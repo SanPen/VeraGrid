@@ -18,6 +18,8 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -168,21 +170,35 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">\frac{d x1}{dt} = (proc_{select\_1} \cdot 0 + (1 - proc_{select\_1}) \cdot yi \cdot Ki)</span></p>
-</div><div class="math">
-<p><span class="math">\frac{d x2}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot Kp+Ki/s+sKd/(1+sTd) [(p_{dx2})</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Kp+Ki/s+sKd/(1+sTd) [(p_{yk} - Kp \cdot yi)</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Kp+Ki/s+sKd/(1+sTd) [(p_{dx2} - \frac{yi - x2}{Td})</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - Kp+Ki/s+sKd/(1+sTd) [(p_{dx2} \cdot Kd)</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Kp+Ki/s+sKd/(1+sTd) [(p_{yis} - (y_{min} + (x1 - y_{min}) \cdot \Theta\left(x1 - y_{min}\right) - (x1 - y_{max}) \cdot \Theta\left(x1 - y_{max}\right)))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (yo - (proc_{select\_3} \cdot proc_{lastvalue\_2} + (1 - proc_{select\_3}) \cdot (y_{min} + (Kp+Ki/s+sKd/(1+sTd) [(p_{yk} + Kp+Ki/s+sKd/(1+sTd) [(p_{yis} + Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - y_{min}) \cdot \Theta\left(Kp+Ki/s+sKd/(1+sTd) [(p_{yk} + Kp+Ki/s+sKd/(1+sTd) [(p_{yis} + Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - y_{min}\right) - (Kp+Ki/s+sKd/(1+sTd) [(p_{yk} + Kp+Ki/s+sKd/(1+sTd) [(p_{yis} + Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - y_{max}) \cdot \Theta\left(Kp+Ki/s+sKd/(1+sTd) [(p_{yk} + Kp+Ki/s+sKd/(1+sTd) [(p_{yis} + Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - y_{max}\right))))</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x1}{dt} = (proc_{select\_1} \cdot 0 + (1 - proc_{select\_1}) \cdot yi \cdot Ki)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x2}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot Kp+Ki/s+sKd/(1+sTd) [(p_{dx2})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Kp+Ki/s+sKd/(1+sTd) [(p_{yk} - Kp \cdot yi)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Kp+Ki/s+sKd/(1+sTd) [(p_{dx2} - \frac{yi - x2}{Td})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - Kp+Ki/s+sKd/(1+sTd) [(p_{dx2} \cdot Kd)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Kp+Ki/s+sKd/(1+sTd) [(p_{yis} - (y_{min} + (x1 - y_{min}) \cdot \Theta\left(x1 - y_{min}\right) - (x1 - y_{max}) \cdot \Theta\left(x1 - y_{max}\right)))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (yo - (proc_{select\_3} \cdot proc_{lastvalue\_2} + (1 - proc_{select\_3}) \cdot (y_{min} + (Kp+Ki/s+sKd/(1+sTd) [(p_{yk} + Kp+Ki/s+sKd/(1+sTd) [(p_{yis} + Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - y_{min}) \cdot \Theta\left(Kp+Ki/s+sKd/(1+sTd) [(p_{yk} + Kp+Ki/s+sKd/(1+sTd) [(p_{yis} + Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - y_{min}\right) - (Kp+Ki/s+sKd/(1+sTd) [(p_{yk} + Kp+Ki/s+sKd/(1+sTd) [(p_{yis} + Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - y_{max}) \cdot \Theta\left(Kp+Ki/s+sKd/(1+sTd) [(p_{yk} + Kp+Ki/s+sKd/(1+sTd) [(p_{yis} + Kp+Ki/s+sKd/(1+sTd) [(p_{yd} - y_{max}\right))))
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

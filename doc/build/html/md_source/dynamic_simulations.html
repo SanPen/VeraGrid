@@ -18,6 +18,8 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -392,29 +394,37 @@
 <section id="dae-formulation">
 <h2>DAE formulation<a class="headerlink" href="#dae-formulation" title="Link to this heading"></a></h2>
 <p>Dynamic power-system models are naturally written as <strong>differential-algebraic equations</strong> (DAEs). A standard form is [2], [3]:</p>
-<div class="math">
-<p><span class="math">\dot{x} = f(x, y, p, t)</span></p>
-</div><div class="math">
-<p><span class="math">0 = g(x, y, p, t)</span></p>
-</div><p>Where:</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{x} = f(x, y, p, t)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = g(x, y, p, t)
+\]</div>
+<p>Where:</p>
 <ul class="simple">
-<li><p><span class="math">x</span> are the differential or state variables,</p></li>
-<li><p><span class="math">y</span> are the algebraic variables,</p></li>
-<li><p><span class="math">p</span> are parameters,</p></li>
-<li><p><span class="math">t</span> is time.</p></li>
+<li><p><span class="math notranslate nohighlight">\(x\)</span> are the differential or state variables,</p></li>
+<li><p><span class="math notranslate nohighlight">\(y\)</span> are the algebraic variables,</p></li>
+<li><p><span class="math notranslate nohighlight">\(p\)</span> are parameters,</p></li>
+<li><p><span class="math notranslate nohighlight">\(t\)</span> is time.</p></li>
 </ul>
 <p>The differential equations describe dynamic storage and control dynamics. The algebraic equations describe instantaneous constraints such as current balance, voltage relations, or constitutive network equations.</p>
 <p>This structure appears naturally in power systems because electrical networks impose instantaneous constraints, while machines, controllers, magnetic circuits, and energy-storage devices contribute state dynamics.</p>
 <p>More generally, one may write the DAE in implicit form as:</p>
-<div class="math">
-<p><span class="math">F(\dot{x},x,y,t)=0</span></p>
-</div><p>or, in the widely used semi-explicit form,</p>
-<div class="math">
-<p><span class="math">\begin{cases}
+<div class="math notranslate nohighlight">
+\[
+F(\dot{x},x,y,t)=0
+\]</div>
+<p>or, in the widely used semi-explicit form,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{cases}
 \dot{x} = f(x,y,t) \\
 0 = g(x,y,t)
-\end{cases}</span></p>
-</div><p>The semi-explicit form is especially useful in power systems because the distinction between dynamic and algebraic quantities is physically meaningful.</p>
+\end{cases}
+\end{split}\]</div>
+<p>The semi-explicit form is especially useful in power systems because the distinction between dynamic and algebraic quantities is physically meaningful.</p>
 <ul class="simple">
 <li><p>The differential part models stored energy and control memory.</p></li>
 <li><p>The algebraic part models instantaneous network balance and constitutive constraints.</p></li>
@@ -423,19 +433,27 @@
 <p>This is why power systems are not, in general, pure ODE systems. The electrical network enforces constraints that must hold at every instant, and those constraints must be solved together with the dynamic equations.</p>
 <section id="linearized-dae-around-one-operating-point">
 <h3>Linearized DAE around one operating point<a class="headerlink" href="#linearized-dae-around-one-operating-point" title="Link to this heading"></a></h3>
-<p>Let <span class="math">(x^*, y^*)</span> be one equilibrium point. Linearizing the semi-explicit DAE gives:</p>
-<div class="math">
-<p><span class="math">\Delta \dot{x} = f_x \Delta x + f_y \Delta y</span></p>
-</div><div class="math">
-<p><span class="math">0 = g_x \Delta x + g_y \Delta y</span></p>
-</div><p>where the Jacobian submatrices are evaluated at the equilibrium point.</p>
-<p>If <span class="math">g_y</span> is nonsingular, then:</p>
-<div class="math">
-<p><span class="math">\Delta y = -g_y^{-1} g_x \Delta x</span></p>
-</div><p>and substitution yields the reduced state matrix:</p>
-<div class="math">
-<p><span class="math">\Delta \dot{x} = \left(f_x - f_y g_y^{-1} g_x\right) \Delta x</span></p>
-</div><p>This reduced matrix is one of the foundations of eigenvalue-based small-signal analysis. It is also a strong reason to keep the nonlinear model formulation coherent: if the original DAE is inconsistent, the linearized model will be inconsistent as well.</p>
+<p>Let <span class="math notranslate nohighlight">\((x^*, y^*)\)</span> be one equilibrium point. Linearizing the semi-explicit DAE gives:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta \dot{x} = f_x \Delta x + f_y \Delta y
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = g_x \Delta x + g_y \Delta y
+\]</div>
+<p>where the Jacobian submatrices are evaluated at the equilibrium point.</p>
+<p>If <span class="math notranslate nohighlight">\(g_y\)</span> is nonsingular, then:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta y = -g_y^{-1} g_x \Delta x
+\]</div>
+<p>and substitution yields the reduced state matrix:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta \dot{x} = \left(f_x - f_y g_y^{-1} g_x\right) \Delta x
+\]</div>
+<p>This reduced matrix is one of the foundations of eigenvalue-based small-signal analysis. It is also a strong reason to keep the nonlinear model formulation coherent: if the original DAE is inconsistent, the linearized model will be inconsistent as well.</p>
 </section>
 <section id="dae-index-and-numerical-implications">
 <h3>DAE index and numerical implications<a class="headerlink" href="#dae-index-and-numerical-implications" title="Link to this heading"></a></h3>
@@ -565,11 +583,15 @@
 <section id="differential-and-algebraic-structure-inside-one-block">
 <h3>Differential and algebraic structure inside one block<a class="headerlink" href="#differential-and-algebraic-structure-inside-one-block" title="Link to this heading"></a></h3>
 <p>At the mathematical level, a block contributes one local set of equations of the form:</p>
-<div class="math">
-<p><span class="math">\dot{x}_b = f_b(x_b, y_b, u_b, p_b, t)</span></p>
-</div><div class="math">
-<p><span class="math">0 = g_b(x_b, y_b, u_b, p_b, t)</span></p>
-</div><p>where the subscript <span class="math">b</span> indicates that the variables belong to one given block. When many blocks are assembled, the global system is obtained by stacking all local equations and adding the connectivity constraints imposed by the network.</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{x}_b = f_b(x_b, y_b, u_b, p_b, t)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = g_b(x_b, y_b, u_b, p_b, t)
+\]</div>
+<p>where the subscript <span class="math notranslate nohighlight">\(b\)</span> indicates that the variables belong to one given block. When many blocks are assembled, the global system is obtained by stacking all local equations and adding the connectivity constraints imposed by the network.</p>
 <p>This is why a block stores both the variables and the equations. The solver does not see a visual diagram; it sees one local symbolic DAE contribution that will become part of the global system.</p>
 </section>
 <section id="state-vars-and-state-eqs">
@@ -585,9 +607,11 @@
 </ul>
 <p>Their associated equations in <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code> or, depending on formulation, in <code class="docutils literal notranslate"><span class="pre">differential_eqs</span></code>, describe how those states evolve in time.</p>
 <p>In continuous time, they typically correspond to equations such as:</p>
-<div class="math">
-<p><span class="math">\dot{x}_i = f_i(x,y,p,t)</span></p>
-</div><p>These are the equations that become discretized by the RMS or EMT integration method.</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{x}_i = f_i(x,y,p,t)
+\]</div>
+<p>These are the equations that become discretized by the RMS or EMT integration method.</p>
 </section>
 <section id="algebraic-vars-and-algebraic-eqs">
 <h3><code class="docutils literal notranslate"><span class="pre">algebraic_vars</span></code> and <code class="docutils literal notranslate"><span class="pre">algebraic_eqs</span></code><a class="headerlink" href="#algebraic-vars-and-algebraic-eqs" title="Link to this heading"></a></h3>
@@ -601,9 +625,11 @@
 <li><p>Norton-equivalent current quantities.</p></li>
 </ul>
 <p>Their associated equations in <code class="docutils literal notranslate"><span class="pre">algebraic_eqs</span></code> take the generic form:</p>
-<div class="math">
-<p><span class="math">0 = g_i(x,y,p,t)</span></p>
-</div><p>These equations are not integrated in time in the same way as states. Instead, they must be satisfied at every time step together with the discretized differential equations.</p>
+<div class="math notranslate nohighlight">
+\[
+0 = g_i(x,y,p,t)
+\]</div>
+<p>These equations are not integrated in time in the same way as states. Instead, they must be satisfied at every time step together with the discretized differential equations.</p>
 </section>
 <section id="differential-eqs-and-formulation-flexibility">
 <h3><code class="docutils literal notranslate"><span class="pre">differential_eqs</span></code> and formulation flexibility<a class="headerlink" href="#differential-eqs-and-formulation-flexibility" title="Link to this heading"></a></h3>
@@ -629,7 +655,7 @@
 <li><p>transformer ratios,</p></li>
 <li><p>damping and inertia constants.</p></li>
 </ul>
-<p>Mathematically, these are the entries of the parameter vector <span class="math">p</span>. They define the model behavior but are not solved for during the simulation.</p>
+<p>Mathematically, these are the entries of the parameter vector <span class="math notranslate nohighlight">\(p\)</span>. They define the model behavior but are not solved for during the simulation.</p>
 <p>It is useful to distinguish them from runtime event parameters: a constant parameter remains fixed during the simulation unless it has been promoted to the runtime event structure.</p>
 </section>
 <section id="init-values-init-eqs-and-diff-init-eqs">
@@ -787,11 +813,15 @@
 <li><p>constructing the initialization and simulation evaluators.</p></li>
 </ol>
 <p>Symbolically, the final system looks like:</p>
-<div class="math">
-<p><span class="math">\dot{X} = F(X,Y,P,t)</span></p>
-</div><div class="math">
-<p><span class="math">0 = G(X,Y,P,t)</span></p>
-</div><p>but internally this global pair <span class="math">(F,G)</span> is built from many local block contributions.</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{X} = F(X,Y,P,t)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = G(X,Y,P,t)
+\]</div>
+<p>but internally this global pair <span class="math notranslate nohighlight">\((F,G)\)</span> is built from many local block contributions.</p>
 <p>This local-to-global assembly is the core idea behind VeraGrid’s dynamic framework.</p>
 </section>
 </section>
@@ -817,18 +847,22 @@
 <h4>Explicit initialization<a class="headerlink" href="#explicit-initialization" title="Link to this heading"></a></h4>
 <p>In explicit initialization, the block templates provide enough initialization equations or direct initialization values to build the initial state from the known operating point. This is the simplest and fastest method when the model has been designed with a complete and well-conditioned initialization structure.</p>
 <p>The idea is classical in DAE-based power-system simulation [2], [3]. Assume the dynamic model is written as</p>
-<div class="math">
-<p><span class="math">\begin{cases}
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{cases}
 \dot{x} = f(x,y,p,t) \\
 0 = g(x,y,p,t)
-\end{cases}</span></p>
-</div><p>At steady state, the differential variables must satisfy equilibrium conditions, so the initialization problem becomes:</p>
-<div class="math">
-<p><span class="math">\begin{cases}
+\end{cases}
+\end{split}\]</div>
+<p>At steady state, the differential variables must satisfy equilibrium conditions, so the initialization problem becomes:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{cases}
 0 = f(x_0,y_0,p,0) \\
 0 = g(x_0,y_0,p,0)
-\end{cases}</span></p>
-</div><p>The role of explicit initialization is to solve this problem not by a generic equilibrium search from scratch, but by exploiting model structure.</p>
+\end{cases}
+\end{split}\]</div>
+<p>The role of explicit initialization is to solve this problem not by a generic equilibrium search from scratch, but by exploiting model structure.</p>
 <p>In practice, VeraGrid uses three sources of information:</p>
 <ul class="simple">
 <li><p>the static network operating point, usually from power flow,</p></li>
@@ -872,9 +906,11 @@
 <h4>Pseudo-transient initialization<a class="headerlink" href="#pseudo-transient-initialization" title="Link to this heading"></a></h4>
 <p>Pseudo-transient continuation is a robust technique for finding equilibria of DAEs by integrating an artificial transient until the residual becomes small [2], [3]. VeraGrid uses pseudo-transient initialization as an alternative when explicit initialization is insufficient or too fragile.</p>
 <p>Suppose the equilibrium problem is written compactly as:</p>
-<div class="math">
-<p><span class="math">F(z)=0</span></p>
-</div><p>where <span class="math">z</span> groups the unknown initialization quantities. A direct Newton solve may fail if:</p>
+<div class="math notranslate nohighlight">
+\[
+F(z)=0
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(z\)</span> groups the unknown initialization quantities. A direct Newton solve may fail if:</p>
 <ul class="simple">
 <li><p>the initial guess is poor,</p></li>
 <li><p>the Jacobian is ill-conditioned,</p></li>
@@ -883,19 +919,23 @@
 <li><p>the model is only partially initialized by explicit formulas.</p></li>
 </ul>
 <p>Pseudo-transient continuation addresses this by embedding the equilibrium problem in an artificial dynamic process:</p>
-<div class="math">
-<p><span class="math">M \frac{dz}{d\tau} = -F(z)</span></p>
-</div><p>where:</p>
+<div class="math notranslate nohighlight">
+\[
+M \frac{dz}{d\tau} = -F(z)
+\]</div>
+<p>where:</p>
 <ul class="simple">
-<li><p><span class="math">\tau</span> is an artificial continuation time,</p></li>
-<li><p><span class="math">M</span> is a scaling or pseudo-mass matrix,</p></li>
-<li><p>the steady state of this artificial system satisfies the original equilibrium condition <span class="math">F(z)=0</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau\)</span> is an artificial continuation time,</p></li>
+<li><p><span class="math notranslate nohighlight">\(M\)</span> is a scaling or pseudo-mass matrix,</p></li>
+<li><p>the steady state of this artificial system satisfies the original equilibrium condition <span class="math notranslate nohighlight">\(F(z)=0\)</span>.</p></li>
 </ul>
 <p>The intuition is simple: instead of asking Newton to jump directly to the equilibrium, the method lets the residual decay progressively. This greatly improves robustness for badly conditioned or weakly initialized systems.</p>
 <p>In one backward-Euler pseudo-transient step, the update has the generic form:</p>
-<div class="math">
-<p><span class="math">M\frac{z^{k+1}-z^k}{\Delta \tau_k} + F(z^{k+1}) = 0</span></p>
-</div><p>which can be interpreted as a sequence of regularized nonlinear solves. When <span class="math">\Delta \tau_k</span> is small, the method behaves conservatively and is robust. As the residual becomes better behaved, <span class="math">\Delta \tau_k</span> can be increased so the method approaches the final equilibrium more aggressively.</p>
+<div class="math notranslate nohighlight">
+\[
+M\frac{z^{k+1}-z^k}{\Delta \tau_k} + F(z^{k+1}) = 0
+\]</div>
+<p>which can be interpreted as a sequence of regularized nonlinear solves. When <span class="math notranslate nohighlight">\(\Delta \tau_k\)</span> is small, the method behaves conservatively and is robust. As the residual becomes better behaved, <span class="math notranslate nohighlight">\(\Delta \tau_k\)</span> can be increased so the method approaches the final equilibrium more aggressively.</p>
 <p>This is one of the reasons pseudo-transient continuation is widely appreciated in power-system DAE solving: it acts as a bridge between time integration and nonlinear equilibrium solving [2], [3], [12].</p>
 </section>
 </section>
@@ -987,25 +1027,33 @@
 </ul>
 <p>Backward Euler is a classical robust implicit method for stiff DAEs and is widely used in transient-stability and dynamic-simulation contexts [1]-[3].</p>
 <p>For one differential equation</p>
-<div class="math">
-<p><span class="math">\dot{x}=f(x,t)</span></p>
-</div><p>the backward Euler discretization is:</p>
-<div class="math">
-<p><span class="math">x_{k+1}=x_k+h f(x_{k+1}, t_{k+1})</span></p>
-</div><p>This is implicit because the future state appears on the right-hand side. In a DAE system, the update is not solved variable by variable, but as one coupled nonlinear problem involving both the discretized differential equations and the algebraic constraints.</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{x}=f(x,t)
+\]</div>
+<p>the backward Euler discretization is:</p>
+<div class="math notranslate nohighlight">
+\[
+x_{k+1}=x_k+h f(x_{k+1}, t_{k+1})
+\]</div>
+<p>This is implicit because the future state appears on the right-hand side. In a DAE system, the update is not solved variable by variable, but as one coupled nonlinear problem involving both the discretized differential equations and the algebraic constraints.</p>
 <p>For a semi-explicit DAE,</p>
-<div class="math">
-<p><span class="math">\begin{cases}
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{cases}
 \dot{x}=f(x,y) \\
 0=g(x,y)
-\end{cases}</span></p>
-</div><p>backward Euler leads to:</p>
-<div class="math">
-<p><span class="math">\begin{cases}
+\end{cases}
+\end{split}\]</div>
+<p>backward Euler leads to:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{cases}
 \dfrac{x_{k+1}-x_k}{h} = f(x_{k+1}, y_{k+1}) \\
 0=g(x_{k+1}, y_{k+1})
-\end{cases}</span></p>
-</div><p>The solver must therefore compute <span class="math">(x_{k+1}, y_{k+1})</span> simultaneously, usually through Newton iterations.</p>
+\end{cases}
+\end{split}\]</div>
+<p>The solver must therefore compute <span class="math notranslate nohighlight">\((x_{k+1}, y_{k+1})\)</span> simultaneously, usually through Newton iterations.</p>
 <p>The advantages of backward Euler in RMS simulation are:</p>
 <ul class="simple">
 <li><p>strong numerical robustness,</p></li>
@@ -1042,16 +1090,22 @@
 </ul>
 <p>This is consistent with standard EMTP practice, where trapezoidal integration is a classical default because of its accuracy and energy behavior for network transients [4]-[6].</p>
 <p>For one generic state equation,</p>
-<div class="math">
-<p><span class="math">\dot{x}=f(x,t)</span></p>
-</div><p>the trapezoidal discretization is:</p>
-<div class="math">
-<p><span class="math">x_{k+1}=x_k+\frac{h}{2}\left(f(x_k,t_k)+f(x_{k+1},t_{k+1})\right)</span></p>
-</div><p>This is again an implicit method, but of second order. In EMT simulation, trapezoidal integration is especially powerful because passive elements can be rewritten as <strong>companion models</strong>.</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{x}=f(x,t)
+\]</div>
+<p>the trapezoidal discretization is:</p>
+<div class="math notranslate nohighlight">
+\[
+x_{k+1}=x_k+\frac{h}{2}\left(f(x_k,t_k)+f(x_{k+1},t_{k+1})\right)
+\]</div>
+<p>This is again an implicit method, but of second order. In EMT simulation, trapezoidal integration is especially powerful because passive elements can be rewritten as <strong>companion models</strong>.</p>
 <p>For example, an inductance described by</p>
-<div class="math">
-<p><span class="math">v=L\frac{di}{dt}</span></p>
-</div><p>can be discretized into one equivalent Norton or Thevenin form containing:</p>
+<div class="math notranslate nohighlight">
+\[
+v=L\frac{di}{dt}
+\]</div>
+<p>can be discretized into one equivalent Norton or Thevenin form containing:</p>
 <ul class="simple">
 <li><p>one equivalent conductance or resistance,</p></li>
 <li><p>one history term that depends on the previous step.</p></li>

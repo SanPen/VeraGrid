@@ -18,6 +18,8 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -177,13 +179,17 @@
 </section>
 <section id="characteristic-equations">
 <h3>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h3>
-<p>For each active branch, let <span class="math">r_X=V_X/V_0</span> be the filtered voltage magnitude normalized by its reference. The ZIP laws are</p>
-<div class="math">
-<p><span class="math">P_X=P_{0,X}(a_1r_X^2+a_2r_X+a_3),</span></p>
-</div><div class="math">
-<p><span class="math">Q_X=Q_{0,X}(a_4r_X^2+a_5r_X+a_6).</span></p>
-</div><p>The quadratic terms represent constant impedance, the linear terms constant current, and the constant terms constant power. The current injection is reconstructed from the filtered in-phase and quadrature voltage components with a regularized denominator.</p>
-<p>For a pure component, the corresponding coefficient triplet normally sums to one. Mixed coefficients should be checked at <span class="math">r_X=1</span> so the model reproduces the nominal operating-point power.</p>
+<p>For each active branch, let <span class="math notranslate nohighlight">\(r_X=V_X/V_0\)</span> be the filtered voltage magnitude normalized by its reference. The ZIP laws are</p>
+<div class="math notranslate nohighlight">
+\[
+P_X=P_{0,X}(a_1r_X^2+a_2r_X+a_3),
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Q_X=Q_{0,X}(a_4r_X^2+a_5r_X+a_6).
+\]</div>
+<p>The quadratic terms represent constant impedance, the linear terms constant current, and the constant terms constant power. The current injection is reconstructed from the filtered in-phase and quadrature voltage components with a regularized denominator.</p>
+<p>For a pure component, the corresponding coefficient triplet normally sums to one. Mixed coefficients should be checked at <span class="math notranslate nohighlight">\(r_X=1\)</span> so the model reproduces the nominal operating-point power.</p>
 </section>
 </section>
 <section id="interface-table">

@@ -18,6 +18,8 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -168,29 +170,51 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">0 = (Limit [ppp_{iXref\_prio} - (proc_{select\_0} \cdot d + (1 - proc_{select\_0}) \cdot q))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Limit [ppp_{iXref\_nonprio} - (proc_{select\_1} \cdot q + (1 - proc_{select\_1}) \cdot d))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Limit [ppp_{max\_prio} - ((proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert)\right))))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Limit [ppp_{min\_prio} - ((proc_{select\_3} \cdot \lvertD_{MIN}\rvert + (1 - proc_{select\_3}) \cdot \lvertQ_{MIN}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertD_{MIN}\rvert + (1 - proc_{select\_3}) \cdot \lvertQ_{MIN}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertD_{MIN}\rvert + (1 - proc_{select\_3}) \cdot \lvertQ_{MIN}\rvert)\right))))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Limit [ppp_{y\_prio} - (-Limit [ppp_{min\_prio} + (Limit [ppp_{iXref\_prio} - -Limit [ppp_{min\_prio}) \cdot \Theta\left(Limit [ppp_{iXref\_prio} - -Limit [ppp_{min\_prio}\right) - (Limit [ppp_{iXref\_prio} - Limit [ppp_{max\_prio}) \cdot \Theta\left(Limit [ppp_{iXref\_prio} - Limit [ppp_{max\_prio}\right)))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Limit [ppp_{remainder} - \sqrt{\lvertMAG_{MAX} \cdot MAG_{MAX} - Limit [ppp_{y\_prio} \cdot Limit [ppp_{y\_prio}\rvert})</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Limit [ppp_{max\_nonprio} - (((proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right))) \cdot \Theta\left(Limit [ppp_{remainder} - ((proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right)))\right) + Limit [ppp_{remainder} \cdot (1 - \Theta\left(Limit [ppp_{remainder} - ((proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right)))\right))))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Limit [ppp_{min\_nonprio} - (((proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right))) \cdot \Theta\left(Limit [ppp_{remainder} - ((proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right)))\right) + Limit [ppp_{remainder} \cdot (1 - \Theta\left(Limit [ppp_{remainder} - ((proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right)))\right))))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Limit [ppp_{y\_nonprio} - (-Limit [ppp_{min\_nonprio} + (Limit [ppp_{iXref\_nonprio} - -Limit [ppp_{min\_nonprio}) \cdot \Theta\left(Limit [ppp_{iXref\_nonprio} - -Limit [ppp_{min\_nonprio}\right) - (Limit [ppp_{iXref\_nonprio} - Limit [ppp_{max\_nonprio}) \cdot \Theta\left(Limit [ppp_{iXref\_nonprio} - Limit [ppp_{max\_nonprio}\right)))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (yo_{d} - (proc_{select\_6} \cdot Limit [ppp_{y\_prio} + (1 - proc_{select\_6}) \cdot Limit [ppp_{y\_nonprio}))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (yo_{q} - (proc_{select\_7} \cdot Limit [ppp_{y\_nonprio} + (1 - proc_{select\_7}) \cdot Limit [ppp_{y\_prio}))</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{iXref\_prio} - (proc_{select\_0} \cdot d + (1 - proc_{select\_0}) \cdot q))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{iXref\_nonprio} - (proc_{select\_1} \cdot q + (1 - proc_{select\_1}) \cdot d))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{max\_prio} - ((proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_2} \cdot \lvertD_{MAX}\rvert + (1 - proc_{select\_2}) \cdot \lvertQ_{MAX}\rvert)\right))))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{min\_prio} - ((proc_{select\_3} \cdot \lvertD_{MIN}\rvert + (1 - proc_{select\_3}) \cdot \lvertQ_{MIN}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertD_{MIN}\rvert + (1 - proc_{select\_3}) \cdot \lvertQ_{MIN}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_3} \cdot \lvertD_{MIN}\rvert + (1 - proc_{select\_3}) \cdot \lvertQ_{MIN}\rvert)\right))))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{y\_prio} - (-Limit [ppp_{min\_prio} + (Limit [ppp_{iXref\_prio} - -Limit [ppp_{min\_prio}) \cdot \Theta\left(Limit [ppp_{iXref\_prio} - -Limit [ppp_{min\_prio}\right) - (Limit [ppp_{iXref\_prio} - Limit [ppp_{max\_prio}) \cdot \Theta\left(Limit [ppp_{iXref\_prio} - Limit [ppp_{max\_prio}\right)))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{remainder} - \sqrt{\lvertMAG_{MAX} \cdot MAG_{MAX} - Limit [ppp_{y\_prio} \cdot Limit [ppp_{y\_prio}\rvert})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{max\_nonprio} - (((proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right))) \cdot \Theta\left(Limit [ppp_{remainder} - ((proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right)))\right) + Limit [ppp_{remainder} \cdot (1 - \Theta\left(Limit [ppp_{remainder} - ((proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_4} \cdot \lvertQ_{MAX}\rvert + (1 - proc_{select\_4}) \cdot \lvertD_{MAX}\rvert)\right)))\right))))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{min\_nonprio} - (((proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right))) \cdot \Theta\left(Limit [ppp_{remainder} - ((proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right)))\right) + Limit [ppp_{remainder} \cdot (1 - \Theta\left(Limit [ppp_{remainder} - ((proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert) \cdot \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right) + \lvertMAG_{MAX}\rvert \cdot (1 - \Theta\left(\lvertMAG_{MAX}\rvert - (proc_{select\_5} \cdot \lvertQ_{MIN}\rvert + (1 - proc_{select\_5}) \cdot \lvertD_{MIN}\rvert)\right)))\right))))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Limit [ppp_{y\_nonprio} - (-Limit [ppp_{min\_nonprio} + (Limit [ppp_{iXref\_nonprio} - -Limit [ppp_{min\_nonprio}) \cdot \Theta\left(Limit [ppp_{iXref\_nonprio} - -Limit [ppp_{min\_nonprio}\right) - (Limit [ppp_{iXref\_nonprio} - Limit [ppp_{max\_nonprio}) \cdot \Theta\left(Limit [ppp_{iXref\_nonprio} - Limit [ppp_{max\_nonprio}\right)))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (yo_{d} - (proc_{select\_6} \cdot Limit [ppp_{y\_prio} + (1 - proc_{select\_6}) \cdot Limit [ppp_{y\_nonprio}))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (yo_{q} - (proc_{select\_7} \cdot Limit [ppp_{y\_nonprio} + (1 - proc_{select\_7}) \cdot Limit [ppp_{y\_prio}))
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

@@ -18,6 +18,8 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -168,21 +170,35 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">0 = (Rate limiter {s_{t0} - proc_{lastvalue\_0})</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Rate limiter {s_{yi0} - proc_{lastvalue\_1})</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Rate limiter {s_{dt} - (glob_{time} - Rate limiter {s_{t0}))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (Rate limiter {s_{dy} - (-\lvertgrd_{down}\rvert + (\frac{yi - Rate limiter {s_{yi0}}{Rate limiter {s_{dt} \cdot \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right) + 1 \times 10^{-12}(1 - \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right))} - -\lvertgrd_{down}\rvert) \cdot \Theta\left(\frac{yi - Rate limiter {s_{yi0}}{Rate limiter {s_{dt} \cdot \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right) + 1 \times 10^{-12}(1 - \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right))} - -\lvertgrd_{down}\rvert\right) - (\frac{yi - Rate limiter {s_{yi0}}{Rate limiter {s_{dt} \cdot \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right) + 1 \times 10^{-12}(1 - \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right))} - \lvertgrd_{up}\rvert) \cdot \Theta\left(\frac{yi - Rate limiter {s_{yi0}}{Rate limiter {s_{dt} \cdot \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right) + 1 \times 10^{-12}(1 - \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right))} - \lvertgrd_{up}\rvert\right)))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (yo - (Rate limiter {s_{dy} \cdot Rate limiter {s_{dt} + Rate limiter {s_{yi0}))</span></p>
-</div><div class="math">
-<p><span class="math">Rate limiter {s_{dt}(t_0) = 0.001</span></p>
-</div><div class="math">
-<p><span class="math">Rate limiter {s_{dy}(t_0) = 0</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+0 = (Rate limiter {s_{t0} - proc_{lastvalue\_0})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Rate limiter {s_{yi0} - proc_{lastvalue\_1})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Rate limiter {s_{dt} - (glob_{time} - Rate limiter {s_{t0}))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (Rate limiter {s_{dy} - (-\lvertgrd_{down}\rvert + (\frac{yi - Rate limiter {s_{yi0}}{Rate limiter {s_{dt} \cdot \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right) + 1 \times 10^{-12}(1 - \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right))} - -\lvertgrd_{down}\rvert) \cdot \Theta\left(\frac{yi - Rate limiter {s_{yi0}}{Rate limiter {s_{dt} \cdot \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right) + 1 \times 10^{-12}(1 - \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right))} - -\lvertgrd_{down}\rvert\right) - (\frac{yi - Rate limiter {s_{yi0}}{Rate limiter {s_{dt} \cdot \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right) + 1 \times 10^{-12}(1 - \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right))} - \lvertgrd_{up}\rvert) \cdot \Theta\left(\frac{yi - Rate limiter {s_{yi0}}{Rate limiter {s_{dt} \cdot \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right) + 1 \times 10^{-12}(1 - \Theta\left(Rate limiter {s_{dt} - 1 \times 10^{-12}\right))} - \lvertgrd_{up}\rvert\right)))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (yo - (Rate limiter {s_{dy} \cdot Rate limiter {s_{dt} + Rate limiter {s_{yi0}))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Rate limiter {s_{dt}(t_0) = 0.001
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Rate limiter {s_{dy}(t_0) = 0
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

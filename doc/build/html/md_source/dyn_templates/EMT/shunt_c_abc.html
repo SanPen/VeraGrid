@@ -18,6 +18,8 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -156,15 +158,21 @@
 </section>
 <section id="electrical-model">
 <h2>Electrical model<a class="headerlink" href="#electrical-model" title="Link to this heading"></a></h2>
-<p>For an enabled star branch <span class="math">X</span>,</p>
-<div class="math">
-<p><span class="math">v_{C,X}=v_X-v_N,</span></p>
-</div><div class="math">
-<p><span class="math">i_{C,X}=C_X\frac{d v_{C,X}}{dt}.</span></p>
-</div><p>The stored electric energy is</p>
-<div class="math">
-<p><span class="math">W_{C,X}=\frac{1}{2}C_Xv_{C,X}^2.</span></p>
-</div><p>The external current follows VeraGrid’s network-injection sign convention. Delta branches use the line-to-line voltage of each enabled pair.</p>
+<p>For an enabled star branch <span class="math notranslate nohighlight">\(X\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+v_{C,X}=v_X-v_N,
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+i_{C,X}=C_X\frac{d v_{C,X}}{dt}.
+\]</div>
+<p>The stored electric energy is</p>
+<div class="math notranslate nohighlight">
+\[
+W_{C,X}=\frac{1}{2}C_Xv_{C,X}^2.
+\]</div>
+<p>The external current follows VeraGrid’s network-injection sign convention. Delta branches use the line-to-line voltage of each enabled pair.</p>
 </section>
 <section id="phase-and-neutral-configurations">
 <h2>Phase and neutral configurations<a class="headerlink" href="#phase-and-neutral-configurations" title="Link to this heading"></a></h2>
@@ -204,13 +212,15 @@
 <section id="parameter-sources">
 <h2>Parameter sources<a class="headerlink" href="#parameter-sources" title="Link to this heading"></a></h2>
 <p>For a star-connected equivalent, each phase capacitance can be obtained from nominal capacitive reactive power:</p>
-<div class="math">
-<p><span class="math">C_X=\frac{Q_{l0,X}}{V_{nom}^2\,\omega_{base}}.</span></p>
-</div><p>Delta equivalents use explicit line-to-line branch capacitances. Check the reactive-power sign convention and whether the source quantity is per-phase or total before mapping it.</p>
+<div class="math notranslate nohighlight">
+\[
+C_X=\frac{Q_{l0,X}}{V_{nom}^2\,\omega_{base}}.
+\]</div>
+<p>Delta equivalents use explicit line-to-line branch capacitances. Check the reactive-power sign convention and whether the source quantity is per-phase or total before mapping it.</p>
 </section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
-<p>The symbol <span class="math">X</span> denotes an enabled phase and <span class="math">XY</span> an enabled delta pair.</p>
+<p>The symbol <span class="math notranslate nohighlight">\(X\)</span> denotes an enabled phase and <span class="math notranslate nohighlight">\(XY\)</span> an enabled delta pair.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Category</p></th>

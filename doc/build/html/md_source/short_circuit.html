@@ -18,6 +18,8 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -147,60 +149,74 @@ current results directly in their real phase values, simplifying both setup and 
 <h3>Linearisation<a class="headerlink" href="#linearisation" title="Link to this heading"></a></h3>
 <p>The first step in performing the short-circuit calculation is to determine the state of the network prior to the fault.
 To achieve this, VeraGrid will perform the three-phase power flow calculation, which has been developed to determine
-the voltage at each bus before the fault <span class="math">\vec{U}_{pf}</span>. This initial step will also provide the other electrical
-magnitudes of the system, such as the admittance matrix of the branches <span class="math">\vec{Y}_b</span>, the power <span class="math">\vec{S}_0</span>,
-current <span class="math">\vec{I}_0</span>, and admittance <span class="math">\vec{Y}_0</span> matrices of the loads or shunt elements, and the complex power vector
-for each bus <span class="math">\vec{S}_{pf}</span>.</p>
+the voltage at each bus before the fault <span class="math notranslate nohighlight">\(\vec{U}_{pf}\)</span>. This initial step will also provide the other electrical
+magnitudes of the system, such as the admittance matrix of the branches <span class="math notranslate nohighlight">\(\vec{Y}_b\)</span>, the power <span class="math notranslate nohighlight">\(\vec{S}_0\)</span>,
+current <span class="math notranslate nohighlight">\(\vec{I}_0\)</span>, and admittance <span class="math notranslate nohighlight">\(\vec{Y}_0\)</span> matrices of the loads or shunt elements, and the complex power vector
+for each bus <span class="math notranslate nohighlight">\(\vec{S}_{pf}\)</span>.</p>
 <p>Once the power flow calculation has been performed and the necessary results obtained, the second step is to linearise
 the entire system, that is, to convert all power and current injections to their equivalent admittance values.
 This way, the system can be solved simply by applying Ohm’s law, without the need for any iterative algorithms like
 Newton-Raphson.</p>
-<p>The admittance of the branches, <span class="math">\vec{Y}_b</span>, is already known, as well as that of the loads defined as constant
-admittance, <span class="math">\vec{Y}_0</span>. However, the loads defined as constant power must be converted by dividing by the square of
+<p>The admittance of the branches, <span class="math notranslate nohighlight">\(\vec{Y}_b\)</span>, is already known, as well as that of the loads defined as constant
+admittance, <span class="math notranslate nohighlight">\(\vec{Y}_0\)</span>. However, the loads defined as constant power must be converted by dividing by the square of
 the voltage vector’s magnitude:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{0_S} = \dfrac{\vec{S}_0^*}{U_{pf}^2}</span></p>
-</div><p>The loads defined as constant current must also be converted to their equivalent admittance by dividing by the voltage
+<div class="math notranslate nohighlight">
+\[
+\vec{Y}_{0_S} = \dfrac{\vec{S}_0^*}{U_{pf}^2}
+\]</div>
+<p>The loads defined as constant current must also be converted to their equivalent admittance by dividing by the voltage
 vector:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{0_I} = \dfrac{\vec{I}_0}{\vec{U}_{pf}}</span></p>
-</div><p>Therefore, the sum of these three admittances will make up the admittance matrix of the loads:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{\text{loads}} = \vec{Y}_0 + \vec{Y}_{0_S} + \vec{Y}_{0_I}</span></p>
-</div><p>In the unbalanced three-phase power flow simulation, the generators had been modelled as simple power injections into
+<div class="math notranslate nohighlight">
+\[
+\vec{Y}_{0_I} = \dfrac{\vec{I}_0}{\vec{U}_{pf}}
+\]</div>
+<p>Therefore, the sum of these three admittances will make up the admittance matrix of the loads:</p>
+<div class="math notranslate nohighlight">
+\[
+\vec{Y}_{\text{loads}} = \vec{Y}_0 + \vec{Y}_{0_S} + \vec{Y}_{0_I}
+\]</div>
+<p>In the unbalanced three-phase power flow simulation, the generators had been modelled as simple power injections into
 the system, which was completely valid. However, this is not sufficient when performing the short-circuit analysis, as
-the impedance of the generator must also be taken into account. VeraGrid has been programmed to accept a <span class="math">3 \times 3</span>
-impedance matrix, which includes both the self and mutual impedances between the <span class="math">abc</span> phases. Furthermore, it is
+the impedance of the generator must also be taken into account. VeraGrid has been programmed to accept a <span class="math notranslate nohighlight">\(3 \times 3\)</span>
+impedance matrix, which includes both the self and mutual impedances between the <span class="math notranslate nohighlight">\(abc\)</span> phases. Furthermore, it is
 common to encounter generator impedances in the sequence domain. Therefore, Fortescue’s theorem must be applied to
 obtain the equivalent values for the three phases:</p>
-<div class="math">
-<p><span class="math">\vec{Z}_{gen_{abc}} =
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\vec{Z}_{gen_{abc}} =
 \begin{bmatrix}
 \vec{Z}_0 + \vec{Z}_1 + \vec{Z}_2 &amp; \vec{Z}_0 + \vec{a}\vec{Z}_1 + \vec{a}^2\vec{Z}_2 &amp; \vec{Z}_0 + \vec{a}^2\vec{Z}_1 + \vec{a}\vec{Z}_2 \\
 \vec{Z}_0 + \vec{a}^2\vec{Z}_1 + \vec{a}\vec{Z}_2 &amp; \vec{Z}_0 + \vec{Z}_1 + \vec{Z}_2 &amp; \vec{Z}_0 + \vec{a}\vec{Z}_1 + \vec{a}^2\vec{Z}_2 \\
 \vec{Z}_0 + \vec{a}\vec{Z}_1 + \vec{a}^2\vec{Z}_2 &amp; \vec{Z}_0 + \vec{a}^2\vec{Z}_1 + \vec{a}\vec{Z}_2 &amp; \vec{Z}_0 + \vec{Z}_1 + \vec{Z}_2
-\end{bmatrix}</span></p>
-</div><p>Where the transformation eigenvector <span class="math">\vec{a} = e^{j2\pi/3}</span> is used. Then, the impedance matrix is linearly inverted
+\end{bmatrix}
+\end{split}\]</div>
+<p>Where the transformation eigenvector <span class="math notranslate nohighlight">\(\vec{a} = e^{j2\pi/3}\)</span> is used. Then, the impedance matrix is linearly inverted
 to finally find the admittance of the generators:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{\text{gen}} = \dfrac{1}{\vec{Z}_{\text{gen}}}</span></p>
-</div><p>Finally, the only remaining admittance to be obtained is that of the fault itself. For instance, in the case of a
+<div class="math notranslate nohighlight">
+\[
+\vec{Y}_{\text{gen}} = \dfrac{1}{\vec{Z}_{\text{gen}}}
+\]</div>
+<p>Finally, the only remaining admittance to be obtained is that of the fault itself. For instance, in the case of a
 phase-to-earth fault, this impedance must be connected between the affected phase and earth. This fault impedance
-<span class="math">\vec{Z}_{f}</span> shall be specified by the VeraGrid user on the bus on which the short-circuit is to be simulated, as well
+<span class="math notranslate nohighlight">\(\vec{Z}_{f}\)</span> shall be specified by the VeraGrid user on the bus on which the short-circuit is to be simulated, as well
 as the short-circuit type and the affected phases. Again, this impedance will be inverted to obtain the fault admittance:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{f} = \dfrac{1}{\vec{Z}_{f}}</span></p>
-</div><p>Thus, the total linearised admittance will be equal to the sum of the admittance of the branches, the loads, the
+<div class="math notranslate nohighlight">
+\[
+\vec{Y}_{f} = \dfrac{1}{\vec{Z}_{f}}
+\]</div>
+<p>Thus, the total linearised admittance will be equal to the sum of the admittance of the branches, the loads, the
 generators, and the fault admittance:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{\text{linear}} = \vec{Y}_b + \vec{Y}_{\text{loads}} + \vec{Y}_{\text{gen}} + \vec{Y}_{f}</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+\vec{Y}_{\text{linear}} = \vec{Y}_b + \vec{Y}_{\text{loads}} + \vec{Y}_{\text{gen}} + \vec{Y}_{f}
+\]</div>
+</section>
 <section id="induced-electromotive-force">
 <h3>Induced Electromotive Force<a class="headerlink" href="#induced-electromotive-force" title="Link to this heading"></a></h3>
 <p>Another key parameter that must be transferred from the power flow to the short-circuit analysis is the induced
-electromotive force (EMF) in the generators, <span class="math">\vec{E}</span>, as this is the only voltage that will not change during the
+electromotive force (EMF) in the generators, <span class="math notranslate nohighlight">\(\vec{E}\)</span>, as this is the only voltage that will not change during the
 fault. The electromotive force depends on the flux induced in the machine’s rotor, and therefore on the excitation
-current. It can be assumed that the internal voltage <span class="math">\vec{E}</span> of the generator remains constant during the duration
+current. It can be assumed that the internal voltage <span class="math notranslate nohighlight">\(\vec{E}\)</span> of the generator remains constant during the duration
 of the fault. The generator could be modelled during the short-circuit using the classic Thévenin equivalent, that is,
 as an ideal voltage source in series with the generator’s impedance, as shown in the electrical circuit of figure bellow:</p>
 <div style="text-align: center;">
@@ -209,16 +225,18 @@ as an ideal voltage source in series with the generator’s impedance, as shown 
     title="Generator's Thevenin"
     width="50%"/>
 </div>
-<p>This circuit allows us to obtain the value of the induced electromotive force, given the voltage <span class="math">\vec{U}_{pf}</span> and
-power <span class="math">\vec{S}_{pf}</span> before the fault at the generator’s output bus:</p>
-<div class="math">
-<p><span class="math">\vec{E} = \vec{U}_{pf} + \vec{Z}_{\text{gen}} \cdot \vec{I}_{pf} = \vec{U}_{pf} + \dfrac{\vec{S}_{pf}^*}{\vec{Y}_{\text{gen}} \cdot \vec{U}_{pf}^*}</span></p>
-</div></section>
+<p>This circuit allows us to obtain the value of the induced electromotive force, given the voltage <span class="math notranslate nohighlight">\(\vec{U}_{pf}\)</span> and
+power <span class="math notranslate nohighlight">\(\vec{S}_{pf}\)</span> before the fault at the generator’s output bus:</p>
+<div class="math notranslate nohighlight">
+\[
+\vec{E} = \vec{U}_{pf} + \vec{Z}_{\text{gen}} \cdot \vec{I}_{pf} = \vec{U}_{pf} + \dfrac{\vec{S}_{pf}^*}{\vec{Y}_{\text{gen}} \cdot \vec{U}_{pf}^*}
+\]</div>
+</section>
 <section id="norton-current-and-short-circuit-voltage">
 <h3>Norton Current and Short-Circuit Voltage<a class="headerlink" href="#norton-current-and-short-circuit-voltage" title="Link to this heading"></a></h3>
 <p>However, this would require to add a fictitious bus into the original system between the generator’s impedance and the
 ideal voltage source. This presents a significant challenge because both the values of the power flow voltage vector
-<span class="math">\vec{U}_{pf}</span> and the already linearised admittance matrix <span class="math">\vec{Y}_{\text{linear}}</span> are referenced by bus, and all
+<span class="math notranslate nohighlight">\(\vec{U}_{pf}\)</span> and the already linearised admittance matrix <span class="math notranslate nohighlight">\(\vec{Y}_{\text{linear}}\)</span> are referenced by bus, and all
 these connections would be more difficult to handle. Therefore, the generator is modelled using its Norton equivalent,
 that is, an ideal current source in parallel with the generator’s impedance, as shown in the following schematic:</p>
 <div style="text-align: center;">
@@ -228,27 +246,33 @@ that is, an ideal current source in parallel with the generator’s impedance, a
     width="40%"/>
 </div>
 <p>The Norton current source will take the value of the internal voltage multiplied by its admittance:</p>
-<div class="math">
-<p><span class="math">\vec{I}_{N} = \vec{Y}_{\text{gen}} \cdot \ \vec{E}</span></p>
-</div><p>This Norton current vector will be of size <span class="math">n</span> buses, but only the nodes with a connected generator will have these
-founded values, while the rest will simply have a value of zero. Finally, this current vector <span class="math">\vec{I}_{N}</span> will be
-multiplied by the inverse of the linearised admittance matrix <span class="math">\vec{Y}_{\text{linear}}</span> of size <span class="math">n \times n</span>,
+<div class="math notranslate nohighlight">
+\[
+\vec{I}_{N} = \vec{Y}_{\text{gen}} \cdot \ \vec{E}
+\]</div>
+<p>This Norton current vector will be of size <span class="math notranslate nohighlight">\(n\)</span> buses, but only the nodes with a connected generator will have these
+founded values, while the rest will simply have a value of zero. Finally, this current vector <span class="math notranslate nohighlight">\(\vec{I}_{N}\)</span> will be
+multiplied by the inverse of the linearised admittance matrix <span class="math notranslate nohighlight">\(\vec{Y}_{\text{linear}}\)</span> of size <span class="math notranslate nohighlight">\(n \times n\)</span>,
 resulting in the short-circuit voltage vector for the different buses:</p>
-<div class="math">
-<p><span class="math">\vec{U}_{sc} = \vec{Y}_{\text{linear}}^{-1} \cdot \vec{I}_{N}</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+\vec{U}_{sc} = \vec{Y}_{\text{linear}}^{-1} \cdot \vec{I}_{N}
+\]</div>
+</section>
 <section id="single-line-to-ground-fault-slg">
 <h3>Single Line-to-Ground Fault (SLG)<a class="headerlink" href="#single-line-to-ground-fault-slg" title="Link to this heading"></a></h3>
 <p>A single line-to-ground fault (SLG) occurs when one phase conductor accidentally makes contact with the ground.
 It is illustrated in the figure bellow for phase a, and the corresponding fault admittance matrix is given by:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{f} =
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\vec{Y}_{f} =
 \begin{bmatrix}
     \vec{Y}_{f}^a &amp; 0 &amp; 0 \\
     0 &amp; 0 &amp; 0 \\
     0 &amp; 0 &amp; 0 \\
-\end{bmatrix}</span></p>
-</div><div style="text-align: center;">
+\end{bmatrix}
+\end{split}\]</div>
+<div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_SLG.png?raw=true"
     alt="Single Line-to-Ground Fault (SLG)"
     title="Single Line-to-Ground Fault (SLG)"
@@ -272,14 +296,16 @@ It is illustrated in the figure bellow for phase a, and the corresponding fault 
 <h3>Line-to-Line Fault (LL)<a class="headerlink" href="#line-to-line-fault-ll" title="Link to this heading"></a></h3>
 <p>A line-to-line fault (LL) occurs when two phase conductors come into contact with each other.
 The following figure shows the fault between phases c and a, and the corresponding fault admittance matrix is given by:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{f} =
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\vec{Y}_{f} =
 \begin{bmatrix}
     \vec{Y}_{f}^{ca} &amp; 0 &amp; -\vec{Y}_{f}^{ca} \\
     0 &amp; 0 &amp; 0 \\
     -\vec{Y}_{f}^{ca} &amp; 0 &amp; \vec{Y}_{f}^{ca} \\
-\end{bmatrix}</span></p>
-</div><div style="text-align: center;">
+\end{bmatrix}
+\end{split}\]</div>
+<div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_LL.png?raw=true"
     alt="Line-to-Line Fault (LL)"
     title="Line-to-Line Fault (LL)"
@@ -304,14 +330,16 @@ The following figure shows the fault between phases c and a, and the correspondi
 <p>A double line-to-ground fault (DLG) occurs when two phase conductors simultaneously make contact with the ground.
 The following figure illustrates the fault involving phases c and a, and the corresponding fault admittance matrix
 is given by:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{f} =
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\vec{Y}_{f} =
 \begin{bmatrix}
     \vec{Y}_{f}^a &amp; 0 &amp; 0 \\
     0 &amp; 0 &amp; 0 \\
     0 &amp; 0 &amp; \vec{Y}_{f}^c \\
-\end{bmatrix}</span></p>
-</div><div style="text-align: center;">
+\end{bmatrix}
+\end{split}\]</div>
+<div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_DLG.png?raw=true"
     alt="Double Line-to-Ground Fault (DLG)"
     title="Double Line-to-Ground Fault (DLG)"
@@ -335,14 +363,16 @@ is given by:</p>
 <h3>Three-Phase Fault (LLL)<a class="headerlink" href="#three-phase-fault-lll" title="Link to this heading"></a></h3>
 <p>A three-phase (LLL) fault occurs when all three phase conductors come into contact with each other.
 The following figure shows the fault between phases a, b, and c, and the corresponding fault admittance matrix is given by:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{f} =
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\vec{Y}_{f} =
 \begin{bmatrix}
     \vec{Y}_{f}^{ab} + \vec{Y}_{f}^{ca} &amp; -\vec{Y}_{f}^{ab} &amp; -\vec{Y}_{f}^{ca} \\
     -\vec{Y}_{f}^{ab} &amp; \vec{Y}_{f}^{ab} + \vec{Y}_{f}^{bc} &amp; -\vec{Y}_{f}^{bc} \\
     -\vec{Y}_{f}^{ca} &amp; -\vec{Y}_{f}^{bc} &amp; \vec{Y}_{f}^{bc} + \vec{Y}_{f}^{ca} \\
-\end{bmatrix}</span></p>
-</div><div style="text-align: center;">
+\end{bmatrix}
+\end{split}\]</div>
+<div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_LLL.png?raw=true"
     alt="Three-Phase Fault (LLL)"
     title="Three-Phase Fault (LLL)"
@@ -367,14 +397,16 @@ The following figure shows the fault between phases a, b, and c, and the corresp
 <p>A three-phase-to-ground (LLLG) fault occurs when all three-phase conductors come into simultaneous contact with the
 ground. The following figure illustrates the fault involving phases a, b, and c, and the corresponding fault admittance
 matrix is given by:</p>
-<div class="math">
-<p><span class="math">\vec{Y}_{f} =
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\vec{Y}_{f} =
 \begin{bmatrix}
     \vec{Y}_{f}^a &amp; 0 &amp; 0 \\
     0 &amp; \vec{Y}_{f}^b &amp; 0 \\
     0 &amp; 0 &amp; \vec{Y}_{f}^c \\
-\end{bmatrix}</span></p>
-</div><div style="text-align: center;">
+\end{bmatrix}
+\end{split}\]</div>
+<div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_LLLG.png?raw=true"
     alt="Three-Phase-to-Ground Fault (LLLG)"
     title="Three-Phase-to-Ground Fault (LLLG)"
@@ -406,8 +438,8 @@ at bus 634 with two fault impedance values.</p>
     width="99%"/>
 </div>
 <p>A generator has been added to bus 632, providing an equivalent power to the network to which the system was connected.
-The sequence impedance values for the generator are <span class="math">Z_1 = 0.004 + 0.5j</span> p.u. for the positive sequence,
-<span class="math">Z_2 = 0.02 + 0.5j</span> p.u. for the negative sequence, and <span class="math">Z_0 = 0.01 + 0.08j</span> p.u. for the zero sequence.</p>
+The sequence impedance values for the generator are <span class="math notranslate nohighlight">\(Z_1 = 0.004 + 0.5j\)</span> p.u. for the positive sequence,
+<span class="math notranslate nohighlight">\(Z_2 = 0.02 + 0.5j\)</span> p.u. for the negative sequence, and <span class="math notranslate nohighlight">\(Z_0 = 0.01 + 0.08j\)</span> p.u. for the zero sequence.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindingType</span><span class="p">,</span> <span class="n">ShuntConnectionType</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -900,27 +932,35 @@ Computer Analysis of Power Systems by J. Arrillaga and C.P. Arnold.</p>
 <h3>3-Phase Short Circuit<a class="headerlink" href="#phase-short-circuit" title="Link to this heading"></a></h3>
 <p>First, declare an array of zeros of size equal to the number of nodes in the
 circuit.</p>
-<div class="math">
-<p><span class="math">\textbf{I} = \{0, 0, 0, 0, ..., 0\}</span></p>
-</div><p>Then for single bus failure, compute the short circuit current at the selected bus <span class="math">i</span> and assign
-that value in the <span class="math">i^{th}</span> position of the array <span class="math">\textbf{I}</span>.</p>
-<div class="math">
-<p><span class="math">\textbf{I}_i = - \frac{\textbf{V}_{pre-failure, i}}{\textbf{Z}_{i, i} + z_f}</span></p>
-</div><p>Then, compute the voltage increment for all the circuit nodes as:</p>
-<div class="math">
-<p><span class="math">\Delta \textbf{V} = \textbf{Z} \times \textbf{I}</span></p>
-</div><p>Finally, define the voltage at all the nodes as:</p>
-<div class="math">
-<p><span class="math">\textbf{V}_{post-failure} = \textbf{V}_{pre-failure} + \Delta \textbf{V}</span></p>
-</div><ul class="simple">
-<li><p><span class="math">\textbf{I}</span>: Array of fault currents at the system nodes.</p></li>
-<li><p><span class="math">\textbf{I}_B</span>: Subarray of <span class="math">\textbf{I}</span> such that all entries for non-selected buses are removed.</p></li>
-<li><p><span class="math">\textbf{V}_{pre-failure}</span>: Array of system voltages prior to the failure. This is obtained from the power flow study.</p></li>
-<li><p><span class="math">\textbf{V}_{pre-failure, B}</span>: Subarray of <span class="math">\textbf{V}_{pre-failure}</span> such that all entries for non-selected buses are removed.</p></li>
-<li><p><span class="math">z_f</span>: Impedance of the failure itself. This is a given value, although you can set it to zero if you don’t know.</p></li>
-<li><p><span class="math">\textbf{z}_{f, B}</span>: Impedance of the failures of selected buses <span class="math">B</span>.</p></li>
-<li><p><span class="math">\textbf{Z}</span>: system impedance matrix. Obtained as the inverse of the complete system admittance matrix.</p></li>
-<li><p><span class="math">\textbf{Z}_B</span>: submatrix of <span class="math">\textbf{Z}</span> such that all rows and columns for non-selected buses are removed.</p></li>
+<div class="math notranslate nohighlight">
+\[
+    \textbf{I} = \{0, 0, 0, 0, ..., 0\}
+\]</div>
+<p>Then for single bus failure, compute the short circuit current at the selected bus <span class="math notranslate nohighlight">\(i\)</span> and assign
+that value in the <span class="math notranslate nohighlight">\(i^{th}\)</span> position of the array <span class="math notranslate nohighlight">\(\textbf{I}\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+    \textbf{I}_i = - \frac{\textbf{V}_{pre-failure, i}}{\textbf{Z}_{i, i} + z_f}
+\]</div>
+<p>Then, compute the voltage increment for all the circuit nodes as:</p>
+<div class="math notranslate nohighlight">
+\[
+    \Delta \textbf{V} = \textbf{Z} \times \textbf{I}
+\]</div>
+<p>Finally, define the voltage at all the nodes as:</p>
+<div class="math notranslate nohighlight">
+\[
+    \textbf{V}_{post-failure} = \textbf{V}_{pre-failure} + \Delta \textbf{V}
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\textbf{I}\)</span>: Array of fault currents at the system nodes.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{I}_B\)</span>: Subarray of <span class="math notranslate nohighlight">\(\textbf{I}\)</span> such that all entries for non-selected buses are removed.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{V}_{pre-failure}\)</span>: Array of system voltages prior to the failure. This is obtained from the power flow study.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{V}_{pre-failure, B}\)</span>: Subarray of <span class="math notranslate nohighlight">\(\textbf{V}_{pre-failure}\)</span> such that all entries for non-selected buses are removed.</p></li>
+<li><p><span class="math notranslate nohighlight">\(z_f\)</span>: Impedance of the failure itself. This is a given value, although you can set it to zero if you don’t know.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{z}_{f, B}\)</span>: Impedance of the failures of selected buses <span class="math notranslate nohighlight">\(B\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{Z}\)</span>: system impedance matrix. Obtained as the inverse of the complete system admittance matrix.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\textbf{Z}_B\)</span>: submatrix of <span class="math notranslate nohighlight">\(\textbf{Z}\)</span> such that all rows and columns for non-selected buses are removed.</p></li>
 </ul>
 <!-- BEGIN RESULTS REGISTERED PROPERTIES -->
 </section>

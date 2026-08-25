@@ -18,6 +18,8 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -188,19 +190,31 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">u_1 = \omega - \omega_{ref}</span></p>
-</div><div class="math">
-<p><span class="math">\frac{dy_{gov0}}{dt} = \frac{u_1 - x_1}{T_1}</span></p>
-</div><div class="math">
-<p><span class="math">y_1 = \frac{T_2}{T_1}u_1 + \left(1 - \frac{T_2}{T_1}\right)x_1</span></p>
-</div><div class="math">
-<p><span class="math">y_{2,1} = \mathrm{sat}\left(\frac{P_{m,ref} - K y_1 - y_{2,3}}{T_3}, U_c, U_o\right)</span></p>
-</div><div class="math">
-<p><span class="math">y_{2,3} = \mathrm{sat}(y_{2,2}, P_{min}, P_{max})</span></p>
-</div><div class="math">
-<p><span class="math">T_m = K_1 y_{3,1} + K_2 y_{3,2} + K_3 y_{3,3} + K_4 y_{3,4}</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+u_1 = \omega - \omega_{ref}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{dy_{gov0}}{dt} = \frac{u_1 - x_1}{T_1}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+y_1 = \frac{T_2}{T_1}u_1 + \left(1 - \frac{T_2}{T_1}\right)x_1
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+y_{2,1} = \mathrm{sat}\left(\frac{P_{m,ref} - K y_1 - y_{2,3}}{T_3}, U_c, U_o\right)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+y_{2,3} = \mathrm{sat}(y_{2,2}, P_{min}, P_{max})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+T_m = K_1 y_{3,1} + K_2 y_{3,2} + K_3 y_{3,3} + K_4 y_{3,4}
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

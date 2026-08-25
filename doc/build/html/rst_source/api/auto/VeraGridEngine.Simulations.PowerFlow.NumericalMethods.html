@@ -18,6 +18,8 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -546,34 +548,34 @@ assigned their initial reactive power set point <code class="docutils literal no
 is subtracted from the bus reactive power before the controlling elements
 share the remaining value.</p>
 <p>For each bus <code class="docutils literal notranslate"><span class="pre">i</span></code>, the fixed non-controlling contribution is:</p>
-<div class="math">
-<p><span class="math">Qfixed_i =
+<div class="math notranslate nohighlight">
+\[Qfixed_i =
 \sum_{k \in G_i,\ online,\ not\ controlling} Q0^{gen}_k
 +
-\sum_{m \in B_i,\ online,\ not\ controlling} Q0^{batt}_m</span></p>
-</div><p>The reactive power left for controlling elements is:</p>
-<div class="math">
-<p><span class="math">Qctrl_i = Qbus_i - Qfixed_i</span></p>
-</div><p>The aggregate controlling limits include both generators and batteries:</p>
-<div class="math">
-<p><span class="math">Qctrl^{min}_i =
+\sum_{m \in B_i,\ online,\ not\ controlling} Q0^{batt}_m\]</div>
+<p>The reactive power left for controlling elements is:</p>
+<div class="math notranslate nohighlight">
+\[Qctrl_i = Qbus_i - Qfixed_i\]</div>
+<p>The aggregate controlling limits include both generators and batteries:</p>
+<div class="math notranslate nohighlight">
+\[Qctrl^{min}_i =
 \sum_{k \in G_i,\ online,\ controlling} Qmin^{gen}_k
 +
-\sum_{m \in B_i,\ online,\ controlling} Qmin^{batt}_m</span></p>
-</div><div class="math">
-<p><span class="math">Qctrl^{max}_i =
+\sum_{m \in B_i,\ online,\ controlling} Qmin^{batt}_m\]</div>
+<div class="math notranslate nohighlight">
+\[Qctrl^{max}_i =
 \sum_{k \in G_i,\ online,\ controlling} Qmax^{gen}_k
 +
-\sum_{m \in B_i,\ online,\ controlling} Qmax^{batt}_m</span></p>
-</div><p>The normalized sharing factor at each bus is:</p>
-<div class="math">
-<p><span class="math">r_i =
+\sum_{m \in B_i,\ online,\ controlling} Qmax^{batt}_m\]</div>
+<p>The normalized sharing factor at each bus is:</p>
+<div class="math notranslate nohighlight">
+\[r_i =
 \frac{
     Qctrl_i - Qctrl^{min}_i
 }{
     Qctrl^{max}_i - Qctrl^{min}_i
-}</span></p>
-</div><p>after clipping <code class="docutils literal notranslate"><span class="pre">Qctrl_i</span></code> to the aggregate controlling capability.</p>
+}\]</div>
+<p>after clipping <code class="docutils literal notranslate"><span class="pre">Qctrl_i</span></code> to the aggregate controlling capability.</p>
 <p>Final assignments are:</p>
 <ul class="simple">
 <li><p>Offline generators receive zero.</p></li>
@@ -637,9 +639,9 @@ from an already compiled fixed bus contribution <code class="docutils literal no
 load-like injections, fixed current/admittance terms, and non-controlling
 generator-like set points captured by the numerical circuit compilation.</p>
 <p>The controlling residual at each bus is therefore:</p>
-<div class="math">
-<p><span class="math">Qctrl_i = Qbus_i - Qfixed_i - Qdroop_i</span></p>
-</div><p>where <code class="docutils literal notranslate"><span class="pre">Qdroop_i</span></code> is the contribution of droop-controlled generators
+<div class="math notranslate nohighlight">
+\[Qctrl_i = Qbus_i - Qfixed_i - Qdroop_i\]</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">Qdroop_i</span></code> is the contribution of droop-controlled generators
 evaluated at the solved voltage magnitude.</p>
 <p>Online voltage-controlled generators and batteries share that residual
 subject to their aggregate limits. Online non-controlling generators and

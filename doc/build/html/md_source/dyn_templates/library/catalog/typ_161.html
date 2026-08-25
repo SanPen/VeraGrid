@@ -18,6 +18,8 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -168,27 +170,47 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">\frac{d x1}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot x2)</span></p>
-</div><div class="math">
-<p><span class="math">\frac{d x2}{dt} = (proc_{select\_1} \cdot 0 + (1 - proc_{select\_1}) \cdot x3)</span></p>
-</div><div class="math">
-<p><span class="math">\frac{d x3}{dt} = (proc_{select\_2} \cdot 0 + (1 - proc_{select\_2}) \cdot (-Butterworth 3rd order _{rst\_hold\_wc\_3} \cdot x1 - 2Butterworth 3rd order _{rst\_hold\_wc\_2} \cdot x2 - 2wc \cdot x3 + yi))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (yo - (proc_{select\_4} \cdot proc_{lastvalue\_3} + (1 - proc_{select\_4}) \cdot Butterworth 3rd order _{rst\_hold\_wc\_3} \cdot x1))</span></p>
-</div><div class="math">
-<p><span class="math">Butterworth 3rd order _{rst\_hold\_wc\_3}(t_0) = (wc^{3})</span></p>
-</div><div class="math">
-<p><span class="math">Butterworth 3rd order _{rst\_hold\_wc\_2}(t_0) = (wc \cdot wc)</span></p>
-</div><div class="math">
-<p><span class="math">x1(t_0) = (\frac{yi}{wc^{3}})</span></p>
-</div><div class="math">
-<p><span class="math">x2(t_0) = 0</span></p>
-</div><div class="math">
-<p><span class="math">x3(t_0) = 0</span></p>
-</div><div class="math">
-<p><span class="math">Butterworth 3rd order _{rst\_hold\_x1\_init}(t_0) = x1</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x1}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot x2)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x2}{dt} = (proc_{select\_1} \cdot 0 + (1 - proc_{select\_1}) \cdot x3)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x3}{dt} = (proc_{select\_2} \cdot 0 + (1 - proc_{select\_2}) \cdot (-Butterworth 3rd order _{rst\_hold\_wc\_3} \cdot x1 - 2Butterworth 3rd order _{rst\_hold\_wc\_2} \cdot x2 - 2wc \cdot x3 + yi))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (yo - (proc_{select\_4} \cdot proc_{lastvalue\_3} + (1 - proc_{select\_4}) \cdot Butterworth 3rd order _{rst\_hold\_wc\_3} \cdot x1))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Butterworth 3rd order _{rst\_hold\_wc\_3}(t_0) = (wc^{3})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Butterworth 3rd order _{rst\_hold\_wc\_2}(t_0) = (wc \cdot wc)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+x1(t_0) = (\frac{yi}{wc^{3}})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+x2(t_0) = 0
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+x3(t_0) = 0
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Butterworth 3rd order _{rst\_hold\_x1\_init}(t_0) = x1
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

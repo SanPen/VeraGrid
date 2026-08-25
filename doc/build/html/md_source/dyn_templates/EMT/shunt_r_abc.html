@@ -18,6 +18,8 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -156,13 +158,17 @@
 </section>
 <section id="electrical-model">
 <h2>Electrical model<a class="headerlink" href="#electrical-model" title="Link to this heading"></a></h2>
-<p>For an enabled star-connected phase <span class="math">X</span>, the branch voltage is</p>
-<div class="math">
-<p><span class="math">v_{XN}=v_X-v_N</span></p>
-</div><p>and the current absorbed by the resistor is</p>
-<div class="math">
-<p><span class="math">i_{R,X}=\frac{v_{XN}}{R_X}.</span></p>
-</div><p>VeraGrid exposes current using the network-injection convention, so the external current is opposite to the absorbed branch current. A delta branch uses the same law with a line-to-line voltage, for example <span class="math">i_{R,AB}=(v_A-v_B)/R_{AB}</span>.</p>
+<p>For an enabled star-connected phase <span class="math notranslate nohighlight">\(X\)</span>, the branch voltage is</p>
+<div class="math notranslate nohighlight">
+\[
+v_{XN}=v_X-v_N
+\]</div>
+<p>and the current absorbed by the resistor is</p>
+<div class="math notranslate nohighlight">
+\[
+i_{R,X}=\frac{v_{XN}}{R_X}.
+\]</div>
+<p>VeraGrid exposes current using the network-injection convention, so the external current is opposite to the absorbed branch current. A delta branch uses the same law with a line-to-line voltage, for example <span class="math notranslate nohighlight">\(i_{R,AB}=(v_A-v_B)/R_{AB}\)</span>.</p>
 <p>Because resistance stores no energy, the model contains algebraic equations only. A voltage change therefore changes current without delay.</p>
 </section>
 <section id="phase-and-neutral-configurations">
@@ -203,13 +209,15 @@
 <section id="parameter-sources">
 <h2>Parameter sources<a class="headerlink" href="#parameter-sources" title="Link to this heading"></a></h2>
 <p>In star-connected load equivalents, VeraGrid can derive each phase resistance from the nominal voltage and active-power operating point:</p>
-<div class="math">
-<p><span class="math">R_X=\frac{V_{nom}^2}{P_{l0,X}}.</span></p>
-</div><p>Delta equivalents use the corresponding line-to-line branch values supplied by the model data. Keep voltage bases, power bases, and connection type consistent when entering or mapping these quantities.</p>
+<div class="math notranslate nohighlight">
+\[
+R_X=\frac{V_{nom}^2}{P_{l0,X}}.
+\]</div>
+<p>Delta equivalents use the corresponding line-to-line branch values supplied by the model data. Keep voltage bases, power bases, and connection type consistent when entering or mapping these quantities.</p>
 </section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
-<p>The symbol <span class="math">X</span> denotes any enabled phase and <span class="math">XY</span> an enabled delta pair.</p>
+<p>The symbol <span class="math notranslate nohighlight">\(X\)</span> denotes any enabled phase and <span class="math notranslate nohighlight">\(XY\)</span> an enabled delta pair.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Category</p></th>

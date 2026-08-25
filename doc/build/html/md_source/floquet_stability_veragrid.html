@@ -18,6 +18,8 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -485,69 +487,99 @@
 <section id="periodic-emt-steady-state">
 <h3>Periodic EMT steady state<a class="headerlink" href="#periodic-emt-steady-state" title="Link to this heading"></a></h3>
 <p>A conventional small-signal analysis assumes a constant equilibrium. In an EMT simulation expressed in the <code class="docutils literal notranslate"><span class="pre">abc</span></code> frame, the steady-state voltages and currents are generally periodic. A perturbation around the periodic trajectory is therefore governed by a linear periodic system,</p>
-<div class="math">
-<p><span class="math">\dot{\delta x}(t) = A(t) \delta x(t)</span></p>
-</div><p>with</p>
-<div class="math">
-<p><span class="math">A(t + T) = A(t)</span></p>
-</div><p>where <span class="math">T</span> is the period of the limit cycle.</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{\delta x}(t) = A(t) \delta x(t)
+\]</div>
+<p>with</p>
+<div class="math notranslate nohighlight">
+\[
+A(t + T) = A(t)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(T\)</span> is the period of the limit cycle.</p>
 </section>
 <section id="fundamental-matrix-and-monodromy-matrix">
 <h3>Fundamental matrix and monodromy matrix<a class="headerlink" href="#fundamental-matrix-and-monodromy-matrix" title="Link to this heading"></a></h3>
-<p>The fundamental matrix <span class="math">M(t)</span> maps an initial perturbation to its value at time <span class="math">t</span>:</p>
-<div class="math">
-<p><span class="math">\dot{M}(t) = A(t) M(t), \qquad M(0) = I</span></p>
-</div><div class="math">
-<p><span class="math">\delta x(t) = M(t) \delta x(0)</span></p>
-</div><p>The monodromy matrix is the state-transition matrix over one complete period:</p>
-<div class="math">
-<p><span class="math">C_M = M(T)</span></p>
-</div><p>The eigenvalues of <span class="math">C_M</span> are the Floquet multipliers:</p>
-<div class="math">
-<p><span class="math">C_M r_i = \mu_i r_i</span></p>
-</div><p>These multipliers determine the local stability of the periodic orbit.</p>
+<p>The fundamental matrix <span class="math notranslate nohighlight">\(M(t)\)</span> maps an initial perturbation to its value at time <span class="math notranslate nohighlight">\(t\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{M}(t) = A(t) M(t), \qquad M(0) = I
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\delta x(t) = M(t) \delta x(0)
+\]</div>
+<p>The monodromy matrix is the state-transition matrix over one complete period:</p>
+<div class="math notranslate nohighlight">
+\[
+C_M = M(T)
+\]</div>
+<p>The eigenvalues of <span class="math notranslate nohighlight">\(C_M\)</span> are the Floquet multipliers:</p>
+<div class="math notranslate nohighlight">
+\[
+C_M r_i = \mu_i r_i
+\]</div>
+<p>These multipliers determine the local stability of the periodic orbit.</p>
 </section>
 <section id="stability-criterion">
 <h3>Stability criterion<a class="headerlink" href="#stability-criterion" title="Link to this heading"></a></h3>
-<p>The unit circle replaces the left-half <span class="math">s</span> plane used in continuous-time eigenvalue analysis:</p>
-<div class="math">
-<p><span class="math">\rho(C_M) = \max_i |\mu_i|</span></p>
-</div><p>The periodic orbit is locally asymptotically stable when all retained physical multipliers lie inside the unit circle. If a multiplier lies outside the unit circle, the corresponding perturbation grows from one period to the next.</p>
+<p>The unit circle replaces the left-half <span class="math notranslate nohighlight">\(s\)</span> plane used in continuous-time eigenvalue analysis:</p>
+<div class="math notranslate nohighlight">
+\[
+\rho(C_M) = \max_i |\mu_i|
+\]</div>
+<p>The periodic orbit is locally asymptotically stable when all retained physical multipliers lie inside the unit circle. If a multiplier lies outside the unit circle, the corresponding perturbation grows from one period to the next.</p>
 </section>
 <section id="from-emt-dae-to-periodic-state-matrix">
 <h3>From EMT DAE to periodic state matrix<a class="headerlink" href="#from-emt-dae-to-periodic-state-matrix" title="Link to this heading"></a></h3>
 <p>An EMT model is commonly represented as a differential-algebraic system,</p>
-<div class="math">
-<p><span class="math">\dot{x} = f(x, y, t)</span></p>
-</div><div class="math">
-<p><span class="math">0 = g(x, y, t)</span></p>
-</div><p>After linearisation and algebraic-variable elimination, the reduced state matrix is</p>
-<div class="math">
-<p><span class="math">A(t) = f_x(t) - f_y(t) g_y(t)^{-1} g_x(t)</span></p>
-</div><p>where the Jacobians are evaluated along the periodic EMT trajectory. VeraGrid avoids explicitly forming this reduced matrix for each operation whenever possible; instead, it applies the equivalent one-period transition map through the EMT linear solver infrastructure.</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{x} = f(x, y, t)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = g(x, y, t)
+\]</div>
+<p>After linearisation and algebraic-variable elimination, the reduced state matrix is</p>
+<div class="math notranslate nohighlight">
+\[
+A(t) = f_x(t) - f_y(t) g_y(t)^{-1} g_x(t)
+\]</div>
+<p>where the Jacobians are evaluated along the periodic EMT trajectory. VeraGrid avoids explicitly forming this reduced matrix for each operation whenever possible; instead, it applies the equivalent one-period transition map through the EMT linear solver infrastructure.</p>
 </section>
 <section id="floquet-exponents-damping-and-frequency">
 <h3>Floquet exponents, damping, and frequency<a class="headerlink" href="#floquet-exponents-damping-and-frequency" title="Link to this heading"></a></h3>
 <p>Floquet multipliers are discrete-time quantities. VeraGrid maps them to continuous-time Floquet exponents with</p>
-<div class="math">
-<p><span class="math">\lambda_i = \frac{1}{T} \log(\mu_i)</span></p>
-</div><p>For</p>
-<div class="math">
-<p><span class="math">\lambda_i = \alpha_i + j \beta_i</span></p>
-</div><p>VeraGrid reports</p>
-<div class="math">
-<p><span class="math">\zeta_i = -\frac{\alpha_i}{\sqrt{\alpha_i^2 + \beta_i^2}}</span></p>
-</div><p>and</p>
-<div class="math">
-<p><span class="math">f_i = \frac{|\beta_i|}{2\pi}</span></p>
-</div><p>The complex logarithm is multi-valued, so the reported frequency corresponds to the selected logarithm branch. Interpret high-frequency or aliased modes with the EMT time step and the target period in mind.</p>
+<div class="math notranslate nohighlight">
+\[
+\lambda_i = \frac{1}{T} \log(\mu_i)
+\]</div>
+<p>For</p>
+<div class="math notranslate nohighlight">
+\[
+\lambda_i = \alpha_i + j \beta_i
+\]</div>
+<p>VeraGrid reports</p>
+<div class="math notranslate nohighlight">
+\[
+\zeta_i = -\frac{\alpha_i}{\sqrt{\alpha_i^2 + \beta_i^2}}
+\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[
+f_i = \frac{|\beta_i|}{2\pi}
+\]</div>
+<p>The complex logarithm is multi-valued, so the reported frequency corresponds to the selected logarithm branch. Interpret high-frequency or aliased modes with the EMT time step and the target period in mind.</p>
 </section>
 <section id="id1">
 <h3>Participation factors<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
-<p>For a multiplier <span class="math">mu_i</span>, let <span class="math">r_i</span> and <span class="math">l_i</span> be the right and left eigenvectors of the monodromy matrix. VeraGrid computes participation factors from the bi-orthonormalised left/right vectors and normalises each mode column:</p>
-<div class="math">
-<p><span class="math">p_{ki} \propto |r_{ki} l_{ki}|</span></p>
-</div><p>The result is a relative contribution of state <span class="math">k</span> to Floquet mode <span class="math">i</span>. Because the underlying system is periodic, these factors describe modal participation over the selected reference period rather than an instantaneous modal decomposition at every time sample.</p>
+<p>For a multiplier <span class="math notranslate nohighlight">\(mu_i\)</span>, let <span class="math notranslate nohighlight">\(r_i\)</span> and <span class="math notranslate nohighlight">\(l_i\)</span> be the right and left eigenvectors of the monodromy matrix. VeraGrid computes participation factors from the bi-orthonormalised left/right vectors and normalises each mode column:</p>
+<div class="math notranslate nohighlight">
+\[
+p_{ki} \propto |r_{ki} l_{ki}|
+\]</div>
+<p>The result is a relative contribution of state <span class="math notranslate nohighlight">\(k\)</span> to Floquet mode <span class="math notranslate nohighlight">\(i\)</span>. Because the underlying system is periodic, these factors describe modal participation over the selected reference period rather than an instantaneous modal decomposition at every time sample.</p>
 </section>
 </section>
 <section id="implementation-notes">
@@ -613,9 +645,11 @@
 <section id="choose-the-period-carefully">
 <h3>Choose the period carefully<a class="headerlink" href="#choose-the-period-carefully" title="Link to this heading"></a></h3>
 <p>For a fundamental-frequency periodic orbit,</p>
-<div class="math">
-<p><span class="math">T = 1 / f_base</span></p>
-</div><p>For a 50 Hz system, <span class="math">T = 0.02 s</span>. For a 60 Hz system, <span class="math">T = 0.016666... s</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+T = 1 / f_base
+\]</div>
+<p>For a 50 Hz system, <span class="math notranslate nohighlight">\(T = 0.02 s\)</span>. For a 60 Hz system, <span class="math notranslate nohighlight">\(T = 0.016666... s\)</span>.</p>
 <p>If the EMT model includes a different dominant periodicity, such as a controller or switching pattern that requires several fundamental cycles to repeat, set <code class="docutils literal notranslate"><span class="pre">target_period</span></code> to the full repeat period of the trajectory being analysed.</p>
 </section>
 <section id="check-that-the-captured-trajectory-is-periodic">

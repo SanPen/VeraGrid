@@ -18,6 +18,8 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -212,13 +214,17 @@
 <section id="standard-formulation">
 <h3>Standard formulation<a class="headerlink" href="#standard-formulation" title="Link to this heading"></a></h3>
 <p>When the RMS model has no differential-variable block in the generalized sense, the driver builds the classical reduced state matrix</p>
-<div class="math">
-<p><span class="math">A = fx - fy \, gy^{-1} \, gx</span></p>
-</div><p>from the DAE Jacobians.</p>
+<div class="math notranslate nohighlight">
+\[
+A = fx - fy \, gy^{-1} \, gx
+\]</div>
+<p>from the DAE Jacobians.</p>
 <p>The eigenanalysis is then the standard problem</p>
-<div class="math">
-<p><span class="math">A v = \lambda v</span></p>
-</div><p>In this case:</p>
+<div class="math notranslate nohighlight">
+\[
+A v = \lambda v
+\]</div>
+<p>In this case:</p>
 <ul class="simple">
 <li><p>the state matrix stored in the results is the reduced state matrix</p></li>
 <li><p>participation factors are computed from the left and right eigenvectors of <code class="docutils literal notranslate"><span class="pre">A</span></code></p></li>
@@ -228,17 +234,21 @@
 <section id="generalized-formulation">
 <h3>Generalized formulation<a class="headerlink" href="#generalized-formulation" title="Link to this heading"></a></h3>
 <p>When the RMS model includes differential variables that must be retained explicitly, the driver solves the generalized eigenvalue problem</p>
-<div class="math">
-<p><span class="math">A v = \lambda E v</span></p>
-</div><p>using the matrices returned by <code class="docutils literal notranslate"><span class="pre">problem.get_static_state_matrix(x,</span> <span class="pre">dx)</span></code> and <code class="docutils literal notranslate"><span class="pre">problem.get_E_matrix(x,</span> <span class="pre">dx)</span></code>.</p>
+<div class="math notranslate nohighlight">
+\[
+A v = \lambda E v
+\]</div>
+<p>using the matrices returned by <code class="docutils literal notranslate"><span class="pre">problem.get_static_state_matrix(x,</span> <span class="pre">dx)</span></code> and <code class="docutils literal notranslate"><span class="pre">problem.get_E_matrix(x,</span> <span class="pre">dx)</span></code>.</p>
 <p>In this case:</p>
 <ul class="simple">
 <li><p>the state matrix stored in the results corresponds to the unreduced generalized linearization matrix used for the eigenanalysis</p></li>
 <li><p>participation factors are computed with the generalized normalization</p></li>
 </ul>
-<div class="math">
-<p><span class="math">w_i^T E v_i = 1</span></p>
-</div><ul class="simple">
+<div class="math notranslate nohighlight">
+\[
+w_i^T E v_i = 1
+\]</div>
+<ul class="simple">
 <li><p>the participation-factor rows and state-matrix axes can include both state and algebraic variables</p></li>
 </ul>
 <p>This is why the results object also stores:</p>
@@ -312,7 +322,7 @@
 <td><p>Signed imaginary part in radians per second.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Imaginary</span> <span class="pre">[Hz]</span></code></p></td>
-<td><p>Signed imaginary part divided by <span class="math">2\pi</span>. Both members of a conjugate pair are retained.</p></td>
+<td><p>Signed imaginary part divided by <span class="math notranslate nohighlight">\(2\pi\)</span>. Both members of a conjugate pair are retained.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Damping</span> <span class="pre">ratio</span></code></p></td>
 <td><p>Damping ratio reported by the modal calculation.</p></td>
@@ -322,7 +332,7 @@
 </tr>
 </tbody>
 </table>
-<p>Clicking <strong>Plot</strong> with no selection draws all visible modes in the complex plane using <code class="docutils literal notranslate"><span class="pre">Real</span></code> and <code class="docutils literal notranslate"><span class="pre">Imaginary</span> <span class="pre">[rad/s]</span></code>. The plot includes the <span class="math">\zeta=5\%</span> damping boundary, and hovering over a point shows its mode name and coordinates.</p>
+<p>Clicking <strong>Plot</strong> with no selection draws all visible modes in the complex plane using <code class="docutils literal notranslate"><span class="pre">Real</span></code> and <code class="docutils literal notranslate"><span class="pre">Imaginary</span> <span class="pre">[rad/s]</span></code>. The plot includes the <span class="math notranslate nohighlight">\(\zeta=5\%\)</span> damping boundary, and hovering over a point shows its mode name and coordinates.</p>
 <p>To plot a subset of modes, select cells or complete rows in the <strong>Modes</strong> table before clicking <strong>Plot</strong>. A filter applied to the table also limits the visible modes. When there is no selection, every mode that remains visible after filtering is plotted.</p>
 <p>To use hertz on the imaginary axis:</p>
 <ol class="arabic simple">

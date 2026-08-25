@@ -18,6 +18,8 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -193,82 +195,116 @@ LODF sparsification threshold</p></li>
 <h3>Network Matrices<a class="headerlink" href="#network-matrices" title="Link to this heading"></a></h3>
 <p>For one island, let:</p>
 <ul class="simple">
-<li><p><span class="math">n</span> be the number of buses in the island.</p></li>
-<li><p><span class="math">m</span> be the number of passive branches with impedance in the island.</p></li>
-<li><p><span class="math">P \in \mathbb{R}^{n}</span> be the bus active-power injection vector.</p></li>
-<li><p><span class="math">P_f \in \mathbb{R}^{m}</span> be the branch active-power flow vector, oriented from the branch <code class="docutils literal notranslate"><span class="pre">from</span></code> bus to the branch <code class="docutils literal notranslate"><span class="pre">to</span></code> bus.</p></li>
-<li><p><span class="math">\theta \in \mathbb{R}^{n}</span> be the bus voltage-angle vector.</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> be the number of buses in the island.</p></li>
+<li><p><span class="math notranslate nohighlight">\(m\)</span> be the number of passive branches with impedance in the island.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P \in \mathbb{R}^{n}\)</span> be the bus active-power injection vector.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_f \in \mathbb{R}^{m}\)</span> be the branch active-power flow vector, oriented from the branch <code class="docutils literal notranslate"><span class="pre">from</span></code> bus to the branch <code class="docutils literal notranslate"><span class="pre">to</span></code> bus.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta \in \mathbb{R}^{n}\)</span> be the bus voltage-angle vector.</p></li>
 </ul>
-<p>Define the branch-bus incidence matrix <span class="math">A \in \mathbb{R}^{m \times n}</span> as:</p>
-<div class="math">
-<p><span class="math">A_{k i} =
+<p>Define the branch-bus incidence matrix <span class="math notranslate nohighlight">\(A \in \mathbb{R}^{m \times n}\)</span> as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+A_{k i} =
 \begin{cases}
 1, &amp; i = F_k \\
 -1, &amp; i = T_k \\
 0, &amp; \text{otherwise}
-\end{cases}</span></p>
-</div><p>where <span class="math">F_k</span> and <span class="math">T_k</span> are the <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> buses of branch <span class="math">k</span>.</p>
+\end{cases}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(F_k\)</span> and <span class="math notranslate nohighlight">\(T_k\)</span> are the <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> buses of branch <span class="math notranslate nohighlight">\(k\)</span>.</p>
 <p>With this orientation, the linear branch flow model is:</p>
-<div class="math">
-<p><span class="math">P_f = B_f \theta</span></p>
-</div><p>and the nodal active-power balance is:</p>
-<div class="math">
-<p><span class="math">P = A^{\mathsf{T}} P_f = B_{\mathrm{bus}} \theta</span></p>
-</div><p>where:</p>
-<div class="math">
-<p><span class="math">B_f = \operatorname{diag}(b) A</span></p>
-</div><p>and:</p>
-<div class="math">
-<p><span class="math">B_{\mathrm{bus}} = A^{\mathsf{T}} \operatorname{diag}(b) A</span></p>
-</div><p>Here <span class="math">b_k</span> is the active-power sensitivity of branch <span class="math">k</span> with respect to its angle difference. In the simplest DC model,
-<span class="math">b_k = 1 / x_k</span>. In the actual numerical implementation, transformer tap effects and other branch parameters are
-included in the produced <span class="math">B_f</span> and <span class="math">B_{\mathrm{bus}}</span> matrices.</p>
+<div class="math notranslate nohighlight">
+\[
+P_f = B_f \theta
+\]</div>
+<p>and the nodal active-power balance is:</p>
+<div class="math notranslate nohighlight">
+\[
+P = A^{\mathsf{T}} P_f = B_{\mathrm{bus}} \theta
+\]</div>
+<p>where:</p>
+<div class="math notranslate nohighlight">
+\[
+B_f = \operatorname{diag}(b) A
+\]</div>
+<p>and:</p>
+<div class="math notranslate nohighlight">
+\[
+B_{\mathrm{bus}} = A^{\mathsf{T}} \operatorname{diag}(b) A
+\]</div>
+<p>Here <span class="math notranslate nohighlight">\(b_k\)</span> is the active-power sensitivity of branch <span class="math notranslate nohighlight">\(k\)</span> with respect to its angle difference. In the simplest DC model,
+<span class="math notranslate nohighlight">\(b_k = 1 / x_k\)</span>. In the actual numerical implementation, transformer tap effects and other branch parameters are
+included in the produced <span class="math notranslate nohighlight">\(B_f\)</span> and <span class="math notranslate nohighlight">\(B_{\mathrm{bus}}\)</span> matrices.</p>
 </section>
 <section id="single-reference-ptdf">
 <h3>Single-Reference PTDF<a class="headerlink" href="#single-reference-ptdf" title="Link to this heading"></a></h3>
-<p>Because <span class="math">B_{\mathrm{bus}}</span> is singular for a connected lossless island, one bus angle is used as the reference. Let <span class="math">s</span> be
-the selected reference bus and let <span class="math">\mathcal{N}</span> be the set of non-reference buses.</p>
+<p>Because <span class="math notranslate nohighlight">\(B_{\mathrm{bus}}\)</span> is singular for a connected lossless island, one bus angle is used as the reference. Let <span class="math notranslate nohighlight">\(s\)</span> be
+the selected reference bus and let <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> be the set of non-reference buses.</p>
 <p>The reduced nodal equation is:</p>
-<div class="math">
-<p><span class="math">P_{\mathcal{N}} = B_{\mathrm{bus}, \mathcal{N}\mathcal{N}} \theta_{\mathcal{N}}</span></p>
-</div><p>so:</p>
-<div class="math">
-<p><span class="math">\theta_{\mathcal{N}} = B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1} P_{\mathcal{N}}</span></p>
-</div><p>The single-reference PTDF matrix <span class="math">H^{(0)} \in \mathbb{R}^{m \times n}</span> is then built as:</p>
-<div class="math">
-<p><span class="math">H^{(0)}_{:, \mathcal{N}} = B_{f, :, \mathcal{N}} B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1}</span></p>
-</div><p>and:</p>
-<div class="math">
-<p><span class="math">H^{(0)}_{:, s} = 0</span></p>
-</div><p>Thus, for a raw injection vector <span class="math">P</span>:</p>
-<div class="math">
-<p><span class="math">P_f = H^{(0)} P</span></p>
-</div><p>In single-slack mode, this flow is balanced by assigning the island active-power mismatch to the reference slack bus.
+<div class="math notranslate nohighlight">
+\[
+P_{\mathcal{N}} = B_{\mathrm{bus}, \mathcal{N}\mathcal{N}} \theta_{\mathcal{N}}
+\]</div>
+<p>so:</p>
+<div class="math notranslate nohighlight">
+\[
+\theta_{\mathcal{N}} = B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1} P_{\mathcal{N}}
+\]</div>
+<p>The single-reference PTDF matrix <span class="math notranslate nohighlight">\(H^{(0)} \in \mathbb{R}^{m \times n}\)</span> is then built as:</p>
+<div class="math notranslate nohighlight">
+\[
+H^{(0)}_{:, \mathcal{N}} = B_{f, :, \mathcal{N}} B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1}
+\]</div>
+<p>and:</p>
+<div class="math notranslate nohighlight">
+\[
+H^{(0)}_{:, s} = 0
+\]</div>
+<p>Thus, for a raw injection vector <span class="math notranslate nohighlight">\(P\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+P_f = H^{(0)} P
+\]</div>
+<p>In single-slack mode, this flow is balanced by assigning the island active-power mismatch to the reference slack bus.
 For nodal-balance checks, define:</p>
-<div class="math">
-<p><span class="math">\Delta P = \mathbf{1}^{\mathsf{T}} P</span></p>
-</div><p>and:</p>
-<div class="math">
-<p><span class="math">w_i^{\mathrm{slack}} =
+<div class="math notranslate nohighlight">
+\[
+\Delta P = \mathbf{1}^{\mathsf{T}} P
+\]</div>
+<p>and:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+w_i^{\mathrm{slack}} =
 \begin{cases}
 1, &amp; i = s \\
 0, &amp; i \ne s
-\end{cases}</span></p>
-</div><p>The effective injection vector is:</p>
-<div class="math">
-<p><span class="math">P^{\mathrm{eff}} = P - w^{\mathrm{slack}} \Delta P</span></p>
-</div><p>or, component-wise:</p>
-<div class="math">
-<p><span class="math">P_i^{\mathrm{eff}} = P_i \quad \text{for } i \ne s</span></p>
-</div><div class="math">
-<p><span class="math">P_s^{\mathrm{eff}} = P_s - \sum_{i=1}^{n} P_i = - \sum_{i \ne s} P_i</span></p>
-</div><p>Therefore, when <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code>, the PTDF production matrix is not modified:</p>
-<div class="math">
-<p><span class="math">D_{\mathrm{PTDF}} = I</span></p>
-</div><div class="math">
-<p><span class="math">H = H^{(0)}</span></p>
-</div><p>but the Kirchhoff balance check must compare branch-flow divergence against <span class="math">P^{\mathrm{eff}}</span>, not necessarily against
-the raw injection vector <span class="math">P</span>.</p>
+\end{cases}
+\end{split}\]</div>
+<p>The effective injection vector is:</p>
+<div class="math notranslate nohighlight">
+\[
+P^{\mathrm{eff}} = P - w^{\mathrm{slack}} \Delta P
+\]</div>
+<p>or, component-wise:</p>
+<div class="math notranslate nohighlight">
+\[
+P_i^{\mathrm{eff}} = P_i \quad \text{for } i \ne s
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+P_s^{\mathrm{eff}} = P_s - \sum_{i=1}^{n} P_i = - \sum_{i \ne s} P_i
+\]</div>
+<p>Therefore, when <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code>, the PTDF production matrix is not modified:</p>
+<div class="math notranslate nohighlight">
+\[
+D_{\mathrm{PTDF}} = I
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+H = H^{(0)}
+\]</div>
+<p>but the Kirchhoff balance check must compare branch-flow divergence against <span class="math notranslate nohighlight">\(P^{\mathrm{eff}}\)</span>, not necessarily against
+the raw injection vector <span class="math notranslate nohighlight">\(P\)</span>.</p>
 </section>
 <section id="distributed-slack-ptdf">
 <h3>Distributed-Slack PTDF<a class="headerlink" href="#distributed-slack-ptdf" title="Link to this heading"></a></h3>
@@ -294,174 +330,260 @@ can regulate active power in the linear model.</p>
 </tbody>
 </table>
 <p>The latest distributed-slack convention uses PV and Slack buses only. Define the participating set:</p>
-<div class="math">
-<p><span class="math">\mathcal{G} = \left\{ i \;\middle|\; \operatorname{bus\_type}_i = 2 \;\lor\; \operatorname{bus\_type}_i = 3 \right\}</span></p>
-</div><p>The participation vector <span class="math">w \in \mathbb{R}^{n}</span> is:</p>
-<div class="math">
-<p><span class="math">w_i =
+<div class="math notranslate nohighlight">
+\[
+\mathcal{G} = \left\{ i \;\middle|\; \operatorname{bus\_type}_i = 2 \;\lor\; \operatorname{bus\_type}_i = 3 \right\}
+\]</div>
+<p>The participation vector <span class="math notranslate nohighlight">\(w \in \mathbb{R}^{n}\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+w_i =
 \begin{cases}
 \dfrac{1}{|\mathcal{G}|}, &amp; i \in \mathcal{G} \\
 0, &amp; i \notin \mathcal{G}
-\end{cases}</span></p>
-</div><p>so that:</p>
-<div class="math">
-<p><span class="math">\mathbf{1}^{\mathsf{T}} w = 1</span></p>
-</div><p>The distributed-slack transaction matrix is:</p>
-<div class="math">
-<p><span class="math">D = I - w \mathbf{1}^{\mathsf{T}}</span></p>
-</div><p>or, entry-wise:</p>
-<div class="math">
-<p><span class="math">D_{ij} = \delta_{ij} - w_i</span></p>
-</div><p>where <span class="math">\delta_{ij}</span> is the Kronecker delta. Only the rows of PV and Slack buses are modified, because only those buses
+\end{cases}
+\end{split}\]</div>
+<p>so that:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{1}^{\mathsf{T}} w = 1
+\]</div>
+<p>The distributed-slack transaction matrix is:</p>
+<div class="math notranslate nohighlight">
+\[
+D = I - w \mathbf{1}^{\mathsf{T}}
+\]</div>
+<p>or, entry-wise:</p>
+<div class="math notranslate nohighlight">
+\[
+D_{ij} = \delta_{ij} - w_i
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\delta_{ij}\)</span> is the Kronecker delta. Only the rows of PV and Slack buses are modified, because only those buses
 have nonzero participation weights.</p>
 <p>The effective injection vector is:</p>
-<div class="math">
-<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
-</div><p>therefore:</p>
-<div class="math">
-<p><span class="math">P^{\mathrm{eff}} = P - w \left( \mathbf{1}^{\mathsf{T}} P \right)</span></p>
-</div><p>and:</p>
-<div class="math">
-<p><span class="math">\sum_{i=1}^{n} P_i^{\mathrm{eff}} = 0</span></p>
-</div><p>The distributed-slack PTDF is produced by right-multiplying the single-reference PTDF by <span class="math">D</span>:</p>
-<div class="math">
-<p><span class="math">H = H^{(0)} D</span></p>
-</div><p>The branch flows are then computed from the raw injection vector as:</p>
-<div class="math">
-<p><span class="math">P_f = H P = H^{(0)} D P = H^{(0)} P^{\mathrm{eff}}</span></p>
-</div><p>Each PTDF column is therefore a balanced transaction. For a unit injection at bus <span class="math">j</span>:</p>
-<div class="math">
-<p><span class="math">D e_j = e_j - w</span></p>
-</div><p>so column <span class="math">j</span> of the distributed-slack PTDF represents an injection at bus <span class="math">j</span> balanced by withdrawals over the PV and
-Slack buses according to <span class="math">w</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+P^{\mathrm{eff}} = D P
+\]</div>
+<p>therefore:</p>
+<div class="math notranslate nohighlight">
+\[
+P^{\mathrm{eff}} = P - w \left( \mathbf{1}^{\mathsf{T}} P \right)
+\]</div>
+<p>and:</p>
+<div class="math notranslate nohighlight">
+\[
+\sum_{i=1}^{n} P_i^{\mathrm{eff}} = 0
+\]</div>
+<p>The distributed-slack PTDF is produced by right-multiplying the single-reference PTDF by <span class="math notranslate nohighlight">\(D\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+H = H^{(0)} D
+\]</div>
+<p>The branch flows are then computed from the raw injection vector as:</p>
+<div class="math notranslate nohighlight">
+\[
+P_f = H P = H^{(0)} D P = H^{(0)} P^{\mathrm{eff}}
+\]</div>
+<p>Each PTDF column is therefore a balanced transaction. For a unit injection at bus <span class="math notranslate nohighlight">\(j\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+D e_j = e_j - w
+\]</div>
+<p>so column <span class="math notranslate nohighlight">\(j\)</span> of the distributed-slack PTDF represents an injection at bus <span class="math notranslate nohighlight">\(j\)</span> balanced by withdrawals over the PV and
+Slack buses according to <span class="math notranslate nohighlight">\(w\)</span>.</p>
 <p>This replaces the older all-bus convention:</p>
-<div class="math">
-<p><span class="math">D_{ij}^{\mathrm{old}} =
+<div class="math notranslate nohighlight">
+\[\begin{split}
+D_{ij}^{\mathrm{old}} =
 \begin{cases}
 1, &amp; i = j \\
 -\dfrac{1}{n - 1}, &amp; i \ne j
-\end{cases}</span></p>
-</div><p>The older convention assigned the balancing power to all other buses, including PQ buses, and excluded the injection bus
+\end{cases}
+\end{split}\]</div>
+<p>The older convention assigned the balancing power to all other buses, including PQ buses, and excluded the injection bus
 itself from the balancing set. The new convention uses a fixed participation vector based on <code class="docutils literal notranslate"><span class="pre">bus_types</span></code>, so PQ buses do
 not absorb active-power mismatch.</p>
 </section>
 <section id="ptdf-production-summary">
 <h3>PTDF Production Summary<a class="headerlink" href="#ptdf-production-summary" title="Link to this heading"></a></h3>
 <p>For each island, the PTDF production can be summarized as:</p>
-<div class="math">
-<p><span class="math">H^{(0)}_{:, \mathcal{N}} = B_{f, :, \mathcal{N}} B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1}</span></p>
-</div><div class="math">
-<p><span class="math">H^{(0)}_{:, s} = 0</span></p>
-</div><p>If <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code>:</p>
-<div class="math">
-<p><span class="math">H = H^{(0)}</span></p>
-</div><p>If <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">True</span></code>:</p>
-<div class="math">
-<p><span class="math">D = I - w \mathbf{1}^{\mathsf{T}}</span></p>
-</div><div class="math">
-<p><span class="math">H = H^{(0)} D</span></p>
-</div><p>The resulting PTDF maps bus injections to branch flows:</p>
-<div class="math">
-<p><span class="math">P_f = H P</span></p>
-</div><p>For distributed slack, this is equivalent to:</p>
-<div class="math">
-<p><span class="math">P_f = H^{(0)} P^{\mathrm{eff}}</span></p>
-</div><p>with:</p>
-<div class="math">
-<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+H^{(0)}_{:, \mathcal{N}} = B_{f, :, \mathcal{N}} B_{\mathrm{bus}, \mathcal{N}\mathcal{N}}^{-1}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+H^{(0)}_{:, s} = 0
+\]</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[
+H = H^{(0)}
+\]</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">True</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[
+D = I - w \mathbf{1}^{\mathsf{T}}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+H = H^{(0)} D
+\]</div>
+<p>The resulting PTDF maps bus injections to branch flows:</p>
+<div class="math notranslate nohighlight">
+\[
+P_f = H P
+\]</div>
+<p>For distributed slack, this is equivalent to:</p>
+<div class="math notranslate nohighlight">
+\[
+P_f = H^{(0)} P^{\mathrm{eff}}
+\]</div>
+<p>with:</p>
+<div class="math notranslate nohighlight">
+\[
+P^{\mathrm{eff}} = D P
+\]</div>
+</section>
 <section id="nodal-balance-check">
 <h3>Nodal-Balance Check<a class="headerlink" href="#nodal-balance-check" title="Link to this heading"></a></h3>
-<p>With the branch-flow orientation defined by <span class="math">A</span>, branch-flow divergence is:</p>
-<div class="math">
-<p><span class="math">\operatorname{div}(P_f) = A^{\mathsf{T}} P_f</span></p>
-</div><p>The linear Kirchhoff balance check is:</p>
-<div class="math">
-<p><span class="math">A^{\mathsf{T}} P_f - P^{\mathrm{eff}} \approx 0</span></p>
-</div><p>For <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">True</span></code>:</p>
-<div class="math">
-<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
-</div><p>For <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code> with one reference slack bus <span class="math">s</span>:</p>
-<div class="math">
-<p><span class="math">P^{\mathrm{eff}} = P - w^{\mathrm{slack}} \left( \mathbf{1}^{\mathsf{T}} P \right)</span></p>
-</div><p>This distinction is important: the vector used to compute flows and the vector used to check nodal balance are not always
-the same raw vector. If the original <span class="math">P</span> comes from an AC operating point, it may contain active losses or mismatch that
+<p>With the branch-flow orientation defined by <span class="math notranslate nohighlight">\(A\)</span>, branch-flow divergence is:</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{div}(P_f) = A^{\mathsf{T}} P_f
+\]</div>
+<p>The linear Kirchhoff balance check is:</p>
+<div class="math notranslate nohighlight">
+\[
+A^{\mathsf{T}} P_f - P^{\mathrm{eff}} \approx 0
+\]</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">True</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[
+P^{\mathrm{eff}} = D P
+\]</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">distribute_slack</span> <span class="pre">=</span> <span class="pre">False</span></code> with one reference slack bus <span class="math notranslate nohighlight">\(s\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+P^{\mathrm{eff}} = P - w^{\mathrm{slack}} \left( \mathbf{1}^{\mathsf{T}} P \right)
+\]</div>
+<p>This distinction is important: the vector used to compute flows and the vector used to check nodal balance are not always
+the same raw vector. If the original <span class="math notranslate nohighlight">\(P\)</span> comes from an AC operating point, it may contain active losses or mismatch that
 must be absorbed by the slack convention in the lossless linear model.</p>
 </section>
 <section id="lodf-production">
 <h3>LODF Production<a class="headerlink" href="#lodf-production" title="Link to this heading"></a></h3>
 <p>The LODF matrix is produced from branch-to-branch PTDFs.</p>
-<p>For branch <span class="math">k</span>, define the endpoint transaction vector:</p>
-<div class="math">
-<p><span class="math">a_k = e_{F_k} - e_{T_k}</span></p>
-</div><p>where <span class="math">e_{F_k}</span> and <span class="math">e_{T_k}</span> are unit vectors at the <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> buses of branch <span class="math">k</span>. Collecting all endpoint
+<p>For branch <span class="math notranslate nohighlight">\(k\)</span>, define the endpoint transaction vector:</p>
+<div class="math notranslate nohighlight">
+\[
+a_k = e_{F_k} - e_{T_k}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(e_{F_k}\)</span> and <span class="math notranslate nohighlight">\(e_{T_k}\)</span> are unit vectors at the <code class="docutils literal notranslate"><span class="pre">from</span></code> and <code class="docutils literal notranslate"><span class="pre">to</span></code> buses of branch <span class="math notranslate nohighlight">\(k\)</span>. Collecting all endpoint
 transaction vectors gives:</p>
-<div class="math">
-<p><span class="math">A^{\mathsf{T}} = \begin{bmatrix} a_1 &amp; a_2 &amp; \cdots &amp; a_m \end{bmatrix}</span></p>
-</div><p>The branch-to-branch PTDF matrix is:</p>
-<div class="math">
-<p><span class="math">K = H A^{\mathsf{T}}</span></p>
-</div><p>so:</p>
-<div class="math">
-<p><span class="math">K_{\ell k} = H_{\ell, :} \left( e_{F_k} - e_{T_k} \right)</span></p>
-</div><p><span class="math">K_{\ell k}</span> is the sensitivity of branch <span class="math">\ell</span> to a unit transaction from the <code class="docutils literal notranslate"><span class="pre">from</span></code> bus of branch <span class="math">k</span> to the <code class="docutils literal notranslate"><span class="pre">to</span></code> bus
-of branch <span class="math">k</span>.</p>
-<p>For the outage of branch <span class="math">k</span>, the LODF denominator is:</p>
-<div class="math">
-<p><span class="math">d_k = 1 - K_{kk}</span></p>
-</div><p>For non-islanding outages, the LODF entries are:</p>
-<div class="math">
-<p><span class="math">\operatorname{LODF}_{\ell k} = \frac{K_{\ell k}}{1 - K_{kk}} \quad \text{for } \ell \ne k</span></p>
-</div><p>and the diagonal is set to:</p>
-<div class="math">
-<p><span class="math">\operatorname{LODF}_{kk} = -1</span></p>
-</div><p>The post-contingency flow approximation for outage <span class="math">k</span> is then:</p>
-<div class="math">
-<p><span class="math">P_{f, \ell}^{\mathrm{post}(k)} = P_{f, \ell}^{\mathrm{pre}} + \operatorname{LODF}_{\ell k} P_{f, k}^{\mathrm{pre}}</span></p>
-</div><p>for <span class="math">\ell \ne k</span>, and:</p>
-<div class="math">
-<p><span class="math">P_{f, k}^{\mathrm{post}(k)} = 0</span></p>
-</div><p>If:</p>
-<div class="math">
-<p><span class="math">1 - K_{kk} \approx 0</span></p>
-</div><p>then the outaged branch is island-forming or numerically close to island-forming. In that case, the standard LODF value is
+<div class="math notranslate nohighlight">
+\[
+A^{\mathsf{T}} = \begin{bmatrix} a_1 &amp; a_2 &amp; \cdots &amp; a_m \end{bmatrix}
+\]</div>
+<p>The branch-to-branch PTDF matrix is:</p>
+<div class="math notranslate nohighlight">
+\[
+K = H A^{\mathsf{T}}
+\]</div>
+<p>so:</p>
+<div class="math notranslate nohighlight">
+\[
+K_{\ell k} = H_{\ell, :} \left( e_{F_k} - e_{T_k} \right)
+\]</div>
+<p><span class="math notranslate nohighlight">\(K_{\ell k}\)</span> is the sensitivity of branch <span class="math notranslate nohighlight">\(\ell\)</span> to a unit transaction from the <code class="docutils literal notranslate"><span class="pre">from</span></code> bus of branch <span class="math notranslate nohighlight">\(k\)</span> to the <code class="docutils literal notranslate"><span class="pre">to</span></code> bus
+of branch <span class="math notranslate nohighlight">\(k\)</span>.</p>
+<p>For the outage of branch <span class="math notranslate nohighlight">\(k\)</span>, the LODF denominator is:</p>
+<div class="math notranslate nohighlight">
+\[
+d_k = 1 - K_{kk}
+\]</div>
+<p>For non-islanding outages, the LODF entries are:</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{LODF}_{\ell k} = \frac{K_{\ell k}}{1 - K_{kk}} \quad \text{for } \ell \ne k
+\]</div>
+<p>and the diagonal is set to:</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{LODF}_{kk} = -1
+\]</div>
+<p>The post-contingency flow approximation for outage <span class="math notranslate nohighlight">\(k\)</span> is then:</p>
+<div class="math notranslate nohighlight">
+\[
+P_{f, \ell}^{\mathrm{post}(k)} = P_{f, \ell}^{\mathrm{pre}} + \operatorname{LODF}_{\ell k} P_{f, k}^{\mathrm{pre}}
+\]</div>
+<p>for <span class="math notranslate nohighlight">\(\ell \ne k\)</span>, and:</p>
+<div class="math notranslate nohighlight">
+\[
+P_{f, k}^{\mathrm{post}(k)} = 0
+\]</div>
+<p>If:</p>
+<div class="math notranslate nohighlight">
+\[
+1 - K_{kk} \approx 0
+\]</div>
+<p>then the outaged branch is island-forming or numerically close to island-forming. In that case, the standard LODF value is
 not finite, because removing the branch changes network connectivity. Production code should mark or correct those values
 according to the selected correction policy.</p>
-<p>The branch endpoint transaction <span class="math">a_k</span> is balanced because:</p>
-<div class="math">
-<p><span class="math">\mathbf{1}^{\mathsf{T}} a_k = 0</span></p>
-</div><p>Therefore, for the corrected distributed-slack matrix:</p>
-<div class="math">
-<p><span class="math">D a_k = a_k</span></p>
-</div><p>This means the LODF calculation is independent of the distributed-slack participation vector, provided the PTDF uses the
+<p>The branch endpoint transaction <span class="math notranslate nohighlight">\(a_k\)</span> is balanced because:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{1}^{\mathsf{T}} a_k = 0
+\]</div>
+<p>Therefore, for the corrected distributed-slack matrix:</p>
+<div class="math notranslate nohighlight">
+\[
+D a_k = a_k
+\]</div>
+<p>This means the LODF calculation is independent of the distributed-slack participation vector, provided the PTDF uses the
 consistent formulation:</p>
-<div class="math">
-<p><span class="math">H = H^{(0)} D</span></p>
-</div><p>The slack convention matters for mapping arbitrary bus injections <span class="math">P</span> to flows, but endpoint-to-endpoint branch outage
+<div class="math notranslate nohighlight">
+\[
+H = H^{(0)} D
+\]</div>
+<p>The slack convention matters for mapping arbitrary bus injections <span class="math notranslate nohighlight">\(P\)</span> to flows, but endpoint-to-endpoint branch outage
 transactions are already balanced.</p>
 </section>
 <section id="avoiding-double-correction">
 <h3>Avoiding Double Correction<a class="headerlink" href="#avoiding-double-correction" title="Link to this heading"></a></h3>
 <p>There are two valid usage patterns.</p>
 <p>If the PTDF already includes the slack-distribution matrix:</p>
-<div class="math">
-<p><span class="math">H = H^{(0)} D</span></p>
-</div><p>then compute flows from the raw injection vector:</p>
-<div class="math">
-<p><span class="math">P_f = H P</span></p>
-</div><p>and check nodal balance with:</p>
-<div class="math">
-<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
-</div><p>Alternatively, if using the single-reference PTDF externally:</p>
-<div class="math">
-<p><span class="math">H = H^{(0)}</span></p>
-</div><p>then first correct the injection vector:</p>
-<div class="math">
-<p><span class="math">P^{\mathrm{eff}} = D P</span></p>
-</div><p>and then compute:</p>
-<div class="math">
-<p><span class="math">P_f = H^{(0)} P^{\mathrm{eff}}</span></p>
-</div><p>Do not apply the slack matrix to both the PTDF and the input vector, because that applies the same slack correction twice.</p>
+<div class="math notranslate nohighlight">
+\[
+H = H^{(0)} D
+\]</div>
+<p>then compute flows from the raw injection vector:</p>
+<div class="math notranslate nohighlight">
+\[
+P_f = H P
+\]</div>
+<p>and check nodal balance with:</p>
+<div class="math notranslate nohighlight">
+\[
+P^{\mathrm{eff}} = D P
+\]</div>
+<p>Alternatively, if using the single-reference PTDF externally:</p>
+<div class="math notranslate nohighlight">
+\[
+H = H^{(0)}
+\]</div>
+<p>then first correct the injection vector:</p>
+<div class="math notranslate nohighlight">
+\[
+P^{\mathrm{eff}} = D P
+\]</div>
+<p>and then compute:</p>
+<div class="math notranslate nohighlight">
+\[
+P_f = H^{(0)} P^{\mathrm{eff}}
+\]</div>
+<p>Do not apply the slack matrix to both the PTDF and the input vector, because that applies the same slack correction twice.</p>
 </section>
 <section id="srap-automatic-power-reduction-system">
 <h3>SRAP: Automatic Power Reduction System<a class="headerlink" href="#srap-automatic-power-reduction-system" title="Link to this heading"></a></h3>

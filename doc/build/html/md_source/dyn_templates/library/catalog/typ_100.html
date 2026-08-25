@@ -18,6 +18,8 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -168,29 +170,51 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">\frac{d x1}{dt} = x2</span></p>
-</div><div class="math">
-<p><span class="math">\frac{d x2}{dt} = (\frac{-(Pade approximant R12 _{incforward\_A0} \cdot x1 + Pade approximant R12 _{incforward\_A1} \cdot x2)}{Pade approximant R12 _{incforward\_A2}} + \frac{yi - Pade approximant R12 _{incforward\_offset}}{Pade approximant R12 _{incforward\_A2}})</span></p>
-</div><div class="math">
-<p><span class="math">0 = (yo - (Pade approximant R12 _{incforward\_B0} \cdot x1 + Pade approximant R12 _{incforward\_B1} \cdot x2 + Pade approximant R12 _{incforward\_offset}))</span></p>
-</div><div class="math">
-<p><span class="math">Pade approximant R12 _{incforward\_offset}(t_0) = yi</span></p>
-</div><div class="math">
-<p><span class="math">x1(t_0) = 0</span></p>
-</div><div class="math">
-<p><span class="math">x2(t_0) = 0</span></p>
-</div><div class="math">
-<p><span class="math">Pade approximant R12 _{incforward\_A0}(t_0) = 1</span></p>
-</div><div class="math">
-<p><span class="math">Pade approximant R12 _{incforward\_A1}(t_0) = (0.666667(Td \cdot \Theta\left(Td - 0.0001\right) + 0.0001(1 - \Theta\left(Td - 0.0001\right))))</span></p>
-</div><div class="math">
-<p><span class="math">Pade approximant R12 _{incforward\_A2}(t_0) = (0.166667(Td \cdot \Theta\left(Td - 0.0001\right) + 0.0001(1 - \Theta\left(Td - 0.0001\right))) \cdot (Td \cdot \Theta\left(Td - 0.0001\right) + 0.0001(1 - \Theta\left(Td - 0.0001\right))))</span></p>
-</div><div class="math">
-<p><span class="math">Pade approximant R12 _{incforward\_B0}(t_0) = 1</span></p>
-</div><div class="math">
-<p><span class="math">Pade approximant R12 _{incforward\_B1}(t_0) = (-0.333333 \cdot (Td \cdot \Theta\left(Td - 0.0001\right) + 0.0001(1 - \Theta\left(Td - 0.0001\right))))</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x1}{dt} = x2
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x2}{dt} = (\frac{-(Pade approximant R12 _{incforward\_A0} \cdot x1 + Pade approximant R12 _{incforward\_A1} \cdot x2)}{Pade approximant R12 _{incforward\_A2}} + \frac{yi - Pade approximant R12 _{incforward\_offset}}{Pade approximant R12 _{incforward\_A2}})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (yo - (Pade approximant R12 _{incforward\_B0} \cdot x1 + Pade approximant R12 _{incforward\_B1} \cdot x2 + Pade approximant R12 _{incforward\_offset}))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Pade approximant R12 _{incforward\_offset}(t_0) = yi
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+x1(t_0) = 0
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+x2(t_0) = 0
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Pade approximant R12 _{incforward\_A0}(t_0) = 1
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Pade approximant R12 _{incforward\_A1}(t_0) = (0.666667(Td \cdot \Theta\left(Td - 0.0001\right) + 0.0001(1 - \Theta\left(Td - 0.0001\right))))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Pade approximant R12 _{incforward\_A2}(t_0) = (0.166667(Td \cdot \Theta\left(Td - 0.0001\right) + 0.0001(1 - \Theta\left(Td - 0.0001\right))) \cdot (Td \cdot \Theta\left(Td - 0.0001\right) + 0.0001(1 - \Theta\left(Td - 0.0001\right))))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Pade approximant R12 _{incforward\_B0}(t_0) = 1
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Pade approximant R12 _{incforward\_B1}(t_0) = (-0.333333 \cdot (Td \cdot \Theta\left(Td - 0.0001\right) + 0.0001(1 - \Theta\left(Td - 0.0001\right))))
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

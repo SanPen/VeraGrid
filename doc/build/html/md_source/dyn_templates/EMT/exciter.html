@@ -18,6 +18,8 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -190,23 +192,39 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">V_m = \sqrt{\frac{v_A^2 + v_B^2 + v_C^2}{3}}</span></p>
-</div><div class="math">
-<p><span class="math">e_{exc} = U_{s,ref} + V_{pss} - y_1 - y_2</span></p>
-</div><div class="math">
-<p><span class="math">y_{LL} = y_3 + \frac{t_C}{t_B}(e_{exc} - y_3)</span></p>
-</div><div class="math">
-<p><span class="math">\frac{dy_1}{dt} = \frac{V_m - y_1}{t_R}</span></p>
-</div><div class="math">
-<p><span class="math">\frac{dy_2}{dt} = \frac{K_f V_f - y_2}{t_F}</span></p>
-</div><div class="math">
-<p><span class="math">\frac{dy_3}{dt} = \frac{e_{exc} - y_3}{t_B}</span></p>
-</div><div class="math">
-<p><span class="math">\frac{dy_4}{dt} = \frac{K_a y_{LL} - y_4}{t_A}</span></p>
-</div><div class="math">
-<p><span class="math">\frac{dV_f}{dt} = \frac{V_{field,ref} - V_{field,fb}}{t_E}</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+V_m = \sqrt{\frac{v_A^2 + v_B^2 + v_C^2}{3}}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+e_{exc} = U_{s,ref} + V_{pss} - y_1 - y_2
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+y_{LL} = y_3 + \frac{t_C}{t_B}(e_{exc} - y_3)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{dy_1}{dt} = \frac{V_m - y_1}{t_R}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{dy_2}{dt} = \frac{K_f V_f - y_2}{t_F}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{dy_3}{dt} = \frac{e_{exc} - y_3}{t_B}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{dy_4}{dt} = \frac{K_a y_{LL} - y_4}{t_A}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{dV_f}{dt} = \frac{V_{field,ref} - V_{field,fb}}{t_E}
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

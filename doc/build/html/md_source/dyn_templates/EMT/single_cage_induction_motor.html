@@ -18,6 +18,8 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -156,33 +158,41 @@
 </section>
 <section id="scope-and-model-level">
 <h2>Scope and model level<a class="headerlink" href="#scope-and-model-level" title="Link to this heading"></a></h2>
-<p>This is the Level-2 induction-motor model. It has a three-wire ABC stator interface and transforms terminal quantities internally to stationary <span class="math">\alpha\beta</span> coordinates. It represents stator and rotor electromagnetic transients together with shaft acceleration, while omitting zero-sequence and detailed mechanical train modes.</p>
+<p>This is the Level-2 induction-motor model. It has a three-wire ABC stator interface and transforms terminal quantities internally to stationary <span class="math notranslate nohighlight">\(\alpha\beta\)</span> coordinates. It represents stator and rotor electromagnetic transients together with shaft acceleration, while omitting zero-sequence and detailed mechanical train modes.</p>
 <p>Use it for ordinary motor starting, stalling, fault recovery, voltage-dip, and aggregate motor-load studies when one rotor cage adequately represents the machine.</p>
 </section>
 <section id="state-equations">
 <h2>State equations<a class="headerlink" href="#state-equations" title="Link to this heading"></a></h2>
 <p>The state vector contains stator flux, rotor flux, and normalized rotor speed. Representative equations are</p>
-<div class="math">
-<p><span class="math">\dot\psi_{s,\alpha}=v_\alpha-r_si_{s,\alpha},
+<div class="math notranslate nohighlight">
+\[
+\dot\psi_{s,\alpha}=v_\alpha-r_si_{s,\alpha},
 \qquad
-\dot\psi_{s,\beta}=v_\beta-r_si_{s,\beta},</span></p>
-</div><div class="math">
-<p><span class="math">\dot\psi_{r,\alpha}=-r_ri_{r,\alpha}-\omega_{r,e}\psi_{r,\beta},
+\dot\psi_{s,\beta}=v_\beta-r_si_{s,\beta},
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\dot\psi_{r,\alpha}=-r_ri_{r,\alpha}-\omega_{r,e}\psi_{r,\beta},
 \qquad
-\dot\psi_{r,\beta}=-r_ri_{r,\beta}+\omega_{r,e}\psi_{r,\alpha}.</span></p>
-</div><p>Currents are obtained algebraically by inverting the stator/rotor inductance relation. Electromagnetic torque and shaft speed follow</p>
-<div class="math">
-<p><span class="math">T_e=\frac{3}{2}\omega_{base}
-(\psi_{s,\alpha}i_{s,\beta}-\psi_{s,\beta}i_{s,\alpha}),</span></p>
-</div><div class="math">
-<p><span class="math">\dot\omega_r=\frac{T_e-T_m-d(\omega_r-1)}{2h+\varepsilon},
+\dot\psi_{r,\beta}=-r_ri_{r,\beta}+\omega_{r,e}\psi_{r,\alpha}.
+\]</div>
+<p>Currents are obtained algebraically by inverting the stator/rotor inductance relation. Electromagnetic torque and shaft speed follow</p>
+<div class="math notranslate nohighlight">
+\[
+T_e=\frac{3}{2}\omega_{base}
+(\psi_{s,\alpha}i_{s,\beta}-\psi_{s,\beta}i_{s,\alpha}),
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\dot\omega_r=\frac{T_e-T_m-d(\omega_r-1)}{2h+\varepsilon},
 \qquad
-s=1-\omega_r.</span></p>
-</div><p>The mechanical load torque varies quadratically with speed around its nominal value.</p>
+s=1-\omega_r.
+\]</div>
+<p>The mechanical load torque varies quadratically with speed around its nominal value.</p>
 </section>
 <section id="initialization">
 <h2>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h2>
-<p>The model builds a positive-sequence equivalent circuit from the solved three-phase <span class="math">P</span>, <span class="math">Q</span>, and voltage. It estimates and bounds the initial slip, then initializes currents, fluxes, rotor speed, electromagnetic torque, and mechanical torque at a compatible operating point. Large initial derivatives or a power mismatch normally indicate inconsistent motor data, bases, or load-flow sign conventions.</p>
+<p>The model builds a positive-sequence equivalent circuit from the solved three-phase <span class="math notranslate nohighlight">\(P\)</span>, <span class="math notranslate nohighlight">\(Q\)</span>, and voltage. It estimates and bounds the initial slip, then initializes currents, fluxes, rotor speed, electromagnetic torque, and mechanical torque at a compatible operating point. Large initial derivatives or a power mismatch normally indicate inconsistent motor data, bases, or load-flow sign conventions.</p>
 </section>
 <section id="numerical-and-physical-limits">
 <h2>Numerical and physical limits<a class="headerlink" href="#numerical-and-physical-limits" title="Link to this heading"></a></h2>
@@ -381,7 +391,7 @@ s=1-\omega_r.</span></p>
 <h2>How to use it<a class="headerlink" href="#how-to-use-it" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Connect all three stator phases and map the machine data on a consistent base.</p></li>
-<li><p>Initialize from a converged power flow and verify that total <span class="math">P</span> and <span class="math">Q</span> match the intended motor demand.</p></li>
+<li><p>Initialize from a converged power flow and verify that total <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(Q\)</span> match the intended motor demand.</p></li>
 <li><p>Inspect initial slip, speed, torque, and phase currents before applying events.</p></li>
 <li><p>Use the double-cage model when startup or deep-slip rotor behavior cannot be fitted with one cage.</p></li>
 <li><p>Perform a time-step convergence check for starts, faults, and near-stall cases.</p></li>

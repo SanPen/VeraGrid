@@ -18,6 +18,8 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -348,15 +350,15 @@ from the base situation to the target situation.</p>
 <section id="theory">
 <h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
 <p>The continuation power flow is a technique that traces a trajectory from a
-base situation given to a combination of power <span class="math">S_0</span> and voltage <span class="math">V_0</span>,
-to another situation determined by another combination of power <span class="math">S'</span>.
+base situation given to a combination of power <span class="math notranslate nohighlight">\(S_0\)</span> and voltage <span class="math notranslate nohighlight">\(V_0\)</span>,
+to another situation determined by another combination of power <span class="math notranslate nohighlight">\(S'\)</span>.
 When the final power situation is undefined, then the algorithm continues
 until the Jacobian is singular, tracing the voltage collapse curve.</p>
 <p>The method uses a predictor-corrector technique to trace this trajectory.</p>
 <section id="predictor-step">
 <h3>Predictor step<a class="headerlink" href="#predictor-step" title="Link to this heading"></a></h3>
-<div class="math">
-<p><span class="math">\begin{bmatrix}
+<div class="math notranslate nohighlight">
+\[\begin{split}    \begin{bmatrix}
         \theta \\
         V \\
         \lambda \\
@@ -379,12 +381,13 @@ until the Jacobian is singular, tracing the voltage collapse curve.</p>
         \hat{0} \\
         \hat{0} \\
         1\\
-    \end{bmatrix}</span></p>
-</div></section>
+    \end{bmatrix}
+\end{split}\]</div>
+</section>
 <section id="corrector-step">
 <h3>Corrector step<a class="headerlink" href="#corrector-step" title="Link to this heading"></a></h3>
-<div class="math">
-<p><span class="math">\begin{bmatrix}
+<div class="math notranslate nohighlight">
+\[\begin{split}    \begin{bmatrix}
         d\theta \\
         dV \\
         d\lambda \\
@@ -407,8 +410,8 @@ until the Jacobian is singular, tracing the voltage collapse curve.</p>
         \hat{0} \\
         \hat{0} \\
         1\\
-    \end{bmatrix}</span></p>
-</div></section>
+    \end{bmatrix}\end{split}\]</div>
+</section>
 </section>
 </section>
 

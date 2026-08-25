@@ -18,6 +18,8 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -168,13 +170,19 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">\frac{d x}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot Ki \cdot yi)</span></p>
-</div><div class="math">
-<p><span class="math">0 = (yo - (proc_{select\_2} \cdot proc_{lastvalue\_1} + (1 - proc_{select\_2}) \cdot (y_{min} + (Kp \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{min}) \cdot \Theta\left(Kp \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{min}\right) - (Kp \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{max}) \cdot \Theta\left(Kp \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{max}\right))))</span></p>
-</div><div class="math">
-<p><span class="math">Kp+Ki/s [(p_{x\_init}(t_0) = x</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot Ki \cdot yi)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (yo - (proc_{select\_2} \cdot proc_{lastvalue\_1} + (1 - proc_{select\_2}) \cdot (y_{min} + (Kp \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{min}) \cdot \Theta\left(Kp \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{min}\right) - (Kp \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{max}) \cdot \Theta\left(Kp \cdot yi + y_{min} + (x - y_{min}) \cdot \Theta\left(x - y_{min}\right) - (x - y_{max}) \cdot \Theta\left(x - y_{max}\right) - y_{max}\right))))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Kp+Ki/s [(p_{x\_init}(t_0) = x
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

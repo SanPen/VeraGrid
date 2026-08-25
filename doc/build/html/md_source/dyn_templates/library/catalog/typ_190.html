@@ -18,6 +18,8 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -168,19 +170,31 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">\frac{d x1}{dt} = (1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx1}</span></p>
-</div><div class="math">
-<p><span class="math">\frac{d x2}{dt} = (1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx2}</span></p>
-</div><div class="math">
-<p><span class="math">0 = ((1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx1} - (proc_{selfix\_0} \cdot 0 + (1 - proc_{selfix\_0}) \cdot x2))</span></p>
-</div><div class="math">
-<p><span class="math">0 = ((1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx2} - (proc_{selfix\_1} \cdot 0 + (1 - proc_{selfix\_1}) \cdot \frac{yi - x1 - A1 \cdot x2}{A2}))</span></p>
-</div><div class="math">
-<p><span class="math">0 = (yo - (proc_{selfix\_2} \cdot yi + (1 - proc_{selfix\_2}) \cdot (x1 + B1 \cdot (1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx1} + B2 \cdot (1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx2})))</span></p>
-</div><div class="math">
-<p><span class="math">(1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_triv}(t_0) = (\Theta\left(0 - \lvertA1\rvert + 1 \times 10^{-6}\right) \cdot \Theta\left(0 - \lvertA2\rvert + 1 \times 10^{-6}\right) \cdot \Theta\left(0 - \lvertB1\rvert + 1 \times 10^{-6}\right) \cdot \Theta\left(0 - \lvertB2\rvert + 1 \times 10^{-6}\right))</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x1}{dt} = (1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx1}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{d x2}{dt} = (1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx2}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = ((1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx1} - (proc_{selfix\_0} \cdot 0 + (1 - proc_{selfix\_0}) \cdot x2))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = ((1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx2} - (proc_{selfix\_1} \cdot 0 + (1 - proc_{selfix\_1}) \cdot \frac{yi - x1 - A1 \cdot x2}{A2}))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = (yo - (proc_{selfix\_2} \cdot yi + (1 - proc_{selfix\_2}) \cdot (x1 + B1 \cdot (1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx1} + B2 \cdot (1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_dx2})))
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+(1+B1s+B2ss)/(1+A1s+A2ss) _{bypass\_triv}(t_0) = (\Theta\left(0 - \lvertA1\rvert + 1 \times 10^{-6}\right) \cdot \Theta\left(0 - \lvertA2\rvert + 1 \times 10^{-6}\right) \cdot \Theta\left(0 - \lvertB1\rvert + 1 \times 10^{-6}\right) \cdot \Theta\left(0 - \lvertB2\rvert + 1 \times 10^{-6}\right))
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

@@ -18,6 +18,8 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -179,15 +181,23 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math">
-<p><span class="math">P_{avail} = \mathrm{sat}\left(P_{rated}\frac{G}{G_{ref}}\left(1 + k_T(T_{cell}-T_{ref})\right), 0, P_{rated}\right)</span></p>
-</div><div class="math">
-<p><span class="math">\frac{dP_{mppt}}{dt} = \frac{P_{avail} - P_{mppt}}{T_{mppt}}</span></p>
-</div><div class="math">
-<p><span class="math">P = V_m I_{p,out}</span></p>
-</div><div class="math">
-<p><span class="math">Q = V_m I_{q,out}</span></p>
-</div></section>
+<div class="math notranslate nohighlight">
+\[
+P_{avail} = \mathrm{sat}\left(P_{rated}\frac{G}{G_{ref}}\left(1 + k_T(T_{cell}-T_{ref})\right), 0, P_{rated}\right)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\frac{dP_{mppt}}{dt} = \frac{P_{avail} - P_{mppt}}{T_{mppt}}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+P = V_m I_{p,out}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Q = V_m I_{q,out}
+\]</div>
+</section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

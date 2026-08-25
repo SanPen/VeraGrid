@@ -18,6 +18,8 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -146,17 +148,21 @@
 <section id="the-mental-model">
 <h2>The mental model<a class="headerlink" href="#the-mental-model" title="Link to this heading"></a></h2>
 <p>A VeraGrid dynamic model is a hierarchy of symbolic blocks. Each primitive block contributes variables and equations to a global differential-algebraic equation (DAE) problem:</p>
-<div class="math">
-<p><span class="math">\dot{x} = f(x, y, p, r, t)</span></p>
-</div><div class="math">
-<p><span class="math">0 = g(x, y, p, r, t)</span></p>
-</div><p>where:</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{x} = f(x, y, p, r, t)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+0 = g(x, y, p, r, t)
+\]</div>
+<p>where:</p>
 <ul class="simple">
-<li><p><span class="math">x</span> contains continuous state variables;</p></li>
-<li><p><span class="math">y</span> contains algebraic variables;</p></li>
-<li><p><span class="math">p</span> contains fixed or event-enabled parameters;</p></li>
-<li><p><span class="math">r</span> contains retained runtime values used by procedural logic;</p></li>
-<li><p><span class="math">t</span> is simulation time.</p></li>
+<li><p><span class="math notranslate nohighlight">\(x\)</span> contains continuous state variables;</p></li>
+<li><p><span class="math notranslate nohighlight">\(y\)</span> contains algebraic variables;</p></li>
+<li><p><span class="math notranslate nohighlight">\(p\)</span> contains fixed or event-enabled parameters;</p></li>
+<li><p><span class="math notranslate nohighlight">\(r\)</span> contains retained runtime values used by procedural logic;</p></li>
+<li><p><span class="math notranslate nohighlight">\(t\)</span> is simulation time.</p></li>
 </ul>
 <p>The solver does not execute a block diagram one box at a time. It flattens the model hierarchy, assembles all continuous equations into one numerical problem, initializes a consistent operating point, and solves the coupled system. The diagram, children, and ports organize that mathematical model and define how it connects to the rest of the grid.</p>
 <p>Procedural logic is deliberately separate. It runs at accepted simulation boundaries and updates retained values outside the continuous Newton residual. This separation prevents a residual evaluation from mutating model memory or choosing a different branch midway through a nonlinear iteration.</p>
@@ -191,19 +197,19 @@
 <td><p>Give every meaningful child a short, stable name.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">state_vars</span></code></p></td>
-<td><p>Continuous state variables <span class="math">x</span></p></td>
+<td><p>Continuous state variables <span class="math notranslate nohighlight">\(x\)</span></p></td>
 <td><p>Keep the same order as <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">state_eqs</span></code></p></td>
-<td><p>Right-hand sides <span class="math">\dot{x}=f(\cdot)</span></p></td>
+<td><p>Right-hand sides <span class="math notranslate nohighlight">\(\dot{x}=f(\cdot)\)</span></p></td>
 <td><p>Write only the derivative right-hand side, not <code class="docutils literal notranslate"><span class="pre">d_x</span> <span class="pre">-</span> <span class="pre">f</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">algebraic_vars</span></code></p></td>
-<td><p>Algebraic unknowns <span class="math">y</span></p></td>
+<td><p>Algebraic unknowns <span class="math notranslate nohighlight">\(y\)</span></p></td>
 <td><p>Keep the same order as <code class="docutils literal notranslate"><span class="pre">algebraic_eqs</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">algebraic_eqs</span></code></p></td>
-<td><p>Algebraic residuals <span class="math">g(\cdot)=0</span></p></td>
+<td><p>Algebraic residuals <span class="math notranslate nohighlight">\(g(\cdot)=0\)</span></p></td>
 <td><p>Write <code class="docutils literal notranslate"><span class="pre">left</span> <span class="pre">-</span> <span class="pre">right</span></code>, so the stored expression must equal zero.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code></p></td>
@@ -310,9 +316,11 @@
 <section id="state-equations">
 <h3>State equations<a class="headerlink" href="#state-equations" title="Link to this heading"></a></h3>
 <p>For the physical equation</p>
-<div class="math">
-<p><span class="math">T\dot{x}=u-x,</span></p>
-</div><p>declare <code class="docutils literal notranslate"><span class="pre">x</span></code> in <code class="docutils literal notranslate"><span class="pre">state_vars</span></code> and store only the right-hand side in <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[
+T\dot{x}=u-x,
+\]</div>
+<p>declare <code class="docutils literal notranslate"><span class="pre">x</span></code> in <code class="docutils literal notranslate"><span class="pre">state_vars</span></code> and store only the right-hand side in <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
 <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([(</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">time_constant</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)])</span>
 </pre></div>
@@ -321,7 +329,7 @@
 </section>
 <section id="algebraic-equations">
 <h3>Algebraic equations<a class="headerlink" href="#algebraic-equations" title="Link to this heading"></a></h3>
-<p>For the physical equation <span class="math">y=Kx</span>, declare <code class="docutils literal notranslate"><span class="pre">y</span></code> as an algebraic variable and store a zero residual:</p>
+<p>For the physical equation <span class="math notranslate nohighlight">\(y=Kx\)</span>, declare <code class="docutils literal notranslate"><span class="pre">y</span></code> as an algebraic variable and store a zero residual:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">y</span><span class="p">])</span>
 <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">y</span> <span class="o">-</span> <span class="n">gain</span> <span class="o">*</span> <span class="n">x</span><span class="p">])</span>
 </pre></div>

@@ -10,3 +10,7 @@ build:
   commands:
     - mkdir -p "$READTHEDOCS_OUTPUT/html"
     - cp -a doc/build/html/. "$READTHEDOCS_OUTPUT/html/"
+    - >-
+      find "$READTHEDOCS_OUTPUT/html" -name '*.html' -exec sed -i
+      's#</head>#<script>window.MathJax={startup:{pageReady:function(){document.querySelectorAll("span.math").forEach(function(e){var p=e.parentElement;var d=false;if(p){var g=p.parentElement;if(g){d=g.classList.contains("math");}}var t=e.textContent;if(t.slice(0,2)!=="\\\\("){if(t.slice(0,2)!=="\\\\["){e.textContent=(d?"\\\\["+t+"\\\\]":"\\\\("+t+"\\\\)");}}});return MathJax.startup.defaultPageReady();}}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script></head>#'
+      {} +

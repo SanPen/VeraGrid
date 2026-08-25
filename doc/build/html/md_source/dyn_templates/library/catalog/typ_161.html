@@ -18,8 +18,6 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -170,47 +168,27 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math notranslate nohighlight">
-\[
-\frac{d x1}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot x2)
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\frac{d x2}{dt} = (proc_{select\_1} \cdot 0 + (1 - proc_{select\_1}) \cdot x3)
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\frac{d x3}{dt} = (proc_{select\_2} \cdot 0 + (1 - proc_{select\_2}) \cdot (-Butterworth 3rd order _{rst\_hold\_wc\_3} \cdot x1 - 2Butterworth 3rd order _{rst\_hold\_wc\_2} \cdot x2 - 2wc \cdot x3 + yi))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (yo - (proc_{select\_4} \cdot proc_{lastvalue\_3} + (1 - proc_{select\_4}) \cdot Butterworth 3rd order _{rst\_hold\_wc\_3} \cdot x1))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Butterworth 3rd order _{rst\_hold\_wc\_3}(t_0) = (wc^{3})
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Butterworth 3rd order _{rst\_hold\_wc\_2}(t_0) = (wc \cdot wc)
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-x1(t_0) = (\frac{yi}{wc^{3}})
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-x2(t_0) = 0
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-x3(t_0) = 0
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Butterworth 3rd order _{rst\_hold\_x1\_init}(t_0) = x1
-\]</div>
-</section>
+<div class="math">
+<p><img src="../../../../_images/math/62525bc7b1095ba3f2cc13613341bf930872b679.svg" alt="\frac{d x1}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot x2)"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/7250c37b275842ffa32e8f9a0898209be24cafd3.svg" alt="\frac{d x2}{dt} = (proc_{select\_1} \cdot 0 + (1 - proc_{select\_1}) \cdot x3)"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/3c25c93f866d506e4f5be4f8a62f196541d57d72.svg" alt="\frac{d x3}{dt} = (proc_{select\_2} \cdot 0 + (1 - proc_{select\_2}) \cdot (-Butterworth 3rd order _{rst\_hold\_wc\_3} \cdot x1 - 2Butterworth 3rd order _{rst\_hold\_wc\_2} \cdot x2 - 2wc \cdot x3 + yi))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/33dda091f476f60fa8e7f476960de9ed05c77472.svg" alt="0 = (yo - (proc_{select\_4} \cdot proc_{lastvalue\_3} + (1 - proc_{select\_4}) \cdot Butterworth 3rd order _{rst\_hold\_wc\_3} \cdot x1))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/014ef49129360f982a4fdb281e8a4cc79eead6ea.svg" alt="Butterworth 3rd order _{rst\_hold\_wc\_3}(t_0) = (wc^{3})"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/cc602b6d759239a372dc1f5c14200e7906799aac.svg" alt="Butterworth 3rd order _{rst\_hold\_wc\_2}(t_0) = (wc \cdot wc)"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/de29a37b5438472eaf3500dd11ad51f7279ad768.svg" alt="x1(t_0) = (\frac{yi}{wc^{3}})"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/074e2dc151af5f3e1814143020bdeaf39655309f.svg" alt="x2(t_0) = 0"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/c9fe5d531c62c6f2d5e549981a3913d5c18723ec.svg" alt="x3(t_0) = 0"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/90a4d5e43c471dee3a108a8b7473e80b07a990ff.svg" alt="Butterworth 3rd order _{rst\_hold\_x1\_init}(t_0) = x1"/></p>
+</div></section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

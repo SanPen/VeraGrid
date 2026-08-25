@@ -18,8 +18,6 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -192,28 +190,22 @@ the input grid.</p>
 <section id="ward-reduction">
 <h3>Ward reduction<a class="headerlink" href="#ward-reduction" title="Link to this heading"></a></h3>
 <p>Performs the standard ward reduction.</p>
-<p>Define the bus sets <span class="math notranslate nohighlight">\(E\)</span> (external buses to remove),
-<span class="math notranslate nohighlight">\(I\)</span> (internal buses that are not boundary) and
-<span class="math notranslate nohighlight">\(B\)</span> (boundary buses)</p>
+<p>Define the bus sets <img class="math" src="../_images/math/1815f600df7845409443aed470eac2d449e4ddb0.svg" alt="E"/> (external buses to remove),
+<img class="math" src="../_images/math/015755a22b6219b345c36a9a47b091dc56007486.svg" alt="I"/> (internal buses that are not boundary) and
+<img class="math" src="../_images/math/4bc3e94a67870b41b7c20179693e889251e2c136.svg" alt="B"/> (boundary buses)</p>
 <ul class="simple">
-<li><p>Run a power flow of the base grid and slice <span class="math notranslate nohighlight">\(V_b = V[B]\)</span> and <span class="math notranslate nohighlight">\(V_e = V[E]\)</span></p></li>
-<li><p>Slice <span class="math notranslate nohighlight">\(Y_{BE} = Y[B, E]\)</span>, <span class="math notranslate nohighlight">\(Y_{EB} = Y[E, B]\)</span> and <span class="math notranslate nohighlight">\(Y_{EE} = Y[E, E]\)</span></p></li>
+<li><p>Run a power flow of the base grid and slice <img class="math" src="../_images/math/cff159693859144a625917d0bcd62128fa125486.svg" alt="V_b = V[B]"/> and <img class="math" src="../_images/math/64c1e8981ddefc71ead1ced06e9f80329edef3da.svg" alt="V_e = V[E]"/></p></li>
+<li><p>Slice <img class="math" src="../_images/math/46b8fd6325be34013211e21615778df3cf1d5e7f.svg" alt="Y_{BE} = Y[B, E]"/>, <img class="math" src="../_images/math/a67e652427d2637eebcc4bb71709ed3891670892.svg" alt="Y_{EB} = Y[E, B]"/> and <img class="math" src="../_images/math/e48ee3c347f04b1ecdb93a806615136040f03cc7.svg" alt="Y_{EE} = Y[E, E]"/></p></li>
 <li><p>Compute the equivalent boundary admittances as:
-<span class="math notranslate nohighlight">\(
-Y_{eq} = Y_{BE} \times Y_{EE}^{-1} \times Y_{EB}
-\)</span></p></li>
+<img class="math" src="../_images/math/b7b8e4acffac3774ab59742ca56ac6456f7a8bcb.svg" alt="Y_{eq} = Y_{BE} \times Y_{EE}^{-1} \times Y_{EB}"/></p></li>
 <li><p>Compute the equivalent boundary injection currents as:
-<span class="math notranslate nohighlight">\(
-I_{eq} = - Y_{BE} \times Y_{EE}^{-1} \times (Y_{EB} \times V_b + Y_{EE} \times V_e)
-\)</span></p></li>
+<img class="math" src="../_images/math/cb5bd81cd800f9707f325e16ddd7119313e86efb.svg" alt="I_{eq} = - Y_{BE} \times Y_{EE}^{-1} \times (Y_{EB} \times V_b + Y_{EE} \times V_e)"/></p></li>
 <li><p>Compute the boundary power injections as:
-<span class="math notranslate nohighlight">\(
-S_{eq} = V_b \cdot (I_{eq})^*
-\)</span></p></li>
-<li><p>Create a new load with the value of <span class="math notranslate nohighlight">\(S_{eq}[b]\)</span> for every bus <span class="math notranslate nohighlight">\(b\)</span> of <span class="math notranslate nohighlight">\(B\)</span>.</p></li>
-<li><p>For every entry in the lower triangle of <span class="math notranslate nohighlight">\(Y_{eq}\)</span>, create a shunt or series reactance
+<img class="math" src="../_images/math/658f56191782c94cbe6f49ccf0e08da9f61061a1.svg" alt="S_{eq} = V_b \cdot (I_{eq})^*"/></p></li>
+<li><p>Create a new load with the value of <img class="math" src="../_images/math/a11c545d6cc8eb98daa0ef1777c1fa9dba9b8f35.svg" alt="S_{eq}[b]"/> for every bus <img class="math" src="../_images/math/68c7c8c65602677ab56cf7fd88002023f0edc575.svg" alt="b"/> of <img class="math" src="../_images/math/4bc3e94a67870b41b7c20179693e889251e2c136.svg" alt="B"/>.</p></li>
+<li><p>For every entry in the lower triangle of <img class="math" src="../_images/math/8e00374c8084602b9f74428a86ad0d104514a3c3.svg" alt="Y_{eq}"/>, create a shunt or series reactance
 at the boundary or between the boundary buses.</p></li>
-<li><p>Finally, remove all buses in <span class="math notranslate nohighlight">\(E\)</span> from the grid.</p></li>
+<li><p>Finally, remove all buses in <img class="math" src="../_images/math/1815f600df7845409443aed470eac2d449e4ddb0.svg" alt="E"/> from the grid.</p></li>
 </ul>
 </section>
 <section id="di-shi-grid-equivalent">
@@ -230,15 +222,15 @@ defined for dispatching.</p>
 <li><p>B: set of boundary buses between E and I.</p></li>
 </ul>
 <p><strong>Step 1 – First Ward reduction</strong></p>
-<p>This first reduction is to obtain the equivalent admittance matrix <span class="math notranslate nohighlight">\(Y_eq^{(1}\)</span> that serves
+<p>This first reduction is to obtain the equivalent admittance matrix <img class="math" src="../_images/math/e7e73979e0cd7d79909d4719cca70b208871f420.svg" alt="Y_eq^{(1}"/> that serves
 to create the inter-boundary branches that represent the grid that we are going to remove.
 For this the buses to keep are the internal (I) + boundary (B).</p>
 <p><strong>Step 2 – Second Ward reduction: Extending to the external generation buses</strong></p>
-<p>The second reduction is to generate another equivalent admittance matrix <span class="math notranslate nohighlight">\(Y_eq^{(2}\)</span>
+<p>The second reduction is to generate another equivalent admittance matrix <img class="math" src="../_images/math/c794eb30d5fa59c44e70e4f0adcfde7d8a8de41f.svg" alt="Y_eq^{(2}"/>
 that we use as adjacency matrix to search the closest bus to move each generator that is external.
 For this the buses to keep are the internal (I) + boundary (B) + the generation buses of E.</p>
 <p><strong>Step 3 – Relocate generators</strong></p>
-<p>Using the matrix <span class="math notranslate nohighlight">\(Y_eq^{(2}\)</span>, we calculate the shortest paths from every
+<p>Using the matrix <img class="math" src="../_images/math/c794eb30d5fa59c44e70e4f0adcfde7d8a8de41f.svg" alt="Y_eq^{(2}"/>, we calculate the shortest paths from every
 external generation bus, to all the other buses in I + B. The end of each
 path will be the relocation bus of every external generator.</p>
 <p><strong>Step 4 – Relocate loads with inverse power flow</strong></p>
@@ -262,21 +254,21 @@ Analysis by Di Shi,
 <section id="ptdf-reduction">
 <h3>PTDF reduction<a class="headerlink" href="#ptdf-reduction" title="Link to this heading"></a></h3>
 <p>Performs a analogous method as the Di-Shi reduction but using the PTDF</p>
-<p>Along with the bus sets <span class="math notranslate nohighlight">\(E\)</span> (external buses to remove),
-<span class="math notranslate nohighlight">\(I\)</span> (internal buses that are not boundary) and
-<span class="math notranslate nohighlight">\(B\)</span> (boundary buses), we add a set of branches that
-join an external bus to a boundary bus and call if <span class="math notranslate nohighlight">\(BE\)</span>.</p>
+<p>Along with the bus sets <img class="math" src="../_images/math/1815f600df7845409443aed470eac2d449e4ddb0.svg" alt="E"/> (external buses to remove),
+<img class="math" src="../_images/math/015755a22b6219b345c36a9a47b091dc56007486.svg" alt="I"/> (internal buses that are not boundary) and
+<img class="math" src="../_images/math/4bc3e94a67870b41b7c20179693e889251e2c136.svg" alt="B"/> (boundary buses), we add a set of branches that
+join an external bus to a boundary bus and call if <img class="math" src="../_images/math/6f6681af09504a633e6abba045cac3816b730021.svg" alt="BE"/>.</p>
 <p>The theory behind is as follows:</p>
 <ol class="arabic simple">
-<li><p>Compute the PTDF (<span class="math notranslate nohighlight">\(PTDF_0\)</span>)</p></li>
-<li><p>Compute the Flows <span class="math notranslate nohighlight">\(P_{f_0} = PTDF_0 \times Pbus_0\)</span></p></li>
+<li><p>Compute the PTDF (<img class="math" src="../_images/math/a090ac19cdb6d02172a2fab32b2e134d72b41873.svg" alt="PTDF_0"/>)</p></li>
+<li><p>Compute the Flows <img class="math" src="../_images/math/88938dba237eff220c05c095faecb76074cc120d.svg" alt="P_{f_0} = PTDF_0 \times Pbus_0"/></p></li>
 <li><p>Move the injections to the boundary (all of them, load and generation)</p></li>
 <li><p>Delete the buses from the External set.</p></li>
-<li><p>Compute the PTDF again (<span class="math notranslate nohighlight">\(PTDF_2\)</span>)</p></li>
-<li><p>Compute the current injections vector (<span class="math notranslate nohighlight">\(Pbus_2\)</span>)</p></li>
-<li><p>Compute the ideal injections that fullfill the base flows using least-squares: <span class="math notranslate nohighlight">\(Pbus_3 = LSQ(PTDF_2, P_{f_0}[I])\)</span></p></li>
-<li><p>Compute the difference between the ideal and the actual injections <span class="math notranslate nohighlight">\(dPbus = Pbus_2 - Pbus_3\)</span></p></li>
-<li><p>For every entry in <span class="math notranslate nohighlight">\(dPbus\)</span> greater than a threshold, add a load compensating the difference</p></li>
+<li><p>Compute the PTDF again (<img class="math" src="../_images/math/d912118e86a90bc00a27d3092adcfb9f3624f741.svg" alt="PTDF_2"/>)</p></li>
+<li><p>Compute the current injections vector (<img class="math" src="../_images/math/d54a1c3849a03ced921b3f7e8910d00b25e50bdb.svg" alt="Pbus_2"/>)</p></li>
+<li><p>Compute the ideal injections that fullfill the base flows using least-squares: <img class="math" src="../_images/math/1cd8b8705bffd247d2e28b0bdc33ac397c47e661.svg" alt="Pbus_3 = LSQ(PTDF_2, P_{f_0}[I])"/></p></li>
+<li><p>Compute the difference between the ideal and the actual injections <img class="math" src="../_images/math/1abc25d838495feec09a1dab513a62e05a1b0f3e.svg" alt="dPbus = Pbus_2 - Pbus_3"/></p></li>
+<li><p>For every entry in <img class="math" src="../_images/math/dd9bea1317ce2edc40c1b20da34419e929d53524.svg" alt="dPbus"/> greater than a threshold, add a load compensating the difference</p></li>
 </ol>
 <p>The PTDF flows pre and post reduction are guaranteed to be the same,
 as much as the least-squares problem is able to find a solution.</p>

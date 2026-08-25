@@ -18,8 +18,6 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -170,51 +168,29 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math notranslate nohighlight">
-\[
-0 = (Limit [s_{setmin} - (proc_{selfix\_1} \cdot 0 + (1 - proc_{selfix\_1}) \cdot (proc_{select\_const\_0} \cdot 1 + (1 - proc_{select\_const\_0}) \cdot 0)))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (Limit [s_{rstmin} - (proc_{selfix\_3} \cdot 0 + (1 - proc_{selfix\_3}) \cdot (proc_{select\_const\_2} \cdot 1 + (1 - proc_{select\_const\_2}) \cdot 0)))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (Limit [s_{setmax} - (proc_{selfix\_5} \cdot 0 + (1 - proc_{selfix\_5}) \cdot (proc_{select\_const\_4} \cdot 1 + (1 - proc_{select\_const\_4}) \cdot 0)))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (Limit [s_{rstmax} - (proc_{selfix\_7} \cdot 0 + (1 - proc_{selfix\_7}) \cdot (proc_{select\_const\_6} \cdot 1 + (1 - proc_{select\_const\_6}) \cdot 0)))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (Limit [s_{yo\_min} - (proc_{selfix\_9} \cdot 0 + (1 - proc_{selfix\_9}) \cdot proc_{flipflop\_8}))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (Limit [s_{yo\_max} - (proc_{selfix\_11} \cdot 0 + (1 - proc_{selfix\_11}) \cdot proc_{flipflop\_10}))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (yo - (proc_{selfix\_14} \cdot (y_{min} + (yi - y_{min}) \cdot \Theta\left(yi - y_{min}\right) - (yi - y_{max}) \cdot \Theta\left(yi - y_{max}\right)) + (1 - proc_{selfix\_14}) \cdot (proc_{select\_13} \cdot y_{min} + (1 - proc_{select\_13}) \cdot (proc_{select\_12} \cdot y_{max} + (1 - proc_{select\_12}) \cdot yi))))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Limit [s_{setmin}(t_0) = (proc_{selfix\_15} \cdot \Theta\left(y_{min} - yi - 1 \times 10^{-6}\right) + (1 - proc_{selfix\_15}) \cdot \Theta\left(y_{min} - (yi - eps) - 1 \times 10^{-6}\right))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Limit [s_{rstmin}(t_0) = (proc_{selfix\_16} \cdot \Theta\left(yi - y_{min} - 1 \times 10^{-6}\right) + (1 - proc_{selfix\_16}) \cdot \Theta\left(yi + eps - y_{min} - 1 \times 10^{-6}\right))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Limit [s_{setmax}(t_0) = (proc_{selfix\_17} \cdot \Theta\left(yi - y_{max} - 1 \times 10^{-6}\right) + (1 - proc_{selfix\_17}) \cdot \Theta\left(yi + eps - y_{max} - 1 \times 10^{-6}\right))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Limit [s_{rstmax}(t_0) = (proc_{selfix\_18} \cdot \Theta\left(y_{max} - yi - 1 \times 10^{-6}\right) + (1 - proc_{selfix\_18}) \cdot \Theta\left(y_{max} - (yi - eps) - 1 \times 10^{-6}\right))
-\]</div>
-</section>
+<div class="math">
+<p><img src="../../../../_images/math/9a9dbfd8f8e68a4f3df30fa1c8d955440ff6eead.svg" alt="0 = (Limit [s_{setmin} - (proc_{selfix\_1} \cdot 0 + (1 - proc_{selfix\_1}) \cdot (proc_{select\_const\_0} \cdot 1 + (1 - proc_{select\_const\_0}) \cdot 0)))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/b5f07736e1a0a8f6e37fd60ca535f661b2b0aff0.svg" alt="0 = (Limit [s_{rstmin} - (proc_{selfix\_3} \cdot 0 + (1 - proc_{selfix\_3}) \cdot (proc_{select\_const\_2} \cdot 1 + (1 - proc_{select\_const\_2}) \cdot 0)))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/03a3621fbfccacb67811fc90b8c78986864ecf93.svg" alt="0 = (Limit [s_{setmax} - (proc_{selfix\_5} \cdot 0 + (1 - proc_{selfix\_5}) \cdot (proc_{select\_const\_4} \cdot 1 + (1 - proc_{select\_const\_4}) \cdot 0)))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/eb76bbdd1dc40e003d05cc3f249f01a78ec1f532.svg" alt="0 = (Limit [s_{rstmax} - (proc_{selfix\_7} \cdot 0 + (1 - proc_{selfix\_7}) \cdot (proc_{select\_const\_6} \cdot 1 + (1 - proc_{select\_const\_6}) \cdot 0)))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/1f50a8368ae0b24e4e5f61b71c3a53f0dd8f6a8b.svg" alt="0 = (Limit [s_{yo\_min} - (proc_{selfix\_9} \cdot 0 + (1 - proc_{selfix\_9}) \cdot proc_{flipflop\_8}))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/0839170de9bae61493f3a5eeb36089346901bcdc.svg" alt="0 = (Limit [s_{yo\_max} - (proc_{selfix\_11} \cdot 0 + (1 - proc_{selfix\_11}) \cdot proc_{flipflop\_10}))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/6fd6bec70b3e8eab4b7bd9dfb7a460e6903ed6f4.svg" alt="0 = (yo - (proc_{selfix\_14} \cdot (y_{min} + (yi - y_{min}) \cdot \Theta\left(yi - y_{min}\right) - (yi - y_{max}) \cdot \Theta\left(yi - y_{max}\right)) + (1 - proc_{selfix\_14}) \cdot (proc_{select\_13} \cdot y_{min} + (1 - proc_{select\_13}) \cdot (proc_{select\_12} \cdot y_{max} + (1 - proc_{select\_12}) \cdot yi))))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/dc5f0504e074a86322736b93f3503e5e12d75b06.svg" alt="Limit [s_{setmin}(t_0) = (proc_{selfix\_15} \cdot \Theta\left(y_{min} - yi - 1 \times 10^{-6}\right) + (1 - proc_{selfix\_15}) \cdot \Theta\left(y_{min} - (yi - eps) - 1 \times 10^{-6}\right))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/1ca8cf9779c49d32d116ff5d42d602909cc66691.svg" alt="Limit [s_{rstmin}(t_0) = (proc_{selfix\_16} \cdot \Theta\left(yi - y_{min} - 1 \times 10^{-6}\right) + (1 - proc_{selfix\_16}) \cdot \Theta\left(yi + eps - y_{min} - 1 \times 10^{-6}\right))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/458f2eff419701dc24c11765ea8879d711156429.svg" alt="Limit [s_{setmax}(t_0) = (proc_{selfix\_17} \cdot \Theta\left(yi - y_{max} - 1 \times 10^{-6}\right) + (1 - proc_{selfix\_17}) \cdot \Theta\left(yi + eps - y_{max} - 1 \times 10^{-6}\right))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/dc3fe634ccc478505feea252c1096a77b35e2e9f.svg" alt="Limit [s_{rstmax}(t_0) = (proc_{selfix\_18} \cdot \Theta\left(y_{max} - yi - 1 \times 10^{-6}\right) + (1 - proc_{selfix\_18}) \cdot \Theta\left(y_{max} - (yi - eps) - 1 \times 10^{-6}\right))"/></p>
+</div></section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

@@ -18,8 +18,6 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -246,25 +244,21 @@ seasonal variation and weather-driven variability.</p>
 <h2>Theory<a class="headerlink" href="#theory" title="Link to this heading"></a></h2>
 <p>Photovoltaic active power depends mainly on irradiance, module temperature, system rating and losses. A simplified
 model can be written as:</p>
-<div class="math notranslate nohighlight">
-\[
-P_{dc}(t) = P_{rated} \cdot \frac{G_{poa}(t)}{G_{stc}} \cdot f_T(t) \cdot f_{loss}
-\]</div>
-<p>Where:</p>
+<div class="math">
+<p><img src="../_images/math/dbb38c762c814e3eb37d3dbbc45ad7d2929b2c3b.svg" alt="P_{dc}(t) = P_{rated} \cdot \frac{G_{poa}(t)}{G_{stc}} \cdot f_T(t) \cdot f_{loss}"/></p>
+</div><p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(P_{dc}(t)\)</span> is the DC photovoltaic power at time <span class="math notranslate nohighlight">\(t\)</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(P_{rated}\)</span> is the rated photovoltaic peak power.</p></li>
-<li><p><span class="math notranslate nohighlight">\(G_{poa}(t)\)</span> is the plane-of-array irradiance.</p></li>
-<li><p><span class="math notranslate nohighlight">\(G_{stc}\)</span> is the standard test condition irradiance, commonly <span class="math notranslate nohighlight">\(1000\ \text{W}/\text{m}^2\)</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_T(t)\)</span> is the module temperature correction factor.</p></li>
-<li><p><span class="math notranslate nohighlight">\(f_{loss}\)</span> is the aggregate loss factor.</p></li>
+<li><p><img class="math" src="../_images/math/3b3a525db1f1b8f5cd6b5509c9ab853ae863edab.svg" alt="P_{dc}(t)"/> is the DC photovoltaic power at time <img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.svg" alt="t"/>.</p></li>
+<li><p><img class="math" src="../_images/math/71e5de70e40fd3c5b227790263308a96cc017cc9.svg" alt="P_{rated}"/> is the rated photovoltaic peak power.</p></li>
+<li><p><img class="math" src="../_images/math/8693c36322b093a49e96ff3ba0f495afeceae4e0.svg" alt="G_{poa}(t)"/> is the plane-of-array irradiance.</p></li>
+<li><p><img class="math" src="../_images/math/0ef93b391298647bc168c3d9b6dab9cc514b9fad.svg" alt="G_{stc}"/> is the standard test condition irradiance, commonly <img class="math" src="../_images/math/f97ea0f8b5fbd6a9f2d9b6ceed973efb4421ed07.svg" alt="1000\ \text{W}/\text{m}^2"/>.</p></li>
+<li><p><img class="math" src="../_images/math/f47952172be494e496ed5d8c161db265d43b2323.svg" alt="f_T(t)"/> is the module temperature correction factor.</p></li>
+<li><p><img class="math" src="../_images/math/7f465a311484d15060ebaf43432b43fbf7149753.svg" alt="f_{loss}"/> is the aggregate loss factor.</p></li>
 </ul>
 <p>The final AC power also depends on inverter behavior:</p>
-<div class="math notranslate nohighlight">
-\[
-P_{ac}(t) = \eta_{inv}(t) \cdot P_{dc}(t)
-\]</div>
-<p>In practice, PVGIS and <code class="docutils literal notranslate"><span class="pre">pvlib</span></code> handle these calculations with more detailed assumptions than the equations above.
+<div class="math">
+<p><img src="../_images/math/5704ed2071712cdc6f2f12f03f819a534da9b500.svg" alt="P_{ac}(t) = \eta_{inv}(t) \cdot P_{dc}(t)"/></p>
+</div><p>In practice, PVGIS and <code class="docutils literal notranslate"><span class="pre">pvlib</span></code> handle these calculations with more detailed assumptions than the equations above.
 The important point for VeraGrid is that the resulting time series is an active power injection profile in MW.</p>
 </section>
 <section id="realistic-profiles-and-limitations">
@@ -304,11 +298,9 @@ factor are checked.</p>
 <li><p>The annual capacity factor is plausible for the location.</p></li>
 </ul>
 <p>The capacity factor can be estimated as:</p>
-<div class="math notranslate nohighlight">
-\[
-CF = \frac{\sum_t P(t)\Delta t}{P_{rated} \cdot T}
-\]</div>
-<p>Where <span class="math notranslate nohighlight">\(T\)</span> is the total simulated time in hours and <span class="math notranslate nohighlight">\(\Delta t\)</span> is the time-step duration in hours.</p>
+<div class="math">
+<p><img src="../_images/math/2e06954f54615aac6bc7272582ed75fba1db9ee5.svg" alt="CF = \frac{\sum_t P(t)\Delta t}{P_{rated} \cdot T}"/></p>
+</div><p>Where <img class="math" src="../_images/math/e8dea8254118f111b5fb20895b03528c17566f06.svg" alt="T"/> is the total simulated time in hours and <img class="math" src="../_images/math/b4ed9c2e208e08edeca8b1550ec0840acd090276.svg" alt="\Delta t"/> is the time-step duration in hours.</p>
 </section>
 <section id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>

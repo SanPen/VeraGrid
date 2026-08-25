@@ -18,8 +18,6 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -1310,24 +1308,20 @@ time                | f1         | f2  | f3  | f4
 <section id="objective-function">
 <h4>Objective function<a class="headerlink" href="#objective-function" title="Link to this heading"></a></h4>
 <p>The objective function minimizes the cost of generation plus all the slack variables set in the problem.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\min\; f = \sum_g cost_g \cdot Pg_g \\
+<div class="math">
+<p><img src="../_images/math/eeae8b3595a6078fc0fb870019371ea96e27e398.svg" alt="\min\; f = \sum_g cost_g \cdot Pg_g \\
          + \sum_b cost_b \cdot Pb_b \\
          + \sum_l cost_l \cdot LSlack_l \\
-         + \sum_b Fslack1_b + Fslack2_b
-\end{split}\]</div>
-</section>
+         + \sum_b Fslack1_b + Fslack2_b"/></p>
+</div></section>
 <section id="power-injections">
 <h4>Power injections<a class="headerlink" href="#power-injections" title="Link to this heading"></a></h4>
 <p>This equation is not a restriction but the computation of the power injections
-(fixed and LP variables) that are injected per node, such that the vector <span class="math notranslate nohighlight">\(P\)</span>
+(fixed and LP variables) that are injected per node, such that the vector <img class="math" src="../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/>
 is dimensionally coherent with the number of buses.</p>
-<div class="math notranslate nohighlight">
-\[
-P = C_{bus\_gen} \times Pg + C_{bus\_bat} \times Pb - C_{bus\_load} \times (LSlack + Load)
-\]</div>
-<table class="docutils align-default">
+<div class="math">
+<p><img src="../_images/math/029b68c343d561645f24b17c4f134219d56e8918.svg" alt="P = C_{bus\_gen} \times Pg + C_{bus\_bat} \times Pb - C_{bus\_load} \times (LSlack + Load)"/></p>
+</div><table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
 <th class="head"><p>Description</p></th>
@@ -1337,49 +1331,49 @@ P = C_{bus\_gen} \times Pg + C_{bus\_bat} \times Pb - C_{bus\_load} \times (LSla
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(P\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/></p></td>
 <td><p>Vector of active power per node.</p></td>
 <td><p>n</p></td>
 <td><p>Float + LP</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(C_{bus\_gen}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/45131aca643f6c6b64e1d6f4a75620202a98366b.svg" alt="C_{bus\_gen}"/></p></td>
 <td><p>Bus-Generators connectivity matrix.</p></td>
 <td><p>n, ng</p></td>
 <td><p>int</p></td>
 <td><p>1/0</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(Pg\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/4c1483c32ac7c2e30bc75dbec6d46a74169c1f79.svg" alt="Pg"/></p></td>
 <td><p>Vector of generators active power.</p></td>
 <td><p>ng</p></td>
 <td><p>LP</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(C_{bus\_bat}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/bcadcbbb8ac94fa19e066af890941959297fdab1.svg" alt="C_{bus\_bat}"/></p></td>
 <td><p>Bus-Batteries connectivity matrix.</p></td>
 <td><p>n, nb</p></td>
 <td><p>int</p></td>
 <td><p>1/0</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(Pb\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/331a3cd453a23008f02ad67ba4bec4dde6080f4d.svg" alt="Pb"/></p></td>
 <td><p>Vector of batteries active power.</p></td>
 <td><p>nb</p></td>
 <td><p>LP</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(C_{bus\_load}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/b75d7b26684cdc812cd86f5c3afe4050617a2d27.svg" alt="C_{bus\_load}"/></p></td>
 <td><p>Bus-Loads connectivity matrix.</p></td>
 <td><p>n, nl</p></td>
 <td><p>int</p></td>
 <td><p>1/0</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(Load\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/060b8734d79a8bed3ac6c587ca609b6724e8197b.svg" alt="Load"/></p></td>
 <td><p>Vector of active power loads.</p></td>
 <td><p>nl</p></td>
 <td><p>Float</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(LSlack\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/1cfb3e1980eeb0c34360c46fd5850a40a9cf53ce.svg" alt="LSlack"/></p></td>
 <td><p>Vector of active power load slack variables.</p></td>
 <td><p>nl</p></td>
 <td><p>LP</p></td>
@@ -1395,16 +1389,12 @@ electrical balance to be fulfilled. Note that this formulation splits the slack 
 from the non-slack nodes. This is faithful to the original DC power-flow formulation
 which allows for implicit losses computation.</p>
 <p><strong>Equilibrium at the non-slack nodes</strong></p>
-<div class="math notranslate nohighlight">
-\[
-B_{pqpv, pqpv} \times \theta_{pqpv} = P_{pqpv}
-\]</div>
-<p><strong>Equilibrium at the slack nodes</strong></p>
-<div class="math notranslate nohighlight">
-\[
-B_{vd, :} \times \theta = P_{vd}
-\]</div>
-<table class="docutils align-default">
+<div class="math">
+<p><img src="../_images/math/2c4f64505a34c07763fa31fa9327d6b730190a81.svg" alt="B_{pqpv, pqpv} \times \theta_{pqpv} = P_{pqpv}"/></p>
+</div><p><strong>Equilibrium at the slack nodes</strong></p>
+<div class="math">
+<p><img src="../_images/math/d73e583d9880bee4e2230d8ea591f77beca008b2.svg" alt="B_{vd, :} \times \theta = P_{vd}"/></p>
+</div><table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
 <th class="head"><p>Description</p></th>
@@ -1414,19 +1404,19 @@ B_{vd, :} \times \theta = P_{vd}
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(B\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/4bc3e94a67870b41b7c20179693e889251e2c136.svg" alt="B"/></p></td>
 <td><p>Matrix of susceptances (imaginary part of Ybus).</p></td>
 <td><p>n, n</p></td>
 <td><p>Float</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(P\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/></p></td>
 <td><p>Vector of active power per node.</p></td>
 <td><p>n</p></td>
 <td><p>Float + LP</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\theta\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/8a87f04e7d7cca18343c084cceca5237fae62491.svg" alt="\theta"/></p></td>
 <td><p>Vector of bus voltage angles.</p></td>
 <td><p>n</p></td>
 <td><p>LP</p></td>
@@ -1442,29 +1432,19 @@ Note that because of the linear simplifications, the computed solution in
 active power might actually be dangerous for the grid. That is why a real
 power flow should counter-check the OPF solution.</p>
 <p>First we compute the arrays of nodal voltage angles for each of the <strong>from</strong> and <strong>to</strong> sides of each branch (a helper calculation):</p>
-<div class="math notranslate nohighlight">
-\[
-\theta_{from} = C_{branch\_bus\_{from}} \times \theta
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\theta_{to} = C_{branch\_bus\_{to}} \times \theta
-\]</div>
-<p>The branch flow must respect the rating in both directions:</p>
-<div class="math notranslate nohighlight">
-\[
-B_{series}\, (\theta_{from} - \theta_{to}) \leq F_{max} + F_{slack1}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-B_{series}\, (\theta_{to} - \theta_{from}) \leq F_{max} + F_{slack2}
-\]</div>
-<p>We may also impose that the loading slacks are equal because they represent the extra capacity needed in either direction:</p>
-<div class="math notranslate nohighlight">
-\[
-F_{slack1} = F_{slack2}
-\]</div>
-<table class="docutils align-default">
+<div class="math">
+<p><img src="../_images/math/ee58ea941a22ff439ddc64a7f70062ce51b44fee.svg" alt="\theta_{from} = C_{branch\_bus\_{from}} \times \theta"/></p>
+</div><div class="math">
+<p><img src="../_images/math/318592dd0b026b88d3d749f7033ad4ee0e60a4f9.svg" alt="\theta_{to} = C_{branch\_bus\_{to}} \times \theta"/></p>
+</div><p>The branch flow must respect the rating in both directions:</p>
+<div class="math">
+<p><img src="../_images/math/4137a7309c5b0ed72e25eacbc30dfebd92ac8464.svg" alt="B_{series}\, (\theta_{from} - \theta_{to}) \leq F_{max} + F_{slack1}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/e6d87fc03c002bdd5007b8da32a3428c6ac9eec0.svg" alt="B_{series}\, (\theta_{to} - \theta_{from}) \leq F_{max} + F_{slack2}"/></p>
+</div><p>We may also impose that the loading slacks are equal because they represent the extra capacity needed in either direction:</p>
+<div class="math">
+<p><img src="../_images/math/f85c1cb807c4807a6a9cd72dfcf10233b8ecbeab.svg" alt="F_{slack1} = F_{slack2}"/></p>
+</div><table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
 <th class="head"><p>Description</p></th>
@@ -1474,55 +1454,55 @@ F_{slack1} = F_{slack2}
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(B_{series}\)</span></p></td>
-<td><p>Vector of series susceptances of the branches (<span class="math notranslate nohighlight">\(\operatorname{Im}\bigl(1/(r + jx)\bigr)\)</span>).</p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/dc117d0ff19fd197b9c93e7deebd294de6b8087e.svg" alt="B_{series}"/></p></td>
+<td><p>Vector of series susceptances of the branches (<img class="math" src="../_images/math/d2da4d11975493fb84508a49f31fd1e0ec351967.svg" alt="\operatorname{Im}\bigl(1/(r + jx)\bigr)"/>).</p></td>
 <td><p>m</p></td>
 <td><p>Float</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(C_{branch\_bus_{from}}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/6c6c33aa6951a2564f2cb42db21a02aba814b0df.svg" alt="C_{branch\_bus_{from}}"/></p></td>
 <td><p>Branch-Bus connectivity matrix at the <strong>from</strong> end.</p></td>
 <td><p>m, n</p></td>
 <td><p>int</p></td>
 <td><p>1/0</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(C_{branch\_bus_{to}}\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/65bb940a64a9adc5938ed1e6bddd30e79cc3aba4.svg" alt="C_{branch\_bus_{to}}"/></p></td>
 <td><p>Branch-Bus connectivity matrix at the <strong>to</strong> end.</p></td>
 <td><p>m, n</p></td>
 <td><p>int</p></td>
 <td><p>1/0</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\theta_{from}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/e37f92d9a0d27d509c381506ae7d71ddc4ea65be.svg" alt="\theta_{from}"/></p></td>
 <td><p>Voltage angles at the <strong>from</strong> end.</p></td>
 <td><p>m</p></td>
 <td><p>LP</p></td>
 <td><p>radians</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\theta_{to}\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/bdd92603fe60af028a495e3bd7e2bd4e9a589019.svg" alt="\theta_{to}"/></p></td>
 <td><p>Voltage angles at the <strong>to</strong> end.</p></td>
 <td><p>m</p></td>
 <td><p>LP</p></td>
 <td><p>radians</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\theta\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/8a87f04e7d7cca18343c084cceca5237fae62491.svg" alt="\theta"/></p></td>
 <td><p>Vector of bus voltage angles.</p></td>
 <td><p>n</p></td>
 <td><p>LP</p></td>
 <td><p>radians</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(F_{max}\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/8974a77e9e21755f1fa6f7eb0f34ea4d7be7caaf.svg" alt="F_{max}"/></p></td>
 <td><p>Vector of branch ratings.</p></td>
 <td><p>m</p></td>
 <td><p>Float</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(F_{slack1}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/b0a7b4bdb7230c38ac67d85bd4f8dbb96bc477fa.svg" alt="F_{slack1}"/></p></td>
 <td><p>Branch-rating slacks (from→to).</p></td>
 <td><p>m</p></td>
 <td><p>LP</p></td>
 <td><p>p.u.</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(F_{slack2}\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/aa6349f7cfcde739cd4e506a1a96017f5cedb6e5.svg" alt="F_{slack2}"/></p></td>
 <td><p>Branch-rating slacks (to→from).</p></td>
 <td><p>m</p></td>
 <td><p>LP</p></td>
@@ -1865,50 +1845,40 @@ The corresponding generator limits and cost signs must obey:</p>
 <section id="id1">
 <h5>2.1  Objective function<a class="headerlink" href="#id1" title="Link to this heading"></a></h5>
 <p>The general objective already includes the generators linked to turbines, pumps and P2Xs.  A single extra term must be added for spillage costs:</p>
-<div class="math notranslate nohighlight">
-\[
- f_{obj} \;+= \sum_{m}^{n_{m}} cost\_{spill}[m] \sum_{t}^{n_{t}} spill[t,m]
-\]</div>
-<p>where</p>
+<div class="math">
+<p><img src="../_images/math/633cc75011742ccb9f23b9e0560c99a1cd9d8b32.svg" alt="f_{obj} \;+= \sum_{m}^{n_{m}} cost\_{spill}[m] \sum_{t}^{n_{t}} spill[t,m]"/></p>
+</div><p>where</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(f_{obj}\)</span> is the current objective value,</p></li>
-<li><p><span class="math notranslate nohighlight">\(m\)</span> indexes fluid nodes (<span class="math notranslate nohighlight">\(n_m\)</span> total),</p></li>
-<li><p><span class="math notranslate nohighlight">\(t\)</span> indexes time steps (<span class="math notranslate nohighlight">\(n_t\)</span> total).</p></li>
+<li><p><img class="math" src="../_images/math/ae6e45e6cd923c4a3e19d8ef4881582fa7c7e22e.svg" alt="f_{obj}"/> is the current objective value,</p></li>
+<li><p><img class="math" src="../_images/math/e9bc7da808d33a16a8347f27a519bd067186aa66.svg" alt="m"/> indexes fluid nodes (<img class="math" src="../_images/math/3b0dd9e361b0090438701e794cc3296db6188411.svg" alt="n_m"/> total),</p></li>
+<li><p><img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.svg" alt="t"/> indexes time steps (<img class="math" src="../_images/math/0dae3b16a416a9a9c11e35da12b2be21d2c1cbf1.svg" alt="n_t"/> total).</p></li>
 </ul>
 </section>
 <section id="balance-constraint">
 <h5>2.2  Balance constraint<a class="headerlink" href="#balance-constraint" title="Link to this heading"></a></h5>
-<p>For each node <span class="math notranslate nohighlight">\(m\)</span> and time <span class="math notranslate nohighlight">\(t\)</span> the water‑balance reads</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{aligned}
+<p>For each node <img class="math" src="../_images/math/e9bc7da808d33a16a8347f27a519bd067186aa66.svg" alt="m"/> and time <img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.svg" alt="t"/> the water‑balance reads</p>
+<div class="math">
+<p><img src="../_images/math/8391c6fcadaba6b382ffe99c0b3173cb45f7c035.svg" alt="\begin{aligned}
 level[t,m] &amp;= level[t-1,m] \\
            &amp;\quad + dt\,inflow[m] \\
            &amp;\quad + dt\,flow\_{in}[t,m] \\
            &amp;\quad + dt\,flow\_{p2x}[t,m] \\
            &amp;\quad - dt\,spill[t,m] \\
            &amp;\quad - dt\,flow\_{out}[t,m].
-\end{aligned}
-\end{split}\]</div>
-<p>For the first step use <span class="math notranslate nohighlight">\(level[t-1,m]=initial\_level[m]\)</span>.</p>
+\end{aligned}"/></p>
+</div><p>For the first step use <img class="math" src="../_images/math/9449cd945762398add8a0efbc81d194e77c0fa6c.svg" alt="level[t-1,m]=initial\_level[m]"/>.</p>
 <section id="coupling-with-injection-devices">
 <h6>Coupling with injection devices<a class="headerlink" href="#coupling-with-injection-devices" title="Link to this heading"></a></h6>
 <p>Turbines draw water:</p>
-<div class="math notranslate nohighlight">
-\[
-flow\_{out}[t,m] \;+=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]}{p\_{max}[g]\;turb\_eff[i]}
-\]</div>
-<p>Pumps inject water:</p>
-<div class="math notranslate nohighlight">
-\[
-flow\_{in}[t,m] \;-=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]\;pump\_eff[i]}{|p\_{min}[g]|}
-\]</div>
-<p>P2X behaves like a pump:</p>
-<div class="math notranslate nohighlight">
-\[
-flow\_{p2x}[t,m] \;+=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]\;p2x\_eff[i]}{|p\_{min}[g]|}
-\]</div>
-</section>
+<div class="math">
+<p><img src="../_images/math/779edf2d4780a855e1842e0d1166f4dc75e9a038.svg" alt="flow\_{out}[t,m] \;+=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]}{p\_{max}[g]\;turb\_eff[i]}"/></p>
+</div><p>Pumps inject water:</p>
+<div class="math">
+<p><img src="../_images/math/f7306e9249f41a263efa22ad3b8a514e99b7f3cb.svg" alt="flow\_{in}[t,m] \;-=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]\;pump\_eff[i]}{|p\_{min}[g]|}"/></p>
+</div><p>P2X behaves like a pump:</p>
+<div class="math">
+<p><img src="../_images/math/779a69da262f7aeed28051cbdd4b15c698ea24d0.svg" alt="flow\_{p2x}[t,m] \;+=\; \sum\_{i \in m}^{n_i} \frac{p[t,g]\;flow\_{max}[i]\;p2x\_eff[i]}{|p\_{min}[g]|}"/></p>
+</div></section>
 </section>
 <section id="output-results">
 <h5>2.3  Output results<a class="headerlink" href="#output-results" title="Link to this heading"></a></h5>
@@ -2036,82 +2006,82 @@ a subset with large/firm capacity is chosen as slack.  Each generator has a (qua
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">slack</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Slack bus IDs (<span class="math notranslate nohighlight">\(n_{\text{slack}}\)</span>)</p></td>
+<td><p>Slack bus IDs (<img class="math" src="../_images/math/4ad55264820c6021467d90c17c28d4b1b4e34ab2.svg" alt="n_{\text{slack}}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pv</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>PV-bus indices (<span class="math notranslate nohighlight">\(n_{\text{pv}}\)</span>)</p></td>
+<td><p>PV-bus indices (<img class="math" src="../_images/math/cfdeb4ef55b3f0886fd4fff5c9a68692234a2205.svg" alt="n_{\text{pv}}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pq</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>PQ-bus indices (<span class="math notranslate nohighlight">\(n_{\text{pq}}\)</span>)</p></td>
+<td><p>PQ-bus indices (<img class="math" src="../_images/math/b742c4b597940a4431adafaff1b211960a513243.svg" alt="n_{\text{pq}}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">from_idx</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p><strong>from</strong>-bus IDs (<span class="math notranslate nohighlight">\(n_l\)</span>)</p></td>
+<td><p><strong>from</strong>-bus IDs (<img class="math" src="../_images/math/85e302ee545da3eaa4eb692462a3a77da256a71d.svg" alt="n_l"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">to_idx</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p><strong>to</strong>-bus IDs (<span class="math notranslate nohighlight">\(n_l\)</span>)</p></td>
+<td><p><strong>to</strong>-bus IDs (<img class="math" src="../_images/math/85e302ee545da3eaa4eb692462a3a77da256a71d.svg" alt="n_l"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">k_m</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Module-controllable transformers (<span class="math notranslate nohighlight">\(n_{\text{tap}m}\)</span>)</p></td>
+<td><p>Module-controllable transformers (<img class="math" src="../_images/math/bf603b10fad2055901b3d239b3c69c01cd81cea0.svg" alt="n_{\text{tap}m}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">k_tau</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Phase-controllable transformers (<span class="math notranslate nohighlight">\(n_{\text{tap}\tau}\)</span>)</p></td>
+<td><p>Phase-controllable transformers (<img class="math" src="../_images/math/5762dcf8359851ba8519e7f5c6508e266935073f.svg" alt="n_{\text{tap}\tau}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">f_disp_hvdc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Dispatchable HVDC <strong>from</strong> buses (<span class="math notranslate nohighlight">\(n_{dc}\)</span>)</p></td>
+<td><p>Dispatchable HVDC <strong>from</strong> buses (<img class="math" src="../_images/math/269ea383cdcd46a2ac70d793ab66531ea7b4e4b8.svg" alt="n_{dc}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_disp_hvdc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Dispatchable HVDC <strong>to</strong> buses (<span class="math notranslate nohighlight">\(n_{dc}\)</span>)</p></td>
+<td><p>Dispatchable HVDC <strong>to</strong> buses (<img class="math" src="../_images/math/269ea383cdcd46a2ac70d793ab66531ea7b4e4b8.svg" alt="n_{dc}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">f_nd_hvdc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Non-dispatchable HVDC <strong>from</strong> buses (<span class="math notranslate nohighlight">\(n_{ndc}\)</span>)</p></td>
+<td><p>Non-dispatchable HVDC <strong>from</strong> buses (<img class="math" src="../_images/math/ed3488cc8ac2f8a4d3f64c2b49421e0b6c53d2f6.svg" alt="n_{ndc}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">t_nd_hvdc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Non-dispatchable HVDC <strong>to</strong> buses (<span class="math notranslate nohighlight">\(n_{ndc}\)</span>)</p></td>
+<td><p>Non-dispatchable HVDC <strong>to</strong> buses (<img class="math" src="../_images/math/ed3488cc8ac2f8a4d3f64c2b49421e0b6c53d2f6.svg" alt="n_{ndc}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_disp_idx</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Dispatchable generator indices (<span class="math notranslate nohighlight">\(n_{ig}\)</span>)</p></td>
+<td><p>Dispatchable generator indices (<img class="math" src="../_images/math/16db509dee9e678875cf1c1c9c7cd8023096c662.svg" alt="n_{ig}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gen_undisp_idx</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Non-dispatchable generator indices (<span class="math notranslate nohighlight">\(n_{nig}\)</span>)</p></td>
+<td><p>Non-dispatchable generator indices (<img class="math" src="../_images/math/c3cb52160b0f6d92f22e9d298ebb47099c73bc14.svg" alt="n_{nig}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">br_mon_idx</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[int]</span></code></p></td>
 <td><p>-</p></td>
-<td><p>Monitored branch indices (<span class="math notranslate nohighlight">\(m\)</span>)</p></td>
+<td><p>Monitored branch indices (<img class="math" src="../_images/math/e9bc7da808d33a16a8347f27a519bd067186aa66.svg" alt="m"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Ybus</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Matrix[complex]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Bus admittance (<span class="math notranslate nohighlight">\(n_{bus}\times n_{bus}\)</span>)</p></td>
+<td><p>Bus admittance (<img class="math" src="../_images/math/0a2d1bb64d0ddb47a01504647417ee9edd771c06.svg" alt="n_{bus}\times n_{bus}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Yf</span></code>/<code class="docutils literal notranslate"><span class="pre">Yt</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Matrix[complex]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>From/To admittance (<span class="math notranslate nohighlight">\(n_l\times n_{bus}\)</span>)</p></td>
+<td><p>From/To admittance (<img class="math" src="../_images/math/8de1d8f4c6dcdd949c679c84278435eb753627e7.svg" alt="n_l\times n_{bus}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Cg</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Matrix[int]</span></code></p></td>
@@ -2131,62 +2101,62 @@ a subset with large/firm capacity is chosen as slack.  Each generator has a (qua
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pf</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Generator power factor (<span class="math notranslate nohighlight">\(n_{gen}\)</span>)</p></td>
+<td><p>Generator power factor (<img class="math" src="../_images/math/d30d89f286c45f970f0fa399e021ac69e0331768.svg" alt="n_{gen}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sg_undisp</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[complex]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Non-dispatchable generator power (<span class="math notranslate nohighlight">\(n_{nig}\)</span>)</p></td>
+<td><p>Non-dispatchable generator power (<img class="math" src="../_images/math/c3cb52160b0f6d92f22e9d298ebb47099c73bc14.svg" alt="n_{nig}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_nondisp</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Non-dispatchable HVDC power (<span class="math notranslate nohighlight">\(n_{dc}\)</span>)</p></td>
+<td><p>Non-dispatchable HVDC power (<img class="math" src="../_images/math/269ea383cdcd46a2ac70d793ab66531ea7b4e4b8.svg" alt="n_{dc}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">R</span></code>, <code class="docutils literal notranslate"><span class="pre">X</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Branch resistance/reactance (<span class="math notranslate nohighlight">\(n_l\)</span>)</p></td>
+<td><p>Branch resistance/reactance (<img class="math" src="../_images/math/85e302ee545da3eaa4eb692462a3a77da256a71d.svg" alt="n_l"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sd</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[complex]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Load per bus (<span class="math notranslate nohighlight">\(n_{bus}\)</span>)</p></td>
+<td><p>Load per bus (<img class="math" src="../_images/math/4495a572ebef3b7eceab87431cdbb7d5e990d09b.svg" alt="n_{bus}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pg_max/min</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Generator <span class="math notranslate nohighlight">\(P\)</span> limits (<span class="math notranslate nohighlight">\(n_{gen}\)</span>)</p></td>
+<td><p>Generator <img class="math" src="../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/> limits (<img class="math" src="../_images/math/d30d89f286c45f970f0fa399e021ac69e0331768.svg" alt="n_{gen}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Qg_max/min</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Generator <span class="math notranslate nohighlight">\(Q\)</span> limits (<span class="math notranslate nohighlight">\(n_{gen}\)</span>)</p></td>
+<td><p>Generator <img class="math" src="../_images/math/90cab5ae70bdb6e45756490226ba488f522c4c4e.svg" alt="Q"/> limits (<img class="math" src="../_images/math/d30d89f286c45f970f0fa399e021ac69e0331768.svg" alt="n_{gen}"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Vm_max/min</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Voltage limits (<span class="math notranslate nohighlight">\(n_{bus}\)</span>)</p></td>
+<td><p>Voltage limits (<img class="math" src="../_images/math/4495a572ebef3b7eceab87431cdbb7d5e990d09b.svg" alt="n_{bus}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rates</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>p.u.</p></td>
-<td><p>Branch MVA limits (<span class="math notranslate nohighlight">\(n_l\)</span>)</p></td>
+<td><p>Branch MVA limits (<img class="math" src="../_images/math/85e302ee545da3eaa4eb692462a3a77da256a71d.svg" alt="n_l"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">c_0</span></code>, <code class="docutils literal notranslate"><span class="pre">c_1</span></code>, <code class="docutils literal notranslate"><span class="pre">c_2</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>€ / €/MWh / €/MWh²</p></td>
-<td><p>Generator cost coefficients (<span class="math notranslate nohighlight">\(n_{gen}\)</span>)</p></td>
+<td><p>Generator cost coefficients (<img class="math" src="../_images/math/d30d89f286c45f970f0fa399e021ac69e0331768.svg" alt="n_{gen}"/>)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">c_s</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>€</p></td>
-<td><p>Branch-slack penalty (<span class="math notranslate nohighlight">\(m\)</span>)</p></td>
+<td><p>Branch-slack penalty (<img class="math" src="../_images/math/e9bc7da808d33a16a8347f27a519bd067186aa66.svg" alt="m"/>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">c_v</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Array[float]</span></code></p></td>
 <td><p>€</p></td>
-<td><p>Voltage-slack penalty (<span class="math notranslate nohighlight">\(n_{bus}\)</span>)</p></td>
+<td><p>Voltage-slack penalty (<img class="math" src="../_images/math/4495a572ebef3b7eceab87431cdbb7d5e990d09b.svg" alt="n_{bus}"/>)</p></td>
 </tr>
 </tbody>
 </table>
@@ -2195,216 +2165,168 @@ a subset with large/firm capacity is chosen as slack.  Each generator has a (qua
 <section id="variables-objective-and-constraints">
 <h4>2 Variables, objective and constraints<a class="headerlink" href="#variables-objective-and-constraints" title="Link to this heading"></a></h4>
 <p>The AC-OPF is cast as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{aligned}
+<div class="math">
+<p><img src="../_images/math/58df57e6e778311a8e8e3ba3663129be08d08afc.svg" alt="\begin{aligned}
 \min\; &amp; f(x) \\
 \text{s.t.}\; &amp; G(x)=0 \\
 &amp; H(x)\le 0
-\end{aligned}
-\end{split}\]</div>
-<p>where</p>
+\end{aligned}"/></p>
+</div><p>where</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(x\)</span> - decision vector,</p></li>
-<li><p><span class="math notranslate nohighlight">\(f\)</span> - objective,</p></li>
-<li><p><span class="math notranslate nohighlight">\(G\)</span> - equality constraints,</p></li>
-<li><p><span class="math notranslate nohighlight">\(H\)</span> - inequality constraints.</p></li>
+<li><p><img class="math" src="../_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.svg" alt="x"/> - decision vector,</p></li>
+<li><p><img class="math" src="../_images/math/5b7752c757e0b691a80ab8227eadb8a8389dc58a.svg" alt="f"/> - objective,</p></li>
+<li><p><img class="math" src="../_images/math/89878909dbb648acdc4a44ded1bd982d7bddef5d.svg" alt="G"/> - equality constraints,</p></li>
+<li><p><img class="math" src="../_images/math/cb5de54f699cf4b3c7c1a3e87313d11d536c0d88.svg" alt="H"/> - inequality constraints.</p></li>
 </ul>
 <section id="decision-variables">
 <h5>2.1 Decision variables<a class="headerlink" href="#decision-variables" title="Link to this heading"></a></h5>
 <ul class="simple">
-<li><p><strong>Bus voltage magnitude</strong> <span class="math notranslate nohighlight">\(v\)</span></p></li>
-<li><p><strong>Bus voltage angle</strong> <span class="math notranslate nohighlight">\(\theta\)</span> (angle of a primary slack bus fixed to 0)</p></li>
-<li><p><strong>Generator active power</strong> <span class="math notranslate nohighlight">\(P_g\)</span> (dispatchable)</p></li>
-<li><p><strong>Generator reactive power</strong> <span class="math notranslate nohighlight">\(Q_g\)</span> (dispatchable)</p></li>
-<li><p><strong>Transformer tap ratio</strong> <span class="math notranslate nohighlight">\(m_p\)</span> (controllable modulus)</p></li>
-<li><p><strong>Transformer phase shift</strong> <span class="math notranslate nohighlight">\(\tau\)</span> (controllable angle)</p></li>
-<li><p><strong>HVDC link power</strong> <span class="math notranslate nohighlight">\(P_{DC}\)</span> (taken positive in the <em>from</em> direction)</p></li>
+<li><p><strong>Bus voltage magnitude</strong> <img class="math" src="../_images/math/02d98909b5d6acd6a7ff927d4d42790bdd407d58.svg" alt="v"/></p></li>
+<li><p><strong>Bus voltage angle</strong> <img class="math" src="../_images/math/8a87f04e7d7cca18343c084cceca5237fae62491.svg" alt="\theta"/> (angle of a primary slack bus fixed to 0)</p></li>
+<li><p><strong>Generator active power</strong> <img class="math" src="../_images/math/551ded367303de5a7faba8b762bb6fa11878f4b1.svg" alt="P_g"/> (dispatchable)</p></li>
+<li><p><strong>Generator reactive power</strong> <img class="math" src="../_images/math/308d6a37c7014a9ff3e8dc14907fd5dcd96d72b1.svg" alt="Q_g"/> (dispatchable)</p></li>
+<li><p><strong>Transformer tap ratio</strong> <img class="math" src="../_images/math/97a7cd31a8cce0783be5ee58b8ccb21154eb1cf6.svg" alt="m_p"/> (controllable modulus)</p></li>
+<li><p><strong>Transformer phase shift</strong> <img class="math" src="../_images/math/914b2d4b6659b86d3153d5510839dfb254dfc8a3.svg" alt="\tau"/> (controllable angle)</p></li>
+<li><p><strong>HVDC link power</strong> <img class="math" src="../_images/math/f027d29454b595c64de20619037e764a5b420e1b.svg" alt="P_{DC}"/> (taken positive in the <em>from</em> direction)</p></li>
 </ul>
 <p>If soft limits are enabled additional non-negative slacks are added:</p>
 <ul class="simple">
-<li><p>Branch flow slacks <span class="math notranslate nohighlight">\(\operatorname{sl}_{sf},\operatorname{sl}_{st}\)</span> (each monitored branch)</p></li>
-<li><p>Voltage slacks <span class="math notranslate nohighlight">\(\operatorname{sl}_{v\max},\operatorname{sl}_{v\min}\)</span> (each bus)</p></li>
+<li><p>Branch flow slacks <img class="math" src="../_images/math/b78849804f34360378af6863de88d54955698dca.svg" alt="\operatorname{sl}_{sf},\operatorname{sl}_{st}"/> (each monitored branch)</p></li>
+<li><p>Voltage slacks <img class="math" src="../_images/math/87f392c3b1f0fbf5c667207bbbfd23479e87c7d2.svg" alt="\operatorname{sl}_{v\max},\operatorname{sl}_{v\min}"/> (each bus)</p></li>
 </ul>
 <p>The stacked variable vector is</p>
-<div class="math notranslate nohighlight">
-\[
-x = \bigl[\,v,\; \theta,\; P_g,\; Q_g,\; \operatorname{sl}_{sf},\; \operatorname{sl}_{st},\; \operatorname{sl}_{v\max},\; \operatorname{sl}_{v\min},\; m_p,\; \tau,\; P_{DC}\bigr]
-\]</div>
-<p>with</p>
-<div class="math notranslate nohighlight">
-\[
-N_V = 2n_{bus} + 2n_g + n_{sl} + n_{tapm} + n_{tapt} + n_{dc}, \qquad n_{sl}=2n_{bus}+2m.
-\]</div>
-</section>
+<div class="math">
+<p><img src="../_images/math/c1dc4dfc8d2da454cb12d9248f13b0e7abcb8bb6.svg" alt="x = \bigl[\,v,\; \theta,\; P_g,\; Q_g,\; \operatorname{sl}_{sf},\; \operatorname{sl}_{st},\; \operatorname{sl}_{v\max},\; \operatorname{sl}_{v\min},\; m_p,\; \tau,\; P_{DC}\bigr]"/></p>
+</div><p>with</p>
+<div class="math">
+<p><img src="../_images/math/80b8c2ce0fb0c272d4e1dfeb8df8a5b06af25285.svg" alt="N_V = 2n_{bus} + 2n_g + n_{sl} + n_{tapm} + n_{tapt} + n_{dc}, \qquad n_{sl}=2n_{bus}+2m."/></p>
+</div></section>
 <section id="id2">
 <h5>2.2 Objective function<a class="headerlink" href="#id2" title="Link to this heading"></a></h5>
 <p>Generator cost is quadratic:</p>
-<div class="math notranslate nohighlight">
-\[
-\min f = c_2^{\top} P_g^{\circ 2} + c_1^{\top} P_g + c_0.
-\]</div>
-<p>If slacks are active:</p>
-<div class="math notranslate nohighlight">
-\[
-\min f = c_2^{\top} P_g^{\circ 2} + c_1^{\top} P_g + c_0 + c_s^{\top}(\operatorname{sl}_{sf}+\operatorname{sl}_{st}) + c_v^{\top}(\operatorname{sl}_{v\max}+\operatorname{sl}_{v\min}).
-\]</div>
-</section>
+<div class="math">
+<p><img src="../_images/math/369de44c1cb8a7245f86868b89ccaa48d7120855.svg" alt="\min f = c_2^{\top} P_g^{\circ 2} + c_1^{\top} P_g + c_0."/></p>
+</div><p>If slacks are active:</p>
+<div class="math">
+<p><img src="../_images/math/6101b22f82b0083c07a04200246a0e18b4ddea3a.svg" alt="\min f = c_2^{\top} P_g^{\circ 2} + c_1^{\top} P_g + c_0 + c_s^{\top}(\operatorname{sl}_{sf}+\operatorname{sl}_{st}) + c_v^{\top}(\operatorname{sl}_{v\max}+\operatorname{sl}_{v\min})."/></p>
+</div></section>
 <section id="equality-constraints">
 <h5>2.3 Equality constraints<a class="headerlink" href="#equality-constraints" title="Link to this heading"></a></h5>
 <ul class="simple">
-<li><p><strong>AC power-balance</strong> (<span class="math notranslate nohighlight">\(n_{bus}\)</span> complex equations):</p></li>
+<li><p><strong>AC power-balance</strong> (<img class="math" src="../_images/math/4495a572ebef3b7eceab87431cdbb7d5e990d09b.svg" alt="n_{bus}"/> complex equations):</p></li>
 </ul>
-<div class="math notranslate nohighlight">
-\[
-S^{bus} = V I_{bus}^* = V (Y_{bus}^* V^*)
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-G^{S} = S^{bus} + S_d - C_g[:,\text{disp}]\,(P_g + jQ_g) - C_g[:,\text{undisp}]\,S_{g,\text{undisp}}
-\]</div>
-<p>For HVDC links (<span class="math notranslate nohighlight">\(\text{link}\)</span> index):</p>
-<div class="math notranslate nohighlight">
-\[
-G^{S}[f_{dc}[\text{link}]]\;{+}= P_{f,DC}[\text{link}],\qquad
-G^{S}[t_{dc}[\text{link}]]\;{-}= P_{f,DC}[\text{link}].
-\]</div>
-<ul class="simple">
+<div class="math">
+<p><img src="../_images/math/4f176c971f3d7796b8ce4cb8b9c7a45c0bbcd499.svg" alt="S^{bus} = V I_{bus}^* = V (Y_{bus}^* V^*)"/></p>
+</div><div class="math">
+<p><img src="../_images/math/7ede25b252dc43af6b43e20a37a73b66ef77cbb4.svg" alt="G^{S} = S^{bus} + S_d - C_g[:,\text{disp}]\,(P_g + jQ_g) - C_g[:,\text{undisp}]\,S_{g,\text{undisp}}"/></p>
+</div><p>For HVDC links (<img class="math" src="../_images/math/04a445f5bf9eb0a0502f51d3f047e660895f5aa4.svg" alt="\text{link}"/> index):</p>
+<div class="math">
+<p><img src="../_images/math/9cce99dbaa17891da9bacf28cd3c3a24f22f08fe.svg" alt="G^{S}[f_{dc}[\text{link}]]\;{+}= P_{f,DC}[\text{link}],\qquad
+G^{S}[t_{dc}[\text{link}]]\;{-}= P_{f,DC}[\text{link}]."/></p>
+</div><ul class="simple">
 <li><p><strong>PV-bus voltage magnitude</strong>:</p></li>
 </ul>
-<div class="math notranslate nohighlight">
-\[
-G^{PV}=v_{pv}-V_{\max}[pv]
-\]</div>
-<ul class="simple">
+<div class="math">
+<p><img src="../_images/math/0822d62095d07811d8ac65ffb3ea4fbbc175f93a.svg" alt="G^{PV}=v_{pv}-V_{\max}[pv]"/></p>
+</div><ul class="simple">
 <li><p><strong>Angle reference</strong>:</p></li>
 </ul>
-<div class="math notranslate nohighlight">
-\[
-G^{\theta}=\theta[slack]
-\]</div>
-<p>All equalities are gathered as</p>
-<div class="math notranslate nohighlight">
-\[
-G(x)=\bigl[\operatorname{Re}G^{S},\;\operatorname{Im}G^{S},\;G^{PV},\;G^{\theta}\bigr].
-\]</div>
-</section>
+<div class="math">
+<p><img src="../_images/math/8b605cb81514ff950ef328e2b2047b60a0d94c92.svg" alt="G^{\theta}=\theta[slack]"/></p>
+</div><p>All equalities are gathered as</p>
+<div class="math">
+<p><img src="../_images/math/797de97cad75fd9002fd140a55a102d22ed33d54.svg" alt="G(x)=\bigl[\operatorname{Re}G^{S},\;\operatorname{Im}G^{S},\;G^{PV},\;G^{\theta}\bigr]."/></p>
+</div></section>
 <section id="inequality-constraints">
 <h5>2.4 Inequality constraints<a class="headerlink" href="#inequality-constraints" title="Link to this heading"></a></h5>
 <p>Branch apparent-power limits (monitored set):
-$<span class="math notranslate nohighlight">\(
-H^{sf}= |S^{f}|^{2}-{S_{\max}}^{2}, \qquad H^{st}= |S^{t}|^{2}-{S_{\max}}^{2}.
-\)</span>$</p>
+$<img class="math" src="../_images/math/a9cf77d6678ad1edbbcd035065e1071a9ae2676b.svg" alt="H^{sf}= |S^{f}|^{2}-{S_{\max}}^{2}, \qquad H^{st}= |S^{t}|^{2}-{S_{\max}}^{2}."/>$</p>
 <p>Voltage, generation, tap and DC bounds provide simple box inequalities.
 Collecting all terms yields
-$<span class="math notranslate nohighlight">\(
-H(x)=\bigl[H^{sf},\,H^{st},\,H^{v_u},H^{p_u},H^{q_u},H^{v_l},H^{p_l},H^{q_l},\,H^{slsf},H^{slst},H^{slv\max},H^{slv\min},H^{tapm_u},H^{tapt_u},H^{tapm_l},H^{tapt_l},H^{dc_u},H^{dc_l}\bigr].
-\)</span>$</p>
+$<img class="math" src="../_images/math/cd7cfddfb68db97d1958d336d6871684c926e21b.svg" alt="H(x)=\bigl[H^{sf},\,H^{st},\,H^{v_u},H^{p_u},H^{q_u},H^{v_l},H^{p_l},H^{q_l},\,H^{slsf},H^{slst},H^{slv\max},H^{slv\min},H^{tapm_u},H^{tapt_u},H^{tapm_l},H^{tapt_l},H^{dc_u},H^{dc_l}\bigr]."/>$</p>
 </section>
 </section>
 <section id="kkt-conditions-newton-raphson-solution">
 <h4>3 KKT conditions &amp; Newton-Raphson solution<a class="headerlink" href="#kkt-conditions-newton-raphson-solution" title="Link to this heading"></a></h4>
 <section id="karush-kuhn-tucker-system">
 <h5>3.1 Karush-Kuhn-Tucker system<a class="headerlink" href="#karush-kuhn-tucker-system" title="Link to this heading"></a></h5>
-<p>Slack variables <span class="math notranslate nohighlight">\(Z\ge0\)</span> convert inequalities to equalities <span class="math notranslate nohighlight">\(H(x)+Z=0\)</span>.
-Introducing multipliers <span class="math notranslate nohighlight">\(\lambda\)</span> (for <span class="math notranslate nohighlight">\(G\)</span>) and <span class="math notranslate nohighlight">\(\mu\ge0\)</span> (for <span class="math notranslate nohighlight">\(H\)</span>) the KKT conditions are</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{aligned}
+<p>Slack variables <img class="math" src="../_images/math/a908b48f4e4d86b5fd1967ed7f3332b169bc131a.svg" alt="Z\ge0"/> convert inequalities to equalities <img class="math" src="../_images/math/999e970eabb6a68f7c0668996019bfc987df9d64.svg" alt="H(x)+Z=0"/>.
+Introducing multipliers <img class="math" src="../_images/math/cefc603e5658facb747581f9567192993f21c7ab.svg" alt="\lambda"/> (for <img class="math" src="../_images/math/89878909dbb648acdc4a44ded1bd982d7bddef5d.svg" alt="G"/>) and <img class="math" src="../_images/math/fab13411f7e7ae419ef97d1e196f12b432c5a7d7.svg" alt="\mu\ge0"/> (for <img class="math" src="../_images/math/cb5de54f699cf4b3c7c1a3e87313d11d536c0d88.svg" alt="H"/>) the KKT conditions are</p>
+<div class="math">
+<p><img src="../_images/math/e09ba11e5e740fccc854e8df1112d13904f7e2e3.svg" alt="\begin{aligned}
 &amp;\nabla f(x)+\nabla G(x)^{\top}\lambda+\nabla H(x)^{\top}\mu = 0, \\
 &amp;G(x)=0, \qquad H(x)+Z=0, \\
 &amp;\mu\odot Z = \gamma\mathbf 1, \qquad \mu,Z\ge0.
-\end{aligned}
-\end{split}\]</div>
-<p>Parameter <span class="math notranslate nohighlight">\(\gamma\)</span> is reduced geometrically towards 0 to drive complementarity.</p>
+\end{aligned}"/></p>
+</div><p>Parameter <img class="math" src="../_images/math/34d137cf01c787ecda732761c3f95b0f65a6c3e9.svg" alt="\gamma"/> is reduced geometrically towards 0 to drive complementarity.</p>
 </section>
 <section id="newton-step">
 <h5>3.2 Newton step<a class="headerlink" href="#newton-step" title="Link to this heading"></a></h5>
-<p>The full NR vector is <span class="math notranslate nohighlight">\(y=[x,\lambda,\mu,Z]\)</span>.<br />
-A reduced system a la <strong>MIPS</strong> solves for <span class="math notranslate nohighlight">\(\Delta X,\Delta\lambda\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{bmatrix}M &amp; G_X^{\top}\\ G_X &amp; 0\end{bmatrix}
-\begin{bmatrix}\Delta X\\ \Delta\lambda\end{bmatrix}=\begin{bmatrix}-N\\ -G(X)\end{bmatrix}
-\end{split}\]</div>
-<p>with</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{aligned}
+<p>The full NR vector is <img class="math" src="../_images/math/d9f09b1c9e21d49369b9ff8e9170b81ea2eef900.svg" alt="y=[x,\lambda,\mu,Z]"/>.<br />
+A reduced system a la <strong>MIPS</strong> solves for <img class="math" src="../_images/math/725a96a5e69dd60b498c95b6250b2aee40db55e9.svg" alt="\Delta X,\Delta\lambda"/>:</p>
+<div class="math">
+<p><img src="../_images/math/edbf90b97976656371415d4b8cf9eb62dc9736da.svg" alt="\begin{bmatrix}M &amp; G_X^{\top}\\ G_X &amp; 0\end{bmatrix}
+\begin{bmatrix}\Delta X\\ \Delta\lambda\end{bmatrix}=\begin{bmatrix}-N\\ -G(X)\end{bmatrix}"/></p>
+</div><p>with</p>
+<div class="math">
+<p><img src="../_images/math/dbe385ad18bc019a12401023067ca0bccb9004ad.svg" alt="\begin{aligned}
 M &amp;= L_{XX}+H_X^{\top}[Z]^{-1}[\mu]H_X,\\
 N &amp;= L_X+H_X^{\top}[Z]^{-1}\bigl(\gamma\mathbf 1+[\mu]H(X)\bigr),\\
 L_X &amp;= f_X+G_X^{\top}\lambda+H_X^{\top}\mu,\\
 L_{XX} &amp;= f_{XX}+G_{XX}(\lambda)+H_{XX}(\mu).
-\end{aligned}
-\end{split}\]</div>
-<p>Updates for <span class="math notranslate nohighlight">\(Z\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> follow</p>
-<div class="math notranslate nohighlight">
-\[
-\Delta Z = -H(X)-Z-H_X\Delta X, \qquad
-\Delta\mu = -\mu+[Z]^{-1}\bigl(\gamma\mathbf1-[\mu]\Delta Z\bigr).
-\]</div>
-</section>
+\end{aligned}"/></p>
+</div><p>Updates for <img class="math" src="../_images/math/95f028ab2b20b895fa12d986e0d9f40f7b6e52d3.svg" alt="Z"/> and <img class="math" src="../_images/math/4a3598141469c2555591e66606a1b86d4ec6dca9.svg" alt="\mu"/> follow</p>
+<div class="math">
+<p><img src="../_images/math/693364ef31a052199714ba6103af466d190da08b.svg" alt="\Delta Z = -H(X)-Z-H_X\Delta X, \qquad
+\Delta\mu = -\mu+[Z]^{-1}\bigl(\gamma\mathbf1-[\mu]\Delta Z\bigr)."/></p>
+</div></section>
 <section id="step-length-positivity-safeguard">
 <h5>3.3 Step length &amp; positivity safeguard<a class="headerlink" href="#step-length-positivity-safeguard" title="Link to this heading"></a></h5>
-<p>A back-tracking merit-function test limits the step factor <span class="math notranslate nohighlight">\(\alpha\in(0,1]\)</span>.<br />
-Positivity of <span class="math notranslate nohighlight">\((\mu,Z)\)</span> is enforced by</p>
-<div class="math notranslate nohighlight">
-\[
-\alpha_p = \min\bigl(1,\,\tau\min_{\Delta Z_m&lt;0}\!-Z_m/\Delta Z_m\bigr),\qquad
-\alpha_d = \min\bigl(1,\,\tau\min_{\Delta\mu_m&lt;0}\! -\mu_m/\Delta \mu_m\bigr),
-\]</div>
-<p>with <span class="math notranslate nohighlight">\(\tau\approx0.995\)</span>. Finally</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{aligned}
+<p>A back-tracking merit-function test limits the step factor <img class="math" src="../_images/math/9fbef49b9e3b2c5ade9ac84c62a96102717aedef.svg" alt="\alpha\in(0,1]"/>.<br />
+Positivity of <img class="math" src="../_images/math/7c52efece4bd913b32dac16651baa271af0004a1.svg" alt="(\mu,Z)"/> is enforced by</p>
+<div class="math">
+<p><img src="../_images/math/7180527b768bbcbb534b28314dbb19d312f8fe41.svg" alt="\alpha_p = \min\bigl(1,\,\tau\min_{\Delta Z_m&lt;0}\!-Z_m/\Delta Z_m\bigr),\qquad
+\alpha_d = \min\bigl(1,\,\tau\min_{\Delta\mu_m&lt;0}\! -\mu_m/\Delta \mu_m\bigr),"/></p>
+</div><p>with <img class="math" src="../_images/math/82f0fd9c5c327be18b67e12593f902b84ebe2564.svg" alt="\tau\approx0.995"/>. Finally</p>
+<div class="math">
+<p><img src="../_images/math/6d260da6309da578866b1bcb97a82856f71728c3.svg" alt="\begin{aligned}
 X &amp;\leftarrow X+\alpha_p\Delta X, &amp; Z &amp;\leftarrow Z+\alpha_p\Delta Z,\\
 \lambda &amp;\leftarrow \lambda+\alpha_d\Delta\lambda, &amp; \mu &amp;\leftarrow \mu+\alpha_d\Delta\mu,\\
 \gamma &amp;\leftarrow \sigma\,\frac{Z^{\top}\mu}{n_{ineq}},\; \sigma\in(0,1).
-\end{aligned}
-\end{split}\]</div>
-</section>
+\end{aligned}"/></p>
+</div></section>
 </section>
 <section id="derivatives">
 <h4>4 Derivatives<a class="headerlink" href="#derivatives" title="Link to this heading"></a></h4>
 <section id="objective">
 <h5>4.1 Objective<a class="headerlink" href="#objective" title="Link to this heading"></a></h5>
-<p>For <span class="math notranslate nohighlight">\(f=c_2^{\top}P_g^{\circ2}+c_1^{\top}P_g+c_0\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
-\nabla_{P_g}f = 2\,c_2\odot P_g + c_1,\qquad
-\nabla^2_{P_gP_g}f = 2\operatorname{diag}(c_2).
-\]</div>
-<p>Slack-penalty gradients add constants <span class="math notranslate nohighlight">\(c_s\)</span> and <span class="math notranslate nohighlight">\(c_v\)</span> in the appropriate positions.</p>
+<p>For <img class="math" src="../_images/math/ffc8ccb247cb7f6d7ec4a4a3e1d26213638addff.svg" alt="f=c_2^{\top}P_g^{\circ2}+c_1^{\top}P_g+c_0"/>:</p>
+<div class="math">
+<p><img src="../_images/math/b77f387e12b4ea436196e522a185db319b1b2175.svg" alt="\nabla_{P_g}f = 2\,c_2\odot P_g + c_1,\qquad
+\nabla^2_{P_gP_g}f = 2\operatorname{diag}(c_2)."/></p>
+</div><p>Slack-penalty gradients add constants <img class="math" src="../_images/math/0db85a3b4a885bd4d3b22d0eea077e6bc90989d6.svg" alt="c_s"/> and <img class="math" src="../_images/math/c7e09be40b85b85338d2ac731494dab5a18d1c7d.svg" alt="c_v"/> in the appropriate positions.</p>
 </section>
 <section id="power-balance-derivatives">
 <h5>4.2 Power-balance derivatives<a class="headerlink" href="#power-balance-derivatives" title="Link to this heading"></a></h5>
 <p>(Only the main formulas are listed; see MATPOWER docs and FUBM for full derivations.)</p>
 <p>First derivatives w.r.t. voltage:
-$<span class="math notranslate nohighlight">\(
-\frac{\partial G^{S}}{\partial v} = [V]\bigl([I_{bus}]^* + Y_{bus}^*[V]^*\bigr)\left[\frac1v\right],\qquad
-\frac{\partial G^{S}}{\partial \theta} = j[V]\bigl([I_{bus}]^*-Y_{bus}^*[V]^*\bigr).
-\)</span>$</p>
-<p>Transformer tap (<span class="math notranslate nohighlight">\(m_p\)</span>) and phase (<span class="math notranslate nohighlight">\(\tau\)</span>) derivatives are obtained via <em>from/to</em> power decomposition
-$<span class="math notranslate nohighlight">\(
-S^{bus}=C_f^{\top}S^{f}+C_t^{\top}S^{t}
-\)</span>$
+$<img class="math" src="../_images/math/2e6c629d29fa183bc6e1085c4331f6a37180297d.svg" alt="\frac{\partial G^{S}}{\partial v} = [V]\bigl([I_{bus}]^* + Y_{bus}^*[V]^*\bigr)\left[\frac1v\right],\qquad
+\frac{\partial G^{S}}{\partial \theta} = j[V]\bigl([I_{bus}]^*-Y_{bus}^*[V]^*\bigr)."/>$</p>
+<p>Transformer tap (<img class="math" src="../_images/math/97a7cd31a8cce0783be5ee58b8ccb21154eb1cf6.svg" alt="m_p"/>) and phase (<img class="math" src="../_images/math/914b2d4b6659b86d3153d5510839dfb254dfc8a3.svg" alt="\tau"/>) derivatives are obtained via <em>from/to</em> power decomposition
+$<img class="math" src="../_images/math/330fd83922e60bce7092c621e66d0b2ef175cb03.svg" alt="S^{bus}=C_f^{\top}S^{f}+C_t^{\top}S^{t}"/>$
 and application of the Flexible Universal Branch Model.</p>
 <p><em>(Detailed first- and second-order expressions omitted for brevity; they have been transcribed verbatim from the original note into the source markdown so you can inspect them.)</em></p>
 </section>
 <section id="inequality-branch-limit-derivatives">
 <h5>4.3 Inequality (branch-limit) derivatives<a class="headerlink" href="#inequality-branch-limit-derivatives" title="Link to this heading"></a></h5>
 <p>For monitored branches</p>
-<div class="math notranslate nohighlight">
-\[
-H^{sf}=|S^{f}|^{2}-S_{\max}^{2}, \quad H^{st}=|S^{t}|^{2}-S_{\max}^{2},
-\]</div>
-<p>the Jacobians are</p>
-<div class="math notranslate nohighlight">
-\[
-\frac{\partial H^{sf}}{\partial X}=2\bigl(\operatorname{Re}(S^{f})\operatorname{Re}\tfrac{\partial S^{f}}{\partial X}+\operatorname{Im}(S^{f})\operatorname{Im}\tfrac{\partial S^{f}}{\partial X}\bigr)
-\]</div>
-<p>and analogously for <span class="math notranslate nohighlight">\(H^{st}\)</span>.<br />
-Second derivatives are assembled using the chain-rule with branch multipliers <span class="math notranslate nohighlight">\(\mu_f,\mu_t\)</span>.</p>
+<div class="math">
+<p><img src="../_images/math/cb64bdab70fc2e44b6530b30c07edbbfe5e20a1f.svg" alt="H^{sf}=|S^{f}|^{2}-S_{\max}^{2}, \quad H^{st}=|S^{t}|^{2}-S_{\max}^{2},"/></p>
+</div><p>the Jacobians are</p>
+<div class="math">
+<p><img src="../_images/math/0882e71bd03cb15322dbc8ee2385b82569ffaae9.svg" alt="\frac{\partial H^{sf}}{\partial X}=2\bigl(\operatorname{Re}(S^{f})\operatorname{Re}\tfrac{\partial S^{f}}{\partial X}+\operatorname{Im}(S^{f})\operatorname{Im}\tfrac{\partial S^{f}}{\partial X}\bigr)"/></p>
+</div><p>and analogously for <img class="math" src="../_images/math/42b17e5787aeb5701c20a7e2b174025a8b85f3bc.svg" alt="H^{st}"/>.<br />
+Second derivatives are assembled using the chain-rule with branch multipliers <img class="math" src="../_images/math/bbe8b3f8905888493be75fc3548272b290fd9f72.svg" alt="\mu_f,\mu_t"/>.</p>
 <p><em>The remainder of the document (detailed second-order tap derivatives, code snippets, etc.)
 has been preserved exactly as in the source and is viewable in the canvas.
 Feel free to adjust, expand or remove sections as needed.</em></p>

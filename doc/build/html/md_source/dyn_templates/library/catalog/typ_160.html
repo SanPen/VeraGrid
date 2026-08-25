@@ -18,8 +18,6 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -170,35 +168,21 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math notranslate nohighlight">
-\[
-\frac{d x1}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot x2)
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\frac{d x2}{dt} = (proc_{select\_1} \cdot 0 + (1 - proc_{select\_1}) \cdot (-Butterworth 2nd order _{rst\_hold\_wc\_2} \cdot x1 - 1.414wc \cdot x2 + yi))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (yo - (proc_{select\_3} \cdot proc_{lastvalue\_2} + (1 - proc_{select\_3}) \cdot Butterworth 2nd order _{rst\_hold\_wc\_2} \cdot x1))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Butterworth 2nd order _{rst\_hold\_wc\_2}(t_0) = (wc \cdot wc)
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-x1(t_0) = (\frac{yi}{Butterworth 2nd order _{rst\_hold\_wc\_2}})
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-x2(t_0) = 0
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Butterworth 2nd order _{rst\_hold\_x1\_init}(t_0) = x1
-\]</div>
-</section>
+<div class="math">
+<p><img src="../../../../_images/math/62525bc7b1095ba3f2cc13613341bf930872b679.svg" alt="\frac{d x1}{dt} = (proc_{select\_0} \cdot 0 + (1 - proc_{select\_0}) \cdot x2)"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/2838cc27eca2718c9a4f01a89486b9429b981b97.svg" alt="\frac{d x2}{dt} = (proc_{select\_1} \cdot 0 + (1 - proc_{select\_1}) \cdot (-Butterworth 2nd order _{rst\_hold\_wc\_2} \cdot x1 - 1.414wc \cdot x2 + yi))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/e3b7e30da216fd77c17a6e18c7cc4a34bf1e22d6.svg" alt="0 = (yo - (proc_{select\_3} \cdot proc_{lastvalue\_2} + (1 - proc_{select\_3}) \cdot Butterworth 2nd order _{rst\_hold\_wc\_2} \cdot x1))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/e92296d1b5de3778bd654444d059eea13f11ba03.svg" alt="Butterworth 2nd order _{rst\_hold\_wc\_2}(t_0) = (wc \cdot wc)"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/bf17ade2045c7a4d0f020926c886ff28572e5aa5.svg" alt="x1(t_0) = (\frac{yi}{Butterworth 2nd order _{rst\_hold\_wc\_2}})"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/074e2dc151af5f3e1814143020bdeaf39655309f.svg" alt="x2(t_0) = 0"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/ab28874a9e688f36efbd8436dd45735e8b5de594.svg" alt="Butterworth 2nd order _{rst\_hold\_x1\_init}(t_0) = x1"/></p>
+</div></section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

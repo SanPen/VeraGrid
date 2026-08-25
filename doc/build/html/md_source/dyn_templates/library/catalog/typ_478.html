@@ -18,8 +18,6 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -170,31 +168,64 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math notranslate nohighlight">
-\[
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">
 \frac{d x}{dt} = (proc_{select\_0} \cdot 2\lvertextfrq\rvert + (1 - proc_{select\_0}) \cdot 0)
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (output - Clock (t&gt;t0) _{sig\_clock})
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Clock (t&gt;t0) _{sig\_t0}(t_0) = glob_{time}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Clock (t&gt;t0) _{sig\_clock}(t_0) = 0
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-x(t_0) = 0
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-output(t_0) = Clock (t&gt;t0) _{sig\_clock}
-\]</div>
-</section>
+</span>)</p>
+<p>latex exited with error
+[stdout]
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=latex)
+ restricted \write18 enabled.
+entering extended mode
+(./math.tex
+LaTeX2e &lt;2023-11-01&gt; patch level 1
+L3 programming layer &lt;2024-01-22&gt;
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/anyfontsize/anyfontsize.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-dvips.def)
+No file math.aux.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+! Undefined control sequence.
+&lt;argument&gt; ...roc_{select\_0} \cdot 2\lvertextfrq 
+                                                  \rvert + (1 - proc_{select...
+l.16 \end{split}
+                
+! Undefined control sequence.
+&lt;argument&gt; ...roc_{select\_0} \cdot 2\lvertextfrq 
+                                                  \rvert + (1 - proc_{select...
+l.16 \end{split}
+                
+[1] (./math.aux) )
+(see the transcript file for additional information)
+Output written on math.dvi (1 page, 624 bytes).
+Transcript written on math.log.
+</p>
+</aside>
+<div class="math">
+<p><img src="../../../../_images/math/eb6e7cb21a8bb8ee87fc6d188f9b720f98501324.svg" alt="0 = (output - Clock (t&gt;t0) _{sig\_clock})"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/447eff9a2d905dc61ddee9e8722cdac2f7fc7330.svg" alt="Clock (t&gt;t0) _{sig\_t0}(t_0) = glob_{time}"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/e1be71c490d277ebfb532bc1273e0ff43bac83dc.svg" alt="Clock (t&gt;t0) _{sig\_clock}(t_0) = 0"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/08cc6aaab04f01c856f8658b353c85f8c9250b04.svg" alt="x(t_0) = 0"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/dcf0bfe2005fc8367c877839ba2b072930b06dd0.svg" alt="output(t_0) = Clock (t&gt;t0) _{sig\_clock}"/></p>
+</div></section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

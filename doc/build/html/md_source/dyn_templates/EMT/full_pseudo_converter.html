@@ -18,8 +18,6 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -164,17 +162,13 @@
 <section id="characteristic-behavior">
 <h2>Characteristic behavior<a class="headerlink" href="#characteristic-behavior" title="Link to this heading"></a></h2>
 <p>The measured ABC quantities are transformed into the PLL-aligned dq0 frame. The equivalent filter-current states follow representative equations of the form</p>
-<div class="math notranslate nohighlight">
-\[
-\frac{d i_d}{dt}=\frac{\omega_{base}}{L_{eq}}
-\left(v_d-v_{cmd,d}-R_{eq}i_d+\omega_rL_{eq}i_q\right),
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\frac{d i_q}{dt}=\frac{\omega_{base}}{L_{eq}}
-\left(v_q-v_{cmd,q}-R_{eq}i_q-\omega_rL_{eq}i_d\right).
-\]</div>
-<p>The outer controller converts active/reactive-power or DC-voltage error into current references. The inner controller converts current error into dq voltage commands, with current, modulation, and anti-windup limits. The dq currents are transformed back to ABC current injections. <code class="docutils literal notranslate"><span class="pre">Idc</span></code> is obtained from the AC/DC power balance and configured losses.</p>
+<div class="math">
+<p><img src="../../../_images/math/a64405902ae509313437916f42dfa5ff4fc5d60a.svg" alt="\frac{d i_d}{dt}=\frac{\omega_{base}}{L_{eq}}
+\left(v_d-v_{cmd,d}-R_{eq}i_d+\omega_rL_{eq}i_q\right),"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/f9720158cf6ea469f6d65667cfcf6d805acf656b.svg" alt="\frac{d i_q}{dt}=\frac{\omega_{base}}{L_{eq}}
+\left(v_q-v_{cmd,q}-R_{eq}i_q-\omega_rL_{eq}i_d\right)."/></p>
+</div><p>The outer controller converts active/reactive-power or DC-voltage error into current references. The inner controller converts current error into dq voltage commands, with current, modulation, and anti-windup limits. The dq currents are transformed back to ABC current injections. <code class="docutils literal notranslate"><span class="pre">Idc</span></code> is obtained from the AC/DC power balance and configured losses.</p>
 </section>
 <section id="averaged-model-boundary">
 <h2>Averaged-model boundary<a class="headerlink" href="#averaged-model-boundary" title="Link to this heading"></a></h2>

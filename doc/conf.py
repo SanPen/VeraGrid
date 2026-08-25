@@ -54,7 +54,7 @@ extensions = list()
 extensions.append('sphinx.ext.todo')
 extensions.append('sphinx.ext.autodoc')
 extensions.append('sphinx.ext.intersphinx')
-extensions.append('sphinx.ext.mathjax')
+extensions.append('sphinx.ext.imgmath')
 extensions.append('sphinx.ext.viewcode')
 extensions.append('sphinx.ext.graphviz')
 extensions.append('sphinx_rtd_theme')
@@ -64,6 +64,7 @@ extensions.append('myst_parser')  # markdown
 
 autosummary_generate = True
 myst_dmath_allow_labels = True
+imgmath_image_format = 'svg'
 
 # generate CGMES, PSSe and VeraGrid data models' rst files
 write_models_to_md(os.path.join('md_source', 'data_models.md'))

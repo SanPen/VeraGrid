@@ -18,8 +18,6 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -2267,20 +2265,18 @@ distribution level, load points can be highly unbalanced due to single-phase con
 <h2>Generator<a class="headerlink" href="#generator" title="Link to this heading"></a></h2>
 <p>For the power flow simulations, generators had been modelled as simple power injections into the system, which was
 completely valid. However, this is not sufficient when performing the short-circuit analysis, as the impedance of the
-generator must also be taken into account. VeraGrid has been programmed to accept a <span class="math notranslate nohighlight">\(3 \times 3\)</span> impedance matrix, which
-includes both the self and mutual impedances between the <span class="math notranslate nohighlight">\(abc\)</span> phases.</p>
+generator must also be taken into account. VeraGrid has been programmed to accept a <img class="math" src="../_images/math/679c5d9dbdc2f5079c0c554856efdae3d27b5d80.svg" alt="3 \times 3"/> impedance matrix, which
+includes both the self and mutual impedances between the <img class="math" src="../_images/math/a5c37ff3d40bfb398ee50cc7c5011eacc70d35c4.svg" alt="abc"/> phases.</p>
 <p>It is also common to encounter generator impedances in the sequence domain. Therefore, Fortescue’s theorem is
 applied to obtain the equivalent values for the three phases:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{Z}_{gen_{abc}} =
+<div class="math">
+<p><img src="../_images/math/86663cd7197dd518c9d03f498141af9988297eda.svg" alt="\vec{Z}_{gen_{abc}} =
 \begin{bmatrix}
 \vec{Z}_0 + \vec{Z}_1 + \vec{Z}_2 &amp; \vec{Z}_0 + \vec{a}\vec{Z}_1 + \vec{a}^2\vec{Z}_2 &amp; \vec{Z}_0 + \vec{a}^2\vec{Z}_1 + \vec{a}\vec{Z}_2 \\
 \vec{Z}_0 + \vec{a}^2\vec{Z}_1 + \vec{a}\vec{Z}_2 &amp; \vec{Z}_0 + \vec{Z}_1 + \vec{Z}_2 &amp; \vec{Z}_0 + \vec{a}\vec{Z}_1 + \vec{a}^2\vec{Z}_2 \\
 \vec{Z}_0 + \vec{a}\vec{Z}_1 + \vec{a}^2\vec{Z}_2 &amp; \vec{Z}_0 + \vec{a}^2\vec{Z}_1 + \vec{a}\vec{Z}_2 &amp; \vec{Z}_0 + \vec{Z}_1 + \vec{Z}_2
-\end{bmatrix}
-\end{split}\]</div>
-<p>Where the transformation eigenvector <span class="math notranslate nohighlight">\(\vec{a} = e^{j2\pi/3}\)</span> is used.</p>
+\end{bmatrix}"/></p>
+</div><p>Where the transformation eigenvector <img class="math" src="../_images/math/d3a35dc49c08891370ba54633c7adbb81bea56ff.svg" alt="\vec{a} = e^{j2\pi/3}"/> is used.</p>
 <p>The generator could be modelled during the short-circuit using the classic Thévenin equivalent, that is, as an ideal
 voltage source in series with the generator’s impedance, as shown in the electrical circuit of the following figure:</p>
 <div style="text-align: center;">
@@ -2297,11 +2293,9 @@ in parallel with the generator’s impedance, as shown in the schematic bellow:<
     width="35%"/>
 </div>
 <p>The Norton current source will take the value of the internal voltage multiplied by its admittance:</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{I}_{N} = \vec{Y}_{gen} \cdot \ \vec{E}
-\]</div>
-<section id="example">
+<div class="math">
+<p><img src="../_images/math/fae1c086644ed51264df7e6ec91b04d41d6b1660.svg" alt="\vec{I}_{N} = \vec{Y}_{gen} \cdot \ \vec{E}"/></p>
+</div><section id="example">
 <h3>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
 
@@ -4016,20 +4010,18 @@ star-connected, requiring delta loads to be converted to star equivalents for im
 <p>The impedance component of the ZIP formulation shares the same admittance modelling described in the <code class="docutils literal notranslate"><span class="pre">Shunt</span></code> section.</p>
 <section id="constant-current-i-modelling-of-three-phase-star-connected-loads">
 <h3>Constant current (I) modelling of three-phase star-connected loads<a class="headerlink" href="#constant-current-i-modelling-of-three-phase-star-connected-loads" title="Link to this heading"></a></h3>
-<p>Traditionally, in positive sequence power flow analysis, constant current loads are directly stored in the <span class="math notranslate nohighlight">\(\vec{I}_0\)</span>
+<p>Traditionally, in positive sequence power flow analysis, constant current loads are directly stored in the <img class="math" src="../_images/math/ccc5ea44709362a042f437076cb91f18f59515bc.svg" alt="\vec{I}_0"/>
 vector. However, since we are performing a three-phase power flow, the voltage angles of phases b and c are not zero,
 so they must be taken into account. For both three-phase current star-connected loads, the defined phase currents are
-stored in the vector <span class="math notranslate nohighlight">\(\vec{I}_0\)</span> as follows:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{I}_0 =
+stored in the vector <img class="math" src="../_images/math/ccc5ea44709362a042f437076cb91f18f59515bc.svg" alt="\vec{I}_0"/> as follows:</p>
+<div class="math">
+<p><img src="../_images/math/05b5ab9d7872f35f2973cb0b9b202383af808e22.svg" alt="\vec{I}_0 =
 \begin{bmatrix}
     \vec{I}_a^* \, e^{j \, \delta_a} \\
     \vec{I}_b^* \, e^{j \, \delta_b} \\
     \vec{I}_c^* \, e^{j \, \delta_c} \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_star_current.png?raw=true"
     title="Three-phase star current loads"
     width="50%"/>
@@ -4067,16 +4059,14 @@ stored in the vector <span class="math notranslate nohighlight">\(\vec{I}_0\)</s
 <h3>Constant current (I) modelling of three-phase delta-connected loads<a class="headerlink" href="#constant-current-i-modelling-of-three-phase-delta-connected-loads" title="Link to this heading"></a></h3>
 <p>However, if the current load is defined in delta connection, the vector shown bellow will be used to mathematically
 model the element:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{I}_0 =
+<div class="math">
+<p><img src="../_images/math/6498767a7e929b2f49cb80990e347242a800ba87.svg" alt="\vec{I}_0 =
 \begin{bmatrix}
 \dfrac{\vec{I}_{ab}^* \, e^{j \, (\delta_a - \delta_b)} - \vec{I}_{ca}^* \, e^{j \, (\delta_c - \delta_a)}}{\sqrt{3}} \\
 \dfrac{\vec{I}_{bc}^* \, e^{j \, (\delta_b - \delta_c)} - \vec{I}_{ab}^* \, e^{j \, (\delta_a - \delta_b)}}{\sqrt{3}} \\
 \dfrac{\vec{I}_{ca}^* \, e^{j \, (\delta_c - \delta_a)} - \vec{I}_{bc}^* \, e^{j \, (\delta_b - \delta_c)}}{\sqrt{3}} \\
-\end{bmatrix}
-\end{split}\]</div>
-<p>Note that for loads connected between phases, the voltage angle to be applied is not that of the
+\end{bmatrix}"/></p>
+</div><p>Note that for loads connected between phases, the voltage angle to be applied is not that of the
 phase to which the current load will be mapped, but rather the angle of the voltage difference
 between the two phases to which the current-defined load is connected. Then, the angles
 will be updated in each iteration, adding significant complexity compared to the traditional power flow.</p>
@@ -4116,19 +4106,17 @@ will be updated in each iteration, adding significant complexity compared to the
 </section>
 <section id="constant-current-i-modelling-of-two-phase-loads">
 <h3>Constant current (I) modelling of two-phase loads<a class="headerlink" href="#constant-current-i-modelling-of-two-phase-loads" title="Link to this heading"></a></h3>
-<p>Two-phase current loads, connected for instance between phases <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(c\)</span>, are modelled in the same way as three-phase
-delta-connected loads. The only difference is that, in this case, the current is defined solely as <span class="math notranslate nohighlight">\(vec{I}_{ca}\)</span>, while the
+<p>Two-phase current loads, connected for instance between phases <img class="math" src="../_images/math/b3e65e3b6408fcfa00452530b73f55d1755f9965.svg" alt="a"/> and <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.svg" alt="c"/>, are modelled in the same way as three-phase
+delta-connected loads. The only difference is that, in this case, the current is defined solely as <img class="math" src="../_images/math/7e7e89dfe189e78a76977082a9310f681564cc58.svg" alt="vec{I}_{ca}"/>, while the
 other phase-to-phase currents remain zero:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{I}_0 =
+<div class="math">
+<p><img src="../_images/math/ce4224dc14e4f44191a93c2608dcc6f4af81f5dc.svg" alt="\vec{I}_0 =
 \begin{bmatrix}
 \dfrac{- \vec{I}_{ca}^* \, e^{j \, (\delta_c - \delta_a)}}{\sqrt{3}} \\
 0 \\
 \dfrac{ \vec{I}_{ca}^* \, e^{j \, (\delta_c - \delta_a)}}{\sqrt{3}} \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_two_phase_current.png?raw=true"
     title="Two-phase current loads"
     width="40%"/>
@@ -4164,18 +4152,16 @@ other phase-to-phase currents remain zero:</p>
 </section>
 <section id="constant-current-i-modelling-of-single-phase-loads">
 <h3>Constant current (I) modelling of single-phase loads<a class="headerlink" href="#constant-current-i-modelling-of-single-phase-loads" title="Link to this heading"></a></h3>
-<p>Finally, single-phase current loads, connected for instance to phase <span class="math notranslate nohighlight">\(b\)</span>, are modelled in the same way as three-phase
+<p>Finally, single-phase current loads, connected for instance to phase <img class="math" src="../_images/math/68c7c8c65602677ab56cf7fd88002023f0edc575.svg" alt="b"/>, are modelled in the same way as three-phase
 star-connected loads. The difference lies in the fact that the absent phases are stored with a value of zero.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{I}_0 =
+<div class="math">
+<p><img src="../_images/math/6794270134c507cbb0357065eb09e20e49568f46.svg" alt="\vec{I}_0 =
 \begin{bmatrix}
     0 \\
     \vec{I}_b^* \, e^{j \, \delta_b} \\
     0 \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_single_phase_current.png?raw=true"
     title="Single-phase current loads"
     width="20%"/>
@@ -4212,17 +4198,15 @@ star-connected loads. The difference lies in the fact that the absent phases are
 <section id="constant-power-p-modelling-of-three-phase-star-connected-loads">
 <h3>Constant power (P) modelling of three-phase star-connected loads<a class="headerlink" href="#constant-power-p-modelling-of-three-phase-star-connected-loads" title="Link to this heading"></a></h3>
 <p>Finally, we will address the modelling of constant power loads. In the case of a three-phase power load connected in
-star, the values defined by the user are stored in the <span class="math notranslate nohighlight">\(vec{S}_0\)</span> vector for each phase:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{S}_0 =
+star, the values defined by the user are stored in the <img class="math" src="../_images/math/0060ad7642302f2781725a4cc8656cb073be053c.svg" alt="vec{S}_0"/> vector for each phase:</p>
+<div class="math">
+<p><img src="../_images/math/06a6ea68f151cde0d56a0544fef12ca6f7984642.svg" alt="\vec{S}_0 =
 \begin{bmatrix}
 \vec{S}_a \\
 \vec{S}_b \\
 \vec{S}_c \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_star_power.png?raw=true"
     title="Three-phase star power loads"
     width="50%"/>
@@ -4261,16 +4245,14 @@ star, the values defined by the user are stored in the <span class="math notrans
 <p>In contrast, if the three-phase power load is connected in delta, the developed transformation to its star equivalent
 involves the phase-to-ground voltages. Then, the power transformation vector to star will be
 updated in each iteration, adding significant complexity compared to the traditional power flow.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{S}_0 = 
+<div class="math">
+<p><img src="../_images/math/701cb8062d353545228a2c2ddd6444111131765a.svg" alt="\vec{S}_0 = 
 \begin{bmatrix}
 \dfrac{\vec{U}_a \cdot \vec{S}_{ab}}{\vec{U}_a - \vec{U}_b} - \dfrac{\vec{U}_a \cdot \vec{S}_{ca}}{\vec{U}_c - \vec{U}_a} \\
 \dfrac{\vec{U}_b \cdot \vec{S}_{bc}}{\vec{U}_b - \vec{U}_c} - \dfrac{\vec{U}_b \cdot \vec{S}_{ab}}{\vec{U}_a - \vec{U}_b} \\
 \dfrac{\vec{U}_c \cdot \vec{S}_{ca}}{\vec{U}_c - \vec{U}_a} - \dfrac{\vec{U}_c \cdot \vec{S}_{bc}}{\vec{U}_b - \vec{U}_c} \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_delta_power.png?raw=true"
     title="Three-phase delta power loads"
     width="60%"/>
@@ -4306,19 +4288,17 @@ updated in each iteration, adding significant complexity compared to the traditi
 </section>
 <section id="constant-power-p-modelling-of-two-phase-loads">
 <h3>Constant power (P) modelling of two-phase loads<a class="headerlink" href="#constant-power-p-modelling-of-two-phase-loads" title="Link to this heading"></a></h3>
-<p>Two-phase power loads, connected for instance between phases <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(c\)</span>, are modelled in the same way as three-phase
-delta-connected loads. The only difference is that, in this case, the power is defined solely as <span class="math notranslate nohighlight">\(vec{S}_{ca}\)</span>, while the
+<p>Two-phase power loads, connected for instance between phases <img class="math" src="../_images/math/b3e65e3b6408fcfa00452530b73f55d1755f9965.svg" alt="a"/> and <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.svg" alt="c"/>, are modelled in the same way as three-phase
+delta-connected loads. The only difference is that, in this case, the power is defined solely as <img class="math" src="../_images/math/0658159933c34d44ce11f1810815ecda31f370cd.svg" alt="vec{S}_{ca}"/>, while the
 other phase-to-phase powers remain zero:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{S}_0 = 
+<div class="math">
+<p><img src="../_images/math/1a0c6c1d89933fcdfd247c7a866e1518970fb081.svg" alt="\vec{S}_0 = 
 \begin{bmatrix}
 -\dfrac{\vec{U}_a \cdot \vec{S}_{ca}}{\vec{U}_c - \vec{U}_a} \\
 0 \\
 \dfrac{\vec{U}_c \cdot \vec{S}_{ca}}{\vec{U}_c - \vec{U}_a} \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_two_phase_power.png?raw=true"
     title="Two-phase power loads"
     width="40%"/>
@@ -4354,18 +4334,16 @@ other phase-to-phase powers remain zero:</p>
 </section>
 <section id="constant-power-p-modelling-of-single-phase-loads">
 <h3>Constant power (P) modelling of single-phase loads<a class="headerlink" href="#constant-power-p-modelling-of-single-phase-loads" title="Link to this heading"></a></h3>
-<p>Finally, single-phase power loads, connected for instance to phase <span class="math notranslate nohighlight">\(b\)</span>, are modelled in the same way as three-phase
+<p>Finally, single-phase power loads, connected for instance to phase <img class="math" src="../_images/math/68c7c8c65602677ab56cf7fd88002023f0edc575.svg" alt="b"/>, are modelled in the same way as three-phase
 star-connected loads. The difference lies in the fact that the absent phases are stored with a value of zero:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{S}_0 =
+<div class="math">
+<p><img src="../_images/math/e0d2a9020ed2a590661a0fbbdb2f91b6ccdec64d.svg" alt="\vec{S}_0 =
 \begin{bmatrix}
 0 \\
 \vec{S}_b \\
 0 \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_single_phase_power.png?raw=true"
     title="Single-phase power loads"
     width="20%"/>
@@ -5056,17 +5034,15 @@ star-connected loads. The difference lies in the fact that the absent phases are
 <h3>Constant impedance (Z) modelling of three-phase star-connected loads and shunts<a class="headerlink" href="#constant-impedance-z-modelling-of-three-phase-star-connected-loads-and-shunts" title="Link to this heading"></a></h3>
 <p>Constant impedance loads and shunts are defined in terms of conductance G [MW] and susceptance B [MVAr].
 If these elements have the three-phases active, and they are connected in star, the diagonal of the 3x3 admittance
-matrix <span class="math notranslate nohighlight">\(\vec{Y}_0\)</span> is simply filled with the values defined for each phase:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{Y}_0 =
+matrix <img class="math" src="../_images/math/dfc432d3011794e330285a4634e41ebd17310ed5.svg" alt="\vec{Y}_0"/> is simply filled with the values defined for each phase:</p>
+<div class="math">
+<p><img src="../_images/math/7bd9c3268bfbddecf0c1bc99f3fa2af21c3dd8c9.svg" alt="\vec{Y}_0 =
 \begin{bmatrix}
     \vec{Y}_a &amp; 0 &amp; 0 \\
     0 &amp; \vec{Y}_b &amp; 0 \\
     0 &amp; 0 &amp; \vec{Y}_c \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_star_impedance.png?raw=true"
     title="Three-phase star impedance loads"
     width="50%"/>
@@ -5104,16 +5080,14 @@ matrix <span class="math notranslate nohighlight">\(\vec{Y}_0\)</span> is simply
 <h3>Constant impedance (Z) modelling of three-phase delta-connected loads and shunts<a class="headerlink" href="#constant-impedance-z-modelling-of-three-phase-delta-connected-loads-and-shunts" title="Link to this heading"></a></h3>
 <p>However, if the load is defined in delta connection, the 3x3 matrix shown bellow will be used to mathematically
 model the load or the shunt element:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{Y}_0 = \dfrac{1}{3}
+<div class="math">
+<p><img src="../_images/math/99230621f27cc2052ddb48b887616a73d01b82ef.svg" alt="\vec{Y}_0 = \dfrac{1}{3}
 \begin{bmatrix}
     \vec{Y}_{ab} + \vec{Y}_{ca} &amp; -\vec{Y}_{ab} &amp; -\vec{Y}_{ca} \\
     -\vec{Y}_{ab} &amp; \vec{Y}_{ab} + \vec{Y}_{bc} &amp; -\vec{Y}_{bc} \\
     -\vec{Y}_{ca} &amp; -\vec{Y}_{bc} &amp; \vec{Y}_{bc} + \vec{Y}_{ca} \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_delta_impedance.png?raw=true"
     title="Three-phase delta impedance loads"
     width="60%"/>
@@ -5151,25 +5125,21 @@ model the load or the shunt element:</p>
 <h3>Constant impedance (Z) modelling of two-phase loads and shunts<a class="headerlink" href="#constant-impedance-z-modelling-of-two-phase-loads-and-shunts" title="Link to this heading"></a></h3>
 <p>Two-phase loads and shunts defined as admittances are converted to their corresponding equivalent power values in star
 configuration. This conversion is carried out using the voltage, and the resulting power values must be updated at each
-iteration of the algorithm. Therefore, in this case, the values are not stored in the admittance matrix <span class="math notranslate nohighlight">\(\vec{Y}_0\)</span> but
-rather in the power vector <span class="math notranslate nohighlight">\(\vec{S}_0\)</span>. The current flowing through this type of load is equal to the voltage difference
+iteration of the algorithm. Therefore, in this case, the values are not stored in the admittance matrix <img class="math" src="../_images/math/dfc432d3011794e330285a4634e41ebd17310ed5.svg" alt="\vec{Y}_0"/> but
+rather in the power vector <img class="math" src="../_images/math/45d430e7798415d46fd331db5c094edc20f59960.svg" alt="\vec{S}_0"/>. The current flowing through this type of load is equal to the voltage difference
 between the phases to which it is connected, multiplied by its admittance, as shown the equation bellow. By multiplying
 the resulting current in each phase by its corresponding voltage, the power value can be obtained.</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{I}_{a} = (\vec{U}_{a} - \vec{U}_{b}) \cdot \dfrac{\vec{Y}_{ab}}{3}
-\]</div>
-<p>In the case where the load is connected between phases <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(c\)</span>, the conversion is as follows:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{S}_0 = 
+<div class="math">
+<p><img src="../_images/math/8009a3c181b83f7c48313d0b0fedc26175cd3895.svg" alt="\vec{I}_{a} = (\vec{U}_{a} - \vec{U}_{b}) \cdot \dfrac{\vec{Y}_{ab}}{3}"/></p>
+</div><p>In the case where the load is connected between phases <img class="math" src="../_images/math/b3e65e3b6408fcfa00452530b73f55d1755f9965.svg" alt="a"/> and <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.svg" alt="c"/>, the conversion is as follows:</p>
+<div class="math">
+<p><img src="../_images/math/95b5540f167309253489dbbc0ec2313c4b09b37f.svg" alt="\vec{S}_0 = 
 \begin{bmatrix}
     \vec{U}_{a} \cdot \left[ (\vec{U}_{a} - \vec{U}_{c}) \cdot \dfrac{\vec{Y}_{ca}}{3} \right]^* \\
     0 \\
     \vec{U}_{c} \cdot \left[ (\vec{U}_{c} - \vec{U}_{a}) \cdot \dfrac{\vec{Y}_{ca}}{3} \right]^* \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_two_phase_impedance.png?raw=true"
     title="Two-phase impedance loads"
     width="40%"/>
@@ -5206,17 +5176,15 @@ the resulting current in each phase by its corresponding voltage, the power valu
 <section id="constant-impedance-z-modelling-of-single-phase-loads-and-shunts">
 <h3>Constant impedance (Z) modelling of single-phase loads and shunts<a class="headerlink" href="#constant-impedance-z-modelling-of-single-phase-loads-and-shunts" title="Link to this heading"></a></h3>
 <p>Finally, single-phase loads and shunt elements are modelled as in the previous three-phase star case, but only saving
-the admittance value for the active phase, for instance phase <span class="math notranslate nohighlight">\(b\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{Y}_0 =
+the admittance value for the active phase, for instance phase <img class="math" src="../_images/math/68c7c8c65602677ab56cf7fd88002023f0edc575.svg" alt="b"/>:</p>
+<div class="math">
+<p><img src="../_images/math/3cb52c25bd0df4f21547aed6a88c3047ed596e04.svg" alt="\vec{Y}_0 =
 \begin{bmatrix}
     0 &amp; 0 &amp; 0 \\
     0 &amp; \vec{Y}_b &amp; 0 \\
     0 &amp; 0 &amp; 0 \\
-\end{bmatrix}
-\end{split}\]</div>
-<div style="text-align: center;">
+\end{bmatrix}"/></p>
+</div><div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_single_phase_impedance.png?raw=true"
     title="Single-phase impedance loads"
     width="20%"/>
@@ -7928,8 +7896,8 @@ the admittance value for the active phase, for instance phase <span class="math 
 positioned above the ground, sometimes using it as a return path, which must be considered in parameter calculations.
 Transmission lines may use bundled conductors and ground wires, while distribution lines can include a neutral return.
 Both types can introduce geometric and electrical unbalances. Accurate modelling aims to calculate voltage drops and
-losses, based on determining the per-unit-length parameters: resistance <span class="math notranslate nohighlight">\(R\)</span>, inductance <span class="math notranslate nohighlight">\(L\)</span>, conductance <span class="math notranslate nohighlight">\(G\)</span>,
-and capacitance <span class="math notranslate nohighlight">\(C\)</span>.</p>
+losses, based on determining the per-unit-length parameters: resistance <img class="math" src="../_images/math/1ebe654cc7b8f2a0d8100aa5825cf2b9021adbbc.svg" alt="R"/>, inductance <img class="math" src="../_images/math/19eef1966f7c545af3ac8c0fa486974d873e3c65.svg" alt="L"/>, conductance <img class="math" src="../_images/math/89878909dbb648acdc4a44ded1bd982d7bddef5d.svg" alt="G"/>,
+and capacitance <img class="math" src="../_images/math/4db5b6e16e06f929ce3f675c5e535d06ffb02ff7.svg" alt="C"/>.</p>
 <div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_power_line.png?raw=true"
     alt="Power line geometric arrangement"
@@ -7940,7 +7908,7 @@ and capacitance <span class="math notranslate nohighlight">\(C\)</span>.</p>
 <h3>π model<a class="headerlink" href="#model" title="Link to this heading"></a></h3>
 <p>Transmission lines are mathematically modelled to describe their electrical behaviour. The inductive and resistive
 effects of multiconductor lines are represented by a series impedance matrix, while capacitive effects are modelled as
-a shunt admittance matrix. Together, these form the basis of the <span class="math notranslate nohighlight">\(\pi\)</span>-equivalent model commonly used in power system
+a shunt admittance matrix. Together, these form the basis of the <img class="math" src="../_images/math/9cc8517129c87252edd7fe2e4532af9dcf7a54d9.svg" alt="\pi"/>-equivalent model commonly used in power system
 studies.</p>
 <div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_pi_model.png?raw=true"
@@ -7950,38 +7918,34 @@ studies.</p>
 </div>
 <p>It consists of:</p>
 <ul class="simple">
-<li><p>Series impedance: <span class="math notranslate nohighlight">\(Z_{\text{series}} = R + jX\)</span></p></li>
-<li><p>Shunt admittance: <span class="math notranslate nohighlight">\(Y_{\text{shunt}} = G + jB\)</span></p></li>
+<li><p>Series impedance: <img class="math" src="../_images/math/b1e835209cc4cddf9faa9ece01bc0f7d7710d972.svg" alt="Z_{\text{series}} = R + jX"/></p></li>
+<li><p>Shunt admittance: <img class="math" src="../_images/math/f8c3c0d183fb47ff71b59c1247182ea594c2c78c.svg" alt="Y_{\text{shunt}} = G + jB"/></p></li>
 </ul>
-<p>In the <span class="math notranslate nohighlight">\(\pi\)</span>-model, <span class="math notranslate nohighlight">\(R\)</span> represents conductor resistance, <span class="math notranslate nohighlight">\(X\)</span> the self and mutual inductive reactances, <span class="math notranslate nohighlight">\(G\)</span> the shunt
-conductance through insulation, and <span class="math notranslate nohighlight">\(B\)</span> the shunt susceptance from line capacitance. Shunt admittance is divided between
+<p>In the <img class="math" src="../_images/math/9cc8517129c87252edd7fe2e4532af9dcf7a54d9.svg" alt="\pi"/>-model, <img class="math" src="../_images/math/1ebe654cc7b8f2a0d8100aa5825cf2b9021adbbc.svg" alt="R"/> represents conductor resistance, <img class="math" src="../_images/math/ed38fa24f1c94891bd312012aab3f6673be3eb83.svg" alt="X"/> the self and mutual inductive reactances, <img class="math" src="../_images/math/89878909dbb648acdc4a44ded1bd982d7bddef5d.svg" alt="G"/> the shunt
+conductance through insulation, and <img class="math" src="../_images/math/4bc3e94a67870b41b7c20179693e889251e2c136.svg" alt="B"/> the shunt susceptance from line capacitance. Shunt admittance is divided between
 the ends, with series impedance in the middle. While the single-phase model is common, unbalanced systems require a 5-wire
-representation, the three-phase conductors (<span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, <span class="math notranslate nohighlight">\(c\)</span>), the neutral (<span class="math notranslate nohighlight">\(n\)</span>), and the ground (<span class="math notranslate nohighlight">\(g\)</span>). The neutral returns
+representation, the three-phase conductors (<img class="math" src="../_images/math/b3e65e3b6408fcfa00452530b73f55d1755f9965.svg" alt="a"/>, <img class="math" src="../_images/math/68c7c8c65602677ab56cf7fd88002023f0edc575.svg" alt="b"/>, <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.svg" alt="c"/>), the neutral (<img class="math" src="../_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.svg" alt="n"/>), and the ground (<img class="math" src="../_images/math/157ba5711de84b4c715a0478fd8ae440e596d96e.svg" alt="g"/>). The neutral returns
 unbalanced current and stabilises voltage, while the ground provides a fault current path for safety. Each conductor
-has its own impedance, and mutual coupling between all conductors requires a <span class="math notranslate nohighlight">\(5\times 5\)</span> impedance or admittance matrix.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{Z} =
+has its own impedance, and mutual coupling between all conductors requires a <img class="math" src="../_images/math/7d8efe4ed104f4015e7339d9c2a6f9c2978639ae.svg" alt="5\times 5"/> impedance or admittance matrix.</p>
+<div class="math">
+<p><img src="../_images/math/a430d999fcaa140b15c793a8cb63931ee3e05e83.svg" alt="\vec{Z} =
 \begin{bmatrix}
 \vec{Z}_{aa} &amp; \vec{Z}_{ab} &amp; \vec{Z}_{ac} &amp; \vec{Z}_{an} &amp; \vec{Z}_{ag} \\
 \vec{Z}_{ba} &amp; \vec{Z}_{bb} &amp; \vec{Z}_{bc} &amp; \vec{Z}_{bn} &amp; \vec{Z}_{bg} \\
 \vec{Z}_{ca} &amp; \vec{Z}_{cb} &amp; \vec{Z}_{cc} &amp; \vec{Z}_{cn} &amp; \vec{Z}_{cg} \\
 \vec{Z}_{na} &amp; \vec{Z}_{nb} &amp; \vec{Z}_{nc} &amp; \vec{Z}_{nn} &amp; \vec{Z}_{ng} \\
 \vec{Z}_{ga} &amp; \vec{Z}_{gb} &amp; \vec{Z}_{gc} &amp; \vec{Z}_{gn} &amp; \vec{Z}_{gg} \\
-\end{bmatrix}
-\end{split}\]</div>
-<p>In most transmission lines, the neutral conductor is absent as it is earthed at both ends. The ground return effect can
-be incorporated into the phase impedance, allowing the line to be represented with a simplified <span class="math notranslate nohighlight">\(3\times 3\)</span> matrix.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{Z} =
+\end{bmatrix}"/></p>
+</div><p>In most transmission lines, the neutral conductor is absent as it is earthed at both ends. The ground return effect can
+be incorporated into the phase impedance, allowing the line to be represented with a simplified <img class="math" src="../_images/math/7356a12d46f4b6eebf0229ca08278f85f541c8d8.svg" alt="3\times 3"/> matrix.</p>
+<div class="math">
+<p><img src="../_images/math/8ba3440b63bad4e68ab6b411036ff868fe090650.svg" alt="\vec{Z} =
 \begin{bmatrix}
 \vec{Z}_{aa} &amp; \vec{Z}_{ab} &amp; \vec{Z}_{ac} \\
 \vec{Z}_{ba} &amp; \vec{Z}_{bb} &amp; \vec{Z}_{bc} \\
 \vec{Z}_{ca} &amp; \vec{Z}_{cb} &amp; \vec{Z}_{cc}
-\end{bmatrix}
-\end{split}\]</div>
-</section>
+\end{bmatrix}"/></p>
+</div></section>
 <section id="series-impedance">
 <h3>Series Impedance<a class="headerlink" href="#series-impedance" title="Link to this heading"></a></h3>
 <p>Carson’s equations calculate the series self and mutual impedances of overhead transmission lines, accounting for the
@@ -7995,29 +7959,25 @@ proximity effects. The impedance matrix elements are derived from the tower geom
     width="30%"/>
 </div>
 <p>Then, the following equations are implemented to obtain the self and mutual values:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{Z}_{ii} = (R_i+R^c_{ii}) + j \left(\omega \frac{\mu_0}{2\pi} \ln{\frac{2h_i}{r_i}} + X_i + X^c_{ii} \right)
-    \label{eq:Carson_Zii}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    \vec{Z}_{ij} = \vec{Z}_{ji} =
+<div class="math">
+<p><img src="../_images/math/e894b6b3d26d89743d13a370b612ca112edbe9a0.svg" alt="\vec{Z}_{ii} = (R_i+R^c_{ii}) + j \left(\omega \frac{\mu_0}{2\pi} \ln{\frac{2h_i}{r_i}} + X_i + X^c_{ii} \right)
+    \label{eq:Carson_Zii}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/6f096ad0c5f81a0a728d1b8732edebacd1d16a5b.svg" alt="\vec{Z}_{ij} = \vec{Z}_{ji} =
     R^c_{ij} + j \left( \omega \frac{\mu_0}{2\pi} \ln{\frac{D_{ij}}{d_{ij}}} + X^c_{ij} \right)
-    \label{eq:Carson_Zij}
-\]</div>
-<p>Where:</p>
+    \label{eq:Carson_Zij}"/></p>
+</div><p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(R_i\)</span> and <span class="math notranslate nohighlight">\(X_i\)</span> are the internal resistance and reactance of conductor <span class="math notranslate nohighlight">\(i\)</span> in <span class="math notranslate nohighlight">\(\Omega\)</span>/km.</p></li>
-<li><p><span class="math notranslate nohighlight">\(R^c\)</span> and <span class="math notranslate nohighlight">\(X^c\)</span> are the Carson’s correction terms for earth return effects in <span class="math notranslate nohighlight">\(\Omega\)</span>/km.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mu_0 = 4\pi\cdot 10^{-4}\)</span> is the permeability of free space in H/km.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\omega = 2\pi f\)</span> is the angular frequency in rad/s.</p></li>
-<li><p><span class="math notranslate nohighlight">\(h_i\)</span> is the average height above ground of conductor <span class="math notranslate nohighlight">\(i\)</span> in m.</p></li>
-<li><p><span class="math notranslate nohighlight">\(r_i\)</span> is the radius of conductor <span class="math notranslate nohighlight">\(i\)</span> in m.</p></li>
-<li><p><span class="math notranslate nohighlight">\(d_{ij}\)</span> is the distance between conductors <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> in m.</p></li>
-<li><p><span class="math notranslate nohighlight">\(D_{ij}\)</span> is the distance between conductor <span class="math notranslate nohighlight">\(i\)</span> and the image of conductor <span class="math notranslate nohighlight">\(j\)</span> in m.</p></li>
+<li><p><img class="math" src="../_images/math/8d47777d070e3b1ae6a9ea0d4918309bc8c942fe.svg" alt="R_i"/> and <img class="math" src="../_images/math/74a2595134b54bda04be7e52e5792f63c573fb22.svg" alt="X_i"/> are the internal resistance and reactance of conductor <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.svg" alt="i"/> in <img class="math" src="../_images/math/8b79605e88e6ebb950c74a1319cdc046dae2069c.svg" alt="\Omega"/>/km.</p></li>
+<li><p><img class="math" src="../_images/math/3b8c080845e9500425b3dc633794f9e2421f2d87.svg" alt="R^c"/> and <img class="math" src="../_images/math/b3310185913b25afc5fb87fac494f5620912a189.svg" alt="X^c"/> are the Carson’s correction terms for earth return effects in <img class="math" src="../_images/math/8b79605e88e6ebb950c74a1319cdc046dae2069c.svg" alt="\Omega"/>/km.</p></li>
+<li><p><img class="math" src="../_images/math/7c4d50edf68752bd7f6c479f5b7b2384fd6475c9.svg" alt="\mu_0 = 4\pi\cdot 10^{-4}"/> is the permeability of free space in H/km.</p></li>
+<li><p><img class="math" src="../_images/math/99acad093fd1faaec8a84f8895459c268e493c9d.svg" alt="\omega = 2\pi f"/> is the angular frequency in rad/s.</p></li>
+<li><p><img class="math" src="../_images/math/b6e2c1bc7d8a8ef8bc3878348c32e442f102d286.svg" alt="h_i"/> is the average height above ground of conductor <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.svg" alt="i"/> in m.</p></li>
+<li><p><img class="math" src="../_images/math/dbc4c429b48dd94e41ee866e1edbf0abededae3a.svg" alt="r_i"/> is the radius of conductor <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.svg" alt="i"/> in m.</p></li>
+<li><p><img class="math" src="../_images/math/6e19ab10020daba0125b21de6d22d8e1784d842d.svg" alt="d_{ij}"/> is the distance between conductors <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.svg" alt="i"/> and <img class="math" src="../_images/math/e3fc28292267f066fee7718c64f4bbfece521f24.svg" alt="j"/> in m.</p></li>
+<li><p><img class="math" src="../_images/math/5bdf1fa41ceecdb702cfd02af595cf5039d32194.svg" alt="D_{ij}"/> is the distance between conductor <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.svg" alt="i"/> and the image of conductor <img class="math" src="../_images/math/e3fc28292267f066fee7718c64f4bbfece521f24.svg" alt="j"/> in m.</p></li>
 </ul>
-<p>The correction terms <span class="math notranslate nohighlight">\(R^c\)</span> and <span class="math notranslate nohighlight">\(X^c\)</span> are derived from an infinite integral representing the impedance contribution due
+<p>The correction terms <img class="math" src="../_images/math/3b8c080845e9500425b3dc633794f9e2421f2d87.svg" alt="R^c"/> and <img class="math" src="../_images/math/b3310185913b25afc5fb87fac494f5620912a189.svg" alt="X^c"/> are derived from an infinite integral representing the impedance contribution due
 to the earth return path.</p>
 </section>
 <section id="shunt-admittance">
@@ -8026,44 +7986,37 @@ to the earth return path.</p>
 conductors and ground, and between conductors themselves. Under the assumptions of lossless air, uniformly grounded
 earth, and conductor radii much smaller than inter-conductor spacing, these capacitances can be modelled mathematically
 to compute the corresponding shunt admittances.</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{Y}_{ii} = j\frac{\omega}{2 \pi \varepsilon_0} \ln{\frac{2 h_i}{r_i}}
-    \label{eq:self_Y}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    \vec{Y}_{ij} = j\frac{\omega}{2 \pi \varepsilon_0} \ln{\frac{D_{ij}}{d_{ij}}}
-    \label{eq:mutual_Y}
-\]</div>
-<p>Where <span class="math notranslate nohighlight">\(\varepsilon_0 = \dfrac{1}{\mu_0 c^2} \approx 8,85 \cdot 10^{-12}\)</span> F/m is the free space permittivity.</p>
+<div class="math">
+<p><img src="../_images/math/9c024db82439b64c0254ef746ec85798969a66cc.svg" alt="\vec{Y}_{ii} = j\frac{\omega}{2 \pi \varepsilon_0} \ln{\frac{2 h_i}{r_i}}
+    \label{eq:self_Y}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/f7baf4da8c8701532ebd479ea6747a8bb5275b39.svg" alt="\vec{Y}_{ij} = j\frac{\omega}{2 \pi \varepsilon_0} \ln{\frac{D_{ij}}{d_{ij}}}
+    \label{eq:mutual_Y}"/></p>
+</div><p>Where <img class="math" src="../_images/math/a3349d8ae750ca7151f04916e4edc8d3c1e6174e.svg" alt="\varepsilon_0 = \dfrac{1}{\mu_0 c^2} \approx 8,85 \cdot 10^{-12}"/> F/m is the free space permittivity.</p>
 </section>
 <section id="krons-reduction">
 <h3>Kron’s reduction<a class="headerlink" href="#krons-reduction" title="Link to this heading"></a></h3>
 <p>Kron’s reduction, or node elimination, is a technique from network theory used to simplify a multi-node electrical
 network by eliminating certain nodes, often called internal or passive nodes, while preserving the electrical
 behaviour at the remaining nodes.</p>
-<p>Assuming a set of nodes divided into two groups between ground conductors <span class="math notranslate nohighlight">\(g\)</span> (to eliminate) and phase conductors <span class="math notranslate nohighlight">\(p\)</span>
+<p>Assuming a set of nodes divided into two groups between ground conductors <img class="math" src="../_images/math/157ba5711de84b4c715a0478fd8ae440e596d96e.svg" alt="g"/> (to eliminate) and phase conductors <img class="math" src="../_images/math/141bbefb74014fc5e43499901bf78607ae335583.svg" alt="p"/>
 (to keep), the impedance matrix is partitioned accordingly:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    \vec{Z} =
+<div class="math">
+<p><img src="../_images/math/f901dc862eba56f45dfa480ba6cf389312c70865.svg" alt="\vec{Z} =
     \begin{bmatrix}
         \vec{Z}_{gg} &amp; \vec{Z}_{gp} \\
         \vec{Z}_{pg} &amp; \vec{Z}_{pp} 
-    \end{bmatrix}
-\end{split}\]</div>
-<p>Where:</p>
+    \end{bmatrix}"/></p>
+</div><p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\vec{Z}_{gg}\)</span> is the impedance between eliminated nodes.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\vec{Z}_{gp}\)</span> is the mutual impedance between eliminated and preserved nodes.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\vec{Z}_{pg}\)</span> is the mutual impedance between preserved and eliminated nodes.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\vec{Z}_{pp}\)</span> is the impedance between preserved nodes.</p></li>
+<li><p><img class="math" src="../_images/math/4ce3b9d44473f5f654d7149d1f6adf955cf30bae.svg" alt="\vec{Z}_{gg}"/> is the impedance between eliminated nodes.</p></li>
+<li><p><img class="math" src="../_images/math/eb9f1fc1ebfac45df1e2943ec39e84e862c53b18.svg" alt="\vec{Z}_{gp}"/> is the mutual impedance between eliminated and preserved nodes.</p></li>
+<li><p><img class="math" src="../_images/math/683bb5d92b46e46dac82b25cf72f3adef053c6c2.svg" alt="\vec{Z}_{pg}"/> is the mutual impedance between preserved and eliminated nodes.</p></li>
+<li><p><img class="math" src="../_images/math/039c43bd5188b312f16be863f8f31cea73f9b9ec.svg" alt="\vec{Z}_{pp}"/> is the impedance between preserved nodes.</p></li>
 </ul>
 <p>Then, the network equations are:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    \begin{bmatrix}
+<div class="math">
+<p><img src="../_images/math/84041764f510c0460a99a13c519cb29f24e41de6.svg" alt="\begin{bmatrix}
         \vec{U}_{g} \\
         \vec{U}_{p}
     \end{bmatrix}
@@ -8075,26 +8028,19 @@ behaviour at the remaining nodes.</p>
     \begin{bmatrix}
         \vec{I}_{g} \\
         \vec{I}_{p}
-    \end{bmatrix}
-\end{split}\]</div>
-<p>Assuming that the eliminated nodes are held at zero voltage because they are grounded, <span class="math notranslate nohighlight">\(\vec{U}_{g} = 0\)</span>. From the
+    \end{bmatrix}"/></p>
+</div><p>Assuming that the eliminated nodes are held at zero voltage because they are grounded, <img class="math" src="../_images/math/c3a71fff5f5401b813fe7e0aee0bf65cf4dfba6f.svg" alt="\vec{U}_{g} = 0"/>. From the
 first row of the system:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{I}_e = -\vec{Z}_{gg}^{-1} \cdot \vec{Z}_{gp} \cdot \vec{I}_{p}
-\]</div>
-<p>Then, substituting <span class="math notranslate nohighlight">\(\vec{I}_e\)</span> in the second row:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{U}_p = (\vec{Z}_{pp} - \vec{Z}_{pg} \cdot \vec{Z}_{gg}^{-1} \cdot \vec{Z}_{gp}) \vec{I}_{p}
-\]</div>
-<p>Finally, the Kron-reduced impedance matrix is defined as:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{Z}_\text{Kron} = \vec{Z}_{pp} - \vec{Z}_{pg} \cdot \vec{Z}_{gg}^{-1} \cdot \vec{Z}_{gp}
-\]</div>
-<p>This new matrix allows to describe the electrical behaviour of the remaining phase nodes <span class="math notranslate nohighlight">\(p\)</span>, while implicitly
-incorporating the effect of the eliminated ground nodes <span class="math notranslate nohighlight">\(g\)</span>, which were assumed to be held at 0 V.</p>
+<div class="math">
+<p><img src="../_images/math/47f4f3e11f0ff0d5e63ae8cda111a902bd5a9786.svg" alt="\vec{I}_e = -\vec{Z}_{gg}^{-1} \cdot \vec{Z}_{gp} \cdot \vec{I}_{p}"/></p>
+</div><p>Then, substituting <img class="math" src="../_images/math/23914574076844f80e7b569c622e073e76e53fde.svg" alt="\vec{I}_e"/> in the second row:</p>
+<div class="math">
+<p><img src="../_images/math/e77abb65c28e150d287c75026802db8fda7a2f93.svg" alt="\vec{U}_p = (\vec{Z}_{pp} - \vec{Z}_{pg} \cdot \vec{Z}_{gg}^{-1} \cdot \vec{Z}_{gp}) \vec{I}_{p}"/></p>
+</div><p>Finally, the Kron-reduced impedance matrix is defined as:</p>
+<div class="math">
+<p><img src="../_images/math/9cb2e11965e57b45d693a82977b8c11f6c8b7c78.svg" alt="\vec{Z}_\text{Kron} = \vec{Z}_{pp} - \vec{Z}_{pg} \cdot \vec{Z}_{gg}^{-1} \cdot \vec{Z}_{gp}"/></p>
+</div><p>This new matrix allows to describe the electrical behaviour of the remaining phase nodes <img class="math" src="../_images/math/141bbefb74014fc5e43499901bf78607ae335583.svg" alt="p"/>, while implicitly
+incorporating the effect of the eliminated ground nodes <img class="math" src="../_images/math/157ba5711de84b4c715a0478fd8ae440e596d96e.svg" alt="g"/>, which were assumed to be held at 0 V.</p>
 </section>
 <section id="line-definition-example">
 <h3>Line definition example<a class="headerlink" href="#line-definition-example" title="Link to this heading"></a></h3>
@@ -8227,14 +8173,14 @@ Here we enter the tower definition, and once we are done, we click on the comput
 Then the tower cross-section will
 be displayed and the results will appear in the following tabs.</p>
 <p><img alt="" src="../_images/editor1.png" /></p>
-<p>This tab shows the series impedance matrix (<span class="math notranslate nohighlight">\(\Omega / km\)</span>) in several forms:</p>
+<p>This tab shows the series impedance matrix (<img class="math" src="../_images/math/c9c470f00280e6275d421f14c32635a94e215e12.svg" alt="\Omega / km"/>) in several forms:</p>
 <ul class="simple">
 <li><p>Per phase without reduction.</p></li>
 <li><p>Per phase with the neutral embedded.</p></li>
 <li><p>Sequence reduction.</p></li>
 </ul>
 <p><img alt="" src="../_images/editorZ.png" /></p>
-<p>This tab shows the series shunt admittance matrix (<span class="math notranslate nohighlight">\(\mu S / km\)</span>) in several forms:</p>
+<p>This tab shows the series shunt admittance matrix (<img class="math" src="../_images/math/ebf7d60f193ec9f671f1175249a850ab0e8410ad.svg" alt="\mu S / km"/>) in several forms:</p>
 <ul class="simple">
 <li><p>Per phase without reduction.</p></li>
 <li><p>Per phase with the neutral embedded.</p></li>
@@ -10069,8 +10015,8 @@ be displayed and the results will appear in the following tabs.</p>
 <section id="transformer2w">
 <h2>Transformer2W<a class="headerlink" href="#transformer2w" title="Link to this heading"></a></h2>
 <p>Power transformers link network sections operating at different voltages, such as generators and transmission systems.
-For two-winding, three-phase transformers, the winding impedance <span class="math notranslate nohighlight">\(\vec{Z}_s\)</span> is derived from short-circuit tests, and
-the iron-core shunt admittance <span class="math notranslate nohighlight">\(\vec{Y}_{sh}\)</span> from open-circuit tests. Modelling begins with the schematic of the basic
+For two-winding, three-phase transformers, the winding impedance <img class="math" src="../_images/math/88d26eab6e9de0f4adc3c7f70ed320a0decbe522.svg" alt="\vec{Z}_s"/> is derived from short-circuit tests, and
+the iron-core shunt admittance <img class="math" src="../_images/math/0595c1ab3627e04327b3c641a22debad97c24284.svg" alt="\vec{Y}_{sh}"/> from open-circuit tests. Modelling begins with the schematic of the basic
 two-winding transformer:</p>
 <div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_single_phase_transformer.png?raw=true"
@@ -10078,7 +10024,7 @@ two-winding transformer:</p>
     title="Two-winding transformer"
     width="50%"/>
 </div>
-<p>A transformer’s primary and secondary windings, with <span class="math notranslate nohighlight">\(N_p\)</span> and <span class="math notranslate nohighlight">\(N_s\)</span> turns respectively, have their voltages and
+<p>A transformer’s primary and secondary windings, with <img class="math" src="../_images/math/5040b4c178bb89af4956089ee01c06df3ab01004.svg" alt="N_p"/> and <img class="math" src="../_images/math/5e39e6f9d54fdbac1a3cad42723c4487d23b7598.svg" alt="N_s"/> turns respectively, have their voltages and
 currents related through short-circuit and open-circuit admittance parameters. These relationships are represented in
 the transformer’s electrical equivalent circuit:</p>
 <div style="text-align: center;">
@@ -10087,13 +10033,12 @@ the transformer’s electrical equivalent circuit:</p>
     title="Transformer electrical equivalent circuit"
     width="90%"/>
 </div>
-<p>In the per-unit system, the transformer voltage ratio <span class="math notranslate nohighlight">\(N_p:N_s\)</span> becomes <span class="math notranslate nohighlight">\(1:1\)</span>. Many transformers include tap
-changers to regulate voltage by adjusting the ratio to <span class="math notranslate nohighlight">\(\vec{m}:1\)</span>. In the <span class="math notranslate nohighlight">\(\pi\)</span>-model, virtual tap transformers
-<span class="math notranslate nohighlight">\(m_f\)</span> and <span class="math notranslate nohighlight">\(m_t\)</span> reconcile device and bus nominal voltages. From the single-phase transformer model, the corresponding
+<p>In the per-unit system, the transformer voltage ratio <img class="math" src="../_images/math/d2426516354ec714d67c7954b22f9f34757356ac.svg" alt="N_p:N_s"/> becomes <img class="math" src="../_images/math/47597694b86443e4806abd0eebe5b0f1ae6a0d7b.svg" alt="1:1"/>. Many transformers include tap
+changers to regulate voltage by adjusting the ratio to <img class="math" src="../_images/math/45580bf940cd3d5f3ef8a77c0cb5f2f9698fc09c.svg" alt="\vec{m}:1"/>. In the <img class="math" src="../_images/math/9cc8517129c87252edd7fe2e4532af9dcf7a54d9.svg" alt="\pi"/>-model, virtual tap transformers
+<img class="math" src="../_images/math/f5f6a5ec5ea5c37a86a7e4ee3df5817bdc77a4c0.svg" alt="m_f"/> and <img class="math" src="../_images/math/8587676bd7e72efd366bb5bec309d64dc297ccc1.svg" alt="m_t"/> reconcile device and bus nominal voltages. From the single-phase transformer model, the corresponding
 primitive admittance matrix is then derived to relate primary and secondary voltages and currents.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    \begin{bmatrix}
+<div class="math">
+<p><img src="../_images/math/eed71a0e74fe4bbccab4e364307bea16439c4f88.svg" alt="\begin{bmatrix}
         \vec{I_p} \\
         \vec{I_s}
     \end{bmatrix}
@@ -10105,14 +10050,12 @@ primitive admittance matrix is then derived to relate primary and secondary volt
     \begin{bmatrix}
         \vec{U_p} \\
         \vec{U_s}
-    \end{bmatrix}
-\end{split}\]</div>
-<p>Using nodal analysis, single-phase transformer models can be extended to multi-winding, multi-phase configurations by
-mapping winding voltages and currents (e.g., “<span class="math notranslate nohighlight">\(1,2,3,4,5,6\)</span>”) into the “<span class="math notranslate nohighlight">\(A,B,C,a,b,c\)</span>” phase frame. The primitive
+    \end{bmatrix}"/></p>
+</div><p>Using nodal analysis, single-phase transformer models can be extended to multi-winding, multi-phase configurations by
+mapping winding voltages and currents (e.g., “<img class="math" src="../_images/math/07c5868ecdd6920a5ba26a227644948b636d2242.svg" alt="1,2,3,4,5,6"/>”) into the “<img class="math" src="../_images/math/81272805812319048ba577acca2a62d523e399b6.svg" alt="A,B,C,a,b,c"/>” phase frame. The primitive
 parameters of three identical single-phase units are then combined to represent the full three-phase transformer.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    \begin{bmatrix}
+<div class="math">
+<p><img src="../_images/math/9f7d2f2bdb2c1a585f33a1f591f7d484e9f1f120.svg" alt="\begin{bmatrix}
         \vec{I}_1 \\
         \vec{I}_2 \\
         \vec{I}_3 \\
@@ -10136,28 +10079,21 @@ parameters of three identical single-phase units are then combined to represent 
         \vec{U}_4 \\
         \vec{U}_5 \\
         \vec{U}_6
-    \end{bmatrix}
-\end{split}\]</div>
-<p>Expressed in compact form, the resulting expression is:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{I}_\text{coils} = \vec{Y}_\text{primitive} \cdot \vec{U}_\text{coils}
-\]</div>
-<p>Which can be operated in order to relate phase magnitudes:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{I}_\text{phases} = C_I^{-1} \cdot \vec{Y}_\text{primitive} \cdot C_U \cdot \vec{U}_\text{phases}
-    \label{eq:Y_transformer1}
-\]</div>
-<p>It follows that the next step is to find the connectivity matrices <span class="math notranslate nohighlight">\(C_U\)</span> and <span class="math notranslate nohighlight">\(C_I\)</span>, which relate the voltages and
-currents at each winding to the phase magnitudes, to obtain the transformer admittance matrix <span class="math notranslate nohighlight">\(\vec{Y}\)</span>.
+    \end{bmatrix}"/></p>
+</div><p>Expressed in compact form, the resulting expression is:</p>
+<div class="math">
+<p><img src="../_images/math/4d8e6bb37121404be10ed8e81d230ec73856c629.svg" alt="\vec{I}_\text{coils} = \vec{Y}_\text{primitive} \cdot \vec{U}_\text{coils}"/></p>
+</div><p>Which can be operated in order to relate phase magnitudes:</p>
+<div class="math">
+<p><img src="../_images/math/b69410df22ae9ec8b1e535935a4cb3467e8f3c05.svg" alt="\vec{I}_\text{phases} = C_I^{-1} \cdot \vec{Y}_\text{primitive} \cdot C_U \cdot \vec{U}_\text{phases}
+    \label{eq:Y_transformer1}"/></p>
+</div><p>It follows that the next step is to find the connectivity matrices <img class="math" src="../_images/math/93ce20cb984d980f1dfc69a89f6f7864663c0ac7.svg" alt="C_U"/> and <img class="math" src="../_images/math/7ae6c585ed06911d3a7efbc8c4ac461692ff679f.svg" alt="C_I"/>, which relate the voltages and
+currents at each winding to the phase magnitudes, to obtain the transformer admittance matrix <img class="math" src="../_images/math/9575d8e9a4b473d3d3a37684de639a4813f6e5b6.svg" alt="\vec{Y}"/>.
 This matrix links the primary and secondary phase voltages and currents:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{Y} = C_I^{-1} \cdot \vec{Y}_\text{primitive} \cdot C_U
-\label{eq:Y_transformer}
-\]</div>
-<p>The three-phase windings of power transformers may be connected in several ways. In high voltage transmission the most
+<div class="math">
+<p><img src="../_images/math/40c8727ff8d6b73605f652eaef87e1ff183ae43b.svg" alt="\vec{Y} = C_I^{-1} \cdot \vec{Y}_\text{primitive} \cdot C_U
+\label{eq:Y_transformer}"/></p>
+</div><p>The three-phase windings of power transformers may be connected in several ways. In high voltage transmission the most
 popular connections are star and delta, although the zig-zag connection is also used in distribution systems, depicted
 in figure bellow. Consequently, connectivity matrices must be computed for each configuration.</p>
 <div style="text-align: center;">
@@ -10173,11 +10109,10 @@ in figure bellow. Consequently, connectivity matrices must be computed for each 
     title="Dy connection"
     width="70%"/>
 </div>
-<p>The transformation matrix <span class="math notranslate nohighlight">\(C_U\)</span>, which relates the voltages of each winding to the corresponding phase voltages,
+<p>The transformation matrix <img class="math" src="../_images/math/93ce20cb984d980f1dfc69a89f6f7864663c0ac7.svg" alt="C_U"/>, which relates the voltages of each winding to the corresponding phase voltages,
 is given explicitly in the following expression:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    \begin{bmatrix}
+<div class="math">
+<p><img src="../_images/math/215c0ffcd5954127d66931460885c693ccbeb0c0.svg" alt="\begin{bmatrix}
         \vec{U}_1 \\
         \vec{U}_2 \\
         \vec{U}_3 \\
@@ -10201,17 +10136,13 @@ is given explicitly in the following expression:</p>
         \vec{U}_a \\
         \vec{U}_b \\
         \vec{U}_c
-    \end{bmatrix}
-\end{split}\]</div>
-<p>And in compact form:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{U}_\text{coils} = C_U \cdot \vec{U}_\text{phases}
-\]</div>
-<p>Similarly, the inverse current connectivity matrix <span class="math notranslate nohighlight">\(C_I^{-1}\)</span> is obtained:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    \begin{bmatrix}
+    \end{bmatrix}"/></p>
+</div><p>And in compact form:</p>
+<div class="math">
+<p><img src="../_images/math/6b4a304ae70d96e1b01d949dc80e72b19f481a20.svg" alt="\vec{U}_\text{coils} = C_U \cdot \vec{U}_\text{phases}"/></p>
+</div><p>Similarly, the inverse current connectivity matrix <img class="math" src="../_images/math/8205d384db88f931bdd3a59d1c8c9c9ffc21cfc2.svg" alt="C_I^{-1}"/> is obtained:</p>
+<div class="math">
+<p><img src="../_images/math/8fa5b0718e5091787f0160e4f485c1189da24e85.svg" alt="\begin{bmatrix}
         \vec{I}_A \\
         \vec{I}_B \\
         \vec{I}_C \\
@@ -10235,23 +10166,17 @@ is given explicitly in the following expression:</p>
         \vec{I}_4 \\
         \vec{I}_5 \\
         \vec{I}_6
-    \end{bmatrix}
-\end{split}\]</div>
-<p>And also in compact form:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{I}_\text{phases} = C_I^{-1} \cdot \vec{I}_\text{coils}
-\]</div>
-<p>The full transformer admittance matrix for the Dy connection is obtained by substituting the connectivity matrices <span class="math notranslate nohighlight">\(C_U\)</span>
-and <span class="math notranslate nohighlight">\(C_I\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
-    \vec{Y} = C_I^{-1} \cdot \vec{Y}_\text{primitive} \cdot C_U
-\]</div>
-<p>Finally, the transformer admittance matrix for the Dy connection is computed:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\vec{Y}
+    \end{bmatrix}"/></p>
+</div><p>And also in compact form:</p>
+<div class="math">
+<p><img src="../_images/math/43d069eb38756101ef5475817dc3e1121805a766.svg" alt="\vec{I}_\text{phases} = C_I^{-1} \cdot \vec{I}_\text{coils}"/></p>
+</div><p>The full transformer admittance matrix for the Dy connection is obtained by substituting the connectivity matrices <img class="math" src="../_images/math/93ce20cb984d980f1dfc69a89f6f7864663c0ac7.svg" alt="C_U"/>
+and <img class="math" src="../_images/math/7ae6c585ed06911d3a7efbc8c4ac461692ff679f.svg" alt="C_I"/>:</p>
+<div class="math">
+<p><img src="../_images/math/d008dfaef17904797f8fad91c00c18fea2b97214.svg" alt="\vec{Y} = C_I^{-1} \cdot \vec{Y}_\text{primitive} \cdot C_U"/></p>
+</div><p>Finally, the transformer admittance matrix for the Dy connection is computed:</p>
+<div class="math">
+<p><img src="../_images/math/1fddfe8a130c4e66265c8ca26a360f157a5c015e.svg" alt="\vec{Y}
     =
     \begin{bmatrix}
         \dfrac{2\vec{Y}_s+\vec{Y}_{sh}}{3m^2m_f^2} &amp; \dfrac{-\vec{Y}_s-\dfrac{\vec{Y}_{sh}}{2}}{3m^2m_f^2} &amp; \dfrac{-\vec{Y}_s-\dfrac{\vec{Y}_{sh}}{2}}{3m^2m_f^2} &amp; \dfrac{-\vec{Y_s}}{\sqrt{3}\vec{m}^*m_fm_t} &amp; 0 &amp; \dfrac{\vec{Y_s}}{\sqrt{3}\vec{m}^*m_fm_t} \\
@@ -10260,9 +10185,8 @@ and <span class="math notranslate nohighlight">\(C_I\)</span>:</p>
         \dfrac{-\vec{Y_s}}{\sqrt{3}\vec{m}m_tm_f} &amp; \dfrac{\vec{Y_s}}{\sqrt{3}\vec{m}m_tm_f} &amp; 0 &amp; \dfrac{\vec{Y}_s+\dfrac{\vec{Y}_{sh}}{2}}{m_t^2} &amp; 0 &amp; 0 \\
         0 &amp; \dfrac{-\vec{Y_s}}{\sqrt{3}\vec{m}m_tm_f} &amp; \dfrac{\vec{Y_s}}{\sqrt{3}\vec{m}m_tm_f} &amp; 0 &amp; \dfrac{\vec{Y}_s+\dfrac{\vec{Y}_{sh}}{2}}{m_t^2} &amp; 0 \\
         \dfrac{\vec{Y_s}}{\sqrt{3}\vec{m}m_tm_f} &amp; 0 &amp; \dfrac{-\vec{Y_s}}{\sqrt{3}\vec{m}m_tm_f} &amp; 0 &amp; 0 &amp; \dfrac{\vec{Y}_s+\dfrac{\vec{Y}_{sh}}{2}}{m_t^2} \\
-    \end{bmatrix}
-\end{split}\]</div>
-<p>The admittance matrices for the other eight possible configurations have been obtained using exactly the same procedure.</p>
+    \end{bmatrix}"/></p>
+</div><p>The admittance matrices for the other eight possible configurations have been obtained using exactly the same procedure.</p>
 <section id="vector-group-and-clock-notation">
 <h3>Vector group and clock notation<a class="headerlink" href="#vector-group-and-clock-notation" title="Link to this heading"></a></h3>
 <p>The vector group and clock notation define the connection type of the high-voltage (HV) and low-voltage (LV) windings
@@ -10275,10 +10199,10 @@ The phase displacement is then specified using clock notation:</p>
     title="Clock notation"
     width="30%"/>
 </div>
-<p>The full circumference of a clock is <span class="math notranslate nohighlight">\(360^\circ\)</span>, which, divided by its <span class="math notranslate nohighlight">\(12\)</span> hours, assigns <span class="math notranslate nohighlight">\(30^\circ\)</span> to each hour.
+<p>The full circumference of a clock is <img class="math" src="../_images/math/6b3dbb2dace4b41617b3af1614affa0a9d2f6ab1.svg" alt="360^\circ"/>, which, divided by its <img class="math" src="../_images/math/d147c12ac411feac5293f9328d82ee96665a8a9d.svg" alt="12"/> hours, assigns <img class="math" src="../_images/math/aa3e4de58095898df09b64df32e2c2133d027008.svg" alt="30^\circ"/> to each hour.
 If the high-voltage (HV) side is taken as the reference, the low-voltage (LV) side indicates the phase displacement
 between the two voltages. For instance, a \textbf{Dy5} transformer connection means that the HV side is delta-connected,
-the LV side is star-connected, and the phase displacement between them is <span class="math notranslate nohighlight">\(150^\circ\)</span> (<span class="math notranslate nohighlight">\(5 \cdot 30^\circ\)</span>), as
+the LV side is star-connected, and the phase displacement between them is <img class="math" src="../_images/math/3fc6015f7fe8e305be01c4f4c0d7108961f03108.svg" alt="150^\circ"/> (<img class="math" src="../_images/math/f0c9f5b1f38b8d7271f1977453b340a942709c80.svg" alt="5 \cdot 30^\circ"/>), as
 illustrated in the figure above.</p>
 </section>
 <section id="transformer-definition-example">
@@ -10323,121 +10247,77 @@ illustrated in the figure above.</p>
 the transformer to match the branch model, it is advised to transform the specification sheet values of the device
 into the desired values. The values to take from the specs sheet are:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(S_n\)</span>: Nominal power in MVA.</p></li>
-<li><p><span class="math notranslate nohighlight">\(HV\)</span>: Voltage at the high-voltage side in kV.</p></li>
-<li><p><span class="math notranslate nohighlight">\(LV\)</span>: Voltage at the low-voltage side in kV.</p></li>
-<li><p><span class="math notranslate nohighlight">\(V_{hv\_bus}\)</span>: Nominal voltage of the high-voltage side bus kV.</p></li>
-<li><p><span class="math notranslate nohighlight">\(V_{lv\_bus}\)</span>: Nominal voltage of the low-voltage side bus kV.</p></li>
-<li><p><span class="math notranslate nohighlight">\(V_{sc}\)</span>: Short circuit voltage in %.</p></li>
-<li><p><span class="math notranslate nohighlight">\(P_{cu}\)</span>: Copper losses in kW.</p></li>
-<li><p><span class="math notranslate nohighlight">\(I_0\)</span>: No load current in %.</p></li>
-<li><p><span class="math notranslate nohighlight">\(Share_{hv1}\)</span>: Contribution to the HV side. Value from 0 to 1.</p></li>
+<li><p><img class="math" src="../_images/math/d8f4bc016cdcd5e68f490375d5fa12902031ed52.svg" alt="S_n"/>: Nominal power in MVA.</p></li>
+<li><p><img class="math" src="../_images/math/90c4289ccf4535e380a408b6b6c35daad81bdb12.svg" alt="HV"/>: Voltage at the high-voltage side in kV.</p></li>
+<li><p><img class="math" src="../_images/math/614415ea976d5389cbcc0863dc008409541c84df.svg" alt="LV"/>: Voltage at the low-voltage side in kV.</p></li>
+<li><p><img class="math" src="../_images/math/ae1743d626b4244d4c7dc1fb73d4bc566aa9e767.svg" alt="V_{hv\_bus}"/>: Nominal voltage of the high-voltage side bus kV.</p></li>
+<li><p><img class="math" src="../_images/math/dcfd7f6ac63a4fa4eb330b0d59bca3710fdedd73.svg" alt="V_{lv\_bus}"/>: Nominal voltage of the low-voltage side bus kV.</p></li>
+<li><p><img class="math" src="../_images/math/c57a7eb309b7c141d721c77d9a268b3687eaaaad.svg" alt="V_{sc}"/>: Short circuit voltage in %.</p></li>
+<li><p><img class="math" src="../_images/math/691732615d638ee7d71c04c83d4d1dc9138419df.svg" alt="P_{cu}"/>: Copper losses in kW.</p></li>
+<li><p><img class="math" src="../_images/math/adcd782280d325715f28dea464d7791b13dfe769.svg" alt="I_0"/>: No load current in %.</p></li>
+<li><p><img class="math" src="../_images/math/b8a280f03639879bda762ec6d94436bcfed5cd87.svg" alt="Share_{hv1}"/>: Contribution to the HV side. Value from 0 to 1.</p></li>
 </ul>
 <p>Short circuit impedance (p.u. of the machine)</p>
-<div class="math notranslate nohighlight">
-\[
-    z_{sc} = \frac{V_{sc}}{100}
-\]</div>
-<p>Short circuit resistance (p.u. of the machine)</p>
-<div class="math notranslate nohighlight">
-\[
-    r_{sc} = \frac{P_{cu} / 1000}{ S_n }
-\]</div>
-<p>Short circuit reactance (p.u. of the machine)
-Can only be computed if <span class="math notranslate nohighlight">\(r_{sc} &lt; z_{sc}\)</span></p>
-<div class="math notranslate nohighlight">
-\[
-    x_{sc} = \sqrt{z_{sc}^2 - r_{sc}^2}
-\]</div>
-<p>Series impedance (p.u. of the machine)</p>
-<div class="math notranslate nohighlight">
-\[
-    z_s = r_{sc} + j \cdot x_{sc}
-\]</div>
-<p>The issue with this is that we now must convert <span class="math notranslate nohighlight">\(zs\)</span> from machine base to the system base.</p>
+<div class="math">
+<p><img src="../_images/math/5192e01b4b10562e7cad483b84ff5f3845e3ff71.svg" alt="z_{sc} = \frac{V_{sc}}{100}"/></p>
+</div><p>Short circuit resistance (p.u. of the machine)</p>
+<div class="math">
+<p><img src="../_images/math/62772ab8b49b624ae4fdccba66abb216a6048726.svg" alt="r_{sc} = \frac{P_{cu} / 1000}{ S_n }"/></p>
+</div><p>Short circuit reactance (p.u. of the machine)
+Can only be computed if <img class="math" src="../_images/math/7ae72c8ad77113c5aceeaf0a8a7cfbe0a89937f9.svg" alt="r_{sc} &lt; z_{sc}"/></p>
+<div class="math">
+<p><img src="../_images/math/4a840dd1ebc8635c4fe70e94bf98d4826767e117.svg" alt="x_{sc} = \sqrt{z_{sc}^2 - r_{sc}^2}"/></p>
+</div><p>Series impedance (p.u. of the machine)</p>
+<div class="math">
+<p><img src="../_images/math/9c9dbdff8dd2a56442836a283d885405121da307.svg" alt="z_s = r_{sc} + j \cdot x_{sc}"/></p>
+</div><p>The issue with this is that we now must convert <img class="math" src="../_images/math/e4ee18f244aef65a4570a414faa6e2d3879f8117.svg" alt="zs"/> from machine base to the system base.</p>
 <p>First we compute the High voltage side:</p>
-<div class="math notranslate nohighlight">
-\[
-    z_{base}^{HV} = \frac{HV^2}{S_n}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    z_{base}^{hv\_bus} = \frac{V_{hv\_bus}^2}{S_{base}}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    z_{s\_HV}^{system}  = z_s\cdot  \frac{z_{base}^{HV}}{z_{base}^{hv\_bus}} \cdot Share_{hv1}  = z_s \cdot  \frac{HV^2 \cdot S_{base}}{V_{hv\_bus}^2 \cdot S_n}  \cdot Share_{hv1}
-\]</div>
-<p>Now, we compute the Low voltage side:</p>
-<div class="math notranslate nohighlight">
-\[
-    z_{base}^{LV} = \frac{LV^2}{S_n}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    z_{base}^{lv\_bus} = \frac{V_{lv\_bus}^2}{S_{base}}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    z_{s\_LV}^{system} = z_s \cdot \frac{z_{base}^{LV}}{z_{base}^{lv\_bus}}  \cdot (1 - Share_{hv1})  = z_s \cdot  \frac{LV^2 \cdot S_{base}}{V_{lv\_bus}^2 \cdot S_n}  \cdot (1 - Share_{hv1})
-\]</div>
-<p>Finally, the system series impedance in p.u. is:</p>
-<div class="math notranslate nohighlight">
-\[
-    z_s = z_{s\_HV}^{system} + z_{s\_LV}^{system}
-\]</div>
-<p>Now, the leakage impedance (shunt of the model)</p>
-<div class="math notranslate nohighlight">
-\[
-    r_m = \frac{S_{base}}{P_{fe} / 1000}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    z_m = \frac{100 \cdot S_{base}}{I0 \cdot S_n}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    x_m = \sqrt{\frac{ - r_m^2 \cdot z_m^2}{z_m^2 - r_m^2}}
-\]</div>
-<p>Finally, the shunt admittance is (p.u. of the system):</p>
-<div class="math notranslate nohighlight">
-\[
-    y_{shunt} = \frac{1}{r_m} + j \cdot \frac{1}{x_m}
-\]</div>
-</section>
+<div class="math">
+<p><img src="../_images/math/bb9e413a98e28689a0f52b7db6e5dfc16568d215.svg" alt="z_{base}^{HV} = \frac{HV^2}{S_n}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/8e00b68d699fdb50e66b21d6b684381012e0d6fd.svg" alt="z_{base}^{hv\_bus} = \frac{V_{hv\_bus}^2}{S_{base}}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/866d105456ca4876b827a53a25079782513b8df5.svg" alt="z_{s\_HV}^{system}  = z_s\cdot  \frac{z_{base}^{HV}}{z_{base}^{hv\_bus}} \cdot Share_{hv1}  = z_s \cdot  \frac{HV^2 \cdot S_{base}}{V_{hv\_bus}^2 \cdot S_n}  \cdot Share_{hv1}"/></p>
+</div><p>Now, we compute the Low voltage side:</p>
+<div class="math">
+<p><img src="../_images/math/11a987a8649f978fe4d23c479590495bd894d717.svg" alt="z_{base}^{LV} = \frac{LV^2}{S_n}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/bee16acd22024c1215ca5aa790dada756ad8e5e4.svg" alt="z_{base}^{lv\_bus} = \frac{V_{lv\_bus}^2}{S_{base}}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/321796fb80be0c3cf794f845596857cc623b1fba.svg" alt="z_{s\_LV}^{system} = z_s \cdot \frac{z_{base}^{LV}}{z_{base}^{lv\_bus}}  \cdot (1 - Share_{hv1})  = z_s \cdot  \frac{LV^2 \cdot S_{base}}{V_{lv\_bus}^2 \cdot S_n}  \cdot (1 - Share_{hv1})"/></p>
+</div><p>Finally, the system series impedance in p.u. is:</p>
+<div class="math">
+<p><img src="../_images/math/fe2472b1b2c316e8bf2b9525cafd300887e6f15b.svg" alt="z_s = z_{s\_HV}^{system} + z_{s\_LV}^{system}"/></p>
+</div><p>Now, the leakage impedance (shunt of the model)</p>
+<div class="math">
+<p><img src="../_images/math/6d790cde87752ea9d748fd44695dba507759b45d.svg" alt="r_m = \frac{S_{base}}{P_{fe} / 1000}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/d3486fd65b1cbf6402a1bcffd4b420453569b67b.svg" alt="z_m = \frac{100 \cdot S_{base}}{I0 \cdot S_n}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/af9a6e535506c177655ce381c683096414d09d6d.svg" alt="x_m = \sqrt{\frac{ - r_m^2 \cdot z_m^2}{z_m^2 - r_m^2}}"/></p>
+</div><p>Finally, the shunt admittance is (p.u. of the system):</p>
+<div class="math">
+<p><img src="../_images/math/330dc052f97db3d145990b844933ca22f7fb41f5.svg" alt="y_{shunt} = \frac{1}{r_m} + j \cdot \frac{1}{x_m}"/></p>
+</div></section>
 <section id="inverse-definition-of-sc-values-from-model">
 <h3>Inverse definition of SC values from π model<a class="headerlink" href="#inverse-definition-of-sc-values-from-model" title="Link to this heading"></a></h3>
 <p>In VeraGrid I found the need to find the short circuit values
-(<span class="math notranslate nohighlight">\(P_{cu}, V_{sc}, r_{fe}, I0\)</span>) from the branch values (<em>R</em>, <em>X</em>, <em>G</em>, <em>B</em>). Hence the following formulas:</p>
-<div class="math notranslate nohighlight">
-\[
-    z_{sc} = \sqrt{R^2 + X^2}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    V_{sc} = 100 \cdot z_{sc}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    P_{cu} = R \cdot S_n \cdot 1000
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    zl = 1 / (G + j B)
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    r_{fe} = zl.real
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    xm = zl.imag
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    I0 = 100 \cdot \sqrt{1 / r_{fe}^2 + 1 / xm^2}
-\]</div>
-</section>
+(<img class="math" src="../_images/math/5111b4d971a2038f55aa344c648ea941a8cc185e.svg" alt="P_{cu}, V_{sc}, r_{fe}, I0"/>) from the branch values (<em>R</em>, <em>X</em>, <em>G</em>, <em>B</em>). Hence the following formulas:</p>
+<div class="math">
+<p><img src="../_images/math/38ecc1d721756c4c239a9ea94c77adae72277c0a.svg" alt="z_{sc} = \sqrt{R^2 + X^2}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/bc6cc9aac5bb600729a44f86155ce30f3746bf72.svg" alt="V_{sc} = 100 \cdot z_{sc}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/378f84c826aa8e6b3734879e620fa32fc577f71b.svg" alt="P_{cu} = R \cdot S_n \cdot 1000"/></p>
+</div><div class="math">
+<p><img src="../_images/math/af801c405a577003791810d6b9f2572560d06813.svg" alt="zl = 1 / (G + j B)"/></p>
+</div><div class="math">
+<p><img src="../_images/math/35850f03795e6ae3f18ad8bd40e8602618fccec6.svg" alt="r_{fe} = zl.real"/></p>
+</div><div class="math">
+<p><img src="../_images/math/ad985c469d00968f63ce1e47d25842434c9aba8a.svg" alt="xm = zl.imag"/></p>
+</div><div class="math">
+<p><img src="../_images/math/62c4e09adb7e8bf5ad0478aa0d54128111ddc95a.svg" alt="I0 = 100 \cdot \sqrt{1 / r_{fe}^2 + 1 / xm^2}"/></p>
+</div></section>
 <section id="id33">
 <h3>Registered properties<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
 <p>Profile-enabled properties: <code class="docutils literal notranslate"><span class="pre">active</span></code>, <code class="docutils literal notranslate"><span class="pre">rate</span></code>, <code class="docutils literal notranslate"><span class="pre">contingency_factor</span></code>, <code class="docutils literal notranslate"><span class="pre">protection_rating_factor</span></code>, <code class="docutils literal notranslate"><span class="pre">Cost</span></code>, <code class="docutils literal notranslate"><span class="pre">temp_oper</span></code>, <code class="docutils literal notranslate"><span class="pre">tap_module</span></code>, <code class="docutils literal notranslate"><span class="pre">tap_module_control_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">vset</span></code>, <code class="docutils literal notranslate"><span class="pre">Qset</span></code>, <code class="docutils literal notranslate"><span class="pre">tap_phase</span></code>, <code class="docutils literal notranslate"><span class="pre">tap_phase_control_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">Pset</span></code>.</p>
@@ -12419,7 +12299,7 @@ or have more than one cable at a time.</p>
 <td><p>Set active power</p></td>
 </tr>
 <tr class="row-odd"><td><p>free</p></td>
-<td><p>AC emulation:<br/><span class="math notranslate nohighlight">\(P = P_0 + k \cdot (\theta_f - \theta_t)\)</span></p></td>
+<td><p>AC emulation:<br/><img class="math" src="../_images/math/91b588383c0b440c20023c3ee9a2706ac8eb6c34.svg" alt="P = P_0 + k \cdot (\theta_f - \theta_t)"/></p></td>
 </tr>
 </tbody>
 </table>
@@ -13019,7 +12899,7 @@ or have more than one cable at a time.</p>
 for formulations that were complete, correct and explicit. Founding none, we
 started to create a formulation, by means of introducing how a converter device should behave.</p>
 <p><img alt="vsc_converter.png" src="../_images/vsc_converter.png" /></p>
-<p>It turns out that a converter cannot be a regular <span class="math notranslate nohighlight">\(\pi\)</span>-branch.
+<p>It turns out that a converter cannot be a regular <img class="math" src="../_images/math/9cc8517129c87252edd7fe2e4532af9dcf7a54d9.svg" alt="\pi"/>-branch.
 It has to be a <em>decoupled</em> branch represented by two injections.
 More or less like the 2-generators model: 2 injections plus a coupling equation.</p>
 <p><img alt="acdc_grid.png" src="../_images/acdc_grid.png" /></p>
@@ -13030,15 +12910,15 @@ AC and DC grids in any level of detail.</p>
 <p>The power flow simulation is an optimization problem
 formed by equality constraints. Because of this:</p>
 <ul class="simple">
-<li><p>For every AC island we must specify one voltage module <span class="math notranslate nohighlight">\(Vm\)</span> and one voltage angle <span class="math notranslate nohighlight">\(\theta\)</span>.
+<li><p>For every AC island we must specify one voltage module <img class="math" src="../_images/math/b1cea03550611f2cb59ad4c556f240687c0b6d6a.svg" alt="Vm"/> and one voltage angle <img class="math" src="../_images/math/8a87f04e7d7cca18343c084cceca5237fae62491.svg" alt="\theta"/>.
 Usually, at the so called <em>slack bus</em>.</p></li>
-<li><p>For every DC island there must be a <span class="math notranslate nohighlight">\(Vm\)</span> set point.
+<li><p>For every DC island there must be a <img class="math" src="../_images/math/b1cea03550611f2cb59ad4c556f240687c0b6d6a.svg" alt="Vm"/> set point.
 This can be thought of as a DC slack.</p></li>
-<li><p>An AC branch has 4 unknowns (<span class="math notranslate nohighlight">\(Vm_f, Vm_t, \theta_f, \theta_t\)</span>)
-and 4 equations (<span class="math notranslate nohighlight">\(P_f, P_t, Q_f, Q_t\)</span>).</p></li>
-<li><p>A DC branch has 2 unknowns (<span class="math notranslate nohighlight">\(Vm_f, Vm_t\)</span>) and 2 equations
-(<span class="math notranslate nohighlight">\(P_f, P_t\)</span>).</p></li>
-<li><p>A converter branch has 3 unknowns (<span class="math notranslate nohighlight">\(Vm_f, Vm_t, \theta_t\)</span>)
+<li><p>An AC branch has 4 unknowns (<img class="math" src="../_images/math/f70a9a01f8b539404ba5db1941e9bd4aeadb94e4.svg" alt="Vm_f, Vm_t, \theta_f, \theta_t"/>)
+and 4 equations (<img class="math" src="../_images/math/1e65b288378414ee7e038009cc19a749e5a8c129.svg" alt="P_f, P_t, Q_f, Q_t"/>).</p></li>
+<li><p>A DC branch has 2 unknowns (<img class="math" src="../_images/math/79d4470e21120512fe7d81a01ebda364636eedb7.svg" alt="Vm_f, Vm_t"/>) and 2 equations
+(<img class="math" src="../_images/math/016ef68609753d0b9dae6f848d51d7f1ee4990c9.svg" alt="P_f, P_t"/>).</p></li>
+<li><p>A converter branch has 3 unknowns (<img class="math" src="../_images/math/e862dfdc8bf26fd6fe05cd3a97b6e390a9e7bbee.svg" alt="Vm_f, Vm_t, \theta_t"/>)
 and only 1 <em>natural</em> equation, the losses equation.
 That is why every converter must control two magnitudes to
 add the 2 extra equations needed.</p></li>
@@ -13057,22 +12937,22 @@ For every converter we need to choose 2 controls to ensure solvability.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(Vm_{dc}\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/da343d9d6c19399522b63fb6797c33ec42d79ac5.svg" alt="Vm_{dc}"/></p></td>
 <td><p>Voltage module control at the DC side (from side)</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(Vm_{ac}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/0885ab27d41da8e85c5469fe08fada495e1cb132.svg" alt="Vm_{ac}"/></p></td>
 <td><p>Voltage module control at the AC side (to side)</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\theta_{ac}\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/216b3b2331a720ea9e79cab719065d5710dda922.svg" alt="\theta_{ac}"/></p></td>
 <td><p>Voltage angle control at the AC side (to side)</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(P_{ac}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/01994cc0e3d03ea06e99987b0c5a4a6cb38f76db.svg" alt="P_{ac}"/></p></td>
 <td><p>Active power control at the AC side (to side)</p></td>
 </tr>
-<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(Q_{ac}\)</span></p></td>
+<tr class="row-even"><td><p><img class="math" src="../_images/math/7bbc78f8e354c149ee75e299e13871b4eda86d03.svg" alt="Q_{ac}"/></p></td>
 <td><p>Reactive power control at the AC side (to side)</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(P_{dc}\)</span></p></td>
+<tr class="row-odd"><td><p><img class="math" src="../_images/math/b5d4dd2d61dc5947619b364bccaf2346e7641afa.svg" alt="P_{dc}"/></p></td>
 <td><p>Active power control at the DC side (from side)</p></td>
 </tr>
 </tbody>

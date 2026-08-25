@@ -18,8 +18,6 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -173,26 +171,18 @@ table in place.</p></li>
 <p>Classical sigma analysis uses one HELM embedding from the no-load solution to
 the target loading condition.</p>
 <p>The HELM voltage and inverse-voltage series are:</p>
-<div class="math notranslate nohighlight">
-\[
-V(s) = \sum_{k=0}^{N} U_k s^k
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-X(s) = \frac{1}{V^*(s)} = \sum_{k=0}^{N} X_k s^k
-\]</div>
-<p>The sigma value is obtained from the Padé relationship between the voltage
+<div class="math">
+<p><img src="../_images/math/8dad41c980806938ba8b1b3243e019fd24cd4af1.svg" alt="V(s) = \sum_{k=0}^{N} U_k s^k"/></p>
+</div><div class="math">
+<p><img src="../_images/math/1d342ab4f0753878b82ce4a4e8cf2e297afcfdec.svg" alt="X(s) = \frac{1}{V^*(s)} = \sum_{k=0}^{N} X_k s^k"/></p>
+</div><p>The sigma value is obtained from the Padé relationship between the voltage
 series and the reciprocal-conjugate voltage series. The resulting complex value</p>
-<div class="math notranslate nohighlight">
-\[
-\sigma = \sigma_r + j \sigma_i
-\]</div>
-<p>is plotted against the sigma stability boundary:</p>
-<div class="math notranslate nohighlight">
-\[
-\sigma_i = \pm \sqrt{0.25 + \sigma_r}
-\]</div>
-<p>The reported distance is the distance from the bus sigma point to that boundary.
+<div class="math">
+<p><img src="../_images/math/b96542341946728ba3e3e5fc75adc0a883638ed6.svg" alt="\sigma = \sigma_r + j \sigma_i"/></p>
+</div><p>is plotted against the sigma stability boundary:</p>
+<div class="math">
+<p><img src="../_images/math/2abaddee48e31f04a171a92b22522f7bf3e6b678.svg" alt="\sigma_i = \pm \sqrt{0.25 + \sigma_r}"/></p>
+</div><p>The reported distance is the distance from the bus sigma point to that boundary.
 Smaller distances indicate lower voltage-stability margin.</p>
 </section>
 <section id="dpr-sigma">

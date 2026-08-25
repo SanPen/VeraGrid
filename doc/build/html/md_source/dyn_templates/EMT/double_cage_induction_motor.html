@@ -18,8 +18,6 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,34 +156,26 @@
 </section>
 <section id="scope-and-model-level">
 <h2>Scope and model level<a class="headerlink" href="#scope-and-model-level" title="Link to this heading"></a></h2>
-<p>This is the Level-3 induction-motor model. Like the single-cage model, it uses a three-wire ABC stator interface and stationary <span class="math notranslate nohighlight">\(\alpha\beta\)</span> electrical coordinates. It adds a second rotor cage so the equivalent rotor impedance changes naturally with slip. This improves the representation of starting torque, inrush current, and deep-bar behavior.</p>
+<p>This is the Level-3 induction-motor model. Like the single-cage model, it uses a three-wire ABC stator interface and stationary <img class="math" src="../../../_images/math/231aa46b5abf5cbd56b54e94a1f1a9fc96f79541.svg" alt="\alpha\beta"/> electrical coordinates. It adds a second rotor cage so the equivalent rotor impedance changes naturally with slip. This improves the representation of starting torque, inrush current, and deep-bar behavior.</p>
 <p>Use Level 3 when both running and high-slip characteristics must be matched. Use the simpler Level-2 model when one cage fits the study data and the extra parameters cannot be identified reliably.</p>
 </section>
 <section id="state-equations">
 <h2>State equations<a class="headerlink" href="#state-equations" title="Link to this heading"></a></h2>
 <p>The model retains stator flux, two pairs of rotor-cage fluxes, and normalized rotor speed. The stator flux follows</p>
-<div class="math notranslate nohighlight">
-\[
-\dot\psi_{s,\alpha}=v_\alpha-r_si_{s,\alpha},
+<div class="math">
+<p><img src="../../../_images/math/7de21ae56cac39b48df7a9f00d0bea9eb4dd6d4e.svg" alt="\dot\psi_{s,\alpha}=v_\alpha-r_si_{s,\alpha},
 \qquad
-\dot\psi_{s,\beta}=v_\beta-r_si_{s,\beta}.
-\]</div>
-<p>For cage <span class="math notranslate nohighlight">\(k\in\{1,2\}\)</span>,</p>
-<div class="math notranslate nohighlight">
-\[
-\dot\psi_{rk,\alpha}=-r_{rk}i_{rk,\alpha}-\omega_{r,e}\psi_{rk,\beta},
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\dot\psi_{rk,\beta}=-r_{rk}i_{rk,\beta}+\omega_{r,e}\psi_{rk,\alpha}.
-\]</div>
-<p>The coupled inductance matrix determines stator and cage currents from all six flux components. Electromagnetic torque is computed from stator flux and current, and the shaft equation is</p>
-<div class="math notranslate nohighlight">
-\[
-\dot\omega_r=\frac{T_e-T_m-d(\omega_r-1)}{2h+\varepsilon},
-\qquad s=1-\omega_r.
-\]</div>
-</section>
+\dot\psi_{s,\beta}=v_\beta-r_si_{s,\beta}."/></p>
+</div><p>For cage <img class="math" src="../../../_images/math/8fc9df8cc15cf63d1a409412b3e803151ca509db.svg" alt="k\in\{1,2\}"/>,</p>
+<div class="math">
+<p><img src="../../../_images/math/0583554ceb5663669e4ac6cdfe9e7b14ad03741e.svg" alt="\dot\psi_{rk,\alpha}=-r_{rk}i_{rk,\alpha}-\omega_{r,e}\psi_{rk,\beta},"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/abf23f3030d529459bbea41970645c037dc0af5a.svg" alt="\dot\psi_{rk,\beta}=-r_{rk}i_{rk,\beta}+\omega_{r,e}\psi_{rk,\alpha}."/></p>
+</div><p>The coupled inductance matrix determines stator and cage currents from all six flux components. Electromagnetic torque is computed from stator flux and current, and the shaft equation is</p>
+<div class="math">
+<p><img src="../../../_images/math/f0645d2eae90168d94ba5e50afe9fdd6f8d6a4ff.svg" alt="\dot\omega_r=\frac{T_e-T_m-d(\omega_r-1)}{2h+\varepsilon},
+\qquad s=1-\omega_r."/></p>
+</div></section>
 <section id="initialization">
 <h2>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h2>
 <p>The initializer forms a positive-sequence double-cage equivalent circuit from solved terminal voltage and power. It estimates a bounded slip, divides rotor current between the two cage impedances, and seeds stator flux, both cage fluxes, speed, and torque consistently. The two cage parameter sets must be physically distinct and use the same per-unit base; otherwise the added model order provides no reliable benefit.</p>

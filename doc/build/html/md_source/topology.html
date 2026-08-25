@@ -18,8 +18,6 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -190,22 +188,22 @@ and states in the most general sense.</p>
 because what we want is to be able to use the electrotechnical formulas
 to get the physical magnitudes, and for that we must abide to some rules.
 Thus, from circuit theory, we derive the following fundamental relationship:</p>
-<div class="math notranslate nohighlight">
-\[ Y \times V = I^* \]</div>
-<p>Where:</p>
+<div class="math">
+<p><img src="../_images/math/88e1ab2958024e8d206401cb76c7bca84c390568.svg" alt="Y \times V = I^*"/></p>
+</div><p>Where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(Y\)</span> is the nodal admittance matrix.</p></li>
-<li><p><span class="math notranslate nohighlight">\(V\)</span> is the vector of bus voltages.</p></li>
-<li><p><span class="math notranslate nohighlight">\(I\)</span> is the vector of current injections at the buses.</p></li>
+<li><p><img class="math" src="../_images/math/7daf0d4815e763eb90f0d5f1dc406f668c1e21db.svg" alt="Y"/> is the nodal admittance matrix.</p></li>
+<li><p><img class="math" src="../_images/math/e4762cec46619bf7781cae62216214f909395368.svg" alt="V"/> is the vector of bus voltages.</p></li>
+<li><p><img class="math" src="../_images/math/015755a22b6219b345c36a9a47b091dc56007486.svg" alt="I"/> is the vector of current injections at the buses.</p></li>
 </ul>
-<p>To solve for <span class="math notranslate nohighlight">\(V\)</span>, we need to invert <span class="math notranslate nohighlight">\(Y\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[V = Y^{-1} \times I^*\]</div>
-<p>However, <span class="math notranslate nohighlight">\(Y\)</span> may not always be invertible for any arbitrary collection
+<p>To solve for <img class="math" src="../_images/math/e4762cec46619bf7781cae62216214f909395368.svg" alt="V"/>, we need to invert <img class="math" src="../_images/math/7daf0d4815e763eb90f0d5f1dc406f668c1e21db.svg" alt="Y"/>:</p>
+<div class="math">
+<p><img src="../_images/math/52df8bfe1c0d0e9f5c92a089d5cc67228041d59c.svg" alt="V = Y^{-1} \times I^*"/></p>
+</div><p>However, <img class="math" src="../_images/math/7daf0d4815e763eb90f0d5f1dc406f668c1e21db.svg" alt="Y"/> may not always be invertible for any arbitrary collection
 of equipment. This is because certain branches in the circuit might have
-zero impedance, making <span class="math notranslate nohighlight">\(Y\)</span> singular.
+zero impedance, making <img class="math" src="../_images/math/7daf0d4815e763eb90f0d5f1dc406f668c1e21db.svg" alt="Y"/> singular.
 Or simply because there are grid parts disconnected from the rest,
-making <span class="math notranslate nohighlight">\(Y\)</span> also singular.</p>
+making <img class="math" src="../_images/math/7daf0d4815e763eb90f0d5f1dc406f668c1e21db.svg" alt="Y"/> also singular.</p>
 <p>The topology processing involves the following steps:</p>
 <ol class="arabic simple">
 <li><p><strong>Reduce problematic branches:</strong> Address switches and jumpers that cause singularities.</p></li>
@@ -290,7 +288,7 @@ connections between buses. The adjacency matrix is computed using the following 
 </div>
 <p>A method that is found to be approximately 2.5 times faster in practice is
 to form the computationally simpler connectivity matrix C, and then compute A
-from it by <span class="math notranslate nohighlight">\(A = C \times C^\top\)</span></p>
+from it by <img class="math" src="../_images/math/f8e695c711ea0a67243253367c0a3b9e116a956a.svg" alt="A = C \times C^\top"/></p>
 <p>See the following pseudo-code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">n</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">buses</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">branches</span>
@@ -353,7 +351,7 @@ non-reducible, active branches. This is, the branches that have impedances and
 can transmit electricity.
 These are the branches that we did not eliminate in the step 1.</p>
 <p>To compose the connected adjancency matrix <code class="docutils literal notranslate"><span class="pre">A</span></code> we do need to fill the incidence matric <code class="docutils literal notranslate"><span class="pre">C</span></code>.
-With that <span class="math notranslate nohighlight">\(A = C \times C\top\)</span>:</p>
+With that <img class="math" src="../_images/math/f8b29ca4fa9987534abb9c19eb360a22ad6935a4.svg" alt="A = C \times C\top"/>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">n</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">buses</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">branches</span>
     <span class="n">C</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>

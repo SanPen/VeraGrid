@@ -10,4 +10,3 @@ build:
   commands:
     - mkdir -p "$READTHEDOCS_OUTPUT/html"
     - cp -a doc/build/html/. "$READTHEDOCS_OUTPUT/html/"
-    - python doc/inject_mathjax.py "$READTHEDOCS_OUTPUT/html"

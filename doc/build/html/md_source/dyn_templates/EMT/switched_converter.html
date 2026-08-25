@@ -18,8 +18,6 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -172,15 +170,13 @@
 <section id="startup-and-procedural-handover">
 <h2>Startup and procedural handover<a class="headerlink" href="#startup-and-procedural-handover" title="Link to this heading"></a></h2>
 <p>The model starts with an averaged bridge so that the initialized operating point is not immediately disturbed by an arbitrary carrier state. At <code class="docutils literal notranslate"><span class="pre">t_enable_sw</span></code>, the <code class="docutils literal notranslate"><span class="pre">startup_handover</span></code> procedural event changes <code class="docutils literal notranslate"><span class="pre">switching_enabled_mode</span></code> from 0 to 1. The effective switching frequency is</p>
-<div class="math notranslate nohighlight">
-\[
-\omega_{sw,eff}=m_{sw}\omega_{sw},
-\]</div>
-<p>where <span class="math notranslate nohighlight">\(m_{sw}\)</span> is the mode flag. Before handover, the converter voltage follows the continuous modulation reference. Afterwards, the phase bridge voltages follow the discrete PWM gate states. The mode is retained after the event; it is not an ordinary continuously solved parameter.</p>
+<div class="math">
+<p><img src="../../../_images/math/860b11cca9e77540ebfb137e7e2c50e735d8a2ac.svg" alt="\omega_{sw,eff}=m_{sw}\omega_{sw},"/></p>
+</div><p>where <img class="math" src="../../../_images/math/2509b6de1e737606c54bd1bbbec63fc0a6895766.svg" alt="m_{sw}"/> is the mode flag. Before handover, the converter voltage follows the continuous modulation reference. Afterwards, the phase bridge voltages follow the discrete PWM gate states. The mode is retained after the event; it is not an ordinary continuously solved parameter.</p>
 </section>
 <section id="electrical-and-control-behavior">
 <h2>Electrical and control behavior<a class="headerlink" href="#electrical-and-control-behavior" title="Link to this heading"></a></h2>
-<p>Terminal voltages and currents are transformed to the PLL-aligned dq0 frame. The outer loop produces current references, the inner loop produces limited voltage commands, and the phase modulator compares the normalized references with the carrier. The series filter retains its current dynamics, while measured <span class="math notranslate nohighlight">\(P\)</span> and <span class="math notranslate nohighlight">\(Q\)</span> close the control loops. DC current follows the converter power balance, including the configured loss term.</p>
+<p>Terminal voltages and currents are transformed to the PLL-aligned dq0 frame. The outer loop produces current references, the inner loop produces limited voltage commands, and the phase modulator compares the normalized references with the carrier. The series filter retains its current dynamics, while measured <img class="math" src="../../../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/> and <img class="math" src="../../../_images/math/90cab5ae70bdb6e45756490226ba488f522c4c4e.svg" alt="Q"/> close the control loops. DC current follows the converter power balance, including the configured loss term.</p>
 <p>The explicit bridge introduces switching harmonics and discontinuous voltage steps that an averaged converter cannot reproduce. It does not represent semiconductor junction physics, dead time, device temperature, or detailed commutation losses.</p>
 </section>
 <section id="initialization-and-time-step-selection">
@@ -308,7 +304,7 @@
 <li><p>Connect the ABC and DC terminals and initialize the network operating point.</p></li>
 <li><p>Map the converter ratings, filter data, controller gains, limits, references, and switching frequency.</p></li>
 <li><p>Choose <code class="docutils literal notranslate"><span class="pre">t_enable_sw</span></code> late enough for a clean initialized start but before the event window being studied.</p></li>
-<li><p>Inspect current and modulation saturation as well as <span class="math notranslate nohighlight">\(P\)</span>, <span class="math notranslate nohighlight">\(Q\)</span>, <code class="docutils literal notranslate"><span class="pre">Vdc</span></code>, and <code class="docutils literal notranslate"><span class="pre">Idc</span></code>.</p></li>
+<li><p>Inspect current and modulation saturation as well as <img class="math" src="../../../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/>, <img class="math" src="../../../_images/math/90cab5ae70bdb6e45756490226ba488f522c4c4e.svg" alt="Q"/>, <code class="docutils literal notranslate"><span class="pre">Vdc</span></code>, and <code class="docutils literal notranslate"><span class="pre">Idc</span></code>.</p></li>
 <li><p>Validate the time step by convergence and use an averaged converter when switching ripple is not part of the study objective.</p></li>
 </ol>
 </section>

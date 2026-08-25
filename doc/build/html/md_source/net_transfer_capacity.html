@@ -18,8 +18,6 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -533,72 +531,54 @@ This optimization is done using linear programming.</p>
 We use a function to summ up all generation present at a
 node and obtain the power injection limits of that node.</p>
 <p>The power increment sent, must be equal to the power increment received:</p>
-<div class="math notranslate nohighlight">
-\[
-    \Delta P_{Send} = \Delta P_{Receive}
-\]</div>
-<p>Where:</p>
-<div class="math notranslate nohighlight">
-\[
-    \Delta P_i = share_i \cdot  \Delta P_{Send} \quad \forall i \in send
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    \Delta P_i = share_i \cdot  \Delta P_{Receive} \quad \forall i \in receive
-\]</div>
-<p>Finally, we add the nodal injection to the nodal balance summation</p>
-<div class="math notranslate nohighlight">
-\[
-    P_{{balance}_i} = Pbase_i + \Delta P_i
-\]</div>
-<blockquote>
+<div class="math">
+<p><img src="../_images/math/facbedf20aa2649ce702e7f41814a530860e9c3a.svg" alt="\Delta P_{Send} = \Delta P_{Receive}"/></p>
+</div><p>Where:</p>
+<div class="math">
+<p><img src="../_images/math/91b8848a24ce4c98a296fed06768803ac0922255.svg" alt="\Delta P_i = share_i \cdot  \Delta P_{Send} \quad \forall i \in send"/></p>
+</div><div class="math">
+<p><img src="../_images/math/c3e89d1d2c50ad5dfd250f21aa37b361b0f0464d.svg" alt="\Delta P_i = share_i \cdot  \Delta P_{Receive} \quad \forall i \in receive"/></p>
+</div><p>Finally, we add the nodal injection to the nodal balance summation</p>
+<div class="math">
+<p><img src="../_images/math/1bfac4b954b68ece4419e1be112293adf66e708b.svg" alt="P_{{balance}_i} = Pbase_i + \Delta P_i"/></p>
+</div><blockquote>
 <div><p>To apply these equations, the generation and the load must be numerically equal in the grid,
 this is, equal to the complete precision of the computer. This requirement is impossible in real life
 since there would be losses; However, in this formulation we are
 forcing everything to be linear and lossless. This means the the summation of the
 $Pbase` vector must be exactly zero.</p>
 </div></blockquote>
-<p>-<span class="math notranslate nohighlight">\(A_{send}\)</span>: Node indices of the sending area.</p>
-<p>-<span class="math notranslate nohighlight">\(A_{receive}\)</span>: Node indices of the receiving area.</p>
-<p>-<span class="math notranslate nohighlight">\(\Delta P_i\)</span>: Power increment at the node i.</p>
-<p>-<span class="math notranslate nohighlight">\(P_{{balance}_i}\)</span>: Power balance at the node i. In the end this will be a summation of terms.</p>
-<p>-<span class="math notranslate nohighlight">\(share_i\)</span>: scale for the increment at the node i. This is akin to the GLSK’s.</p>
-<p>-<span class="math notranslate nohighlight">\(Pbase_i\)</span>: Power injection (generation - load) of the base situation at the node i.</p>
+<p>-<img class="math" src="../_images/math/c766a9eefd4a279dcd8be9a9f761aa817fdc410a.svg" alt="A_{send}"/>: Node indices of the sending area.</p>
+<p>-<img class="math" src="../_images/math/d0469eec287fe5477ae76ee8c90479b0a7c2e950.svg" alt="A_{receive}"/>: Node indices of the receiving area.</p>
+<p>-<img class="math" src="../_images/math/aeaaeb3a4d5ac6f69a5d2f81ee86b85504722601.svg" alt="\Delta P_i"/>: Power increment at the node i.</p>
+<p>-<img class="math" src="../_images/math/4032f77cf85ebffe4e9b10ef00bf2496f695b0ac.svg" alt="P_{{balance}_i}"/>: Power balance at the node i. In the end this will be a summation of terms.</p>
+<p>-<img class="math" src="../_images/math/a7cb9b85ed64f18763d7b7cfdf2f23e540295a8e.svg" alt="share_i"/>: scale for the increment at the node i. This is akin to the GLSK’s.</p>
+<p>-<img class="math" src="../_images/math/207e669bcefc239abb045875f004e9ebe4e44848.svg" alt="Pbase_i"/>: Power injection (generation - load) of the base situation at the node i.</p>
 <section id="branches">
 <h3>Branches<a class="headerlink" href="#branches" title="Link to this heading"></a></h3>
 <p>The flow at the “from” node in a branch is:</p>
-<div class="math notranslate nohighlight">
-\[
-    flow_k = \frac{\theta_f - \theta_t}{x_k}
-\]</div>
-<p>In case of a phase shifter transformer:</p>
-<div class="math notranslate nohighlight">
-\[
-    flow_k = \frac{\theta_f - \theta_t + \tau_k}{x_k}
-\]</div>
-<p>We need to limit the flow to the line specified rating:</p>
-<div class="math notranslate nohighlight">
-\[
-    - rate_k \leq flow_k \leq rate_k
-\]</div>
-<p>Finally, we add the flows to the nodal balance summation:</p>
-<div class="math notranslate nohighlight">
-\[
-    P_{{balance}_f} -= flow_k
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    P_{{balance}_t} += flow_k
-\]</div>
-<p>-<span class="math notranslate nohighlight">\(f\)</span>: index of the node “from”</p>
-<p>-<span class="math notranslate nohighlight">\(t\)</span>: index of the node “to”</p>
-<p>-<span class="math notranslate nohighlight">\(\theta_f\)</span>: Nodal voltage angle at the node f.</p>
-<p>-<span class="math notranslate nohighlight">\(\theta_t\)</span>: Nodal voltage angle at the node t.</p>
-<p>-<span class="math notranslate nohighlight">\(x_k\)</span>: Branch k reactance.</p>
-<p>-<span class="math notranslate nohighlight">\(rate_k\)</span>: Branch k power rating.</p>
-<p>-<span class="math notranslate nohighlight">\(\tau_k\)</span>: Tap angle of the branch k.</p>
-<p>-<span class="math notranslate nohighlight">\(P_f\)</span>: Power balance at the node f.</p>
-<p>-<span class="math notranslate nohighlight">\(P_t\)</span>: Power balance at the node t.</p>
+<div class="math">
+<p><img src="../_images/math/59bd7de8181f254f66e466663108e4128227f6a1.svg" alt="flow_k = \frac{\theta_f - \theta_t}{x_k}"/></p>
+</div><p>In case of a phase shifter transformer:</p>
+<div class="math">
+<p><img src="../_images/math/8627d3d2ec764e8fda91763cc96d9eb5f0de3ea2.svg" alt="flow_k = \frac{\theta_f - \theta_t + \tau_k}{x_k}"/></p>
+</div><p>We need to limit the flow to the line specified rating:</p>
+<div class="math">
+<p><img src="../_images/math/0d5e5b164a231f8885475213138a14408ad0ed84.svg" alt="- rate_k \leq flow_k \leq rate_k"/></p>
+</div><p>Finally, we add the flows to the nodal balance summation:</p>
+<div class="math">
+<p><img src="../_images/math/2968d19236d6d8ac0aaed736d0ad7a8b87310141.svg" alt="P_{{balance}_f} -= flow_k"/></p>
+</div><div class="math">
+<p><img src="../_images/math/03446e83c51cd554c6dedb00a6e240cafc7fcd0d.svg" alt="P_{{balance}_t} += flow_k"/></p>
+</div><p>-<img class="math" src="../_images/math/5b7752c757e0b691a80ab8227eadb8a8389dc58a.svg" alt="f"/>: index of the node “from”</p>
+<p>-<img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.svg" alt="t"/>: index of the node “to”</p>
+<p>-<img class="math" src="../_images/math/99e86186e8ea5444e9dceca86e6acc04e580381e.svg" alt="\theta_f"/>: Nodal voltage angle at the node f.</p>
+<p>-<img class="math" src="../_images/math/6c55be1010642a5e7a7d4637e9861f4afd6eee6d.svg" alt="\theta_t"/>: Nodal voltage angle at the node t.</p>
+<p>-<img class="math" src="../_images/math/7d7d74e7994aa052a0d73daf3b7268759632d6aa.svg" alt="x_k"/>: Branch k reactance.</p>
+<p>-<img class="math" src="../_images/math/942647397ccd9b6bcbd8fe3882ece9047443bbb0.svg" alt="rate_k"/>: Branch k power rating.</p>
+<p>-<img class="math" src="../_images/math/9d4aabae661f947351159a27bdb9078780dc8a49.svg" alt="\tau_k"/>: Tap angle of the branch k.</p>
+<p>-<img class="math" src="../_images/math/686f2b710ce6b28bfe4584aefe625ae1a723f66c.svg" alt="P_f"/>: Power balance at the node f.</p>
+<p>-<img class="math" src="../_images/math/68da83d6a46cf8fc80bfabec7cba2583311f75c4.svg" alt="P_t"/>: Power balance at the node t.</p>
 </section>
 <section id="hvdc-converters">
 <h3>HVDC converters<a class="headerlink" href="#hvdc-converters" title="Link to this heading"></a></h3>
@@ -610,11 +590,9 @@ The $flow_k` value will differ depending on the control mode chosen:</p>
 converter, where the active power send is controlled and fixed.
 For out optimization, the variable $flow_k` is an optimization value
 that moves freely between the +/- rating values.</p>
-<div class="math notranslate nohighlight">
-\[
-    - rate_k \leq flow_k \leq rate_k
-\]</div>
-</section>
+<div class="math">
+<p><img src="../_images/math/0d5e5b164a231f8885475213138a14408ad0ed84.svg" alt="- rate_k \leq flow_k \leq rate_k"/></p>
+</div></section>
 <section id="angle-droop-mode-ac-emulation">
 <h4>Angle droop mode (AC emulation)<a class="headerlink" href="#angle-droop-mode-ac-emulation" title="Link to this heading"></a></h4>
 <p>This is a very uncommon control decision solely used by the INELFE HVDC
@@ -633,88 +611,68 @@ This is of course because of the artificial coupling imposed by the math,
 since in reality the voltage angles are independent of this of that control
 mode. To appropriately express this, we need to use a piece-wise function
 formulation:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    flow_k =
+<div class="math">
+<p><img src="../_images/math/55362f929d4d1f8c6d3be43702ced5e506aef34e.svg" alt="flow_k =
     \begin{cases}
         -rate_k &amp; if \quad  flow\_lin \le -rate_k \\
         P_0 + k(\theta_f - \theta_t) &amp; if \quad -rate_k &lt; flow\_lin &lt; rate_k \\
         rate_k &amp; if \quad flow\_lin \ge rate_k
-    \end{cases}
-\end{split}\]</div>
-<p>To implement this piecewise function we need to perform a serious
+    \end{cases}"/></p>
+</div><p>To implement this piecewise function we need to perform a serious
 amount of MIP magic.</p>
 <p>Selector constraint:</p>
-<div class="math notranslate nohighlight">
-\[
-    z_{neg} + z_{mid} + z_{pos} = 1
-\]</div>
-<p>Linear flow expression:</p>
-<div class="math notranslate nohighlight">
-\[
-    flow\_lin = P_0 + k(\theta_f - \theta_t)
-\]</div>
-<p>Lower flow definitionNegative flow saturation:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    flow_k \le -rate_k + M(1 - z_{neg}) \\
+<div class="math">
+<p><img src="../_images/math/2900b19396f84512305f385dbb9b16d7547adcb3.svg" alt="z_{neg} + z_{mid} + z_{pos} = 1"/></p>
+</div><p>Linear flow expression:</p>
+<div class="math">
+<p><img src="../_images/math/008b1af727c50fae7c62289b432c55957d3530dd.svg" alt="flow\_lin = P_0 + k(\theta_f - \theta_t)"/></p>
+</div><p>Lower flow definitionNegative flow saturation:</p>
+<div class="math">
+<p><img src="../_images/math/c43eb9fcb034deeb3744752b9b2dbfb8dac5251d.svg" alt="flow_k \le -rate_k + M(1 - z_{neg}) \\
     flow_k \ge -rate_k - M(1 - z_{neg}) \\
-    flow\_lin \le -rate_k + M(1 - z_{neg})
-\end{split}\]</div>
-<p>Mid-range: the droop operation zone:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    flow_k \le flow\_lin + M(1 - z_{mid}) \\
+    flow\_lin \le -rate_k + M(1 - z_{neg})"/></p>
+</div><p>Mid-range: the droop operation zone:</p>
+<div class="math">
+<p><img src="../_images/math/01a4d8781275292c4e437470936a891e8903ef16.svg" alt="flow_k \le flow\_lin + M(1 - z_{mid}) \\
     flow_k \ge flow\_lin - M(1 - z_{mid}) \\
     flow\_lin \le rate_k - \varepsilon + M(1 - z_{mid}) \\
-    flow\_lin \ge -rate_k + \varepsilon - M(1 - z_{mid})
-\end{split}\]</div>
-<p>Upper flow definitionNegative flow saturation:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-    flow_k \le rate_k + M(1 - z_{pos}) \\
+    flow\_lin \ge -rate_k + \varepsilon - M(1 - z_{mid})"/></p>
+</div><p>Upper flow definitionNegative flow saturation:</p>
+<div class="math">
+<p><img src="../_images/math/d98b7f3aa9fdb53bb2c4d3c6d526630928954d73.svg" alt="flow_k \le rate_k + M(1 - z_{pos}) \\
     flow_k \ge rate_k - M(1 - z_{pos}) \\
-    flow\_lin \ge rate_k - M(1 - z_{pos})
-\end{split}\]</div>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(K_k\)</span>: Arbitrary control parameter used.</p></li>
-<li><p><span class="math notranslate nohighlight">\(P0_k\)</span>: Base power (i.e. the given market exchange for the line).</p></li>
-<li><p><span class="math notranslate nohighlight">\(flow_k\)</span>: real variable to be computed</p></li>
-<li><p><span class="math notranslate nohighlight">\(flow\_lin\)</span>: Auxiliary variable.</p></li>
-<li><p><span class="math notranslate nohighlight">\(rate_k\)</span>: maximum allowable flow in either direction</p></li>
-<li><p><span class="math notranslate nohighlight">\(M\)</span>: large constant for Big-M logic (e.g., $M \ge 2 \cdot rate`)</p></li>
-<li><p><span class="math notranslate nohighlight">\(\varepsilon\)</span>: small tolerance for strict inequalities</p></li>
+    flow\_lin \ge rate_k - M(1 - z_{pos})"/></p>
+</div><ul class="simple">
+<li><p><img class="math" src="../_images/math/67675909b597100308627d2d2462c8a240030a3f.svg" alt="K_k"/>: Arbitrary control parameter used.</p></li>
+<li><p><img class="math" src="../_images/math/19eff13e500b89d89671d1f9178134ee996b7e78.svg" alt="P0_k"/>: Base power (i.e. the given market exchange for the line).</p></li>
+<li><p><img class="math" src="../_images/math/70656416747681d6995503707d9541f3e9f9fac9.svg" alt="flow_k"/>: real variable to be computed</p></li>
+<li><p><img class="math" src="../_images/math/55f6a04c153cdfddd4f07502900859da6f899ac9.svg" alt="flow\_lin"/>: Auxiliary variable.</p></li>
+<li><p><img class="math" src="../_images/math/942647397ccd9b6bcbd8fe3882ece9047443bbb0.svg" alt="rate_k"/>: maximum allowable flow in either direction</p></li>
+<li><p><img class="math" src="../_images/math/4abba779877abb276b98ccb2b4ba9bf2e41947ab.svg" alt="M"/>: large constant for Big-M logic (e.g., $M \ge 2 \cdot rate`)</p></li>
+<li><p><img class="math" src="../_images/math/cc7cc8f478074da39b2a04d286fe2444178ba85e.svg" alt="\varepsilon"/>: small tolerance for strict inequalities</p></li>
 <li><p>$z_{neg}, z_{mid}, z_{pos} \in {0, 1}`</p></li>
 </ul>
 <p>Finally, we add the flows to the nodal balance summation, just like we would with the branches:</p>
-<div class="math notranslate nohighlight">
-\[
-    P_{{balance}_f} -= flow_k
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-    P_{{balance}_t} += flow_k
-\]</div>
-</section>
+<div class="math">
+<p><img src="../_images/math/2968d19236d6d8ac0aaed736d0ad7a8b87310141.svg" alt="P_{{balance}_f} -= flow_k"/></p>
+</div><div class="math">
+<p><img src="../_images/math/03446e83c51cd554c6dedb00a6e240cafc7fcd0d.svg" alt="P_{{balance}_t} += flow_k"/></p>
+</div></section>
 </section>
 <section id="nodal-balance">
 <h3>Nodal balance<a class="headerlink" href="#nodal-balance" title="Link to this heading"></a></h3>
 <p>To respect the nodal flows, we create constraints where every nodal power
 summation is equal to zero to fulfill the Bucherot theorem:
 <em>All power summation at a node is zero</em>.</p>
-<div class="math notranslate nohighlight">
-\[
-    \sum^{Nodes}_i {P_{{balance}_i} =0 }
-\]</div>
-<p>The expressions contained in <span class="math notranslate nohighlight">\(P_{{balance}_i}\)</span> will be dependent on the angles
-<span class="math notranslate nohighlight">\(\theta\)</span> because of the branches and HVDC formulations.
+<div class="math">
+<p><img src="../_images/math/a034efcb5a7728ba108e83d6a51a235eb39aadbb.svg" alt="\sum^{Nodes}_i {P_{{balance}_i} =0 }"/></p>
+</div><p>The expressions contained in <img class="math" src="../_images/math/4032f77cf85ebffe4e9b10ef00bf2496f695b0ac.svg" alt="P_{{balance}_i}"/> will be dependent on the angles
+<img class="math" src="../_images/math/8a87f04e7d7cca18343c084cceca5237fae62491.svg" alt="\theta"/> because of the branches and HVDC formulations.
 Therefore, the angles will be solved by the optimization too.
 However, we must take care to set the slack angles to exactly zero:</p>
-<div class="math notranslate nohighlight">
-\[
-    \theta_{slack} = 0
-\]</div>
-</section>
+<div class="math">
+<p><img src="../_images/math/a753172098a6033060131d8852bc5d1eda7f5746.svg" alt="\theta_{slack} = 0"/></p>
+</div></section>
 </section>
 </section>
 

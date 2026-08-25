@@ -18,8 +18,6 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -180,39 +178,23 @@
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
 <p>Representative equations are:</p>
-<div class="math notranslate nohighlight">
-\[
-P_{dc,cmd} = P_{ref} + 2(v_{dc} - V_{dc,ref})\,\mathrm{regulate}_{vdc}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Q_{cmd} = Q_{ref}\,\mathrm{regulate}_q
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-i_{d,cmd} = \frac{2}{3}\frac{Q_{cmd,pu}}{V_{pk}}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-i_{q,cmd} = \frac{2}{3}\frac{P_{ac,cmd,pu}}{V_{pk}}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-i_A = i_{d,cmd}\cos\theta + i_{q,cmd}\sin\theta
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-v_{dc} i_{dc} + P_{dc,cmd,pu} = 0
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-P = v_A i_A + v_B i_B + v_C i_C
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-Q = \frac{1}{\sqrt{3}}\left((v_A-v_B)i_C + (v_B-v_C)i_A + (v_C-v_A)i_B\right)
-\]</div>
-</section>
+<div class="math">
+<p><img src="../../../_images/math/283b9d028a729ad710dd8c8c2eaff660d140c393.svg" alt="P_{dc,cmd} = P_{ref} + 2(v_{dc} - V_{dc,ref})\,\mathrm{regulate}_{vdc}"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/f23f01f534a2154e3312cfaf18afe3f37a0daa6c.svg" alt="Q_{cmd} = Q_{ref}\,\mathrm{regulate}_q"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/2936eadfed75afb4373e7022cafbd489b7f52920.svg" alt="i_{d,cmd} = \frac{2}{3}\frac{Q_{cmd,pu}}{V_{pk}}"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/2cc1393c003b760acafb6b267e1a4a60adb33044.svg" alt="i_{q,cmd} = \frac{2}{3}\frac{P_{ac,cmd,pu}}{V_{pk}}"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/f6615b83e8b4ee658e3f1f29d77a869a1eab5770.svg" alt="i_A = i_{d,cmd}\cos\theta + i_{q,cmd}\sin\theta"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/4518a5368dd7caab24b84f3f8d0291c0fed8da92.svg" alt="v_{dc} i_{dc} + P_{dc,cmd,pu} = 0"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/bdb05a0c04c7f540a1a655e66b1e0457aae3f46a.svg" alt="P = v_A i_A + v_B i_B + v_C i_C"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/0c8175c843dc9323fa98583535bc149c7969af7b.svg" alt="Q = \frac{1}{\sqrt{3}}\left((v_A-v_B)i_C + (v_B-v_C)i_A + (v_C-v_A)i_B\right)"/></p>
+</div></section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
 <table class="docutils align-default">

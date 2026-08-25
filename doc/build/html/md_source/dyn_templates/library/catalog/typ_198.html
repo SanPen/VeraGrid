@@ -18,8 +18,6 @@
       <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -170,30 +168,76 @@
 </section>
 <section id="characteristic-equations">
 <h2>Characteristic equations<a class="headerlink" href="#characteristic-equations" title="Link to this heading"></a></h2>
-<div class="math notranslate nohighlight">
-\[
-\frac{d x1}{dt} = (ss)/(Ass+Bs+1) _{bypass\_dx1}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\frac{d x2}{dt} = (ss)/(Ass+Bs+1) _{bypass\_dx2}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = ((ss)/(Ass+Bs+1) _{bypass\_dx1} - (proc_{selfix\_0} \cdot 0 + (1 - proc_{selfix\_0}) \cdot x2))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = ((ss)/(Ass+Bs+1) _{bypass\_dx2} - (proc_{selfix\_1} \cdot 0 + (1 - proc_{selfix\_1}) \cdot \frac{yi - x1 - B \cdot x2}{A}))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-0 = (yo - (proc_{selfix\_2} \cdot yi + (1 - proc_{selfix\_2}) \cdot (ss)/(Ass+Bs+1) _{bypass\_dx2}))
-\]</div>
-<div class="math notranslate nohighlight">
-\[
+<div class="math">
+<p><img src="../../../../_images/math/6cba10df5b627984cfda6fb3f5c84ca7ac329117.svg" alt="\frac{d x1}{dt} = (ss)/(Ass+Bs+1) _{bypass\_dx1}"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/2de48fafe6e78ae8fac9b259f1e07e4ba8bea90f.svg" alt="\frac{d x2}{dt} = (ss)/(Ass+Bs+1) _{bypass\_dx2}"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/e57fdf0f35f23812241b8d626a671f596a14da78.svg" alt="0 = ((ss)/(Ass+Bs+1) _{bypass\_dx1} - (proc_{selfix\_0} \cdot 0 + (1 - proc_{selfix\_0}) \cdot x2))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/8a4fb29f6323fe793d572e2700d9b07e284dabf3.svg" alt="0 = ((ss)/(Ass+Bs+1) _{bypass\_dx2} - (proc_{selfix\_1} \cdot 0 + (1 - proc_{selfix\_1}) \cdot \frac{yi - x1 - B \cdot x2}{A}))"/></p>
+</div><div class="math">
+<p><img src="../../../../_images/math/f33fe3b745b04f4c90bbc704df834f6b8fd4b5da.svg" alt="0 = (yo - (proc_{selfix\_2} \cdot yi + (1 - proc_{selfix\_2}) \cdot (ss)/(Ass+Bs+1) _{bypass\_dx2}))"/></p>
+</div><aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">
 (ss)/(Ass+Bs+1) _{bypass\_triv}(t_0) = (\Theta\left(0 - \lvertA\rvert + 1 \times 10^{-6}\right) \cdot \Theta\left(0 - \lvertB\rvert + 1 \times 10^{-6}\right))
-\]</div>
+</span>)</p>
+<p>latex exited with error
+[stdout]
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=latex)
+ restricted \write18 enabled.
+entering extended mode
+(./math.tex
+LaTeX2e &lt;2023-11-01&gt; patch level 1
+L3 programming layer &lt;2024-01-22&gt;
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/anyfontsize/anyfontsize.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-dvips.def)
+No file math.aux.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+! Undefined control sequence.
+&lt;argument&gt; ...}(t_0) = (\Theta \left (0 - \lvertA 
+                                                  \rvert + 1 \times 10^{-6}\...
+l.16 \end{split}
+                
+! Undefined control sequence.
+&lt;argument&gt; ...t ) \cdot \Theta \left (0 - \lvertB 
+                                                  \rvert + 1 \times 10^{-6}\...
+l.16 \end{split}
+                
+! Undefined control sequence.
+&lt;argument&gt; ...}(t_0) = (\Theta \left (0 - \lvertA 
+                                                  \rvert + 1 \times 10^{-6}\...
+l.16 \end{split}
+                
+! Undefined control sequence.
+&lt;argument&gt; ...t ) \cdot \Theta \left (0 - \lvertB 
+                                                  \rvert + 1 \times 10^{-6}\...
+l.16 \end{split}
+                
+
+Overfull \hbox (7.13885pt too wide) detected at line 17
+[]
+[1] (./math.aux) )
+(see the transcript file for additional information)
+Output written on math.dvi (1 page, 768 bytes).
+Transcript written on math.log.
+</p>
+</aside>
 </section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>

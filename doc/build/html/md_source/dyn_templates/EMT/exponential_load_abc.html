@@ -18,8 +18,6 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,28 +156,20 @@
 </section>
 <section id="model-behavior">
 <h2>Model behavior<a class="headerlink" href="#model-behavior" title="Link to this heading"></a></h2>
-<p>Each active branch uses a second-order generalized integrator (SOGI) to obtain in-phase and quadrature voltage components. For branch <span class="math notranslate nohighlight">\(X\)</span>,</p>
-<div class="math notranslate nohighlight">
-\[
-\dot u_X=k_{sogi}\omega(v_X-u_X)-\omega q_X,
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\dot q_X=\omega u_X.
-\]</div>
-<p>The filtered magnitude is regularized close to zero voltage:</p>
-<div class="math notranslate nohighlight">
-\[
-V_X=\sqrt{u_X^2+q_X^2+\varepsilon}.
-\]</div>
-<p>Active and reactive demand then follow</p>
-<div class="math notranslate nohighlight">
-\[
-P_X=P_{0,X}\left(\frac{V_X}{V_0}\right)^a,
+<p>Each active branch uses a second-order generalized integrator (SOGI) to obtain in-phase and quadrature voltage components. For branch <img class="math" src="../../../_images/math/ed38fa24f1c94891bd312012aab3f6673be3eb83.svg" alt="X"/>,</p>
+<div class="math">
+<p><img src="../../../_images/math/7f4104283404120da375006e278046929bdbdd5b.svg" alt="\dot u_X=k_{sogi}\omega(v_X-u_X)-\omega q_X,"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/9705aee49c8bfd910cece5387f83aeae1d241223.svg" alt="\dot q_X=\omega u_X."/></p>
+</div><p>The filtered magnitude is regularized close to zero voltage:</p>
+<div class="math">
+<p><img src="../../../_images/math/8a2b81a1e0b7fa5f2db86776149169be3e2be150.svg" alt="V_X=\sqrt{u_X^2+q_X^2+\varepsilon}."/></p>
+</div><p>Active and reactive demand then follow</p>
+<div class="math">
+<p><img src="../../../_images/math/f2b5573cb52766da3f474a2a38cfaf9d77cfdc33.svg" alt="P_X=P_{0,X}\left(\frac{V_X}{V_0}\right)^a,
 \qquad
-Q_X=Q_{0,X}\left(\frac{V_X}{V_0}\right)^b.
-\]</div>
-<p>The branch current is reconstructed from the filtered voltage components and the requested complex power. Internal safe denominators keep the expression finite during deep voltage depressions.</p>
+Q_X=Q_{0,X}\left(\frac{V_X}{V_0}\right)^b."/></p>
+</div><p>The branch current is reconstructed from the filtered voltage components and the requested complex power. Internal safe denominators keep the expression finite during deep voltage depressions.</p>
 </section>
 <section id="phase-and-connection-configurations">
 <h2>Phase and connection configurations<a class="headerlink" href="#phase-and-connection-configurations" title="Link to this heading"></a></h2>

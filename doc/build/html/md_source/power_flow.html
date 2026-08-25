@@ -18,8 +18,6 @@
       <script src="../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -1957,30 +1955,24 @@ that comes with the files when the flat start fails.</p>
 system. In practice, this amounts to calculating the voltage phasor in each bus of the power network.
 Once the bus voltages are known, the other electrical variables are easy to compute. Mathematical equations for the
 power flow problem can be obtained by combining the complex power equation with Ohm’s law.</p>
-<p>The injected complex power <span class="math notranslate nohighlight">\(\vec{S_i}\)</span> can be written as the product of the voltage phasor <span class="math notranslate nohighlight">\(\vec{U_i}\)</span> and the
-conjugated current phasor <span class="math notranslate nohighlight">\(\vec{I_i}^*\)</span> in the bus <span class="math notranslate nohighlight">\(i\)</span>.</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{S_i} = \vec{U_i} \vec{I_i}^*
-\]</div>
-<p>Ohm’s law relates the current <span class="math notranslate nohighlight">\(\vec{I_i}\)</span> flowing through the bus <span class="math notranslate nohighlight">\(i\)</span> with the bus voltage <span class="math notranslate nohighlight">\(\vec{U_i}\)</span> and its
-impedance <span class="math notranslate nohighlight">\(\vec{Z_i}\)</span>. We can express it in terms of admittance <span class="math notranslate nohighlight">\(\vec{Y_i}\)</span>, which is the impedance inverse.</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{I_i} = \frac{\vec{U_i}}{\vec{Z_i}} = \vec{Y_i}\vec{U_i}
-\]</div>
-<p>Therefore, by substituting the current from the first equation into the second equation, the fundamental expression to
+<p>The injected complex power <img class="math" src="../_images/math/497fa127d4a88336437f1e532da6bc64f058c993.svg" alt="\vec{S_i}"/> can be written as the product of the voltage phasor <img class="math" src="../_images/math/021dbe95c7652bc202f37fe9bb8bd26944f6fad1.svg" alt="\vec{U_i}"/> and the
+conjugated current phasor <img class="math" src="../_images/math/60ea4ec19bafee96e4c38bca5ac43d2e525f46de.svg" alt="\vec{I_i}^*"/> in the bus <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.svg" alt="i"/>.</p>
+<div class="math">
+<p><img src="../_images/math/88d61b65c252475af5ab8fc4bacc9b652672b9bb.svg" alt="\vec{S_i} = \vec{U_i} \vec{I_i}^*"/></p>
+</div><p>Ohm’s law relates the current <img class="math" src="../_images/math/780c35d52020446ef7e3e5c6b34d7f7e531079ff.svg" alt="\vec{I_i}"/> flowing through the bus <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.svg" alt="i"/> with the bus voltage <img class="math" src="../_images/math/021dbe95c7652bc202f37fe9bb8bd26944f6fad1.svg" alt="\vec{U_i}"/> and its
+impedance <img class="math" src="../_images/math/fa13847e883902f0752889776beb4679a9c42a16.svg" alt="\vec{Z_i}"/>. We can express it in terms of admittance <img class="math" src="../_images/math/a4b530fe429665fa63b791cd76d7d5e0b2b9ffb9.svg" alt="\vec{Y_i}"/>, which is the impedance inverse.</p>
+<div class="math">
+<p><img src="../_images/math/673f66da08157748bf0fb602d3a1c7ba24374fd0.svg" alt="\vec{I_i} = \frac{\vec{U_i}}{\vec{Z_i}} = \vec{Y_i}\vec{U_i}"/></p>
+</div><p>Therefore, by substituting the current from the first equation into the second equation, the fundamental expression to
 be solved is obtained as:</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{S_i} = \vec{U_i}(\vec{Y_i}\vec{U_i})^*
-\]</div>
-<p>The following magnitudes are defined for each bus <span class="math notranslate nohighlight">\(i\)</span>:</p>
+<div class="math">
+<p><img src="../_images/math/3937a2fc19941ec807fe53e0a196abf77eb5c700.svg" alt="\vec{S_i} = \vec{U_i}(\vec{Y_i}\vec{U_i})^*"/></p>
+</div><p>The following magnitudes are defined for each bus <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.svg" alt="i"/>:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(U\)</span>: Voltage module.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\delta\)</span>: Voltage angle.</p></li>
-<li><p><span class="math notranslate nohighlight">\(P\)</span>: Active power injection or consumption.</p></li>
-<li><p><span class="math notranslate nohighlight">\(Q\)</span>: Reactive power injection or consumption.</p></li>
+<li><p><img class="math" src="../_images/math/9098c1c4618d7a0f321cee441aabee7f1b57a19b.svg" alt="U"/>: Voltage module.</p></li>
+<li><p><img class="math" src="../_images/math/652b9d8b65c10aed0fdcdbde47396c879ed5bd33.svg" alt="\delta"/>: Voltage angle.</p></li>
+<li><p><img class="math" src="../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/>: Active power injection or consumption.</p></li>
+<li><p><img class="math" src="../_images/math/90cab5ae70bdb6e45756490226ba488f522c4c4e.svg" alt="Q"/>: Reactive power injection or consumption.</p></li>
 </ul>
 <p>In some buses we artificially define the voltage module and angle (slack buses), in some buses we just know the
 consumption power (load buses or PQ), and in some others we know the active power injection and the voltage module
@@ -1989,10 +1981,10 @@ At least one slack bus is required in order to solve the power flow problem.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
-<th class="head"><p><span class="math notranslate nohighlight">\(U\)</span></p></th>
-<th class="head"><p><span class="math notranslate nohighlight">\(\delta\)</span></p></th>
-<th class="head"><p><span class="math notranslate nohighlight">\(P\)</span></p></th>
-<th class="head"><p><span class="math notranslate nohighlight">\(Q\)</span></p></th>
+<th class="head"><p><img class="math" src="../_images/math/9098c1c4618d7a0f321cee441aabee7f1b57a19b.svg" alt="U"/></p></th>
+<th class="head"><p><img class="math" src="../_images/math/652b9d8b65c10aed0fdcdbde47396c879ed5bd33.svg" alt="\delta"/></p></th>
+<th class="head"><p><img class="math" src="../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/></p></th>
+<th class="head"><p><img class="math" src="../_images/math/90cab5ae70bdb6e45756490226ba488f522c4c4e.svg" alt="Q"/></p></th>
 </tr>
 </thead>
 <tbody>
@@ -2019,42 +2011,37 @@ At least one slack bus is required in order to solve the power flow problem.</p>
 <section id="the-newton-raphson-method">
 <h3>The Newton-Raphson Method<a class="headerlink" href="#the-newton-raphson-method" title="Link to this heading"></a></h3>
 <p>The Newton-Raphson method is used to solve the power flow problem, which consists of a zero-finding algorithm that
-produces successively better approximations to the zeros of a function. A zero of a function <span class="math notranslate nohighlight">\(f\)</span> is the <span class="math notranslate nohighlight">\(x\)</span> value such
-that <span class="math notranslate nohighlight">\(f(x)=0\)</span>. The idea is to start with an initial guess <span class="math notranslate nohighlight">\(x_0\)</span>, then to approximate the function by its tangent line,
+produces successively better approximations to the zeros of a function. A zero of a function <img class="math" src="../_images/math/5b7752c757e0b691a80ab8227eadb8a8389dc58a.svg" alt="f"/> is the <img class="math" src="../_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.svg" alt="x"/> value such
+that <img class="math" src="../_images/math/eb5e546c79039e8477f9b10b11f0977e0f9d6da9.svg" alt="f(x)=0"/>. The idea is to start with an initial guess <img class="math" src="../_images/math/ed7fb0260e58d3ca5851e823ff991dae4cde5671.svg" alt="x_0"/>, then to approximate the function by its tangent line,
 and finally to compute the x-axis interception of this tangent line.
-As shown in the following figure, the <span class="math notranslate nohighlight">\(x_1\)</span> interception will typically be a better approximation to the
-function’s real zero <span class="math notranslate nohighlight">\(x_n\)</span> than the initial guess <span class="math notranslate nohighlight">\(x_0\)</span>, and the method can be iterated.</p>
+As shown in the following figure, the <img class="math" src="../_images/math/5ea99039cd8359fa2e14317dbfae4497ebbc1360.svg" alt="x_1"/> interception will typically be a better approximation to the
+function’s real zero <img class="math" src="../_images/math/08dfd7399e8e2f0a9715c6f9a13a55d8a368a038.svg" alt="x_n"/> than the initial guess <img class="math" src="../_images/math/ed7fb0260e58d3ca5851e823ff991dae4cde5671.svg" alt="x_0"/>, and the method can be iterated.</p>
 <div style="text-align: center;">
     <img src="https://github.com/SanPen/VeraGrid/blob/master/doc/md_source/figures/3ph_newton_raphson.png?raw=true"
     alt="Newton-Raphson Method"
     title="Newton-Raphson Method"
     width="75%"/>
 </div>
-<p>If a function <span class="math notranslate nohighlight">\(y=f(x)\)</span> is expanded about an operating point <span class="math notranslate nohighlight">\(x_0\)</span> using a Taylor series expansion and ignoring all
+<p>If a function <img class="math" src="../_images/math/234cb21a18f90acee76031c4605275de96c120c6.svg" alt="y=f(x)"/> is expanded about an operating point <img class="math" src="../_images/math/ed7fb0260e58d3ca5851e823ff991dae4cde5671.svg" alt="x_0"/> using a Taylor series expansion and ignoring all
 terms of higher order than 1, the following equation can be obtained:</p>
-<div class="math notranslate nohighlight">
-\[
-y = f(x_0) + \frac{df(x_0)}{dx} (x - x_0)
-\]</div>
-<p>Returning to the power flow problem and considering again the fundamental equation <span class="math notranslate nohighlight">\(\vec{S_i} = \vec{U_i}(\vec{Y_i}\vec{U_i})^*\)</span>
-to be solved, it can be noted that it may be expressed as <span class="math notranslate nohighlight">\(\vec{S}_i = f(\vec{U}_i)\)</span>, in the same way as a generic function <span class="math notranslate nohighlight">\(y = f(x)\)</span>.
+<div class="math">
+<p><img src="../_images/math/07a170d17c1b47dc17092b539bd8261831b482b4.svg" alt="y = f(x_0) + \frac{df(x_0)}{dx} (x - x_0)"/></p>
+</div><p>Returning to the power flow problem and considering again the fundamental equation <img class="math" src="../_images/math/1f5c482fe326921e8c7dba1babe9ec7193157d5a.svg" alt="\vec{S_i} = \vec{U_i}(\vec{Y_i}\vec{U_i})^*"/>
+to be solved, it can be noted that it may be expressed as <img class="math" src="../_images/math/3adde53a0464de3695c539536ed7c147efb8069a.svg" alt="\vec{S}_i = f(\vec{U}_i)"/>, in the same way as a generic function <img class="math" src="../_images/math/5c81ce742afef9e6f20622db1228a9b431a1827a.svg" alt="y = f(x)"/>.
 Therefore, it can be solved using the Newton-Raphson method.</p>
 </section>
 <section id="solving-the-three-phase-unbalanced-power-flow-problem">
 <h3>Solving the Three-phase Unbalanced Power Flow Problem<a class="headerlink" href="#solving-the-three-phase-unbalanced-power-flow-problem" title="Link to this heading"></a></h3>
-<p>From the previous consideration, the solution of the function <span class="math notranslate nohighlight">\(\vec{S_i} = f(\vec{U_i})\)</span> can be written in the form of
+<p>From the previous consideration, the solution of the function <img class="math" src="../_images/math/dc66e4d8694d79aa7a49b166bba44568fcac2d15.svg" alt="\vec{S_i} = f(\vec{U_i})"/> can be written in the form of
 the expression above, the fundamental Newton-Raphson expression for the solution of the power flow problem,
-where <span class="math notranslate nohighlight">\(J\)</span> is the Jacobian matrix:</p>
-<div class="math notranslate nohighlight">
-\[
-\varDelta \vec{S} = -J \cdot \vec{U}
-\]</div>
-<p>If the previous equation is developed such that the complex power is expressed in its respective active <span class="math notranslate nohighlight">\(P\)</span> and
-reactive <span class="math notranslate nohighlight">\(Q\)</span> components, <span class="math notranslate nohighlight">\(J\)</span> is the Jacobian matrix composed by the partial derivatives, and the voltage is isolated
-and expressed in polar coordinates with angle <span class="math notranslate nohighlight">\(\delta\)</span> and module <span class="math notranslate nohighlight">\(U\)</span>. Then, its matrix full representation is as follows:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{bmatrix}
+where <img class="math" src="../_images/math/32c06f8c59d4bd3d13eedea7765a8a74a11f2383.svg" alt="J"/> is the Jacobian matrix:</p>
+<div class="math">
+<p><img src="../_images/math/65fb9b2a610545adae0b3c876643cb08669921c1.svg" alt="\varDelta \vec{S} = -J \cdot \vec{U}"/></p>
+</div><p>If the previous equation is developed such that the complex power is expressed in its respective active <img class="math" src="../_images/math/c2aa3dff9bffb099e9dff196fd36aed56ec16baf.svg" alt="P"/> and
+reactive <img class="math" src="../_images/math/90cab5ae70bdb6e45756490226ba488f522c4c4e.svg" alt="Q"/> components, <img class="math" src="../_images/math/32c06f8c59d4bd3d13eedea7765a8a74a11f2383.svg" alt="J"/> is the Jacobian matrix composed by the partial derivatives, and the voltage is isolated
+and expressed in polar coordinates with angle <img class="math" src="../_images/math/652b9d8b65c10aed0fdcdbde47396c879ed5bd33.svg" alt="\delta"/> and module <img class="math" src="../_images/math/9098c1c4618d7a0f321cee441aabee7f1b57a19b.svg" alt="U"/>. Then, its matrix full representation is as follows:</p>
+<div class="math">
+<p><img src="../_images/math/2065ca71d03ba808dae787fe0172749c2ae02c78.svg" alt="\begin{bmatrix}
 \delta \\
 U
 \end{bmatrix}
@@ -2066,37 +2053,30 @@ U
 \begin{bmatrix}
 \varDelta P \\
 \varDelta Q
-\end{bmatrix}
-\end{split}\]</div>
-<p>Therefore, the system will be solved iteratively until the difference between the specified power <span class="math notranslate nohighlight">\(S_\text{spec}\)</span> and
-the calculated power <span class="math notranslate nohighlight">\(S_\text{calc}\)</span> is negligible, meaning that the zero of the function has been found:</p>
-<div class="math notranslate nohighlight">
-\[
-\varDelta \vec{S} = \vec{S}_\text{calc} - \vec{S}_\text{spec}
-\]</div>
-<p>The calculated power can be obtained using the voltage and the admittance matrices of the lines and
+\end{bmatrix}"/></p>
+</div><p>Therefore, the system will be solved iteratively until the difference between the specified power <img class="math" src="../_images/math/52a0d917cc7e019826e00a7797cd3f7b9d6c16fe.svg" alt="S_\text{spec}"/> and
+the calculated power <img class="math" src="../_images/math/080f0e9d4140c45952251e4cd076dd0ef2c51b74.svg" alt="S_\text{calc}"/> is negligible, meaning that the zero of the function has been found:</p>
+<div class="math">
+<p><img src="../_images/math/4fc402bd431311d1a02c89f215f7af79fe1b028d.svg" alt="\varDelta \vec{S} = \vec{S}_\text{calc} - \vec{S}_\text{spec}"/></p>
+</div><p>The calculated power can be obtained using the voltage and the admittance matrices of the lines and
 transformers, as previously developed:</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{S}_\text{calc} = \vec{U} \, (\vec{Y} \, \vec{U})^*
-\]</div>
-<p>In contrast, the specified power incorporates the injection values of the different elements defined by
+<div class="math">
+<p><img src="../_images/math/23488e8f944d7e133e36dd0418e52fd1e738aca1.svg" alt="\vec{S}_\text{calc} = \vec{U} \, (\vec{Y} \, \vec{U})^*"/></p>
+</div><p>In contrast, the specified power incorporates the injection values of the different elements defined by
 the user. As previously discussed in the modelling section, these elements may be defined in terms of specified power
-<span class="math notranslate nohighlight">\(\vec{S}_0\)</span>, current <span class="math notranslate nohighlight">\(\vec{I}_0\)</span>, or admittance <span class="math notranslate nohighlight">\(\vec{Y}_0\)</span>. Then, the equivalent specified power is calculated using
+<img class="math" src="../_images/math/45d430e7798415d46fd331db5c094edc20f59960.svg" alt="\vec{S}_0"/>, current <img class="math" src="../_images/math/ccc5ea44709362a042f437076cb91f18f59515bc.svg" alt="\vec{I}_0"/>, or admittance <img class="math" src="../_images/math/dfc432d3011794e330285a4634e41ebd17310ed5.svg" alt="\vec{Y}_0"/>. Then, the equivalent specified power is calculated using
 the following expression:</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{S}_\text{spec} = \vec{S}_0 + (\vec{I}_0 + \vec{Y}_0 \, \vec{U})^* \, \vec{U}
-\]</div>
-<p>The voltage term <span class="math notranslate nohighlight">\(\vec{U}\)</span> is a vector composed by the voltage values at each of the system’s buses, and therefore has
-a size equal to <span class="math notranslate nohighlight">\(n\)</span>, that is, the total number of buses. The admittance term <span class="math notranslate nohighlight">\(\vec{Y}\)</span> is a matrix comprising the
+<div class="math">
+<p><img src="../_images/math/cc11afd26e2db5e1f2b28e0044c5d66687a3c57f.svg" alt="\vec{S}_\text{spec} = \vec{S}_0 + (\vec{I}_0 + \vec{Y}_0 \, \vec{U})^* \, \vec{U}"/></p>
+</div><p>The voltage term <img class="math" src="../_images/math/517f4aca75333456abcb9dd6fab82d59d0e92410.svg" alt="\vec{U}"/> is a vector composed by the voltage values at each of the system’s buses, and therefore has
+a size equal to <img class="math" src="../_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.svg" alt="n"/>, that is, the total number of buses. The admittance term <img class="math" src="../_images/math/9575d8e9a4b473d3d3a37684de639a4813f6e5b6.svg" alt="\vec{Y}"/> is a matrix comprising the
 admittance of the lines and transformers, therefore the elements that interconnect the buses with one another.
-As a result, it has a size of <span class="math notranslate nohighlight">\(n \times n\)</span>.</p>
-<p>On the other hand, the specified power and current injection vectors, <span class="math notranslate nohighlight">\(\vec{S}_0\)</span> and <span class="math notranslate nohighlight">\(\vec{I}_0\)</span>, have the same length
-as the voltage vector <span class="math notranslate nohighlight">\(\vec{U}\)</span>, while the specified admittance <span class="math notranslate nohighlight">\(\vec{Y}_0\)</span> has the same dimensions as the branch
-admittance matrix <span class="math notranslate nohighlight">\(\vec{Y}\)</span>.</p>
+As a result, it has a size of <img class="math" src="../_images/math/a093134f3fa86b4bc38a1634715b6a50c537ad3a.svg" alt="n \times n"/>.</p>
+<p>On the other hand, the specified power and current injection vectors, <img class="math" src="../_images/math/45d430e7798415d46fd331db5c094edc20f59960.svg" alt="\vec{S}_0"/> and <img class="math" src="../_images/math/ccc5ea44709362a042f437076cb91f18f59515bc.svg" alt="\vec{I}_0"/>, have the same length
+as the voltage vector <img class="math" src="../_images/math/517f4aca75333456abcb9dd6fab82d59d0e92410.svg" alt="\vec{U}"/>, while the specified admittance <img class="math" src="../_images/math/dfc432d3011794e330285a4634e41ebd17310ed5.svg" alt="\vec{Y}_0"/> has the same dimensions as the branch
+admittance matrix <img class="math" src="../_images/math/9575d8e9a4b473d3d3a37684de639a4813f6e5b6.svg" alt="\vec{Y}"/>.</p>
 <p>One might assume that, in order to formulate a three-phase power flow, it would be sufficient to simply multiply the
-number of buses by three, to account for the <span class="math notranslate nohighlight">\(abc\)</span> phases. While this assumption could be valid in transmission systems,
+number of buses by three, to account for the <img class="math" src="../_images/math/a5c37ff3d40bfb398ee50cc7c5011eacc70d35c4.svg" alt="abc"/> phases. While this assumption could be valid in transmission systems,
 it does not hold true when we enter the domain of distribution networks. In such systems, all kinds of elements can be
 present, with three-phase, two-phase, and single-phase components.</p>
 <p>Since VeraGrid aims to address both transmission and distribution systems, the assumption of simply tripling the number
@@ -2106,15 +2086,13 @@ taking into account the presence or absence of the three phases.</p>
 These are the elements where the presence of phases transporting electrical energy is specified. Based on this
 information, a binary vector, referred to as the bus <strong>mask</strong>, is constructed. This vector contains ones for the phases
 that are present and zeros for those positions where one of the three standard phases is absent.</p>
-<p>This mask <span class="math notranslate nohighlight">\(M\)</span> must be applied to several variables. The first is the admittance matrix, which will be processed by
+<p>This mask <img class="math" src="../_images/math/4abba779877abb276b98ccb2b4ba9bf2e41947ab.svg" alt="M"/> must be applied to several variables. The first is the admittance matrix, which will be processed by
 multiplying both its rows and columns by the bus mask. In this way, the entries corresponding to non-existent phases
-are removed. As a result, the matrix remains of size equal to <span class="math notranslate nohighlight">\(n \times n\)</span>, that this time corresponds to the total
+are removed. As a result, the matrix remains of size equal to <img class="math" src="../_images/math/a093134f3fa86b4bc38a1634715b6a50c537ad3a.svg" alt="n \times n"/>, that this time corresponds to the total
 number of <strong>active buses</strong>.</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{Y}_{\text{masked}} = M \cdot \vec{Y} \cdot M^{\top}
-\]</div>
-<p>Considering a simple example of two buses connected through a line that only has phases <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(c\)</span> active, phase <span class="math notranslate nohighlight">\(b\)</span>
+<div class="math">
+<p><img src="../_images/math/74ec5d3098df4cacfd7360441c7a12563131d778.svg" alt="\vec{Y}_{\text{masked}} = M \cdot \vec{Y} \cdot M^{\top}"/></p>
+</div><p>Considering a simple example of two buses connected through a line that only has phases <img class="math" src="../_images/math/b3e65e3b6408fcfa00452530b73f55d1755f9965.svg" alt="a"/> and <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.svg" alt="c"/> active, phase <img class="math" src="../_images/math/68c7c8c65602677ab56cf7fd88002023f0edc575.svg" alt="b"/>
 cannot exist at the second bus. Therefore, the bus mask will contain a zero in that position, effectively removing the
 corresponding rows and columns from the admittance matrix:</p>
 <div style="text-align: center;">
@@ -2125,21 +2103,15 @@ corresponding rows and columns from the admittance matrix:</p>
 </div>
 <p>Naturally, the bus mask must also be applied to the voltage vector at each bus in order to eliminate the entries
 corresponding to non-existent buses:</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{U}_{\text{masked}} = M^{\top} \cdot \vec{U}
-\]</div>
-<p>And the same operation must be carried out equivalently for the current injection vector and the power vector
+<div class="math">
+<p><img src="../_images/math/dc286e185b16981a0068cb3bd4839d9b18d43e42.svg" alt="\vec{U}_{\text{masked}} = M^{\top} \cdot \vec{U}"/></p>
+</div><p>And the same operation must be carried out equivalently for the current injection vector and the power vector
 at each bus:</p>
-<div class="math notranslate nohighlight">
-\[
-\vec{I}_{\text{masked}} = M^{\top} \cdot \vec{I}
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\vec{S}_{\text{masked}} = M^{\top} \cdot \vec{S}
-\]</div>
-<p>In this way, all the elements required for the power flow are now correctly dimensioned, and the algorithm can be
+<div class="math">
+<p><img src="../_images/math/53be513ad2ac69d08762844bef89fe84bedc76a9.svg" alt="\vec{I}_{\text{masked}} = M^{\top} \cdot \vec{I}"/></p>
+</div><div class="math">
+<p><img src="../_images/math/eebe643b93afa68a8d1d8c2ce977015a0df1eb0d.svg" alt="\vec{S}_{\text{masked}} = M^{\top} \cdot \vec{S}"/></p>
+</div><p>In this way, all the elements required for the power flow are now correctly dimensioned, and the algorithm can be
 applied in a manner equivalent to the traditional single-phase power flow.</p>
 </section>
 <section id="benchmark-ieee-13-node-test-feeder">

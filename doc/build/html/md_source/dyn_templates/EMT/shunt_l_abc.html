@@ -18,8 +18,6 @@
       <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -158,17 +156,13 @@
 </section>
 <section id="electrical-model">
 <h2>Electrical model<a class="headerlink" href="#electrical-model" title="Link to this heading"></a></h2>
-<p>For an enabled star branch <span class="math notranslate nohighlight">\(X\)</span>, the absorbed branch current obeys</p>
-<div class="math notranslate nohighlight">
-\[
-L_X\frac{d i_{L,X}}{dt}=v_X-v_N.
-\]</div>
-<p>The corresponding stored magnetic energy is</p>
-<div class="math notranslate nohighlight">
-\[
-W_{L,X}=\frac{1}{2}L_X i_{L,X}^2.
-\]</div>
-<p>External port currents use VeraGrid’s network-injection convention and are therefore opposite to absorbed load current. Delta branches use line-to-line voltages, such as <span class="math notranslate nohighlight">\(v_A-v_B\)</span>, and one current state per active phase pair.</p>
+<p>For an enabled star branch <img class="math" src="../../../_images/math/ed38fa24f1c94891bd312012aab3f6673be3eb83.svg" alt="X"/>, the absorbed branch current obeys</p>
+<div class="math">
+<p><img src="../../../_images/math/f3b6d5cf88744b7bb48aa05e0d38410c3eb31003.svg" alt="L_X\frac{d i_{L,X}}{dt}=v_X-v_N."/></p>
+</div><p>The corresponding stored magnetic energy is</p>
+<div class="math">
+<p><img src="../../../_images/math/8394ea7c9f85c385f8f39057c57e7baf047bde66.svg" alt="W_{L,X}=\frac{1}{2}L_X i_{L,X}^2."/></p>
+</div><p>External port currents use VeraGrid’s network-injection convention and are therefore opposite to absorbed load current. Delta branches use line-to-line voltages, such as <img class="math" src="../../../_images/math/6fe6b3831e648cb113ae5aff6b99923c1c959247.svg" alt="v_A-v_B"/>, and one current state per active phase pair.</p>
 </section>
 <section id="phase-and-neutral-configurations">
 <h2>Phase and neutral configurations<a class="headerlink" href="#phase-and-neutral-configurations" title="Link to this heading"></a></h2>
@@ -208,15 +202,13 @@ W_{L,X}=\frac{1}{2}L_X i_{L,X}^2.
 <section id="parameter-sources">
 <h2>Parameter sources<a class="headerlink" href="#parameter-sources" title="Link to this heading"></a></h2>
 <p>For a star-connected load equivalent, each phase inductance can be obtained from its nominal reactive-power demand:</p>
-<div class="math notranslate nohighlight">
-\[
-L_X=\frac{V_{nom}^2}{Q_{l0,X}\,\omega_{base}}.
-\]</div>
-<p>Delta equivalents use explicit line-to-line branch inductances. Verify whether the source data represents total three-phase power or per-phase power before mapping it.</p>
+<div class="math">
+<p><img src="../../../_images/math/42f0ed6262518150ca38ef22bdd858bac6794c0d.svg" alt="L_X=\frac{V_{nom}^2}{Q_{l0,X}\,\omega_{base}}."/></p>
+</div><p>Delta equivalents use explicit line-to-line branch inductances. Verify whether the source data represents total three-phase power or per-phase power before mapping it.</p>
 </section>
 <section id="interface-table">
 <h2>Interface table<a class="headerlink" href="#interface-table" title="Link to this heading"></a></h2>
-<p>The symbol <span class="math notranslate nohighlight">\(X\)</span> denotes an enabled phase and <span class="math notranslate nohighlight">\(XY\)</span> an enabled delta pair.</p>
+<p>The symbol <img class="math" src="../../../_images/math/ed38fa24f1c94891bd312012aab3f6673be3eb83.svg" alt="X"/> denotes an enabled phase and <img class="math" src="../../../_images/math/79c38ea82f3a7d4876167ed2a4b3b2bd83f420b6.svg" alt="XY"/> an enabled delta pair.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Category</p></th>

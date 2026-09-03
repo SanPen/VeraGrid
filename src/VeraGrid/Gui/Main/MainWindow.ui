@@ -363,7 +363,7 @@
                             <x>0</x>
                             <y>0</y>
                             <width>382</width>
-                            <height>360</height>
+                            <height>362</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -11031,6 +11031,7 @@ QProgressBar::chunk{
      <property name="title">
       <string>Import data</string>
      </property>
+     <addaction name="actionImport_bus_coordinates"/>
      <addaction name="actionImport_contingencies"/>
      <addaction name="actionAdd_custom_catalogue"/>
     </widget>
@@ -11038,7 +11039,6 @@ QProgressBar::chunk{
     <addaction name="actiongrid_Generator"/>
     <addaction name="actionOpen_file"/>
     <addaction name="actionAdd_circuit"/>
-    <addaction name="actionImport_bus_coordinates"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
@@ -11060,8 +11060,8 @@ QProgressBar::chunk{
     <property name="title">
      <string>Actions</string>
     </property>
-    <addaction name="actionAdd_default_catalogue"/>
     <addaction name="actionClear_stuff_running_right_now"/>
+    <addaction name="actionClear_cache"/>
     <addaction name="actionReset_console"/>
    </widget>
    <widget class="QMenu" name="menuSimulations">
@@ -11120,6 +11120,7 @@ QProgressBar::chunk{
     <property name="title">
      <string>Model</string>
     </property>
+    <addaction name="actionAdd_default_catalogue"/>
     <addaction name="actionAuto_rate_branches"/>
     <addaction name="actionDetect_transformers"/>
     <addaction name="actionDetect_substations"/>
@@ -11820,10 +11821,13 @@ QProgressBar::chunk{
   <action name="actionClear_stuff_running_right_now">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/Icons/icons/clear_runs.png</normaloff>:/Icons/icons/clear_runs.png</iconset>
+     <normaloff>:/Icons/icons/minus (gray).png</normaloff>:/Icons/icons/minus (gray).png</iconset>
    </property>
    <property name="text">
-    <string>Clear &quot;stuff running right now&quot;</string>
+    <string>Stop &quot;stuff running right now&quot;</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop &quot;stuff running right now&quot;</string>
    </property>
    <property name="font">
     <font/>
@@ -11958,10 +11962,10 @@ QProgressBar::chunk{
   <action name="actionImport_bus_coordinates">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/Icons/icons/load_add.png</normaloff>:/Icons/icons/load_add.png</iconset>
+     <normaloff>:/Icons/icons/map (add).png</normaloff>:/Icons/icons/map (add).png</iconset>
    </property>
    <property name="text">
-    <string>Import bus coordinates</string>
+    <string>Coordinates</string>
    </property>
    <property name="font">
     <font/>
@@ -13118,6 +13122,15 @@ QProgressBar::chunk{
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionClear_cache">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/clear_runs.png</normaloff>:/Icons/icons/clear_runs.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear cache</string>
    </property>
   </action>
  </widget>

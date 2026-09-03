@@ -20,13 +20,31 @@ from VeraGridEngine.enumerations import (
     GeneratorType,
     GeneratorControlMode,
     BusGraphicType,
-    ShuntConnectionType
+    ShuntConnectionType,
+    DynamicSimulationMode,
 )
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.Branches.wire import Wire
 from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType, WireInTower
+from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
+from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.dgs.dgs_circuit import DgsCircuit
+from VeraGridEngine.IO.dgs.dgs_logical_actuator_binding import (
+    bind_dgs_logical_actuator_runtime,
+    prepare_dgs_logical_actuator_topology,
+    release_dgs_logical_actuator_import_context,
+)
+from VeraGridEngine.IO.dgs.dgs_rms_measurement_binding import bind_dgs_rms_measurements
+from VeraGridEngine.IO.dgs.dgs_rms_preparation import (
+    bind_dgs_switch_event_runtime,
+    prepare_dgs_circuit_for_rms,
+)
+from VeraGridEngine.IO.dgs.dynamic_models.dynamic_model_import import (
+    DgsDynamicTemplateConversionResult,
+    apply_dgs_dynamic_templates_to_devices,
+    convert_and_add_dgs_dynamic_templates_to_circuit,
+)
 from VeraGridEngine.IO.dgs.dgs_objects import *
 
 TDgsObject = TypeVar("TDgsObject")
@@ -669,14 +687,30 @@ def convert_dgs_to_bus(elmterm: ElmTerm,
     """
     tid = _ref_id(elmterm.ID)
     x, y = pos_by_objid.get(tid, (0.0, 0.0))
+    # Preserve a solved DGS snapshot as a numerical seed while keeping the
+    # configured voltage target independent from optional measured results.
+    measured_voltage_magnitude: float = float(elmterm.m_u)
+    measured_voltage_angle_radians: float = math.radians(float(elmterm.m_phiu))
+    if measured_voltage_magnitude > 0.0 and math.isfinite(measured_voltage_magnitude):
+        initial_voltage_magnitude: float = measured_voltage_magnitude
+        initial_voltage_angle: float = measured_voltage_angle_radians
+    else:
+        initial_voltage_magnitude = 1.0
+        initial_voltage_angle = 0.0
+
     bus = dev.Bus(
         name=elmterm.loc_name or f"Bus_{tid}",
+        idtag=tid,
         Vnom=float(elmterm.uknom),
+        # Alex review required: preserve the native AC/DC domain used to resolve VSC terminals.
+        is_dc=(int(elmterm.systype or 0) == 1),
         vmin=0.9,
         vmax=1.1,
         xpos=float(x) * 5,
         ypos=float(-y) * 5,
         active=(int(elmterm.outserv or 0) == 0),
+        Vm0=initial_voltage_magnitude,
+        Va0=initial_voltage_angle,
         graphic_type=(
             BusGraphicType.BusBar
             if int(elmterm.iUsage or 0) == 0
@@ -684,7 +718,9 @@ def convert_dgs_to_bus(elmterm: ElmTerm,
         ),
     )
 
-    if float(elmterm.vtarget) > 0.0:
+    if measured_voltage_magnitude > 0.0 and math.isfinite(measured_voltage_magnitude):
+        pass
+    elif float(elmterm.vtarget) > 0.0:
         bus.Vm0 = float(elmterm.vtarget)
     else:
         pass
@@ -2856,6 +2892,8 @@ def convert_dgs_to_line(
         ohl_template = tower_template
 
     applied_template = False
+    dynamic_parameters_complete: bool = False
+    is_dc_cable: bool = line.bus_from.is_dc and line.bus_to.is_dc
     if len(owned_sections) > 0:
         section_r = 0.0
         section_x = 0.0
@@ -2865,6 +2903,7 @@ def convert_dgs_to_line(
         section_b0 = 0.0
         section_rate: float | None = None
         section_template_found = False
+        section_templates_complete: bool = True
         bus_vnom = line.get_max_bus_nominal_voltage()
 
         ordered_sections = sorted(owned_sections, key=_line_section_index_sort_key)
@@ -2894,6 +2933,10 @@ def convert_dgs_to_line(
                 else:
                     pass
                 section_template_found = True
+                if not ohl_section_template.has_sequence_data():
+                    section_templates_complete = False
+                else:
+                    pass
                 values = ohl_section_template.get_values(
                     Sbase=baseMVA,
                     length=float(section.dline),
@@ -2908,6 +2951,7 @@ def convert_dgs_to_line(
                 section_b0 += float(values[5])
                 current_rate = float(values[6])
             else:
+                section_templates_complete = False
                 current_rate = 0.0
                 logger.add_warning(
                     "Line section type not found.",
@@ -2937,18 +2981,32 @@ def convert_dgs_to_line(
             else:
                 pass
             applied_template = True
+            dynamic_parameters_complete = section_templates_complete
         else:
             applied_template = False
+            dynamic_parameters_complete = False
     elif seq_template is not None:
-        line.apply_template(obj=seq_template, Sbase=baseMVA, freq=freq, logger=logger)
+        # Preserve the declarative series values on the canonical Line for every simulation domain.
+        line.apply_template(
+            obj=seq_template,
+            Sbase=baseMVA,
+            freq=freq,
+            logger=logger,
+            decimals_rounding=16,
+        )
         applied_template = True
+        dynamic_parameters_complete = line.template is seq_template
     elif ohl_template is not None:
         # OverheadLineType uses a 1-based circuit index. Default to circuit 1 here.
         line.set_circuit_idx(val=1, obj=ohl_template)
         line.apply_template(obj=ohl_template, Sbase=baseMVA, freq=freq, logger=logger)
         applied_template = True
+        dynamic_parameters_complete = (
+            line.template is ohl_template
+            and ohl_template.has_sequence_data()
+        )
     else:
-        pass
+        dynamic_parameters_complete = False
 
     if applied_template:
         line.rate = float(line.rate) * float(lne.fline)
@@ -2967,6 +3025,17 @@ def convert_dgs_to_line(
             admittance.phA = 1 in active_phases
             admittance.phB = 2 in active_phases
             admittance.phC = 3 in active_phases
+
+    # Alex review required: retain precise AC link data while preserving its historical topology reduction.
+    is_ac_topological_link: bool = (
+        not is_dc_cable
+        and np.round(float(line.R), decimals=6) == 0.0
+        and np.round(float(line.X), decimals=6) == 0.0
+    )
+    if is_ac_topological_link:
+        line.reducible = True
+    else:
+        pass
 
     return line
 
@@ -3851,6 +3920,7 @@ def convert_dgs_external_grid_to_generator(elmxnet: ElmXnet,
 
     gen = dev.Generator(
         name=elmxnet.loc_name or f"Gen_{_ref_id(elmxnet.ID)}",
+        idtag=_ref_id(elmxnet.ID),
         active=not bool(elmxnet.outserv),
         r1=r1,
         x1=x1,
@@ -4950,6 +5020,657 @@ def _add_elmlod_loads(dgs_grid: DgsCircuit,
         grid.add_load(bus=bus, api_obj=load)
 
 
+# Alex review required: convert native losses exactly once into the canonical VSC model.
+def _get_powerfactory_vsc_loss_coefficients(
+        source: ElmVsc | ElmVscmono,
+        system_base_mva: float,
+) -> Tuple[float, float, float]:
+    """Convert native converter loss data to VeraGrid's per-unit polynomial.
+
+    PowerFactory stores the configured loss parameters independently from its
+    solved ``m:*`` outputs. Only the configured parameters enter this mapping.
+
+    :param source: Native monopolar or three-terminal converter row.
+    :param system_base_mva: VeraGrid system power base in MVA.
+    :return: Idle, linear-current and quadratic-current loss coefficients.
+    """
+    if system_base_mva > 0.0:
+        alpha1: float = float(source.Pnold) / (1000.0 * system_base_mva)
+    else:
+        alpha1 = 0.0
+
+    nominal_voltage_kv: float = abs(float(source.Unom))
+    switching_loss_factor: float = (
+        0.0 if source.swtLossFactor is None else float(source.swtLossFactor)
+    )
+    resistive_loss_factor: float = (
+        0.0 if source.resLossFactor is None else float(source.resLossFactor)
+    )
+    if nominal_voltage_kv > 0.0:
+        alpha2: float = switching_loss_factor / (
+            math.sqrt(3.0) * nominal_voltage_kv
+        )
+        alpha3: float = (
+            resistive_loss_factor
+            * system_base_mva
+            / (3.0 * nominal_voltage_kv * nominal_voltage_kv)
+        )
+    else:
+        alpha2 = 0.0
+        alpha3 = 0.0
+
+    rated_power_mva: float = (
+        0.0 if source.Snom is None else abs(float(source.Snom))
+    )
+    copper_loss_kw: float = 0.0 if source.Pcu is None else float(source.Pcu)
+    if rated_power_mva > 0.0 and system_base_mva > 0.0:
+        alpha3 += (
+            copper_loss_kw
+            * system_base_mva
+            / (1000.0 * rated_power_mva * rated_power_mva)
+        )
+    else:
+        pass
+
+    arm_resistance_ohm: float = (
+        0.0 if source.Rarm is None else max(float(source.Rarm), 0.0)
+    )
+    if (
+            isinstance(source, ElmVsc)
+            and nominal_voltage_kv > 0.0
+            and system_base_mva > 0.0
+            and arm_resistance_ohm > 0.0
+    ):
+        alpha3 += (
+            arm_resistance_ohm
+            * system_base_mva
+            / (2.0 * nominal_voltage_kv * nominal_voltage_kv)
+        )
+    else:
+        pass
+    return alpha1, alpha2, alpha3
+
+
+# Dynamic contract: collapse Pcu/uk/Rarm/Larm without duplicating adapter impedance.
+def _get_powerfactory_vsc_series_impedance(
+        source: ElmVsc | ElmVscmono,
+        frequency_hz: float,
+) -> Tuple[float, float]:
+    """Convert configured converter-reactor data to per unit.
+
+    :param source: Native monopolar or three-terminal converter row.
+    :param frequency_hz: Network nominal frequency in Hz.
+    :return: Series resistance and reactance on the converter power base.
+    """
+    rated_power_mva: float = (
+        0.0 if source.Snom is None else abs(float(source.Snom))
+    )
+    copper_loss_kw: float = (
+        0.0 if source.Pcu is None else max(float(source.Pcu), 0.0)
+    )
+    impedance_magnitude_pu: float = (
+        0.0 if source.uk is None else max(float(source.uk) / 100.0, 0.0)
+    )
+    if rated_power_mva > 0.0:
+        resistance_pu: float = copper_loss_kw / (1000.0 * rated_power_mva)
+    else:
+        resistance_pu = 0.0
+    reactance_squared: float = max(
+        impedance_magnitude_pu * impedance_magnitude_pu
+        - resistance_pu * resistance_pu,
+        0.0,
+    )
+    reactance_pu: float = math.sqrt(reactance_squared)
+
+    arm_resistance_ohm: float = (
+        0.0 if source.Rarm is None else max(float(source.Rarm), 0.0)
+    )
+    arm_inductance_mh: float = (
+        0.0 if source.Larm is None else max(float(source.Larm), 0.0)
+    )
+    nominal_voltage_kv: float = abs(float(source.Unom))
+    if (
+            isinstance(source, ElmVsc)
+            and rated_power_mva > 0.0
+            and nominal_voltage_kv > 0.0
+            and frequency_hz > 0.0
+            and (arm_resistance_ohm > 0.0 or arm_inductance_mh > 0.0)
+    ):
+        impedance_base_ohm: float = (
+            nominal_voltage_kv * nominal_voltage_kv / rated_power_mva
+        )
+        resistance_pu += arm_resistance_ohm / (2.0 * impedance_base_ohm)
+        reactance_pu += (
+            2.0
+            * math.pi
+            * frequency_hz
+            * arm_inductance_mh
+            * 1.0e-3
+            / (2.0 * impedance_base_ohm)
+        )
+    else:
+        pass
+    return resistance_pu, reactance_pu
+
+
+# Dynamic contract: store Cmod/Nsm, the MMC quantity consumed by the adapter.
+def _get_powerfactory_mmc_arm_capacitance_uf(
+        source: ElmVsc | ElmVscmono,
+) -> float:
+    """Return the equivalent capacitance of one MMC arm.
+
+    PowerFactory exports the capacitance of one submodule and the number of
+    series submodules per arm.  Every downstream physical representation uses
+    only their quotient, so the source pair is reduced before the transient
+    DGS row is discarded.
+
+    :param source: Native monopolar or three-terminal converter row.
+    :return: Equivalent arm capacitance in microfarads, or zero when incomplete.
+    """
+    # Normalize the physical source value without inventing missing equipment data.
+    submodule_capacitance_uf: float = (
+        0.0 if source.mmcCmod is None else max(float(source.mmcCmod), 0.0)
+    )
+    # Prefer the current PowerFactory field while retaining declarative legacy compatibility.
+    if source.NmmcSM is None:
+        if source.MmmcSM is None:
+            submodules_per_arm: int = 0
+        else:
+            submodules_per_arm = max(int(source.MmmcSM), 0)
+    else:
+        submodules_per_arm = max(int(source.NmmcSM), 0)
+    # Reduce the pair only when both native values establish a physical capacitance.
+    if submodule_capacitance_uf > 0.0 and submodules_per_arm > 0:
+        arm_capacitance_uf: float = (
+            submodule_capacitance_uf / float(submodules_per_arm)
+        )
+    else:
+        arm_capacitance_uf = 0.0
+    return arm_capacitance_uf
+
+
+def _get_powerfactory_dc_link_capacitance_uf(
+        source: ElmVsc | ElmVscmono,
+) -> float:
+    """Return the capacitance owned directly by the native DC terminals.
+
+    A two-level converter uses ``Cdc``. MMC rows may still export a stale
+    ``Cdc`` value, so their arm capacitance remains owned by the separate MMC
+    field and is never interpreted as a terminal capacitor here.
+
+    :param source: Native PowerFactory converter row.
+    :return: Applicable two-level DC-link capacitance in microfarads.
+    """
+    source_type_value: int | None = source.vsctype
+    source_type: PowerFactoryVscType | None
+    if source_type_value == int(PowerFactoryVscType.TwoLevel):
+        source_type = PowerFactoryVscType.TwoLevel
+    elif source_type_value == int(PowerFactoryVscType.HalfBridgeMmc):
+        source_type = PowerFactoryVscType.HalfBridgeMmc
+    elif source_type_value == int(PowerFactoryVscType.FullBridgeMmc):
+        source_type = PowerFactoryVscType.FullBridgeMmc
+    else:
+        source_type = None
+
+    configured_capacitance_uf: float = (
+        0.0 if source.Cdc is None else max(float(source.Cdc), 0.0)
+    )
+    if source_type is PowerFactoryVscType.TwoLevel:
+        dc_link_capacitance_uf: float = configured_capacitance_uf
+    else:
+        dc_link_capacitance_uf = 0.0
+    return dc_link_capacitance_uf
+
+
+# Alex review required: map configured setpoints only; solved m:* values never control the VSC.
+def _get_native_vsc_controls(
+        source: ElmVsc | ElmVscmono,
+        logger: Logger,
+) -> Tuple[ConverterControlType, float, ConverterControlType, float, bool]:
+    """Translate one configured PowerFactory VSC control pair.
+
+    Solved ``m:*`` values are deliberately excluded. They are optional oracle
+    evidence for validation and never replace configured control targets.
+
+    :param source: Parsed monopolar or three-terminal converter row.
+    :param logger: Import diagnostic sink.
+    :return: Two control modes, their configured targets and exactness flag.
+    """
+    mode: int = int(source.i_acdc)
+    # PowerFactory equipment setpoints are positive when injected into the AC
+    # bus. VeraGrid VSC terminal powers are positive from the bus into the
+    # converter, so configured AC power targets cross the boundary negated.
+    active_power_target: float = -float(source.psetp)
+    reactive_power_target: float = -float(source.qsetp)
+    if source.usetpdc is None:
+        dc_voltage_target: float = float(source.usetp)
+    else:
+        dc_voltage_target = float(source.usetpdc)
+    ac_voltage_target: float = float(source.usetp)
+
+    if mode == 3:
+        control1: ConverterControlType = ConverterControlType.Vm_dc
+        control1_value: float = dc_voltage_target
+        control2: ConverterControlType = ConverterControlType.Qac
+        control2_value: float = reactive_power_target
+        is_exact: bool = True
+    elif mode == 4:
+        control1 = ConverterControlType.Pac
+        control1_value = active_power_target
+        control2 = ConverterControlType.Vm_ac
+        control2_value = ac_voltage_target
+        is_exact = True
+    elif mode == 5:
+        control1 = ConverterControlType.Pac
+        control1_value = active_power_target
+        control2 = ConverterControlType.Qac
+        control2_value = reactive_power_target
+        is_exact = True
+    elif mode == 6:
+        control1 = ConverterControlType.Vm_dc
+        control1_value = dc_voltage_target
+        control2 = ConverterControlType.Vm_ac
+        control2_value = ac_voltage_target
+        is_exact = True
+    else:
+        control1 = ConverterControlType.Pac
+        control1_value = active_power_target
+        control2 = ConverterControlType.Qac
+        control2_value = reactive_power_target
+        is_exact = False
+        logger.add_warning(
+            msg="Native VSC control pair is not represented exactly; converter kept inactive",
+            device=source.loc_name,
+            device_class=source.element_type,
+            value=f"i_acdc={mode}",
+        )
+    return control1, control1_value, control2, control2_value, is_exact
+
+
+# Alex review required: build the final three-phase VSC directly from its FID and cubicles.
+def convert_dgs_to_vsc(
+        elmvsc: ElmVsc,
+        cubics_by_objid: Dict[str, List[StaCubic]],
+        bus_by_term_id: Dict[str, dev.Bus],
+        switch_by_cubic_id: Dict[str, StaSwitch],
+        system_base_mva: float,
+        frequency_hz: float,
+        logger: Logger,
+) -> dev.VSC | None:
+    """Convert one native three-terminal PowerFactory converter.
+
+    Cubicle role zero is AC, role one is DC positive and role two is DC
+    negative. Duplicate or unresolved required roles fail closed.
+
+    :param elmvsc: Source converter row.
+    :param cubics_by_objid: Cubicles grouped by converter FID.
+    :param bus_by_term_id: Imported buses keyed by terminal FID.
+    :param switch_by_cubic_id: Cubicle switches keyed by cubicle FID.
+    :param system_base_mva: VeraGrid system power base in MVA.
+    :param frequency_hz: Network nominal frequency in Hz.
+    :param logger: Import diagnostic sink.
+    :return: Final VSC, or ``None`` when required topology is unresolved.
+    """
+    converter_id: str | None = _ref_id(elmvsc.ID)
+    if converter_id is None or converter_id == "":
+        converter_cubics: List[StaCubic] = list()
+    else:
+        converter_cubics = cubics_by_objid.get(converter_id, list())
+
+    ac_bus: dev.Bus | None = None
+    dc_positive_bus: dev.Bus | None = None
+    dc_negative_bus: dev.Bus | None = None
+    duplicate_role: bool = False
+    invalid_cubicle: bool = False
+    cubic: StaCubic
+    for cubic in converter_cubics:
+        terminal_id: str | None = _ref_id(cubic.fold_id)
+        if terminal_id is None or terminal_id == "":
+            terminal_bus: dev.Bus | None = None
+        else:
+            terminal_bus = bus_by_term_id.get(terminal_id, None)
+        terminal_role: int = int(cubic.obj_bus)
+        if terminal_bus is None:
+            invalid_cubicle = True
+        elif terminal_role == 0:
+            if ac_bus is None:
+                ac_bus = terminal_bus
+            else:
+                duplicate_role = True
+        elif terminal_role == 1:
+            if dc_positive_bus is None:
+                dc_positive_bus = terminal_bus
+            else:
+                duplicate_role = True
+        elif terminal_role == 2:
+            if dc_negative_bus is None:
+                dc_negative_bus = terminal_bus
+            else:
+                duplicate_role = True
+        else:
+            invalid_cubicle = True
+
+    topology_is_complete: bool = bool(
+        ac_bus is not None
+        and dc_positive_bus is not None
+        and dc_negative_bus is not None
+        and not duplicate_role
+        and not invalid_cubicle
+        and len(converter_cubics) == 3
+    )
+    if not topology_is_complete:
+        logger.add_warning(
+            msg=(
+                "ElmVsc skipped because AC/DC+/DC- cubicles are incomplete, "
+                "unexpected or ambiguous"
+            ),
+            device=elmvsc.loc_name,
+            device_class="ElmVsc",
+        )
+        converter: dev.VSC | None = None
+    else:
+        dc_positive_bus.is_dc = True
+        dc_negative_bus.is_dc = True
+        control1: ConverterControlType
+        control1_value: float
+        control2: ConverterControlType
+        control2_value: float
+        control_is_exact: bool
+        control1, control1_value, control2, control2_value, control_is_exact = (
+            _get_native_vsc_controls(source=elmvsc, logger=logger)
+        )
+        converter_active: bool = bool(
+            not bool(elmvsc.outserv)
+            and control_is_exact
+            and _is_element_closed_by_cubicle_switches(
+                element_id=elmvsc.ID,
+                cubics_by_objid=cubics_by_objid,
+                switch_by_cubic_id=switch_by_cubic_id,
+            )
+        )
+        rated_power_mva: float = (
+            0.0 if elmvsc.Snom is None else abs(float(elmvsc.Snom))
+        )
+        converter_rate: float = max(
+            abs(float(elmvsc.P_max)),
+            rated_power_mva,
+            math.hypot(float(elmvsc.psetp), float(elmvsc.qsetp)),
+            1.0,
+        )
+        alpha1: float
+        alpha2: float
+        alpha3: float
+        alpha1, alpha2, alpha3 = _get_powerfactory_vsc_loss_coefficients(
+            source=elmvsc,
+            system_base_mva=system_base_mva,
+        )
+        resistance_pu: float
+        reactance_pu: float
+        resistance_pu, reactance_pu = _get_powerfactory_vsc_series_impedance(
+            source=elmvsc,
+            frequency_hz=frequency_hz,
+        )
+        converter = dev.VSC(
+            name=_get_non_empty_name(
+                name=elmvsc.loc_name,
+                default_value=f"VSC_{converter_id}",
+            ),
+            idtag=converter_id,
+            code=elmvsc.for_name,
+            active=converter_active,
+            bus_from=dc_positive_bus,
+            bus_to=ac_bus,
+            bus_dc_n=dc_negative_bus,
+            design_rate=converter_rate,
+            rate=converter_rate,
+            alpha1=alpha1,
+            alpha2=alpha2,
+            alpha3=alpha3,
+            r_series=resistance_pu,
+            x_series=reactance_pu,
+            dc_voltage_base=(
+                0.0 if elmvsc.Unomdc is None else float(elmvsc.Unomdc)
+            ),
+            dc_link_capacitance_uf=(
+                _get_powerfactory_dc_link_capacitance_uf(source=elmvsc)
+            ),
+            mmc_arm_capacitance_uf=(
+                _get_powerfactory_mmc_arm_capacitance_uf(source=elmvsc)
+            ),
+            mmc_consider_arm_reactor_dc=(
+                False if elmvsc.iZarmDCside is None else bool(elmvsc.iZarmDCside)
+            ),
+            control1=control1,
+            control1_val=control1_value,
+            control2=control2,
+            control2_val=control2_value,
+        )
+    return converter
+
+
+# Alex review required: build the final monopolar VSC directly from its FID and cubicles.
+def convert_dgs_to_monopolar_vsc(
+        source: ElmVscmono,
+        cubics_by_objid: Dict[str, List[StaCubic]],
+        bus_by_term_id: Dict[str, dev.Bus],
+        switch_by_cubic_id: Dict[str, StaSwitch],
+        system_base_mva: float,
+        frequency_hz: float,
+        logger: Logger,
+) -> dev.VSC | None:
+    """Convert one native two-terminal PowerFactory converter.
+
+    :param source: Source monopolar converter row.
+    :param cubics_by_objid: Cubicles grouped by converter FID.
+    :param bus_by_term_id: Imported buses keyed by terminal FID.
+    :param switch_by_cubic_id: Cubicle switches keyed by cubicle FID.
+    :param system_base_mva: VeraGrid system power base in MVA.
+    :param frequency_hz: Network nominal frequency in Hz.
+    :param logger: Import diagnostic sink.
+    :return: Final VSC, or ``None`` when required topology is unresolved.
+    """
+    source_id: str | None = _ref_id(source.ID)
+    if source_id is None or source_id == "":
+        source_cubics: List[StaCubic] = list()
+    else:
+        source_cubics = cubics_by_objid.get(source_id, list())
+
+    ac_bus: dev.Bus | None = None
+    dc_bus: dev.Bus | None = None
+    duplicate_role: bool = False
+    invalid_cubicle: bool = False
+    cubic: StaCubic
+    for cubic in source_cubics:
+        terminal_id: str | None = _ref_id(cubic.fold_id)
+        if terminal_id is None or terminal_id == "":
+            terminal_bus: dev.Bus | None = None
+        else:
+            terminal_bus = bus_by_term_id.get(terminal_id, None)
+        terminal_role: int = int(cubic.obj_bus)
+        if terminal_bus is None:
+            invalid_cubicle = True
+        elif terminal_role == 0:
+            if ac_bus is None:
+                ac_bus = terminal_bus
+            else:
+                duplicate_role = True
+        elif terminal_role == 1:
+            if dc_bus is None:
+                dc_bus = terminal_bus
+            else:
+                duplicate_role = True
+        else:
+            invalid_cubicle = True
+
+    topology_is_complete: bool = bool(
+        ac_bus is not None
+        and dc_bus is not None
+        and not duplicate_role
+        and not invalid_cubicle
+        and len(source_cubics) == 2
+    )
+    if not topology_is_complete:
+        logger.add_warning(
+            msg=(
+                "ElmVscmono skipped because AC/DC cubicles are incomplete, "
+                "unexpected or ambiguous"
+            ),
+            device=source.loc_name,
+            device_class="ElmVscmono",
+        )
+        converter: dev.VSC | None = None
+    else:
+        dc_bus.is_dc = True
+        control1: ConverterControlType
+        control1_value: float
+        control2: ConverterControlType
+        control2_value: float
+        control_is_exact: bool
+        control1, control1_value, control2, control2_value, control_is_exact = (
+            _get_native_vsc_controls(source=source, logger=logger)
+        )
+        converter_active: bool = bool(
+            not bool(source.outserv)
+            and control_is_exact
+            and _is_element_closed_by_cubicle_switches(
+                element_id=source.ID,
+                cubics_by_objid=cubics_by_objid,
+                switch_by_cubic_id=switch_by_cubic_id,
+            )
+        )
+        converter_rate: float = max(
+            abs(float(source.P_max)),
+            0.0 if source.Snom is None else abs(float(source.Snom)),
+            math.hypot(float(source.psetp), float(source.qsetp)),
+            1.0,
+        )
+        alpha1: float
+        alpha2: float
+        alpha3: float
+        alpha1, alpha2, alpha3 = _get_powerfactory_vsc_loss_coefficients(
+            source=source,
+            system_base_mva=system_base_mva,
+        )
+        resistance_pu: float
+        reactance_pu: float
+        resistance_pu, reactance_pu = _get_powerfactory_vsc_series_impedance(
+            source=source,
+            frequency_hz=frequency_hz,
+        )
+        converter = dev.VSC(
+            name=_get_non_empty_name(
+                name=source.loc_name,
+                default_value=f"VSC_MONO_{source_id}",
+            ),
+            idtag=source_id,
+            code=source.for_name,
+            active=converter_active,
+            bus_from=dc_bus,
+            bus_to=ac_bus,
+            bus_dc_n=None,
+            design_rate=converter_rate,
+            rate=converter_rate,
+            alpha1=alpha1,
+            alpha2=alpha2,
+            alpha3=alpha3,
+            r_series=resistance_pu,
+            x_series=reactance_pu,
+            dc_voltage_base=(
+                0.0 if source.Unomdc is None else float(source.Unomdc)
+            ),
+            dc_link_capacitance_uf=(
+                _get_powerfactory_dc_link_capacitance_uf(source=source)
+            ),
+            mmc_arm_capacitance_uf=(
+                _get_powerfactory_mmc_arm_capacitance_uf(source=source)
+            ),
+            mmc_consider_arm_reactor_dc=(
+                False if source.iZarmDCside is None else bool(source.iZarmDCside)
+            ),
+            control1=control1,
+            control1_val=control1_value,
+            control2=control2,
+            control2_val=control2_value,
+        )
+    return converter
+
+
+# Alex review required: register already-canonical three-phase VSC devices in MultiCircuit.
+def _add_elmvsc_devices(
+        dgs_grid: DgsCircuit,
+        grid: dev.MultiCircuit,
+        logger: Logger,
+        cubics_by_objid: Dict[str, List[StaCubic]],
+        bus_by_term_id: Dict[str, dev.Bus],
+        switch_by_cubic_id: Dict[str, StaSwitch],
+        frequency_hz: float,
+) -> None:
+    """Add every structurally valid native three-terminal converter.
+
+    :param dgs_grid: Parsed DGS circuit.
+    :param grid: Target VeraGrid circuit.
+    :param logger: Import diagnostic sink.
+    :param cubics_by_objid: Cubicles grouped by source object FID.
+    :param bus_by_term_id: Imported buses keyed by terminal FID.
+    :param switch_by_cubic_id: Cubicle switches keyed by cubicle FID.
+    :param frequency_hz: Network nominal frequency in Hz.
+    :return: None.
+    """
+    elmvsc: ElmVsc
+    for elmvsc in dgs_grid.elmvscs:
+        converter: dev.VSC | None = convert_dgs_to_vsc(
+            elmvsc=elmvsc,
+            cubics_by_objid=cubics_by_objid,
+            bus_by_term_id=bus_by_term_id,
+            switch_by_cubic_id=switch_by_cubic_id,
+            system_base_mva=float(grid.Sbase),
+            frequency_hz=frequency_hz,
+            logger=logger,
+        )
+        if converter is None:
+            pass
+        else:
+            grid.add_vsc(obj=converter)
+
+
+# Alex review required: register already-canonical monopolar VSC devices in MultiCircuit.
+def _add_elmvscmono_devices(
+        dgs_grid: DgsCircuit,
+        grid: dev.MultiCircuit,
+        logger: Logger,
+        cubics_by_objid: Dict[str, List[StaCubic]],
+        bus_by_term_id: Dict[str, dev.Bus],
+        switch_by_cubic_id: Dict[str, StaSwitch],
+        frequency_hz: float,
+) -> None:
+    """Add every structurally valid native monopolar converter.
+
+    :param dgs_grid: Parsed DGS circuit.
+    :param grid: Target VeraGrid circuit.
+    :param logger: Import diagnostic sink.
+    :param cubics_by_objid: Cubicles grouped by source object FID.
+    :param bus_by_term_id: Imported buses keyed by terminal FID.
+    :param switch_by_cubic_id: Cubicle switches keyed by cubicle FID.
+    :param frequency_hz: Network nominal frequency in Hz.
+    :return: None.
+    """
+    source: ElmVscmono
+    for source in dgs_grid.elmvscmonos:
+        converter: dev.VSC | None = convert_dgs_to_monopolar_vsc(
+            source=source,
+            cubics_by_objid=cubics_by_objid,
+            bus_by_term_id=bus_by_term_id,
+            switch_by_cubic_id=switch_by_cubic_id,
+            system_base_mva=float(grid.Sbase),
+            frequency_hz=frequency_hz,
+            logger=logger,
+        )
+        if converter is None:
+            pass
+        else:
+            grid.add_vsc(obj=converter)
+
+
 def _add_elmgenstat_devices(dgs_grid: DgsCircuit,
                             grid: dev.MultiCircuit,
                             stacubic_dict: Dict[str, List[int]],
@@ -5777,24 +6498,46 @@ def _add_elmbranch_groups(dgs_grid: DgsCircuit, grid: dev.MultiCircuit) -> Dict[
     return branch_group_by_id
 
 
-def _add_elmterm_buses(dgs_grid: DgsCircuit,
+def add_dgs_terminal_buses(dgs_grid: DgsCircuit,
                        grid: dev.MultiCircuit,
                        pos_by_objid: Dict[str, Tuple[float, float]]) -> Dict[str, dev.Bus]:
     """
-    Add elmterm buses.
+    Add buses only after every source terminal FID is proven unambiguous.
 
     :param dgs_grid: dgs_grid parameter.
     :param grid: grid parameter.
     :param pos_by_objid: pos_by_objid parameter.
-    :return: Function result.
+    :return: Added buses indexed by their exact normalized ``ElmTerm`` FID.
+    :raises ValueError: If any terminal FID is empty or duplicated.
     """
+    # Validate the complete source identity envelope before constructing or
+    # adding a bus. This prevents a late invalid row from leaving a partially
+    # mutated circuit and prevents duplicate FIDs from merging distinct nodes.
+    terminal_ids: List[str] = list("" for elmterm in dgs_grid.elmterms)
+    known_terminal_ids: Set[str] = set()
+    terminal_index: int
+    elmterm: ElmTerm
+    for terminal_index, elmterm in enumerate(dgs_grid.elmterms):
+        terminal_id: str | None = _ref_id(elmterm.ID)
+        if terminal_id is None or terminal_id == "":
+            raise ValueError("ElmTerm FID must not be empty")
+        else:
+            if terminal_id in known_terminal_ids:
+                raise ValueError(f"Duplicate ElmTerm FID: {terminal_id}")
+            else:
+                known_terminal_ids.add(terminal_id)
+                terminal_ids[terminal_index] = terminal_id
+
+    # The validated one-to-one source mapping can now be committed to the
+    # circuit without last-write-wins identity loss.
     bus_by_term_id: Dict[str, dev.Bus] = dict()
-    for elmterm in dgs_grid.elmterms:
-        bus = convert_dgs_to_bus(elmterm=elmterm, pos_by_objid=pos_by_objid)
+    for terminal_index, elmterm in enumerate(dgs_grid.elmterms):
+        bus: dev.Bus = convert_dgs_to_bus(
+            elmterm=elmterm,
+            pos_by_objid=pos_by_objid,
+        )
         grid.add_bus(obj=bus)
-        tid = _ref_id(elmterm.ID)
-        if tid is not None:
-            bus_by_term_id[tid] = bus
+        bus_by_term_id[terminal_ids[terminal_index]] = bus
     return bus_by_term_id
 
 
@@ -6290,14 +7033,31 @@ def _add_elmlne_lines(dgs_grid: DgsCircuit,
         if len(term_ids) != 2:
             bus_ids: List[int] | None = stacubic_dict.get(_ref_id(elmlne.ID), None)
             if bus_ids is None or len(bus_ids) != 2:
-                logger.add_warning(
-                    f"not connected to exactly 2 terminals",
-                    device=f"{elmlne.loc_name}' (ID={elmlne.ID}) ",
-                    device_class="ElmLne",
-                    value=len(term_ids),
-                    expected_value="2"
-                )
+                if len(term_ids) == 1:
+                    # A one-ended line is a disconnected source artefact rather
+                    # than a partially constructible VeraGrid branch. Record the
+                    # intentional omission without presenting it as an import
+                    # warning because no invalid object enters the final circuit.
+                    logger.add_info(
+                        msg="Skipped disconnected one-terminal line",
+                        device=f"{elmlne.loc_name}' (ID={elmlne.ID}) ",
+                        device_class="ElmLne",
+                        value=len(term_ids),
+                        expected_value="2",
+                    )
+                else:
+                    # Zero-ended and over-connected branches remain suspicious
+                    # source states that users need to review explicitly.
+                    logger.add_warning(
+                        msg="not connected to exactly 2 terminals",
+                        device=f"{elmlne.loc_name}' (ID={elmlne.ID}) ",
+                        device_class="ElmLne",
+                        value=len(term_ids),
+                        expected_value="2",
+                    )
                 continue
+            else:
+                pass
 
         parallel_count = _get_parallel_device_count(count=int(elmlne.nlnum))
         for parallel_index in range(parallel_count):
@@ -6417,13 +7177,15 @@ def _apply_elmtow_tower_coupling(dgs_grid: DgsCircuit,
 def dgs_to_circuit(path: str,
                    use_vsc_for_injections: bool = False,
                    use_dynamic_information: bool = False,
+                   dynamic_simulation_mode: DynamicSimulationMode | None = None,
                    logger_: Logger | None = None) -> dev.MultiCircuit:
     """
     Dgs to circuit.
 
     :param path: path parameter.
     :param use_vsc_for_injections: use_vsc_for_injections parameter.
-    :param use_dynamic_information: use_dynamic_information parameter.
+    :param use_dynamic_information: Import dynamic DGS equations when available.
+    :param dynamic_simulation_mode: Explicit RMS or EMT destination for imported dynamic models.
     :param logger_: logger_ parameter.
     :return: Function result.
     """
@@ -6454,7 +7216,11 @@ def dgs_to_circuit(path: str,
     area_by_id: Dict[str, dev.Area] = _add_elmarea_areas(dgs_grid=dgs_grid, grid=grid)
     zone_by_id: Dict[str, dev.Zone] = _add_elmzone_zones(dgs_grid=dgs_grid, grid=grid)
     branch_group_by_id: Dict[str, dev.BranchGroup] = _add_elmbranch_groups(dgs_grid=dgs_grid, grid=grid)
-    bus_by_term_id: Dict[str, dev.Bus] = _add_elmterm_buses(dgs_grid=dgs_grid, grid=grid, pos_by_objid=pos_by_objid)
+    bus_by_term_id: Dict[str, dev.Bus] = add_dgs_terminal_buses(
+        dgs_grid=dgs_grid,
+        grid=grid,
+        pos_by_objid=pos_by_objid,
+    )
     _assign_elmterm_area_references(dgs_grid=dgs_grid, bus_by_term_id=bus_by_term_id, area_by_id=area_by_id)
     _assign_elmterm_zone_references(dgs_grid=dgs_grid, bus_by_term_id=bus_by_term_id, zone_by_id=zone_by_id)
 
@@ -6520,6 +7286,26 @@ def dgs_to_circuit(path: str,
         logger=logger,
         cubics_by_objid=cubics_by_objid,
         bus_by_term_id=bus_by_term_id,
+    )
+    # Alex review required: validate the bipolar VSC for balanced/three-phase load flow and short circuit.
+    _add_elmvsc_devices(
+        dgs_grid=dgs_grid,
+        grid=grid,
+        logger=logger,
+        cubics_by_objid=cubics_by_objid,
+        bus_by_term_id=bus_by_term_id,
+        switch_by_cubic_id=switch_by_cubic_id,
+        frequency_hz=frequency,
+    )
+    # Alex review required: validate the monopolar VSC for balanced/three-phase load flow and short circuit.
+    _add_elmvscmono_devices(
+        dgs_grid=dgs_grid,
+        grid=grid,
+        logger=logger,
+        cubics_by_objid=cubics_by_objid,
+        bus_by_term_id=bus_by_term_id,
+        switch_by_cubic_id=switch_by_cubic_id,
+        frequency_hz=frequency,
     )
     _add_elmxnet_devices(
         dgs_grid=dgs_grid,
@@ -6691,5 +7477,143 @@ def dgs_to_circuit(path: str,
         switch_by_cubic_id=switch_by_cubic_id,
         branch_group_by_id=branch_group_by_id,
     )
+
+    if use_dynamic_information:
+        if dynamic_simulation_mode is None:
+            logger.add_error(
+                msg=(
+                    "DGS dynamic model import requires an explicit RMS or EMT "
+                    "simulation mode"
+                ),
+            )
+        else:
+            # 1: Convert each DGS root to its final template, register it in
+            # MultiCircuit and retain only the irreducible root-FID lookup.
+            conversion_result: DgsDynamicTemplateConversionResult = (
+                convert_and_add_dgs_dynamic_templates_to_circuit(
+                    dgs_circuit=dgs_grid,
+                    circuit=grid,
+                    target_domain=dynamic_simulation_mode,
+                    logger=logger,
+                )
+            )
+            templates_by_root_dgs_id: Dict[
+                str,
+                RmsModelTemplate | EmtModelTemplate,
+            ] = conversion_result.templates_by_root_dgs_id
+
+            # 2: Apply the registered templates to exact static devices using
+            # that minimal lookup and the original declarative FID relations.
+            apply_dgs_dynamic_templates_to_devices(
+                dgs_circuit=dgs_grid,
+                circuit=grid,
+                templates_by_root_dgs_id=templates_by_root_dgs_id,
+                logger=logger,
+            )
+
+            if dynamic_simulation_mode == DynamicSimulationMode.RMS:
+                # Narrow the domain explicitly so logical actuator completion
+                # cannot consume an EMT template through the shared lookup.
+                rms_templates_by_root_dgs_id: Dict[str, RmsModelTemplate] = dict(
+                    (root_id, template)
+                    for root_id, template in templates_by_root_dgs_id.items()
+                    if isinstance(template, RmsModelTemplate)
+                )
+
+                # RMS completion is not a third template-transfer stage. It
+                # fills only empty electrical shells, then binds exact native
+                # measurement FIDs to the already assigned controller block.
+                external_grid_source_ids: Set[str] = set()
+                external_grid_source: ElmXnet
+                for external_grid_source in dgs_grid.elmxnets:
+                    if external_grid_source.ID == "":
+                        pass
+                    else:
+                        external_grid_source_ids.add(external_grid_source.ID)
+                elmgenstat_source_ids: Set[str] = set()
+                elmgenstat_source: ElmGenstat
+                for elmgenstat_source in dgs_grid.elmgenstats:
+                    if elmgenstat_source.ID == "":
+                        pass
+                    else:
+                        elmgenstat_source_ids.add(elmgenstat_source.ID)
+                elmsym_source_ids: Set[str] = set()
+                elmsym_reference_source_ids: Set[str] = set()
+                elmsym_source: ElmSym
+                for elmsym_source in dgs_grid.elmsyms:
+                    if elmsym_source.ID == "":
+                        pass
+                    else:
+                        elmsym_source_ids.add(elmsym_source.ID)
+                        if int(elmsym_source.ip_ctrl) == 1:
+                            elmsym_reference_source_ids.add(elmsym_source.ID)
+                        else:
+                            pass
+                typeless_elmlod_source_ids: Set[str] = set()
+                elmlod_source: ElmLod
+                for elmlod_source in dgs_grid.elmlods:
+                    if (
+                            elmlod_source.ID != ""
+                            and _ref_id(elmlod_source.typ_id) in {None, ""}
+                    ):
+                        typeless_elmlod_source_ids.add(elmlod_source.ID)
+                    else:
+                        pass
+                prepare_dgs_circuit_for_rms(
+                    circuit=grid,
+                    external_grid_source_ids=external_grid_source_ids,
+                    logger=logger,
+                    elmgenstat_source_ids=elmgenstat_source_ids,
+                    elmsym_source_ids=elmsym_source_ids,
+                    elmsym_reference_source_ids=elmsym_reference_source_ids,
+                    typeless_elmlod_source_ids=typeless_elmlod_source_ids,
+                )
+                # Passive shells exist now, so exported meter FIDs can place
+                # omitted valve terminals on their exact electrical rails.
+                prepared_actuator_count: int = prepare_dgs_logical_actuator_topology(
+                    circuit=grid,
+                    dgs_circuit=dgs_grid,
+                    templates_by_root_dgs_id=rms_templates_by_root_dgs_id,
+                    logger=logger,
+                )
+                # Bind native meters on the registered controller before its
+                # sole runtime instance is duplicated into a physical owner.
+                bind_dgs_rms_measurements(
+                    circuit=grid,
+                    dgs_circuit=dgs_grid,
+                    templates_by_root_dgs_id=templates_by_root_dgs_id,
+                    child_blocks_by_root_and_slot_id=(
+                        conversion_result.child_blocks_by_root_and_slot_id
+                    ),
+                    logger=logger,
+                )
+                bound_actuator_count: int = bind_dgs_logical_actuator_runtime(
+                    circuit=grid,
+                    templates_by_root_dgs_id=rms_templates_by_root_dgs_id,
+                    logger=logger,
+                )
+                if (
+                        prepared_actuator_count > 0
+                        and bound_actuator_count == prepared_actuator_count
+                ):
+                    release_dgs_logical_actuator_import_context(circuit=grid)
+                else:
+                    if bound_actuator_count != prepared_actuator_count:
+                        logger.add_warning(
+                            msg="DGS logical actuator import context retained after incomplete binding",
+                            value=bound_actuator_count,
+                            expected_value=prepared_actuator_count,
+                        )
+                    else:
+                        pass
+                bind_dgs_switch_event_runtime(
+                    circuit=grid,
+                    templates_by_root_dgs_id=templates_by_root_dgs_id,
+                    logger=logger,
+                )
+            else:
+                pass
+    else:
+        pass
 
     return grid

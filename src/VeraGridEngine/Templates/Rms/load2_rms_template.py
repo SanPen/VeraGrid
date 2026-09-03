@@ -49,4 +49,5 @@ def get_load2_rms_template(var_factory: VarFactory, name = "Load rms template") 
 
     templ.block.in_vars = inputs
 
+    templ.comment = 'Load RMS model variant 2'
     return templ

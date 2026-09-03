@@ -61,6 +61,7 @@ from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_utilities import (
     RlcComboBlockTemplateDefinition,
     get_blocktype2template_builder_dict,
     initialize_template_builder_from_block,
+    synchronize_vsc_library_initialization,
 )
 
 from VeraGrid.Gui.messages import yes_no_question
@@ -2101,10 +2102,6 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             dialogue.structuralRebuildRequested.connect(self.on_structural_rebuild_requested)
             dialogue.variableRenameRequested.connect(self.on_variable_rename_requested)
             dialogue.outputExportChangesRequested.connect(self.on_output_export_changes_requested)
-            if self.current_theme == DynEditorGraphicsModes.DARK:
-                dialogue.set_dark_mode()
-            else:
-                dialogue.set_light_mode()
             properties_dock: DynamicBlockPropertiesDockWidget = DynamicBlockPropertiesDockWidget(
                 properties_widget=dialogue,
                 parent=self,
@@ -2715,7 +2712,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             self.scene.addItem(item)
 
             self.diagram.add_node(
-                name=item_name,
+                name=block_model.name,
                 x=x_pos,
                 y=y_pos,
                 tpe=block_type.name,
@@ -2756,6 +2753,9 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             block_item.set_subsystem(block_model)
             block_item.position_changed_callback = self.build_position_changed_callback(block_model.uid)
             block_item.build_item()
+            # The factory may give a native block a readable display name while
+            # keeping its enum identifier unchanged for persistence.
+            block_item.refresh_block_name()
 
             # The editor block is the authoritative model container for later save/rebuild steps.
             self.main_block.add(block_model)
@@ -2764,7 +2764,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
 
             # Keep the diagram synchronized so later features can rebuild from the same data source.
             self.diagram.add_node(
-                name=item_name,
+                name=block_model.name,
                 x=x_pos,
                 y=y_pos,
                 tpe=block_type.name,
@@ -6196,7 +6196,9 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
 
 
 
-
+    def add_measurements_items(self):
+        # Here we need to create the measurements items
+        pass
 
     def add_connection_items(self, blocks_list: List[graph.BlockItem] | None = None) -> None:
         """
@@ -8417,8 +8419,8 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         :return: None.
         """
         confirmed: bool = yes_no_question(
-            text=self.tr("You are going to delete the complete model and start from scratch. Are you sure?"),
-            title=self.tr("Delete all")
+            text="You are going to delete the complete model and start from scratch. Are you sure?",
+            title="Delete all"
         )
 
         if confirmed:
@@ -9574,6 +9576,13 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 pass
             # Persist the edited RMS block back into the original model object.
             if self._document is not None:
+                # Individual VSC Library blocks keep their original ports.
+                # Bind only their initialization expressions before committing,
+                # including when their equations were decomposed for display.
+                synchronize_vsc_library_initialization(
+                    root=self._document.working_root_block,
+                    block_types=self._block2blocktype,
+                )
                 self._document.commit()
             else:
                 pass
@@ -9664,7 +9673,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         """
         # Create dialog
         dialog = QDialog(self)
-        dialog.setWindowTitle(self.tr("Inspect Model"))
+        dialog.setWindowTitle("Inspect Model")
         dialog.resize(600, 400)
 
         # create layout
@@ -10883,8 +10892,8 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
 
         reply = QtWidgets.QMessageBox.question(
             parent if parent is not None else self,
-            self.tr("Unsaved changes"),
-            self.tr("There are unapplied changes. Do you want to close without applying them?"),
+            "Unsaved changes",
+            "There are unapplied changes. Do you want to close without applying them?",
             QtWidgets.QMessageBox.StandardButton.Yes,
             QtWidgets.QMessageBox.StandardButton.No,
         )
@@ -10967,8 +10976,58 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         else:
             pass
 
+        properties_dialogue: DynamicBlockPropertiesDialog | None = self._block_properties_dialogue
+        if properties_dialogue is not None:
+            # The dialogue can outlive its editor until DeferredDelete is
+            # processed. Disconnect every Python receiver first so no queued
+            # properties signal can call into the dismantled editor.
+            try:
+                properties_dialogue.blockApplied.disconnect(
+                    self.on_block_properties_applied
+                )
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                properties_dialogue.structuralRebuildRequested.disconnect(
+                    self.on_structural_rebuild_requested
+                )
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                properties_dialogue.variableRenameRequested.disconnect(
+                    self.on_variable_rename_requested
+                )
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                properties_dialogue.outputExportChangesRequested.disconnect(
+                    self.on_output_export_changes_requested
+                )
+            except (RuntimeError, TypeError):
+                pass
+        else:
+            pass
+
         properties_dock: DynamicBlockPropertiesDockWidget | None = self._block_properties_dock
         if properties_dock is not None:
+            try:
+                properties_dock.closed.disconnect(
+                    self.on_block_properties_dock_closed
+                )
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                properties_dock.dockLocationChanged.disconnect(
+                    self.on_block_properties_dock_location_changed
+                )
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                properties_dock.topLevelChanged.disconnect(
+                    self.on_block_properties_dock_top_level_changed
+                )
+            except (RuntimeError, TypeError):
+                pass
             properties_dock.prepare_to_delete()
             self.removeDockWidget(properties_dock)
             properties_dock.setParent(None)
@@ -11127,10 +11186,6 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 item.recolour()
             else:
                 pass
-        if self._block_properties_dialogue is not None:
-            self._block_properties_dialogue.set_dark_mode()
-        else:
-            pass
 
     def set_light_mode(self) -> None:
         """
@@ -11146,7 +11201,3 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 item.recolour()
             else:
                 pass
-        if self._block_properties_dialogue is not None:
-            self._block_properties_dialogue.set_light_mode()
-        else:
-            pass

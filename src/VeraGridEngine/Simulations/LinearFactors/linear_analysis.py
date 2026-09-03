@@ -374,11 +374,12 @@ def make_acdc_ptdf(nc: NumericalCircuit,
 
         if nc.bus_data.is_dc[f] and nc.bus_data.is_dc[t]:
             # this is a dc branch
-            ys = float(nc.passive_branch_data.active[k]) / (nc.passive_branch_data.R[k] + 1e-20)
+            ys: float = float(nc.passive_branch_data.active[k]) / (nc.passive_branch_data.R[k] + 1e-20)
 
         elif not nc.bus_data.is_dc[f] and not nc.bus_data.is_dc[t]:
-            # this is an ac branch
-            ys = float(nc.passive_branch_data.active[k]) / (nc.passive_branch_data.X[k] + 1e-20)
+            # AC branch: the DC susceptance includes the tap module, same as Bf
+            m: float = float(nc.active_branch_data.tap_module[k])
+            ys = float(nc.passive_branch_data.active[k]) / (nc.passive_branch_data.X[k] * m + 1e-20)
 
         else:
             # this is an error
@@ -566,30 +567,36 @@ def compute_phase_shift_terms(nc: NumericalCircuit) -> Tuple[Vec, Vec]:
     """
     Build the per-unit contribution of the branch phase shifts to the DC branch flows.
 
-    A branch with susceptance b = 1/X and phase shift tau has
-    ``Pf = b · (theta_f - theta_t - tau)``, where the tap ratio ``t = m·exp(j·tau)`` 
-    gives ``Pf ~ sin(theta_f - theta_t - tau) / (X·m)``.
+    A branch with susceptance ``b = 1 / (X · m)`` and phase shift ``tau`` has
+    ``Pf = b · (theta_f - theta_t - tau)``. This is the same convention as
+    ``compute_linear_admittances`` and ``power_flow_post_process_linear``.
+    The tap ratio is ``t = m · exp(j · tau)``, so both the tap module and the
+    tap phase enter the DC flow.
 
     Separating the constant part turns the DC system into ``B·theta = P - Pshift``, so the flows are
     ``Pf = PTDF @ (P - Pshift) + shift_flow`` with ``shift_flow = -b·tau`` and
-    ``Pshift[from] = -b·tau``, ``Pshift[to] = +b·tau``. 
+    ``Pshift[from] = -b·tau``, ``Pshift[to] = +b·tau``.
     Without these two terms the PTDF flows are simply blind to any phase shifter.
 
     :param nc: numerical circuit
-    :return: direct flow term per branch, equivalent bus injections), in p.u.
+    :return: direct flow term per branch, equivalent bus injections, in p.u.
     """
     tau_flows: Vec = np.zeros(nc.nbr, dtype=float)
     tau_injections: Vec = np.zeros(nc.nbus, dtype=float)
 
     for k in range(nc.nbr):
-        tau = float(nc.active_branch_data.tap_angle[k])
-        x = float(nc.passive_branch_data.X[k])
+        tau: float = float(nc.active_branch_data.tap_angle[k])
+        x: float = float(nc.passive_branch_data.X[k])
+        m: float = float(nc.active_branch_data.tap_module[k])
+        is_dc: bool = bool(nc.passive_branch_data.dc[k])
+        is_active: bool = bool(nc.passive_branch_data.active[k])
 
-        if tau == 0.0 or bool(nc.passive_branch_data.dc[k]) or x == 0.0:
-            # no shift, a DC branch where the concept does not apply, or no usable susceptance
+        if (not is_active) or is_dc or (tau == 0.0) or (x == 0.0) or (m == 0.0):
+            # no contribution: the branch is off, DC, unshifted, or has no usable susceptance
             pass
         else:
-            contribution = -tau / x
+            # b = 1/(X*m), add m to the contribution
+            contribution: float = -tau / (x * m)
             tau_flows[k] = contribution
             tau_injections[nc.passive_branch_data.F[k]] += contribution
             tau_injections[nc.passive_branch_data.T[k]] -= contribution

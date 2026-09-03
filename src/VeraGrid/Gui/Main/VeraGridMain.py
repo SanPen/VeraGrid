@@ -5,6 +5,7 @@
 
 import os.path
 import sys
+from pathlib import Path
 
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtCore import Qt
@@ -17,6 +18,7 @@ from VeraGrid.Gui.update_gui_all import update_all_icons
 from VeraGrid.Gui.Main.SubClasses.Scripting.scripting import ScriptingMain
 import VeraGrid.ThirdParty.qdarktheme as qdarktheme
 from VeraGrid.__version__ import __VeraGrid_VERSION__
+from VeraGridEngine.Utils.cache import clean_pycache_folders
 
 __author__ = 'Santiago Peñate Vera'
 
@@ -96,6 +98,24 @@ class VeraGridMainGUI(ScriptingMain):
 
         # global delete function
         self.ui.actionDelete_selected.triggered.connect(self.global_delete)
+        self.ui.actionClear_cache.triggered.connect(self.clear_cache)
+
+    def clear_cache(self) -> None:
+        """
+        Clear Python bytecode cache folders from the VeraGrid source packages.
+
+        :return: None.
+        """
+        veragrid_root_path: Path = Path(__file__).resolve().parents[2]
+        veragrid_engine_root_path: Path = veragrid_root_path.parent / "VeraGridEngine"
+
+        # Remove only Python bytecode caches below the two source package roots.
+        removed_count: int = clean_pycache_folders(veragrid_root_path)
+        removed_count += clean_pycache_folders(veragrid_engine_root_path)
+
+        self.show_info_toast(
+            message=self.tr("Removed {count} __pycache__ folders").format(count=removed_count),
+        )
 
     def refresh_runtime_translations(self) -> None:
         """
@@ -127,9 +147,20 @@ class VeraGridMainGUI(ScriptingMain):
         """
         Save all configuration files needed
         """
-        self.save_gui_config()
-        self.save_server_config()
-        self.save_ai_config()
+        try:
+            self.save_gui_config()
+        except OSError as error:
+            print(f"Could not save GUI config: {error}")
+
+        try:
+            self.save_server_config()
+        except OSError as error:
+            print(f"Could not save server config: {error}")
+
+        try:
+            self.save_ai_config()
+        except OSError as error:
+            print(f"Could not save AI config: {error}")
 
     def load_all_config(self) -> None:
         """

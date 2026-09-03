@@ -6,12 +6,21 @@
 from __future__ import annotations
 
 import copy
+import math
 import uuid
 from typing import List, Dict, Any, Tuple
+from typing import Iterable, Mapping
 
-from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, _expr_to_dict, _dict_to_expr, BinOp, UnOp, Func, Func2, Comparison
+from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, BinOp, _expr_to_dict, _dict_to_expr, Comparison
 from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagram
-from VeraGridEngine.enumerations import VarPowerFlowReferenceType, ParamPowerFlowReferenceType
+from VeraGridEngine.enumerations import (
+    EmtTerminalConductor,
+    EmtTerminalSide,
+    ParamPowerFlowReferenceType,
+    RmsPhysicalMeterKind,
+    RmsTerminalSide,
+    VarPowerFlowReferenceType,
+)
 from VeraGridEngine.Utils.Symbolic.compare_expressions_structure import equivalent_systems
 from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConnectionIntent,
                                                                      DynamicConnectionIntentDirection,
@@ -19,6 +28,11 @@ from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConn
                                                                      dynamic_connection_intent_from_dict,
                                                                      dynamic_connection_intent_to_dict)
 from VeraGridEngine.Utils.Symbolic.variable_alignment_engine import align_variables
+from VeraGridEngine.Utils.procedural_logic_contract import (
+    ProceduralLogicCodecContract,
+    ProceduralLogicData,
+    ProceduralLogicEntryContract,
+)
 
 
 def normalize_event_parameter_initialization(block: "Block") -> None:
@@ -72,6 +86,1749 @@ def normalize_event_parameter_initialization(block: "Block") -> None:
         for child_block in current_block.children:
             pending_blocks.append(child_block)
 
+
+class RmsPhysicalMeasurementPoint:
+    """Declare one physical RMS measurement selected by exact source FIDs.
+
+    The declaration contains identity and selection metadata only. Its solved
+    expressions and variables remain owned by the canonical meter ``Block``.
+    A global consumer can therefore index measurement blocks without retaining
+    DGS parser objects or constructing a second electrical graph.
+    """
+
+    __slots__ = (
+        "_source_fid",
+        "_target_fid",
+        "_terminal_side",
+        "_meter_kind",
+        "_output_signal_names",
+        "_output_var_uids",
+    )
+
+    def __init__(
+            self,
+            source_fid: str,
+            target_fid: str,
+            terminal_side: RmsTerminalSide,
+            meter_kind: RmsPhysicalMeterKind,
+            output_signal_names: Tuple[str, ...],
+            output_var_uids: Tuple[int, ...],
+    ) -> None:
+        """Create one immutable physical measurement declaration.
+
+        :param source_fid: Exact FID of the native meter or built-in slot.
+        :param target_fid: Exact FID of the measured bus or physical device.
+        :param terminal_side: Measured physical terminal of the target.
+        :param meter_kind: Physical quantity family produced by the meter.
+        :param output_signal_names: Exact selected output signal names.
+        :param output_var_uids: Canonical output-variable UIDs paired with names.
+        :return: None.
+        """
+        if source_fid.strip() == "":
+            raise ValueError("RMS physical meter source FID must not be empty")
+        else:
+            pass
+        if target_fid.strip() == "":
+            raise ValueError("RMS physical meter target FID must not be empty")
+        else:
+            pass
+        if isinstance(terminal_side, RmsTerminalSide):
+            pass
+        else:
+            raise TypeError("RMS physical meter terminal side is invalid")
+        if isinstance(meter_kind, RmsPhysicalMeterKind):
+            pass
+        else:
+            raise TypeError("RMS physical meter kind is invalid")
+        if (
+                meter_kind in (
+                    RmsPhysicalMeterKind.VOLTAGE,
+                    RmsPhysicalMeterKind.PHASE_LOCKED_LOOP,
+                )
+                and terminal_side is not RmsTerminalSide.BUS
+        ):
+            raise ValueError("Voltage and PLL meters must target a bus")
+        else:
+            pass
+        if (
+                len(output_signal_names) > 0
+                and all(name.strip() != "" for name in output_signal_names)
+                and len(set(output_signal_names)) == len(output_signal_names)
+        ):
+            pass
+        else:
+            raise ValueError(
+                "RMS physical meter outputs must be non-empty and unique"
+            )
+        if (
+                len(output_var_uids) == len(output_signal_names)
+                and len(set(output_var_uids)) == len(output_var_uids)
+                and all(
+                    isinstance(uid, int) and not isinstance(uid, bool)
+                    for uid in output_var_uids
+                )
+        ):
+            pass
+        else:
+            raise ValueError(
+                "RMS physical meter output names and UIDs must pair uniquely"
+            )
+
+        self._source_fid: str = source_fid
+        self._target_fid: str = target_fid
+        self._terminal_side: RmsTerminalSide = terminal_side
+        self._meter_kind: RmsPhysicalMeterKind = meter_kind
+        self._output_signal_names: Tuple[str, ...] = tuple(output_signal_names)
+        self._output_var_uids: Tuple[int, ...] = tuple(output_var_uids)
+
+    def get_source_fid(self) -> str:
+        """Return the exact native meter or built-in slot FID.
+
+        :return: Source FID.
+        """
+        return self._source_fid
+
+    def get_target_fid(self) -> str:
+        """Return the exact measured bus or device FID.
+
+        :return: Physical target FID.
+        """
+        return self._target_fid
+
+    def get_terminal_side(self) -> RmsTerminalSide:
+        """Return the measured physical terminal.
+
+        :return: Typed terminal side.
+        """
+        return self._terminal_side
+
+    def get_meter_kind(self) -> RmsPhysicalMeterKind:
+        """Return the physical quantity family.
+
+        :return: Typed meter kind.
+        """
+        return self._meter_kind
+
+    def get_output_signal_names(self) -> Tuple[str, ...]:
+        """Return the exact selected output signal names.
+
+        :return: Immutable ordered signal-name tuple.
+        """
+        return self._output_signal_names
+
+    def get_output_var_uids(self) -> Tuple[int, ...]:
+        """Return canonical output-variable UIDs paired with signal names.
+
+        :return: Immutable ordered output-UID tuple.
+        """
+        return self._output_var_uids
+
+    def to_data(self) -> Dict[str, object]:
+        """Serialize this measurement point as declarative data.
+
+        :return: Version-independent physical measurement record.
+        """
+        return {
+            "source_fid": self._source_fid,
+            "target_fid": self._target_fid,
+            "terminal_side": self._terminal_side.value,
+            "meter_kind": self._meter_kind.value,
+            "output_signal_names": list(self._output_signal_names),
+            "output_var_uids": list(self._output_var_uids),
+        }
+
+
+def rms_physical_measurement_point_from_data(
+        data: Dict[str, object],
+) -> RmsPhysicalMeasurementPoint:
+    """Reconstruct one physical RMS measurement declaration fail-closed.
+
+    :param data: Declarative physical measurement record.
+    :return: Validated typed measurement point.
+    """
+    expected_keys: set[str] = set((
+        "source_fid",
+        "target_fid",
+        "terminal_side",
+        "meter_kind",
+        "output_signal_names",
+        "output_var_uids",
+    ))
+    if set(data.keys()) == expected_keys:
+        pass
+    else:
+        raise ValueError("RMS physical measurement fields do not match")
+
+    source_fid_data: object = data["source_fid"]
+    target_fid_data: object = data["target_fid"]
+    terminal_side_data: object = data["terminal_side"]
+    meter_kind_data: object = data["meter_kind"]
+    output_names_data: object = data["output_signal_names"]
+    output_uids_data: object = data["output_var_uids"]
+    if isinstance(source_fid_data, str) and isinstance(target_fid_data, str):
+        pass
+    else:
+        raise TypeError("RMS physical measurement FIDs must be strings")
+    if isinstance(terminal_side_data, str):
+        terminal_side: RmsTerminalSide = RmsTerminalSide(terminal_side_data)
+    else:
+        raise TypeError("RMS physical measurement terminal side must be a string")
+    if isinstance(meter_kind_data, str):
+        meter_kind: RmsPhysicalMeterKind = RmsPhysicalMeterKind(meter_kind_data)
+    else:
+        raise TypeError("RMS physical measurement kind must be a string")
+    if isinstance(output_names_data, list):
+        output_signal_names: List[str] = list()
+        output_name_data: object
+        for output_name_data in output_names_data:
+            if isinstance(output_name_data, str):
+                output_signal_names.append(output_name_data)
+            else:
+                raise TypeError(
+                    "RMS physical measurement output names must be strings"
+                )
+        else:
+            pass
+    else:
+        raise TypeError("RMS physical measurement outputs must be a list")
+    if isinstance(output_uids_data, list):
+        output_var_uids: List[int] = list()
+        output_uid_data: object
+        for output_uid_data in output_uids_data:
+            if isinstance(output_uid_data, int) and not isinstance(output_uid_data, bool):
+                output_var_uids.append(output_uid_data)
+            else:
+                raise TypeError(
+                    "RMS physical measurement output UIDs must be integers"
+                )
+        else:
+            pass
+    else:
+        raise TypeError("RMS physical measurement output UIDs must be a list")
+    return RmsPhysicalMeasurementPoint(
+        source_fid=source_fid_data,
+        target_fid=target_fid_data,
+        terminal_side=terminal_side,
+        meter_kind=meter_kind,
+        output_signal_names=tuple(output_signal_names),
+        output_var_uids=tuple(output_var_uids),
+    )
+
+
+class RmsTerminalPowerContribution:
+    """Declare one device power flow consumed by the RMS nodal assembler.
+
+    ``FROM`` and ``TO`` references use the branch convention: a positive value
+    flows from the connected bus into the device, so the network assembler
+    contributes its negative to the bus injection. ``BUS`` references already
+    use the device-to-network injection convention and retain their sign. The
+    declaration stores semantic references only and never retains a second
+    symbolic variable graph.
+    """
+
+    __slots__ = (
+        "_terminal_side",
+        "_active_power_reference",
+        "_reactive_power_reference",
+    )
+
+    def __init__(
+            self,
+            terminal_side: RmsTerminalSide,
+            active_power_reference: VarPowerFlowReferenceType,
+            reactive_power_reference: VarPowerFlowReferenceType | None,
+    ) -> None:
+        """Create one typed terminal power declaration.
+
+        :param terminal_side: Physical device terminal resolved by topology.
+        :param active_power_reference: Active-power variable in the owning block.
+        :param reactive_power_reference: Reactive-power variable, or None for a DC terminal.
+        :return: None.
+        """
+        if terminal_side is RmsTerminalSide.BUS:
+            if active_power_reference is VarPowerFlowReferenceType.P:
+                pass
+            else:
+                raise ValueError("RMS bus-terminal active power must use P")
+            if reactive_power_reference in (None, VarPowerFlowReferenceType.Q):
+                pass
+            else:
+                raise ValueError("RMS bus-terminal reactive power must use Q or null")
+        else:
+            if terminal_side is RmsTerminalSide.FROM:
+                if active_power_reference is VarPowerFlowReferenceType.Pf:
+                    pass
+                else:
+                    raise ValueError("RMS from-terminal active power must use Pf")
+                if reactive_power_reference in (None, VarPowerFlowReferenceType.Qf):
+                    pass
+                else:
+                    raise ValueError("RMS from-terminal reactive power must use Qf or null")
+            else:
+                if terminal_side is RmsTerminalSide.TO:
+                    if active_power_reference is VarPowerFlowReferenceType.Pt:
+                        pass
+                    else:
+                        raise ValueError("RMS to-terminal active power must use Pt")
+                    if reactive_power_reference in (None, VarPowerFlowReferenceType.Qt):
+                        pass
+                    else:
+                        raise ValueError("RMS to-terminal reactive power must use Qt or null")
+                else:
+                    raise TypeError("RMS terminal side must be a RmsTerminalSide")
+
+        self._terminal_side: RmsTerminalSide = terminal_side
+        self._active_power_reference: VarPowerFlowReferenceType = active_power_reference
+        self._reactive_power_reference: VarPowerFlowReferenceType | None = reactive_power_reference
+
+    def get_terminal_side(self) -> RmsTerminalSide:
+        """Return the physical terminal selected by network topology.
+
+        :return: Declared terminal side.
+        """
+        return self._terminal_side
+
+    def get_active_power_reference(self) -> VarPowerFlowReferenceType:
+        """Return the active-power reference owned by the symbolic block.
+
+        :return: Active-power reference.
+        """
+        return self._active_power_reference
+
+    def get_reactive_power_reference(self) -> VarPowerFlowReferenceType | None:
+        """Return the reactive-power reference for an AC terminal.
+
+        :return: Reactive-power reference, or None for a DC terminal.
+        """
+        return self._reactive_power_reference
+
+    def to_data(self) -> Dict[str, object]:
+        """Return a declarative representation without symbolic objects.
+
+        :return: Version-owned terminal power data.
+        """
+        reactive_reference: str | None
+        if self._reactive_power_reference is None:
+            reactive_reference = None
+        else:
+            reactive_reference = self._reactive_power_reference.value
+        return {
+            "terminal_side": self._terminal_side.value,
+            "active_power_reference": self._active_power_reference.value,
+            "reactive_power_reference": reactive_reference,
+        }
+
+
+def rms_terminal_power_contribution_from_data(
+        data: Dict[str, object],
+) -> RmsTerminalPowerContribution:
+    """Reconstruct one fail-closed terminal power declaration.
+
+    :param data: Declarative terminal power data.
+    :return: Reconstructed typed declaration.
+    """
+    expected_keys: set[str] = set((
+        "terminal_side",
+        "active_power_reference",
+        "reactive_power_reference",
+    ))
+    actual_keys: set[str] = set(data.keys())
+    if actual_keys == expected_keys:
+        pass
+    else:
+        raise KeyError(
+            "RMS terminal power keys do not match the contract: "
+            f"missing={sorted(expected_keys - actual_keys)}, "
+            f"extra={sorted(actual_keys - expected_keys)}"
+        )
+
+    raw_terminal_side: object = data["terminal_side"]
+    raw_active_reference: object = data["active_power_reference"]
+    raw_reactive_reference: object = data["reactive_power_reference"]
+    if isinstance(raw_terminal_side, str):
+        terminal_side: RmsTerminalSide = RmsTerminalSide(raw_terminal_side)
+    else:
+        raise TypeError("RMS terminal side must be a string")
+    if isinstance(raw_active_reference, str):
+        active_reference: VarPowerFlowReferenceType = VarPowerFlowReferenceType(
+            raw_active_reference
+        )
+    else:
+        raise TypeError("RMS terminal active-power reference must be a string")
+    if raw_reactive_reference is None:
+        reactive_reference: VarPowerFlowReferenceType | None = None
+    else:
+        if isinstance(raw_reactive_reference, str):
+            reactive_reference = VarPowerFlowReferenceType(raw_reactive_reference)
+        else:
+            raise TypeError(
+                "RMS terminal reactive-power reference must be a string or null"
+            )
+    return RmsTerminalPowerContribution(
+        terminal_side=terminal_side,
+        active_power_reference=active_reference,
+        reactive_power_reference=reactive_reference,
+    )
+
+
+class EmtTerminalCurrentContribution:
+    """Declare one device current consumed by the EMT nodal assembler.
+
+    The declaration stores only a typed side, conductor, and semantic current
+    reference. The current variable remains in the canonical block, while the
+    physical bus is resolved later from ``MultiCircuit`` topology.
+    """
+
+    __slots__ = (
+        "_terminal_side",
+        "_conductor",
+        "_current_reference",
+    )
+
+    def __init__(
+            self,
+            terminal_side: EmtTerminalSide,
+            conductor: EmtTerminalConductor,
+            current_reference: VarPowerFlowReferenceType,
+    ) -> None:
+        """Create one typed instantaneous-current declaration.
+
+        :param terminal_side: Physical device terminal resolved by topology.
+        :param conductor: DC or AC conductor carrying the current.
+        :param current_reference: Current variable in the owning block.
+        :return: None.
+        """
+        if isinstance(terminal_side, EmtTerminalSide):
+            pass
+        else:
+            raise TypeError("EMT terminal side must be an EmtTerminalSide")
+        if isinstance(conductor, EmtTerminalConductor):
+            pass
+        else:
+            raise TypeError("EMT conductor must be an EmtTerminalConductor")
+
+        allowed_references: set[VarPowerFlowReferenceType]
+        if conductor is EmtTerminalConductor.DC:
+            allowed_references = set((
+                VarPowerFlowReferenceType.Idc,
+                VarPowerFlowReferenceType.If_dc,
+                VarPowerFlowReferenceType.It_dc,
+            ))
+        else:
+            if conductor is EmtTerminalConductor.NEUTRAL:
+                allowed_references = set((
+                    VarPowerFlowReferenceType.i_N,
+                    VarPowerFlowReferenceType.if_N,
+                    VarPowerFlowReferenceType.it_N,
+                ))
+            else:
+                if conductor is EmtTerminalConductor.PHASE_A:
+                    allowed_references = set((
+                        VarPowerFlowReferenceType.i_A,
+                        VarPowerFlowReferenceType.if_A,
+                        VarPowerFlowReferenceType.it_A,
+                    ))
+                else:
+                    if conductor is EmtTerminalConductor.PHASE_B:
+                        allowed_references = set((
+                            VarPowerFlowReferenceType.i_B,
+                            VarPowerFlowReferenceType.if_B,
+                            VarPowerFlowReferenceType.it_B,
+                        ))
+                    else:
+                        if conductor is EmtTerminalConductor.PHASE_C:
+                            allowed_references = set((
+                                VarPowerFlowReferenceType.i_C,
+                                VarPowerFlowReferenceType.if_C,
+                                VarPowerFlowReferenceType.it_C,
+                            ))
+                        else:
+                            raise ValueError("Unsupported EMT terminal conductor")
+        if current_reference in allowed_references:
+            pass
+        else:
+            raise ValueError(
+                "EMT terminal current reference does not match its conductor"
+            )
+
+        self._terminal_side: EmtTerminalSide = terminal_side
+        self._conductor: EmtTerminalConductor = conductor
+        self._current_reference: VarPowerFlowReferenceType = current_reference
+
+    def get_terminal_side(self) -> EmtTerminalSide:
+        """Return the physical terminal selected by network topology.
+
+        :return: Declared terminal side.
+        """
+        return self._terminal_side
+
+    def get_conductor(self) -> EmtTerminalConductor:
+        """Return the instantaneous conductor represented by this current.
+
+        :return: Declared EMT conductor.
+        """
+        return self._conductor
+
+    def get_current_reference(self) -> VarPowerFlowReferenceType:
+        """Return the current reference owned by the symbolic block.
+
+        :return: Declared current reference.
+        """
+        return self._current_reference
+
+    def to_data(self) -> Dict[str, object]:
+        """Return a declarative representation without symbolic objects.
+
+        :return: Version-owned terminal current data.
+        """
+        return {
+            "terminal_side": self._terminal_side.value,
+            "conductor": self._conductor.value,
+            "current_reference": self._current_reference.value,
+        }
+
+
+def emt_terminal_current_contribution_from_data(
+        data: Dict[str, object],
+) -> EmtTerminalCurrentContribution:
+    """Reconstruct one fail-closed EMT terminal current declaration.
+
+    :param data: Declarative terminal current data.
+    :return: Reconstructed typed declaration.
+    """
+    expected_keys: set[str] = set((
+        "terminal_side",
+        "conductor",
+        "current_reference",
+    ))
+    actual_keys: set[str] = set(data.keys())
+    if actual_keys == expected_keys:
+        pass
+    else:
+        raise KeyError(
+            "EMT terminal current keys do not match the contract: "
+            f"missing={sorted(expected_keys - actual_keys)}, "
+            f"extra={sorted(actual_keys - expected_keys)}"
+        )
+
+    raw_terminal_side: object = data["terminal_side"]
+    raw_conductor: object = data["conductor"]
+    raw_current_reference: object = data["current_reference"]
+    if isinstance(raw_terminal_side, str):
+        terminal_side: EmtTerminalSide = EmtTerminalSide(raw_terminal_side)
+    else:
+        raise TypeError("EMT terminal side must be a string")
+    if isinstance(raw_conductor, str):
+        conductor: EmtTerminalConductor = EmtTerminalConductor(raw_conductor)
+    else:
+        raise TypeError("EMT terminal conductor must be a string")
+    if isinstance(raw_current_reference, str):
+        current_reference: VarPowerFlowReferenceType = VarPowerFlowReferenceType(
+            raw_current_reference
+        )
+    else:
+        raise TypeError("EMT terminal current reference must be a string")
+    return EmtTerminalCurrentContribution(
+        terminal_side=terminal_side,
+        conductor=conductor,
+        current_reference=current_reference,
+    )
+
+
+class DynamicModelContract:
+    """Store typed dynamic-behavior declarations owned by one symbolic block.
+
+    The contract contains semantic references, scalar flags and symbolic UIDs.
+    It therefore preserves the canonical ``Block`` object graph instead of
+    retaining import parser objects or references to a second dynamic-model
+    representation. Physical declarations state quantity ownership while
+    ``MultiCircuit`` remains the only source of bus topology.
+    """
+
+    __slots__ = (
+        "dgs_elmsym_runtime_adapter",
+        "dgs_elmsym_runtime_adapter_pending",
+        "dgs_elmsym_round_rotor",
+        "dgs_elmsym_rotor_angle_var_uid",
+        "dgs_elmsym_speed_var_uid",
+        "dgs_elmsym_angular_frequency_var_uid",
+        "dgs_elmsym_rated_field_voltage_var_uid",
+        "dgs_elmsym_excitation_gain_var_uid",
+        "dgs_elmsym_active_base_factor_var_uid",
+        "dgs_elmsym_network_angle_anchor",
+        "dgs_elmsym_reference_speed_var_uid",
+        "dgs_explicit_initialization_uids",
+        "dgs_logical_actuator_root_id",
+        "dgs_open_resistance_ohm",
+        "rms_conduction_status_var_uid",
+        "rms_topology_constraint_status_var_uid",
+        "rms_terminal_power_contributions",
+        "rms_physical_measurement_point",
+        "emt_terminal_current_contributions",
+        "emt_internal_grounding_link",
+        "rms_ideal_ac_connector",
+        "rms_ideal_transformer",
+        "skip_device_local_explicit_init",
+        "startup_initial_reduced_polish_var_names",
+        "runtime_measurement_shell_sync_names",
+        "startup_ordered_shell_sync_names",
+        "dgs_equipment_owned_signal_names",
+        "dgs_elmgenstat_runtime_adapter",
+        "dgs_open_standard_regc_current_pll",
+        "dgs_open_standard_regc_voltage_source",
+        "explicit_init_excluded_var_names",
+        "explicit_init_override_init_exprs",
+        "runtime_equipment_shell_sync_names",
+        "runtime_equipment_shell_sync_var_uids",
+        "startup_final_init_replay_var_names",
+        "dgs_elmsvs_runtime_adapter",
+        "dgs_elmsvs_remote_voltage_var_uid",
+    )
+
+    def __init__(self) -> None:
+        """
+        Initialize an empty fail-closed dynamic-model contract.
+
+        :return: None.
+        """
+        # Adapter flags default to false so incomplete imports cannot become
+        # runtime-assignable merely because metadata is absent.
+        self.dgs_elmsym_runtime_adapter: bool = False
+        self.dgs_elmsym_runtime_adapter_pending: bool = False
+        self.dgs_elmsym_round_rotor: bool | None = None
+
+        # Symbolic references use stable UIDs and never retain duplicate Var
+        # objects outside the canonical block graph.
+        self.dgs_elmsym_rotor_angle_var_uid: int | None = None
+        self.dgs_elmsym_speed_var_uid: int | None = None
+        self.dgs_elmsym_angular_frequency_var_uid: int | None = None
+        self.dgs_elmsym_rated_field_voltage_var_uid: int | None = None
+        self.dgs_elmsym_excitation_gain_var_uid: int | None = None
+        self.dgs_elmsym_active_base_factor_var_uid: int | None = None
+        self.dgs_elmsym_network_angle_anchor: bool = False
+        self.dgs_elmsym_reference_speed_var_uid: int | None = None
+        self.dgs_explicit_initialization_uids: set[int] = set()
+
+        # Logical actuators retain only exact source identity and fixed-size
+        # runtime projection specifications on their canonical RMS block.
+        self.dgs_logical_actuator_root_id: str | None = None
+        self.dgs_open_resistance_ohm: float | None = None
+        self.rms_conduction_status_var_uid: int | None = None
+        self.rms_topology_constraint_status_var_uid: int | None = None
+        self.rms_terminal_power_contributions: List[RmsTerminalPowerContribution] = list()
+        self.rms_physical_measurement_point: RmsPhysicalMeasurementPoint | None = None
+        self.emt_terminal_current_contributions: List[EmtTerminalCurrentContribution] = list()
+        self.emt_internal_grounding_link: bool = False
+        self.rms_ideal_ac_connector: bool = False
+        self.rms_ideal_transformer: bool = False
+        self.skip_device_local_explicit_init: bool = False
+        self.startup_initial_reduced_polish_var_names: list[str] = list()
+
+        # Shell synchronization declarations contain names only and cannot
+        # retain source parser objects or duplicate symbolic variables.
+        self.runtime_measurement_shell_sync_names: list[str] = list()
+        self.startup_ordered_shell_sync_names: list[str] = list()
+        self.dgs_equipment_owned_signal_names: list[str] = list()
+
+        # Equipment adapters declare their runtime and initialization contract
+        # using names, UIDs, expressions, and fail-closed marker flags only.
+        self.dgs_elmgenstat_runtime_adapter: bool = False
+        self.dgs_open_standard_regc_current_pll: bool = False
+        self.dgs_open_standard_regc_voltage_source: bool = False
+        self.explicit_init_excluded_var_names: list[str] = list()
+        self.explicit_init_override_init_exprs: dict[str, Expr] = dict()
+        self.runtime_equipment_shell_sync_names: list[str] = list()
+        self.runtime_equipment_shell_sync_var_uids: list[int] = list()
+        self.startup_final_init_replay_var_names: list[str] = list()
+        self.dgs_elmsvs_runtime_adapter: bool = False
+        self.dgs_elmsvs_remote_voltage_var_uid: int | None = None
+
+    def to_data(self) -> Dict[str, object]:
+        """Return the versioned declarative dynamic-model contract.
+
+        :return: Data-only contract suitable for canonical block persistence.
+        """
+        return {
+            "version": 5,
+            "dgs_elmsym_runtime_adapter": self.dgs_elmsym_runtime_adapter,
+            "dgs_elmsym_runtime_adapter_pending": self.dgs_elmsym_runtime_adapter_pending,
+            "dgs_elmsym_round_rotor": self.dgs_elmsym_round_rotor,
+            "dgs_elmsym_rotor_angle_var_uid": self.dgs_elmsym_rotor_angle_var_uid,
+            "dgs_elmsym_speed_var_uid": self.dgs_elmsym_speed_var_uid,
+            "dgs_elmsym_angular_frequency_var_uid": self.dgs_elmsym_angular_frequency_var_uid,
+            "dgs_elmsym_rated_field_voltage_var_uid": self.dgs_elmsym_rated_field_voltage_var_uid,
+            "dgs_elmsym_excitation_gain_var_uid": self.dgs_elmsym_excitation_gain_var_uid,
+            "dgs_elmsym_active_base_factor_var_uid": self.dgs_elmsym_active_base_factor_var_uid,
+            "dgs_elmsym_network_angle_anchor": self.dgs_elmsym_network_angle_anchor,
+            "dgs_elmsym_reference_speed_var_uid": self.dgs_elmsym_reference_speed_var_uid,
+            "dgs_explicit_initialization_uids": sorted(self.dgs_explicit_initialization_uids),
+            "dgs_logical_actuator_root_id": self.dgs_logical_actuator_root_id,
+            "dgs_open_resistance_ohm": self.dgs_open_resistance_ohm,
+            "rms_conduction_status_var_uid": self.rms_conduction_status_var_uid,
+            "rms_topology_constraint_status_var_uid": self.rms_topology_constraint_status_var_uid,
+            "rms_terminal_power_contributions": list(
+                contribution.to_data()
+                for contribution in self.rms_terminal_power_contributions
+            ),
+            "rms_physical_measurement_point": (
+                None
+                if self.rms_physical_measurement_point is None
+                else self.rms_physical_measurement_point.to_data()
+            ),
+            "emt_terminal_current_contributions": list(
+                contribution.to_data()
+                for contribution in self.emt_terminal_current_contributions
+            ),
+            "emt_internal_grounding_link": self.emt_internal_grounding_link,
+            "rms_ideal_ac_connector": self.rms_ideal_ac_connector,
+            "rms_ideal_transformer": self.rms_ideal_transformer,
+            "skip_device_local_explicit_init": self.skip_device_local_explicit_init,
+            "startup_initial_reduced_polish_var_names": list(
+                self.startup_initial_reduced_polish_var_names
+            ),
+            "runtime_measurement_shell_sync_names": list(
+                self.runtime_measurement_shell_sync_names
+            ),
+            "startup_ordered_shell_sync_names": list(
+                self.startup_ordered_shell_sync_names
+            ),
+            "dgs_equipment_owned_signal_names": list(
+                self.dgs_equipment_owned_signal_names
+            ),
+            "dgs_elmgenstat_runtime_adapter": self.dgs_elmgenstat_runtime_adapter,
+            "dgs_open_standard_regc_current_pll": self.dgs_open_standard_regc_current_pll,
+            "dgs_open_standard_regc_voltage_source": self.dgs_open_standard_regc_voltage_source,
+            "explicit_init_excluded_var_names": list(
+                self.explicit_init_excluded_var_names
+            ),
+            "explicit_init_override_init_exprs": dict(
+                (name, _expr_to_dict(expression))
+                for name, expression in self.explicit_init_override_init_exprs.items()
+            ),
+            "runtime_equipment_shell_sync_names": list(
+                self.runtime_equipment_shell_sync_names
+            ),
+            "runtime_equipment_shell_sync_var_uids": list(
+                self.runtime_equipment_shell_sync_var_uids
+            ),
+            "startup_final_init_replay_var_names": list(
+                self.startup_final_init_replay_var_names
+            ),
+            "dgs_elmsvs_runtime_adapter": self.dgs_elmsvs_runtime_adapter,
+            "dgs_elmsvs_remote_voltage_var_uid": self.dgs_elmsvs_remote_voltage_var_uid,
+        }
+
+
+def _read_required_dynamic_contract_field(
+        data: Dict[str, object],
+        field_name: str,
+) -> object:
+    """Read one required field from a present versioned contract.
+
+    :param data: Versioned dynamic-model contract data.
+    :param field_name: Exact required field name.
+    :return: Stored field value, including an explicit ``None``.
+    """
+    if field_name in data:
+        return data[field_name]
+    else:
+        raise KeyError(
+            f"Dynamic-model contract field '{field_name}' is missing"
+        )
+
+
+def _read_required_dynamic_contract_boolean(
+        data: Dict[str, object],
+        field_name: str,
+) -> bool:
+    """Read one required boolean contract field.
+
+    :param data: Versioned dynamic-model contract data.
+    :param field_name: Exact field whose declaration must be boolean.
+    :return: Validated boolean value.
+    """
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if isinstance(value, bool):
+        return value
+    else:
+        raise TypeError(
+            f"Dynamic-model contract field '{field_name}' must be boolean"
+        )
+
+
+def _read_nullable_dynamic_contract_boolean(
+        data: Dict[str, object],
+        field_name: str,
+) -> bool | None:
+    """Read one required field whose declared value may be boolean or null.
+
+    :param data: Versioned dynamic-model contract data.
+    :param field_name: Exact required field whose value may be nullable.
+    :return: Declared boolean, or ``None`` for the explicit inapplicable state.
+    """
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if value is None:
+        return None
+    else:
+        if isinstance(value, bool):
+            return value
+        else:
+            raise TypeError(
+                f"Dynamic-model contract field '{field_name}' must be boolean or null"
+            )
+
+
+def _read_nullable_dynamic_contract_symbolic_uid(
+        data: Dict[str, object],
+        field_name: str,
+) -> int | None:
+    """Read one required symbolic-UID field whose value may be null.
+
+    :param data: Versioned dynamic-model contract data.
+    :param field_name: Exact required field containing a symbolic UID.
+    :return: Integer symbolic UID, or ``None`` when no variable is declared.
+    """
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if value is None:
+        return None
+    else:
+        if isinstance(value, int) and not isinstance(value, bool):
+            return value
+        else:
+            raise TypeError(
+                f"Dynamic-model contract field '{field_name}' must be an integer or null"
+            )
+
+
+def _read_nullable_dgs_open_resistance_ohm(
+        data: Dict[str, object],
+) -> float | None:
+    """Reconstruct the DGS actuator resistance used for an open branch.
+
+    The version-1 field is required even when no open-state resistance applies;
+    that inapplicable state is represented by an explicit ``None``. Integer and
+    floating-point encodings are accepted because both are losslessly converted
+    to the runtime floating-point representation, while booleans and non-finite
+    values are rejected to keep the electrical declaration fail-closed.
+
+    :param data: Versioned dynamic-model contract containing the required
+        ``dgs_open_resistance_ohm`` field.
+    :return: Finite open-state resistance in ohms, or ``None`` when the block
+        does not declare that actuator projection.
+    """
+    field_name: str = "dgs_open_resistance_ohm"
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if value is None:
+        return None
+    else:
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            numeric_value: float = float(value)
+            if math.isfinite(numeric_value):
+                return numeric_value
+            else:
+                raise ValueError(
+                    f"Dynamic-model contract field '{field_name}' must be finite"
+                )
+        else:
+            raise TypeError(
+                f"Dynamic-model contract field '{field_name}' must be numeric or null"
+            )
+
+
+def _read_nullable_dgs_logical_actuator_root_id(
+        data: Dict[str, object],
+) -> str | None:
+    """Reconstruct the source DGS identity shared by one logical actuator.
+
+    The field itself is mandatory in version 1. An explicit ``None`` states
+    that the block is not a member of a logical-actuator group; otherwise the
+    exact string is retained so imported actuator fragments can be associated
+    without retaining source parser objects.
+
+    :param data: Versioned dynamic-model contract containing the required
+        ``dgs_logical_actuator_root_id`` field.
+    :return: Exact DGS logical-actuator root identifier, or ``None`` when the
+        block has no logical-actuator association.
+    """
+    field_name: str = "dgs_logical_actuator_root_id"
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if value is None:
+        return None
+    else:
+        if isinstance(value, str):
+            return value
+        else:
+            raise TypeError(
+                f"Dynamic-model contract field '{field_name}' must be a string or null"
+            )
+
+
+def _read_dynamic_model_variable_name_sequence(
+        data: Dict[str, object],
+        field_name: str,
+) -> List[str]:
+    """Reconstruct an ordered sequence of declared variable or signal names.
+
+    Ordering is preserved because initialization replay and shell synchronization
+    consume these declarations sequentially. Every item must be a string so an
+    invalid persisted name cannot reach runtime lookup as partially trusted data.
+
+    :param data: Versioned dynamic-model contract data.
+    :param field_name: Required field whose value declares an ordered sequence
+        of symbolic variable or equipment-signal names.
+    :return: Independent validated list that preserves the persisted order.
+    """
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if isinstance(value, list):
+        result: List[str] = list()
+        item: object
+        for item in value:
+            if isinstance(item, str):
+                result.append(item)
+            else:
+                raise TypeError(
+                    f"Dynamic-model contract field '{field_name}' must contain strings"
+                )
+        else:
+            pass
+        return result
+    else:
+        raise TypeError(
+            f"Dynamic-model contract field '{field_name}' must be a list"
+        )
+
+
+def _read_dynamic_contract_symbolic_uid_sequence(
+        data: Dict[str, object],
+        field_name: str,
+) -> List[int]:
+    """Read an ordered sequence of declared symbolic variable identifiers.
+
+    :param data: Versioned dynamic-model contract data.
+    :param field_name: Exact required field containing symbolic UIDs.
+    :return: Independent integer list preserving the persisted order.
+    """
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if isinstance(value, list):
+        result: List[int] = list()
+        item: object
+        for item in value:
+            if isinstance(item, int) and not isinstance(item, bool):
+                result.append(item)
+            else:
+                raise TypeError(
+                    f"Dynamic-model contract field '{field_name}' must contain integers"
+                )
+        else:
+            pass
+        return result
+    else:
+        raise TypeError(
+            f"Dynamic-model contract field '{field_name}' must be a list"
+        )
+
+
+def _read_rms_terminal_power_contributions(
+        data: Dict[str, object],
+) -> List[RmsTerminalPowerContribution]:
+    """Read the ordered terminal contributions declared by one RMS model.
+
+    :param data: Versioned dynamic-model contract data.
+    :return: Validated terminal power declarations.
+    """
+    field_name: str = "rms_terminal_power_contributions"
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if isinstance(value, list):
+        result: List[RmsTerminalPowerContribution] = list()
+        item: object
+        for item in value:
+            if isinstance(item, dict):
+                normalized_item: Dict[str, object] = dict()
+                raw_key: object
+                raw_value: object
+                for raw_key, raw_value in item.items():
+                    if isinstance(raw_key, str):
+                        normalized_item[raw_key] = raw_value
+                    else:
+                        raise TypeError(
+                            "RMS terminal power field names must be strings"
+                        )
+                else:
+                    pass
+                result.append(
+                    rms_terminal_power_contribution_from_data(normalized_item)
+                )
+            else:
+                raise TypeError(
+                    "RMS terminal power contributions must be declarative mappings"
+                )
+        else:
+            pass
+        return result
+    else:
+        raise TypeError(
+            f"Dynamic-model contract field '{field_name}' must be a list"
+        )
+
+
+def _read_emt_terminal_current_contributions(
+        data: Dict[str, object],
+) -> List[EmtTerminalCurrentContribution]:
+    """Read the ordered terminal currents declared by one EMT model.
+
+    :param data: Versioned dynamic-model contract data.
+    :return: Validated terminal current declarations.
+    """
+    field_name: str = "emt_terminal_current_contributions"
+    value: object = _read_required_dynamic_contract_field(data, field_name)
+    if isinstance(value, list):
+        result: List[EmtTerminalCurrentContribution] = list()
+        item: object
+        for item in value:
+            if isinstance(item, dict):
+                normalized_item: Dict[str, object] = dict()
+                raw_key: object
+                raw_value: object
+                for raw_key, raw_value in item.items():
+                    if isinstance(raw_key, str):
+                        normalized_item[raw_key] = raw_value
+                    else:
+                        raise TypeError(
+                            "EMT terminal current field names must be strings"
+                        )
+                else:
+                    pass
+                result.append(
+                    emt_terminal_current_contribution_from_data(normalized_item)
+                )
+            else:
+                raise TypeError(
+                    "EMT terminal current contributions must be declarative mappings"
+                )
+        else:
+            pass
+        return result
+    else:
+        raise TypeError(
+            f"Dynamic-model contract field '{field_name}' must be a list"
+        )
+
+
+def dynamic_model_contract_from_data(data: Dict[str, object]) -> DynamicModelContract:
+    """Reconstruct one fail-closed versioned dynamic-model contract.
+
+    :param data: Declarative contract data.
+    :return: Reconstructed typed contract.
+    """
+    version: object = _read_required_dynamic_contract_field(data, "version")
+    if isinstance(version, int) and not isinstance(version, bool):
+        version_number: int = version
+    else:
+        raise TypeError("Dynamic-model contract version must be an integer")
+    if version_number in (1, 2, 3, 4, 5):
+        pass
+    else:
+        raise ValueError("Unsupported dynamic-model contract version")
+
+    result: DynamicModelContract = DynamicModelContract()
+    expected_keys: set[str] = set(result.to_data().keys())
+    if version_number == 1:
+        expected_keys.remove("rms_terminal_power_contributions")
+    else:
+        pass
+    if version_number in (1, 2):
+        expected_keys.remove("emt_terminal_current_contributions")
+    else:
+        pass
+    if version_number in (1, 2, 3):
+        expected_keys.remove("emt_internal_grounding_link")
+    else:
+        pass
+    if version_number in (1, 2, 3, 4):
+        expected_keys.remove("rms_physical_measurement_point")
+    else:
+        pass
+    actual_keys: set[str] = set(data.keys())
+    if actual_keys == expected_keys:
+        pass
+    else:
+        missing_keys: List[str] = sorted(expected_keys - actual_keys)
+        extra_keys: List[str] = sorted(actual_keys - expected_keys)
+        raise KeyError(
+            f"Dynamic-model contract keys do not match version {version_number}: "
+            f"missing={missing_keys}, extra={extra_keys}"
+        )
+    result.dgs_elmsym_runtime_adapter = _read_required_dynamic_contract_boolean(
+        data, "dgs_elmsym_runtime_adapter"
+    )
+    result.dgs_elmsym_runtime_adapter_pending = _read_required_dynamic_contract_boolean(
+        data, "dgs_elmsym_runtime_adapter_pending"
+    )
+    result.dgs_elmsym_round_rotor = _read_nullable_dynamic_contract_boolean(
+        data, "dgs_elmsym_round_rotor"
+    )
+    result.dgs_elmsym_rotor_angle_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "dgs_elmsym_rotor_angle_var_uid"
+    )
+    result.dgs_elmsym_speed_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "dgs_elmsym_speed_var_uid"
+    )
+    result.dgs_elmsym_angular_frequency_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "dgs_elmsym_angular_frequency_var_uid"
+    )
+    result.dgs_elmsym_rated_field_voltage_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "dgs_elmsym_rated_field_voltage_var_uid"
+    )
+    result.dgs_elmsym_excitation_gain_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "dgs_elmsym_excitation_gain_var_uid"
+    )
+    result.dgs_elmsym_active_base_factor_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "dgs_elmsym_active_base_factor_var_uid"
+    )
+    result.dgs_elmsym_network_angle_anchor = _read_required_dynamic_contract_boolean(
+        data, "dgs_elmsym_network_angle_anchor"
+    )
+    result.dgs_elmsym_reference_speed_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "dgs_elmsym_reference_speed_var_uid"
+    )
+    result.dgs_explicit_initialization_uids = set(
+        _read_dynamic_contract_symbolic_uid_sequence(
+            data, "dgs_explicit_initialization_uids"
+        )
+    )
+    result.dgs_logical_actuator_root_id = _read_nullable_dgs_logical_actuator_root_id(
+        data
+    )
+    result.dgs_open_resistance_ohm = _read_nullable_dgs_open_resistance_ohm(
+        data
+    )
+    result.rms_conduction_status_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "rms_conduction_status_var_uid"
+    )
+    result.rms_topology_constraint_status_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "rms_topology_constraint_status_var_uid"
+    )
+    if version_number == 1:
+        result.rms_terminal_power_contributions = list()
+    else:
+        result.rms_terminal_power_contributions = (
+            _read_rms_terminal_power_contributions(data)
+        )
+    if version_number in (1, 2, 3, 4):
+        result.rms_physical_measurement_point = None
+    else:
+        physical_measurement_data: object = _read_required_dynamic_contract_field(
+            data,
+            "rms_physical_measurement_point",
+        )
+        if physical_measurement_data is None:
+            result.rms_physical_measurement_point = None
+        else:
+            if isinstance(physical_measurement_data, dict):
+                normalized_measurement_data: Dict[str, object] = dict()
+                measurement_key: object
+                measurement_value: object
+                for measurement_key, measurement_value in physical_measurement_data.items():
+                    if isinstance(measurement_key, str):
+                        normalized_measurement_data[measurement_key] = measurement_value
+                    else:
+                        raise TypeError(
+                            "RMS physical measurement field names must be strings"
+                        )
+                else:
+                    pass
+                result.rms_physical_measurement_point = (
+                    rms_physical_measurement_point_from_data(
+                        data=normalized_measurement_data,
+                    )
+                )
+            else:
+                raise TypeError(
+                    "RMS physical measurement point must be a mapping or null"
+                )
+    if version_number in (1, 2):
+        result.emt_terminal_current_contributions = list()
+    else:
+        result.emt_terminal_current_contributions = (
+            _read_emt_terminal_current_contributions(data)
+        )
+    if version_number in (1, 2, 3):
+        result.emt_internal_grounding_link = False
+    else:
+        result.emt_internal_grounding_link = _read_required_dynamic_contract_boolean(
+            data, "emt_internal_grounding_link"
+        )
+    result.rms_ideal_ac_connector = _read_required_dynamic_contract_boolean(
+        data, "rms_ideal_ac_connector"
+    )
+    result.rms_ideal_transformer = _read_required_dynamic_contract_boolean(
+        data, "rms_ideal_transformer"
+    )
+    result.skip_device_local_explicit_init = _read_required_dynamic_contract_boolean(
+        data, "skip_device_local_explicit_init"
+    )
+    result.startup_initial_reduced_polish_var_names = _read_dynamic_model_variable_name_sequence(
+        data, "startup_initial_reduced_polish_var_names"
+    )
+    result.runtime_measurement_shell_sync_names = _read_dynamic_model_variable_name_sequence(
+        data, "runtime_measurement_shell_sync_names"
+    )
+    result.startup_ordered_shell_sync_names = _read_dynamic_model_variable_name_sequence(
+        data, "startup_ordered_shell_sync_names"
+    )
+    result.dgs_equipment_owned_signal_names = _read_dynamic_model_variable_name_sequence(
+        data, "dgs_equipment_owned_signal_names"
+    )
+    result.dgs_elmgenstat_runtime_adapter = _read_required_dynamic_contract_boolean(
+        data, "dgs_elmgenstat_runtime_adapter"
+    )
+    result.dgs_open_standard_regc_current_pll = _read_required_dynamic_contract_boolean(
+        data, "dgs_open_standard_regc_current_pll"
+    )
+    result.dgs_open_standard_regc_voltage_source = _read_required_dynamic_contract_boolean(
+        data, "dgs_open_standard_regc_voltage_source"
+    )
+    result.explicit_init_excluded_var_names = _read_dynamic_model_variable_name_sequence(
+        data, "explicit_init_excluded_var_names"
+    )
+    expression_data: object = _read_required_dynamic_contract_field(
+        data,
+        "explicit_init_override_init_exprs",
+    )
+    result.explicit_init_override_init_exprs = dict()
+    if isinstance(expression_data, dict):
+        expression_name: object
+        raw_expression: object
+        for expression_name, raw_expression in expression_data.items():
+            if isinstance(expression_name, str) and isinstance(raw_expression, dict):
+                result.explicit_init_override_init_exprs[expression_name] = _dict_to_expr(
+                    raw_expression
+                )
+            else:
+                raise TypeError(
+                    "Dynamic-model override expressions must be string-keyed expression data"
+                )
+    else:
+        raise TypeError("Dynamic-model override expressions must be a mapping")
+    result.runtime_equipment_shell_sync_names = _read_dynamic_model_variable_name_sequence(
+        data, "runtime_equipment_shell_sync_names"
+    )
+    result.runtime_equipment_shell_sync_var_uids = _read_dynamic_contract_symbolic_uid_sequence(
+        data, "runtime_equipment_shell_sync_var_uids"
+    )
+    result.startup_final_init_replay_var_names = _read_dynamic_model_variable_name_sequence(
+        data, "startup_final_init_replay_var_names"
+    )
+    result.dgs_elmsvs_runtime_adapter = _read_required_dynamic_contract_boolean(
+        data, "dgs_elmsvs_runtime_adapter"
+    )
+    result.dgs_elmsvs_remote_voltage_var_uid = _read_nullable_dynamic_contract_symbolic_uid(
+        data, "dgs_elmsvs_remote_voltage_var_uid"
+    )
+    return result
+
+
+def _remember_contract_var_uid(var: Var | None, reachable_uids: set[int]) -> None:
+    """Collect one variable identity and its derivative chain.
+
+    :param var: Reachable symbolic variable or ``None``.
+    :param reachable_uids: Mutable UID set for one block tree.
+    :return: None.
+    """
+    if var is None:
+        pass
+    else:
+        if var.uid in reachable_uids:
+            pass
+        else:
+            reachable_uids.add(var.uid)
+            _remember_contract_var_uid(var.base_var, reachable_uids)
+            _remember_contract_var_uid(var.diff_var, reachable_uids)
+
+
+def _remember_contract_expression_uids(
+        expression: Expr | Comparison,
+        reachable_uids: set[int],
+) -> None:
+    """Collect every variable referenced by one symbolic condition.
+
+    :param expression: Symbolic expression or comparison.
+    :param reachable_uids: Mutable UID set for one block tree.
+    :return: None.
+    """
+    if isinstance(expression, Comparison):
+        _remember_contract_expression_uids(expression.lhs, reachable_uids)
+        if isinstance(expression.rhs, Expr):
+            _remember_contract_expression_uids(expression.rhs, reachable_uids)
+        else:
+            pass
+    else:
+        referenced_var: Var
+        for referenced_var in expression.get_vars():
+            _remember_contract_var_uid(referenced_var, reachable_uids)
+
+
+def _collect_contract_reachable_uids(
+        block: "Block",
+        reachable_uids: set[int] | None = None,
+) -> set[int]:
+    """Collect all structural and expression-reachable UIDs in a block tree.
+
+    :param block: Root block whose declared graph is inspected.
+    :param reachable_uids: Optional accumulator for child recursion.
+    :return: Complete reachable UID set.
+    """
+    if reachable_uids is None:
+        result: set[int] = set()
+    else:
+        result = reachable_uids
+
+    var_list: List[Var]
+    for var_list in (
+            block.state_vars,
+            block.algebraic_vars,
+            block.diff_vars,
+            block.reformulated_vars,
+            block.in_vars,
+            block.out_vars,
+    ):
+        structural_var: Var
+        for structural_var in var_list:
+            _remember_contract_var_uid(structural_var, result)
+
+    var_mapping: Mapping[Var, object]
+    for var_mapping in (
+            block.parameters,
+            block.init_values,
+            block.init_eqs,
+            block.diff_init_eqs,
+            block.post_init_seed_eqs,
+            block.discrete_eqs,
+            block.event_dict,
+            block.mode_dict,
+            block.boolean_guards,
+    ):
+        mapping_var: Var
+        mapping_value: object
+        for mapping_var, mapping_value in var_mapping.items():
+            _remember_contract_var_uid(mapping_var, result)
+            if isinstance(mapping_value, (Expr, Comparison)):
+                _remember_contract_expression_uids(mapping_value, result)
+            else:
+                pass
+
+    optional_var: Var | None
+    for optional_var in block.external_mapping.values():
+        _remember_contract_var_uid(optional_var, result)
+    for optional_var in block.api_obj_mapping.values():
+        _remember_contract_var_uid(optional_var, result)
+
+    expression_list: Iterable[Expr | Comparison]
+    for expression_list in (
+            block.state_eqs,
+            block.algebraic_eqs,
+            block.differential_eqs,
+            block.inequalities,
+    ):
+        expression: Expr | Comparison
+        for expression in expression_list:
+            _remember_contract_expression_uids(expression, result)
+
+    child: Block
+    for child in block.children:
+        _collect_contract_reachable_uids(child, result)
+
+    return result
+
+
+def validate_rms_terminal_power_contributions(block: "Block") -> None:
+    """Reject ambiguous or unresolved RMS terminal power declarations.
+
+    :param block: Canonical symbolic block owning the declarations.
+    :return: None.
+    """
+    contract: DynamicModelContract = block.dynamic_model_contract
+    # Terminal declarations resolve semantic references through the owning
+    # block. No copied Var is retained, and duplicate topology sides fail
+    # before the network assembler can count one device twice.
+    terminal_sides: set[RmsTerminalSide] = set()
+    terminal_contribution: RmsTerminalPowerContribution
+    for terminal_contribution in contract.rms_terminal_power_contributions:
+        if isinstance(terminal_contribution, RmsTerminalPowerContribution):
+            pass
+        else:
+            raise TypeError(
+                "RMS terminal power contract contains an invalid declaration"
+            )
+        terminal_side: RmsTerminalSide = terminal_contribution.get_terminal_side()
+        if terminal_side in terminal_sides:
+            raise ValueError(
+                f"RMS terminal power contract duplicates side '{terminal_side.value}'"
+            )
+        else:
+            terminal_sides.add(terminal_side)
+
+        active_reference: VarPowerFlowReferenceType = (
+            terminal_contribution.get_active_power_reference()
+        )
+        active_variable: Var | None = block.external_mapping.get(
+            active_reference,
+            None,
+        )
+        if active_variable is None:
+            raise ValueError(
+                "RMS terminal power contract references an absent active-power variable"
+            )
+        else:
+            pass
+
+        reactive_reference: VarPowerFlowReferenceType | None = (
+            terminal_contribution.get_reactive_power_reference()
+        )
+        if reactive_reference is None:
+            pass
+        else:
+            reactive_variable: Var | None = block.external_mapping.get(
+                reactive_reference,
+                None,
+            )
+            if reactive_variable is None:
+                raise ValueError(
+                    "RMS terminal power contract references an absent reactive-power variable"
+                )
+            else:
+                pass
+
+
+def validate_emt_terminal_current_contributions(block: "Block") -> None:
+    """Reject duplicate or unresolved EMT terminal current declarations.
+
+    :param block: Canonical symbolic block owning the declarations.
+    :return: None.
+    """
+    contract: DynamicModelContract = block.dynamic_model_contract
+    terminal_conductors: set[Tuple[EmtTerminalSide, EmtTerminalConductor]] = set()
+    contribution: EmtTerminalCurrentContribution
+    for contribution in contract.emt_terminal_current_contributions:
+        if isinstance(contribution, EmtTerminalCurrentContribution):
+            pass
+        else:
+            raise TypeError(
+                "EMT terminal current contract contains an invalid declaration"
+            )
+        terminal_conductor: Tuple[EmtTerminalSide, EmtTerminalConductor] = (
+            contribution.get_terminal_side(),
+            contribution.get_conductor(),
+        )
+        if terminal_conductor in terminal_conductors:
+            raise ValueError(
+                "EMT terminal current contract duplicates one terminal conductor"
+            )
+        else:
+            terminal_conductors.add(terminal_conductor)
+
+        current_reference: VarPowerFlowReferenceType = (
+            contribution.get_current_reference()
+        )
+        current_variable: Var | None = block.external_mapping.get(
+            current_reference,
+            None,
+        )
+        if current_variable is None:
+            raise ValueError(
+                "EMT terminal current contract references an absent current variable"
+            )
+        else:
+            pass
+
+
+def validate_dynamic_model_contract(block: "Block") -> None:
+    """Reject incomplete or unreachable dynamic-model declarations.
+
+    :param block: Block owning the reconstructed dynamic-model contract.
+    :return: None.
+    """
+    reachable_uids: set[int] = _collect_contract_reachable_uids(block)
+    contract: DynamicModelContract = block.dynamic_model_contract
+    validate_rms_terminal_power_contributions(block=block)
+    validate_emt_terminal_current_contributions(block=block)
+    if contract.rms_physical_measurement_point is None:
+        pass
+    else:
+        if isinstance(
+                contract.rms_physical_measurement_point,
+                RmsPhysicalMeasurementPoint,
+        ):
+            local_output_uids: set[int] = set()
+            local_output_var: Var
+            for local_output_var in block.out_vars:
+                local_output_uids.add(local_output_var.uid)
+            else:
+                pass
+            selected_output_uid: int
+            for selected_output_uid in (
+                    contract.rms_physical_measurement_point.get_output_var_uids()
+            ):
+                if selected_output_uid in local_output_uids:
+                    pass
+                else:
+                    raise KeyError(
+                        "RMS physical measurement UIDs must reference outputs "
+                        "owned by the declaring Block"
+                    )
+            else:
+                pass
+        else:
+            raise TypeError(
+                "Dynamic-model contract contains an invalid RMS measurement point"
+            )
+
+    # One block represents one physical equipment adapter. Accepting two
+    # adapter families would make runtime dispatch depend on incidental order.
+    adapter_flags: List[bool] = list((
+        contract.dgs_elmsym_runtime_adapter,
+        contract.dgs_elmsym_runtime_adapter_pending,
+        contract.dgs_elmgenstat_runtime_adapter,
+        contract.dgs_elmsvs_runtime_adapter,
+    ))
+    if sum(1 for adapter_flag in adapter_flags if adapter_flag) <= 1:
+        pass
+    else:
+        raise ValueError("Dynamic-model contract declares conflicting equipment adapters")
+
+    # A completed synchronous-machine adapter is executable only when every
+    # variable required by its boundary update has an explicit identity.
+    elmsym_required_uids: List[int | None] = list((
+        contract.dgs_elmsym_rotor_angle_var_uid,
+        contract.dgs_elmsym_speed_var_uid,
+        contract.dgs_elmsym_angular_frequency_var_uid,
+        contract.dgs_elmsym_rated_field_voltage_var_uid,
+        contract.dgs_elmsym_excitation_gain_var_uid,
+        contract.dgs_elmsym_active_base_factor_var_uid,
+    ))
+    if contract.dgs_elmsym_runtime_adapter:
+        if (
+                contract.dgs_elmsym_round_rotor is not None
+                and all(required_uid is not None for required_uid in elmsym_required_uids)
+        ):
+            pass
+        else:
+            raise ValueError("Completed ElmSym adapter contract is incomplete")
+    else:
+        if contract.dgs_elmsym_network_angle_anchor:
+            raise ValueError("ElmSym angle anchor requires a completed adapter")
+        else:
+            pass
+        if contract.dgs_elmsym_reference_speed_var_uid is not None:
+            raise ValueError("ElmSym reference speed requires a completed adapter")
+        else:
+            pass
+
+    # An SVS remote-voltage identity and its adapter flag are one indivisible
+    # declaration. Neither half is meaningful on its own.
+    if contract.dgs_elmsvs_runtime_adapter:
+        if (
+                contract.dgs_elmsvs_remote_voltage_var_uid is not None
+                and len(contract.dgs_explicit_initialization_uids) > 0
+                and len(contract.dgs_equipment_owned_signal_names) > 0
+                and len(contract.explicit_init_excluded_var_names) > 0
+                and len(contract.explicit_init_override_init_exprs) > 0
+        ):
+            pass
+        else:
+            raise ValueError("ElmSvs adapter contract is incomplete")
+    else:
+        if contract.dgs_elmsvs_remote_voltage_var_uid is None:
+            pass
+        else:
+            raise ValueError("ElmSvs remote-voltage UID requires its adapter")
+
+    if (
+            contract.dgs_open_standard_regc_current_pll
+            and contract.dgs_open_standard_regc_voltage_source
+    ):
+        raise ValueError("ElmGenstat REGC boundary modes are mutually exclusive")
+    else:
+        pass
+    if (
+            contract.dgs_open_standard_regc_current_pll
+            or contract.dgs_open_standard_regc_voltage_source
+    ):
+        if (
+                contract.dgs_elmgenstat_runtime_adapter
+                and len(contract.startup_final_init_replay_var_names) > 0
+        ):
+            pass
+        else:
+            raise ValueError("REGC boundary mode requires a complete ElmGenstat adapter")
+    else:
+        pass
+
+    if contract.dgs_elmgenstat_runtime_adapter:
+        if (
+                len(contract.dgs_equipment_owned_signal_names) > 0
+                and len(contract.explicit_init_excluded_var_names) > 0
+        ):
+            pass
+        else:
+            raise ValueError("ElmGenstat adapter contract is incomplete")
+    else:
+        pass
+
+    if (
+            len(contract.runtime_equipment_shell_sync_names)
+            == len(contract.runtime_equipment_shell_sync_var_uids)
+    ):
+        pass
+    else:
+        raise ValueError("Runtime equipment shell names and UIDs must have equal lengths")
+
+    if contract.rms_ideal_ac_connector and contract.rms_ideal_transformer:
+        raise ValueError("RMS ideal connector and transformer flags are mutually exclusive")
+    else:
+        pass
+    if contract.rms_ideal_ac_connector:
+        if (
+                contract.rms_conduction_status_var_uid is not None
+                and contract.rms_topology_constraint_status_var_uid is not None
+                and contract.skip_device_local_explicit_init
+        ):
+            pass
+        else:
+            raise ValueError("RMS ideal AC connector contract is incomplete")
+    else:
+        pass
+    if contract.rms_ideal_transformer:
+        if (
+                contract.rms_conduction_status_var_uid is not None
+                and contract.skip_device_local_explicit_init
+        ):
+            pass
+        else:
+            raise ValueError("RMS ideal transformer contract is incomplete")
+    else:
+        pass
+
+    if contract.dgs_logical_actuator_root_id is None:
+        if contract.dgs_open_resistance_ohm is None:
+            pass
+        else:
+            raise ValueError("Logical-actuator resistance requires a root FID")
+    else:
+        if contract.dgs_logical_actuator_root_id.strip() == "":
+            raise ValueError("Logical-actuator root FID must not be empty")
+        else:
+            pass
+        if (
+                contract.dgs_open_resistance_ohm is None
+                or (
+                    math.isfinite(contract.dgs_open_resistance_ohm)
+                    and contract.dgs_open_resistance_ohm > 0.0
+                )
+        ):
+            pass
+        else:
+            raise ValueError("Logical-actuator resistance must be positive")
+
+    # All persisted names are exact runtime lookup keys. Empty or duplicate
+    # entries would make the consumer silently select an arbitrary boundary.
+    name_collections: List[List[str]] = list((
+        contract.startup_initial_reduced_polish_var_names,
+        contract.runtime_measurement_shell_sync_names,
+        contract.startup_ordered_shell_sync_names,
+        contract.dgs_equipment_owned_signal_names,
+        contract.explicit_init_excluded_var_names,
+        contract.runtime_equipment_shell_sync_names,
+        contract.startup_final_init_replay_var_names,
+    ))
+    name_collection: List[str]
+    for name_collection in name_collections:
+        if (
+                all(name.strip() != "" for name in name_collection)
+                and len(set(name_collection)) == len(name_collection)
+        ):
+            pass
+        else:
+            raise ValueError("Dynamic-model contract names must be non-empty and unique")
+
+    override_name: str
+    override_expression: Expr
+    for override_name, override_expression in contract.explicit_init_override_init_exprs.items():
+        if override_name.strip() == "":
+            raise ValueError("Dynamic-model override name must not be empty")
+        else:
+            pass
+        override_var: Var
+        for override_var in override_expression.get_vars():
+            if override_var.uid in reachable_uids:
+                pass
+            else:
+                raise KeyError(
+                    f"Dynamic-model override UID '{override_var.uid}' is not reachable"
+                )
+
+    declared_uids: List[int] = list(contract.dgs_explicit_initialization_uids)
+    declared_uids.extend(contract.runtime_equipment_shell_sync_var_uids)
+    optional_uid: int | None
+    for optional_uid in (
+            contract.dgs_elmsym_rotor_angle_var_uid,
+            contract.dgs_elmsym_speed_var_uid,
+            contract.dgs_elmsym_angular_frequency_var_uid,
+            contract.dgs_elmsym_rated_field_voltage_var_uid,
+            contract.dgs_elmsym_excitation_gain_var_uid,
+            contract.dgs_elmsym_active_base_factor_var_uid,
+            contract.dgs_elmsym_reference_speed_var_uid,
+            contract.rms_conduction_status_var_uid,
+            contract.rms_topology_constraint_status_var_uid,
+            contract.dgs_elmsvs_remote_voltage_var_uid,
+    ):
+        if optional_uid is None:
+            pass
+        else:
+            declared_uids.append(optional_uid)
+
+    declared_uid: int
+    for declared_uid in declared_uids:
+        if declared_uid in reachable_uids:
+            pass
+        else:
+            raise KeyError(
+                f"Dynamic-model contract UID '{declared_uid}' is not reachable"
+            )
+
+
+def collect_rms_physical_measurement_points(
+        block: "Block",
+) -> Dict[str, RmsPhysicalMeasurementPoint]:
+    """Index canonical RMS meter blocks by exact source FID.
+
+    The returned dictionary is a transient lookup over the existing block tree;
+    it neither owns measurement expressions nor persists a parallel topology.
+    Duplicate FIDs fail closed because a global consumer cannot select between
+    two physical points with the same authoritative identity.
+
+    :param block: Canonical local or global RMS block root to inspect.
+    :return: Exact source-FID lookup of typed physical measurement points.
+    """
+    result: Dict[str, RmsPhysicalMeasurementPoint] = dict()
+    candidate_block: Block
+    for candidate_block in block.get_all_blocks():
+        measurement_point: RmsPhysicalMeasurementPoint | None = (
+            candidate_block.dynamic_model_contract.rms_physical_measurement_point
+        )
+        if measurement_point is None:
+            pass
+        else:
+            source_fid: str = measurement_point.get_source_fid()
+            if source_fid in result:
+                raise ValueError(
+                    f"RMS physical measurement FID '{source_fid}' is duplicated"
+                )
+            else:
+                result[source_fid] = measurement_point
+    else:
+        pass
+    return result
 
 def normalize_dynamic_connection_intents(block: "Block") -> None:
     """
@@ -211,33 +1968,575 @@ def _new_uid() -> int:
     """
     return uuid.uuid4().int
 
-def set_parameter(blk: Block, var_name: str, new_value: float):
 
-    for var, expr in blk.event_dict.items():
-        if var.name == var_name:
-            if isinstance(expr, Const):
-                expr.value = new_value
+def _require_declarative_record(
+        value: object,
+        context: str,
+) -> Dict[str, object]:
+    """Validate one persisted JSON-style record with string field names.
+
+    :param value: Imported value expected to contain one declarative record.
+    :param context: Domain path included in fail-closed validation messages.
+    :return: Independent record whose field names are validated strings.
+    """
+    if isinstance(value, dict):
+        record: Dict[str, object] = dict()
+        raw_key: object
+        raw_value: object
+        for raw_key, raw_value in value.items():
+            if isinstance(raw_key, str):
+                record[raw_key] = raw_value
             else:
-                blk.event_dict[var] = Const(new_value)
+                raise TypeError(f"{context} field names must be strings")
+        else:
+            pass
+        return record
+    else:
+        raise TypeError(f"{context} must be a declarative mapping")
 
 
-    for var, expr in blk.mode_dict.items():
-        if var.name == var_name:
-            if isinstance(expr, Const):
-                expr.value = new_value
+class _PersistedBlockReader:
+    """Validate the versioned data boundary used to reconstruct one ``Block``."""
+
+    __slots__ = ("_data",)
+
+    def __init__(self, data: Dict[str, object]) -> None:
+        """Create a reader over one imported block payload.
+
+        :param data: Declarative block fields supplied by persistence or import.
+        :return: None.
+        """
+        self._data: Dict[str, object] = data
+
+    def read_required_value(self, field_name: str) -> object:
+        """Read a field whose absence invalidates the block declaration.
+
+        :param field_name: Exact required block field.
+        :return: Persisted value, including an explicit ``None``.
+        """
+        if field_name in self._data:
+            return self._data[field_name]
+        else:
+            raise KeyError(f"Persisted block field '{field_name}' is missing")
+
+    def read_optional_value(self, field_name: str, default_value: object) -> object:
+        """Read a backward-compatible field with an explicit default.
+
+        :param field_name: Exact optional block field.
+        :param default_value: Value used only when the field is absent.
+        :return: Persisted field value or the supplied legacy default.
+        """
+        return self._data.get(field_name, default_value)
+
+    def read_record_sequence(
+            self,
+            field_name: str,
+            required: bool,
+    ) -> List[Mapping[str, object]]:
+        """Read an ordered collection of declarative records.
+
+        :param field_name: Field containing expression, child, or intent records.
+        :param required: Whether absence of the field invalidates the payload.
+        :return: Independent validated records in persisted order.
+        """
+        if required:
+            sequence_value: object = self.read_required_value(field_name)
+        else:
+            sequence_value = self.read_optional_value(field_name, list())
+
+        if isinstance(sequence_value, list):
+            records: List[Mapping[str, object]] = list()
+            item_index: int
+            raw_record: object
+            for item_index, raw_record in enumerate(sequence_value):
+                records.append(
+                    _require_declarative_record(
+                        value=raw_record,
+                        context=f"Persisted block field '{field_name}' item {item_index}",
+                    )
+                )
             else:
-                blk.mode_dict[var] = Const(new_value)
+                pass
+            return records
+        else:
+            raise TypeError(f"Persisted block field '{field_name}' must be a list")
 
+    def read_record_mapping_values(
+            self,
+            field_name: str,
+            required: bool,
+    ) -> List[Mapping[str, object]]:
+        """Read pair records stored as values of a UID-keyed mapping.
 
-    # check parameters dict
-    for var, const in blk.parameters.items():
-        if var.name == var_name:
-            if isinstance(const, Const):
-                const.value = new_value
+        UID keys are persistence indexes only; the embedded symbolic ``key``
+        record remains canonical and is validated by the caller.
+
+        :param field_name: Field containing UID-indexed ``key``/``value`` records.
+        :param required: Whether absence of the field invalidates the payload.
+        :return: Pair records in persisted mapping order.
+        """
+        if required:
+            mapping_value: object = self.read_required_value(field_name)
+        else:
+            mapping_value = self.read_optional_value(field_name, dict())
+
+        if isinstance(mapping_value, dict):
+            records: List[Mapping[str, object]] = list()
+            raw_record: object
+            for raw_record in mapping_value.values():
+                records.append(
+                    _require_declarative_record(
+                        value=raw_record,
+                        context=f"Persisted block field '{field_name}' entry",
+                    )
+                )
             else:
-                blk.parameters[var] = Const(new_value)
+                pass
+            return records
+        else:
+            raise TypeError(
+                f"Persisted block field '{field_name}' must be a mapping"
+            )
+
+    def read_mapping(
+            self,
+            field_name: str,
+            required: bool,
+    ) -> Dict[object, object]:
+        """Read a mapping whose keys have field-specific domain types.
+
+        :param field_name: Exact mapping field.
+        :param required: Whether absence of the field invalidates the payload.
+        :return: Independent mapping retaining source key and value objects.
+        """
+        if required:
+            mapping_value: object = self.read_required_value(field_name)
+        else:
+            mapping_value = self.read_optional_value(field_name, dict())
+
+        if isinstance(mapping_value, dict):
+            return dict(mapping_value)
+        else:
+            raise TypeError(
+                f"Persisted block field '{field_name}' must be a mapping"
+            )
+
+    def read_block_name(self) -> str:
+        """Read the exact human-readable block name.
+
+        :return: Validated persisted block name.
+        """
+        name_value: object = self.read_required_value("name")
+        if isinstance(name_value, str):
+            return name_value
+        else:
+            raise TypeError("Persisted block field 'name' must be a string")
+
+    def read_block_uid(self) -> int | None:
+        """Read the stable block identifier or its allocation marker.
+
+        :return: Integer UID, or ``None`` when reconstruction must allocate one.
+        """
+        uid_value: object = self.read_required_value("uid")
+        if uid_value is None:
+            return None
+        else:
+            if isinstance(uid_value, int) and not isinstance(uid_value, bool):
+                return uid_value
+            else:
+                raise TypeError(
+                    "Persisted block field 'uid' must be an integer or null"
+                )
+
+    def read_diagram_record(self) -> Dict[str, object]:
+        """Read the optional declarative block-diagram payload.
+
+        :return: Validated diagram record, empty for legacy payloads without one.
+        """
+        diagram_value: object = self.read_optional_value("diagram", dict())
+        return _require_declarative_record(
+            value=diagram_value,
+            context="Persisted block diagram",
+        )
 
 
+def _parse_persisted_symbolic_value(
+        record: Dict[str, object],
+        context: str,
+) -> Expr | Comparison:
+    """Reconstruct one validated symbolic expression record.
+
+    :param record: Declarative symbolic expression data.
+    :param context: Domain path included in type validation failures.
+    :return: Reconstructed symbolic expression or comparison.
+    """
+    symbolic_value: Expr | Var | Const | Comparison = _dict_to_expr(data=record)
+    if isinstance(symbolic_value, (Expr, Comparison)):
+        return symbolic_value
+    else:
+        raise TypeError(f"{context} must reconstruct a symbolic value")
+
+
+def _parse_persisted_var(
+        record: Dict[str, object],
+        context: str,
+) -> Var:
+    """Reconstruct one symbolic variable record.
+
+    :param record: Declarative symbolic expression data.
+    :param context: Domain path included in type validation failures.
+    :return: Reconstructed symbolic variable.
+    """
+    symbolic_value: Expr | Comparison = _parse_persisted_symbolic_value(
+        record=record,
+        context=context,
+    )
+    if isinstance(symbolic_value, Var):
+        return symbolic_value
+    else:
+        raise TypeError(f"{context} must declare a symbolic variable")
+
+
+def _parse_persisted_expr(
+        record: Dict[str, object],
+        context: str,
+) -> Expr:
+    """Reconstruct one non-comparison symbolic expression record.
+
+    :param record: Declarative symbolic expression data.
+    :param context: Domain path included in type validation failures.
+    :return: Reconstructed symbolic expression.
+    """
+    symbolic_value: Expr | Comparison = _parse_persisted_symbolic_value(
+        record=record,
+        context=context,
+    )
+    if isinstance(symbolic_value, Expr):
+        return symbolic_value
+    else:
+        raise TypeError(f"{context} must declare an expression")
+
+
+def _parse_persisted_const(
+        record: Dict[str, object],
+        context: str,
+) -> Const:
+    """Reconstruct one symbolic constant record.
+
+    :param record: Declarative symbolic expression data.
+    :param context: Domain path included in type validation failures.
+    :return: Reconstructed symbolic constant.
+    """
+    symbolic_value: Expr = _parse_persisted_expr(record=record, context=context)
+    if isinstance(symbolic_value, Const):
+        return symbolic_value
+    else:
+        raise TypeError(f"{context} must declare a symbolic constant")
+
+
+def _read_pair_member_record(
+        pair_record: Dict[str, object],
+        member_name: str,
+        context: str,
+) -> Dict[str, object]:
+    """Read one symbolic member from a persisted ``key``/``value`` pair.
+
+    :param pair_record: Declarative pair record.
+    :param member_name: Required ``key`` or ``value`` member.
+    :param context: Domain path included in validation failures.
+    :return: Validated symbolic member record.
+    """
+    if member_name in pair_record:
+        return _require_declarative_record(
+            value=pair_record[member_name],
+            context=f"{context} member '{member_name}'",
+        )
+    else:
+        raise KeyError(f"{context} member '{member_name}' is missing")
+
+
+def _parse_var_sequence(
+        reader: _PersistedBlockReader,
+        field_name: str,
+) -> List[Var]:
+    """Reconstruct an ordered symbolic-variable block field.
+
+    :param reader: Validated persisted-block reader.
+    :param field_name: Required variable-sequence field.
+    :return: Reconstructed variables in persisted order.
+    """
+    records: List[Mapping[str, object]] = reader.read_record_sequence(
+        field_name=field_name,
+        required=True,
+    )
+    variables: List[Var] = list()
+    item_index: int
+    record: Dict[str, object]
+    for item_index, record in enumerate(records):
+        variables.append(
+            _parse_persisted_var(
+                record=record,
+                context=f"Persisted block field '{field_name}' item {item_index}",
+            )
+        )
+    else:
+        pass
+    return variables
+
+
+def _parse_expr_sequence(
+        reader: _PersistedBlockReader,
+        field_name: str,
+        required: bool,
+) -> List[Expr]:
+    """Reconstruct an ordered symbolic-expression block field.
+
+    :param reader: Validated persisted-block reader.
+    :param field_name: Expression-sequence field.
+    :param required: Whether absence of the field invalidates the payload.
+    :return: Reconstructed expressions in persisted order.
+    """
+    records: List[Mapping[str, object]] = reader.read_record_sequence(
+        field_name=field_name,
+        required=required,
+    )
+    expressions: List[Expr] = list()
+    item_index: int
+    record: Dict[str, object]
+    for item_index, record in enumerate(records):
+        expressions.append(
+            _parse_persisted_expr(
+                record=record,
+                context=f"Persisted block field '{field_name}' item {item_index}",
+            )
+        )
+    else:
+        pass
+    return expressions
+
+
+def _parse_inequality_sequence(
+        reader: _PersistedBlockReader,
+) -> List[Expr | Comparison]:
+    """Reconstruct optional inequality expressions and comparisons.
+
+    :param reader: Validated persisted-block reader.
+    :return: Reconstructed inequality declarations in persisted order.
+    """
+    records: List[Mapping[str, object]] = reader.read_record_sequence(
+        field_name="inequalities",
+        required=False,
+    )
+    inequalities: List[Expr | Comparison] = list()
+    item_index: int
+    record: Dict[str, object]
+    for item_index, record in enumerate(records):
+        inequalities.append(
+            _parse_persisted_symbolic_value(
+                record=record,
+                context=f"Persisted block field 'inequalities' item {item_index}",
+            )
+        )
+    else:
+        pass
+    return inequalities
+
+
+def _parse_var_const_mapping(
+        reader: _PersistedBlockReader,
+        field_name: str,
+) -> Dict[Var, Const]:
+    """Reconstruct a required symbolic-variable-to-constant mapping.
+
+    :param reader: Validated persisted-block reader.
+    :param field_name: Required constant mapping field.
+    :return: Reconstructed variable-to-constant mapping.
+    """
+    pair_records: List[Mapping[str, object]] = reader.read_record_mapping_values(
+        field_name=field_name,
+        required=True,
+    )
+    result: Dict[Var, Const] = dict()
+    pair_index: int
+    pair_record: Dict[str, object]
+    for pair_index, pair_record in enumerate(pair_records):
+        context: str = f"Persisted block field '{field_name}' entry {pair_index}"
+        key_record: Dict[str, object] = _read_pair_member_record(
+            pair_record=pair_record,
+            member_name="key",
+            context=context,
+        )
+        value_record: Dict[str, object] = _read_pair_member_record(
+            pair_record=pair_record,
+            member_name="value",
+            context=context,
+        )
+        result[_parse_persisted_var(key_record, context)] = _parse_persisted_const(
+            value_record,
+            context,
+        )
+    else:
+        pass
+    return result
+
+
+def _parse_var_expr_mapping(
+        reader: _PersistedBlockReader,
+        field_name: str,
+        required: bool,
+) -> Dict[Var, Expr]:
+    """Reconstruct a symbolic-variable-to-expression mapping.
+
+    :param reader: Validated persisted-block reader.
+    :param field_name: Expression mapping field.
+    :param required: Whether absence of the field invalidates the payload.
+    :return: Reconstructed variable-to-expression mapping.
+    """
+    pair_records: List[Mapping[str, object]] = reader.read_record_mapping_values(
+        field_name=field_name,
+        required=required,
+    )
+    result: Dict[Var, Expr] = dict()
+    pair_index: int
+    pair_record: Dict[str, object]
+    for pair_index, pair_record in enumerate(pair_records):
+        context: str = f"Persisted block field '{field_name}' entry {pair_index}"
+        key_record: Dict[str, object] = _read_pair_member_record(
+            pair_record=pair_record,
+            member_name="key",
+            context=context,
+        )
+        value_record: Dict[str, object] = _read_pair_member_record(
+            pair_record=pair_record,
+            member_name="value",
+            context=context,
+        )
+        result[_parse_persisted_var(key_record, context)] = _parse_persisted_expr(
+            value_record,
+            context,
+        )
+    else:
+        pass
+    return result
+
+
+def _parse_boolean_guard_mapping(
+        reader: _PersistedBlockReader,
+) -> Dict[Var, Expr | Comparison]:
+    """Reconstruct optional boolean-guard expressions keyed by output variable.
+
+    :param reader: Validated persisted-block reader.
+    :return: Reconstructed boolean-guard mapping.
+    """
+    pair_records: List[Mapping[str, object]] = reader.read_record_mapping_values(
+        field_name="boolean_guards",
+        required=False,
+    )
+    result: Dict[Var, Expr | Comparison] = dict()
+    pair_index: int
+    pair_record: Dict[str, object]
+    for pair_index, pair_record in enumerate(pair_records):
+        context: str = f"Persisted block field 'boolean_guards' entry {pair_index}"
+        key_record: Dict[str, object] = _read_pair_member_record(
+            pair_record=pair_record,
+            member_name="key",
+            context=context,
+        )
+        value_record: Dict[str, object] = _read_pair_member_record(
+            pair_record=pair_record,
+            member_name="value",
+            context=context,
+        )
+        result[_parse_persisted_var(key_record, context)] = (
+            _parse_persisted_symbolic_value(value_record, context)
+        )
+    else:
+        pass
+    return result
+
+
+def _parse_external_mapping(
+        reader: _PersistedBlockReader,
+) -> Dict[VarPowerFlowReferenceType, Var | None]:
+    """Reconstruct nullable power-flow initialization references.
+
+    :param reader: Validated persisted-block reader.
+    :return: External-reference mapping keyed by its domain enum.
+    """
+    persisted_mapping: Dict[object, object] = reader.read_mapping(
+        field_name="external_mapping",
+        required=True,
+    )
+    result: Dict[VarPowerFlowReferenceType, Var | None] = dict()
+    raw_reference: object
+    raw_var_record: object
+    for raw_reference, raw_var_record in persisted_mapping.items():
+        if isinstance(raw_reference, VarPowerFlowReferenceType):
+            reference: VarPowerFlowReferenceType = raw_reference
+        else:
+            if isinstance(raw_reference, str):
+                reference = VarPowerFlowReferenceType(raw_reference)
+            else:
+                raise TypeError(
+                    "Persisted external-mapping keys must be power-flow references"
+                )
+
+        if raw_var_record is None:
+            result[reference] = None
+        else:
+            var_record: Dict[str, object] = _require_declarative_record(
+                value=raw_var_record,
+                context=f"Persisted external mapping '{reference.value}'",
+            )
+            result[reference] = _parse_persisted_var(
+                record=var_record,
+                context=f"Persisted external mapping '{reference.value}'",
+            )
+    else:
+        pass
+    return result
+
+
+def _parse_api_object_mapping(
+        reader: _PersistedBlockReader,
+) -> Dict[ParamPowerFlowReferenceType, Var | None]:
+    """Reconstruct device-property references to symbolic parameters.
+
+    :param reader: Validated persisted-block reader.
+    :return: Device-property mapping keyed by its domain enum.
+    """
+    persisted_mapping: Dict[object, object] = reader.read_mapping(
+        field_name="api_obj_mapping",
+        required=True,
+    )
+    result: Dict[ParamPowerFlowReferenceType, Var | None] = dict()
+    raw_reference: object
+    raw_var_record: object
+    for raw_reference, raw_var_record in persisted_mapping.items():
+        if isinstance(raw_reference, ParamPowerFlowReferenceType):
+            reference: ParamPowerFlowReferenceType = raw_reference
+        else:
+            if isinstance(raw_reference, str):
+                reference = ParamPowerFlowReferenceType(raw_reference)
+            else:
+                raise TypeError(
+                    "Persisted API-mapping keys must be device-property references"
+                )
+
+        if raw_var_record is None:
+            result[reference] = None
+        else:
+            var_record: Dict[str, object] = _require_declarative_record(
+                value=raw_var_record,
+                context=f"Persisted API mapping '{reference.value}'",
+            )
+            result[reference] = _parse_persisted_var(
+                record=var_record,
+                context=f"Persisted API mapping '{reference.value}'",
+            )
+    else:
+        pass
+    return result
 
 
 class Block:
@@ -259,16 +2558,17 @@ class Block:
                  init_eqs: Dict[Var, Expr] | None = None,
                  diff_init_eqs: Dict[Var, Expr] | None = None,
                  discrete_eqs: Dict[Var, Expr] | None = None,
+                 post_init_seed_eqs: Dict[Var, Expr | Const] | None = None,
                  children: List["Block"] | None = None,
                  in_vars: List[Var] | None = None,
                  out_vars: List[Var] | None = None,
                  event_dict: Dict[Var, Expr] | None = None,
                  mode_dict: Dict[Var, Expr] | None = None,
                  boolean_guards: Dict[Var, Expr | Comparison] | None = None,
-                 procedural_logic: List[Any] | None = None,
+                 procedural_logic: Iterable[ProceduralLogicEntryContract[Expr]] | None = None,
                  connection_intents: List[DynamicConnectionIntent] | None = None,
-                 external_mapping: Dict[VarPowerFlowReferenceType, Var] | None = None,
-                 api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var] | None = None,
+                 external_mapping: Dict[VarPowerFlowReferenceType, Var | None] | None = None,
+                 api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var | None] | None = None,
                  is_decomposable: bool = True,
                  name: str = "",
                  uid: int | None = None):
@@ -308,7 +2608,7 @@ class Block:
         self.uid: int = _new_uid() if uid is None else uid
 
         self.is_decomposable = is_decomposable
-        self.tpe_uid: int | None =  None
+        self.tpe_uid: int | None = None
         self.vars_glob_name2uid: Dict[str, int] = dict()
 
         self.state_vars: List[Var] = list() if state_vars is None else state_vars
@@ -335,13 +2635,16 @@ class Block:
         self.parameters: Dict[Var, Const] = dict() if parameters is None else parameters
 
         self.discrete_eqs: Dict[Var, Expr] = dict() if discrete_eqs is None else discrete_eqs
+        self.post_init_seed_eqs: Dict[Var, Expr | Const] = (
+            dict() if post_init_seed_eqs is None else post_init_seed_eqs
+        )
         self.external_mapping: Dict[VarPowerFlowReferenceType, Var | None] = (dict()
-                                                                               if external_mapping is None
-                                                                               else external_mapping)
+                                                                              if external_mapping is None
+                                                                              else external_mapping)
 
-        self.api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var] = (dict()
-                                                                         if api_obj_mapping is None
-                                                                         else api_obj_mapping)
+        self.api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var | None] = (
+            dict() if api_obj_mapping is None else api_obj_mapping
+        )
         # initialization
         self.init_values: Dict[Var, Const] = dict() if init_values is None else init_values
 
@@ -352,13 +2655,19 @@ class Block:
         self.event_dict: Dict[Var, Expr | Const] = dict() if event_dict is None else event_dict
         self.mode_dict: Dict[Var, Expr | Const] = dict() if mode_dict is None else mode_dict
         self.boolean_guards: Dict[Var, Expr | Comparison] = dict() if boolean_guards is None else boolean_guards
-        self.procedural_logic: List[Any] = list() if procedural_logic is None else procedural_logic
+        self.procedural_logic: List[ProceduralLogicEntryContract[Expr]] = (
+            list() if procedural_logic is None else list(procedural_logic)
+        )
         # Root-interface intents are current semantic connection states. They
-        # are independent from the graphical wires that happen to be visible
+        # are independent of the graphical wires that happen to be visible
         # under the current network topology.
         self.connection_intents: List[DynamicConnectionIntent] = (list()
                                                                   if connection_intents is None
                                                                   else connection_intents)
+
+        # Runtime identity belongs to the canonical block and stores only
+        # scalar flags or UIDs into this block's symbolic variables.
+        self.dynamic_model_contract: DynamicModelContract = DynamicModelContract()
 
         self._diagram: BlockDiagram = BlockDiagram()
 
@@ -403,6 +2712,9 @@ class Block:
         Get dictionary representation of this block
         :return: Dictionary
         """
+        # Persistence is the stable boundary where a fully built in-memory
+        # model must become one coherent declarative contract.
+        validate_dynamic_model_contract(self)
         return {
             "name": self.name,
             "uid": self.uid,
@@ -460,8 +2772,9 @@ class Block:
                 for k, v in self.boolean_guards.items()
             },
 
-            "procedural_logic": self._procedural_logic_to_dict(),
+            "procedural_logic": self.serialize_procedural_logic_entries(),
             "connection_intents": [dynamic_connection_intent_to_dict(intent) for intent in self.connection_intents],
+            "dynamic_model_contract": self.dynamic_model_contract.to_data(),
 
             "parameters": {
                 k.uid: {
@@ -497,97 +2810,172 @@ class Block:
                 for k, v in self.discrete_eqs.items()
             },
 
+            "post_init_seed_eqs": {
+                k.uid: {
+                    "key": _expr_to_dict(k),
+                    "value": _expr_to_dict(v),
+                }
+                for k, v in self.post_init_seed_eqs.items()
+            },
+
             "children": [child.to_dict() for child in self.children],
 
             "diagram": self.diagram.to_dict(),
         }
 
     @staticmethod
-    def parse(data: Dict[str, Any]) -> "Block":
+    def parse(
+            data: Dict[str, object],
+            procedural_logic_codec: ProceduralLogicCodecContract[Expr] | None = None,
+    ) -> "Block":
+        """Reconstruct one canonical block from declarative data.
+
+        Every persisted container and symbolic member is validated before the
+        final block is constructed. Malformed imported data therefore cannot
+        create a partially typed or parallel runtime graph.
+
+        :param data: Declarative block representation.
+        :param procedural_logic_codec: Explicit codec required when procedural entries exist.
+        :return: Reconstructed symbolic block.
         """
-        Parse the dictionary representation of a block
-        :param data:
-        :return:
-        """
-        block = Block(
-            state_vars=[_dict_to_expr(data=v) for v in data["state_vars"]],
-            state_eqs=[_dict_to_expr(data=e) for e in data["state_eqs"]],
-            algebraic_vars=[_dict_to_expr(data=v) for v in data["algebraic_vars"]],
-            algebraic_eqs=[_dict_to_expr(data=e) for e in data["algebraic_eqs"]],
-            inequalities=[_dict_to_expr(data=e) for e in data.get("inequalities", [])],
-            diff_vars=[_dict_to_expr(data=v) for v in data["diff_vars"]],
-            reformulated_vars=[_dict_to_expr(data=v) for v in data["reformulated_vars"]],
-            differential_eqs=[_dict_to_expr(data=e) for e in data["differential_eqs"]],
-            parameters={
-                _dict_to_expr(data=item["key"]): _dict_to_expr(data=item["value"])
-                for item in data["parameters"].values()
-            },
-            init_values={
-                _dict_to_expr(data=item["key"]): _dict_to_expr(data=item["value"])
-                for item in data["init_values"].values()
-            },
-            init_eqs={
-                _dict_to_expr(data=item["key"]): _dict_to_expr(data=item["value"])
-                for item in data["init_eqs"].values()
-            },
-            diff_init_eqs={
-                _dict_to_expr(data=item["key"]): _dict_to_expr(data=item["value"])
-                for item in data["diff_init_eqs"].values()
-            },
-            discrete_eqs={
-                _dict_to_expr(data=item["key"]): _dict_to_expr(data=item["value"])
-                for item in data.get("discrete_eqs", {}).values()
-            },
-            children=[
-                Block.parse(child_data)
-                for child_data in data["children"]
-            ],
-            in_vars=[_dict_to_expr(data=v) for v in data["in_vars"]],
-            out_vars=[_dict_to_expr(data=v) for v in data["out_vars"]],
-            event_dict={
-                _dict_to_expr(data=item["key"]): _dict_to_expr(data=item["value"])
-                for item in data["event_dict"].values()
-            },
-            mode_dict={
-                _dict_to_expr(data=item["key"]): _dict_to_expr(data=item["value"])
-                for item in data.get("mode_dict", {}).values()
-            },
-            boolean_guards={
-                _dict_to_expr(data=item["key"]): _dict_to_expr(data=item["value"])
-                for item in data.get("boolean_guards", {}).values()
-            },
-            procedural_logic=Block._procedural_logic_from_dict(data.get("procedural_logic", [])),
-            external_mapping={
-                VarPowerFlowReferenceType(k): (_dict_to_expr(v) if v is not None else None)
-                for k, v in data["external_mapping"].items()
-            },
-            api_obj_mapping={
-                ParamPowerFlowReferenceType(k): (_dict_to_expr(v) if v is not None else None)
-                for k, v in data["api_obj_mapping"].items()
-            },
-            name=data["name"],
-            uid=data["uid"]
+        reader: _PersistedBlockReader = _PersistedBlockReader(data=data)
+
+        # Child blocks are final graph members, not retained import-stage DTOs.
+        child_records: List[Mapping[str, object]] = reader.read_record_sequence(
+            field_name="children",
+            required=True,
+        )
+        children: List[Block] = list()
+        child_record: Dict[str, object]
+        for child_record in child_records:
+            children.append(
+                Block.parse(
+                    data=child_record,
+                    procedural_logic_codec=procedural_logic_codec,
+                )
+            )
+        else:
+            pass
+
+        procedural_logic_data: object = reader.read_optional_value(
+            field_name="procedural_logic",
+            default_value=list(),
+        )
+        block: Block = Block(
+            state_vars=_parse_var_sequence(reader, "state_vars"),
+            state_eqs=_parse_expr_sequence(reader, "state_eqs", required=True),
+            algebraic_vars=_parse_var_sequence(reader, "algebraic_vars"),
+            algebraic_eqs=_parse_expr_sequence(
+                reader,
+                "algebraic_eqs",
+                required=True,
+            ),
+            inequalities=_parse_inequality_sequence(reader),
+            diff_vars=_parse_var_sequence(reader, "diff_vars"),
+            reformulated_vars=_parse_var_sequence(reader, "reformulated_vars"),
+            differential_eqs=_parse_expr_sequence(
+                reader,
+                "differential_eqs",
+                required=True,
+            ),
+            parameters=_parse_var_const_mapping(reader, "parameters"),
+            init_values=_parse_var_const_mapping(reader, "init_values"),
+            init_eqs=_parse_var_expr_mapping(reader, "init_eqs", required=True),
+            diff_init_eqs=_parse_var_expr_mapping(
+                reader,
+                "diff_init_eqs",
+                required=True,
+            ),
+            discrete_eqs=_parse_var_expr_mapping(
+                reader,
+                "discrete_eqs",
+                required=False,
+            ),
+            post_init_seed_eqs=_parse_var_expr_mapping(
+                reader,
+                "post_init_seed_eqs",
+                required=False,
+            ),
+            children=children,
+            in_vars=_parse_var_sequence(reader, "in_vars"),
+            out_vars=_parse_var_sequence(reader, "out_vars"),
+            event_dict=_parse_var_expr_mapping(reader, "event_dict", required=True),
+            mode_dict=_parse_var_expr_mapping(reader, "mode_dict", required=False),
+            boolean_guards=_parse_boolean_guard_mapping(reader),
+            procedural_logic=Block.reconstruct_procedural_logic_entries(
+                data=procedural_logic_data,
+                procedural_logic_codec=procedural_logic_codec,
+            ),
+            external_mapping=_parse_external_mapping(reader),
+            api_obj_mapping=_parse_api_object_mapping(reader),
+            name=reader.read_block_name(),
+            uid=reader.read_block_uid(),
         )
 
-        # Fill the diagram
-        block.diagram.parse(data.get("diagram", {}))
+        # Diagram data is attached only after the symbolic hierarchy validates.
+        diagram_record: Dict[str, object] = reader.read_diagram_record()
+        block.diagram.parse(diagram_record)
 
         # Parse intents only after the complete block hierarchy exists because
         # legacy records identify the internal variable by its port position.
-        persisted_intent: object
-        for persisted_intent in data.get("connection_intents", list()):
-            if isinstance(persisted_intent, dict):
-                parsed_intent: DynamicConnectionIntent | None = dynamic_connection_intent_from_dict(
-                    data=persisted_intent,
+        intent_records: List[Mapping[str, object]] = reader.read_record_sequence(
+            field_name="connection_intents",
+            required=False,
+        )
+        intent_record: Dict[str, object]
+        for intent_record in intent_records:
+            parsed_intent: DynamicConnectionIntent | None = (
+                dynamic_connection_intent_from_dict(
+                    data=intent_record,
                     root_block=block,
                 )
-                if parsed_intent is not None:
-                    block.connection_intents.append(parsed_intent)
-                else:
-                    pass
+            )
+            if parsed_intent is not None:
+                block.connection_intents.append(parsed_intent)
             else:
                 pass
         normalize_dynamic_connection_intents(block=block)
+
+        contract_data: object = reader.read_optional_value(
+            field_name="dynamic_model_contract",
+            default_value=None,
+        )
+        if contract_data is None:
+            pass
+        else:
+            contract_record: Dict[str, object] = _require_declarative_record(
+                value=contract_data,
+                context="Dynamic-model contract",
+            )
+            block.dynamic_model_contract = dynamic_model_contract_from_data(
+                contract_record
+            )
+            contract_version_data: object = contract_record["version"]
+            if (
+                    isinstance(contract_version_data, int)
+                    and not isinstance(contract_version_data, bool)
+            ):
+                if (
+                        contract_version_data in (1, 2, 3)
+                        and _is_legacy_emt_internal_grounding_link(block=block)
+                ):
+                    # Old contracts predate the explicit grounding flag. Migrate
+                    # from the canonical symbolic structure while it is still
+                    # available, never from the optional diagram projection.
+                    block.dynamic_model_contract.emt_internal_grounding_link = True
+                    if block.in_vars[0].ref is None:
+                        block.in_vars[0].ref = VarPowerFlowReferenceType.v_N
+                    else:
+                        pass
+                    if block.out_vars[0].ref is None:
+                        block.out_vars[0].ref = VarPowerFlowReferenceType.i_N
+                    else:
+                        pass
+                else:
+                    pass
+            else:
+                raise TypeError("Dynamic-model contract version must be an integer")
+            validate_dynamic_model_contract(block)
 
         return block
 
@@ -599,35 +2987,72 @@ class Block:
         """
         return copy.deepcopy(self)
 
-
-    def _procedural_logic_to_dict(self) -> List[Dict[str, Any]]:
+    def serialize_procedural_logic_entries(self) -> List[ProceduralLogicData]:
         """
         Serialize block-attached procedural logic.
 
         :return: Serialized procedural logic entries.
         """
-        from VeraGridEngine.Utils.procedural_logic import procedural_logic_to_dict
-        return procedural_logic_to_dict(self.procedural_logic)
+        return list(entry.to_data() for entry in self.procedural_logic)
 
     @staticmethod
-    def _procedural_logic_from_dict(data: List[Dict[str, Any]]) -> List[Any]:
+    def reconstruct_procedural_logic_entries(
+            data: object,
+            procedural_logic_codec: ProceduralLogicCodecContract[Expr] | None,
+    ) -> List[ProceduralLogicEntryContract[Expr]]:
         """
-        Deserialize block-attached procedural logic.
+        Reconstruct validated block-attached procedural logic.
 
-        :param data: Serialized logic entries.
-        :return: Procedural logic objects.
+        Persisted entries cross the data-to-runtime boundary here. The parser
+        therefore rejects non-list containers, non-mapping entries, and
+        non-string field names before the explicit codec can reconstruct any
+        runtime object.
+
+        :param data: Persisted declarative logic-entry collection.
+        :param procedural_logic_codec: Explicit codec that reconstructs the
+            validated declarative entries.
+        :return: Reconstructed procedural logic entries in persisted order.
         """
-        from VeraGridEngine.Utils.procedural_logic import procedural_logic_from_dict
+        if isinstance(data, list):
+            normalized_data: List[ProceduralLogicData] = list()
+            persisted_entry: object
+            for persisted_entry in data:
+                if isinstance(persisted_entry, dict):
+                    normalized_entry: ProceduralLogicData = dict()
+                    persisted_key: object
+                    persisted_value: object
+                    for persisted_key, persisted_value in persisted_entry.items():
+                        if isinstance(persisted_key, str):
+                            normalized_entry[persisted_key] = persisted_value
+                        else:
+                            raise TypeError(
+                                "Procedural logic field names must be strings"
+                            )
+                    else:
+                        pass
+                    normalized_data.append(normalized_entry)
+                else:
+                    raise TypeError(
+                        "Procedural logic entries must be declarative mappings"
+                    )
+            else:
+                pass
+        else:
+            raise TypeError("Procedural logic data must be an ordered list")
 
-        if len(data) == 0:
+        if len(normalized_data) == 0:
             return list()
         else:
             pass
 
-        if isinstance(data[0], dict):
-            return procedural_logic_from_dict(data)
+        if procedural_logic_codec is None:
+            raise ValueError(
+                "Procedural logic data requires an explicit reconstruction codec"
+            )
         else:
-            return list(data)
+            pass
+
+        return list(procedural_logic_codec.parse_entries(normalized_data))
 
     def __deepcopy__(self, memo: Dict[int, Any]) -> "Block":
         """
@@ -644,6 +3069,8 @@ class Block:
 
             result.name = copy.deepcopy(self.name, memo)
             result.uid = copy.deepcopy(self.uid, memo)
+            result.is_decomposable = copy.deepcopy(self.is_decomposable, memo)
+            result.tpe_uid = copy.deepcopy(self.tpe_uid, memo)
             result.vars_glob_name2uid = copy.deepcopy(self.vars_glob_name2uid, memo)
             result.state_vars = copy.deepcopy(self.state_vars, memo)
             result.state_eqs = copy.deepcopy(self.state_eqs, memo)
@@ -660,6 +3087,7 @@ class Block:
             result.out_vars = copy.deepcopy(self.out_vars, memo)
             result.parameters = copy.deepcopy(self.parameters, memo)
             result.discrete_eqs = copy.deepcopy(self.discrete_eqs, memo)
+            result.post_init_seed_eqs = copy.deepcopy(self.post_init_seed_eqs, memo)
             result.external_mapping = copy.deepcopy(self.external_mapping, memo)
             result.api_obj_mapping = copy.deepcopy(self.api_obj_mapping, memo)
             result.init_values = copy.deepcopy(self.init_values, memo)
@@ -669,15 +3097,9 @@ class Block:
             result.boolean_guards = copy.deepcopy(self.boolean_guards, memo)
             result.procedural_logic = copy.deepcopy(self.procedural_logic, memo)
             result.connection_intents = copy.deepcopy(self.connection_intents, memo)
+            result.dynamic_model_contract = copy.deepcopy(self.dynamic_model_contract, memo)
             result._diagram = copy.deepcopy(self._diagram, memo)
 
-            extra_key: str
-            extra_value: Any
-            for extra_key, extra_value in self.__dict__.items():
-                if extra_key in result.__dict__:
-                    pass
-                else:
-                    setattr(result, extra_key, copy.deepcopy(extra_value, memo))
             return result
 
     def compare(self, block2: Block) -> bool:
@@ -697,7 +3119,6 @@ class Block:
         equations_list.extend(self.differential_eqs)
         return equations_list
 
-
     def __eq__(self, other: Block) -> bool:
         x = self.compare(other)
         return x
@@ -706,22 +3127,58 @@ class Block:
     #
     #     self.parameters[self.api_obj_mapping[ref]] = val
 
+    def set_parameter_in_model(self, var_name: str, new_value: float) -> None:
+        """Update every matching parameter in this block hierarchy.
 
+        Dynamic parameters can be stored as event values, mode values, or
+        ordinary model parameters. The update therefore visits every canonical
+        parameter store in the current block before descending into its child
+        blocks.
 
-    def set_parameter_in_model(self, var_name: str, new_value: float):
+        :param var_name: Symbolic parameter name to update.
+        :param new_value: Numeric value assigned to every matching parameter.
+        :return: None.
         """
-        updates parameter value given a name and a value
+        event_var: Var
+        event_expr: Expr
+        for event_var, event_expr in self.event_dict.items():
+            # Preserve the canonical expression object when it is already a constant.
+            if event_var.name == var_name:
+                if isinstance(event_expr, Const):
+                    event_expr.value = new_value
+                else:
+                    self.event_dict[event_var] = Const(new_value)
+            else:
+                pass
 
-        :param var_name:
-        :param new_value:
-        :return:
-        """
+        mode_var: Var
+        mode_expr: Expr
+        for mode_var, mode_expr in self.mode_dict.items():
+            # Mode parameters follow the same replacement contract as event parameters.
+            if mode_var.name == var_name:
+                if isinstance(mode_expr, Const):
+                    mode_expr.value = new_value
+                else:
+                    self.mode_dict[mode_var] = Const(new_value)
+            else:
+                pass
 
-        set_parameter(self, var_name, new_value)
-        if self.children:
-            for child in self.children:
-                child.set_parameter_in_model(var_name, new_value)
+        parameter_var: Var
+        parameter_expr: Const
+        for parameter_var, parameter_expr in self.parameters.items():
+            # Ordinary parameters are the final local store checked by the setter.
+            if parameter_var.name == var_name:
+                if isinstance(parameter_expr, Const):
+                    parameter_expr.value = new_value
+                else:
+                    self.parameters[parameter_var] = Const(new_value)
+            else:
+                pass
 
+        child_block: Block
+        for child_block in self.children:
+            # Apply the same semantic update to every nested model instance.
+            child_block.set_parameter_in_model(var_name, new_value)
 
     def check_empty(self) -> bool:
         """
@@ -742,6 +3199,7 @@ class Block:
                 not self.init_values and
                 not self.init_eqs and
                 not self.diff_init_eqs and
+                not self.post_init_seed_eqs and
                 not self.children and
                 not self.in_vars and
                 not self.out_vars and
@@ -816,7 +3274,6 @@ class Block:
                 #     self.init_values[var] = Const(0)
         return explicit
 
-
     def get_all_blocks(self) -> List[Block]:
         """
         Depth-first collection of all *primitive* Blocks.
@@ -856,6 +3313,8 @@ class Block:
         for diffvar, diff_init_eq in block.diff_init_eqs.items():
             self.diff_init_eqs[diffvar] = diff_init_eq
 
+        for seed_var, seed_expression in block.post_init_seed_eqs.items():
+            self.post_init_seed_eqs[seed_var] = seed_expression
 
     def unify_blocks(self):
         """
@@ -865,7 +3324,6 @@ class Block:
         Union[None, VeraGridEngine.Utils.Symbolic.block.Block]
         """
         mdl_placeholder = Block()
-        list_blocks = self.get_all_blocks()
         for b in self.get_all_blocks():
             mdl_placeholder.algebraic_vars.extend(b.algebraic_vars)
             mdl_placeholder.algebraic_eqs.extend(b.algebraic_eqs)
@@ -898,6 +3356,9 @@ class Block:
             for diffvar, diff_init_eq in b.diff_init_eqs.items():
                 mdl_placeholder.diff_init_eqs[diffvar] = diff_init_eq
 
+            for seed_var, seed_expression in b.post_init_seed_eqs.items():
+                mdl_placeholder.post_init_seed_eqs[seed_var] = seed_expression
+
             mdl_placeholder.procedural_logic.extend(b.procedural_logic)
 
         self.algebraic_vars = mdl_placeholder.algebraic_vars
@@ -913,6 +3374,7 @@ class Block:
         self.parameters = mdl_placeholder.parameters
         self.init_eqs = mdl_placeholder.init_eqs
         self.diff_init_eqs = mdl_placeholder.diff_init_eqs
+        self.post_init_seed_eqs = mdl_placeholder.post_init_seed_eqs
         self.reformulated_vars = mdl_placeholder.reformulated_vars
         self.external_mapping = mdl_placeholder.external_mapping
         self.api_obj_mapping = mdl_placeholder.api_obj_mapping
@@ -959,10 +3421,7 @@ class Block:
         for lst in [self.state_vars, self.algebraic_vars, self.diff_vars]:
             for i, var in enumerate(lst):
                 if var.uid == old.uid:
-                    lst[i]=new
-
-
-
+                    lst[i] = new
 
     def update_equations(self, old: Var | Expr, new: Var | Expr) -> None:
         """
@@ -973,6 +3432,7 @@ class Block:
         """
         init_eqs_new = dict()
         diff_init_eqs_new = dict()
+        post_init_seed_eqs_new: Dict[Var, Expr | Const] = dict()
         event_dict_new = dict()
         mode_dict_new = dict()
         boolean_guards_new = dict()
@@ -1007,6 +3467,14 @@ class Block:
 
         self.diff_init_eqs = diff_init_eqs_new
 
+        for var, expr in self.post_init_seed_eqs.items():
+            new_expr: Expr = expr.subs({old: new})
+            if var is old and isinstance(new, Var):
+                post_init_seed_eqs_new[new] = new_expr
+            else:
+                post_init_seed_eqs_new[var] = new_expr
+        self.post_init_seed_eqs = post_init_seed_eqs_new
+
         for var, expr in self.event_dict.items():
             new_expr = expr.subs({old: new})
             if var is old:
@@ -1037,9 +3505,14 @@ class Block:
                 self.external_mapping.update({var_pf_ref: new})
 
         if self.procedural_logic:
-            from VeraGridEngine.Utils.procedural_logic import clone_procedural_logic_entries
-            self.procedural_logic = clone_procedural_logic_entries(self.procedural_logic,
-                                                                   var_mapping={old: new, old.name: new})
+            procedural_var_mapping: Dict[Expr | str, Expr] = dict((
+                (old, new),
+                (old.name, new),
+            ))
+            self.procedural_logic = list(
+                entry.remap(procedural_var_mapping)
+                for entry in self.procedural_logic
+            )
 
     def update_model(self, old: Var | Expr, new: Var | Expr) -> None:
         """
@@ -1083,6 +3556,7 @@ class Block:
         uid_mapping: Dict[int, Var] = dict((old_var.uid, new_var) for old_var, new_var in var_mapping.items())
         init_eqs_new: Dict[Var, Expr] = dict()
         diff_init_eqs_new: Dict[Var, Expr] = dict()
+        post_init_seed_eqs_new: Dict[Var, Expr | Const] = dict()
         event_dict_new: Dict[Var, Expr] = dict()
         mode_dict_new: Dict[Var, Expr] = dict()
         boolean_guards_new: Dict[Var, Expr | Comparison] = dict()
@@ -1119,6 +3593,13 @@ class Block:
             diff_init_eqs_new[var if new_var is None else new_var] = expr.subs(var_mapping)
         self.diff_init_eqs = diff_init_eqs_new
 
+        for var, expr in self.post_init_seed_eqs.items():
+            new_var = uid_mapping.get(var.uid, None)
+            post_init_seed_eqs_new[
+                var if new_var is None else new_var
+            ] = expr.subs(var_mapping)
+        self.post_init_seed_eqs = post_init_seed_eqs_new
+
         for var, expr in self.event_dict.items():
             new_var = uid_mapping.get(var.uid, None)
             event_dict_new[var if new_var is None else new_var] = expr.subs(var_mapping)
@@ -1144,10 +3625,9 @@ class Block:
         self.external_mapping = external_mapping_new
 
         if self.procedural_logic:
-            from VeraGridEngine.Utils.procedural_logic import clone_procedural_logic_entries
-            self.procedural_logic = clone_procedural_logic_entries(
-                self.procedural_logic,
-                var_mapping=procedural_var_mapping,
+            self.procedural_logic = list(
+                entry.remap(procedural_var_mapping)
+                for entry in self.procedural_logic
             )
         else:
             pass
@@ -1167,98 +3647,65 @@ class Block:
         else:
             pass
 
-    def can_use_bulk_connect_update(self, pairs: List[Tuple[Var, Var]]) -> bool:
-        """
-        Return whether one connection batch can be substituted safely in one pass.
-
-        Bulk substitution is used only when the old and new variable sets are
-        both unique and disjoint. If the mappings overlap, the original
-        sequential behaviour is preserved because the substitution order can be
-        semantically relevant.
-
-        :param pairs: Connection pairs ``(old_var, new_var)``.
-        :return: ``True`` when the fast bulk path is safe.
-        """
-        old_uids: List[int] = list()
-        new_uids: List[int] = list()
-        var_to_subs: Var
-        incoming_var: Var
-
-        if len(pairs) <= 1:
-            return False
-        else:
-            pass
-
-        for var_to_subs, incoming_var in pairs:
-            old_uids.append(var_to_subs.uid)
-            new_uids.append(incoming_var.uid)
-
-        if len(set(old_uids)) != len(pairs) or len(set(new_uids)) != len(pairs):
-            return False
-        else:
-            pass
-
-        if len(set(old_uids).intersection(set(new_uids))) > 0:
-            return False
-        else:
-            return True
-
     def connect(self, vars_to_subs: List[Var], incoming_vars: List[Var]):
         """
         Function to connect two blocks by variables sharing
         """
         # here we just change uid and name of the vars_to_subs
         pairs: List[Tuple[Var, Var]] = list(zip(vars_to_subs, incoming_vars))
-        can_use_bulk_update: bool = self.can_use_bulk_connect_update(pairs)
         var_to_subs: Var
         incoming_var: Var
 
-        # if can_use_bulk_update:
-        #     self.update_model_bulk(dict(pairs))
-        # else:
         for var_to_subs, incoming_var in pairs:
             self.update_model(var_to_subs, incoming_var)
             # var_to_subs.uid = incoming_var.uid
             # var_to_subs.name = incoming_var.name
 
-    def find_var_in_equations(self,var: Var) -> bool:
+    def find_var_in_equations(self, var: Var) -> bool:
         """
         find a var in the equations of a block
         :param var:
         :return:
         """
 
-        for i, eq in enumerate(self.algebraic_eqs):
-            if eq.contains_var:
+        equation: Expr
+        equation_var: Var
+
+        for equation in self.algebraic_eqs:
+            if equation.contains_var(var):
                 return True
 
-        for i, eq in enumerate(self.state_eqs):
-            if eq.contains_var:
+        for equation in self.state_eqs:
+            if equation.contains_var(var):
                 return True
 
-        for i, eq in enumerate(self.differential_eqs):
-            if eq.contains_var:
+        for equation in self.differential_eqs:
+            if equation.contains_var(var):
                 return True
 
-        for var, eq in self.init_eqs.items():
-            if eq.contains_var:
+        for equation_var, equation in self.init_eqs.items():
+            if equation_var.uid == var.uid or equation.contains_var(var):
                 return True
 
-        for var, eq in self.diff_init_eqs.items():
-            if eq.contains_var:
+        for equation_var, equation in self.diff_init_eqs.items():
+            if equation_var.uid == var.uid or equation.contains_var(var):
                 return True
 
-        for var, eq in self.event_dict.items():
-            if eq.contains_var:
+        for equation_var, equation in self.post_init_seed_eqs.items():
+            if equation_var.uid == var.uid or equation.contains_var(var):
                 return True
 
-        for var, eq in self.mode_dict.items():
-            if eq.contains_var:
+        for equation_var, equation in self.event_dict.items():
+            if equation_var.uid == var.uid or equation.contains_var(var):
                 return True
 
-        for var_pf_ref, mdl_var in self.external_mapping.items():
-            if mdl_var is var:
-               return True
+        for equation_var, equation in self.mode_dict.items():
+            if equation_var.uid == var.uid or equation.contains_var(var):
+                return True
+
+        for mdl_var in self.external_mapping.values():
+            if mdl_var is not None and mdl_var.uid == var.uid:
+                return True
 
         return False
 
@@ -1289,6 +3736,7 @@ class Block:
             return False
         return True
 
+
 def find_connections(mdl1: Block, mdl2: Block) -> tuple[List[tuple[Var, Var]], List[tuple[Var, Var]]]:
     """
     find connections between the two blocks by vars searching
@@ -1306,7 +3754,7 @@ def find_connections(mdl1: Block, mdl2: Block) -> tuple[List[tuple[Var, Var]], L
         outp.shared_ref == inpt.shared_ref and outp.shared_ref is not None and inpt.shared_ref is not None
     ]
 
-    power_flow_pairs =  [
+    power_flow_pairs = [
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
@@ -1315,8 +3763,8 @@ def find_connections(mdl1: Block, mdl2: Block) -> tuple[List[tuple[Var, Var]], L
         outp.ref == inpt.ref and outp.ref is not None and inpt.ref is not None
     ]
 
-
     return pairs, power_flow_pairs
+
 
 def find_connections_pf(mdl1: Block, mdl2: Block) -> List[tuple[Var, Var]]:
     """
@@ -1325,7 +3773,7 @@ def find_connections_pf(mdl1: Block, mdl2: Block) -> List[tuple[Var, Var]]:
     :rtype:
     """
 
-    power_flow_pairs =  [
+    power_flow_pairs = [
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
@@ -1333,8 +3781,8 @@ def find_connections_pf(mdl1: Block, mdl2: Block) -> List[tuple[Var, Var]]:
         outp.ref == inpt.ref and outp.ref is not None and inpt.ref is not None and outp.uid == inpt.uid
     ]
 
-
     return power_flow_pairs
+
 
 def find_name_in_block(name: str, block: Block) -> Var | None:
     """
@@ -1415,6 +3863,7 @@ def build_name_to_var_lookup(block: Block) -> Dict[str, Var]:
 
     return lookup
 
+
 def _get_var_attribute_mapping(block: Block) -> Dict[int, str]:
     """Build a mapping from variable uid to attribute name for a block."""
     mapping = {}
@@ -1433,6 +3882,7 @@ def _get_var_attribute_mapping(block: Block) -> Dict[int, str]:
     for var in block.in_vars:
         mapping[var.uid] = "in_vars"
     return mapping
+
 
 def variables_in_corresponding_attributes(blocks: List[Block], variables_mappings: List[Dict[int, int]]) -> bool:
     """
@@ -1472,6 +3922,7 @@ def variables_in_corresponding_attributes(blocks: List[Block], variables_mapping
 
     return True
 
+
 def _get_pair_index(i: int, j: int, n: int) -> int:
     """Get the index in variables_mappings list for the pair (i, j)."""
     idx = 0
@@ -1481,6 +3932,7 @@ def _get_pair_index(i: int, j: int, n: int) -> int:
                 return idx
             idx += 1
     return -1
+
 
 def compare_n_blocks_structurally(blocks: List[Block]) -> Tuple[Dict[int, List[int]], Dict[int, List[int]]]:
     """
@@ -1531,7 +3983,6 @@ def compare_n_blocks_structurally(blocks: List[Block]) -> Tuple[Dict[int, List[i
 
                             variables_mappings = [variables_alignment]
                             if variables_in_corresponding_attributes([block_i_copy, block_j_copy], variables_mappings):
-
                                 current_group.append(blocks[j].uid)
                                 processed[j] = True
                                 current_alignments[j] = variables_alignment
@@ -1555,6 +4006,8 @@ def compare_n_blocks_structurally(blocks: List[Block]) -> Tuple[Dict[int, List[i
             var_result[ref_var_uid] = equivalent_uids
 
     return model_result, var_result
+
+
 #
 # def compare_n_blocks_structurally(blocks: List[Block]) -> Dict[int, List[int]]:
 #     """
@@ -1621,6 +4074,178 @@ def compare_n_blocks_structurally(blocks: List[Block]) -> Tuple[Dict[int, List[i
 #
 #     return result
 
+def _is_legacy_emt_ground_block(block: Block) -> bool:
+    """Recognize the canonical ideal-ground structure used before contract v4.
+
+    The historical ideal ground owns one input voltage, one output current and
+    one algebraic equation that clamps that exact input voltage to zero. This
+    structural signature is independent of display names and diagram records.
+
+    :param block: Parsed legacy child block to inspect.
+    :return: ``True`` when the child is the historical ideal EMT ground.
+    """
+    has_exact_container_shape: bool = (
+        len(block.in_vars) == 1
+        and len(block.out_vars) == 1
+        and len(block.algebraic_vars) == 1
+        and len(block.algebraic_eqs) == 1
+        and len(block.init_eqs) == 1
+        and len(block.state_vars) == 0
+        and len(block.state_eqs) == 0
+        and len(block.diff_vars) == 0
+        and len(block.reformulated_vars) == 0
+        and len(block.differential_eqs) == 0
+        and len(block.inequalities) == 0
+        and len(block.children) == 0
+        and len(block.parameters) == 0
+        and len(block.init_values) == 0
+        and len(block.diff_init_eqs) == 0
+        and len(block.event_dict) == 0
+        and len(block.mode_dict) == 0
+        and len(block.boolean_guards) == 0
+        and len(block.discrete_eqs) == 0
+        and len(block.post_init_seed_eqs) == 0
+        and len(block.procedural_logic) == 0
+        and len(block.connection_intents) == 0
+        and len(block.external_mapping) == 0
+        and len(block.api_obj_mapping) == 0
+    )
+    if has_exact_container_shape:
+        grounding_voltage: Var = block.in_vars[0]
+        grounding_current: Var = block.out_vars[0]
+        grounding_equation: Expr = block.algebraic_eqs[0]
+        initial_current: Expr | None = block.init_eqs.get(grounding_current, None)
+        if (
+            block.algebraic_vars[0].uid == grounding_current.uid
+            and grounding_voltage.ref is None
+            and grounding_current.ref is None
+            and isinstance(grounding_equation, Var)
+            and grounding_equation.uid == grounding_voltage.uid
+            and isinstance(initial_current, Const)
+            and initial_current.value == 0.0
+        ):
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def _is_legacy_emt_ground_current_kcl(
+        equation: Expr,
+        grounding_current_uid: int,
+        terminal_current_uid: int,
+) -> bool:
+    """Recognize the exact historical two-current grounding KCL.
+
+    :param equation: Candidate parent algebraic equation.
+    :param grounding_current_uid: Current output UID of the ideal-ground child.
+    :param terminal_current_uid: External neutral-current output UID of the parent.
+    :return: ``True`` when the equation is exactly their sum.
+    """
+    if (
+        isinstance(equation, BinOp)
+        and equation.op == "+"
+        and isinstance(equation.left, Var)
+        and isinstance(equation.right, Var)
+    ):
+        left_uid: int = equation.left.uid
+        right_uid: int = equation.right.uid
+        if (
+            left_uid == grounding_current_uid
+            and right_uid == terminal_current_uid
+        ):
+            return True
+        elif (
+            left_uid == terminal_current_uid
+            and right_uid == grounding_current_uid
+        ):
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def _is_legacy_emt_internal_grounding_link(block: Block) -> bool:
+    """Recognize one pre-v4 grounding link from canonical symbolic structure.
+
+    :param block: Parsed legacy block whose contract lacks the typed flag.
+    :return: ``True`` when neutral voltage/current ports own an ideal-ground child.
+    """
+    if len(block.in_vars) == 1 and len(block.out_vars) == 1:
+        # Historical expression records did not persist physical references.
+        # Accept only missing or already-neutral ports; an explicit conflicting
+        # conductor remains a fail-closed rejection.
+        has_compatible_neutral_ports: bool = (
+                block.in_vars[0].ref in (None, VarPowerFlowReferenceType.v_N)
+                and block.out_vars[0].ref in (None, VarPowerFlowReferenceType.i_N)
+        )
+    else:
+        has_compatible_neutral_ports = False
+
+    if has_compatible_neutral_ports:
+        terminal_current_uid: int = block.out_vars[0].uid
+        parent_algebraic_uids: set[int] = set()
+        algebraic_var: Var
+        for algebraic_var in block.algebraic_vars:
+            parent_algebraic_uids.add(algebraic_var.uid)
+        else:
+            pass
+        child_block: Block
+        for child_block in block.children:
+            if _is_legacy_emt_ground_block(block=child_block):
+                grounding_voltage_uid: int = child_block.in_vars[0].uid
+                grounding_current_uid: int = child_block.out_vars[0].uid
+                has_internal_voltage_connection: bool = (
+                    grounding_voltage_uid in parent_algebraic_uids
+                    and grounding_voltage_uid != block.in_vars[0].uid
+                    and terminal_current_uid in parent_algebraic_uids
+                )
+                if has_internal_voltage_connection:
+                    parent_equation: Expr
+                    for parent_equation in block.algebraic_eqs:
+                        if _is_legacy_emt_ground_current_kcl(
+                                equation=parent_equation,
+                                grounding_current_uid=grounding_current_uid,
+                                terminal_current_uid=terminal_current_uid,
+                        ):
+                            return True
+                        else:
+                            pass
+                else:
+                    pass
+            else:
+                pass
+        return False
+    else:
+        return False
+
+
+def has_emt_internal_grounding_link(block: Block) -> bool:
+    """Return whether a canonical block hierarchy declares internal grounding.
+
+    Diagram nodes are deliberately excluded because they persist editor layout,
+    not executable electrical topology. The declaration lives on the canonical
+    symbolic block and therefore survives diagram removal and block renaming.
+
+    :param block: Root symbolic block to inspect.
+    :return: ``True`` when the root or one descendant owns a grounding link.
+    """
+    if block.dynamic_model_contract.emt_internal_grounding_link:
+        return True
+    else:
+        pass
+
+    child_block: Block
+    for child_block in block.children:
+        if has_emt_internal_grounding_link(block=child_block):
+            return True
+        else:
+            pass
+    return False
+
+
 def compare_blocks_structurally(block1: Block, block2: Block) -> bool:
     block1_compare = block1.copy().unify_blocks()
     block2_compare = block2.copy().unify_blocks()
@@ -1635,4 +4260,82 @@ def compare_blocks_structurally(block1: Block, block2: Block) -> bool:
             return True
     return False
 
-    return True
+
+def build_name_to_vars_lookup(block: Block) -> Dict[str, List[Var]]:
+    """
+    Build a UID-distinct variable lookup by symbolic name.
+
+    A composite can expose the same PowerFactory port label on several direct
+    instances. Callers that materialize one external signal, such as a native
+    meter, must bind every matching boundary variable instead of silently
+    selecting the first occurrence.
+
+    :param block: Root block hierarchy to inspect.
+    :return: Ordered variables grouped by their symbolic name.
+    """
+    lookup: Dict[str, List[Var]] = dict()
+    seen_uids_by_name: Dict[str, set[int]] = dict()
+    runtime_block: Block
+    variable_groups: List[List[Var]]
+    variable_group: List[Var]
+    variable: Var
+    expression_groups: List[List[Expr]]
+    expression_group: List[Expr]
+    expression: Expr
+
+    for runtime_block in block.get_all_blocks():
+        variable_groups = list([
+            runtime_block.in_vars,
+            runtime_block.out_vars,
+            runtime_block.algebraic_vars,
+            runtime_block.state_vars,
+            runtime_block.diff_vars,
+            list(runtime_block.event_dict.keys()),
+            list(runtime_block.mode_dict.keys()),
+            list(runtime_block.boolean_guards.keys()),
+        ])
+        for variable_group in variable_groups:
+            for variable in variable_group:
+                seen_uids: set[int] | None = seen_uids_by_name.get(
+                    variable.name,
+                    None,
+                )
+                if seen_uids is None:
+                    lookup[variable.name] = list([variable])
+                    seen_uids_by_name[variable.name] = set([variable.uid])
+                else:
+                    if variable.uid in seen_uids:
+                        pass
+                    else:
+                        lookup[variable.name].append(variable)
+                        seen_uids.add(variable.uid)
+
+        # Imported DSL initialization statements can reference a native slot
+        # signal before that signal is promoted to a root interface. Include
+        # those expression-only variables so the authoritative Sta*mea or
+        # equipment adapter can bind them by the exported signal name.
+        expression_groups = list([
+            runtime_block.algebraic_eqs,
+            runtime_block.state_eqs,
+            runtime_block.differential_eqs,
+            list(runtime_block.init_eqs.values()),
+            list(runtime_block.diff_init_eqs.values()),
+            list(runtime_block.event_dict.values()),
+            list(runtime_block.mode_dict.values()),
+            list(runtime_block.boolean_guards.values()),
+        ])
+        for expression_group in expression_groups:
+            for expression in expression_group:
+                for variable in expression.get_vars():
+                    seen_uids = seen_uids_by_name.get(variable.name, None)
+                    if seen_uids is None:
+                        lookup[variable.name] = list([variable])
+                        seen_uids_by_name[variable.name] = set([variable.uid])
+                    else:
+                        if variable.uid in seen_uids:
+                            pass
+                        else:
+                            lookup[variable.name].append(variable)
+                            seen_uids.add(variable.uid)
+
+    return lookup

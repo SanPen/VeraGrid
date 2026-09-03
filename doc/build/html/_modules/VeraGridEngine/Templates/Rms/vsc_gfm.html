@@ -204,11 +204,6 @@
         <span class="n">Kdq</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">),</span>
         <span class="n">omega_nom</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">50</span><span class="p">),</span>
         <span class="n">omega_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
-        <span class="n">V_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
-        <span class="n">P_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>  <span class="c1"># Initialized from power flow</span>
-        <span class="n">Q_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-        <span class="n">vd_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-        <span class="n">vq_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
         <span class="n">fn</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">50.0</span><span class="p">),</span>
         <span class="n">Kp_icl</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">),</span>
         <span class="n">Ki_icl</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">50.0</span><span class="p">),</span>
@@ -494,6 +489,27 @@
         <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">dt_vd_f</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
         <span class="n">diff_init_eqs</span><span class="p">[</span><span class="n">dt_vq_f</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
 
+    <span class="c1"># Runtime references own their equilibrium expressions directly. The</span>
+    <span class="c1"># explicit initializer resolves these expressions once and freezes the</span>
+    <span class="c1"># resulting scalar values before runtime events are enabled.</span>
+    <span class="n">event_dict</span><span class="p">[</span><span class="n">P_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">P_ctrl</span>
+    <span class="n">event_dict</span><span class="p">[</span><span class="n">Q_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q_ctrl</span>
+    <span class="n">event_dict</span><span class="p">[</span><span class="n">vd_ref</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">vd_f</span>
+        <span class="k">if</span> <span class="n">reconstruct_filter_voltage</span>
+        <span class="k">else</span> <span class="p">(</span><span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">voltage_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vd_f</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">event_dict</span><span class="p">[</span><span class="n">vq_ref</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">vq_f</span>
+        <span class="k">if</span> <span class="n">reconstruct_filter_voltage</span>
+        <span class="k">else</span> <span class="p">(</span><span class="n">V</span> <span class="k">if</span> <span class="n">voltage_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vq_f</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">event_dict</span><span class="p">[</span><span class="n">V_ref</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">vq_f</span> <span class="k">if</span> <span class="n">reconstruct_filter_voltage</span> <span class="k">else</span> <span class="n">Vm_f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">voltage_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="n">Vm_c</span>
+    <span class="p">)</span>
+
     <span class="n">core_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
         <span class="n">algebraic_eqs</span><span class="o">=</span><span class="n">algebraic_eqs</span><span class="p">,</span>
         <span class="n">algebraic_vars</span><span class="o">=</span><span class="n">algebraic_vars</span><span class="p">,</span>
@@ -503,20 +519,15 @@
         <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
             <span class="n">P</span><span class="p">:</span> <span class="n">p_init</span><span class="p">,</span>
             <span class="n">Q</span><span class="p">:</span> <span class="n">q_init</span><span class="p">,</span>
-            <span class="n">P_ref</span><span class="p">:</span> <span class="n">P_ctrl</span><span class="p">,</span>
-            <span class="n">Q_ref</span><span class="p">:</span> <span class="n">Q_ctrl</span><span class="p">,</span>
             <span class="n">theta</span><span class="p">:</span> <span class="p">(</span><span class="n">Va_g</span> <span class="k">if</span> <span class="n">reconstruct_filter_voltage</span> <span class="k">else</span> <span class="n">Va_f</span><span class="p">)</span> <span class="k">if</span> <span class="n">voltage_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Va_c</span><span class="p">,</span>
             <span class="n">omega</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
             <span class="n">V</span><span class="p">:</span> <span class="n">V_ref</span> <span class="k">if</span> <span class="n">reconstruct_filter_voltage</span> <span class="k">else</span> <span class="p">(</span><span class="n">Vm_f</span> <span class="k">if</span> <span class="n">voltage_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Vm_c</span><span class="p">),</span>
-            <span class="n">V_ref</span><span class="p">:</span> <span class="p">(</span><span class="n">vq_f</span> <span class="k">if</span> <span class="n">reconstruct_filter_voltage</span> <span class="k">else</span> <span class="n">Vm_f</span><span class="p">)</span> <span class="k">if</span> <span class="n">voltage_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Vm_c</span><span class="p">,</span>
             <span class="n">vd_g</span><span class="p">:</span> <span class="n">Vm_g</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">Va_g</span> <span class="o">-</span> <span class="n">theta</span><span class="p">),</span>
             <span class="n">vq_g</span><span class="p">:</span> <span class="n">Vm_g</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">Va_g</span> <span class="o">-</span> <span class="n">theta</span><span class="p">),</span>
             <span class="n">id_g</span><span class="p">:</span> <span class="n">id_g_init</span><span class="p">,</span>
             <span class="n">iq_g</span><span class="p">:</span> <span class="n">iq_g_init</span><span class="p">,</span>
             <span class="n">vd_f</span><span class="p">:</span> <span class="n">vd_f_init</span><span class="p">,</span>
             <span class="n">vq_f</span><span class="p">:</span> <span class="n">vq_f_init</span><span class="p">,</span>
-            <span class="n">vd_ref</span><span class="p">:</span> <span class="n">vd_f</span> <span class="k">if</span> <span class="n">reconstruct_filter_voltage</span> <span class="k">else</span> <span class="p">(</span><span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">voltage_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vd_f</span><span class="p">),</span>
-            <span class="n">vq_ref</span><span class="p">:</span> <span class="n">vq_f</span> <span class="k">if</span> <span class="n">reconstruct_filter_voltage</span> <span class="k">else</span> <span class="p">(</span><span class="n">V</span> <span class="k">if</span> <span class="n">voltage_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vq_f</span><span class="p">),</span>
 
             <span class="c1"># Capacitor currents (Rcap is large, so damping terms are negligible)</span>
             <span class="n">id_c</span><span class="p">:</span> <span class="n">id_c_init</span><span class="p">,</span>

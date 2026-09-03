@@ -15,6 +15,7 @@ from VeraGrid.Gui.messages import error_msg, warning_msg, yes_no_question
 from VeraGrid.Gui.Main.SubClasses.simulations import SimulationsMain
 from VeraGrid.Gui.results_model import ResultsModel
 from VeraGrid.Gui.general_dialogues import fill_tree_from_logs
+from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely
 import VeraGridEngine.Utils.Filtering as flt
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import (ResultTypes, SimulationTypes, PlotSimulationType, DynamicPlotEntryKind,
@@ -110,6 +111,12 @@ class ResultsMain(SimulationsMain):
             driver = self.session.get_driver(driver_type=study_type)
 
             if driver is None:
+                # set the logs
+                self.current_results_logger = None
+                self.ui.resultsLogsTreeView.setModel(None)
+                return
+
+            if driver.results is None:
                 # set the logs
                 self.current_results_logger = None
                 self.ui.resultsLogsTreeView.setModel(None)
@@ -547,7 +554,6 @@ class ResultsMain(SimulationsMain):
         :return: Nothing.
         """
 
-
         # A row insertion already happened inside the existing model. Rebuilding
         # the views here would destroy the exact expansion state we are trying to
         # preserve. The only required post-insert action is to keep the target
@@ -573,8 +579,9 @@ class ResultsMain(SimulationsMain):
             name_edit: QtWidgets.QLineEdit = QtWidgets.QLineEdit(dialog)
             mode_label: QtWidgets.QLabel = QtWidgets.QLabel(self.tr("Plot mode"), dialog)
             mode_combo: QtWidgets.QComboBox = QtWidgets.QComboBox(dialog)
-            buttons: QtWidgets.QDialogButtonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
-                                                                              dialog)
+            buttons: QtWidgets.QDialogButtonBox = QtWidgets.QDialogButtonBox(
+                QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
+                dialog)
             name_edit.setText(suggested_name)
             mode_combo.addItem(self.tr("Time Series (Y vs Time)"), DynamicPlotMode.TIME_SERIES)
             mode_combo.addItem(self.tr("X-Y Plot (Y vs X)"), DynamicPlotMode.XY)
@@ -585,22 +592,25 @@ class ResultsMain(SimulationsMain):
             layout.addWidget(mode_label)
             layout.addWidget(mode_combo)
             layout.addWidget(buttons)
-            accepted: bool = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
-            if accepted:
-                group_name: str = name_edit.text()
-                selected_mode_data: object = mode_combo.currentData()
-                selected_mode: DynamicPlotMode = DynamicPlotMode.TIME_SERIES
-                if isinstance(selected_mode_data, DynamicPlotMode):
-                    selected_mode = selected_mode_data
+            try:
+                accepted: bool = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
+                if accepted:
+                    group_name: str = name_edit.text()
+                    selected_mode_data: object = mode_combo.currentData()
+                    selected_mode: DynamicPlotMode = DynamicPlotMode.TIME_SERIES
+                    if isinstance(selected_mode_data, DynamicPlotMode):
+                        selected_mode = selected_mode_data
+                    else:
+                        pass
+                    created: bool = self.dynamic_results_handler.create_plot_group(name=group_name, mode=selected_mode)
+                    if created:
+                        self.ui.dynamicsPlotsTreeView.expandAll()
+                    else:
+                        self.show_warning_toast(self.tr("The plot group name is empty or already exists."))
                 else:
                     pass
-                created: bool = self.dynamic_results_handler.create_plot_group(name=group_name, mode=selected_mode)
-                if created:
-                    self.ui.dynamicsPlotsTreeView.expandAll()
-                else:
-                    self.show_warning_toast(self.tr("The plot group name is empty or already exists."))
-            else:
-                pass
+            finally:
+                delete_dialog_safely(dialog=dialog)
         else:
             self.show_warning_toast(self.tr("There are no RMS dynamics results loaded."))
 
@@ -665,7 +675,7 @@ class ResultsMain(SimulationsMain):
 
     def get_or_create_dynamic_results_handler(self,
                                               study_type: SimulationTypes,
-                                              results: RmsResults|EmtResults) -> DynamicsResultsHandler:
+                                              results: RmsResults | EmtResults) -> DynamicsResultsHandler:
         """
         Get a cached dynamic-results handler for the given study, or create/update it.
 
@@ -834,8 +844,8 @@ class ResultsMain(SimulationsMain):
             if number_of_plots > 50:
                 ok = yes_no_question(text=self.tr("There are {columns} columns, the plot might take a lot to render.\n"
                                                   "Are you ok with potentially waiting a lot?").format(
-                                                      columns=number_of_plots),
-                                     title=self.tr("Plot"))
+                    columns=number_of_plots),
+                    title=self.tr("Plot"))
             else:
                 ok = True
 
@@ -1002,7 +1012,6 @@ class ResultsMain(SimulationsMain):
 
         # Leave the dynamics tab and go back to the normal results table tab
         self.ui.resultsTabWidget.setCurrentIndex(0)
-
 
     def copy_opf_to_profiles(self):
         """

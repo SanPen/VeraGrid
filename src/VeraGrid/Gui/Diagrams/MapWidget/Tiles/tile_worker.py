@@ -29,33 +29,30 @@ For example, see osm_tiles.py.
 import queue
 import ssl
 from urllib.request import Request, urlopen
-from collections.abc import Callable
-from PySide6.QtCore import QThread
-from PySide6.QtGui import QPixmap
+from PySide6.QtCore import QThread, Signal
 
 # SSL magic to solve the certificates hell
 # https://stackoverflow.com/questions/68275857/urllib-error-urlerror-urlopen-error-ssl-certificate-verify-failed-certifica
 ssl._create_default_https_context = ssl._create_stdlib_context
 
 
-def log(val: str):
+def log(val: str) -> None:
     print(val)
 
 
 class TileWorker(QThread):
-    """Thread class that gets request from queue, loads tile, calls callback."""
+    """Thread class that gets request from queue, loads tile bytes, emits result."""
+
+    tile_available = Signal(int, float, float, bytes, bool)
 
     def __init__(self,
                  id_num: int,
                  server: str,
                  tile_path: str,
                  requests_cue: queue.Queue,
-                 callback: Callable[[int, float, float, QPixmap, bool], None],  # level, x, y, pixmap, error
-                 error_tile: QPixmap,
                  content_type: str,
                  re_request_age: float,
-                 error_image: QPixmap,
-                 refresh_tiles_after_days=60):
+                 refresh_tiles_after_days: int = 60):
         """
         Prepare the tile worker
         Results are returned in the callback() params.
@@ -63,11 +60,8 @@ class TileWorker(QThread):
         :param server: server URL
         :param tile_path: path to tile on server
         :param requests_cue: the request queue
-        :param callback: function to call after tile available
-        :param error_tile: image of error tile
         :param content_type: expected Content-Type string
         :param re_request_age: number of days in tile age before re-requesting (0 means don't update tiles)
-        :param error_image: the image to return on some error
         :param refresh_tiles_after_days:
         """
         super().__init__()
@@ -76,11 +70,8 @@ class TileWorker(QThread):
         self.server = server
         self.tile_path = tile_path
         self.requests_cue = requests_cue
-        self.callback: Callable[[int, float, float, QPixmap, bool], None] = callback
-        self.error_tile_image = error_tile
         self.content_type = content_type
         self.re_request_age = re_request_age
-        self.error_image = error_image
         self.daemon = True
         self.refresh_tiles_after_days = refresh_tiles_after_days
         self._running = True
@@ -92,7 +83,7 @@ class TileWorker(QThread):
         self._running = False
         self.requests_cue.put(None)
 
-    def run(self):
+    def run(self) -> None:
         """
 
         :return:
@@ -108,19 +99,17 @@ class TileWorker(QThread):
 
             # try to retrieve the image
             error = False
-            pixmap = self.error_image
+            tile_data = bytes()
             tile_url = self.server + self.tile_path.format(Z=level, X=x, Y=y)
             try:
 
                 # Create a Request object with the desired headers
-                response = urlopen(Request(tile_url, headers={'User-Agent': 'VeraGrid 5'}))
+                response = urlopen(Request(tile_url, headers={'User-Agent': 'VeraGrid 5'}), timeout=5.0)
 
                 content_type = response.info().get_content_type()
 
                 if content_type == self.content_type:
-                    data = response.read()
-                    pixmap = QPixmap()
-                    pixmap.loadFromData(data)
+                    tile_data = response.read()
                 else:
                     # show error, don't cache returned error tile
                     error = True
@@ -128,9 +117,9 @@ class TileWorker(QThread):
                 error = True
                 log(f"{e} exception getting tile ({level},{x},{y}) with {tile_url}")
 
-            # call the callback function passing level, x, y and pixmap data
+            # emit the tile bytes for GUI-thread pixmap creation
             # error is False if we want to cache this tile on-disk
-            self.callback(level, x, y, pixmap, error)
+            self.tile_available.emit(level, x, y, tile_data, error)
 
             # finally, removes request from queue
             self.requests_cue.task_done()

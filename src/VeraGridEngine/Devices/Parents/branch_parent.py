@@ -65,7 +65,7 @@ class BranchParent(DynamicDevice):
             tpe=DeviceType.BusDevice,
             definition='Name of the bus at the "from" side',
             editable=False,
-            cat=[PrpCat.TP],
+            cat=list([PrpCat.TP]),
         ),
         GCProp(
             prop_name='bus_to',

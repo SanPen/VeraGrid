@@ -21,6 +21,10 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResu
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.initialization import init_explicit, init_pseudo_transient
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
+from VeraGridEngine.Simulations.Rms.problems.rms_terminal_power_assembly import (
+    assemble_rms_terminal_power_contributions,
+    convert_rms_ac_power_balance_to_current_balance,
+)
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -369,11 +373,27 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
 
-                # Phasor formulation: use current balance instead of power balance
-                setIr(Ir, Ir_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Irf))
-                setIr(Ir, Ir_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Irt))
-                setIi(Ii, Ii_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Iif))
-                setIi(Ii, Ii_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Iit))
+                if len(elm.rms_model.dynamic_model_contract.rms_terminal_power_contributions) > 0:
+                    # A declared equipment power interface is converted to KCL
+                    # only after every physical device has been assembled.
+                    assemble_rms_terminal_power_contributions(
+                        model=elm.rms_model,
+                        bus_from_index=f,
+                        bus_to_index=t,
+                        bus_from_is_dc=elm.bus_from.is_dc,
+                        bus_to_is_dc=elm.bus_to.is_dc,
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                    )
+                else:
+                    # Preserve native phasor-current templates that have not
+                    # migrated to the hidden terminal-power contract.
+                    setIr(Ir, Ir_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Irf))
+                    setIr(Ir, Ir_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Irt))
+                    setIi(Ii, Ii_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Iif))
+                    setIi(Ii, Ii_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Iit))
 
         # Populating VSCs init guess
         for i, elm in enumerate(self.grid.get_vsc()):
@@ -398,9 +418,40 @@ class RmsProblemPhasor(RmsProblemTemplate):
 
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
-                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
-                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
+                dc_voltage_init: float = float(
+                    np.abs(self.power_flow_results.voltage[f])
+                )
+                dc_current_init: float = float(self.power_flow_results.If_vsc[i])
+                self.set_init_guess(
+                    mdl,
+                    VarPowerFlowReferenceType.Vf_dc,
+                    dc_voltage_init,
+                )
+                self.set_init_guess(
+                    mdl,
+                    VarPowerFlowReferenceType.Idc,
+                    dc_current_init,
+                )
+                if len(mdl.dynamic_model_contract.rms_terminal_power_contributions) > 0:
+                    # New templates declare their physical terminal powers
+                    # independently from selectable signal ports.
+                    assemble_rms_terminal_power_contributions(
+                        model=mdl,
+                        bus_from_index=f,
+                        bus_to_index=t,
+                        bus_from_is_dc=elm.bus_from.is_dc,
+                        bus_to_is_dc=elm.bus_to.is_dc,
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                    )
+                else:
+                    # Version-one and custom legacy VSC models retain their
+                    # historical power-reference coupling during migration.
+                    setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                    setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
                 self.sys_block.add(mdl)
 
         # Populating HVDC init guess (similar to VSCs)
@@ -424,10 +475,23 @@ class RmsProblemPhasor(RmsProblemTemplate):
 
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
-                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
-                setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
-                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
+                if len(mdl.dynamic_model_contract.rms_terminal_power_contributions) > 0:
+                    assemble_rms_terminal_power_contributions(
+                        model=mdl,
+                        bus_from_index=f,
+                        bus_to_index=t,
+                        bus_from_is_dc=elm.bus_from.is_dc,
+                        bus_to_is_dc=elm.bus_to.is_dc,
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                    )
+                else:
+                    setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                    setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                    setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
+                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
                 self.sys_block.add(mdl)
 
         # initialize injections
@@ -596,11 +660,31 @@ class RmsProblemPhasor(RmsProblemTemplate):
                         self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Q, Sdev.imag)
 
                 k = bus_dict[elm.bus]
-                # Phasor formulation: use current balance
-                if VarPowerFlowReferenceType.Ir in elm.rms_model.external_mapping:
-                    setIr(Ir, Ir_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Ir))
-                if VarPowerFlowReferenceType.Ii in elm.rms_model.external_mapping:
-                    setIi(Ii, Ii_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Ii))
+                if len(elm.rms_model.dynamic_model_contract.rms_terminal_power_contributions) > 0:
+                    assemble_rms_terminal_power_contributions(
+                        model=elm.rms_model,
+                        bus_from_index=None,
+                        bus_to_index=None,
+                        bus_from_is_dc=None,
+                        bus_to_is_dc=None,
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                        bus_index=k,
+                        bus_is_dc=elm.bus.is_dc,
+                    )
+                else:
+                    # Legacy phasor models contribute their selected current
+                    # outputs directly until they declare a power terminal.
+                    if VarPowerFlowReferenceType.Ir in elm.rms_model.external_mapping:
+                        setIr(Ir, Ir_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Ir))
+                    else:
+                        pass
+                    if VarPowerFlowReferenceType.Ii in elm.rms_model.external_mapping:
+                        setIi(Ii, Ii_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Ii))
+                    else:
+                        pass
 
                 if self.options.initialization_method == RmsInitializationMethod.Explicit:
 
@@ -660,12 +744,40 @@ class RmsProblemPhasor(RmsProblemTemplate):
         for i, elm in enumerate(self.grid.buses):
             mdl = block_deep_copy(elm.rms_model, grid.var_factory)
             if len(mdl.algebraic_eqs) == 0:
-                if not Ir_used[i] and not Ii_used[i]:
-                    self.logger.add_error("Isolated bus", value=i)
+                if elm.is_dc:
+                    # DC buses have one voltage coordinate, so their physical
+                    # terminal-power contract produces one active-power balance.
+                    if Q_used[i]:
+                        raise ValueError("Reactive-power balance found on a DC bus")
+                    else:
+                        if P_used[i]:
+                            self._algebraic_eqs.append(P[i])
+                        else:
+                            self.logger.add_error("Isolated bus", value=i)
                 else:
-                    # Phasor formulation uses current balance equations
-                    self._algebraic_eqs.append(Ir[i])
-                    self._algebraic_eqs.append(Ii[i])
+                    # Convert device terminal powers before emitting the two
+                    # real-valued Kirchhoff current equations of an AC bus.
+                    convert_rms_ac_power_balance_to_current_balance(
+                        bus_index=i,
+                        voltage_real=elm.rms_model.E(VarPowerFlowReferenceType.Vr),
+                        voltage_imaginary=elm.rms_model.E(VarPowerFlowReferenceType.Vi),
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                        real_current_balance=Ir,
+                        real_current_balance_used=Ir_used,
+                        imaginary_current_balance=Ii,
+                        imaginary_current_balance_used=Ii_used,
+                    )
+                    if not Ir_used[i] and not Ii_used[i]:
+                        self.logger.add_error("Isolated bus", value=i)
+                    else:
+                        # Phasor AC buses own real and imaginary KCL residuals.
+                        self._algebraic_eqs.append(Ir[i])
+                        self._algebraic_eqs.append(Ii[i])
+            else:
+                pass
 
         # self._variable_parameters: List[Var] = list()
         # self._event_parameters_eqs: List[Expr | Const] = list()

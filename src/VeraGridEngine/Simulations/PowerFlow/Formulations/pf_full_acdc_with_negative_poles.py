@@ -6,7 +6,7 @@ import time
 from typing import Tuple, List, Dict, Callable, Union
 import numpy as np
 from numba import njit
-from scipy.sparse import lil_matrix, isspmatrix_csc
+from scipy.sparse import csc_matrix, isspmatrix_csc
 from VeraGridEngine.Topology.admittance_matrices import compute_admittances_fast
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
@@ -14,7 +14,7 @@ from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 import VeraGridEngine.Simulations.Derivatives.csc_derivatives as deriv
 from VeraGridEngine.Simulations.Derivatives.csc_derivatives import dSbus_dV_with_I0_numba_sparse_csc
 from VeraGridEngine.Utils.NumericalMethods.common import find_closest_number, make_complex
-from VeraGridEngine.Utils.Sparse.csc2 import (CSC, CxCSC, scipy_to_mat, sp_slice, csc_stack_2d_ff)
+from VeraGridEngine.Utils.Sparse.csc2 import (CSC, CxCSC, mat_to_scipy, scipy_to_mat, sp_slice, csc_stack_2d_ff)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls import (control_q_for_generalized_method,
                                                                                      DiscreteShuntControlState,
                                                                                      QvDroopControlState,
@@ -178,6 +178,7 @@ def adv_jacobian(nbus: int,
 
     # -------- ROW 1 + ROW 2 (Sbus): bus-bus derivatives (including I0 Norton current) --------
     dSy_dVm_x, dSy_dVa_x = dSbus_dV_with_I0_numba_sparse_csc(Yx, Yp, Yi, V, Vm, I0)
+
     dS_dVm = CxCSC(nbus, nbus, len(dSy_dVm_x), False).set(Yi, Yp, dSy_dVm_x)
     dS_dVa = CxCSC(nbus, nbus, len(dSy_dVa_x), False).set(Yi, Yp, dSy_dVa_x)
 
@@ -618,33 +619,81 @@ def calculate_vsc_currents(nbus: int,
     return Iconv
 
 
-def calc_autodiff_jacobian(func: Callable[[Vec], Vec], x: Vec, h=1e-8) -> CSC:
+def calc_autodiff_jacobian(func: Callable[[Vec], Vec],
+                           x: Vec,
+                           sparsity: CSC,
+                           h: float = 1e-8) -> CSC:
     """
-    Compute the Jacobian matrix of `func` at `x` using finite differences.
+    Compute a sparse finite-difference Jacobian using column coloring.
+
+    Columns with disjoint residual support are perturbed together. The values
+    remain finite differences of ``func``; the supplied analytic matrix is
+    used only as the structural sparsity contract.
 
     :param func: function accepting a vector x and args, and returning either a vector or a
                  tuple where the first argument is a vector and the second.
     :param x: Point at which to evaluate the Jacobian (numpy array).
+    :param sparsity: Structural Jacobian pattern at the current formulation state.
     :param h: Small step for finite difference.
     :return: Jacobian matrix as a CSC matrix.
     """
-    nx = len(x)
-    f0 = func(x)
+    nx: int = len(x)
+    f0: Vec = func(x)
+    n_rows: int = len(f0)
+    structural_matrix: csc_matrix = mat_to_scipy(sparsity).copy()
+    structural_matrix.data = np.ones(structural_matrix.nnz, dtype=float)
+    conflict_matrix: csc_matrix = (structural_matrix.T @ structural_matrix).tocsc()
+    column_colors: IntVec = np.full(nx, -1, dtype=int)
+    used_color_stamp: IntVec = np.full(nx, -1, dtype=int)
+    color_count: int = 0
 
-    n_rows = len(f0)
+    # Alex review required: accelerate the static PF finite-difference Jacobian without changing its equations.
+    column_index: int
+    for column_index in range(nx):
+        data_index: int
+        for data_index in range(
+                conflict_matrix.indptr[column_index],
+                conflict_matrix.indptr[column_index + 1]):
+            conflicting_column: int = conflict_matrix.indices[data_index]
+            conflicting_color: int = column_colors[conflicting_column]
+            if conflicting_color >= 0:
+                used_color_stamp[conflicting_color] = column_index
+            else:
+                pass
 
-    jac = lil_matrix((n_rows, nx))
+        selected_color: int = 0
+        while selected_color < color_count and used_color_stamp[selected_color] == column_index:
+            selected_color += 1
+        if selected_color == color_count:
+            color_count += 1
+        else:
+            pass
+        column_colors[column_index] = selected_color
 
-    for j in range(nx):
-        x_plus_h = np.copy(x)
-        x_plus_h[j] += h
-        f_plus_h = func(x_plus_h)
-        row = (f_plus_h - f0) / h
-        for i in range(n_rows):
-            if row[i] != 0.0:
-                jac[i, j] = row[i]
+    jacobian_data: Vec = np.zeros(structural_matrix.nnz, dtype=float)
+    color_index: int
+    for color_index in range(color_count):
+        color_columns: IntVec = np.where(column_colors == color_index)[0]
+        x_plus_h: Vec = np.copy(x)
+        x_plus_h[color_columns] += h
+        f_plus_h: Vec = func(x_plus_h)
+        finite_difference: Vec = (f_plus_h - f0) / h
 
-    return scipy_to_mat(jac.tocsc())
+        for column_index in color_columns:
+            column_start: int = structural_matrix.indptr[column_index]
+            column_end: int = structural_matrix.indptr[column_index + 1]
+            structural_rows: IntVec = structural_matrix.indices[column_start:column_end]
+            jacobian_data[column_start:column_end] = finite_difference[structural_rows]
+
+    jacobian: csc_matrix = csc_matrix(
+        (
+            jacobian_data,
+            structural_matrix.indices.copy(),
+            structural_matrix.indptr.copy(),
+        ),
+        shape=(n_rows, nx),
+    )
+    return scipy_to_mat(jacobian)
 
 
 class PfAcDcWithNegativePoles(PfFormulationTemplate):
@@ -1207,8 +1256,14 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
 
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
+                        # Grid-forming voltage control fixes Vm, while the
+                        # converter's unknown Qt still needs the nodal Q row.
+                        self.is_q_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
                         self.is_va_controlled[control2_bus_device] = True
+                        # Grid-forming angle control fixes Va, while the
+                        # converter's unknown Pt still needs the nodal P row.
+                        self.is_p_controlled[control2_bus_device] = True
                     u_vsc_pfp.append(k)
 
                     if self.nc.vsc_data.F_dcn[k] > -1:
@@ -1314,8 +1369,14 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
 
                     if control1_bus_device > -1:
                         self.is_va_controlled[control1_bus_device] = True
+                        # Grid-forming angle control fixes Va, while the
+                        # converter's unknown Pt still needs the nodal P row.
+                        self.is_p_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
+                        # Grid-forming voltage control fixes Vm, while the
+                        # converter's unknown Qt still needs the nodal Q row.
+                        self.is_q_controlled[control2_bus_device] = True
                     u_vsc_pfp.append(k)
 
                     if self.nc.vsc_data.F_dcn[k] > -1:
@@ -3058,8 +3119,11 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
             autodiff = self.use_autodiff_jacobian
 
         if autodiff:
+            # TODO: SANPEN: And what if the Jacobian is not complete because we haven't computed the derivatives and we want the autodiff for debugging? Again, AI Slop
+            sparsity: CSC = self.Jacobian(autodiff=False)
             J: CSC = calc_autodiff_jacobian(func=self.compute_f,
                                             x=self.var2x(),
+                                            sparsity=sparsity,
                                             h=1e-7)
             return J
         else:

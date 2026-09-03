@@ -317,21 +317,18 @@
             <span class="n">phi_v_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
             <span class="n">Ipk_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
             <span class="n">phi_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-            <span class="n">P_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-            <span class="n">Q_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-            <span class="n">V_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+            <span class="n">P_ref</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span>
+            <span class="n">Q_ref</span><span class="p">:</span> <span class="n">Q</span><span class="p">,</span>
+            <span class="n">V_ref</span><span class="p">:</span> <span class="n">vq_f</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
             <span class="n">theta</span><span class="p">:</span> <span class="n">phi_v_ref</span> <span class="o">-</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
             <span class="n">P</span><span class="p">:</span> <span class="n">p_expr</span><span class="p">,</span>
             <span class="n">Q</span><span class="p">:</span> <span class="n">q_expr</span><span class="p">,</span>
-            <span class="n">P_ref</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span>
-            <span class="n">Q_ref</span><span class="p">:</span> <span class="n">Q</span><span class="p">,</span>
             <span class="n">P_lp</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span>
             <span class="n">Q_lp</span><span class="p">:</span> <span class="n">Q</span><span class="p">,</span>
             <span class="n">omega</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
             <span class="n">V</span><span class="p">:</span> <span class="n">vq_f</span><span class="p">,</span>
-            <span class="n">V_ref</span><span class="p">:</span> <span class="n">vq_f</span><span class="p">,</span>
             <span class="n">vd_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
             <span class="n">vq_ref</span><span class="p">:</span> <span class="n">V</span><span class="p">,</span>
             <span class="n">id_ref</span><span class="p">:</span> <span class="n">id_c</span><span class="p">,</span>

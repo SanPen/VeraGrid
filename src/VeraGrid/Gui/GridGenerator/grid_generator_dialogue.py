@@ -34,6 +34,16 @@ class GridGeneratorGUI(QtWidgets.QDialog):
         self.ui.applyButton.clicked.connect(self.apply)
         self.ui.previewButton.clicked.connect(self.preview)
 
+    def done(self, result: int) -> None:
+        """
+        Release plot resources before the modal dialog closes.
+
+        :param result: Qt dialog result code.
+        :return: None.
+        """
+        self.ui.plotwidget.dispose()
+        QtWidgets.QDialog.done(self, result)
+
     def msg(self, text: str, title: str | None = None) -> None:
         """
         Message box

@@ -81,8 +81,8 @@ class Wire(EditableDevice):
                  max_current: float = 1.0,
                  stranding: str = "",
                  material: str = "",
-                 diameter: float = 0.0,
-                 diameter_internal: float = 0.0,
+                 diameter: float = 1.0,
+                 diameter_internal: float = 0.01,
                  is_tube: bool = False,
                  code: str = ""):
         """

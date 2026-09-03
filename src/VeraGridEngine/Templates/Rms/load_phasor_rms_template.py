@@ -52,4 +52,5 @@ def get_load_phasor_rms_template(vfactory: VarFactory, name="Load phasor rms tem
 
     templ.block.in_vars = inputs
 
+    templ.comment = 'Load RMS phasor model'
     return templ

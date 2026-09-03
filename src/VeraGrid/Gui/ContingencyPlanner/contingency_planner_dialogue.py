@@ -34,6 +34,7 @@ class ContingencyPlannerGUI(QtWidgets.QDialog):
         self.contingency_branch_types = [DeviceType.LineDevice,
                                          DeviceType.DCLineDevice,
                                          DeviceType.Transformer2WDevice,
+                                         DeviceType.WindingDevice,
                                          DeviceType.VscDevice,
                                          DeviceType.UpfcDevice]
 

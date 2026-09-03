@@ -5,6 +5,7 @@
 
 
 from typing import Any, Dict, Tuple, List
+from io import TextIOWrapper
 import json
 import numpy as np
 
@@ -24,8 +25,10 @@ def parse_rawx(file_name: str, logger: Logger = Logger()) -> PsseCircuit:
     :return: PsseCircuit
     """
 
-    # read json file into dictionary
-    data = json.load(open(file_name))
+    # Alex review required: this changes static PSS/E RAWX import resource handling.
+    rawx_file: TextIOWrapper
+    with open(file_name) as rawx_file:
+        data = json.load(rawx_file)
 
     # get structures
     psse_grid = PsseCircuit()

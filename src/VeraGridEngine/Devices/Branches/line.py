@@ -50,12 +50,15 @@ class Line(BranchParent):
         '_R',
         '_X',
         '_B',
+        '_G',
         '_R0',
         '_X0',
         '_B0',
+        '_G0',
         '_R2',
         '_X2',
         '_B2',
+        '_G2',
         '_ys',
         '_ysh',
         'temp_base',
@@ -104,6 +107,13 @@ class Line(BranchParent):
             dyn_ref=ParamPowerFlowReferenceType.bsh,
         ),
         GCProp(
+            prop_name='G',
+            units='p.u.',
+            tpe=float,
+            definition='Total positive sequence shunt conductance.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
             prop_name='R0',
             units='p.u.',
             tpe=float,
@@ -125,6 +135,13 @@ class Line(BranchParent):
             cat=[PrpCat.SC, PrpCat.PF3],
         ),
         GCProp(
+            prop_name='G0',
+            units='p.u.',
+            tpe=float,
+            definition='Total zero sequence shunt conductance.',
+            cat=[PrpCat.SC, PrpCat.PF3],
+        ),
+        GCProp(
             prop_name='R2',
             units='p.u.',
             tpe=float,
@@ -143,6 +160,13 @@ class Line(BranchParent):
             units='p.u.',
             tpe=float,
             definition='Total negative sequence shunt susceptance.',
+            cat=[PrpCat.SC, PrpCat.PF3],
+        ),
+        GCProp(
+            prop_name='G2',
+            units='p.u.',
+            tpe=float,
+            definition='Total negative sequence shunt conductance.',
             cat=[PrpCat.SC, PrpCat.PF3],
         ),
         GCProp(
@@ -232,12 +256,12 @@ class Line(BranchParent):
     )
 
     def __init__(self,
-                 bus_from: Bus = None,
-                 bus_to: Bus = None,
+                 bus_from: Bus | None = None,
+                 bus_to: Bus | None = None,
                  name='Line',
                  idtag=None,
                  code='',
-                 r=1e-20, x=0.00001, b=1e-20,
+                 r=1e-20, x=0.00001, b=1e-20, g: float = 0.0,
                  design_rate: float = 9999.0,
                  rate=9999.0,
                  active=True,
@@ -257,8 +281,8 @@ class Line(BranchParent):
                  protection_rating_factor: float = 1.4,
                  contingency_enabled=True,
                  monitor_loading=True,
-                 r0=1e-20, x0=1e-20, b0=1e-20,
-                 r2=1e-20, x2=1e-20, b2=1e-20,
+                 r0=1e-20, x0=1e-20, b0=1e-20, g0: float = 0.0,
+                 r2=1e-20, x2=1e-20, b2=1e-20, g2: float = 0.0,
                  capex=0,
                  opex=0,
                  circuit_idx: int = 1,
@@ -273,6 +297,7 @@ class Line(BranchParent):
         :param r: Branch resistance in per unit
         :param x: Branch reactance in per unit
         :param b: Branch shunt susceptance in per unit
+        :param g: Branch shunt conductance in per unit
         :param design_rate: Design rate (MVA)
         :param rate: Branch rate in MVA
         :param active: Is the branch active?
@@ -295,9 +320,11 @@ class Line(BranchParent):
         :param r0: zero-sequence resistence (p.u.)
         :param x0: zero-sequence reactance (p.u.)
         :param b0: zero-sequence susceptance (p.u.)
+        :param g0: zero-sequence conductance (p.u.)
         :param r2: negative-sequence resistence (p.u.)
         :param x2: negative-sequence reactance (p.u.)
         :param b2: negative-sequence susceptance (p.u.)
+        :param g2: negative-sequence conductance (p.u.)
         :param capex: Cost of investment (e/MW)
         :param opex: Cost of operation (e/MWh)
         :param build_status: build status (now time)
@@ -343,14 +370,17 @@ class Line(BranchParent):
         self._R = float(r)
         self._X = float(x)
         self._B = float(b)
+        self._G = float(g)
 
         self._R0 = float(r0)
         self._X0 = float(x0)
         self._B0 = float(b0)
+        self._G0 = float(g0)
 
         self._R2 = float(r2)
         self._X2 = float(x2)
         self._B2 = float(b2)
+        self._G2 = float(g2)
 
         self._ys = AdmittanceMatrix()
         self._ysh = AdmittanceMatrix()
@@ -393,6 +423,23 @@ class Line(BranchParent):
         self._B = float(value)
 
     @property
+    def G(self) -> float:
+        """Return total positive-sequence shunt conductance.
+
+        :return: Conductance in p.u.
+        """
+        return self._G
+
+    @G.setter
+    def G(self, value: float) -> None:
+        """Set total positive-sequence shunt conductance.
+
+        :param value: Conductance in p.u.
+        :return: None.
+        """
+        self._G = float(value)
+
+    @property
     def R0(self):
         return self._R0
 
@@ -417,6 +464,23 @@ class Line(BranchParent):
         self._B0 = float(value)
 
     @property
+    def G0(self) -> float:
+        """Return total zero-sequence shunt conductance.
+
+        :return: Conductance in p.u.
+        """
+        return self._G0
+
+    @G0.setter
+    def G0(self, value: float) -> None:
+        """Set total zero-sequence shunt conductance.
+
+        :param value: Conductance in p.u.
+        :return: None.
+        """
+        self._G0 = float(value)
+
+    @property
     def R2(self):
         return self._R2
 
@@ -439,6 +503,23 @@ class Line(BranchParent):
     @B2.setter
     def B2(self, value):
         self._B2 = float(value)
+
+    @property
+    def G2(self) -> float:
+        """Return total negative-sequence shunt conductance.
+
+        :return: Conductance in p.u.
+        """
+        return self._G2
+
+    @G2.setter
+    def G2(self, value: float) -> None:
+        """Set total negative-sequence shunt conductance.
+
+        :param value: Conductance in p.u.
+        :return: None.
+        """
+        self._G2 = float(value)
 
     @property
     def circuit_idx(self):
@@ -514,12 +595,15 @@ class Line(BranchParent):
                     self.R *= factor
                     self.X *= factor
                     self.B *= factor
+                    self.G *= factor
                     self.R0 *= factor
                     self.X0 *= factor
                     self.B0 *= factor
+                    self.G0 *= factor
                     self.R2 *= factor
                     self.X2 *= factor
                     self.B2 *= factor
+                    self.G2 *= factor
 
                 # set the value
                 self._length = val
@@ -592,17 +676,29 @@ class Line(BranchParent):
         else:
             raise ValueError(f'{val} is not a AdmittanceMatrix')
 
-    def change_base(self, Sbase_old: float, Sbase_new: float):
+    def change_base(self, Sbase_old: float, Sbase_new: float) -> None:
         """
         Change the impedance base
         :param Sbase_old: old base (MVA)
         :param Sbase_new: new base (MVA)
+        :return: None.
         """
-        b = Sbase_new / Sbase_old
-
-        self.R *= b
-        self.X *= b
-        self.B *= b
+        has_valid_base_change: bool = (
+            np.isfinite(Sbase_old)
+            and Sbase_old > 0.0
+            and np.isfinite(Sbase_new)
+            and Sbase_new > 0.0
+        )
+        if has_valid_base_change:
+            b: float = Sbase_new / Sbase_old
+            self.R *= b
+            self.X *= b
+            self.B *= b
+            self.G *= b
+            self.G0 *= b
+            self.G2 *= b
+        else:
+            pass
 
     def get_weight(self) -> float:
         """
@@ -699,9 +795,11 @@ class Line(BranchParent):
                                 R=self.R / self.length,
                                 X=self.X / self.length,
                                 B=self.B / self.length,
+                                G=self.G / self.length,
                                 R0=self.R0 / self.length,
                                 X0=self.X0 / self.length,
-                                B0=self.B0 / self.length)
+                                B0=self.B0 / self.length,
+                                G0=self.G0 / self.length)
 
     # def get_save_data(self) -> List[str]:
     #     """
@@ -839,9 +937,9 @@ class Line(BranchParent):
             return 0.0
         else:
             # TODO: consider using line.ys and line.ysh instead
-            # Physical Parameters from Carson's
-            Z = self.template.z_nabc  # from Carson ohm/km
-            Y = self.template.y_nabc  # from Carson ohm/km
+            # Physical parameters per unit length
+            Z = self.template.z_nabc  # Ohm/km
+            Y = self.template.y_nabc  # S/km
 
             Z_phys_m = Z / 1e3  # ohm/m
             Y_phys_m = Y / 1e3  # S/m

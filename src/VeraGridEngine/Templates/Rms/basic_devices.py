@@ -114,6 +114,7 @@ def get_pll_transform_rms(vfactory: VarFactory, name: str = "Pll_transform_rms")
     templ.block.out_vars = [vd, vq, theta, omega]
     templ.block.name = "Phase locked loop"
 
+    templ.comment = 'Reusable VSC phase-locked-loop RMS control block'
     return templ
 
 
@@ -184,6 +185,7 @@ def get_pi_current_controller(vfactory: VarFactory, name: str = "current_ctrl_iq
     templ.block = block
 
 
+    templ.comment = 'Reusable VSC PI current-controller RMS block'
     return templ
 
 
@@ -276,6 +278,7 @@ def get_pi_power_controller(vfactory: VarFactory, name: str = "power_ctrl") -> R
 
     templ.block = block
 
+    templ.comment = 'Reusable VSC PI power-controller RMS block'
     return templ
 
 def get_gfl_electrical_block(vfactory: VarFactory, name: str = "gfl_electrical_eqs") -> RmsModelTemplate:
@@ -355,6 +358,7 @@ def get_gfl_electrical_block(vfactory: VarFactory, name: str = "gfl_electrical_e
 
     templ.block = electrical_block
 
+    templ.comment = 'Grid-following converter electrical-equations RMS block'
     return templ
 
 
@@ -411,6 +415,7 @@ def get_gfl_converter_bus_block(vfactory: VarFactory, name: str = "gfl_converter
 
     templ.block = block
 
+    templ.comment = 'Grid-following converter AC-bus interface RMS block'
     return templ
 
 
@@ -460,6 +465,7 @@ def get_gfl_voltage_control_electrical_block(vfactory: VarFactory,
 
     templ.block = block
 
+    templ.comment = 'Grid-following converter voltage-control electrical RMS block'
     return templ
 
 
@@ -502,6 +508,7 @@ def get_gfl_line_current_measurement_block(vfactory: VarFactory,
 
     templ.block = block
 
+    templ.comment = 'Grid-following converter line-current measurement RMS block'
     return templ
 
 
@@ -567,6 +574,7 @@ def get_pi_power_controller_from_line(vfactory: VarFactory, name: str = "power_c
 
     templ.block = block
 
+    templ.comment = 'Grid-following converter line power-controller RMS block'
     return templ
 
 
@@ -636,6 +644,7 @@ def get_gfl_losses_from_line_block(vfactory: VarFactory, name: str = "gfl_losses
 
     templ.block = block
 
+    templ.comment = 'Grid-following converter line-loss RMS block'
     return templ
 
 def get_gfl_current_limiter_block(vfactory: VarFactory, name: str = "electrical") -> RmsModelTemplate:
@@ -680,6 +689,7 @@ def get_gfl_current_limiter_block(vfactory: VarFactory, name: str = "electrical"
     current_limiter_block.name = "current limiters"
     templ.block = current_limiter_block
 
+    templ.comment = 'Grid-following converter current-limiter RMS block'
     return templ
 
 def get_gfl_losses_block(vfactory: VarFactory, name: str = "gfl_losses") -> RmsModelTemplate:
@@ -757,6 +767,7 @@ def get_gfl_losses_block(vfactory: VarFactory, name: str = "gfl_losses") -> RmsM
 
     templ.block = losses_block
 
+    templ.comment = 'Grid-following converter loss RMS block'
     return templ
 
 
@@ -798,6 +809,7 @@ def get_gfl_converter_rms(vfactory: VarFactory, name: str = "current_ctrl_iq") -
     block.out_vars = out_vars
     templ.block = block
 
+    templ.comment = 'Reusable grid-following converter RMS control block'
     return templ
 
 
@@ -857,4 +869,5 @@ def get_gfl_converter_rms_electrical(vfactory: VarFactory,
 
     templ.block = block
 
+    templ.comment = 'Grid-following converter electrical RMS block'
     return templ

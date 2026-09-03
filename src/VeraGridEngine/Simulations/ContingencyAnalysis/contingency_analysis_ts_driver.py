@@ -549,6 +549,7 @@ class ContingencyAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
         Run contingency analysis time series
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         if self.engine == EngineType.VeraGrid:
 

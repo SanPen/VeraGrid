@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_dpr &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_dpr &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -472,19 +472,38 @@
 <span class="sd">    :return: Power-flow mismatch norm.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Scalc</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="n">q_idx</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">pq</span><span class="p">,</span> <span class="n">pqv</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dpr_voltage_is_valid</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">):</span>
+        <span class="n">Scalc</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">compute_power</span><span class="p">(</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+        <span class="n">q_idx</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">pq</span><span class="p">,</span> <span class="n">pqv</span><span class="p">]</span>
 
-    <span class="c1"># The mismatch must match the algebraic model solved by the coefficient matrix:</span>
-    <span class="c1"># active power at every non-slack bus, reactive power at PQ/PVQ buses, and PVQ voltage magnitude constraints.</span>
-    <span class="n">fx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span>
-        <span class="p">(</span><span class="n">Scalc</span> <span class="o">-</span> <span class="n">S0</span><span class="p">)[</span><span class="n">no_slack</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
-        <span class="p">(</span><span class="n">Scalc</span> <span class="o">-</span> <span class="n">S0</span><span class="p">)[</span><span class="n">q_idx</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">pqv</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Vset</span><span class="p">[</span><span class="n">pqv</span><span class="p">])</span>
-    <span class="p">]</span>
-    <span class="n">norm_f</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">compute_fx_error</span><span class="p">(</span><span class="n">fx</span><span class="p">))</span>
+        <span class="c1"># The mismatch must match the algebraic model solved by the coefficient matrix:</span>
+        <span class="c1"># active power at every non-slack bus, reactive power at PQ/PVQ buses, and PVQ voltage magnitude constraints.</span>
+        <span class="n">fx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">Scalc</span> <span class="o">-</span> <span class="n">S0</span><span class="p">)[</span><span class="n">no_slack</span><span class="p">]</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">Scalc</span> <span class="o">-</span> <span class="n">S0</span><span class="p">)[</span><span class="n">q_idx</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">pqv</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Vset</span><span class="p">[</span><span class="n">pqv</span><span class="p">])</span>
+        <span class="p">]</span>
+        <span class="n">norm_f</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">compute_fx_error</span><span class="p">(</span><span class="n">fx</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">norm_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
     <span class="k">return</span> <span class="n">norm_f</span></div>
+
+
+
+<div class="viewcode-block" id="dpr_voltage_is_valid">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.NumericalMethods.html#VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_dpr.dpr_voltage_is_valid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dpr_voltage_is_valid</span><span class="p">(</span><span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that a DPR voltage candidate is numerically usable.</span>
+
+<span class="sd">    :param V: Full voltage vector candidate.</span>
+<span class="sd">    :return: True if the voltage can safely be used in sparse nonlinear calculations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">V</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e6</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">valid</span></div>
 
 
 
@@ -774,7 +793,9 @@
                                                     <span class="n">pq</span><span class="o">=</span><span class="n">pq</span><span class="p">,</span>
                                                     <span class="n">pqv</span><span class="o">=</span><span class="n">pqv</span><span class="p">,</span>
                                                     <span class="n">Vset</span><span class="o">=</span><span class="n">Vset</span><span class="p">)</span>
-            <span class="n">scaled_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">scaled_norm</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dpr_angle_guard</span><span class="p">(</span><span class="n">Vscaled</span><span class="p">,</span> <span class="n">sl</span><span class="p">,</span> <span class="n">no_slack</span><span class="p">))</span>
+            <span class="n">scaled_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">scaled_norm</span><span class="p">)</span>
+                                   <span class="ow">and</span> <span class="n">dpr_voltage_is_valid</span><span class="p">(</span><span class="n">V</span><span class="o">=</span><span class="n">Vscaled</span><span class="p">)</span>
+                                   <span class="ow">and</span> <span class="n">dpr_angle_guard</span><span class="p">(</span><span class="n">Vscaled</span><span class="p">,</span> <span class="n">sl</span><span class="p">,</span> <span class="n">no_slack</span><span class="p">))</span>
 
             <span class="k">if</span> <span class="n">scaled_ok</span> <span class="ow">and</span> <span class="n">scaled_norm</span> <span class="o">&lt;</span> <span class="n">candidate_norm</span><span class="p">:</span>
                 <span class="n">Vcandidate</span> <span class="o">=</span> <span class="n">Vscaled</span>

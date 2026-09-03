@@ -1,4 +1,45 @@
 from VeraGrid.Gui.Diagrams.MapWidget.Tiles.tiles import Tiles
+from PySide6 import QtCore
+from PySide6 import QtWidgets
+from PySide6.QtGui import QColor, QImage, QPixmap
+
+
+def ensure_qapplication() -> QtWidgets.QApplication:
+    """
+    Create the Qt application required by QPixmap when the test runs alone.
+
+    :return: Existing or newly created QApplication.
+    """
+    app: QtWidgets.QApplication | None = QtWidgets.QApplication.instance()
+    if app is None:
+        app = QtWidgets.QApplication(list(("test-map-tiles-cache",)))
+    else:
+        pass
+
+    return app
+
+
+def valid_png_bytes() -> bytes:
+    """
+    Return valid one-pixel PNG bytes for QPixmap decoding.
+
+    :return: PNG byte payload.
+    """
+    image: QImage = QImage(1, 1, QImage.Format.Format_ARGB32)
+    image.fill(QColor("black"))
+
+    payload: QtCore.QByteArray = QtCore.QByteArray()
+    buffer: QtCore.QBuffer = QtCore.QBuffer(payload)
+    buffer.open(QtCore.QIODevice.OpenModeFlag.WriteOnly)
+    image_saved: bool = image.save(buffer, "PNG")
+    buffer.close()
+
+    if image_saved:
+        data: bytes = bytes(payload)
+    else:
+        data = b""
+
+    return data
 
 
 class _TileCacheErrorStub(dict):
@@ -60,13 +101,14 @@ class _TileCacheSuccessStub(dict):
 
 
 class _TilesStub:
-    __slots__ = ("cache", "queued_requests", "callback", "callback_calls")
+    __slots__ = ("cache", "queued_requests", "callback", "callback_calls", "error_tile")
 
-    def __init__(self, cache: dict) -> None:
+    def __init__(self, cache: dict, error_tile: object) -> None:
         self.cache = cache
         self.queued_requests: dict[tuple[int, float, float], bool] = {(3, 4.0, 5.0): True}
         self.callback_calls: list[tuple[int, float, float, object, bool]] = list()
         self.callback = self.record_callback
+        self.error_tile = error_tile
 
     def record_callback(self, level: int, x: float, y: float, image: object, available: bool) -> None:
         """
@@ -86,11 +128,12 @@ def test_error_tiles_do_not_use_write_through_cache_path() -> None:
     """
     Error tiles should stay out of the on-disk cache and update only the in-memory cache state.
     """
+    ensure_qapplication()
     image: object = object()
     cache: _TileCacheErrorStub = _TileCacheErrorStub()
-    stub: _TilesStub = _TilesStub(cache=cache)
+    stub: _TilesStub = _TilesStub(cache=cache, error_tile=image)
 
-    Tiles.tile_is_available(stub, level=3, x=4.0, y=5.0, image=image, error=True)
+    Tiles.tile_is_available(stub, level=3, x=4.0, y=5.0, image_data=b"", error=True)
 
     assert cache[(3, 4.0, 5.0)] is image
     assert cache.setitem_calls == 0
@@ -104,12 +147,16 @@ def test_successful_tiles_keep_normal_write_through_cache_path() -> None:
     """
     Successful tiles should still use the regular write-through cache update.
     """
-    image: object = object()
+    ensure_qapplication()
+    image: QPixmap = QPixmap()
     cache: _TileCacheSuccessStub = _TileCacheSuccessStub()
-    stub: _TilesStub = _TilesStub(cache=cache)
+    stub: _TilesStub = _TilesStub(cache=cache, error_tile=image)
 
-    Tiles.tile_is_available(stub, level=3, x=4.0, y=5.0, image=image, error=False)
+    Tiles.tile_is_available(stub, level=3, x=4.0, y=5.0, image_data=valid_png_bytes(), error=False)
 
-    assert cache.set_calls == [((3, 4.0, 5.0), image)]
+    assert len(cache.set_calls) == 1
+    assert cache.set_calls[0][0] == (3, 4.0, 5.0)
+    assert cache.set_calls[0][1] is not image
+    assert cache.set_calls[0][1].isNull() is False
     assert stub.queued_requests == dict()
-    assert stub.callback_calls == [(3, 4.0, 5.0, image, True)]
+    assert stub.callback_calls == [(3, 4.0, 5.0, cache.set_calls[0][1], True)]

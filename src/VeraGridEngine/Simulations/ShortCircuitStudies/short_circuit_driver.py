@@ -443,6 +443,7 @@ class ShortCircuitDriver(DriverTemplate):
         @return:
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self._is_running = True
         if self.options.mid_line_fault:
 

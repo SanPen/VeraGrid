@@ -222,6 +222,7 @@ class PowerFlowTimeSeriesDriver3Ph(TimeSeriesDriverTemplate):
         :return: None.
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         # The driver can only keep the GSLV engine when the wrapper is available.
         if self.engine == EngineType.GSLV and not GSLV_AVAILABLE:

@@ -111,3 +111,6 @@ def test_object_smart_search_name_fallback_without_operators() -> None:
 
     filter_engine.filter("alp")
     assert list(filter_engine.filtered_indices) == [0]
+
+    filter_engine.filter("Alpha")
+    assert list(filter_engine.filtered_indices) == [0]

@@ -6,7 +6,7 @@ import time
 from typing import Tuple, List, Dict, Callable
 import numpy as np
 from numba import njit
-from scipy.sparse import lil_matrix, isspmatrix_csc
+from scipy.sparse import csc_matrix, lil_matrix, isspmatrix_csc, vstack
 from VeraGridEngine.Topology.admittance_matrices import compute_admittances_fast
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
@@ -14,7 +14,7 @@ from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 import VeraGridEngine.Simulations.Derivatives.csc_derivatives as deriv
 from VeraGridEngine.Simulations.Derivatives.csc_derivatives import dSbus_dV_with_I0_numba_sparse_csc
 from VeraGridEngine.Utils.NumericalMethods.common import find_closest_number, make_complex
-from VeraGridEngine.Utils.Sparse.csc2 import (CSC, CxCSC, scipy_to_mat, sp_slice, csc_stack_2d_ff)
+from VeraGridEngine.Utils.Sparse.csc2 import (CSC, CxCSC, mat_to_scipy, scipy_to_mat, sp_slice, csc_stack_2d_ff)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls import (control_q_for_generalized_method,
                                                                                      DiscreteShuntControlState,
                                                                                      QvDroopControlState,
@@ -215,9 +215,12 @@ def adv_jacobian(nbus: int,
 
     # -------- ROW 4 (current balance VSCs) ---------
     dIvsc_dVa = CSC(nvsc_has_dc_n, len(i_u_va), 0, False)  # fully empty
-    dIvsc_dVm = deriv.dIvsc_dVm_csc(k_vsc_has_dc_n, nbus, i_u_vm, Pfp_vsc, Pfn_vsc, Fdcp_vsc, Fdcn_vsc)
-    dIvsc_dPfpvsc = deriv.dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, Fdcn_vsc)
-    dIvsc_dPfnvsc = deriv.dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, Fdcp_vsc)
+    # Alex review required: compile the static SC bipolar-current derivative with its voltage-angle input.
+    dIvsc_dVm = deriv.dIvsc_dVm_csc(
+        k_vsc_has_dc_n, nbus, i_u_vm, Pfp_vsc, Pfn_vsc, Va, Fdcp_vsc, Fdcn_vsc
+    )
+    dIvsc_dPfpvsc = deriv.dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, Va, Fdcn_vsc)
+    dIvsc_dPfnvsc = deriv.dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, Va, Fdcp_vsc)
     dIvsc_dPtvsc = CSC(nvsc_has_dc_n, len(u_vsc_pt), 0, False)  # fully empty
     dIvsc_dQtvsc = CSC(nvsc_has_dc_n, len(u_vsc_qt), 0, False)  # fully empty
     dIvsc_dPfhvdc = CSC(nvsc_has_dc_n, nhvdc, 0, False)  # fully empty
@@ -545,33 +548,81 @@ def calc_flows_active_branch_per_bus(nbus: int,
     return res
 
 
-def calc_autodiff_jacobian(func: Callable[[Vec], Vec], x: Vec, h=1e-8) -> CSC:
+def calc_autodiff_jacobian(func: Callable[[Vec], Vec],
+                           x: Vec,
+                           sparsity: CSC,
+                           h: float = 1e-8) -> CSC:
     """
-    Compute the Jacobian matrix of `func` at `x` using finite differences.
+    Compute a sparse finite-difference Jacobian using column coloring.
+
+    Columns with disjoint residual support are perturbed together. The values
+    remain finite differences of ``func``; ``sparsity`` supplies only the
+    structural dependency contract.
 
     :param func: function accepting a vector x and args, and returning either a vector or a
                  tuple where the first argument is a vector and the second.
     :param x: Point at which to evaluate the Jacobian (numpy array).
+    :param sparsity: Complete structural Jacobian pattern.
     :param h: Small step for finite difference.
     :return: Jacobian matrix as a CSC matrix.
     """
-    nx = len(x)
-    f0 = func(x)
+    nx: int = len(x)
+    f0: Vec = func(x)
+    n_rows: int = len(f0)
+    structural_matrix: csc_matrix = mat_to_scipy(sparsity).copy()
+    structural_matrix.data = np.ones(structural_matrix.nnz, dtype=float)
+    conflict_matrix: csc_matrix = (structural_matrix.T @ structural_matrix).tocsc()
+    column_colors: IntVec = np.full(nx, -1, dtype=int)
+    used_color_stamp: IntVec = np.full(nx, -1, dtype=int)
+    color_count: int = 0
 
-    n_rows = len(f0)
+    # Alex review required: accelerate static SC finite differences from the complete residual dependency pattern.
+    column_index: int
+    for column_index in range(nx):
+        data_index: int
+        for data_index in range(
+                conflict_matrix.indptr[column_index],
+                conflict_matrix.indptr[column_index + 1]):
+            conflicting_column: int = conflict_matrix.indices[data_index]
+            conflicting_color: int = column_colors[conflicting_column]
+            if conflicting_color >= 0:
+                used_color_stamp[conflicting_color] = column_index
+            else:
+                pass
 
-    jac = lil_matrix((n_rows, nx))
+        selected_color: int = 0
+        while selected_color < color_count and used_color_stamp[selected_color] == column_index:
+            selected_color += 1
+        if selected_color == color_count:
+            color_count += 1
+        else:
+            pass
+        column_colors[column_index] = selected_color
 
-    for j in range(nx):
-        x_plus_h = np.copy(x)
-        x_plus_h[j] += h
-        f_plus_h = func(x_plus_h)
-        row = (f_plus_h - f0) / h
-        for i in range(n_rows):
-            if row[i] != 0.0:
-                jac[i, j] = row[i]
+    jacobian_data: Vec = np.zeros(structural_matrix.nnz, dtype=float)
+    color_index: int
+    for color_index in range(color_count):
+        color_columns: IntVec = np.where(column_colors == color_index)[0]
+        x_plus_h: Vec = np.copy(x)
+        x_plus_h[color_columns] += h
+        f_plus_h: Vec = func(x_plus_h)
+        finite_difference: Vec = (f_plus_h - f0) / h
 
-    return scipy_to_mat(jac.tocsc())
+        for column_index in color_columns:
+            column_start: int = structural_matrix.indptr[column_index]
+            column_end: int = structural_matrix.indptr[column_index + 1]
+            structural_rows: IntVec = structural_matrix.indices[column_start:column_end]
+            jacobian_data[column_start:column_end] = finite_difference[structural_rows]
+
+    jacobian: csc_matrix = csc_matrix(
+        (
+            jacobian_data,
+            structural_matrix.indices.copy(),
+            structural_matrix.indptr.copy(),
+        ),
+        shape=(n_rows, nx),
+    )
+    return scipy_to_mat(jacobian)
 
 
 class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
@@ -2681,15 +2732,89 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
         return self._f
 
+    def _finite_difference_sparsity(self) -> CSC:
+        """Build the complete structural pattern of the SC residual.
+
+        The legacy analytic assembler covers the shared PF/SC balance blocks.
+        Fault-controller active and reactive reference equations are evaluated
+        numerically, so this method appends their declared local dependencies
+        without assigning them approximate analytic values.
+
+        :return: Square CSC pattern matching :meth:`compute_f` and ``var2x``.
+        """
+        analytic_structure: csc_matrix = mat_to_scipy(
+            self.Jacobian(autodiff=False)
+        )
+        n_columns: int = len(self.var2x())
+        n_va: int = len(self.i_u_va)
+        n_vm: int = len(self.i_u_vm)
+        n_pfp: int = len(self.u_vsc_pfp)
+        n_pfn: int = len(self.u_vsc_pfn)
+        n_pt: int = len(self.u_vsc_pt)
+        n_qt: int = len(self.u_vsc_qt)
+        pt_column_offset: int = n_va + n_vm + n_pfp + n_pfn
+        qt_column_offset: int = pt_column_offset + n_pt
+        va_lookup: IntVec = np.full(self.nc.nbus, -1, dtype=int)
+        vm_lookup: IntVec = np.full(self.nc.nbus, -1, dtype=int)
+        va_lookup[self.i_u_va] = np.arange(n_va, dtype=int)
+        vm_lookup[self.i_u_vm] = np.arange(n_vm, dtype=int)
+        pt_structure: lil_matrix = lil_matrix((n_pt, n_columns), dtype=float)
+        qt_structure: lil_matrix = lil_matrix((n_qt, n_columns), dtype=float)
+
+        # Alex review required: declare static SC fault-controller dependencies omitted by the legacy assembler.
+        row_index: int
+        for row_index in range(n_pt):
+            vsc_index: int = self.u_vsc_pt[row_index]
+            terminal_bus: int = self.nc.vsc_data.T[vsc_index]
+            va_column: int = va_lookup[terminal_bus]
+            vm_column: int = vm_lookup[terminal_bus]
+            if va_column >= 0:
+                pt_structure[row_index, va_column] = 1.0
+            else:
+                pass
+            if vm_column >= 0:
+                pt_structure[row_index, n_va + vm_column] = 1.0
+            else:
+                pass
+            pt_structure[row_index, pt_column_offset + row_index] = 1.0
+
+        for row_index in range(n_qt):
+            vsc_index = self.u_vsc_qt[row_index]
+            terminal_bus = self.nc.vsc_data.T[vsc_index]
+            va_column = va_lookup[terminal_bus]
+            vm_column = vm_lookup[terminal_bus]
+            if va_column >= 0:
+                qt_structure[row_index, va_column] = 1.0
+            else:
+                pass
+            if vm_column >= 0:
+                qt_structure[row_index, n_va + vm_column] = 1.0
+            else:
+                pass
+            qt_structure[row_index, qt_column_offset + row_index] = 1.0
+
+        complete_structure: csc_matrix = vstack(
+            (
+                analytic_structure,
+                pt_structure.tocsc(),
+                qt_structure.tocsc(),
+            ),
+            format="csc",
+        )
+        assert complete_structure.shape == (n_columns, n_columns)
+        return scipy_to_mat(complete_structure)
+
     def Jacobian(self, autodiff: bool = True) -> CSC:
         """
         Get the Jacobian
         :return:
         """
         if autodiff:
-            J = calc_autodiff_jacobian(func=self.compute_f,
-                                       x=self.var2x(),
-                                       h=1e-7)
+            sparsity: CSC = self._finite_difference_sparsity()
+            J: CSC = calc_autodiff_jacobian(func=self.compute_f,
+                                            x=self.var2x(),
+                                            sparsity=sparsity,
+                                            h=1e-7)
 
             return J
 

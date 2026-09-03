@@ -12,14 +12,190 @@ from typing import Any, Dict, List, Union
 from PySide6 import QtCore, QtWidgets, QtGui
 from typing import Callable
 from enum import EnumMeta
-from VeraGrid.Gui.gui_functions import (IntDelegate, ComboDelegate, TextDelegate, FloatDelegate, ColorPickerDelegate,
+from VeraGrid.Gui.gui_functions import (BoolCheckboxDelegate, IntDelegate, ComboDelegate, TextDelegate, FloatDelegate,
+                                        ColorPickerDelegate,
                                         ComplexDelegate, LineLocationsDelegate, DateTimeDelegate)
+from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 from VeraGridEngine.Devices import Bus, ContingencyGroup
 from VeraGridEngine.Devices.Parents.editable_device import GCProp, GCPROP_TYPES
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-from VeraGridEngine.enumerations import PrpCat
+from VeraGridEngine.enumerations import DeviceType, PrpCat
+
+
+class DeviceSelectorDelegate(QtWidgets.QItemDelegate):
+    """
+    Delegate that opens a searchable device selector for an empty device reference.
+    """
+
+    def __init__(self,
+                 parent: QtWidgets.QTableView,
+                 devices_by_type: Dict[DeviceType, List[ALL_DEV_TYPES]],
+                 allow_none: bool = True) -> None:
+        """
+        Constructor.
+
+        :param parent: QTableView parent object.
+        :param devices_by_type: Dictionary with device types and their devices.
+        :param allow_none: Add a selectable None entry.
+        """
+        QtWidgets.QItemDelegate.__init__(self, parent)
+
+        self.devices_by_type: Dict[DeviceType, List[ALL_DEV_TYPES]] = devices_by_type
+        self.allow_none: bool = allow_none
+
+    @QtCore.Slot(object)
+    def commit_selector_value(self, selected_device: object) -> None:
+        """
+        Commit the selector popup value to the table model.
+
+        :param selected_device: Selected device or None.
+        :return: None.
+        """
+        del selected_device
+        editor: QtCore.QObject | None = self.sender()
+
+        if isinstance(editor, QtWidgets.QWidget):
+            self.commitData.emit(editor)
+            self.closeEditor.emit(editor)
+        else:
+            pass
+
+    @QtCore.Slot()
+    def close_selector_value(self) -> None:
+        """
+        Close the selector popup without committing.
+
+        :return: None.
+        """
+        editor: QtCore.QObject | None = self.sender()
+
+        if isinstance(editor, QtWidgets.QWidget):
+            self.closeEditor.emit(editor)
+        else:
+            pass
+
+    def createEditor(self,
+                     parent: QtWidgets.QWidget,
+                     option: QtWidgets.QStyleOptionViewItem,
+                     index: QtCore.QModelIndex) -> QtWidgets.QWidget:
+        """
+        Create a searchable selector popup for one editable device reference.
+
+        :param parent: Parent widget.
+        :param option: Editor style option.
+        :param index: Edited model index.
+        :return: Searchable selector popup.
+        """
+        del option
+        del index
+        from VeraGrid.Gui.general_dialogues import DeviceSelectorPanel
+
+        editor: DeviceSelectorPanel = DeviceSelectorPanel(
+            devices_by_type=self.devices_by_type,
+            allow_none=self.allow_none,
+            parent=parent,
+        )
+        editor.setWindowFlags(QtCore.Qt.WindowType.Popup)
+        editor.resize(500, 400)
+        editor.selection_made.connect(self.commit_selector_value)
+        editor.selection_cancelled.connect(self.close_selector_value)
+        return editor
+
+    def setModelData(self,
+                     editor: QtWidgets.QWidget,
+                     model: QtCore.QAbstractItemModel,
+                     index: QtCore.QModelIndex) -> None:
+        """
+        Write the selected device from the selector popup to the model.
+
+        :param editor: Selector popup editor.
+        :param model: Edited model.
+        :param index: Edited cell index.
+        :return: None.
+        """
+        from VeraGrid.Gui.general_dialogues import DeviceSelectorPanel
+
+        if isinstance(editor, DeviceSelectorPanel):
+            if editor.has_selection:
+                selected_device: ALL_DEV_TYPES | None = editor.get_selected_device()
+                model.setData(index, selected_device)
+            else:
+                pass
+        else:
+            pass
+
+    def updateEditorGeometry(self,
+                             editor: QtWidgets.QWidget,
+                             option: QtWidgets.QStyleOptionViewItem,
+                             index: QtCore.QModelIndex) -> None:
+        """
+        Position the selector popup next to the edited cell.
+
+        :param editor: Selector popup editor.
+        :param option: Edited cell style option.
+        :param index: Edited model index.
+        :return: None.
+        """
+        del index
+        from VeraGrid.Gui.general_dialogues import DeviceSelectorPanel
+
+        view: QtWidgets.QWidget | None = option.widget
+        size: QtCore.QSize = QtCore.QSize(500, 400)
+
+        if view is None:
+            editor.setGeometry(QtCore.QRect(option.rect.topLeft(), size))
+        else:
+            if isinstance(view, QtWidgets.QAbstractItemView):
+                cell_bottom_left: QtCore.QPoint = view.viewport().mapToGlobal(option.rect.bottomLeft())
+                cell_top_left: QtCore.QPoint = view.viewport().mapToGlobal(option.rect.topLeft())
+            else:
+                cell_bottom_left = view.mapToGlobal(option.rect.bottomLeft())
+                cell_top_left = view.mapToGlobal(option.rect.topLeft())
+
+            screen: QtGui.QScreen | None = QtGui.QGuiApplication.screenAt(cell_bottom_left)
+
+            if screen is None:
+                screen = QtGui.QGuiApplication.primaryScreen()
+            else:
+                pass
+
+            if screen is not None:
+                available_geometry: QtCore.QRect = screen.availableGeometry()
+                width: int = min(size.width(), available_geometry.width())
+                height: int = min(size.height(), available_geometry.height())
+                top_left: QtCore.QPoint = QtCore.QPoint(cell_bottom_left)
+                grip_at_top: bool = False
+
+                if top_left.y() + height > available_geometry.bottom():
+                    top_left.setY(cell_top_left.y() - height)
+                    grip_at_top = True
+                else:
+                    pass
+
+                if top_left.x() + width > available_geometry.right():
+                    top_left.setX(available_geometry.right() - width)
+                else:
+                    pass
+
+                if top_left.x() < available_geometry.left():
+                    top_left.setX(available_geometry.left())
+                else:
+                    pass
+
+                if top_left.y() < available_geometry.top():
+                    top_left.setY(available_geometry.top())
+                else:
+                    pass
+
+                editor.setGeometry(QtCore.QRect(top_left, QtCore.QSize(width, height)))
+                if isinstance(editor, DeviceSelectorPanel):
+                    editor.set_resize_grip_at_top(value=grip_at_top)
+                else:
+                    pass
+            else:
+                editor.setGeometry(QtCore.QRect(cell_bottom_left, size))
 
 
 class ObjectsModel(WrappableTableModel):
@@ -159,7 +335,7 @@ class ObjectsModel(WrappableTableModel):
                 tpe = self.attribute_types[i]
 
                 if tpe is bool:
-                    delegate = ComboDelegate(self.parent, [True, False], ['True', 'False'])
+                    delegate = BoolCheckboxDelegate(self.parent)
                     F(i, delegate)
 
                 elif tpe is str:
@@ -194,15 +370,40 @@ class ObjectsModel(WrappableTableModel):
                     F(i, delegate)
 
                 elif self._get_delegate_objects(i) is not None:
-                    # foreign key objects drop-down
+                    # Foreign key object references use the searchable device selector.
                     objs = self._get_delegate_objects(i)
-                    delegate = ComboDelegate(parent=self.parent,
-                                             objects=[None] + objs,
-                                             object_names=['None'] + [x.name for x in objs])
+                    if isinstance(tpe, DeviceType):
+                        device_type: DeviceType = tpe
+                    else:
+                        if len(objs) > 0:
+                            device_type: DeviceType = objs[0].device_type
+                        else:
+                            device_type: DeviceType = DeviceType.NoDevice
+
+                    delegate = DeviceSelectorDelegate(
+                        parent=self.parent,
+                        devices_by_type={device_type: objs},
+                    )
                     F(i, delegate)
 
                 else:
                     F(i, None)
+
+    @staticmethod
+    def _is_bus_property_type(tpe: GCPROP_TYPES) -> bool:
+        """
+        Check if a property type describes a bus reference.
+
+        :param tpe: Property type.
+        :return: True if the property type is a bus reference.
+        """
+        if tpe is Bus:
+            return True
+        else:
+            if tpe == DeviceType.BusDevice:
+                return True
+            else:
+                return False
 
     def _get_delegate_objects(self, attr_idx: int) -> List[ALL_DEV_TYPES] | None:
         """
@@ -228,7 +429,10 @@ class ObjectsModel(WrappableTableModel):
                 if tpe in self.dictionary_of_lists:
                     return self.dictionary_of_lists[tpe]
                 else:
-                    return None
+                    if self._is_bus_property_type(tpe=tpe) and DeviceType.BusDevice in self.dictionary_of_lists:
+                        return self.dictionary_of_lists[DeviceType.BusDevice]
+                    else:
+                        return None
 
     def update(self):
         """
@@ -254,8 +458,24 @@ class ObjectsModel(WrappableTableModel):
         else:
             attr_idx = index.column()
 
-        if self.editable and self.attributes[attr_idx] not in self.non_editable_attributes:
-            return QtCore.Qt.ItemFlag.ItemIsEditable | QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
+        value: Any = self.data_with_type(index=index)
+        is_empty_bus_reference: bool = self._is_bus_property_type(
+            tpe=self.attribute_types[attr_idx],
+        ) and value is None
+
+        if self.editable and (self.attributes[attr_idx] not in self.non_editable_attributes or is_empty_bus_reference):
+            flags: QtCore.Qt.ItemFlag = (
+                QtCore.Qt.ItemFlag.ItemIsEditable
+                | QtCore.Qt.ItemFlag.ItemIsEnabled
+                | QtCore.Qt.ItemFlag.ItemIsSelectable
+            )
+
+            if self.attribute_types[attr_idx] is bool:
+                flags = flags | QtCore.Qt.ItemFlag.ItemIsUserCheckable
+            else:
+                pass
+
+            return flags
         else:
             return QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
 
@@ -296,11 +516,15 @@ class ObjectsModel(WrappableTableModel):
             attr_idx = c
 
         prop = self.property_list[attr_idx]
+        value: Any = self.objects[obj_idx].get_value(prop=prop, t_idx=self.time_index_)
 
-        if prop.tpe is Bus:
-            return self.objects[obj_idx].get_value(prop=prop, t_idx=self.time_index_).name
+        if self._is_bus_property_type(tpe=prop.tpe):
+            if value is None:
+                return ""
+            else:
+                return value.name
         else:
-            return self.objects[obj_idx].get_value(prop=prop, t_idx=self.time_index_)
+            return value
 
     def data_with_type(self, index: QtCore.QModelIndex):
         """
@@ -317,11 +541,15 @@ class ObjectsModel(WrappableTableModel):
 
         if obj_idx < len(self.objects):
             prop = self.property_list[attr_idx]
+            value: Any = self.objects[obj_idx].get_value(prop=prop, t_idx=self.time_index_)
 
-            if prop.tpe is Bus:
-                return self.objects[obj_idx].get_value(prop=prop, t_idx=self.time_index_).name
+            if self._is_bus_property_type(tpe=prop.tpe):
+                if value is None:
+                    return None
+                else:
+                    return value.name
             else:
-                return self.objects[obj_idx].get_value(prop=prop, t_idx=self.time_index_)
+                return value
         else:
             # there is a mismatch because the element was deleted without refreshing this table model
             return ""
@@ -374,19 +602,62 @@ class ObjectsModel(WrappableTableModel):
                 attr_idx = index.column()
 
             if role == QtCore.Qt.ItemDataRole.DisplayRole:
+                value: Any = self.data_with_type(index)
 
-                if self.property_list[attr_idx].is_date:
-                    return self._format_date_display(self.data_with_type(index))
+                if self.attribute_types[attr_idx] is bool:
+                    return ""
+                elif self.property_list[attr_idx].is_date:
+                    return self._format_date_display(value)
                 else:
-                    return str(self.data_with_type(index))
+                    if value is None:
+                        return ""
+                    else:
+                        return str(value)
 
             elif role == QtCore.Qt.ItemDataRole.EditRole:
                 return self.data_with_type(index)
+
+            elif role == QtCore.Qt.ItemDataRole.CheckStateRole:
+                if self.attribute_types[attr_idx] is bool:
+                    if bool(self.data_with_type(index)):
+                        return QtCore.Qt.CheckState.Checked
+                    else:
+                        return QtCore.Qt.CheckState.Unchecked
+                else:
+                    pass
 
             elif role == QtCore.Qt.ItemDataRole.BackgroundRole:
 
                 if self.property_list[attr_idx].is_color:
                     return QtGui.QColor(str(self.data_with_type(index)))
+                else:
+                    pass
+
+            elif role == QtCore.Qt.ItemDataRole.DecorationRole:
+
+                delegate_objects: List[ALL_DEV_TYPES] | None = self._get_delegate_objects(attr_idx)
+                has_selector_data: bool = delegate_objects is not None
+                is_editable_cell: bool = bool(self.flags(index) & QtCore.Qt.ItemFlag.ItemIsEditable)
+
+                if has_selector_data and is_editable_cell:
+                    tpe: GCPROP_TYPES = self.attribute_types[attr_idx]
+
+                    if isinstance(tpe, DeviceType):
+                        device_type: DeviceType = tpe
+                    else:
+                        if delegate_objects is not None and len(delegate_objects) > 0:
+                            device_type: DeviceType = delegate_objects[0].device_type
+                        else:
+                            device_type: DeviceType = DeviceType.NoDevice
+
+                    icon_path: str | None = device_type_icons.get(device_type.value, None)
+
+                    if icon_path is not None:
+                        return QtGui.QIcon(icon_path)
+                    else:
+                        return QtGui.QIcon(":/Icons/icons/link-to-selection.png")
+                else:
+                    pass
 
         return None
 
@@ -410,6 +681,11 @@ class ObjectsModel(WrappableTableModel):
 
         prop = self.property_list[attr_idx]
 
+        if role == QtCore.Qt.ItemDataRole.CheckStateRole and prop.tpe is bool:
+            value = value == QtCore.Qt.CheckState.Checked or value == int(QtCore.Qt.CheckState.Checked.value)
+        else:
+            pass
+
         # check taken values
         if self.attributes[attr_idx] in self.check_unique:
             taken = self.attr_taken(self.attributes[attr_idx], value)
@@ -418,7 +694,10 @@ class ObjectsModel(WrappableTableModel):
 
         if not taken:
             if obj_idx < len(self.objects):
-                if self.attributes[attr_idx] not in self.non_editable_attributes:
+                current_value: Any = self.objects[obj_idx].get_value(prop=prop, t_idx=self.time_index_)
+                is_empty_bus_reference: bool = self._is_bus_property_type(tpe=prop.tpe) and current_value is None
+
+                if self.attributes[attr_idx] not in self.non_editable_attributes or is_empty_bus_reference:
 
                     if isinstance(value, str) and value != "":
                         # try casting to the type
@@ -428,6 +707,15 @@ class ObjectsModel(WrappableTableModel):
 
                     try:
                         self.objects[obj_idx].set_value(prop=prop, t_idx=self.time_index_, value=value2)
+                        self.dataChanged.emit(
+                            index,
+                            index,
+                            [
+                                QtCore.Qt.ItemDataRole.DisplayRole,
+                                QtCore.Qt.ItemDataRole.EditRole,
+                                QtCore.Qt.ItemDataRole.CheckStateRole,
+                            ],
+                        )
                     except ValueError as e:
                         self.report_error(str(e))
                 else:

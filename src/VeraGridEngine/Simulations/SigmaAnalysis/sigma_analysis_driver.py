@@ -605,6 +605,7 @@ class SigmaAnalysisDriver(DriverTemplate):
         :return:
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self.results = multi_island_sigma(multi_circuit=self.grid,
                                           options=self.options,
                                           logger=self.logger,

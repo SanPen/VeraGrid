@@ -1883,18 +1883,23 @@ def dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, Va, Fdcn_vsc) -> CSC:
     Tj = np.empty(max_nnz, dtype=np.int32)
 
     nnz = 0  # Counter for non-zero entries
+    vsc_row_lookup: IntVec = make_lookup(len(Fdcn_vsc), k_vsc_has_dc_n)
 
     for k, vsc in enumerate(u_vsc_pfp):
         fn = Fdcn_vsc[vsc]
+        row_idx: int = vsc_row_lookup[vsc]
 
-        if fn > -1:
+        if fn > -1 and row_idx >= 0:
             val = Vm[fn] * np.cos(Va[fn])  # signed DC voltage of the neutral bus
 
             # Populate COO format arrays
             Tx[nnz] = val
-            Ti[nnz] = vsc  # Row index corresponds to the current VSC
+            # Alex review required: address the compact static SC bipolar-balance row.
+            Ti[nnz] = row_idx
             Tj[nnz] = k  # Column index aligns with u_vsc_pfp, should be equal to k
             nnz += 1
+        else:
+            pass
 
     # Convert to CSC
     mat.fill_from_coo(Ti, Tj, Tx, nnz)
@@ -1922,16 +1927,21 @@ def dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, Va, Fdcp_vsc) -> CSC:
     Tj = np.empty(max_nnz, dtype=np.int32)
 
     nnz = 0  # Counter for non-zero entries
+    vsc_row_lookup: IntVec = make_lookup(len(Fdcp_vsc), k_vsc_has_dc_n)
 
     for k, vsc in enumerate(u_vsc_pfn):
         fp = Fdcp_vsc[vsc]
-        val = Vm[fp] * np.cos(Va[fp])  # signed DC voltage of the pole bus
+        row_idx: int = vsc_row_lookup[vsc]
+        if row_idx >= 0:
+            val = Vm[fp] * np.cos(Va[fp])  # signed DC voltage of the pole bus
 
-        # Populate COO format arrays
-        Tx[nnz] = val
-        Ti[nnz] = vsc  # Row index corresponds to the current VSC
-        Tj[nnz] = k  # Column index aligns with u_vsc_pfn, should be equal to k
-        nnz += 1
+            # Populate COO format arrays
+            Tx[nnz] = val
+            Ti[nnz] = row_idx
+            Tj[nnz] = k  # Column index aligns with u_vsc_pfn, should be equal to k
+            nnz += 1
+        else:
+            pass
 
     # Convert to CSC
     mat.fill_from_coo(Ti, Tj, Tx, nnz)
@@ -1969,22 +1979,31 @@ def dIvsc_dVm_csc(k_vsc_has_dc_n: IntVec,
 
     j_lookup = make_lookup(nbus, i_u_vm)
 
+    # Alex review required: address compact static SC bipolar-balance rows by position.
+    row_idx: int = 0
     for kidx in k_vsc_has_dc_n:
         fp = Fdcp_vsc[kidx]
         fn = Fdcn_vsc[kidx]
 
         if j_lookup[fp] >= 0:
             Tx[nnz] = Pfn_vsc[kidx] * np.cos(Va[fp])  # d(balance)/dVm[pole], signed
-            Ti[nnz] = kidx
+            Ti[nnz] = row_idx
             Tj[nnz] = j_lookup[fp]
             nnz += 1
+        else:
+            pass
 
         if fn > -1:
             if j_lookup[fn] >= 0:
                 Tx[nnz] = Pfp_vsc[kidx] * np.cos(Va[fn])  # d(balance)/dVm[neutral], signed
-                Ti[nnz] = kidx
+                Ti[nnz] = row_idx
                 Tj[nnz] = j_lookup[fn]
                 nnz += 1
+            else:
+                pass
+        else:
+            pass
+        row_idx += 1
 
     # # convert to csc
     mat.fill_from_coo(Ti, Tj, Tx, nnz)

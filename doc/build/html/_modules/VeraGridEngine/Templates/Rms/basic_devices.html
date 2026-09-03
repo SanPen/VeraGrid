@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Rms.basic_devices &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Templates.Rms.basic_devices &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -219,6 +219,7 @@
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">vd</span><span class="p">,</span> <span class="n">vq</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">omega</span><span class="p">]</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Phase locked loop&quot;</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Reusable VSC phase-locked-loop RMS control block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -292,6 +293,7 @@
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Reusable VSC PI current-controller RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -387,6 +389,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Reusable VSC PI power-controller RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -469,6 +472,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">electrical_block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter electrical-equations RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -531,6 +535,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter AC-bus interface RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -583,6 +588,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter voltage-control electrical RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -628,6 +634,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter line-current measurement RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -696,6 +703,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter line power-controller RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -768,6 +776,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter line-loss RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -815,6 +824,7 @@
     <span class="n">current_limiter_block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;current limiters&quot;</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">current_limiter_block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter current-limiter RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -895,6 +905,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">losses_block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter loss RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -939,6 +950,7 @@
     <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="n">out_vars</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Reusable grid-following converter RMS control block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
@@ -1001,6 +1013,7 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Grid-following converter electrical RMS block&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 </pre></div>

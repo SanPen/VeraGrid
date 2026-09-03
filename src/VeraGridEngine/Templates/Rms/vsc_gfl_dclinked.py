@@ -9,7 +9,12 @@ import math
 
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import (Block, Var)
+from VeraGridEngine.Utils.Symbolic.block import (
+    Block,
+    RmsTerminalPowerContribution,
+    RmsTerminalSide,
+    Var,
+)
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
@@ -92,7 +97,6 @@ def build_vsc_rms(vfactory: VarFactory, name:str = 'vsc_rms_template'):
         Pf + Pt - 1.0 * (alpha1 + alpha2 * im + alpha3 * im ** 2),
     ]
 
-    block.out_vars = [Pf, Pt, Qt_ref]
     block.external_mapping = {
         VarPowerFlowReferenceType.Vm: vm_t,
         VarPowerFlowReferenceType.Pf: Pf,
@@ -111,8 +115,20 @@ def build_vsc_rms(vfactory: VarFactory, name:str = 'vsc_rms_template'):
     templ.block.external_mapping = block.external_mapping
     templ.block.api_obj_mapping = block.api_obj_mapping
     templ.block.in_vars = inputs
-    templ.block.out_vars = block.out_vars
+    templ.block.dynamic_model_contract.rms_terminal_power_contributions = list([
+        RmsTerminalPowerContribution(
+            terminal_side=RmsTerminalSide.FROM,
+            active_power_reference=VarPowerFlowReferenceType.Pf,
+            reactive_power_reference=None,
+        ),
+        RmsTerminalPowerContribution(
+            terminal_side=RmsTerminalSide.TO,
+            active_power_reference=VarPowerFlowReferenceType.Pt,
+            reactive_power_reference=VarPowerFlowReferenceType.Qt,
+        ),
+    ])
 
+    templ.comment = 'VSC grid-following RMS model'
     return templ
 
 def build_vsc_transformer_control(vf: VarFactory, Vm: Var, vdc: Var, name: str = ''):

@@ -30,7 +30,7 @@ def resolve_server_runtime_file_path(file_name: str) -> str:
 
     # Relative TLS file names must live next to the server package so the
     # runtime can generate and reuse them consistently from any cwd.
-    if requested_path.is_absolute():
+    if requested_path.is_absolute() or requested_path.root:
         return str(requested_path)
     else:
         return str(base_directory / requested_path)

@@ -417,7 +417,10 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
         q_B: vf.add_const(None),
         p_C: vf.add_const(None),
         q_C: vf.add_const(None),
-        delta: vf.add_const(None),
+        delta: sym.atan(
+            (Ra * ipk_init * sym.sin(phi_init) - omega * (Lmq + La) * ipk_init * sym.cos(phi_init)) /
+            (vpk_init + Ra * ipk_init * sym.cos(phi_init) + omega * (Lmq + La) * ipk_init * sym.sin(phi_init))
+        ),
     }
     templ.block.api_obj_mapping = {
         ParamPowerFlowReferenceType.omega_base : omega_base,
@@ -433,10 +436,6 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
 
     templ.block.init_eqs = {
         omega: omega_ref,
-        delta: sym.atan(
-            (Ra * ipk_init * sym.sin(phi_init) - omega * (Lmq + La) * ipk_init * sym.cos(phi_init)) /
-            (vpk_init + Ra * ipk_init * sym.cos(phi_init) + omega * (Lmq + La) * ipk_init * sym.sin(phi_init))
-        ),
         theta: phi_v_init + delta,
 
         v_d: 2 / 3 * (sym.sin(theta) * inputs[0] +
@@ -858,7 +857,8 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
         # --------------------------------------------------------------------------
         # Initialization auxiliaries obtained from PF
         # --------------------------------------------------------------------------
-        delta: vf.add_const(None),
+        delta: sym.atan((Ra * ipk_init * sym.sin(phi_init) - w_elec * Lq * ipk_init * sym.cos(phi_init)) / (
+                    vpk_init + Ra * ipk_init * sym.cos(phi_init) + w_elec * Lq * ipk_init * sym.sin(phi_init))),
         d_v_A: vf.add_const(None),
         d_v_B: vf.add_const(None),
         d_v_C: vf.add_const(None),
@@ -887,9 +887,7 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
         w_mec_base: omega_base,
         w_mec: c1,
         w_elec: (0.5 * p_poles) * w_mec,
-        # Rotor angle initialization based on Load Angle (delta)
-        delta: sym.atan((Ra * ipk_init * sym.sin(phi_init) - w_elec * Lq * ipk_init * sym.cos(phi_init)) / (
-                    vpk_init + Ra * ipk_init * sym.cos(phi_init) + w_elec * Lq * ipk_init * sym.sin(phi_init))),
+        # Rotor angle is owned and initialized by the event dictionary.
         theta_elec: phi_v_init + delta,
 
         # Terminal dq voltages and currents
@@ -1738,7 +1736,6 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
 
     events_dict = {
         # Exciter (AVR) parameters
-        UsRefPu: vf.add_const(1.0),  # reference voltage (pu)
         AEz: vf.add_const(0.02),  # saturation gain
         BEz: vf.add_const(1.5),  # saturation exponential coefficient
         Se_threshold: vf.add_const(1.0),  # saturation threshold
@@ -1785,6 +1782,7 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
     y2_init = parameters["Kf"].value * vf_init
     y4_init = field_feedback_init
     y3_init = field_feedback_init / parameters["Ka"].value
+    events_dict[UsRefPu] = us_ref_init
     templ.block = Block(
         state_eqs=[
             (Vm - y1) / parameters["tR"].value,
@@ -1815,7 +1813,6 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
             Efe: field_feedback_init,
             y4: y4_init,
             y3: y3_init,
-            UsRefPu: us_ref_init,
         },
         name=name,
     )

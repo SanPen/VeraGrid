@@ -1,4 +1,4 @@
-﻿# This Source Code Form is subject to the terms of the Mozilla Public
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
@@ -153,15 +153,23 @@ class ExternalGridMode(Enum):
             return s
 
 
-class ShuntControlMode(str,  Enum):
+class ShuntControlMode(str, Enum):
     """
     Modes of operation of shunt control modes
     """
     Locked = ("Locked", 0)
     Continuous = ("Continuous", 1)
     Discrete = ("Discrete", 2)
+    QVDroop = ("QV droop", 3)
+    ReactivePower = ("Reactive power", 4)
 
-    def __new__(cls, value: str, code: int):
+    def __new__(cls, value: str, code: int) -> "ShuntControlMode":
+        """Create one shunt-control selector with its native integer code.
+
+        :param value: Human-readable shunt-control objective.
+        :param code: Native integer selector used by the source format.
+        :return: Typed shunt-control enumeration member.
+        """
         obj = str.__new__(cls, value)
         obj._value_ = value
         obj.code = code
@@ -193,8 +201,14 @@ class GeneratorControlMode(str, Enum):
     V = ("V", 1)  # Fixed V, classic PV node
     QVDroop = ("Q-V", 2)  # Like a PQ node with droop equation update of Q
 
-    def __new__(cls, value: str, code: int):
-        obj = str.__new__(cls, value)
+    def __new__(cls, value: str, code: int) -> "GeneratorControlMode":
+        """Create one generator-control selector with its native integer code.
+
+        :param value: Human-readable generator-control objective.
+        :param code: Native integer selector used by the source format.
+        :return: Typed generator-control enumeration member.
+        """
+        obj: GeneratorControlMode = str.__new__(cls, value)
         obj._value_ = value
         obj.code = code
         return obj
@@ -214,6 +228,191 @@ class GeneratorControlMode(str, Enum):
             return GeneratorControlMode[s]
         except KeyError:
             return s
+
+
+class SynchronousMachineSpeedVariationMode(str, Enum):
+    """Rotor-speed treatment in synchronous-machine stator equations."""
+
+    Neglected = ("Neglected", 0)
+    Considered = ("Considered", 1)
+    PartiallyNeglected = ("Partially neglected", 2)
+
+    def __new__(
+            cls,
+            value: str,
+            code: int,
+    ) -> "SynchronousMachineSpeedVariationMode":
+        """Build one human-readable mode with its native code.
+
+        :param value: Human-readable mode name.
+        :param code: Native PowerFactory ``i_speedVar`` code.
+        :return: Constructed enumeration member.
+        """
+        obj: SynchronousMachineSpeedVariationMode = str.__new__(cls, value)
+        obj._value_ = value
+        obj.code = code
+        return obj
+
+    def idx(self) -> int:
+        """Return the native PowerFactory mode code.
+
+        :return: Native integer selector.
+        """
+        return self.code
+
+
+class StationControlMode(str, Enum):
+    """Control objective used by a non-physical station controller."""
+
+    Voltage = ("Voltage", 0)
+    ReactivePower = ("Reactive power", 1)
+    PowerFactor = ("Power factor", 2)
+    TanPhi = ("Tan(phi)", 3)
+
+    def __new__(cls, value: str, code: int) -> "StationControlMode":
+        """Create one station-control selector with its native integer code.
+
+        :param value: Human-readable station-control objective.
+        :param code: Native PowerFactory station-control selector.
+        :return: Typed station-control enumeration member.
+        """
+        obj: StationControlMode = str.__new__(cls, value)
+        obj._value_ = value
+        obj.code = code
+        return obj
+
+    def idx(self) -> int:
+        """Return the native PowerFactory control-mode code."""
+        return self.code
+
+
+class StationControlBusSelection(str, Enum):
+    """Describe how a station controller selects its regulated bus."""
+
+    Explicit = ("Explicit controlled bus", 0)
+    Automatic = ("Automatic bus search", 1)
+
+    def __new__(cls, value: str, code: int) -> "StationControlBusSelection":
+        """Create one humanized selector with its native integer code.
+
+        :param value: Human-readable selector name.
+        :param code: Native PowerFactory ``selBus`` code.
+        :return: Typed controlled-bus selector.
+        """
+        obj: StationControlBusSelection = str.__new__(cls, value)
+        obj._value_ = value
+        obj.code = code
+        return obj
+
+    def idx(self) -> int:
+        """Return the native PowerFactory controlled-bus selector code."""
+        return self.code
+
+
+class StationVoltageSetpointMode(str, Enum):
+    """Select the voltage target used by a station controller."""
+
+    StationController = ("Station Controller", 0)
+    BusTargetVoltage = ("Bus target voltage", 1)
+
+    def __new__(cls, value: str, code: int) -> "StationVoltageSetpointMode":
+        """Create one humanized selector with its native integer code.
+
+        :param value: Human-readable PowerFactory selector name.
+        :param code: Native PowerFactory ``uset_mode`` code.
+        :return: Typed station voltage-setpoint selector.
+        """
+        obj: StationVoltageSetpointMode = str.__new__(cls, value)
+        obj._value_ = value
+        obj.code = code
+        return obj
+
+    def idx(self) -> int:
+        """Return the native PowerFactory voltage-setpoint selector code."""
+        return self.code
+
+
+class StationTransformerControlSide(str, Enum):
+    """Select whether a station controller coordinates step-up transformers."""
+
+    NoControl = ("None", 0)
+    HighVoltageSide = ("HV-Side", 1)
+    LowVoltageSide = ("LV-Side", 2)
+
+    def __new__(cls, value: str, code: int) -> "StationTransformerControlSide":
+        """Create one typed transformer-side selector.
+
+        :param value: Human-readable PowerFactory selector name.
+        :param code: Native PowerFactory ``iTrfCtrl`` code.
+        :return: Typed transformer control-side selector.
+        """
+        obj: StationTransformerControlSide = str.__new__(cls, value)
+        obj._value_ = value
+        obj.code = code
+        return obj
+
+    def idx(self) -> int:
+        """Return the native PowerFactory transformer-side selector code."""
+        return self.code
+
+
+class StationReactivePowerDistribution(str, Enum):
+    """Describe the native station reactive-distribution selector."""
+
+    AccordingToDispatchedActivePower = ("According to Dispatched Active Power", 0)
+    AccordingToRatedPower = ("According to Rated Power", 1)
+    IndividualReactivePower = ("Individual Reactive Power", 2)
+    MaximiseReactiveReserve = ("Maximise Reactive Reserve", 3)
+    VoltageSetpointAdaption = ("Voltage Setpoint Adaption", 4)
+
+    # Keep source-code compatibility while exposing the humanized PowerFactory
+    # labels as the canonical enum names shown by the application and templates.
+    SourceMode0 = ("According to Dispatched Active Power", 0)
+    SourceMode1 = ("According to Rated Power", 1)
+    SourceMode2 = ("Individual Reactive Power", 2)
+    SourceMode3 = ("Maximise Reactive Reserve", 3)
+    SourceMode4 = ("Voltage Setpoint Adaption", 4)
+
+    def __new__(cls, value: str, code: int) -> "StationReactivePowerDistribution":
+        """Create one humanized selector with its native integer code.
+
+        :param value: Human-readable PowerFactory selector name.
+        :param code: Native PowerFactory distribution code.
+        :return: Typed distribution selector.
+        """
+        obj: StationReactivePowerDistribution = str.__new__(cls, value)
+        obj._value_ = value
+        obj.code = code
+        return obj
+
+    def idx(self) -> int:
+        """Return the native PowerFactory distribution code."""
+        return self.code
+
+
+class ReactivePowerLimitState(str, Enum):
+    """Describe an optional initial generator reactive-limit active set."""
+
+    Unknown = ("Unknown", -2)
+    AtMinimum = ("At minimum", -1)
+    Free = ("Free", 0)
+    AtMaximum = ("At maximum", 1)
+
+    def __new__(cls, value: str, code: int) -> "ReactivePowerLimitState":
+        """Create one human-readable reactive-limit state.
+
+        :param value: Human-readable state name.
+        :param code: Stable numerical active-set code.
+        :return: Typed reactive-limit state.
+        """
+        obj: ReactivePowerLimitState = str.__new__(cls, value)
+        obj._value_ = value
+        obj.code = code
+        return obj
+
+    def idx(self) -> int:
+        """Return the stable numerical active-set code."""
+        return self.code
 
 
 class GeneratorType(str, Enum):
@@ -434,6 +633,28 @@ class FmuTemplateMode(Enum):
 
     CO_SIMULATION = "CoSimulation"
     MODEL_EXCHANGE = "ModelExchange"
+
+
+class FmiVersion(str, Enum):
+    """FMI specification families recognized by VeraGrid.
+
+    Maintenance documents do not necessarily define a new XML version or ABI.
+    FMI 1.0.1 and FMI 2.0.x therefore remain in the 1.0 and 2.0 families,
+    while stable FMI 3.0.x declarations remain in the 3.0 family. Recognizing
+    a family does not imply that every importer, runtime, or exporter supports
+    every interface in that family.
+    """
+
+    FMI_1_0 = "1.0"
+    FMI_2_0 = "2.0"
+    FMI_3_0 = "3.0"
+
+
+class FmuSourceKind(str, Enum):
+    """Kinds of FMU source accepted at the import boundary."""
+
+    ZIP = "zip"
+    DIRECTORY = "directory"
 
 
 class MIPSolvers(Enum):
@@ -957,6 +1178,10 @@ class ValveEmtType(Enum):
         return str(self.value)
 
     def __repr__(self) -> str:
+        """Return the stable display representation of the EMT valve type.
+
+        :return: Human-readable EMT valve-type value.
+        """
         return str(self)
 
     @staticmethod
@@ -1347,28 +1572,28 @@ class TerminalType(Enum):
         return list(enum_item.value for enum_item in cls)
 
 
-
 class WaveformSequenceType(Enum):
     """
         Squence points type
     """
+
 
 class V_I_CurveSequenceType(Enum):
     """
         Squence points type
     """
 
+
 class X_Y_SequenceType(Enum):
     """
         Squence points type
     """
 
+
 class X_Y_Z_Matrix(Enum):
     """
         Squence points type
     """
-
-
 
 
 class WindingType(str, Enum):
@@ -1505,12 +1730,13 @@ class PrpCat(Enum):
     ActionType
     """
     All = 'All'
+    MT = 'Metadata'
+    TP = 'Topology'
     PF = 'Power flow'
     PF3 = 'Power flow (unbalanced)'
     SC = "Short Circuit"
     OPF = 'Optimal Power flow'
     CON = "Contingencies"
-    TP = 'Topology'
     REL = 'Reliability'
     NTC = 'Net Transfer Capacity'
     INV = "Investments"
@@ -1585,6 +1811,29 @@ class PrpCat(Enum):
 #         return list(enum_item.value for enum_item in cls)
 
 
+class DgsDynamicAssociationRole(Enum):
+    """Define the physical or logical role of one DGS composite relation."""
+
+    __slots__ = ()
+
+    CompositeController = "CompositeController"
+    ControllerModel = "ControllerModel"
+    PhysicalHost = "PhysicalHost"
+    Measurement = "Measurement"
+    SwitchActuator = "SwitchActuator"
+    ValveActuator = "ValveActuator"
+    PassiveActuator = "PassiveActuator"
+    Unknown = "Unknown"
+
+    def __str__(self) -> str:
+        """Return the persistent enum value."""
+        return str(self.value)
+
+    def __repr__(self) -> str:
+        """Return the persistent enum representation."""
+        return str(self)
+
+
 class DeviceType(Enum):
     """
     Device types
@@ -1636,6 +1885,7 @@ class DeviceType(Enum):
     ItMeasurementDevice = 'It Measurement'
 
     WireDevice = 'Wire'
+    DcCableTypeDevice = 'DC cable type'
     SequenceLineDevice = 'Sequence line'
     UnderGroundLineDevice = 'Underground line'
     OverheadLineTypeDevice = 'Tower'
@@ -2712,6 +2962,7 @@ class ResultTypes(Enum):
 
     # Hydro OPF
     FluidCurrentLevel = 'Reservoir fluid level'
+    FluidValue = 'Fluid value'
     FluidFlowIn = 'Flow entering the node'
     FluidFlowOut = 'Flow exiting the node'
     FluidP2XFlow = 'Flow from the P2X'
@@ -3384,13 +3635,12 @@ class EmtSolverTypes(Enum):
 
 
 class RmsProblemTypes(Enum):
-
-    Tensygrid       = "Tensygrid"
-    PowerBalance    = "RmsProblemDae"
+    Tensygrid = "Tensygrid"
+    PowerBalance = "RmsProblemDae"
     PowerBalanceVectorized = "RmsProblemDaeVectorized"
     PowerBalanceFullVectorized = "RmsProblemDaeFullVectorized"
-    CurrentBalance  = "RmsProblemPhasor"
-    Multilinear     = "RmsProblemMultilinear"
+    CurrentBalance = "RmsProblemPhasor"
+    Multilinear = "RmsProblemMultilinear"
 
     def __str__(self) -> str:
         return str(self.value)
@@ -3674,7 +3924,6 @@ class VarPowerFlowReferenceType(Enum):
     If_vsc = "If_vsc"
     It_vsc = "It_vsc"
 
-
     # Phasor current references for RMS formulation
     Ir = "Ir"  # Real part of bus injection current
     Ii = "Ii"  # Imaginary part of bus injection current
@@ -3684,6 +3933,7 @@ class VarPowerFlowReferenceType(Enum):
     Iit = "Iit"  # Imaginary current at branch to end
 
     Vdc = "Vdc"  # Bus voltage for DC voltage in p.u.
+    d_Vdc = "d_Vdc"  # Bus DC-voltage derivative in p.u. per second.
     Vf_dc = "Vf_dc"  # Branch from-side DC voltage in p.u.
     Vt_dc = "Vt_dc"  # Branch to-side DC voltage in p.u.
     DcPathModeSeed = "DcPathModeSeed"  # PF-derived discrete conduction seed for DC branch EMT devices.
@@ -4114,6 +4364,7 @@ class ParamPowerFlowReferenceType(Enum):
     line_length_km = "line_length_km"
     dc_line_length_km = "dc_line_length_km"
     dc_line_r_pu = "dc_line_r_pu"
+    dc_line_l_pu_seconds = "dc_line_l_pu_seconds"
 
     # VSC static parameters
     vsc_kdp_pu = "vsc_kdp_pu"
@@ -4243,17 +4494,25 @@ class EmtLineTypes(Enum):
 
 
 class DynamicSimulationMode(Enum):
-    RMS = "RMS",
-    EMT = "EMT",
+    """
+    Dynamic simulation domains supported by VeraGrid.
+    """
+
+    RMS = "RMS"
+    EMT = "EMT"
 
     def __str__(self) -> str:
         return str(self.value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Return the stable dynamic-simulation domain representation.
+
+        :return: Human-readable dynamic-simulation domain value.
+        """
         return str(self)
 
     @staticmethod
-    def argparse(s):
+    def argparse(s: str) -> "DynamicSimulationMode | str":
         """
         :param s:
         :return:
@@ -4379,6 +4638,84 @@ class BlockScopeMode(Enum):
         return list(enum_item.value for enum_item in cls)
 
 
+class DynamicTemplateCategory(Enum):
+    """Identify how one reusable dynamic template may be used."""
+
+    DEVICE = "device"
+    COMPONENT = "component"
+    MEASUREMENT = "measurement"
+
+
+class DynamicBlockVisualRole(Enum):
+    """Identify the semantic palette of one dynamic-editor block."""
+
+    CONTROL = 0
+    MEASUREMENT = 1
+    DEVICE_TEMPLATE = 2
+
+
+class DynamicProjectionLayoutRole(Enum):
+    """Identify one stable item in a derived dynamic-editor projection."""
+
+    LOCAL_MEASUREMENTS = 0
+    PHYSICAL_DEVICE = 1
+    NETWORK_EXCHANGE = 2
+    FROM_TAG = 3
+    GOTO_TAG = 4
+    MEASUREMENT_STATION_FROM = 5
+    MEASUREMENT_STATION_TO = 6
+
+
+class ProjectionTagConnectionSide(Enum):
+    """Identify the real endpoint represented by a transient signal tag."""
+
+    SOURCE = 0
+    TARGET = 1
+
+
+class RmsVectorizedNodalBalanceKind(Enum):
+    """Identify how one compiled RMS nodal row is evaluated."""
+
+    ACTIVE_POWER = 1
+    REACTIVE_POWER = 2
+    CAPACITIVE_DC_POWER = 3
+
+
+class RmsTerminalSide(Enum):
+    """Identify one physical RMS network terminal of a device."""
+
+    BUS = "bus"
+    FROM = "from"
+    TO = "to"
+
+
+class RmsPhysicalMeterKind(Enum):
+    """Identify the physical quantity selected by one RMS meter."""
+
+    VOLTAGE = "voltage"
+    CURRENT = "current"
+    POWER = "power"
+    PHASE_LOCKED_LOOP = "phase_locked_loop"
+
+
+class EmtTerminalSide(Enum):
+    """Identify one physical EMT network terminal of a device."""
+
+    BUS = "bus"
+    FROM = "from"
+    TO = "to"
+
+
+class EmtTerminalConductor(Enum):
+    """Identify one instantaneous EMT terminal conductor."""
+
+    DC = "dc"
+    NEUTRAL = "neutral"
+    PHASE_A = "phase_a"
+    PHASE_B = "phase_b"
+    PHASE_C = "phase_c"
+
+
 class BlockType(Enum):
     """
     this class contains the existing types of blocks
@@ -4463,9 +4800,101 @@ class BlockType(Enum):
     PI_POWER_CONTROLLER = "Pi_power_controller"
     GFL_CONVERTER_RMS = "GFL_converter_rms"
     GFL_VSC_HVDC_RMS = "GFL_vsc_hvdc"
+    VSC_PLL_RMS = "VSC_PLL_RMS"
+    VSC_ELECTRICAL_RMS = "VSC_ELECTRICAL_RMS"
+    VSC_ACTIVE_CONTROL_RMS = "VSC_ACTIVE_CONTROL_RMS"
+    VSC_REACTIVE_CONTROL_RMS = "VSC_REACTIVE_CONTROL_RMS"
+    VSC_CURRENT_LIMITER_RMS = "VSC_CURRENT_LIMITER_RMS"
+    VSC_VD_HAT_RMS = "VSC_VD_HAT_RMS"
+    VSC_VQ_HAT_RMS = "VSC_VQ_HAT_RMS"
+    VSC_DC_LINK_RMS = "VSC_DC_LINK_RMS"
+    VSC_TERMINAL_POWER_RMS = "VSC_TERMINAL_POWER_RMS"
     VOLTAGE_SOURCE_RMS = "Voltage_source_rms"
     TRANSFORMER_2W_RMS = "Transformer_2w_rms"
     DC_LINE_RMS = "DC_line_rms"
+
+    # RMS - International standards
+    AC1A = 'ac1a'
+    AC1C = 'ac1c'
+    AC6A = 'ac6a'
+    AC6C = 'ac6c'
+    AC7B = 'ac7b'
+    AC7C = 'ac7c'
+    AC8B = 'ac8b'
+    AC8C = 'ac8c'
+    BBSEX1 = 'bbsex1'
+    BESSCBCURRENTSOURCENOPLANTCONTROL = 'besscbcurrentsourcenoplantcontrol'
+    DC1A = 'dc1a'
+    DC1C = 'dc1c'
+    EXAC1 = 'exac1'
+    GOVHYDRO4 = 'govhydro4'
+    GOVSTEAM1 = 'govsteam1'
+    GOVSTEAMEU = 'govsteameu'
+    IEEEG1 = 'ieeeg1'
+    IEEEG2 = 'ieeeg2'
+    IEEET1 = 'ieeet1'
+    IEEEX2 = 'ieeex2'
+    IEEX2A = 'ieex2a'
+    MAXEX2 = 'maxex2'
+    OEL2C = 'oel2c'
+    OEL3C = 'oel3c'
+    OEL4C = 'oel4c'
+    OEL5C = 'oel5c'
+    PSS1AOMEGA = 'pss1aomega'
+    PSS1APGEN = 'pss1apgen'
+    PSS2A = 'pss2a'
+    PSS2B = 'pss2b'
+    PSS2C = 'pss2c'
+    PSS3B = 'pss3b'
+    PSS3C = 'pss3c'
+    PSS6C = 'pss6c'
+    PSSKUNDUR = 'psskundur'
+    PVCURRENTSOURCEBNOPLANTCONTROL = 'pvcurrentsourcebnoplantcontrol'
+    PVVOLTAGESOURCEANOPLANTCONTROL = 'pvvoltagesourceanoplantcontrol'
+    PVVOLTAGESOURCEBNOPLANTCONTROL = 'pvvoltagesourcebnoplantcontrol'
+    REECB = 'reecb'
+    REECC = 'reecc'
+    REGCBCS = 'regcbcs'
+    REPCA = 'repca'
+    SCL1C = 'scl1c'
+    SCL2C = 'scl2c'
+    SCRX = 'scrx'
+    SEXS = 'sexs'
+    ST1A = 'st1a'
+    ST1C = 'st1c'
+    ST4B = 'st4b'
+    ST4C = 'st4c'
+    ST5B = 'st5b'
+    ST5C = 'st5c'
+    ST6B = 'st6b'
+    ST6C = 'st6c'
+    ST7B = 'st7b'
+    ST7C = 'st7c'
+    ST9C = 'st9c'
+    TGOV3 = 'tgov3'
+    UEL1 = 'uel1'
+    UEL2C = 'uel2c'
+    VRKUNDUR = 'vrkundur'
+    WPP4BCURRENTSOURCE2020 = 'wpp4bcurrentsource2020'
+    WT4ACURRENTSOURCE = 'wt4acurrentsource'
+    WT4ACURRENTSOURCE2020 = 'wt4acurrentsource2020'
+    WT4BCURRENTSOURCE2020 = 'wt4bcurrentsource2020'
+    WT4BCURRENTSOURCE = 'wt4bcurrentsource'
+    WT4INJECTOR = 'wt4injector'
+    WTG4ACURRENTSOURCE = 'wtg4acurrentsource'
+    WTG4BCURRENTSOURCE = 'wtg4bcurrentsource'
+    IEEEVC_1981 = 'ieeevc_1981'
+    ESDC2A = 'esdc2a'
+    FRQTPA = 'frqtpa'
+    VTGTPA = 'vtgtpa'
+    CIMTR1 = 'cimtr1'
+    CIMW = 'cimw'
+    GENSAL = 'gensal'
+    GENROU = 'genrou'
+    GGOV1 = 'ggov1'
+    HYGOV = 'hygov'
+    IEEL = 'ieel'
+    TGOV1 = 'tgov1'
 
     # EMT
     EMT_GENERATOR = "EMT_GENERATOR"
@@ -4590,6 +5019,10 @@ class ProceduralFieldType(Enum):
     TARGET_REFERENCE = "Mutable target"
     FLOAT = "Number"
     OPTIONAL_FLOAT = "Optional number"
+    TEXT = "Text"
+    REQUIRED_TEXT = "Required text"
+    INTEGER = "Integer"
+    BOOLEAN = "Boolean"
 
 
 class RoutingNodeKind(Enum):
@@ -4642,6 +5075,8 @@ class ProceduralLogicType(Enum):
     TimeDelay = "time_delay"
     MovingAverage = "moving_average"
     GradientLimiter = "gradient_limiter"
+    ConditionalDiagnostic = "conditional_diagnostic"
+    DelayedSwitchEvent = "delayed_switch_event"
     DelayedThresholdLatch = "delayed_threshold_latch"
     StartupHandover = "startup_handover"
     ValveState = "valve_state"
@@ -4733,6 +5168,7 @@ class TreeStateNodeKind(Enum):
     PLOT_GROUP = "plot_group"
     PLOT_ENTRY = "plot_entry"
 
+
 class DynamicTableModelMode(Enum):
     """
     Modes to define data table in block editor
@@ -4742,12 +5178,14 @@ class DynamicTableModelMode(Enum):
     PARAMETERS = "parameters"
     EQUATIONS = "equations"
 
+
 class DynEditorGraphicsModes(Enum):
     """
     Modes to definr editor colouring
     """
     DARK = "Dark"
     LIGHT = "Light"
+
 
 class RoutingAxis(Enum):
     """
@@ -4758,6 +5196,7 @@ class RoutingAxis(Enum):
 
     HORIZONTAL = "horizontal"
     VERTICAL = "vertical"
+
 
 class RoutingPortSide(Enum):
     """
@@ -4771,6 +5210,7 @@ class RoutingPortSide(Enum):
     TOP = "top"
     BOTTOM = "bottom"
 
+
 class RoutingValidationMessageLevel(Enum):
     """
     Enumerate validation message severities.
@@ -4780,3 +5220,24 @@ class RoutingValidationMessageLevel(Enum):
 
     ERROR = "error"
     WARNING = "warning"
+
+
+class SampledValueEvaluationMode(Enum):
+    """Select the numerical boundary that owns a sampled-value update."""
+
+    AcceptedBoundary = "accepted_boundary"
+    ImplicitIterate = "implicit_iterate"
+
+
+class VoltageDependentPowerModel(Enum):
+    """Select the physical voltage law of a static RMS power injection."""
+
+    ConstantCurrent = "ConstantCurrent"
+    ConstantImpedance = "ConstantImpedance"
+
+
+class InductionMachineRole(Enum):
+    """Identify whether the shared induction equations inject or consume power."""
+
+    GENERATOR = "generator"
+    MOTOR = "motor"

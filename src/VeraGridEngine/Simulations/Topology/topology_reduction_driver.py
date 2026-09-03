@@ -282,6 +282,7 @@ class TopologyReduction(DriverTemplate):
         @return:
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self.report_progress(0.0)
         self.report_text('Detecting which Branches to delete...')
 
@@ -341,6 +342,7 @@ class DeleteAndReduce(DriverTemplate):
         @return:
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self._is_running = True
         self.report_progress(0.0)
         self.report_text('Detecting which Branches to delete...')

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Branches.vsc &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Devices.Branches.vsc &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -111,7 +111,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProfileDevice</span><span class="p">,</span> <span class="n">ProfileEnum</span><span class="p">,</span> <span class="n">ProfileFloat</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">BuildStatus</span><span class="p">,</span> <span class="n">ConverterControlType</span><span class="p">,</span> <span class="n">ConverterFaultControlType</span><span class="p">,</span> <span class="n">PrpCat</span><span class="p">,</span>
@@ -119,9 +119,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.branch_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">BranchParent</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">GCProp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_at</span>
-
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BRANCH_TYPES</span>
 
 
 <div class="viewcode-block" id="VSC">
@@ -137,6 +134,16 @@
         <span class="s1">&#39;_alpha1&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_alpha2&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_alpha3&#39;</span><span class="p">,</span>
+        <span class="c1"># Final dynamic data consumed by the RMS adapter.</span>
+        <span class="c1"># r_series/x_series cannot be recovered from alpha3 because it combines losses;</span>
+        <span class="c1"># dc_voltage_base may differ from the bus base; the capacitance</span>
+        <span class="c1"># MMC capacitance already reduces Cmod/Nsm, and the reactor DC side is binary.</span>
+        <span class="s1">&#39;_r_series&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_x_series&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_dc_voltage_base&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_dc_link_capacitance_uf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_mmc_arm_capacitance_uf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_mmc_consider_arm_reactor_dc&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_control1&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_control1_prof&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_control1_dev&#39;</span><span class="p">,</span>
@@ -210,6 +217,43 @@
             <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
             <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Losses quadratic parameter (IEC 62751-2 loss Correction, resistive loss).&#39;</span><span class="p">,</span>
             <span class="n">dyn_ref</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">alpha3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="c1"># Persist only the six irreducible dynamic inputs owned by the adapter.</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;r_series&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Converter series-reactor resistance on the converter base.&#39;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;x_series&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;p.u.&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Converter series-reactor reactance on the converter base.&#39;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;dc_voltage_base&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kV&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Native converter DC voltage base used by dynamic models.&#39;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;dc_link_capacitance_uf&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;uF&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Equivalent capacitance directly across the DC terminals.&#39;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;mmc_arm_capacitance_uf&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;uF&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Equivalent capacitance of one MMC arm.&#39;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;mmc_consider_arm_reactor_dc&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Whether the MMC arm reactor is represented on the DC side.&#39;</span><span class="p">,</span>
         <span class="p">),</span>
 
         <span class="n">GCProp</span><span class="p">(</span>
@@ -431,28 +475,36 @@
                  <span class="n">bus_from</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">bus_to</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">bus_dc_n</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">name</span><span class="o">=</span><span class="s1">&#39;VSC&#39;</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;VSC&#39;</span><span class="p">,</span>
                  <span class="n">idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">code</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-                 <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                 <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">design_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9999.0</span><span class="p">,</span>
                  <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9999.0</span><span class="p">,</span>
-                 <span class="n">alpha1</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-                 <span class="n">alpha2</span><span class="o">=</span><span class="mf">0.015</span><span class="p">,</span>
-                 <span class="n">alpha3</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-                 <span class="n">mttf</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                 <span class="n">mttr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                 <span class="n">cost</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                 <span class="n">contingency_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">alpha1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0001</span><span class="p">,</span>
+                 <span class="n">alpha2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.015</span><span class="p">,</span>
+                 <span class="n">alpha3</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+                 <span class="c1"># Dynamic inputs owned solely by the VSC; do not retain</span>
+                 <span class="c1"># redundant Pcu/uk/Rarm/Larm/Cmod/Nsm source values.</span>
+                 <span class="n">r_series</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">x_series</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">dc_voltage_base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">dc_link_capacitance_uf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">mmc_arm_capacitance_uf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">mmc_consider_arm_reactor_dc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">mttf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">mttr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">cost</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>
+                 <span class="n">contingency_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
                  <span class="n">protection_rating_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">,</span>
-                 <span class="n">contingency_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">monitor_loading</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">capex</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                 <span class="n">opex</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">contingency_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">monitor_loading</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">opex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">build_status</span><span class="p">:</span> <span class="n">BuildStatus</span> <span class="o">=</span> <span class="n">BuildStatus</span><span class="o">.</span><span class="n">Commissioned</span><span class="p">,</span>
 
                  <span class="n">control1</span><span class="p">:</span> <span class="n">ConverterControlType</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Q_droop</span><span class="p">,</span>
-                 <span class="n">control1_dev</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="n">BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">control1_dev</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="n">BranchParent</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">control1_val</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
                  <span class="n">control1_val_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">,</span>
                  <span class="n">control1_val_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9999.0</span><span class="p">,</span>
@@ -462,7 +514,7 @@
                  <span class="n">control1_droop_val_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.1</span><span class="p">,</span>
 
                  <span class="n">control2</span><span class="p">:</span> <span class="n">ConverterControlType</span> <span class="o">=</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_dc</span><span class="p">,</span>
-                 <span class="n">control2_dev</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="n">BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">control2_dev</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="n">BranchParent</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">control2_val</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">control2_val_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">,</span>
                  <span class="n">control2_val_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9999.0</span><span class="p">,</span>
@@ -476,7 +528,7 @@
                  <span class="n">min_ac_voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
                  <span class="n">ysvs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-                 <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
+                 <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Voltage source converter (VSC) with 3 terminals</span>
 <span class="sd">        :param bus_from: bus_dc_p</span>
@@ -493,6 +545,12 @@
 <span class="sd">        :param alpha1:</span>
 <span class="sd">        :param alpha2:</span>
 <span class="sd">        :param alpha3:</span>
+<span class="sd">        :param r_series: Converter series-reactor resistance in per unit.</span>
+<span class="sd">        :param x_series: Converter series-reactor reactance in per unit.</span>
+<span class="sd">        :param dc_voltage_base: Native DC voltage base in kV.</span>
+<span class="sd">        :param dc_link_capacitance_uf: Equivalent DC-terminal capacitance in microfarads.</span>
+<span class="sd">        :param mmc_arm_capacitance_uf: Equivalent capacitance of one MMC arm in microfarads.</span>
+<span class="sd">        :param mmc_consider_arm_reactor_dc: Whether the arm reactor is represented on the DC side.</span>
 <span class="sd">        :param mttf:</span>
 <span class="sd">        :param mttr:</span>
 <span class="sd">        :param cost:</span>
@@ -597,6 +655,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha3</span><span class="p">)</span>
+        <span class="c1"># Transfer one canonical copy of the dynamic data and</span>
+        <span class="c1"># discard DGS source fields that have already been reduced.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_series</span> <span class="o">=</span> <span class="n">r_series</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_series</span> <span class="o">=</span> <span class="n">x_series</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dc_voltage_base</span> <span class="o">=</span> <span class="n">dc_voltage_base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dc_link_capacitance_uf</span> <span class="o">=</span> <span class="n">dc_link_capacitance_uf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mmc_arm_capacitance_uf</span> <span class="o">=</span> <span class="n">mmc_arm_capacitance_uf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mmc_consider_arm_reactor_dc</span> <span class="o">=</span> <span class="n">mmc_consider_arm_reactor_dc</span>
 
         <span class="c1"># u_setpoint_min: float = 0.9, -&gt; min_val</span>
         <span class="c1"># u_setpoint_max: float = 1.1, -&gt; max_val</span>
@@ -611,7 +677,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_control1</span><span class="p">:</span> <span class="n">ConverterControlType</span> <span class="o">=</span> <span class="n">control1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_control1_prof</span><span class="p">:</span> <span class="n">ProfileEnum</span> <span class="o">=</span> <span class="n">ProfileEnum</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">control1</span><span class="p">,</span> <span class="n">enum_type</span><span class="o">=</span><span class="n">ConverterControlType</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_control1_dev</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="n">BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">control1_dev</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control1_dev</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="n">BranchParent</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">control1_dev</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_control1_dev_prof</span><span class="p">:</span> <span class="n">ProfileDevice</span> <span class="o">=</span> <span class="n">ProfileDevice</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">control1_dev</span><span class="p">,</span>
                                                                <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">BusOrBranch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_control1_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">control1_val</span><span class="p">)</span>
@@ -627,7 +693,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_control2</span><span class="p">:</span> <span class="n">ConverterControlType</span> <span class="o">=</span> <span class="n">control2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_control2_prof</span><span class="p">:</span> <span class="n">ProfileEnum</span> <span class="o">=</span> <span class="n">ProfileEnum</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">control2</span><span class="p">,</span> <span class="n">enum_type</span><span class="o">=</span><span class="n">ConverterControlType</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_control2_dev</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="n">BRANCH_TYPES</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">control2_dev</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control2_dev</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="n">BranchParent</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">control2_dev</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_control2_dev_prof</span><span class="p">:</span> <span class="n">ProfileDevice</span> <span class="o">=</span> <span class="n">ProfileDevice</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">control2_dev</span><span class="p">,</span>
                                                                <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">BusOrBranch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_control2_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">control2_val</span><span class="p">)</span>
@@ -1543,6 +1609,110 @@
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_alpha3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="c1"># Provide typed RMS-adapter access to the five final values without</span>
+    <span class="c1"># retaining the source DGS row.</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">r_series</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the converter series-reactor resistance.</span>
+
+<span class="sd">        :return: Series resistance in per unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r_series</span>
+
+    <span class="nd">@r_series</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">r_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the converter series-reactor resistance.</span>
+
+<span class="sd">        :param val: Series resistance in per unit.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r_series</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_series</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the converter series-reactor reactance.</span>
+
+<span class="sd">        :return: Series reactance in per unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x_series</span>
+
+    <span class="nd">@x_series</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the converter series-reactor reactance.</span>
+
+<span class="sd">        :param val: Series reactance in per unit.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x_series</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dc_voltage_base</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the native converter DC voltage base.</span>
+
+<span class="sd">        :return: DC voltage base in kV.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dc_voltage_base</span>
+
+    <span class="nd">@dc_voltage_base</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dc_voltage_base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the native converter DC voltage base.</span>
+
+<span class="sd">        :param val: DC voltage base in kV.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dc_voltage_base</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dc_link_capacitance_uf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the capacitance represented directly across the DC terminals.</span>
+
+<span class="sd">        :return: DC-terminal capacitance in microfarads.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dc_link_capacitance_uf</span>
+
+    <span class="nd">@dc_link_capacitance_uf</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dc_link_capacitance_uf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the capacitance represented directly across the DC terminals.</span>
+
+<span class="sd">        :param val: DC-terminal capacitance in microfarads.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dc_link_capacitance_uf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mmc_arm_capacitance_uf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the equivalent capacitance of one MMC arm.</span>
+
+<span class="sd">        :return: Arm capacitance in microfarads.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmc_arm_capacitance_uf</span>
+
+    <span class="nd">@mmc_arm_capacitance_uf</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mmc_arm_capacitance_uf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the equivalent capacitance of one MMC arm.</span>
+
+<span class="sd">        :param val: Arm capacitance in microfarads.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mmc_arm_capacitance_uf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mmc_consider_arm_reactor_dc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get whether the MMC arm reactor is represented on the DC side.</span>
+
+<span class="sd">        :return: True when the arm reactor belongs to the DC-side representation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mmc_consider_arm_reactor_dc</span>
+
+    <span class="nd">@mmc_consider_arm_reactor_dc</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mmc_consider_arm_reactor_dc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set whether the MMC arm reactor is represented on the DC side.</span>
+
+<span class="sd">        :param val: DC-side arm-reactor representation flag.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mmc_consider_arm_reactor_dc</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">min_ac_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>

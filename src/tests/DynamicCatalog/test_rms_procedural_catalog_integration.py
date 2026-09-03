@@ -141,6 +141,7 @@ def test_rms_update_variable_params_applies_catalog_procedural_logic() -> None:
     # invariants expected by production code.
     problem.sys_block = template.block
     problem._glob_time = Var("glob_time")
+    problem._external_time_parameter = Var("rms_external_time")
     problem._uid2idx_vars = {var.uid: idx for idx, var in enumerate(ordered_vars)}
     problem._uid2idx_event_params = {var.uid: idx for idx, var in enumerate(runtime_parameters)}
     problem._variable_parameters = runtime_parameters

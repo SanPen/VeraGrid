@@ -8,7 +8,12 @@
 from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.block import (
+    Block,
+    EmtTerminalConductor,
+    EmtTerminalCurrentContribution,
+    EmtTerminalSide,
+)
 
 """
 EMT DC load template.
@@ -83,6 +88,15 @@ def get_dc_load_emt_template(
     templ.block.parameters = block.parameters
     templ.block.in_vars = block.in_vars
     templ.block.out_vars = block.out_vars
+    # The network assembler owns KCL through physical device topology. The
+    # current remains independently selectable as a visible control signal.
+    templ.block.dynamic_model_contract.emt_terminal_current_contributions = list((
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.BUS,
+            conductor=EmtTerminalConductor.DC,
+            current_reference=VarPowerFlowReferenceType.Idc,
+        ),
+    ))
 
     return templ
 

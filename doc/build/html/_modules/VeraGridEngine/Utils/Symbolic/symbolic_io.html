@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Symbolic.symbolic_io &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Utils.Symbolic.symbolic_io &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -109,6 +110,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Connection</span><span class="p">,</span>
@@ -116,8 +118,21 @@
                                                         <span class="n">build_persisted_identity_lookup</span><span class="p">,</span>
                                                         <span class="n">find_var_by_persisted_identity</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">SharedVarReferenceType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">,</span> <span class="n">UnOp</span><span class="p">,</span> <span class="n">Func</span><span class="p">,</span> <span class="n">Func2</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">normalize_dynamic_connection_intents</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">,</span> <span class="n">UnOp</span><span class="p">,</span> <span class="n">Func</span><span class="p">,</span> <span class="n">Func2</span><span class="p">,</span> <span class="n">CmpOp</span><span class="p">,</span> <span class="n">Comparison</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Block</span><span class="p">,</span>
+    <span class="n">DynamicModelContract</span><span class="p">,</span>
+    <span class="n">RmsPhysicalMeasurementPoint</span><span class="p">,</span>
+    <span class="n">dynamic_model_contract_from_data</span><span class="p">,</span>
+    <span class="n">normalize_dynamic_connection_intents</span><span class="p">,</span>
+    <span class="n">normalize_event_parameter_initialization</span><span class="p">,</span>
+    <span class="n">validate_dynamic_model_contract</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.procedural_logic_contract</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ProceduralLogicCodecContract</span><span class="p">,</span>
+    <span class="n">ProceduralLogicData</span><span class="p">,</span>
+    <span class="n">ProceduralLogicEntryContract</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.dynamic_connection_intent</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DynamicConnectionIntent</span><span class="p">,</span>
                                                                      <span class="n">DynamicConnectionIntentDirection</span><span class="p">,</span>
                                                                      <span class="n">dynamic_connection_intent_from_dict</span><span class="p">,</span>
@@ -129,7 +144,7 @@
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic_io.symbolic_objects_to_dict">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">symbolic_objects_to_dict</span><span class="p">(</span><span class="n">obj_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">Const</span> <span class="o">|</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">SharedVarReferenceType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Save the list of all unique vars, diffvars and const</span>
+<span class="sd">    Save all unique variables, differential variables, and constants.</span>
 <span class="sd">    :param obj_dict: Dictionary storing the unique objects</span>
 <span class="sd">    :return: List of dictionaries representing each object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -388,25 +403,22 @@
 
 <div class="viewcode-block" id="expr_to_dict">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic_io.expr_to_dict">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">expr_to_dict</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Expr</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">expr_to_dict</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">,</span>
                  <span class="n">const_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Const</span><span class="p">],</span>
                  <span class="n">var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
                  <span class="n">diff_var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
                  <span class="n">composite_expression_ids</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Serialise any `Expr` tree into a plain Python dictionary that’s</span>
-<span class="sd">    JSON-friendly.  Each node type becomes a small dict that records:</span>
+<span class="sd">    Serialize any ``Expr`` tree into a JSON-compatible Python dictionary.</span>
 
-<span class="sd">        • its own type      (\&quot;Const\&quot;, \&quot;Var\&quot;, \&quot;BinOp\&quot;, …)</span>
-<span class="sd">        • the data it carries (value, name, operator…)</span>
-<span class="sd">        • its unique uid     (string, so it survives round-trip)</span>
-<span class="sd">        • nested children    (recursively serialised)</span>
+<span class="sd">    Each node record contains its symbolic kind, payload, stable UID, and</span>
+<span class="sd">    recursively serialized child expressions.</span>
 <span class="sd">    :param expr: Expression child</span>
 <span class="sd">    :param const_dict: Dictionary that keeps a reference of the Const objects already saved</span>
-<span class="sd">    :param var_dict: Dictionary that keeps a reference of the VAr objects already saved</span>
+<span class="sd">    :param var_dict: Dictionary that retains variables already saved.</span>
 <span class="sd">    :param diff_var_dict: Dictionary that keeps a reference of the DiffVar objects already saved</span>
 <span class="sd">    :param composite_expression_ids: Object identities already serialized in the current block</span>
-<span class="sd">    :return: Dict to save in jason</span>
+<span class="sd">    :return: Declarative expression record suitable for JSON persistence.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">active_composite_expression_ids</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">composite_expression_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -535,6 +547,31 @@
             <span class="s2">&quot;graph_id&quot;</span><span class="p">:</span> <span class="n">graph_id</span><span class="p">,</span>
         <span class="p">}</span>
 
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">Comparison</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
+            <span class="n">comparison_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">rhs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">comparison_rhs</span> <span class="o">=</span> <span class="n">Const</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">rhs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Comparison&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lhs&quot;</span><span class="p">:</span> <span class="n">expr_to_dict</span><span class="p">(</span>
+                <span class="n">expr</span><span class="o">=</span><span class="n">expr</span><span class="o">.</span><span class="n">lhs</span><span class="p">,</span>
+                <span class="n">const_dict</span><span class="o">=</span><span class="n">const_dict</span><span class="p">,</span>
+                <span class="n">var_dict</span><span class="o">=</span><span class="n">var_dict</span><span class="p">,</span>
+                <span class="n">diff_var_dict</span><span class="o">=</span><span class="n">diff_var_dict</span><span class="p">,</span>
+                <span class="n">composite_expression_ids</span><span class="o">=</span><span class="n">active_composite_expression_ids</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;op&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;rhs&quot;</span><span class="p">:</span> <span class="n">expr_to_dict</span><span class="p">(</span>
+                <span class="n">expr</span><span class="o">=</span><span class="n">comparison_rhs</span><span class="p">,</span>
+                <span class="n">const_dict</span><span class="o">=</span><span class="n">const_dict</span><span class="p">,</span>
+                <span class="n">var_dict</span><span class="o">=</span><span class="n">var_dict</span><span class="p">,</span>
+                <span class="n">diff_var_dict</span><span class="o">=</span><span class="n">diff_var_dict</span><span class="p">,</span>
+                <span class="n">composite_expression_ids</span><span class="o">=</span><span class="n">active_composite_expression_ids</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;graph_id&quot;</span><span class="p">:</span> <span class="n">graph_id</span><span class="p">,</span>
+        <span class="p">}</span>
+
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported Expr subclass: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
@@ -582,17 +619,17 @@
                <span class="n">const_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Const</span><span class="p">],</span>
                <span class="n">var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
                <span class="n">diff_var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
-               <span class="n">composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Const</span> <span class="o">|</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">UnOp</span> <span class="o">|</span> <span class="n">BinOp</span> <span class="o">|</span> <span class="n">Func</span> <span class="o">|</span> <span class="n">Func2</span><span class="p">:</span>
+               <span class="n">composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    De-Serialize expression from dictionary</span>
 <span class="sd">    :param data: Some dictionary containing the expression</span>
 <span class="sd">    :param const_dict: Dictionary that keeps a reference of the Const objects already saved</span>
-<span class="sd">    :param var_dict: Dictionary that keeps a reference of the VAr objects already saved</span>
+<span class="sd">    :param var_dict: Dictionary that retains variables already saved.</span>
 <span class="sd">    :param diff_var_dict: Dictionary that keeps a reference of the DiffVar objects already saved</span>
 <span class="sd">    :param composite_expressions: Composite graph nodes already parsed in the current block</span>
-<span class="sd">    :return: Expression chil</span>
+<span class="sd">    :return: Reconstructed expression node.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">active_composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span>
+    <span class="n">active_composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">composite_expressions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">active_composite_expressions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
@@ -602,7 +639,7 @@
 
     <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;ExprRef&quot;</span><span class="p">:</span>
         <span class="n">graph_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;graph_id&quot;</span><span class="p">])</span>
-        <span class="n">referenced_expression</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">active_composite_expressions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">graph_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">referenced_expression</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">active_composite_expressions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">graph_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">referenced_expression</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown backward expression reference &#39;</span><span class="si">{</span><span class="n">graph_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -664,18 +701,58 @@
         <span class="n">obj</span> <span class="o">=</span> <span class="n">Func</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;op&quot;</span><span class="p">],</span> <span class="n">uid</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">])</span>
 
     <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;Func2&quot;</span><span class="p">:</span>
-        <span class="n">arg1</span><span class="p">:</span> <span class="n">Const</span> <span class="o">|</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">UnOp</span> <span class="o">|</span> <span class="n">BinOp</span> <span class="o">|</span> <span class="n">Func</span> <span class="o">|</span> <span class="n">Func2</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;arg1&quot;</span><span class="p">],</span>
+        <span class="n">arg1</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;arg1&quot;</span><span class="p">],</span>
                                                                       <span class="n">const_dict</span><span class="o">=</span><span class="n">const_dict</span><span class="p">,</span>
                                                                       <span class="n">var_dict</span><span class="o">=</span><span class="n">var_dict</span><span class="p">,</span>
                                                                       <span class="n">diff_var_dict</span><span class="o">=</span><span class="n">diff_var_dict</span><span class="p">,</span>
                                                                       <span class="n">composite_expressions</span><span class="o">=</span><span class="n">active_composite_expressions</span><span class="p">)</span>
-        <span class="n">arg2</span><span class="p">:</span> <span class="n">Const</span> <span class="o">|</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">UnOp</span> <span class="o">|</span> <span class="n">BinOp</span> <span class="o">|</span> <span class="n">Func</span> <span class="o">|</span> <span class="n">Func2</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;arg2&quot;</span><span class="p">],</span>
+        <span class="n">arg2</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;arg2&quot;</span><span class="p">],</span>
                                                                       <span class="n">const_dict</span><span class="o">=</span><span class="n">const_dict</span><span class="p">,</span>
                                                                       <span class="n">var_dict</span><span class="o">=</span><span class="n">var_dict</span><span class="p">,</span>
                                                                       <span class="n">diff_var_dict</span><span class="o">=</span><span class="n">diff_var_dict</span><span class="p">,</span>
                                                                       <span class="n">composite_expressions</span><span class="o">=</span><span class="n">active_composite_expressions</span><span class="p">)</span>
 
         <span class="n">obj</span> <span class="o">=</span> <span class="n">Func2</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">arg1</span><span class="o">=</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="o">=</span><span class="n">arg2</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">])</span>
+
+    <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s2">&quot;Comparison&quot;</span><span class="p">:</span>
+        <span class="n">lhs_value</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;lhs&quot;</span><span class="p">],</span>
+            <span class="n">const_dict</span><span class="o">=</span><span class="n">const_dict</span><span class="p">,</span>
+            <span class="n">var_dict</span><span class="o">=</span><span class="n">var_dict</span><span class="p">,</span>
+            <span class="n">diff_var_dict</span><span class="o">=</span><span class="n">diff_var_dict</span><span class="p">,</span>
+            <span class="n">composite_expressions</span><span class="o">=</span><span class="n">active_composite_expressions</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">rhs_value</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;rhs&quot;</span><span class="p">],</span>
+            <span class="n">const_dict</span><span class="o">=</span><span class="n">const_dict</span><span class="p">,</span>
+            <span class="n">var_dict</span><span class="o">=</span><span class="n">var_dict</span><span class="p">,</span>
+            <span class="n">diff_var_dict</span><span class="o">=</span><span class="n">diff_var_dict</span><span class="p">,</span>
+            <span class="n">composite_expressions</span><span class="o">=</span><span class="n">active_composite_expressions</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lhs_value</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs_value</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Comparison operands must be symbolic expressions&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">comparison_operator_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;op&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">comparison_operator_value</span> <span class="o">==</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">LE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">comparison_operator</span><span class="p">:</span> <span class="n">CmpOp</span> <span class="o">=</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">LE</span>
+        <span class="k">elif</span> <span class="n">comparison_operator_value</span> <span class="o">==</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">GE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">comparison_operator</span> <span class="o">=</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">GE</span>
+        <span class="k">elif</span> <span class="n">comparison_operator_value</span> <span class="o">==</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">LT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">comparison_operator</span> <span class="o">=</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">LT</span>
+        <span class="k">elif</span> <span class="n">comparison_operator_value</span> <span class="o">==</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">GT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">comparison_operator</span> <span class="o">=</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">GT</span>
+        <span class="k">elif</span> <span class="n">comparison_operator_value</span> <span class="o">==</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">EQ</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">comparison_operator</span> <span class="o">=</span> <span class="n">CmpOp</span><span class="o">.</span><span class="n">EQ</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown comparison operator &#39;</span><span class="si">{</span><span class="n">comparison_operator_value</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">Comparison</span><span class="p">(</span>
+            <span class="n">lhs</span><span class="o">=</span><span class="n">lhs_value</span><span class="p">,</span>
+            <span class="n">op</span><span class="o">=</span><span class="n">comparison_operator</span><span class="p">,</span>
+            <span class="n">rhs</span><span class="o">=</span><span class="n">rhs_value</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown type &#39;</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&#39; in symbolic deserialization&quot;</span><span class="p">)</span>
@@ -698,7 +775,7 @@
                     <span class="n">const_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Const</span><span class="p">],</span>
                     <span class="n">var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
                     <span class="n">diff_var_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
-                    <span class="n">composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Const</span> <span class="o">|</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">UnOp</span> <span class="o">|</span> <span class="n">BinOp</span> <span class="o">|</span> <span class="n">Func</span> <span class="o">|</span> <span class="n">Func2</span><span class="p">]:</span>
+                    <span class="n">composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param lst:</span>
@@ -708,13 +785,13 @@
 <span class="sd">    :param composite_expressions: Composite graph nodes already parsed in the current block</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">active_composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span>
+    <span class="n">active_composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">composite_expressions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">active_composite_expressions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">active_composite_expressions</span> <span class="o">=</span> <span class="n">composite_expressions</span>
 
-    <span class="n">lst2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Const</span> <span class="o">|</span> <span class="n">Var</span> <span class="o">|</span> <span class="n">UnOp</span> <span class="o">|</span> <span class="n">BinOp</span> <span class="o">|</span> <span class="n">Func</span> <span class="o">|</span> <span class="n">Func2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">lst2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
         <span class="n">lst2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -817,13 +894,14 @@
 <span class="sd">        :param var: Variable to register.</span>
 <span class="sd">        :return: None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">found_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_var</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">found_var</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">registered_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_vars_dict</span><span class="p">()</span>
+        <span class="n">found_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">find_var_by_persisted_identity</span><span class="p">(</span>
+            <span class="n">var_dict</span><span class="o">=</span><span class="n">registered_vars</span><span class="p">,</span>
+            <span class="n">persisted_uid</span><span class="o">=</span><span class="n">var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">found_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">_var_dict</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span>
+            <span class="n">registered_vars</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
 
@@ -834,13 +912,14 @@
 <span class="sd">        :param diff_var: Differential variable to register.</span>
 <span class="sd">        :return: None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">found_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_diff_var</span><span class="p">(</span><span class="n">diff_var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">found_var</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">registered_diff_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_diff_var_dict</span><span class="p">()</span>
+        <span class="n">found_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">find_var_by_persisted_identity</span><span class="p">(</span>
+            <span class="n">var_dict</span><span class="o">=</span><span class="n">registered_diff_vars</span><span class="p">,</span>
+            <span class="n">persisted_uid</span><span class="o">=</span><span class="n">diff_var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">found_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">_diff_var_dict</span><span class="p">[</span><span class="n">diff_var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">diff_var</span>
+            <span class="n">registered_diff_vars</span><span class="p">[</span><span class="n">diff_var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">diff_var</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
 
@@ -849,11 +928,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">save_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blk</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a dictionary representing the block</span>
-<span class="sd">        All &quot;global references&quot; such a as Conts, Var and DiffVar are stored in the class for later</span>
+<span class="sd">        All global constant, variable, and differential-variable references are retained for later serialization.</span>
 <span class="sd">        :param blk: Block</span>
 <span class="sd">        :param main: is it the main block?</span>
 <span class="sd">        :return: Dictionary representing the block</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normalize_event_parameter_initialization</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">blk</span><span class="p">)</span>
+        <span class="c1"># Persistence must reject an incoherent runtime contract before any</span>
+        <span class="c1"># partial block data is registered in the canonical serializer.</span>
+        <span class="n">validate_dynamic_model_contract</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span>
+
         <span class="c1"># One registry is shared by every expression owned by this block. Child</span>
         <span class="c1"># blocks create their own registry when ``save_block`` recurses.</span>
         <span class="n">composite_expression_ids</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -921,6 +1005,22 @@
                         <span class="n">diff_var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_diff_var_dict</span><span class="p">(),</span>
                         <span class="n">composite_expression_ids</span><span class="o">=</span><span class="n">composite_expression_ids</span>
                     <span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="n">post_init_seed_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">post_init_seed_eqs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_var_registered</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="n">post_init_seed_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;var&quot;</span><span class="p">:</span> <span class="n">var</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+                    <span class="s2">&quot;expr&quot;</span><span class="p">:</span> <span class="n">expr_to_dict</span><span class="p">(</span>
+                        <span class="n">expr</span><span class="o">=</span><span class="n">expr</span><span class="p">,</span>
+                        <span class="n">const_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_const_dict</span><span class="p">(),</span>
+                        <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_vars_dict</span><span class="p">(),</span>
+                        <span class="n">diff_var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_diff_var_dict</span><span class="p">(),</span>
+                        <span class="n">composite_expression_ids</span><span class="o">=</span><span class="n">composite_expression_ids</span><span class="p">,</span>
+                    <span class="p">),</span>
                 <span class="p">}</span>
             <span class="p">)</span>
 
@@ -1023,6 +1123,26 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
 
+        <span class="n">dynamic_model_contract_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">blk</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">to_data</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">override_expression_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">override_name</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">override_expression</span><span class="p">:</span> <span class="n">Expr</span>
+        <span class="k">for</span> <span class="n">override_name</span><span class="p">,</span> <span class="n">override_expression</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="n">blk</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">explicit_init_override_init_exprs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">override_expression_data</span><span class="p">[</span><span class="n">override_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">expr_to_dict</span><span class="p">(</span>
+                <span class="n">expr</span><span class="o">=</span><span class="n">override_expression</span><span class="p">,</span>
+                <span class="n">const_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_const_dict</span><span class="p">(),</span>
+                <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_vars_dict</span><span class="p">(),</span>
+                <span class="n">diff_var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_diff_var_dict</span><span class="p">(),</span>
+                <span class="n">composite_expression_ids</span><span class="o">=</span><span class="n">composite_expression_ids</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">dynamic_model_contract_data</span><span class="p">[</span>
+            <span class="s2">&quot;explicit_init_override_init_exprs&quot;</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="n">override_expression_data</span>
+
         <span class="c1"># save diagram</span>
         <span class="n">diagram</span> <span class="o">=</span> <span class="n">blk</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 
@@ -1055,17 +1175,17 @@
 
             <span class="s2">&quot;diff_init_eqs&quot;</span><span class="p">:</span> <span class="n">diff_init_eq_list</span><span class="p">,</span>
 
+            <span class="s2">&quot;post_init_seed_eqs&quot;</span><span class="p">:</span> <span class="n">post_init_seed_list</span><span class="p">,</span>
+
             <span class="s2">&quot;discrete_eqs&quot;</span><span class="p">:</span> <span class="n">discrete_list</span><span class="p">,</span>
 
             <span class="s2">&quot;mode_dict&quot;</span><span class="p">:</span> <span class="n">mode_list</span><span class="p">,</span>
 
             <span class="s2">&quot;boolean_guards&quot;</span><span class="p">:</span> <span class="n">boolean_guard_list</span><span class="p">,</span>
 
-            <span class="c1"># Procedural-logic entries are runtime objects and cannot be</span>
-            <span class="c1"># written to JSON directly.  Persist their typed dictionaries so</span>
-            <span class="c1"># saving one sampled controller does not omit ``blocks.symbolic``</span>
-            <span class="c1"># and leave every device model pointer unresolved on reload.</span>
-            <span class="s2">&quot;procedural_logic&quot;</span><span class="p">:</span> <span class="n">blk</span><span class="o">.</span><span class="n">_procedural_logic_to_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;procedural_logic&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">to_data</span><span class="p">()</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">procedural_logic</span>
+            <span class="p">),</span>
 
             <span class="s2">&quot;init_values&quot;</span><span class="p">:</span> <span class="n">init_values</span><span class="p">,</span>
 
@@ -1088,6 +1208,8 @@
             <span class="s2">&quot;connection_intents&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">dynamic_connection_intent_to_dict</span><span class="p">(</span><span class="n">intent</span><span class="p">)</span>
                                    <span class="k">for</span> <span class="n">intent</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">connection_intents</span><span class="p">],</span>
 
+            <span class="s2">&quot;dynamic_model_contract&quot;</span><span class="p">:</span> <span class="n">dynamic_model_contract_data</span><span class="p">,</span>
+
             <span class="s2">&quot;diagram&quot;</span><span class="p">:</span> <span class="n">diagram</span>
         <span class="p">}</span>
 
@@ -1109,13 +1231,21 @@
         <span class="s2">&quot;logger&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_var_identity_lookup&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_diff_var_identity_lookup&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_procedural_logic_codec&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+            <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">procedural_logic_codec</span><span class="p">:</span> <span class="n">ProceduralLogicCodecContract</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a block parser bound to one symbolic variable factory.</span>
 
 <span class="sd">        :param var_factory: Factory used to resolve persisted symbolic identities.</span>
 <span class="sd">        :param logger: Optional logger receiving recoverable parsing warnings.</span>
+<span class="sd">        :param procedural_logic_codec: Explicit declarative logic codec.</span>
+<span class="sd">        :return: None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span> <span class="o">=</span> <span class="n">var_factory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">block_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Block</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -1125,6 +1255,9 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_identity_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_persisted_identity_lookup</span><span class="p">(</span>
             <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_diff_var_dict</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_procedural_logic_codec</span><span class="p">:</span> <span class="n">ProceduralLogicCodecContract</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">procedural_logic_codec</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_rebuild_persisted_identity_lookups</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1452,7 +1585,7 @@
         <span class="c1"># Graph identifiers are local to one block and may be shared across</span>
         <span class="c1"># several equation collections. Recursive child parsing creates an</span>
         <span class="c1"># independent registry for each child block.</span>
-        <span class="n">composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">composite_expressions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
         <span class="n">state_vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="n">v_uid</span><span class="p">:</span> <span class="nb">int</span>
@@ -1605,6 +1738,25 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
 
+        <span class="n">post_init_seed_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;post_init_seed_eqs&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">()):</span>
+            <span class="n">seed_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_var_or_warn</span><span class="p">(</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;var&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="n">block_name</span><span class="p">,</span>
+                <span class="n">block_uid_value</span><span class="p">,</span>
+                <span class="s2">&quot;post_init_seed_eqs&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">seed_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">post_init_seed_eqs</span><span class="p">[</span><span class="n">seed_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;expr&quot;</span><span class="p">],</span>
+                    <span class="n">const_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_const_dict</span><span class="p">(),</span>
+                    <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_identity_lookup</span><span class="p">,</span>
+                    <span class="n">diff_var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_identity_lookup</span><span class="p">,</span>
+                    <span class="n">composite_expressions</span><span class="o">=</span><span class="n">composite_expressions</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
         <span class="n">event_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;event_dict&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">()):</span>
             <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_var_or_warn</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;var&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">block_uid_value</span><span class="p">,</span> <span class="s2">&quot;event_dict&quot;</span><span class="p">)</span>
@@ -1681,7 +1833,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Rebuild PF-exposed mappings using the stable symbolic</span>
                 <span class="c1"># identity. A non-null UID that is absent from both factory</span>
-                <span class="c1"># dictionaries is a broken persisted reference and matters to</span>
+                <span class="c1"># dictionaries is a broken persisted-data reference and matters to</span>
                 <span class="c1"># the user even though parsing can continue without it.</span>
                 <span class="n">var_in_varfactory</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_var_or_diff_var_by_non_mutable_uid</span><span class="p">(</span><span class="n">var_uid</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">var_in_varfactory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1726,6 +1878,29 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
 
+        <span class="n">procedural_logic_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ProceduralLogicData</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">procedural_entry</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="k">for</span> <span class="n">procedural_entry</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;procedural_logic&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">procedural_entry</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">procedural_logic_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">procedural_entry</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Persisted procedural logic entry must be declarative data&quot;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">procedural_logic_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">procedural_logic_entries</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ProceduralLogicEntryContract</span><span class="p">[</span><span class="n">Expr</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_procedural_logic_codec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Persisted procedural logic requires an explicit codec&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">procedural_logic_entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_procedural_logic_codec</span><span class="o">.</span><span class="n">parse_entries</span><span class="p">(</span>
+                        <span class="n">procedural_logic_data</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
         <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
             <span class="n">state_vars</span><span class="o">=</span><span class="n">state_vars</span><span class="p">,</span>
             <span class="n">state_eqs</span><span class="o">=</span><span class="n">state_eqs</span><span class="p">,</span>
@@ -1738,16 +1913,12 @@
             <span class="n">out_vars</span><span class="o">=</span><span class="n">out_vars</span><span class="p">,</span>
             <span class="n">init_eqs</span><span class="o">=</span><span class="n">init_eqs</span><span class="p">,</span>
             <span class="n">diff_init_eqs</span><span class="o">=</span><span class="n">diff_init_eqs</span><span class="p">,</span>
+            <span class="n">post_init_seed_eqs</span><span class="o">=</span><span class="n">post_init_seed_eqs</span><span class="p">,</span>
             <span class="n">discrete_eqs</span><span class="o">=</span><span class="n">discrete_eqs</span><span class="p">,</span>
             <span class="n">event_dict</span><span class="o">=</span><span class="n">event_dict</span><span class="p">,</span>
             <span class="n">mode_dict</span><span class="o">=</span><span class="n">mode_dict</span><span class="p">,</span>
             <span class="n">boolean_guards</span><span class="o">=</span><span class="n">boolean_guards</span><span class="p">,</span>
-            <span class="c1"># Rebuild the executable procedural-logic objects from the typed</span>
-            <span class="c1"># JSON representation emitted by ``BlockSaver``.  The helper also</span>
-            <span class="c1"># accepts legacy in-memory objects for backwards compatibility.</span>
-            <span class="n">procedural_logic</span><span class="o">=</span><span class="n">Block</span><span class="o">.</span><span class="n">_procedural_logic_from_dict</span><span class="p">(</span>
-                <span class="n">data</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;procedural_logic&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">()))</span>
-            <span class="p">),</span>
+            <span class="n">procedural_logic</span><span class="o">=</span><span class="n">procedural_logic_entries</span><span class="p">,</span>
             <span class="n">children</span><span class="o">=</span><span class="n">children</span><span class="p">,</span>  <span class="c1"># TODO think about this</span>
             <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
             <span class="n">init_values</span><span class="o">=</span><span class="n">init_values</span><span class="p">,</span>
@@ -1757,6 +1928,69 @@
             <span class="n">name</span><span class="o">=</span><span class="n">block_name</span><span class="p">,</span>
             <span class="n">uid</span><span class="o">=</span><span class="n">block_uid_value</span>
         <span class="p">)</span>
+
+        <span class="n">dynamic_model_contract_raw</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;dynamic_model_contract&quot;</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dynamic_model_contract_raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dynamic_model_contract_raw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">normalized_contract_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">contract_key</span><span class="p">:</span> <span class="nb">object</span>
+                <span class="n">contract_value</span><span class="p">:</span> <span class="nb">object</span>
+                <span class="k">for</span> <span class="n">contract_key</span><span class="p">,</span> <span class="n">contract_value</span> <span class="ow">in</span> <span class="n">dynamic_model_contract_raw</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contract_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="n">normalized_contract_data</span><span class="p">[</span><span class="n">contract_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">contract_value</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                            <span class="s2">&quot;Dynamic-model contract keys must be strings&quot;</span>
+                        <span class="p">)</span>
+
+                <span class="n">override_expression_data_raw</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">normalized_contract_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="s2">&quot;explicit_init_override_init_exprs&quot;</span><span class="p">,</span>
+                        <span class="nb">dict</span><span class="p">(),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">normalized_contract_data</span><span class="p">[</span>
+                    <span class="s2">&quot;explicit_init_override_init_exprs&quot;</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">parsed_contract</span><span class="p">:</span> <span class="n">DynamicModelContract</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">dynamic_model_contract_from_data</span><span class="p">(</span><span class="n">normalized_contract_data</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">override_expression_data_raw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">override_name_raw</span><span class="p">:</span> <span class="nb">object</span>
+                    <span class="n">override_expression_raw</span><span class="p">:</span> <span class="nb">object</span>
+                    <span class="k">for</span> <span class="n">override_name_raw</span><span class="p">,</span> <span class="n">override_expression_raw</span> <span class="ow">in</span> <span class="p">(</span>
+                            <span class="n">override_expression_data_raw</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="p">):</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                                <span class="nb">isinstance</span><span class="p">(</span><span class="n">override_name_raw</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">override_expression_raw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                        <span class="p">):</span>
+                            <span class="n">parsed_contract</span><span class="o">.</span><span class="n">explicit_init_override_init_exprs</span><span class="p">[</span>
+                                <span class="n">override_name_raw</span>
+                            <span class="p">]</span> <span class="o">=</span> <span class="n">parse_expr</span><span class="p">(</span>
+                                <span class="n">data</span><span class="o">=</span><span class="n">override_expression_raw</span><span class="p">,</span>
+                                <span class="n">const_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_const_dict</span><span class="p">(),</span>
+                                <span class="n">var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_identity_lookup</span><span class="p">,</span>
+                                <span class="n">diff_var_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_diff_var_identity_lookup</span><span class="p">,</span>
+                                <span class="n">composite_expressions</span><span class="o">=</span><span class="n">composite_expressions</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                                <span class="s2">&quot;Dynamic-model override expressions must be declarative mappings&quot;</span>
+                            <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="s2">&quot;Dynamic-model override expressions must be a mapping&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span> <span class="o">=</span> <span class="n">parsed_contract</span>
+                <span class="n">validate_dynamic_model_contract</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Dynamic-model contract must be declarative data&quot;</span><span class="p">)</span>
 
         <span class="c1"># Children have already been parsed, so both current stable variable</span>
         <span class="c1"># UIDs and legacy positional port references can now be resolved.</span>
@@ -1782,6 +2016,7 @@
                                   <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;connection_intents&quot;</span><span class="p">,</span>
                                   <span class="n">missing_uid</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">normalize_dynamic_connection_intents</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
+        <span class="n">normalize_event_parameter_initialization</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">)</span>
 
         <span class="n">diagram_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;diagram&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">diagram_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1795,28 +2030,14 @@
 
 <div class="viewcode-block" id="block_deep_copy">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic_io.block_deep_copy">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">block_deep_copy</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create depp copy of a block</span>
-<span class="sd">    :param block:</span>
-<span class="sd">    :param var_factory:</span>
-<span class="sd">    :return:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">block_deep_copy</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Duplicate one block without a serialization round trip.</span>
+
+<span class="sd">    :param block: Source block.</span>
+<span class="sd">    :param var_factory: Factory owning the duplicated symbolic variables.</span>
+<span class="sd">    :return: Duplicated block with remapped internal identities.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: avoid passing to json</span>
-    <span class="n">saver</span> <span class="o">=</span> <span class="n">BlockSaver</span><span class="p">(</span><span class="n">var_factory</span><span class="p">)</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">saver</span><span class="o">.</span><span class="n">save_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">const_save</span> <span class="o">=</span> <span class="n">saver</span><span class="o">.</span><span class="n">get_const_to_save</span><span class="p">()</span>
-    <span class="n">vars_save</span> <span class="o">=</span> <span class="n">saver</span><span class="o">.</span><span class="n">get_vars_to_save</span><span class="p">()</span>
-    <span class="n">diff_vars_save</span> <span class="o">=</span> <span class="n">saver</span><span class="o">.</span><span class="n">get_diff_vars_to_save</span><span class="p">()</span>
-    <span class="n">blocks</span> <span class="o">=</span> <span class="n">saver</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">()</span>
-
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">BlockParser</span><span class="p">(</span><span class="n">VarFactory</span><span class="p">())</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">parse_consts</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">const_save</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">parse_vars</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">vars_save</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">parse_diff_vars</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">diff_vars_save</span><span class="p">)</span>
-    <span class="n">block2</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_block</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">block</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">block2</span></div>
+    <span class="k">return</span> <span class="n">duplicate_block</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span> <span class="n">var_factory</span><span class="o">=</span><span class="n">var_factory</span><span class="p">)</span></div>
 
 
 
@@ -1841,9 +2062,12 @@
         <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">old_to_new_var</span><span class="p">:</span>
             <span class="n">new_var</span> <span class="o">=</span> <span class="n">old_to_new_var</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">base_var_new</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">base_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">base_var_new</span> <span class="o">=</span> <span class="n">duplicate_required_var</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="n">base_var</span><span class="p">)</span>
+                <span class="n">base_var_new</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">duplicate_required_var</span><span class="p">(</span>
+                    <span class="n">var_factory</span><span class="p">,</span>
+                    <span class="n">old_to_new_var</span><span class="p">,</span>
+                    <span class="n">var</span><span class="o">.</span><span class="n">base_var</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="c1"># Differential variables must be linked to the cloned base variable. Passing the</span>
                 <span class="c1"># original differential pointer here would reconnect the new chain to the source.</span>
@@ -1948,6 +2172,54 @@
 
 
 
+<div class="viewcode-block" id="duplicate_condition">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic_io.duplicate_condition">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">duplicate_condition</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">old_to_new_const</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Const</span><span class="p">],</span>
+        <span class="n">old_to_new_var</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
+        <span class="n">condition</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Duplicate one expression or symbolic comparison.</span>
+
+<span class="sd">    :param var_factory: Variable factory used to allocate owned symbols.</span>
+<span class="sd">    :param old_to_new_const: Source-to-duplicate constant mapping.</span>
+<span class="sd">    :param old_to_new_var: Source-to-duplicate variable mapping.</span>
+<span class="sd">    :param condition: Expression or comparison to duplicate.</span>
+<span class="sd">    :return: Condition rebuilt against the resolved symbolic mapping.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">Comparison</span><span class="p">):</span>
+        <span class="n">source_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">rhs</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_rhs</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
+            <span class="n">target_rhs</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">=</span> <span class="n">duplicate_expr</span><span class="p">(</span>
+                <span class="n">var_factory</span><span class="p">,</span>
+                <span class="n">old_to_new_const</span><span class="p">,</span>
+                <span class="n">old_to_new_var</span><span class="p">,</span>
+                <span class="n">source_rhs</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_rhs</span> <span class="o">=</span> <span class="n">source_rhs</span>
+
+        <span class="k">return</span> <span class="n">Comparison</span><span class="p">(</span>
+            <span class="n">lhs</span><span class="o">=</span><span class="n">duplicate_expr</span><span class="p">(</span>
+                <span class="n">var_factory</span><span class="p">,</span>
+                <span class="n">old_to_new_const</span><span class="p">,</span>
+                <span class="n">old_to_new_var</span><span class="p">,</span>
+                <span class="n">condition</span><span class="o">.</span><span class="n">lhs</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">op</span><span class="o">=</span><span class="n">condition</span><span class="o">.</span><span class="n">op</span><span class="p">,</span>
+            <span class="n">rhs</span><span class="o">=</span><span class="n">target_rhs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">duplicate_expr</span><span class="p">(</span>
+            <span class="n">var_factory</span><span class="p">,</span>
+            <span class="n">old_to_new_const</span><span class="p">,</span>
+            <span class="n">old_to_new_var</span><span class="p">,</span>
+            <span class="n">condition</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_remember_var</span><span class="p">(</span><span class="n">var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vars_by_uid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Collect one variable and its derivative chain by uid.</span>
@@ -1980,6 +2252,26 @@
         <span class="n">_remember_var</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">vars_by_uid</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_remember_condition_vars</span><span class="p">(</span>
+        <span class="n">condition</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">,</span>
+        <span class="n">vars_by_uid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect variables referenced by an expression or comparison.</span>
+
+<span class="sd">    :param condition: Symbolic expression or comparison to scan.</span>
+<span class="sd">    :param vars_by_uid: Accumulator keyed by source variable UID.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">Comparison</span><span class="p">):</span>
+        <span class="n">_remember_expr_vars</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">lhs</span><span class="p">,</span> <span class="n">vars_by_uid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
+            <span class="n">_remember_expr_vars</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="n">vars_by_uid</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_remember_expr_vars</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">vars_by_uid</span><span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_collect_block_vars_by_uid</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">vars_by_uid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Collect all variables reachable from a block, including expression-only references.</span>
@@ -2010,18 +2302,17 @@
             <span class="n">block</span><span class="o">.</span><span class="n">init_values</span><span class="p">,</span>
             <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">,</span>
             <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">post_init_seed_eqs</span><span class="p">,</span>
             <span class="n">block</span><span class="o">.</span><span class="n">discrete_eqs</span><span class="p">,</span>
             <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">,</span>
             <span class="n">block</span><span class="o">.</span><span class="n">mode_dict</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">boolean_guards</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">mapping_key</span><span class="p">:</span> <span class="n">Var</span>
-        <span class="n">mapping_value</span><span class="p">:</span> <span class="n">Expr</span>
+        <span class="n">mapping_value</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span>
         <span class="k">for</span> <span class="n">mapping_key</span><span class="p">,</span> <span class="n">mapping_value</span> <span class="ow">in</span> <span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">_remember_var</span><span class="p">(</span><span class="n">mapping_key</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping_value</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
-                <span class="n">_remember_expr_vars</span><span class="p">(</span><span class="n">mapping_value</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">pass</span>
+            <span class="n">_remember_condition_vars</span><span class="p">(</span><span class="n">mapping_value</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="n">external_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">external_var</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -2035,14 +2326,75 @@
             <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span><span class="p">,</span>
             <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">,</span>
             <span class="n">block</span><span class="o">.</span><span class="n">differential_eqs</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">inequalities</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">expr</span><span class="p">:</span> <span class="n">Expr</span>
-        <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">expr_list</span><span class="p">:</span>
-            <span class="n">_remember_expr_vars</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">condition</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span>
+        <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">expr_list</span><span class="p">:</span>
+            <span class="n">_remember_condition_vars</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="n">child</span><span class="p">:</span> <span class="n">Block</span>
     <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
         <span class="n">_collect_block_vars_by_uid</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_collect_owned_block_vars_by_uid</span><span class="p">(</span>
+        <span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+        <span class="n">vars_by_uid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect variables structurally owned by one complete block tree.</span>
+
+<span class="sd">    Variables appearing only inside expressions are external references and</span>
+<span class="sd">    deliberately remain outside this ownership set.</span>
+
+<span class="sd">    :param block: Block tree whose owned variables are required.</span>
+<span class="sd">    :param vars_by_uid: Optional accumulator for recursive child scans.</span>
+<span class="sd">    :return: Structurally owned variables keyed by source UID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">vars_by_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">vars_by_uid</span>
+
+    <span class="n">var_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">var_list</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">reformulated_vars</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">owned_var</span><span class="p">:</span> <span class="n">Var</span>
+        <span class="k">for</span> <span class="n">owned_var</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
+            <span class="n">_remember_var</span><span class="p">(</span><span class="n">owned_var</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="n">owned_mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">owned_mapping</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">init_values</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">post_init_seed_eqs</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">discrete_eqs</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">mode_dict</span><span class="p">,</span>
+            <span class="n">block</span><span class="o">.</span><span class="n">boolean_guards</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">owned_key</span><span class="p">:</span> <span class="n">Var</span>
+        <span class="k">for</span> <span class="n">owned_key</span> <span class="ow">in</span> <span class="n">owned_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">_remember_var</span><span class="p">(</span><span class="n">owned_key</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="n">mapped_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">mapped_var</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">_remember_var</span><span class="p">(</span><span class="n">mapped_var</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">mapped_var</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">_remember_var</span><span class="p">(</span><span class="n">mapped_var</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="n">child</span><span class="p">:</span> <span class="n">Block</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">_collect_owned_block_vars_by_uid</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span>
 
@@ -2068,6 +2420,51 @@
     <span class="k">return</span> <span class="n">mapping</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate one optional source UID into a duplicated block tree.</span>
+
+<span class="sd">    :param source_uid: Source variable UID or ``None``.</span>
+<span class="sd">    :param old_to_new_var: Source UID to duplicated variable mapping.</span>
+<span class="sd">    :return: Duplicated variable UID or ``None`` when not declared.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">source_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mapped_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">old_to_new_var</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mapped_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dynamic-model contract UID &#39;</span><span class="si">{</span><span class="n">source_uid</span><span class="si">}</span><span class="s2">&#39; was not duplicated&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mapped_var</span><span class="o">.</span><span class="n">uid</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_remap_duplicate_uids</span><span class="p">(</span>
+        <span class="n">source_uids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">old_to_new_var</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate every required contract UID into a duplicated block tree.</span>
+
+<span class="sd">    :param source_uids: Required source variable UIDs.</span>
+<span class="sd">    :param old_to_new_var: Source UID to duplicated variable mapping.</span>
+<span class="sd">    :return: Duplicated variable UIDs in source order.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">source_uid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">source_uid</span> <span class="ow">in</span> <span class="n">source_uids</span><span class="p">:</span>
+        <span class="n">mapped_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">old_to_new_var</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mapped_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dynamic-model contract UID &#39;</span><span class="si">{</span><span class="n">source_uid</span><span class="si">}</span><span class="s2">&#39; was not duplicated&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mapped_var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_duplicate_block</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
                      <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
                      <span class="n">old_to_new_var</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
@@ -2084,8 +2481,23 @@
 <span class="sd">    :return: Duplicated block.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">old_vars_by_uid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_collect_block_vars_by_uid</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">owned_vars_by_uid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_collect_owned_block_vars_by_uid</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">old_var</span> <span class="ow">in</span> <span class="n">old_vars_by_uid</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="n">source_uid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">old_var</span><span class="p">:</span> <span class="n">Var</span>
+    <span class="k">for</span> <span class="n">source_uid</span><span class="p">,</span> <span class="n">old_var</span> <span class="ow">in</span> <span class="n">old_vars_by_uid</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">source_uid</span> <span class="ow">in</span> <span class="n">owned_vars_by_uid</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">existing_var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">old_to_new_var</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">existing_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">old_to_new_var</span><span class="p">[</span><span class="n">source_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_var</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># A variable already resolved by its owning parent or sibling</span>
+                <span class="c1"># must remain canonical throughout the recursive duplication.</span>
+                <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">old_var</span> <span class="ow">in</span> <span class="n">owned_vars_by_uid</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="n">duplicate_var</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">,</span> <span class="n">old_var</span><span class="p">)</span>
 
     <span class="n">const</span><span class="p">:</span> <span class="n">Const</span>
@@ -2124,6 +2536,10 @@
         <span class="n">duplicate_expr</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_const</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">differential_eqs</span>
     <span class="p">]</span>
+    <span class="n">new_inequalities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">duplicate_condition</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_const</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">inequalities</span>
+    <span class="p">]</span>
 
     <span class="n">new_init_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">duplicate_required_var</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span> <span class="n">duplicate_expr</span><span class="p">(</span>
@@ -2143,6 +2559,16 @@
             <span class="n">v</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="n">new_post_init_seed_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">duplicate_required_var</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span> <span class="n">duplicate_expr</span><span class="p">(</span>
+            <span class="n">var_factory</span><span class="p">,</span>
+            <span class="n">old_to_new_const</span><span class="p">,</span>
+            <span class="n">old_to_new_var</span><span class="p">,</span>
+            <span class="n">v</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">post_init_seed_eqs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
 
     <span class="n">new_discrete_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -2175,6 +2601,16 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">mode_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
 
+    <span class="n">new_boolean_guards</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">duplicate_required_var</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span> <span class="n">duplicate_condition</span><span class="p">(</span>
+            <span class="n">var_factory</span><span class="p">,</span>
+            <span class="n">old_to_new_const</span><span class="p">,</span>
+            <span class="n">old_to_new_var</span><span class="p">,</span>
+            <span class="n">v</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">boolean_guards</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
     <span class="n">new_parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">duplicate_required_var</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span> <span class="n">duplicate_const</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">old_to_new_const</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -2200,19 +2636,23 @@
     <span class="p">]</span>
 
     <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">procedural_logic</span><span class="p">:</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.procedural_logic</span><span class="w"> </span><span class="kn">import</span> <span class="n">clone_procedural_logic_entries</span>
-        <span class="n">new_procedural_logic</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">clone_procedural_logic_entries</span><span class="p">(</span>
-            <span class="n">entries</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">procedural_logic</span><span class="p">,</span>
-            <span class="n">var_mapping</span><span class="o">=</span><span class="n">_build_var_mapping</span><span class="p">(</span><span class="n">old_vars_by_uid</span><span class="p">,</span> <span class="n">old_to_new_var</span><span class="p">),</span>
+        <span class="n">procedural_var_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Expr</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_var_mapping</span><span class="p">(</span>
+            <span class="n">old_vars_by_uid</span><span class="p">,</span>
+            <span class="n">old_to_new_var</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">new_procedural_logic</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ProceduralLogicEntryContract</span><span class="p">[</span><span class="n">Expr</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="n">procedural_var_mapping</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">procedural_logic</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">new_procedural_logic</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
-    <span class="n">new_block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+    <span class="n">new_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
         <span class="n">state_vars</span><span class="o">=</span><span class="n">new_state_vars</span><span class="p">,</span>
         <span class="n">state_eqs</span><span class="o">=</span><span class="n">new_state_eqs</span><span class="p">,</span>
         <span class="n">algebraic_vars</span><span class="o">=</span><span class="n">new_algebraic_vars</span><span class="p">,</span>
         <span class="n">algebraic_eqs</span><span class="o">=</span><span class="n">new_algebraic_eqs</span><span class="p">,</span>
+        <span class="n">inequalities</span><span class="o">=</span><span class="n">new_inequalities</span><span class="p">,</span>
         <span class="n">diff_vars</span><span class="o">=</span><span class="n">new_diff_vars</span><span class="p">,</span>
         <span class="n">reformulated_vars</span><span class="o">=</span><span class="n">new_reformulated_vars</span><span class="p">,</span>
         <span class="n">differential_eqs</span><span class="o">=</span><span class="n">new_differential_eqs</span><span class="p">,</span>
@@ -2220,12 +2660,14 @@
         <span class="n">init_values</span><span class="o">=</span><span class="n">new_init_values</span><span class="p">,</span>
         <span class="n">init_eqs</span><span class="o">=</span><span class="n">new_init_eqs</span><span class="p">,</span>
         <span class="n">diff_init_eqs</span><span class="o">=</span><span class="n">new_diff_init_eqs</span><span class="p">,</span>
+        <span class="n">post_init_seed_eqs</span><span class="o">=</span><span class="n">new_post_init_seed_eqs</span><span class="p">,</span>
         <span class="n">discrete_eqs</span><span class="o">=</span><span class="n">new_discrete_eqs</span><span class="p">,</span>
         <span class="n">children</span><span class="o">=</span><span class="n">new_children</span><span class="p">,</span>
         <span class="n">in_vars</span><span class="o">=</span><span class="n">new_in_vars</span><span class="p">,</span>
         <span class="n">out_vars</span><span class="o">=</span><span class="n">new_out_vars</span><span class="p">,</span>
         <span class="n">event_dict</span><span class="o">=</span><span class="n">new_event_dict</span><span class="p">,</span>
         <span class="n">mode_dict</span><span class="o">=</span><span class="n">new_mode_dict</span><span class="p">,</span>
+        <span class="n">boolean_guards</span><span class="o">=</span><span class="n">new_boolean_guards</span><span class="p">,</span>
         <span class="n">procedural_logic</span><span class="o">=</span><span class="n">new_procedural_logic</span><span class="p">,</span>
         <span class="n">external_mapping</span><span class="o">=</span><span class="n">new_external_mapping</span><span class="p">,</span>
         <span class="n">api_obj_mapping</span><span class="o">=</span><span class="n">new_api_obj_mapping</span><span class="p">,</span>
@@ -2285,14 +2727,103 @@
             <span class="p">))</span>
 
     <span class="n">normalize_dynamic_connection_intents</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">)</span>
+    <span class="n">normalize_event_parameter_initialization</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">new_block</span><span class="p">)</span>
 
-    <span class="n">extra_key</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">extra_value</span><span class="p">:</span> <span class="n">Any</span>
-    <span class="k">for</span> <span class="n">extra_key</span><span class="p">,</span> <span class="n">extra_value</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">extra_key</span> <span class="ow">in</span> <span class="n">new_block</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="n">new_block</span><span class="p">,</span> <span class="n">extra_key</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">extra_value</span><span class="p">))</span>
+    <span class="c1"># Runtime identity is part of the declared Block contract. Copy every</span>
+    <span class="c1"># scalar declaration explicitly, then translate symbolic UIDs through the</span>
+    <span class="c1"># same map that owns the duplicated variables and expressions.</span>
+    <span class="n">new_block</span><span class="o">.</span><span class="n">dynamic_model_contract</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span>
+    <span class="p">)</span>
+    <span class="n">source_contract</span><span class="p">:</span> <span class="n">DynamicModelContract</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span>
+    <span class="n">target_contract</span><span class="p">:</span> <span class="n">DynamicModelContract</span> <span class="o">=</span> <span class="n">new_block</span><span class="o">.</span><span class="n">dynamic_model_contract</span>
+
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_elmsym_rotor_angle_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_elmsym_rotor_angle_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_elmsym_speed_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_elmsym_speed_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_elmsym_angular_frequency_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_elmsym_angular_frequency_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_elmsym_rated_field_voltage_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_elmsym_rated_field_voltage_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_elmsym_excitation_gain_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_elmsym_excitation_gain_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_elmsym_active_base_factor_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_elmsym_active_base_factor_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_elmsym_reference_speed_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_elmsym_reference_speed_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">rms_topology_constraint_status_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">rms_topology_constraint_status_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_elmsvs_remote_voltage_var_uid</span> <span class="o">=</span> <span class="n">_remap_optional_duplicate_uid</span><span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_elmsvs_remote_voltage_var_uid</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">dgs_explicit_initialization_uids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="n">_remap_duplicate_uids</span><span class="p">(</span>
+            <span class="n">source_uids</span><span class="o">=</span><span class="n">source_contract</span><span class="o">.</span><span class="n">dgs_explicit_initialization_uids</span><span class="p">,</span>
+            <span class="n">old_to_new_var</span><span class="o">=</span><span class="n">old_to_new_var</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">runtime_equipment_shell_sync_var_uids</span> <span class="o">=</span> <span class="n">_remap_duplicate_uids</span><span class="p">(</span>
+        <span class="n">source_uids</span><span class="o">=</span><span class="n">source_contract</span><span class="o">.</span><span class="n">runtime_equipment_shell_sync_var_uids</span><span class="p">,</span>
+        <span class="n">old_to_new_var</span><span class="o">=</span><span class="n">old_to_new_var</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">source_measurement_point</span><span class="p">:</span> <span class="n">RmsPhysicalMeasurementPoint</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">source_contract</span><span class="o">.</span><span class="n">rms_physical_measurement_point</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">source_measurement_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">target_contract</span><span class="o">.</span><span class="n">rms_physical_measurement_point</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">remapped_measurement_uids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">_remap_duplicate_uids</span><span class="p">(</span>
+            <span class="n">source_uids</span><span class="o">=</span><span class="n">source_measurement_point</span><span class="o">.</span><span class="n">get_output_var_uids</span><span class="p">(),</span>
+            <span class="n">old_to_new_var</span><span class="o">=</span><span class="n">old_to_new_var</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">target_contract</span><span class="o">.</span><span class="n">rms_physical_measurement_point</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">RmsPhysicalMeasurementPoint</span><span class="p">(</span>
+                <span class="n">source_fid</span><span class="o">=</span><span class="n">source_measurement_point</span><span class="o">.</span><span class="n">get_source_fid</span><span class="p">(),</span>
+                <span class="n">target_fid</span><span class="o">=</span><span class="n">source_measurement_point</span><span class="o">.</span><span class="n">get_target_fid</span><span class="p">(),</span>
+                <span class="n">terminal_side</span><span class="o">=</span><span class="n">source_measurement_point</span><span class="o">.</span><span class="n">get_terminal_side</span><span class="p">(),</span>
+                <span class="n">meter_kind</span><span class="o">=</span><span class="n">source_measurement_point</span><span class="o">.</span><span class="n">get_meter_kind</span><span class="p">(),</span>
+                <span class="n">output_signal_names</span><span class="o">=</span><span class="p">(</span>
+                    <span class="n">source_measurement_point</span><span class="o">.</span><span class="n">get_output_signal_names</span><span class="p">()</span>
+                <span class="p">),</span>
+                <span class="n">output_var_uids</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">remapped_measurement_uids</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">target_contract</span><span class="o">.</span><span class="n">explicit_init_override_init_exprs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">variable_name</span><span class="p">,</span>
+            <span class="n">duplicate_expr</span><span class="p">(</span>
+                <span class="n">var_factory</span><span class="p">,</span>
+                <span class="n">old_to_new_const</span><span class="p">,</span>
+                <span class="n">old_to_new_var</span><span class="p">,</span>
+                <span class="n">source_expression</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">variable_name</span><span class="p">,</span> <span class="n">source_expression</span>
+        <span class="ow">in</span> <span class="n">source_contract</span><span class="o">.</span><span class="n">explicit_init_override_init_exprs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">new_block</span>
 
@@ -2313,37 +2844,68 @@
     <span class="k">if</span> <span class="n">var_factory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;duplicate_block: var_factory cannot be None&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_duplicate_block</span><span class="p">(</span>
+        <span class="c1"># Every child owns an independent typed contract. Validate each local</span>
+        <span class="c1"># owner before cloning so an invalid descendant cannot be hidden by a</span>
+        <span class="c1"># structurally valid root contract.</span>
+        <span class="n">source_block</span><span class="p">:</span> <span class="n">Block</span>
+        <span class="k">for</span> <span class="n">source_block</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">():</span>
+            <span class="n">validate_dynamic_model_contract</span><span class="p">(</span><span class="n">source_block</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">duplicated_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">_duplicate_block</span><span class="p">(</span>
             <span class="n">block</span><span class="o">=</span><span class="n">block</span><span class="p">,</span>
             <span class="n">var_factory</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
             <span class="n">old_to_new_var</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
             <span class="n">old_to_new_const</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
             <span class="n">old_to_new_block_uid</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        <span class="c1"># Remapped declarations must remain local to the duplicated owner;</span>
+        <span class="c1"># checking the root alone would not inspect meter children.</span>
+        <span class="n">duplicated_candidate</span><span class="p">:</span> <span class="n">Block</span>
+        <span class="k">for</span> <span class="n">duplicated_candidate</span> <span class="ow">in</span> <span class="n">duplicated_block</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">():</span>
+            <span class="n">validate_dynamic_model_contract</span><span class="p">(</span><span class="n">duplicated_candidate</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">duplicated_block</span></div>
 
 
 
 <div class="viewcode-block" id="compare_blocks">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic_io.compare_blocks">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">compare_blocks</span><span class="p">(</span><span class="n">block1</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">block2</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span> <span class="n">var_factory1</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">var_factory2</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">testing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create depp copy of a block</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_blocks</span><span class="p">(</span>
+        <span class="n">block1</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+        <span class="n">block2</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+        <span class="n">var_factory1</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">var_factory2</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">testing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare the declarative symbolic content of two blocks.</span>
+
 <span class="sd">    :param block1:</span>
 <span class="sd">    :param block2:</span>
-<span class="sd">    :param var_factory:</span>
-<span class="sd">    :param testing:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param var_factory1: Variable factory that owns ``block1`` references.</span>
+<span class="sd">    :param var_factory2: Variable factory that owns ``block2`` references.</span>
+<span class="sd">    :param testing: Backward-compatible diagnostic flag; equality semantics</span>
+<span class="sd">        remain identical in production and diagnostic callers.</span>
+<span class="sd">    :return: Whether both blocks produce the same persisted symbolic content.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">testing</span><span class="p">:</span>
+        <span class="c1"># Diagnostic callers intentionally exercise the production equality</span>
+        <span class="c1"># path, so the flag does not select a weaker comparison algorithm.</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
     <span class="c1"># TODO: do not use dictionaries and compare directly using the block information</span>
     <span class="n">saver1</span> <span class="o">=</span> <span class="n">BlockSaver</span><span class="p">(</span><span class="n">var_factory1</span><span class="p">)</span>
-    <span class="n">d1</span> <span class="o">=</span> <span class="n">saver1</span><span class="o">.</span><span class="n">save_block</span><span class="p">(</span><span class="n">block1</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">saver1</span><span class="o">.</span><span class="n">save_block</span><span class="p">(</span><span class="n">block1</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">const_save1</span> <span class="o">=</span> <span class="n">saver1</span><span class="o">.</span><span class="n">get_const_to_save</span><span class="p">()</span>
     <span class="n">vars_save1</span> <span class="o">=</span> <span class="n">saver1</span><span class="o">.</span><span class="n">get_vars_to_save</span><span class="p">()</span>
     <span class="n">diff_vars_save1</span> <span class="o">=</span> <span class="n">saver1</span><span class="o">.</span><span class="n">get_diff_vars_to_save</span><span class="p">()</span>
     <span class="n">blocks1</span> <span class="o">=</span> <span class="n">saver1</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">()</span>
 
     <span class="n">saver2</span> <span class="o">=</span> <span class="n">BlockSaver</span><span class="p">(</span><span class="n">var_factory2</span><span class="p">)</span>
-    <span class="n">d2</span> <span class="o">=</span> <span class="n">saver2</span><span class="o">.</span><span class="n">save_block</span><span class="p">(</span><span class="n">block2</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">saver2</span><span class="o">.</span><span class="n">save_block</span><span class="p">(</span><span class="n">block2</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">const_save2</span> <span class="o">=</span> <span class="n">saver2</span><span class="o">.</span><span class="n">get_const_to_save</span><span class="p">()</span>
     <span class="n">vars_save2</span> <span class="o">=</span> <span class="n">saver2</span><span class="o">.</span><span class="n">get_vars_to_save</span><span class="p">()</span>
     <span class="n">diff_vars_save2</span> <span class="o">=</span> <span class="n">saver2</span><span class="o">.</span><span class="n">get_diff_vars_to_save</span><span class="p">()</span>

@@ -76,6 +76,16 @@ class TowerBuilderGUI(QtWidgets.QDialog):
         self.ui.rho_doubleSpinBox.valueChanged.connect(self.compute)
         self.ui.voltage_doubleSpinBox.valueChanged.connect(self.compute)
 
+    def done(self, result: int) -> None:
+        """
+        Release editor-owned plotting resources before closing the modal dialog.
+
+        :param result: Qt dialog result code.
+        :return: None.
+        """
+        self.ui.plotwidget.dispose()
+        QtWidgets.QDialog.done(self, result)
+
     def msg(self, text, title="Warning"):
         """
         Message box

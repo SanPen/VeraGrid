@@ -7,7 +7,73 @@ import numpy as np
 import pandas as pd
 import pytest
 from VeraGridEngine.api import *
+from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc
+
+
+def build_helm_controlled_transformer_grid() -> MultiCircuit:
+    """
+    Build a tiny grid with active branch PF control.
+
+    :return: MultiCircuit with a controlled transformer and one contingency.
+    """
+
+    grid: MultiCircuit = MultiCircuit(name="HELM controlled transformer regression")
+    bus1: Bus = Bus(name="Bus1")
+    bus2: Bus = Bus(name="Bus2")
+    line12: Line = Line(bus_from=bus1, bus_to=bus2, name="Line 1-2", x=0.01, rate=1000.0)
+    transformer12: Transformer2W = Transformer2W(bus_from=bus1,
+                                                 bus_to=bus2,
+                                                 name="Transformer 1-2",
+                                                 x=0.01,
+                                                 rate=1000.0)
+    generator1: Generator = Generator(name="Generator1", P=10.0, Pmax=1000.0)
+    load2: Load = Load(name="Load2", P=10.0)
+    contingency_group: ContingencyGroup = ContingencyGroup(name="Line12 contingency")
+    contingency: Contingency = Contingency(device=line12, name=contingency_group.name, group=contingency_group)
+
+    grid.add_bus(bus1)
+    grid.add_bus(bus2)
+    grid.add_line(line12)
+    grid.add_transformer2w(transformer12)
+    grid.add_generator(bus1, generator1)
+    grid.add_load(bus2, load2)
+    grid.add_contingency_group(contingency_group)
+    grid.add_contingency(contingency)
+
+    transformer12.tap_phase_control_mode = TapPhaseControl.Pf
+
+    return grid
+
+
+def test_helm_power_flow_ignores_control_aware_route() -> None:
+    """
+    HELM must not enter the control-aware Newton route when branch controls exist.
+
+    :return: None.
+    """
+
+    grid: MultiCircuit = build_helm_controlled_transformer_grid()
+    nc = compile_numerical_circuit_at(grid)
+    logger: Logger = Logger()
+
+    assert bool(nc.active_branch_data.any_pf_control)
+
+    results = multi_island_pf_nc(
+        nc=nc,
+        options=PowerFlowOptions(
+            solver_type=SolverType.HELM,
+            retry_with_other_methods=False,
+            verbose=False
+        ),
+        logger=logger
+    )
+    messages: list[str] = [entry.msg for entry in logger.entries]
+
+    assert len(results.convergence_reports) == 1
+    assert results.convergence_reports[0].methods_[0] == SolverType.HELM
+    assert "Using the limited support power flow method" in messages
+    assert "Using the complete support power flow method" not in messages
 
 
 def test_contingency() -> None:

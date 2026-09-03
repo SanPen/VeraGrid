@@ -173,7 +173,7 @@ class FilterObjects:
             if to_search != "":
                 ls = list()
                 for i, obj in enumerate(self._objects):
-                    if expression in obj.name.lower():
+                    if to_search in obj.name.lower():
                         ls.append(i)
 
                 self._filtered_indices = np.array(ls, dtype=int)

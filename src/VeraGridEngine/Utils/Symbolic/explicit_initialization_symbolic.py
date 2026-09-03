@@ -23,7 +23,8 @@ from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, S
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars
 from VeraGridEngine.Utils.Symbolic.block import Block, normalize_event_parameter_initialization
-from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, find_vars_order
+from VeraGridEngine.Utils.Symbolic.symbolic import BinOp, Comparison, Var, Const, Expr, find_vars_order
+from VeraGridEngine.Utils.procedural_logic import SampledValueLogic
 
 
 def build_uid_bindings(
@@ -38,6 +39,7 @@ def build_uid_bindings(
         uid2idx_diff: Dict[int, int],
         init_guess: Optional[Dict[int, float]] = None,
         diff_init_guess: Optional[Dict[int, float]] = None,
+        external_uid_values: Optional[Dict[int, float]] = None,
 ) -> Dict[int, float]:
     """
     Build the UID-to-value bindings needed to evaluate one symbolic expression.
@@ -60,6 +62,9 @@ def build_uid_bindings(
     :type uid2idx_params: Dict[int, int]
     :param uid2idx_diff: Differential variable index map.
     :type uid2idx_diff: Dict[int, int]
+    :param init_guess: Previously resolved state and algebraic values.
+    :param diff_init_guess: Previously resolved differential values.
+    :param external_uid_values: Explicit values for variables owned outside the symbolic block.
     :return: Numeric bindings for the expression variables.
     :rtype: Dict[int, float]
     """
@@ -77,7 +82,9 @@ def build_uid_bindings(
             if state_idx is None:
                 if param_idx is None:
                     if diff_idx is None:
-                        if init_guess is not None and vr.uid in init_guess:
+                        if external_uid_values is not None and vr.uid in external_uid_values:
+                            resolved_value = float(external_uid_values[vr.uid])
+                        elif init_guess is not None and vr.uid in init_guess:
                             resolved_value = float(init_guess[vr.uid])
                         elif diff_init_guess is not None and vr.uid in diff_init_guess:
                             resolved_value = float(diff_init_guess[vr.uid])
@@ -119,6 +126,7 @@ def evaluate_explicit_init_equation(
         uid2idx_diff: Dict[int, int],
         init_guess: Optional[Dict[int, float]] = None,
         diff_init_guess: Optional[Dict[int, float]] = None,
+        external_uid_values: Optional[Dict[int, float]] = None,
 ) -> float | int | complex | None:
     """
     Evaluate one explicit initialization equation using the shared bindings.
@@ -141,6 +149,9 @@ def evaluate_explicit_init_equation(
     :type uid2idx_params: Dict[int, int]
     :param uid2idx_diff: Differential variable index map.
     :type uid2idx_diff: Dict[int, int]
+    :param init_guess: Previously resolved state and algebraic values.
+    :param diff_init_guess: Previously resolved differential values.
+    :param external_uid_values: Explicit values for variables owned outside the symbolic block.
     :return: Evaluated scalar value.
     :rtype: float
     :raises RuntimeError: If a constant equation has no concrete value.
@@ -160,6 +171,7 @@ def evaluate_explicit_init_equation(
             uid2idx_diff=uid2idx_diff,
             init_guess=init_guess,
             diff_init_guess=diff_init_guess,
+            external_uid_values=external_uid_values,
         )
         try:
             return eq.eval_uid(uid_bindings)
@@ -405,6 +417,11 @@ def add_items(blk, init_vars, init_event):
     for event_key, event_value in blk.event_dict.items():
         init_event[event_key] = event_value
 
+    mode_key: Var
+    mode_value: Union[Expr, Const]
+    for mode_key, mode_value in blk.mode_dict.items():
+        init_event[mode_key] = mode_value
+
 def build_init_dict(mdl, init_vars, init_event):
     """
     builds initialization dictionary from mdl
@@ -421,14 +438,179 @@ def build_init_dict(mdl, init_vars, init_event):
     for blk in mdl.children:
         build_init_dict(blk, init_vars, init_event)
 
+
+def apply_sampled_procedural_initializers(
+        mdl: Block,
+        init_event: Dict[Var, Union[Expr, Const]],
+) -> None:
+    """Use sampled procedural expressions as their startup mode values.
+
+    Generated ``select(...)`` and sampled-value blocks keep their outputs in
+    ``mode_dict`` because runtime updates occur outside the Newton residual.
+    Their placeholder mode defaults must not choose the branch used by
+    ``inc(...)``. At startup, the declared sampled source is the authoritative
+    value and participates in the same dependency graph as every other
+    explicit initialization equation.
+
+    :param mdl: Symbolic block whose procedural entries are inspected.
+    :param init_event: Runtime initialization equations updated in place.
+    :return: None.
+    """
+    event_var_by_uid: Dict[int, Var] = dict(
+        (event_var.uid, event_var) for event_var in init_event
+    )
+    procedural_entry: object
+
+    for procedural_entry in mdl.procedural_logic:
+        if isinstance(procedural_entry, SampledValueLogic):
+            output_var: Optional[Var] = None
+            if procedural_entry.output_var_uid is None:
+                candidate_var: Var
+                for candidate_var in init_event:
+                    if candidate_var.name == procedural_entry.output_var_name:
+                        if output_var is None:
+                            output_var = candidate_var
+                        else:
+                            output_var = None
+                            break
+                    else:
+                        pass
+            else:
+                output_var = event_var_by_uid.get(
+                    procedural_entry.output_var_uid,
+                    None,
+                )
+
+            if output_var is None:
+                pass
+            else:
+                source_expression: Expr
+                if isinstance(procedural_entry.source_expr, Comparison):
+                    source_expression = procedural_entry.source_expr.to_expression()
+                else:
+                    source_expression = procedural_entry.source_expr
+                init_event[output_var] = source_expression
+        else:
+            pass
+
+    child_block: Block
+    for child_block in mdl.children:
+        apply_sampled_procedural_initializers(
+            mdl=child_block,
+            init_event=init_event,
+        )
+
+
+def collect_direct_algebraic_initializers(
+        mdl: Block,
+        direct_initializers: Dict[Var, Expr],
+) -> None:
+    """Collect explicit ``variable - expression`` algebraic assignments.
+
+    PowerFactory ``inc(...)`` expressions can depend on an intermediate
+    algebraic assignment. Those intermediates must be evaluated before the
+    initialization expression instead of retaining the generic work-vector
+    seed.
+
+    :param mdl: Symbolic block whose algebraic equations are inspected.
+    :param direct_initializers: Direct assignments collected recursively.
+    :return: None.
+    """
+    algebraic_var_uids: set[int] = set()
+    state_var_uids: set[int] = set()
+    all_blocks: List[Block] = mdl.get_all_blocks()
+    nested_block: Block
+    for nested_block in all_blocks:
+        nested_state_var: Var
+        for nested_state_var in nested_block.state_vars:
+            state_var_uids.add(nested_state_var.uid)
+
+    for nested_block in all_blocks:
+        nested_algebraic_var: Var
+        nested_algebraic_lists: Tuple[List[Var], ...] = (
+            nested_block.algebraic_vars,
+            nested_block.reformulated_vars,
+            nested_block.in_vars,
+            nested_block.out_vars,
+        )
+        nested_algebraic_list: List[Var]
+        for nested_algebraic_list in nested_algebraic_lists:
+            for nested_algebraic_var in nested_algebraic_list:
+                if nested_algebraic_var.uid in state_var_uids:
+                    pass
+                else:
+                    algebraic_var_uids.add(nested_algebraic_var.uid)
+    algebraic_eq: Expr
+
+    # Only accept the declarative residual shape produced for a direct
+    # assignment. General implicit equations remain owned by the DAE solver.
+    for algebraic_eq in mdl.algebraic_eqs:
+        if (
+                isinstance(algebraic_eq, BinOp)
+                and algebraic_eq.op == "-"
+                and isinstance(algebraic_eq.left, Var)
+                and algebraic_eq.left.uid in algebraic_var_uids
+                and not algebraic_eq.right.contains_var(algebraic_eq.left)
+        ):
+            direct_initializers[algebraic_eq.left] = algebraic_eq.right
+        else:
+            pass
+
+    child_block: Block
+    for child_block in mdl.children:
+        collect_direct_algebraic_initializers(
+            mdl=child_block,
+            direct_initializers=direct_initializers,
+        )
+
+
+def add_direct_algebraic_init_dependencies(
+        init_vars: Dict[Var, Union[Expr, Const]],
+        direct_initializers: Dict[Var, Expr],
+        preserved_var_uids: set[int],
+) -> None:
+    """Add direct algebraic assignments required by initialization equations.
+
+    :param init_vars: Unified explicit initialization equations, updated in place.
+    :param direct_initializers: Available direct algebraic assignments.
+    :param preserved_var_uids: Variables already seeded by an external operating point.
+    :return: None.
+    """
+    dependency_added: bool = True
+
+    # Re-scan a fixed snapshot on each pass because a newly added direct
+    # assignment can itself expose another required intermediate.
+    while dependency_added:
+        dependency_added = False
+        current_equations: List[Union[Expr, Const]] = list(init_vars.values())
+        current_eq: Union[Expr, Const]
+        for current_eq in current_equations:
+            dependency_var: Var
+            for dependency_var in get_expression_vars(current_eq):
+                if dependency_var in init_vars:
+                    pass
+                else:
+                    if dependency_var.uid in preserved_var_uids:
+                        pass
+                    else:
+                        direct_eq: Optional[Expr] = direct_initializers.get(dependency_var, None)
+                        if direct_eq is None:
+                            pass
+                        else:
+                            init_vars[dependency_var] = direct_eq
+                            dependency_added = True
+
 def build_explicit_init_graph(
         mdl: Block,
+        preserved_var_uids: Optional[set[int]] = None,
 ) -> Tuple[Dict[Var, Union[Expr, Const]], Dict[Var, List[Var]], List[Var], Dict[Var, Union[Expr, Const]]]:
     """
     Build the unified dependency graph used by the explicit initializer.
 
     :param mdl: Symbolic block containing event, init, and diff-init equations.
     :type mdl: Block
+    :param preserved_var_uids: Optional externally seeded variables that direct
+        algebraic assignments must consume without replacing.
     :return: Unified equation dictionary, dependency map, and topological order.
     :rtype: Tuple[Dict[Var, Union[Expr, Const]], Dict[Var, List[Var]], List[Var]]
     :raises RuntimeError: If a cross-variable cycle is detected.
@@ -437,12 +619,45 @@ def build_explicit_init_graph(
 
     init_vars = dict()
     init_event = dict()
+    if preserved_var_uids is None:
+        preserved_uids: set[int] = set()
+    else:
+        preserved_uids = set(preserved_var_uids)
     build_init_dict(mdl, init_vars, init_event)
+    apply_sampled_procedural_initializers(
+        mdl=mdl,
+        init_event=init_event,
+    )
 
     # Event parameters own their single initialization expression directly.
     # Normalization above migrates the former Const(None) + init_eqs pattern.
     for ev_var, ev_eq in init_event.items():
         init_vars[ev_var] = ev_eq
+
+    # Resolve only direct algebraic assignments reached from the complete
+    # initialization graph, including procedural startup expressions. This
+    # preserves DAE ownership of general implicit algebraics while ensuring
+    # ``inc(...)`` observes the same selected branch used at the first sample.
+    direct_initializers: Dict[Var, Expr] = dict()
+    collect_direct_algebraic_initializers(
+        mdl=mdl,
+        direct_initializers=direct_initializers,
+    )
+    direct_var: Var
+    direct_eq: Expr
+    for direct_var, direct_eq in direct_initializers.items():
+        if direct_var in init_vars:
+            pass
+        else:
+            if direct_var.uid in preserved_uids:
+                pass
+            else:
+                init_vars[direct_var] = direct_eq
+    add_direct_algebraic_init_dependencies(
+        init_vars=init_vars,
+        direct_initializers=direct_initializers,
+        preserved_var_uids=preserved_uids,
+    )
 
     graph: Dict[Var, List[Var]] = defaultdict(list)
     in_degree: Dict[Var, int] = defaultdict(int)
@@ -646,6 +861,60 @@ def solve_self_implicit(
     return x1
 
 
+def build_explicit_external_uid_values(
+        mdl: Block,
+        external_name_values: Dict[str, float],
+) -> Dict[int, float]:
+    """Resolve external symbolic inputs to their exact equation UIDs.
+
+    Imported expressions may own external variables that are intentionally not
+    part of the DAE state, derivative, or parameter vectors. The RMS wrapper
+    declares their semantic names and values, while this boundary converts that
+    declaration into the UID mapping consumed by the generic initializer.
+
+    :param mdl: Symbolic block whose initialization graph consumes external inputs.
+    :param external_name_values: External values keyed by declared symbolic name.
+    :return: External values keyed by the exact variable UIDs used by the block.
+    """
+    external_uid_values: Dict[int, float] = dict()
+    runtime_block: Block
+    for runtime_block in mdl.get_all_blocks():
+        equation_groups: List[List[Union[Expr, Const]]] = list([
+            list(runtime_block.algebraic_eqs),
+            list(runtime_block.state_eqs),
+            list(runtime_block.differential_eqs),
+            list(runtime_block.init_eqs.values()),
+            list(runtime_block.diff_init_eqs.values()),
+            list(runtime_block.event_dict.values()),
+            list(runtime_block.mode_dict.values()),
+            list(runtime_block.boolean_guards.values()),
+        ])
+        equation_group: List[Union[Expr, Const]]
+        equation: Union[Expr, Const]
+        equation_var: Var
+        for equation_group in equation_groups:
+            for equation in equation_group:
+                for equation_var in find_vars_order(equation):
+                    external_value: float | None = external_name_values.get(
+                        equation_var.name,
+                        None,
+                    )
+                    if external_value is None:
+                        pass
+                    else:
+                        external_uid_values[equation_var.uid] = float(external_value)
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+    else:
+        pass
+
+    return external_uid_values
+
+
 def init_explicit_common(
         mdl: Block,
         sys_vars: Dict[int, Var],
@@ -660,8 +929,9 @@ def init_explicit_common(
         uid2idx_diff: Dict[int, int],
         uid2idx_params: Dict[int, int],
         uid2idx_event_params: Dict[int, int],
-        params_array: np.ndarray,
+        params_array: List[Const] | np.ndarray,
         compile_single_equation: Union[SymbolicVectorSingleEquationCompiler, RmsSingleEquationCompiler],
+        external_uid_values: Optional[Dict[int, float]] = None,
         verbose: bool = False,
 ) -> Tuple[Dict[int, float | int | complex | None], Dict[int, float | int | complex | None]]:
     """
@@ -692,10 +962,11 @@ def init_explicit_common(
     :type uid2idx_params: Dict[int, int]
     :param uid2idx_event_params: Event parameter index map.
     :type uid2idx_event_params: Dict[int, int]
-    :param params_array: Constant parameter vector.
-    :type params_array: np.ndarray
+    :param params_array: Constant parameter vector in symbolic storage or numeric form.
+    :type params_array: List[Const] | np.ndarray
     :param compile_single_equation: Backend-specific single-equation compiler wrapper.
     :type compile_single_equation: Union[SymbolicVectorSingleEquationCompiler, RmsSingleEquationCompiler]
+    :param external_uid_values: Explicit values for variables owned outside the symbolic block.
     :param verbose: Print initialization progress.
     :type verbose: bool
     :return: Updated algebraic or state and differential guesses.
@@ -707,6 +978,24 @@ def init_explicit_common(
     x: np.ndarray = np.ones(len(sys_vars))
     dx: np.ndarray = np.zeros(len(sys_diff_vars))
     event_params_array: np.ndarray = np.ones(len(variable_parameters))
+
+    # RMS problem assembly retains Const wrappers so symbolic ownership is not
+    # lost before compilation. Explicit evaluation consumes only concrete
+    # scalars, therefore materialize a fixed-size numeric view at this boundary.
+    if isinstance(params_array, np.ndarray):
+        numeric_params_array: np.ndarray = np.asarray(params_array, dtype=float)
+    else:
+        numeric_params_array = np.zeros(len(params_array), dtype=float)
+        parameter_index: int
+        parameter_value: Const
+        for parameter_index, parameter_value in enumerate(params_array):
+            if parameter_value.value is None:
+                parameter_name: str = constant_parameters[parameter_index].name
+                raise ValueError(
+                    f"Constant parameter '{parameter_name}' has no explicit initialization value"
+                )
+            else:
+                numeric_params_array[parameter_index] = float(parameter_value.value)
 
     # Seed the working vectors with the guesses already assembled before the
     # explicit stage. The problem relies on those PF-driven values and on previously
@@ -720,7 +1009,10 @@ def init_explicit_common(
             dx[uid2idx_diff[uid]] = val
 
 
-    dic_total, dependencies, topo_order, init_event = build_explicit_init_graph(mdl)
+    dic_total, dependencies, topo_order, init_event = build_explicit_init_graph(
+        mdl=mdl,
+        preserved_var_uids=set(init_guess.keys()),
+    )
 
     for var in topo_order:
         eq: Union[Expr, Const] = dic_total[var]
@@ -730,7 +1022,7 @@ def init_explicit_common(
                 eq=eq,
                 event_params_array=event_params_array,
                 x=x,
-                params_array=params_array,
+                params_array=numeric_params_array,
                 dx=dx,
                 uid2idx_event_params=uid2idx_event_params,
                 uid2idx_vars=uid2idx_vars,
@@ -738,6 +1030,7 @@ def init_explicit_common(
                 uid2idx_diff=uid2idx_diff,
                 init_guess=init_guess,
                 diff_init_guess=diff_init_guess,
+                external_uid_values=external_uid_values,
             )
             event_params_array[uid2idx_event_params[var.uid]] = result
             store_resolved_event_parameter(
@@ -757,7 +1050,7 @@ def init_explicit_common(
                     eq=eq,
                     event_params_array=event_params_array,
                     x=x,
-                    params_array=params_array,
+                    params_array=numeric_params_array,
                     dx=dx,
                     uid2idx_event_params=uid2idx_event_params,
                     uid2idx_vars=uid2idx_vars,
@@ -765,6 +1058,7 @@ def init_explicit_common(
                     uid2idx_diff=uid2idx_diff,
                     init_guess=init_guess,
                     diff_init_guess=diff_init_guess,
+                    external_uid_values=external_uid_values,
                 )
 
                 if var.uid in uid2idx_vars:
@@ -790,7 +1084,7 @@ def init_explicit_common(
                         target_idx=target_idx,
                         target_array=x,
                         event_params_array=event_params_array,
-                        params_array=params_array,
+                        params_array=numeric_params_array,
                     )
                     x[target_idx] = result
                     init_guess[var.uid] = result
@@ -803,7 +1097,7 @@ def init_explicit_common(
                         target_idx=target_idx,
                         target_array=dx,
                         event_params_array=event_params_array,
-                        params_array=params_array,
+                        params_array=numeric_params_array,
                     )
                     dx[target_idx] = result
                     diff_init_guess[var.uid] = result

@@ -498,6 +498,8 @@ class FluidNodeVars:
         self.spillage = np.zeros((nt, n_elm), dtype=object)  # m3/s
         self.flow_in = np.zeros((nt, n_elm), dtype=object)  # m3/s
         self.flow_out = np.zeros((nt, n_elm), dtype=object)  # m3/s
+        self.water_balance = np.zeros((nt, n_elm), dtype=object)
+        self.fluid_value = np.zeros((nt, n_elm), dtype=float)
 
     def get_values(self, model: LpModel) -> "FluidNodeVars":
         """
@@ -515,6 +517,19 @@ class FluidNodeVars:
                 data.spillage[t, i] = model.get_value(self.spillage[t, i])
                 data.flow_in[t, i] = model.get_value(self.flow_in[t, i])
                 data.flow_out[t, i] = model.get_value(self.flow_out[t, i])
+                water_balance: object = self.water_balance[t, i]
+                if isinstance(water_balance, (int, float)):
+                    data.fluid_value[t, i] = 0.0
+                else:
+                    water_balance_dual: float = model.get_dual_value(water_balance)
+                    # IMPORTANT FLUID VALUE SIGN CONVENTION:
+                    # The LP dual belongs to the equality written as
+                    # level[t] = previous_level + inflows - spillage - outflows.
+                    # That raw row dual has the opposite sign of the intuitive
+                    # marginal value of one extra stored m3 of fluid.  The public
+                    # result therefore reports -dual so positive values mean that
+                    # stored fluid reduces the OPF objective cost.
+                    data.fluid_value[t, i] = -water_balance_dual
 
         # format the arrays appropriately
         data.p2x_flow = data.p2x_flow.astype(float, copy=False)
@@ -522,6 +537,7 @@ class FluidNodeVars:
         data.spillage = data.spillage.astype(float, copy=False)
         data.flow_in = data.flow_in.astype(float, copy=False)
         data.flow_out = data.flow_out.astype(float, copy=False)
+        data.fluid_value = data.fluid_value.astype(float, copy=False)
 
         # from the data object itself
         # data.min_level = self.min_level
@@ -2831,26 +2847,26 @@ def add_hydro_formulation(t: Union[int, None],
                 dt = get_time_increment_seconds(time_array=time_array, idx=time_global_tidx)
 
                 # Initialize level at fluid_level_0
-                prob.add_cst(cst=(node_vars.current_level[t, m] ==
-                                  fluid_level_0[m]
-                                  + dt * node_data.inflow[m]
-                                  + dt * node_vars.flow_in[t, m]
-                                  + dt * node_vars.p2x_flow[t, m]
-                                  - dt * node_vars.spillage[t, m]
-                                  - dt * node_vars.flow_out[t, m]),
-                             name=join("nodal_balance_", [t, m], "_"))
+                node_vars.water_balance[t, m] = prob.add_cst(cst=(node_vars.current_level[t, m] ==
+                                                                   fluid_level_0[m]
+                                                                   + dt * node_data.inflow[m]
+                                                                   + dt * node_vars.flow_in[t, m]
+                                                                   + dt * node_vars.p2x_flow[t, m]
+                                                                   - dt * node_vars.spillage[t, m]
+                                                                   - dt * node_vars.flow_out[t, m]),
+                                                              name=join("nodal_balance_", [t, m], "_"))
             else:
                 # Update the level according to the in and out flows as time passes
                 dt = get_time_increment_seconds(time_array=time_array, idx=time_global_tidx)
 
-                prob.add_cst(cst=(node_vars.current_level[t, m] ==
-                                  node_vars.current_level[t - 1, m]
-                                  + dt * node_data.inflow[m]
-                                  + dt * node_vars.flow_in[t, m]
-                                  + dt * node_vars.p2x_flow[t, m]
-                                  - dt * node_vars.spillage[t, m]
-                                  - dt * node_vars.flow_out[t, m]),
-                             name=join("nodal_balance_", [t, m], "_"))
+                node_vars.water_balance[t, m] = prob.add_cst(cst=(node_vars.current_level[t, m] ==
+                                                                   node_vars.current_level[t - 1, m]
+                                                                   + dt * node_data.inflow[m]
+                                                                   + dt * node_vars.flow_in[t, m]
+                                                                   + dt * node_vars.p2x_flow[t, m]
+                                                                   - dt * node_vars.spillage[t, m]
+                                                                   - dt * node_vars.flow_out[t, m]),
+                                                              name=join("nodal_balance_", [t, m], "_"))
     return f_obj
 
 

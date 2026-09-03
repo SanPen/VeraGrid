@@ -395,6 +395,7 @@ class GeneratorQCurveEditorWidget(QtWidgets.QWidget):
         """
         _ = event
         self.collect_data()
+        self.ui.plotter.dispose()
 
     def plot(self) -> None:
         """
@@ -857,6 +858,7 @@ class GeneratorEditor(TemplateDeviceEditor):
         """
         _ = event
         self._sync_qcurve_to_generator()
+        self.qcurve_editor_widget.ui.plotter.dispose()
 
 
 # Backward-compatible alias used by existing call sites in diagrams.

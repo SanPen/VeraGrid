@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGrid &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGrid &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -398,6 +399,14 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType"><code class="docutils literal notranslate"><span class="pre">BlockType</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ABS"><code class="docutils literal notranslate"><span class="pre">BlockType.ABS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.AC1A"><code class="docutils literal notranslate"><span class="pre">BlockType.AC1A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.AC1C"><code class="docutils literal notranslate"><span class="pre">BlockType.AC1C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.AC6A"><code class="docutils literal notranslate"><span class="pre">BlockType.AC6A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.AC6C"><code class="docutils literal notranslate"><span class="pre">BlockType.AC6C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.AC7B"><code class="docutils literal notranslate"><span class="pre">BlockType.AC7B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.AC7C"><code class="docutils literal notranslate"><span class="pre">BlockType.AC7C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.AC8B"><code class="docutils literal notranslate"><span class="pre">BlockType.AC8B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.AC8C"><code class="docutils literal notranslate"><span class="pre">BlockType.AC8C</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ACOS"><code class="docutils literal notranslate"><span class="pre">BlockType.ACOS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ANGLE"><code class="docutils literal notranslate"><span class="pre">BlockType.ANGLE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT</span></code></a></li>
@@ -408,9 +417,13 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.BALANCED_3PH_CURRENT_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.BALANCED_3PH_CURRENT_SOURCE_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.BALANCED_3PH_VOLTAGE_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.BALANCED_3PH_VOLTAGE_SOURCE_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.BATTERY_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.BATTERY_EMT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.BBSEX1"><code class="docutils literal notranslate"><span class="pre">BlockType.BBSEX1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.BESSCBCURRENTSOURCENOPLANTCONTROL"><code class="docutils literal notranslate"><span class="pre">BlockType.BESSCBCURRENTSOURCENOPLANTCONTROL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.BESS_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.BESS_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.CEIL"><code class="docutils literal notranslate"><span class="pre">BlockType.CEIL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.CIMTR1"><code class="docutils literal notranslate"><span class="pre">BlockType.CIMTR1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.CIMW"><code class="docutils literal notranslate"><span class="pre">BlockType.CIMW</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.COMPLETE_PSEUDO_VSC_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.COMPLETE_PSEUDO_VSC_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.CONJ"><code class="docutils literal notranslate"><span class="pre">BlockType.CONJ</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.CONST"><code class="docutils literal notranslate"><span class="pre">BlockType.CONST</span></code></a></li>
@@ -424,6 +437,8 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.COSH"><code class="docutils literal notranslate"><span class="pre">BlockType.COSH</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.CURRENT_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.CURRENT_SOURCE_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.C_LOAD_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.C_LOAD_EMT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.DC1A"><code class="docutils literal notranslate"><span class="pre">BlockType.DC1A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.DC1C"><code class="docutils literal notranslate"><span class="pre">BlockType.DC1C</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.DC_CURRENT_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.DC_CURRENT_SOURCE_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.DC_LINE_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.DC_LINE_RMS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.DC_LOAD_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.DC_LOAD_EMT</span></code></a></li>
@@ -438,6 +453,8 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.EMT_LOAD"><code class="docutils literal notranslate"><span class="pre">BlockType.EMT_LOAD</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.EMT_PI_LINE"><code class="docutils literal notranslate"><span class="pre">BlockType.EMT_PI_LINE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.EMT_THEVENIN"><code class="docutils literal notranslate"><span class="pre">BlockType.EMT_THEVENIN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ESDC2A"><code class="docutils literal notranslate"><span class="pre">BlockType.ESDC2A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.EXAC1"><code class="docutils literal notranslate"><span class="pre">BlockType.EXAC1</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.EXCITER_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.EXCITER_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.EXCITER_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.EXCITER_RMS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.EXP"><code class="docutils literal notranslate"><span class="pre">BlockType.EXP</span></code></a></li>
@@ -445,19 +462,34 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.FAULT_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.FAULT_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.FLOOR"><code class="docutils literal notranslate"><span class="pre">BlockType.FLOOR</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.FROM_GOTO"><code class="docutils literal notranslate"><span class="pre">BlockType.FROM_GOTO</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.FRQTPA"><code class="docutils literal notranslate"><span class="pre">BlockType.FRQTPA</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GAIN"><code class="docutils literal notranslate"><span class="pre">BlockType.GAIN</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GENERIC"><code class="docutils literal notranslate"><span class="pre">BlockType.GENERIC</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GENQEC"><code class="docutils literal notranslate"><span class="pre">BlockType.GENQEC</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GENRAW"><code class="docutils literal notranslate"><span class="pre">BlockType.GENRAW</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GENROU"><code class="docutils literal notranslate"><span class="pre">BlockType.GENROU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GENSAL"><code class="docutils literal notranslate"><span class="pre">BlockType.GENSAL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GFL_CONVERTER_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.GFL_CONVERTER_RMS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GFL_VSC_HVDC_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.GFL_VSC_HVDC_RMS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GFL_VSC_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.GFL_VSC_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GGOV1"><code class="docutils literal notranslate"><span class="pre">BlockType.GGOV1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GOVHYDRO4"><code class="docutils literal notranslate"><span class="pre">BlockType.GOVHYDRO4</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GOVSTEAM1"><code class="docutils literal notranslate"><span class="pre">BlockType.GOVSTEAM1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GOVSTEAMEU"><code class="docutils literal notranslate"><span class="pre">BlockType.GOVSTEAMEU</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GOV_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.GOV_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GOV_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.GOV_RMS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GROUNDING_LINK_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.GROUNDING_LINK_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.GROUND_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.GROUND_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.HEAVISIDE"><code class="docutils literal notranslate"><span class="pre">BlockType.HEAVISIDE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.HEIDLER_CURRENT_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.HEIDLER_CURRENT_SOURCE_EMT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.HYGOV"><code class="docutils literal notranslate"><span class="pre">BlockType.HYGOV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.IEEEG1"><code class="docutils literal notranslate"><span class="pre">BlockType.IEEEG1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.IEEEG2"><code class="docutils literal notranslate"><span class="pre">BlockType.IEEEG2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.IEEET1"><code class="docutils literal notranslate"><span class="pre">BlockType.IEEET1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.IEEEVC_1981"><code class="docutils literal notranslate"><span class="pre">BlockType.IEEEVC_1981</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.IEEEX2"><code class="docutils literal notranslate"><span class="pre">BlockType.IEEEX2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.IEEL"><code class="docutils literal notranslate"><span class="pre">BlockType.IEEL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.IEEX2A"><code class="docutils literal notranslate"><span class="pre">BlockType.IEEX2A</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.IMAG"><code class="docutils literal notranslate"><span class="pre">BlockType.IMAG</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.INDUCTION_MOTOR_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.INDUCTION_MOTOR_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.INPUT_CONN"><code class="docutils literal notranslate"><span class="pre">BlockType.INPUT_CONN</span></code></a></li>
@@ -482,27 +514,63 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.LOOKUP_MATRIX_SPLINE_OBJECT"><code class="docutils literal notranslate"><span class="pre">BlockType.LOOKUP_MATRIX_SPLINE_OBJECT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.L_LOAD_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.L_LOAD_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.MAX"><code class="docutils literal notranslate"><span class="pre">BlockType.MAX</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.MAXEX2"><code class="docutils literal notranslate"><span class="pre">BlockType.MAXEX2</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.MIN"><code class="docutils literal notranslate"><span class="pre">BlockType.MIN</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.NONLINEAR_RESISTOR_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.NONLINEAR_RESISTOR_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.NOTYPE"><code class="docutils literal notranslate"><span class="pre">BlockType.NOTYPE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.OEL2C"><code class="docutils literal notranslate"><span class="pre">BlockType.OEL2C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.OEL3C"><code class="docutils literal notranslate"><span class="pre">BlockType.OEL3C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.OEL4C"><code class="docutils literal notranslate"><span class="pre">BlockType.OEL4C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.OEL5C"><code class="docutils literal notranslate"><span class="pre">BlockType.OEL5C</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.OUTPUT_CONN"><code class="docutils literal notranslate"><span class="pre">BlockType.OUTPUT_CONN</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PI_CURRENT_CONTROLLER"><code class="docutils literal notranslate"><span class="pre">BlockType.PI_CURRENT_CONTROLLER</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PI_POWER_CONTROLLER"><code class="docutils literal notranslate"><span class="pre">BlockType.PI_POWER_CONTROLLER</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PLL_TRANSFORM_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.PLL_TRANSFORM_RMS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.POWER"><code class="docutils literal notranslate"><span class="pre">BlockType.POWER</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PRODUCT"><code class="docutils literal notranslate"><span class="pre">BlockType.PRODUCT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSS1AOMEGA"><code class="docutils literal notranslate"><span class="pre">BlockType.PSS1AOMEGA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSS1APGEN"><code class="docutils literal notranslate"><span class="pre">BlockType.PSS1APGEN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSS2A"><code class="docutils literal notranslate"><span class="pre">BlockType.PSS2A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSS2B"><code class="docutils literal notranslate"><span class="pre">BlockType.PSS2B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSS2C"><code class="docutils literal notranslate"><span class="pre">BlockType.PSS2C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSS3B"><code class="docutils literal notranslate"><span class="pre">BlockType.PSS3B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSS3C"><code class="docutils literal notranslate"><span class="pre">BlockType.PSS3C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSS6C"><code class="docutils literal notranslate"><span class="pre">BlockType.PSS6C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PSSKUNDUR"><code class="docutils literal notranslate"><span class="pre">BlockType.PSSKUNDUR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PVCURRENTSOURCEBNOPLANTCONTROL"><code class="docutils literal notranslate"><span class="pre">BlockType.PVCURRENTSOURCEBNOPLANTCONTROL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PVVOLTAGESOURCEANOPLANTCONTROL"><code class="docutils literal notranslate"><span class="pre">BlockType.PVVOLTAGESOURCEANOPLANTCONTROL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PVVOLTAGESOURCEBNOPLANTCONTROL"><code class="docutils literal notranslate"><span class="pre">BlockType.PVVOLTAGESOURCEBNOPLANTCONTROL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PV_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.PV_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.PV_POWER_PLANT_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.PV_POWER_PLANT_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.RAMP_CURRENT_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.RAMP_CURRENT_SOURCE_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.RAMP_VOLTAGE_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.RAMP_VOLTAGE_SOURCE_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.RAND"><code class="docutils literal notranslate"><span class="pre">BlockType.RAND</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.REAL"><code class="docutils literal notranslate"><span class="pre">BlockType.REAL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.REECB"><code class="docutils literal notranslate"><span class="pre">BlockType.REECB</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.REECC"><code class="docutils literal notranslate"><span class="pre">BlockType.REECC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.REGCBCS"><code class="docutils literal notranslate"><span class="pre">BlockType.REGCBCS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.REPCA"><code class="docutils literal notranslate"><span class="pre">BlockType.REPCA</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.RLC_COMBO_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.RLC_COMBO_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ROUND"><code class="docutils literal notranslate"><span class="pre">BlockType.ROUND</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.R_LOAD_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.R_LOAD_EMT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.SCL1C"><code class="docutils literal notranslate"><span class="pre">BlockType.SCL1C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.SCL2C"><code class="docutils literal notranslate"><span class="pre">BlockType.SCL2C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.SCRX"><code class="docutils literal notranslate"><span class="pre">BlockType.SCRX</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.SEXS"><code class="docutils literal notranslate"><span class="pre">BlockType.SEXS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.SIN"><code class="docutils literal notranslate"><span class="pre">BlockType.SIN</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.SINH"><code class="docutils literal notranslate"><span class="pre">BlockType.SINH</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.SQRT"><code class="docutils literal notranslate"><span class="pre">BlockType.SQRT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST1A"><code class="docutils literal notranslate"><span class="pre">BlockType.ST1A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST1C"><code class="docutils literal notranslate"><span class="pre">BlockType.ST1C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST4B"><code class="docutils literal notranslate"><span class="pre">BlockType.ST4B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST4C"><code class="docutils literal notranslate"><span class="pre">BlockType.ST4C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST5B"><code class="docutils literal notranslate"><span class="pre">BlockType.ST5B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST5C"><code class="docutils literal notranslate"><span class="pre">BlockType.ST5C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST6B"><code class="docutils literal notranslate"><span class="pre">BlockType.ST6B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST6C"><code class="docutils literal notranslate"><span class="pre">BlockType.ST6C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST7B"><code class="docutils literal notranslate"><span class="pre">BlockType.ST7B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST7C"><code class="docutils literal notranslate"><span class="pre">BlockType.ST7C</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ST9C"><code class="docutils literal notranslate"><span class="pre">BlockType.ST9C</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.STAB_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.STAB_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.STAB_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.STAB_RMS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.STEP_CURRENT_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.STEP_CURRENT_SOURCE_EMT</span></code></a></li>
@@ -511,10 +579,33 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.SWITCH_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.SWITCH_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.TAN"><code class="docutils literal notranslate"><span class="pre">BlockType.TAN</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.TANH"><code class="docutils literal notranslate"><span class="pre">BlockType.TANH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.TGOV1"><code class="docutils literal notranslate"><span class="pre">BlockType.TGOV1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.TGOV3"><code class="docutils literal notranslate"><span class="pre">BlockType.TGOV3</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.TRAFO_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.TRAFO_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.TRANSFORMER_2W_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.TRANSFORMER_2W_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.UEL1"><code class="docutils literal notranslate"><span class="pre">BlockType.UEL1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.UEL2C"><code class="docutils literal notranslate"><span class="pre">BlockType.UEL2C</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VOLTAGE_SOURCE_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.VOLTAGE_SOURCE_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VOLTAGE_SOURCE_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VOLTAGE_SOURCE_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VRKUNDUR"><code class="docutils literal notranslate"><span class="pre">BlockType.VRKUNDUR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_ACTIVE_CONTROL_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_ACTIVE_CONTROL_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_CURRENT_LIMITER_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_CURRENT_LIMITER_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_DC_LINK_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_DC_LINK_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_ELECTRICAL_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_ELECTRICAL_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_PLL_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_PLL_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_REACTIVE_CONTROL_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_REACTIVE_CONTROL_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_TERMINAL_POWER_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_TERMINAL_POWER_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_VD_HAT_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_VD_HAT_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VSC_VQ_HAT_RMS"><code class="docutils literal notranslate"><span class="pre">BlockType.VSC_VQ_HAT_RMS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.VTGTPA"><code class="docutils literal notranslate"><span class="pre">BlockType.VTGTPA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.WPP4BCURRENTSOURCE2020"><code class="docutils literal notranslate"><span class="pre">BlockType.WPP4BCURRENTSOURCE2020</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.WT4ACURRENTSOURCE"><code class="docutils literal notranslate"><span class="pre">BlockType.WT4ACURRENTSOURCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.WT4ACURRENTSOURCE2020"><code class="docutils literal notranslate"><span class="pre">BlockType.WT4ACURRENTSOURCE2020</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.WT4BCURRENTSOURCE"><code class="docutils literal notranslate"><span class="pre">BlockType.WT4BCURRENTSOURCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.WT4BCURRENTSOURCE2020"><code class="docutils literal notranslate"><span class="pre">BlockType.WT4BCURRENTSOURCE2020</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.WT4INJECTOR"><code class="docutils literal notranslate"><span class="pre">BlockType.WT4INJECTOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.WTG4ACURRENTSOURCE"><code class="docutils literal notranslate"><span class="pre">BlockType.WTG4ACURRENTSOURCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.WTG4BCURRENTSOURCE"><code class="docutils literal notranslate"><span class="pre">BlockType.WTG4BCURRENTSOURCE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.XFMR_TRANSFORMER"><code class="docutils literal notranslate"><span class="pre">BlockType.XFMR_TRANSFORMER</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.ZIP_LOAD_EMT"><code class="docutils literal notranslate"><span class="pre">BlockType.ZIP_LOAD_EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.BlockType.argparse"><code class="docutils literal notranslate"><span class="pre">BlockType.argparse()</span></code></a></li>
@@ -701,6 +792,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType.CountryDevice"><code class="docutils literal notranslate"><span class="pre">DeviceType.CountryDevice</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType.CurrentInjectionDevice"><code class="docutils literal notranslate"><span class="pre">DeviceType.CurrentInjectionDevice</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType.DCLineDevice"><code class="docutils literal notranslate"><span class="pre">DeviceType.DCLineDevice</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType.DcCableTypeDevice"><code class="docutils literal notranslate"><span class="pre">DeviceType.DcCableTypeDevice</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType.DiagramDevice"><code class="docutils literal notranslate"><span class="pre">DeviceType.DiagramDevice</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType.DynamicModelHostDevice"><code class="docutils literal notranslate"><span class="pre">DeviceType.DynamicModelHostDevice</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType.DynamicPlotEntry"><code class="docutils literal notranslate"><span class="pre">DeviceType.DynamicPlotEntry</span></code></a></li>
@@ -792,6 +884,17 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType.list"><code class="docutils literal notranslate"><span class="pre">DeviceType.list()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole.CompositeController"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole.CompositeController</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole.ControllerModel"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole.ControllerModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole.Measurement"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole.Measurement</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole.PassiveActuator"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole.PassiveActuator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole.PhysicalHost"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole.PhysicalHost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole.SwitchActuator"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole.SwitchActuator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole.Unknown"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole.Unknown</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole.ValveActuator"><code class="docutils literal notranslate"><span class="pre">DgsDynamicAssociationRole.ValveActuator</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsExportMode"><code class="docutils literal notranslate"><span class="pre">DgsExportMode</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsExportMode.BatchZip"><code class="docutils literal notranslate"><span class="pre">DgsExportMode.BatchZip</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DgsExportMode.SingleFile"><code class="docutils literal notranslate"><span class="pre">DgsExportMode.SingleFile</span></code></a></li>
@@ -808,6 +911,12 @@
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynEditorGraphicsModes"><code class="docutils literal notranslate"><span class="pre">DynEditorGraphicsModes</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynEditorGraphicsModes.DARK"><code class="docutils literal notranslate"><span class="pre">DynEditorGraphicsModes.DARK</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynEditorGraphicsModes.LIGHT"><code class="docutils literal notranslate"><span class="pre">DynEditorGraphicsModes.LIGHT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicBlockVisualRole"><code class="docutils literal notranslate"><span class="pre">DynamicBlockVisualRole</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicBlockVisualRole.CONTROL"><code class="docutils literal notranslate"><span class="pre">DynamicBlockVisualRole.CONTROL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicBlockVisualRole.DEVICE_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DynamicBlockVisualRole.DEVICE_TEMPLATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicBlockVisualRole.MEASUREMENT"><code class="docutils literal notranslate"><span class="pre">DynamicBlockVisualRole.MEASUREMENT</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicEditorMimeType"><code class="docutils literal notranslate"><span class="pre">DynamicEditorMimeType</span></code></a><ul>
@@ -853,6 +962,16 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicPlotMode.XY"><code class="docutils literal notranslate"><span class="pre">DynamicPlotMode.XY</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole"><code class="docutils literal notranslate"><span class="pre">DynamicProjectionLayoutRole</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole.FROM_TAG"><code class="docutils literal notranslate"><span class="pre">DynamicProjectionLayoutRole.FROM_TAG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole.GOTO_TAG"><code class="docutils literal notranslate"><span class="pre">DynamicProjectionLayoutRole.GOTO_TAG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole.LOCAL_MEASUREMENTS"><code class="docutils literal notranslate"><span class="pre">DynamicProjectionLayoutRole.LOCAL_MEASUREMENTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole.MEASUREMENT_STATION_FROM"><code class="docutils literal notranslate"><span class="pre">DynamicProjectionLayoutRole.MEASUREMENT_STATION_FROM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole.MEASUREMENT_STATION_TO"><code class="docutils literal notranslate"><span class="pre">DynamicProjectionLayoutRole.MEASUREMENT_STATION_TO</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole.NETWORK_EXCHANGE"><code class="docutils literal notranslate"><span class="pre">DynamicProjectionLayoutRole.NETWORK_EXCHANGE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole.PHYSICAL_DEVICE"><code class="docutils literal notranslate"><span class="pre">DynamicProjectionLayoutRole.PHYSICAL_DEVICE</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicSimulationMode"><code class="docutils literal notranslate"><span class="pre">DynamicSimulationMode</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicSimulationMode.EMT"><code class="docutils literal notranslate"><span class="pre">DynamicSimulationMode.EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicSimulationMode.RMS"><code class="docutils literal notranslate"><span class="pre">DynamicSimulationMode.RMS</span></code></a></li>
@@ -864,6 +983,12 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTableModelMode.EQUATIONS"><code class="docutils literal notranslate"><span class="pre">DynamicTableModelMode.EQUATIONS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTableModelMode.PARAMETERS"><code class="docutils literal notranslate"><span class="pre">DynamicTableModelMode.PARAMETERS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTableModelMode.VARIABLES"><code class="docutils literal notranslate"><span class="pre">DynamicTableModelMode.VARIABLES</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTemplateCategory"><code class="docutils literal notranslate"><span class="pre">DynamicTemplateCategory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTemplateCategory.COMPONENT"><code class="docutils literal notranslate"><span class="pre">DynamicTemplateCategory.COMPONENT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTemplateCategory.DEVICE"><code class="docutils literal notranslate"><span class="pre">DynamicTemplateCategory.DEVICE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTemplateCategory.MEASUREMENT"><code class="docutils literal notranslate"><span class="pre">DynamicTemplateCategory.MEASUREMENT</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtFaultPlacementSide"><code class="docutils literal notranslate"><span class="pre">EmtFaultPlacementSide</span></code></a><ul>
@@ -910,6 +1035,20 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtSolverTypes.Symbolic"><code class="docutils literal notranslate"><span class="pre">EmtSolverTypes.Symbolic</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtSolverTypes.argparse"><code class="docutils literal notranslate"><span class="pre">EmtSolverTypes.argparse()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtSolverTypes.list"><code class="docutils literal notranslate"><span class="pre">EmtSolverTypes.list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalConductor"><code class="docutils literal notranslate"><span class="pre">EmtTerminalConductor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalConductor.DC"><code class="docutils literal notranslate"><span class="pre">EmtTerminalConductor.DC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalConductor.NEUTRAL"><code class="docutils literal notranslate"><span class="pre">EmtTerminalConductor.NEUTRAL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalConductor.PHASE_A"><code class="docutils literal notranslate"><span class="pre">EmtTerminalConductor.PHASE_A</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalConductor.PHASE_B"><code class="docutils literal notranslate"><span class="pre">EmtTerminalConductor.PHASE_B</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalConductor.PHASE_C"><code class="docutils literal notranslate"><span class="pre">EmtTerminalConductor.PHASE_C</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalSide"><code class="docutils literal notranslate"><span class="pre">EmtTerminalSide</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalSide.BUS"><code class="docutils literal notranslate"><span class="pre">EmtTerminalSide.BUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalSide.FROM"><code class="docutils literal notranslate"><span class="pre">EmtTerminalSide.FROM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalSide.TO"><code class="docutils literal notranslate"><span class="pre">EmtTerminalSide.TO</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.EngineType"><code class="docutils literal notranslate"><span class="pre">EngineType</span></code></a><ul>
@@ -984,6 +1123,17 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FileType.generic_excel"><code class="docutils literal notranslate"><span class="pre">FileType.generic_excel</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmiVersion"><code class="docutils literal notranslate"><span class="pre">FmiVersion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmiVersion.FMI_1_0"><code class="docutils literal notranslate"><span class="pre">FmiVersion.FMI_1_0</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmiVersion.FMI_2_0"><code class="docutils literal notranslate"><span class="pre">FmiVersion.FMI_2_0</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmiVersion.FMI_3_0"><code class="docutils literal notranslate"><span class="pre">FmiVersion.FMI_3_0</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmuSourceKind"><code class="docutils literal notranslate"><span class="pre">FmuSourceKind</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmuSourceKind.DIRECTORY"><code class="docutils literal notranslate"><span class="pre">FmuSourceKind.DIRECTORY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmuSourceKind.ZIP"><code class="docutils literal notranslate"><span class="pre">FmuSourceKind.ZIP</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmuTemplateDomain"><code class="docutils literal notranslate"><span class="pre">FmuTemplateDomain</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmuTemplateDomain.EMT"><code class="docutils literal notranslate"><span class="pre">FmuTemplateDomain.EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.FmuTemplateDomain.RMS"><code class="docutils literal notranslate"><span class="pre">FmuTemplateDomain.RMS</span></code></a></li>
@@ -1029,6 +1179,11 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.HvdcControlType.list"><code class="docutils literal notranslate"><span class="pre">HvdcControlType.list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.HvdcControlType.type_0_free"><code class="docutils literal notranslate"><span class="pre">HvdcControlType.type_0_free</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.HvdcControlType.type_1_Pset"><code class="docutils literal notranslate"><span class="pre">HvdcControlType.type_1_Pset</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.InductionMachineRole"><code class="docutils literal notranslate"><span class="pre">InductionMachineRole</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.InductionMachineRole.GENERATOR"><code class="docutils literal notranslate"><span class="pre">InductionMachineRole.GENERATOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.InductionMachineRole.MOTOR"><code class="docutils literal notranslate"><span class="pre">InductionMachineRole.MOTOR</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.InvestmentEvaluationMethod"><code class="docutils literal notranslate"><span class="pre">InvestmentEvaluationMethod</span></code></a><ul>
@@ -1263,6 +1418,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ParamPowerFlowReferenceType.current_injection_ira_pu"><code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType.current_injection_ira_pu</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ParamPowerFlowReferenceType.current_injection_irb_pu"><code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType.current_injection_irb_pu</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ParamPowerFlowReferenceType.current_injection_irc_pu"><code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType.current_injection_irc_pu</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ParamPowerFlowReferenceType.dc_line_l_pu_seconds"><code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType.dc_line_l_pu_seconds</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ParamPowerFlowReferenceType.dc_line_length_km"><code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType.dc_line_length_km</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ParamPowerFlowReferenceType.dc_line_r_pu"><code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType.dc_line_r_pu</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ParamPowerFlowReferenceType.device_active"><code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType.device_active</span></code></a></li>
@@ -1402,12 +1558,16 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.BOOLEAN"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.BOOLEAN</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.EXPRESSION"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.EXPRESSION</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.FLOAT"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.FLOAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.INTEGER"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.INTEGER</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.MODE_REFERENCE"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.MODE_REFERENCE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.OPTIONAL_FLOAT"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.OPTIONAL_FLOAT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.REQUIRED_TEXT"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.REQUIRED_TEXT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.RUNTIME_REFERENCE"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.RUNTIME_REFERENCE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.TARGET_REFERENCE"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.TARGET_REFERENCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.TEXT"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.TEXT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralFieldType.VARIABLE_REFERENCE"><code class="docutils literal notranslate"><span class="pre">ProceduralFieldType.VARIABLE_REFERENCE</span></code></a></li>
 </ul>
 </li>
@@ -1421,6 +1581,8 @@
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType.AnalogFlipFlop"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType.AnalogFlipFlop</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType.Base"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType.Base</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType.ConditionalDiagnostic"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType.ConditionalDiagnostic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType.DelayedSwitchEvent"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType.DelayedSwitchEvent</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType.DelayedThresholdLatch"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType.DelayedThresholdLatch</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType.FixedSample"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType.FixedSample</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType.FlipFlop"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType.FlipFlop</span></code></a></li>
@@ -1438,11 +1600,17 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProceduralLogicType.argparse"><code class="docutils literal notranslate"><span class="pre">ProceduralLogicType.argparse()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProjectionTagConnectionSide"><code class="docutils literal notranslate"><span class="pre">ProjectionTagConnectionSide</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProjectionTagConnectionSide.SOURCE"><code class="docutils literal notranslate"><span class="pre">ProjectionTagConnectionSide.SOURCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ProjectionTagConnectionSide.TARGET"><code class="docutils literal notranslate"><span class="pre">ProjectionTagConnectionSide.TARGET</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat"><code class="docutils literal notranslate"><span class="pre">PrpCat</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat.All"><code class="docutils literal notranslate"><span class="pre">PrpCat.All</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat.CON"><code class="docutils literal notranslate"><span class="pre">PrpCat.CON</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat.EMT"><code class="docutils literal notranslate"><span class="pre">PrpCat.EMT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat.INV"><code class="docutils literal notranslate"><span class="pre">PrpCat.INV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat.MT"><code class="docutils literal notranslate"><span class="pre">PrpCat.MT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat.NTC"><code class="docutils literal notranslate"><span class="pre">PrpCat.NTC</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat.OPF"><code class="docutils literal notranslate"><span class="pre">PrpCat.OPF</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PrpCat.PF"><code class="docutils literal notranslate"><span class="pre">PrpCat.PF</span></code></a></li>
@@ -1465,6 +1633,14 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PsseTopologyExportMode.BusBranch"><code class="docutils literal notranslate"><span class="pre">PsseTopologyExportMode.BusBranch</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PsseTopologyExportMode.NodeBreaker"><code class="docutils literal notranslate"><span class="pre">PsseTopologyExportMode.NodeBreaker</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.PsseTopologyExportMode.argparse"><code class="docutils literal notranslate"><span class="pre">PsseTopologyExportMode.argparse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ReactivePowerLimitState"><code class="docutils literal notranslate"><span class="pre">ReactivePowerLimitState</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ReactivePowerLimitState.AtMaximum"><code class="docutils literal notranslate"><span class="pre">ReactivePowerLimitState.AtMaximum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ReactivePowerLimitState.AtMinimum"><code class="docutils literal notranslate"><span class="pre">ReactivePowerLimitState.AtMinimum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ReactivePowerLimitState.Free"><code class="docutils literal notranslate"><span class="pre">ReactivePowerLimitState.Free</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ReactivePowerLimitState.Unknown"><code class="docutils literal notranslate"><span class="pre">ReactivePowerLimitState.Unknown</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ReactivePowerLimitState.idx"><code class="docutils literal notranslate"><span class="pre">ReactivePowerLimitState.idx()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ReliabilityMode"><code class="docutils literal notranslate"><span class="pre">ReliabilityMode</span></code></a><ul>
@@ -1681,6 +1857,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.FluidPumpResults"><code class="docutils literal notranslate"><span class="pre">ResultTypes.FluidPumpResults</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.FluidSpillage"><code class="docutils literal notranslate"><span class="pre">ResultTypes.FluidSpillage</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.FluidTurbineResults"><code class="docutils literal notranslate"><span class="pre">ResultTypes.FluidTurbineResults</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.FluidValue"><code class="docutils literal notranslate"><span class="pre">ResultTypes.FluidValue</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.GenerationDelta"><code class="docutils literal notranslate"><span class="pre">ResultTypes.GenerationDelta</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.GenerationDeltaSlacks"><code class="docutils literal notranslate"><span class="pre">ResultTypes.GenerationDeltaSlacks</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.GeneratorCost"><code class="docutils literal notranslate"><span class="pre">ResultTypes.GeneratorCost</span></code></a></li>
@@ -1749,6 +1926,8 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.MunicipalityResults"><code class="docutils literal notranslate"><span class="pre">ResultTypes.MunicipalityResults</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.NTCResults"><code class="docutils literal notranslate"><span class="pre">ResultTypes.NTCResults</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.NetTransferCapacity"><code class="docutils literal notranslate"><span class="pre">ResultTypes.NetTransferCapacity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.NetTransferCapacitySlack"><code class="docutils literal notranslate"><span class="pre">ResultTypes.NetTransferCapacitySlack</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.NetTransferCapacityStatus"><code class="docutils literal notranslate"><span class="pre">ResultTypes.NetTransferCapacityStatus</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.NodeSlacks"><code class="docutils literal notranslate"><span class="pre">ResultTypes.NodeSlacks</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.OTDFSimulationError"><code class="docutils literal notranslate"><span class="pre">ResultTypes.OTDFSimulationError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ResultTypes.OpfBalancePlot"><code class="docutils literal notranslate"><span class="pre">ResultTypes.OpfBalancePlot</span></code></a></li>
@@ -1867,6 +2046,13 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsInitializationMethod.list"><code class="docutils literal notranslate"><span class="pre">RmsInitializationMethod.list()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsPhysicalMeterKind"><code class="docutils literal notranslate"><span class="pre">RmsPhysicalMeterKind</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsPhysicalMeterKind.CURRENT"><code class="docutils literal notranslate"><span class="pre">RmsPhysicalMeterKind.CURRENT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsPhysicalMeterKind.PHASE_LOCKED_LOOP"><code class="docutils literal notranslate"><span class="pre">RmsPhysicalMeterKind.PHASE_LOCKED_LOOP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsPhysicalMeterKind.POWER"><code class="docutils literal notranslate"><span class="pre">RmsPhysicalMeterKind.POWER</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsPhysicalMeterKind.VOLTAGE"><code class="docutils literal notranslate"><span class="pre">RmsPhysicalMeterKind.VOLTAGE</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsProblemTypes"><code class="docutils literal notranslate"><span class="pre">RmsProblemTypes</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsProblemTypes.CurrentBalance"><code class="docutils literal notranslate"><span class="pre">RmsProblemTypes.CurrentBalance</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsProblemTypes.Multilinear"><code class="docutils literal notranslate"><span class="pre">RmsProblemTypes.Multilinear</span></code></a></li>
@@ -1876,6 +2062,18 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsProblemTypes.Tensygrid"><code class="docutils literal notranslate"><span class="pre">RmsProblemTypes.Tensygrid</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsProblemTypes.argparse"><code class="docutils literal notranslate"><span class="pre">RmsProblemTypes.argparse()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsProblemTypes.list"><code class="docutils literal notranslate"><span class="pre">RmsProblemTypes.list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsTerminalSide"><code class="docutils literal notranslate"><span class="pre">RmsTerminalSide</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsTerminalSide.BUS"><code class="docutils literal notranslate"><span class="pre">RmsTerminalSide.BUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsTerminalSide.FROM"><code class="docutils literal notranslate"><span class="pre">RmsTerminalSide.FROM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsTerminalSide.TO"><code class="docutils literal notranslate"><span class="pre">RmsTerminalSide.TO</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsVectorizedNodalBalanceKind"><code class="docutils literal notranslate"><span class="pre">RmsVectorizedNodalBalanceKind</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsVectorizedNodalBalanceKind.ACTIVE_POWER"><code class="docutils literal notranslate"><span class="pre">RmsVectorizedNodalBalanceKind.ACTIVE_POWER</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsVectorizedNodalBalanceKind.CAPACITIVE_DC_POWER"><code class="docutils literal notranslate"><span class="pre">RmsVectorizedNodalBalanceKind.CAPACITIVE_DC_POWER</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RmsVectorizedNodalBalanceKind.REACTIVE_POWER"><code class="docutils literal notranslate"><span class="pre">RmsVectorizedNodalBalanceKind.REACTIVE_POWER</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RoutingAxis"><code class="docutils literal notranslate"><span class="pre">RoutingAxis</span></code></a><ul>
@@ -1899,6 +2097,11 @@
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RoutingValidationMessageLevel"><code class="docutils literal notranslate"><span class="pre">RoutingValidationMessageLevel</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RoutingValidationMessageLevel.ERROR"><code class="docutils literal notranslate"><span class="pre">RoutingValidationMessageLevel.ERROR</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.RoutingValidationMessageLevel.WARNING"><code class="docutils literal notranslate"><span class="pre">RoutingValidationMessageLevel.WARNING</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SampledValueEvaluationMode"><code class="docutils literal notranslate"><span class="pre">SampledValueEvaluationMode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SampledValueEvaluationMode.AcceptedBoundary"><code class="docutils literal notranslate"><span class="pre">SampledValueEvaluationMode.AcceptedBoundary</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SampledValueEvaluationMode.ImplicitIterate"><code class="docutils literal notranslate"><span class="pre">SampledValueEvaluationMode.ImplicitIterate</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SchematicAttachmentOwnerKind"><code class="docutils literal notranslate"><span class="pre">SchematicAttachmentOwnerKind</span></code></a><ul>
@@ -1952,6 +2155,8 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ShuntControlMode.Continuous"><code class="docutils literal notranslate"><span class="pre">ShuntControlMode.Continuous</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ShuntControlMode.Discrete"><code class="docutils literal notranslate"><span class="pre">ShuntControlMode.Discrete</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ShuntControlMode.Locked"><code class="docutils literal notranslate"><span class="pre">ShuntControlMode.Locked</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ShuntControlMode.QVDroop"><code class="docutils literal notranslate"><span class="pre">ShuntControlMode.QVDroop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ShuntControlMode.ReactivePower"><code class="docutils literal notranslate"><span class="pre">ShuntControlMode.ReactivePower</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ShuntControlMode.argparse"><code class="docutils literal notranslate"><span class="pre">ShuntControlMode.argparse()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ShuntControlMode.idx"><code class="docutils literal notranslate"><span class="pre">ShuntControlMode.idx()</span></code></a></li>
 </ul>
@@ -2058,6 +2263,47 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SparseSolver.argparse"><code class="docutils literal notranslate"><span class="pre">SparseSolver.argparse()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlBusSelection"><code class="docutils literal notranslate"><span class="pre">StationControlBusSelection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlBusSelection.Automatic"><code class="docutils literal notranslate"><span class="pre">StationControlBusSelection.Automatic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlBusSelection.Explicit"><code class="docutils literal notranslate"><span class="pre">StationControlBusSelection.Explicit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlBusSelection.idx"><code class="docutils literal notranslate"><span class="pre">StationControlBusSelection.idx()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlMode"><code class="docutils literal notranslate"><span class="pre">StationControlMode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlMode.PowerFactor"><code class="docutils literal notranslate"><span class="pre">StationControlMode.PowerFactor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlMode.ReactivePower"><code class="docutils literal notranslate"><span class="pre">StationControlMode.ReactivePower</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlMode.TanPhi"><code class="docutils literal notranslate"><span class="pre">StationControlMode.TanPhi</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlMode.Voltage"><code class="docutils literal notranslate"><span class="pre">StationControlMode.Voltage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationControlMode.idx"><code class="docutils literal notranslate"><span class="pre">StationControlMode.idx()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.AccordingToDispatchedActivePower"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.AccordingToDispatchedActivePower</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.AccordingToRatedPower"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.AccordingToRatedPower</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.IndividualReactivePower"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.IndividualReactivePower</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.MaximiseReactiveReserve"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.MaximiseReactiveReserve</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.SourceMode0"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.SourceMode0</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.SourceMode1"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.SourceMode1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.SourceMode2"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.SourceMode2</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.SourceMode3"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.SourceMode3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.SourceMode4"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.SourceMode4</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.VoltageSetpointAdaption"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.VoltageSetpointAdaption</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.idx"><code class="docutils literal notranslate"><span class="pre">StationReactivePowerDistribution.idx()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationTransformerControlSide"><code class="docutils literal notranslate"><span class="pre">StationTransformerControlSide</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationTransformerControlSide.HighVoltageSide"><code class="docutils literal notranslate"><span class="pre">StationTransformerControlSide.HighVoltageSide</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationTransformerControlSide.LowVoltageSide"><code class="docutils literal notranslate"><span class="pre">StationTransformerControlSide.LowVoltageSide</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationTransformerControlSide.NoControl"><code class="docutils literal notranslate"><span class="pre">StationTransformerControlSide.NoControl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationTransformerControlSide.idx"><code class="docutils literal notranslate"><span class="pre">StationTransformerControlSide.idx()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationVoltageSetpointMode"><code class="docutils literal notranslate"><span class="pre">StationVoltageSetpointMode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationVoltageSetpointMode.BusTargetVoltage"><code class="docutils literal notranslate"><span class="pre">StationVoltageSetpointMode.BusTargetVoltage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationVoltageSetpointMode.StationController"><code class="docutils literal notranslate"><span class="pre">StationVoltageSetpointMode.StationController</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StationVoltageSetpointMode.idx"><code class="docutils literal notranslate"><span class="pre">StationVoltageSetpointMode.idx()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StudyResultsType"><code class="docutils literal notranslate"><span class="pre">StudyResultsType</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StudyResultsType.AvailableTransferCapacity"><code class="docutils literal notranslate"><span class="pre">StudyResultsType.AvailableTransferCapacity</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.StudyResultsType.AvailableTransferCapacityTimeSeries"><code class="docutils literal notranslate"><span class="pre">StudyResultsType.AvailableTransferCapacityTimeSeries</span></code></a></li>
@@ -2117,6 +2363,13 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SyncIssueType.Conflict"><code class="docutils literal notranslate"><span class="pre">SyncIssueType.Conflict</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SyncIssueType.Deleted"><code class="docutils literal notranslate"><span class="pre">SyncIssueType.Deleted</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SyncIssueType.argparse"><code class="docutils literal notranslate"><span class="pre">SyncIssueType.argparse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SynchronousMachineSpeedVariationMode"><code class="docutils literal notranslate"><span class="pre">SynchronousMachineSpeedVariationMode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SynchronousMachineSpeedVariationMode.Considered"><code class="docutils literal notranslate"><span class="pre">SynchronousMachineSpeedVariationMode.Considered</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SynchronousMachineSpeedVariationMode.Neglected"><code class="docutils literal notranslate"><span class="pre">SynchronousMachineSpeedVariationMode.Neglected</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SynchronousMachineSpeedVariationMode.PartiallyNeglected"><code class="docutils literal notranslate"><span class="pre">SynchronousMachineSpeedVariationMode.PartiallyNeglected</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.SynchronousMachineSpeedVariationMode.idx"><code class="docutils literal notranslate"><span class="pre">SynchronousMachineSpeedVariationMode.idx()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.TapChangerTypes"><code class="docutils literal notranslate"><span class="pre">TapChangerTypes</span></code></a><ul>
@@ -2282,6 +2535,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VarPowerFlowReferenceType.Vt_complex"><code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType.Vt_complex</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VarPowerFlowReferenceType.Vt_dc"><code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType.Vt_dc</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VarPowerFlowReferenceType.argparse"><code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType.argparse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VarPowerFlowReferenceType.d_Vdc"><code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType.d_Vdc</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VarPowerFlowReferenceType.d_v_A"><code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType.d_v_A</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VarPowerFlowReferenceType.d_v_A_f"><code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType.d_v_A_f</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VarPowerFlowReferenceType.d_v_A_t"><code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType.d_v_A_t</span></code></a></li>
@@ -2322,6 +2576,11 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VarPowerFlowReferenceType.vt_N"><code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType.vt_N</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VoltageDependentPowerModel"><code class="docutils literal notranslate"><span class="pre">VoltageDependentPowerModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VoltageDependentPowerModel.ConstantCurrent"><code class="docutils literal notranslate"><span class="pre">VoltageDependentPowerModel.ConstantCurrent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VoltageDependentPowerModel.ConstantImpedance"><code class="docutils literal notranslate"><span class="pre">VoltageDependentPowerModel.ConstantImpedance</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VoltageLevelTypes"><code class="docutils literal notranslate"><span class="pre">VoltageLevelTypes</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VoltageLevelTypes.BreakerAndAHalf"><code class="docutils literal notranslate"><span class="pre">VoltageLevelTypes.BreakerAndAHalf</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.VoltageLevelTypes.DoubleBar"><code class="docutils literal notranslate"><span class="pre">VoltageLevelTypes.DoubleBar</span></code></a></li>
@@ -2340,9 +2599,11 @@
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType"><code class="docutils literal notranslate"><span class="pre">WindingType</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.Delta"><code class="docutils literal notranslate"><span class="pre">WindingType.Delta</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.FloatingStar"><code class="docutils literal notranslate"><span class="pre">WindingType.FloatingStar</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.FloatingZigZag"><code class="docutils literal notranslate"><span class="pre">WindingType.FloatingZigZag</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.GroundedStar"><code class="docutils literal notranslate"><span class="pre">WindingType.GroundedStar</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.GroundedZigZag"><code class="docutils literal notranslate"><span class="pre">WindingType.GroundedZigZag</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.NeutralStar"><code class="docutils literal notranslate"><span class="pre">WindingType.NeutralStar</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.ZigZag"><code class="docutils literal notranslate"><span class="pre">WindingType.ZigZag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.NeutralZigZag"><code class="docutils literal notranslate"><span class="pre">WindingType.NeutralZigZag</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.argparse"><code class="docutils literal notranslate"><span class="pre">WindingType.argparse()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.idx"><code class="docutils literal notranslate"><span class="pre">WindingType.idx()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.WindingType.list"><code class="docutils literal notranslate"><span class="pre">WindingType.list()</span></code></a></li>

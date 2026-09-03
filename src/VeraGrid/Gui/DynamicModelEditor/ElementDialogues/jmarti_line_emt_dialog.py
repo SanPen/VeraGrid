@@ -70,7 +70,7 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         :return: None.
         """
         super().__init__(parent)
-        self.setWindowTitle(self.tr("Configure EMT J_Marti Line"))
+        self.setWindowTitle("Configure EMT J_Marti Line")
         self.resize(700, 860)
 
         self._phase_checks: dict[str, QtWidgets.QCheckBox] = dict()
@@ -393,9 +393,9 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         """
         file_path, _selected_filter = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            self.tr("Open JMARTI Frequency Samples"),
+            "Open JMARTI Frequency Samples",
             "",
-            self.tr("NumPy archive (*.npz)"),
+            "NumPy archive (*.npz)",
         )
 
         if file_path:
@@ -420,20 +420,20 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         if self._phase_checks["phase_a"].isChecked() or self._phase_checks["phase_b"].isChecked() or self._phase_checks["phase_c"].isChecked() or self._phase_checks["phase_n"].isChecked():
             pass
         else:
-            QtWidgets.QMessageBox.warning(self, self.tr("EMT J_Marti line"), self.tr("Enable at least one phase."))
+            QtWidgets.QMessageBox.warning(self, "EMT J_Marti line", "Enable at least one phase.")
             return
 
         if import_mode_enabled:
             if self._import_path_edit.text().strip():
                 pass
             else:
-                QtWidgets.QMessageBox.warning(self, self.tr("EMT J_Marti line"), self.tr("Select one NPZ file to import frequency samples."))
+                QtWidgets.QMessageBox.warning(self, "EMT J_Marti line", "Select one NPZ file to import frequency samples.")
                 return
         else:
             if sweep_high_hz > sweep_low_hz:
                 pass
             else:
-                QtWidgets.QMessageBox.warning(self, self.tr("EMT J_Marti line"), self.tr("The sweep upper frequency must be greater than the lower frequency."))
+                QtWidgets.QMessageBox.warning(self, "EMT J_Marti line", "The sweep upper frequency must be greater than the lower frequency.")
                 return
 
             if sweep_sample_count >= minimum_frequency_samples:
@@ -441,8 +441,8 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
             else:
                 QtWidgets.QMessageBox.warning(
                     self,
-                    self.tr("EMT J_Marti line"),
-                    self.tr("The sweep sample count must be greater than or equal to the minimum frequency sample requirement."),
+                    "EMT J_Marti line",
+                    "The sweep sample count must be greater than or equal to the minimum frequency sample requirement.",
                 )
                 return
 
@@ -451,8 +451,8 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         else:
             QtWidgets.QMessageBox.warning(
                 self,
-                self.tr("EMT J_Marti line"),
-                self.tr("The forced model order must be zero or less than or equal to the maximum model order."),
+                "EMT J_Marti line",
+                "The forced model order must be zero or less than or equal to the maximum model order.",
             )
             return
 
@@ -508,10 +508,8 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         else:
             QtWidgets.QMessageBox.warning(
                 self,
-                self.tr("EMT J_Marti line"),
-                self.tr("The {window_name} upper frequency must be greater than the lower frequency.").format(
-                    window_name=window_name,
-                ),
+                "EMT J_Marti line",
+                f"The {window_name} upper frequency must be greater than the lower frequency.",
             )
             return False
 
@@ -520,10 +518,8 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         else:
             QtWidgets.QMessageBox.warning(
                 self,
-                self.tr("EMT J_Marti line"),
-                self.tr("The {window_name} window must stay inside the configured sweep band.").format(
-                    window_name=window_name,
-                ),
+                "EMT J_Marti line",
+                f"The {window_name} window must stay inside the configured sweep band.",
             )
             return False
 
@@ -547,10 +543,8 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         else:
             QtWidgets.QMessageBox.warning(
                 self,
-                self.tr("EMT J_Marti line"),
-                self.tr("The {window_name} upper frequency must be greater than the lower frequency.").format(
-                    window_name=window_name,
-                ),
+                "EMT J_Marti line",
+                f"The {window_name} upper frequency must be greater than the lower frequency.",
             )
             return False
 

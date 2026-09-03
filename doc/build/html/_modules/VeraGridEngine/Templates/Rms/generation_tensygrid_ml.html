@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Rms.generation_tensygrid_ml &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Templates.Rms.generation_tensygrid_ml &mdash; VeraGrid 6.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -556,7 +553,7 @@
 
     <span class="n">events_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="c1"># control parameters</span>
-        <span class="n">Pm_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">Pm_ref</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">Kp</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">),</span>
         <span class="n">Ki</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">),</span>
         <span class="n">p0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
@@ -663,7 +660,6 @@
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;governor&quot;</span><span class="p">,</span>
 
         <span class="n">init_eqs</span><span class="o">=</span><span class="p">{</span>
-            <span class="n">Pm_ref</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
             <span class="n">y1</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
             <span class="n">x1</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">omega_ref</span><span class="p">,</span>
             <span class="n">u_gov1</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
@@ -1157,7 +1153,7 @@
         <span class="n">SW1</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
     <span class="p">}</span>
 
-    <span class="n">oel_block</span><span class="o">.</span><span class="n">event_params</span> <span class="o">=</span> <span class="n">event_dict</span>
+    <span class="n">oel_block</span><span class="o">.</span><span class="n">event_dict</span> <span class="o">=</span> <span class="n">event_dict</span>
     <span class="c1"># equations</span>
     <span class="n">block_Ipu</span><span class="p">,</span> <span class="n">Ipu</span> <span class="o">=</span> <span class="n">tf_to_block</span><span class="p">(</span>
         <span class="n">vfactory</span><span class="p">,</span>

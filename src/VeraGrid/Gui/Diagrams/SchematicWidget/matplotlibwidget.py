@@ -13,6 +13,7 @@ if os.environ.get("QT_QPA_PLATFORM", "") != "offscreen":
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigationtoolbar
+from matplotlib.backend_bases import MouseEvent
 from matplotlib.figure import Figure
 
 from matplotlib import pyplot as plt
@@ -35,6 +36,9 @@ class MplCanvas(FigureCanvas):
         self.ypress = None
         self.zoom_x_limits = None
         self.zoom_y_limits = None
+        self.zoom_axis: plt.Axes | None = None
+        self.zoom_base_scale: float = 1.2
+        self.scroll_callback_id: int | None = None
 
         self.fig = Figure()
         try:
@@ -48,7 +52,7 @@ class MplCanvas(FigureCanvas):
         FigureCanvas.updateGeometry(self)
 
         scale = 1.2
-        f = self.zoom_factory(self.ax, base_scale=scale)
+        self.zoom_factory(self.ax, base_scale=scale)
         # p = self.pan_factory(self.ax)
 
         self.dragged = None
@@ -73,33 +77,52 @@ class MplCanvas(FigureCanvas):
         """
         self.fig.subplots_adjust(left=0, bottom=0, right=1, top=0.9, wspace=0, hspace=0)
 
-    def zoom_factory(self, ax: plt.Axes, base_scale=1.2):
+    def zoom_factory(self, ax: plt.Axes, base_scale: float = 1.2) -> None:
         """
         Mouse zoom handler
         """
+        self.zoom_axis = ax
+        self.zoom_base_scale = base_scale
 
-        def zoom(event):
-            cur_xlim = ax.get_xlim()
-            cur_ylim = ax.get_ylim()
+        if self.scroll_callback_id is not None:
+            ax.figure.canvas.mpl_disconnect(self.scroll_callback_id)
+        else:
+            pass
 
-            xdata = event.xdata  # get event x location
-            ydata = event.ydata  # get event y location
+        fig = ax.get_figure()  # get the figure of interest
+        self.scroll_callback_id = int(fig.canvas.mpl_connect('scroll_event', self.zoom))
+
+    def zoom(self, event: MouseEvent) -> None:
+        """
+        Mouse zoom handler.
+
+        :param event: Matplotlib mouse event.
+        :return: None.
+        """
+        ax: plt.Axes | None = self.zoom_axis
+
+        if ax is not None and event.xdata is not None and event.ydata is not None:
+            cur_xlim: tuple[float, float] = ax.get_xlim()
+            cur_ylim: tuple[float, float] = ax.get_ylim()
+
+            xdata: float = event.xdata  # get event x location
+            ydata: float = event.ydata  # get event y location
 
             if event.button == 'down':
                 # deal with zoom in
-                scale_factor = 1 / base_scale
+                scale_factor: float = 1.0 / self.zoom_base_scale
             elif event.button == 'up':
                 # deal with zoom out
-                scale_factor = base_scale
+                scale_factor = self.zoom_base_scale
             else:
                 # deal with something that should never happen
-                scale_factor = 1
+                scale_factor = 1.0
 
-            new_width = (cur_xlim[1] - cur_xlim[0]) * scale_factor
-            new_height = (cur_ylim[1] - cur_ylim[0]) * scale_factor
+            new_width: float = (cur_xlim[1] - cur_xlim[0]) * scale_factor
+            new_height: float = (cur_ylim[1] - cur_ylim[0]) * scale_factor
 
-            relx = (cur_xlim[1] - xdata) / (cur_xlim[1] - cur_xlim[0])
-            rely = (cur_ylim[1] - ydata) / (cur_ylim[1] - cur_ylim[0])
+            relx: float = (cur_xlim[1] - xdata) / (cur_xlim[1] - cur_xlim[0])
+            rely: float = (cur_ylim[1] - ydata) / (cur_ylim[1] - cur_ylim[0])
 
             self.zoom_x_limits = [xdata - new_width * (1 - relx), xdata + new_width * relx]
             self.zoom_y_limits = [ydata - new_height * (1 - rely), ydata + new_height * rely]
@@ -107,11 +130,8 @@ class MplCanvas(FigureCanvas):
             ax.set_xlim(self.zoom_x_limits)
             ax.set_ylim(self.zoom_y_limits)
             ax.figure.canvas.draw()
-
-        fig = ax.get_figure()  # get the figure of interest
-        fig.canvas.mpl_connect('scroll_event', zoom)
-
-        return zoom
+        else:
+            pass
 
     def rec_zoom(self):
         self.zoom_x_limits = self.ax.get_xlim()

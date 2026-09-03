@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Symbolic.dynamic_connection_intent &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Utils.Symbolic.dynamic_connection_intent &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -109,13 +110,69 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarPowerFlowReferenceType</span>
 
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span>
+
+<div class="viewcode-block" id="ConnectionIntentVariable">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.ConnectionIntentVariable">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConnectionIntentVariable</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expose the immutable variable identity required by intent parsing.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">non_mutable_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the stable symbolic variable identifier.</span>
+
+<span class="sd">        :return: Stable variable identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="ConnectionIntentBlock">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.ConnectionIntentBlock">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConnectionIntentBlock</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expose the bounded block structure required by intent parsing.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">uid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the block identifier.</span>
+
+<span class="sd">        :return: Stable block identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">in_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ConnectionIntentVariable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the block input variables.</span>
+
+<span class="sd">        :return: Ordered input variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">out_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ConnectionIntentVariable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the block output variables.</span>
+
+<span class="sd">        :return: Ordered output variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="ConnectionIntentBlock.get_all_blocks">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.ConnectionIntentBlock.get_all_blocks">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="s2">&quot;ConnectionIntentBlock&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return this block and its bounded descendants.</span>
+
+<span class="sd">        :return: Ordered block traversal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+</div>
+
 
 
 <div class="viewcode-block" id="DynamicConnectionIntentOrigin">
@@ -347,12 +404,14 @@
 <span class="sd">    :param value: Persisted candidate value.</span>
 <span class="sd">    :return: Parsed origin or ``None`` when invalid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">DynamicConnectionIntentOrigin</span><span class="o">.</span><span class="n">USER</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DynamicConnectionIntentOrigin</span><span class="o">.</span><span class="n">USER</span>
-    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="n">DynamicConnectionIntentOrigin</span><span class="o">.</span><span class="n">TEMPLATE_DERIVED</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DynamicConnectionIntentOrigin</span><span class="o">.</span><span class="n">TEMPLATE_DERIVED</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">:</span> <span class="n">DynamicConnectionIntentOrigin</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">DynamicConnectionIntentOrigin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">result</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_parse_direction</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DynamicConnectionIntentDirection</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -371,12 +430,16 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">pass</span>
 
-    <span class="k">if</span> <span class="n">direction_value</span> <span class="o">==</span> <span class="n">DynamicConnectionIntentDirection</span><span class="o">.</span><span class="n">INPUT</span><span class="o">.</span><span class="n">value</span> <span class="ow">or</span> <span class="n">direction_value</span> <span class="o">==</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DynamicConnectionIntentDirection</span><span class="o">.</span><span class="n">INPUT</span>
-    <span class="k">elif</span> <span class="n">direction_value</span> <span class="o">==</span> <span class="n">DynamicConnectionIntentDirection</span><span class="o">.</span><span class="n">OUTPUT</span><span class="o">.</span><span class="n">value</span> <span class="ow">or</span> <span class="n">direction_value</span> <span class="o">==</span> <span class="s2">&quot;output&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DynamicConnectionIntentDirection</span><span class="o">.</span><span class="n">OUTPUT</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">direction_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">:</span> <span class="n">DynamicConnectionIntentDirection</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">DynamicConnectionIntentDirection</span><span class="p">(</span>
+                <span class="n">direction_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">result</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_parse_root_reference</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -386,23 +449,18 @@
 <span class="sd">    :param value: Persisted reference value.</span>
 <span class="sd">    :return: Parsed reference or ``None`` when invalid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">candidate</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">pass</span>
-
-    <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">candidate</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-    <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">result</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_find_internal_block</span><span class="p">(</span><span class="n">root_block</span><span class="p">:</span> <span class="s2">&quot;Block&quot;</span><span class="p">,</span> <span class="n">internal_block_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Block | None&quot;</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_internal_block</span><span class="p">(</span><span class="n">root_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span><span class="p">,</span>
+                         <span class="n">internal_block_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConnectionIntentBlock</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Locate the internal block referenced by one intent.</span>
 
@@ -410,7 +468,7 @@
 <span class="sd">    :param internal_block_uid: Persisted child block UID.</span>
 <span class="sd">    :return: Matching block or ``None`` when absent.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">candidate_block</span><span class="p">:</span> <span class="n">Block</span>
+    <span class="n">candidate_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span>
 
     <span class="k">for</span> <span class="n">candidate_block</span> <span class="ow">in</span> <span class="n">root_block</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">candidate_block</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">internal_block_uid</span><span class="p">:</span>
@@ -422,7 +480,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_internal_variable_uid</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span>
-                                   <span class="n">internal_block</span><span class="p">:</span> <span class="s2">&quot;Block&quot;</span><span class="p">,</span>
+                                   <span class="n">internal_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span><span class="p">,</span>
                                    <span class="n">direction</span><span class="p">:</span> <span class="n">DynamicConnectionIntentDirection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Resolve the stable variable UID, including the legacy positional format.</span>
@@ -434,8 +492,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">variable_uid_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;internal_variable_uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">port_index_value</span><span class="p">:</span> <span class="nb">object</span>
-    <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span>
-    <span class="n">candidate_var</span><span class="p">:</span> <span class="n">Var</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ConnectionIntentVariable</span><span class="p">]</span>
+    <span class="n">candidate_var</span><span class="p">:</span> <span class="n">ConnectionIntentVariable</span>
 
     <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">DynamicConnectionIntentDirection</span><span class="o">.</span><span class="n">INPUT</span><span class="p">:</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="n">internal_block</span><span class="o">.</span><span class="n">in_vars</span>
@@ -465,7 +523,7 @@
 <div class="viewcode-block" id="dynamic_connection_intent_from_dict">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.dynamic_connection_intent_from_dict">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dynamic_connection_intent_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span>
-                                        <span class="n">root_block</span><span class="p">:</span> <span class="s2">&quot;Block&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DynamicConnectionIntent</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+                                        <span class="n">root_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DynamicConnectionIntent</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build one typed intent from current or legacy persisted fields.</span>
 
@@ -478,7 +536,7 @@
     <span class="n">root_reference</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_parse_root_reference</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;root_ref&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
     <span class="n">internal_block_uid_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;internal_block_uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">suppressed_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suppressed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">internal_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">internal_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">internal_variable_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">direction</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">root_reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

@@ -6,7 +6,7 @@ from __future__ import annotations
 import builtins
 import rlcompleter
 from types import ModuleType
-from typing import Any, Dict, Mapping, List
+from typing import Dict, Mapping, List
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
@@ -14,16 +14,16 @@ from VeraGrid.Gui.base_python_code_editor import BasePythonCodeEditor
 from VeraGrid.Gui.python_highlighter import PythonHighlighter
 
 
-def normalize_scripting_namespace(namespace: Mapping[str, Any]) -> Dict[str, Any]:
+def normalize_scripting_namespace(namespace: Mapping[str, object]) -> Dict[str, object]:
     """Return an rlcompleter-compatible namespace with explicit builtins.
 
     :param namespace: Objects exposed by the Scripting controller.
     :return: Detached namespace accepted by ``rlcompleter``.
     """
-    normalized_namespace: Dict[str, Any] = dict(namespace)
+    normalized_namespace: Dict[str, object] = dict(namespace)
     builtins_object: object = normalized_namespace.get("__builtins__", builtins)
     if isinstance(builtins_object, dict):
-        builtins_dictionary: Dict[str, Any] = builtins_object
+        builtins_dictionary: Dict[str, object] = builtins_object
     elif isinstance(builtins_object, ModuleType):
         builtins_dictionary = builtins_object.__dict__
     else:
@@ -49,7 +49,7 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
     def __init__(
             self,
             parent: QtWidgets.QWidget | None = None,
-            vars_dict: Mapping[str, Any] | None = None,
+            vars_dict: Mapping[str, object] | None = None,
     ) -> None:
         """Create the Scripting editor and its runtime completion namespace.
 
@@ -64,11 +64,11 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
         super().__init__(parent)
         self._highlighter: PythonHighlighter = PythonHighlighter(self.document())
         if vars_dict is None:
-            self._vars_dict: Dict[str, Any] = dict()
+            self._vars_dict: Dict[str, object] = dict()
         else:
             self._vars_dict = dict(vars_dict)
         self._vars_dict["__builtins__"] = builtins
-        self._namespace: Dict[str, Any] = normalize_scripting_namespace(self._vars_dict)
+        self._namespace: Dict[str, object] = normalize_scripting_namespace(self._vars_dict)
         self._completer_backend: rlcompleter.Completer = rlcompleter.Completer(self._namespace)
 
         # The Qt popup is only a view over matches produced by rlcompleter; it
@@ -106,7 +106,7 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
         BasePythonCodeEditor.set_light_mode(self)
         self._highlighter.set_light_mode()
 
-    def add_var(self, name: str, val: Any) -> None:
+    def add_var(self, name: str, val: object) -> None:
         """Expose one object to Scripting completion and execution.
 
         :param name: Python identifier used by scripts.
@@ -117,7 +117,7 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
         self._namespace = normalize_scripting_namespace(self._vars_dict)
         self._completer_backend = rlcompleter.Completer(self._namespace)
 
-    def get_execution_namespace(self) -> Dict[str, Any]:
+    def get_execution_namespace(self) -> Dict[str, object]:
         """Return a detached view of the namespace exposed to Scripting.
 
         The Scripting controller remains responsible for executing the source.

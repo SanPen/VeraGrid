@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Branches.underground_line_type &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Devices.Branches.underground_line_type &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -113,6 +110,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">GCProp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.dynamic_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicDevice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.sequence_line_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">sequence_to_phase_matrix</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrpCat</span>
 
 
@@ -329,6 +327,39 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span></div>
 
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">z_nabc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the physical ABC series-impedance matrix in Ohm/km.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">sequence_to_phase_matrix</span><span class="p">(</span>
+            <span class="n">positive_sequence_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+            <span class="n">zero_sequence_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R0</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">X0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y_nabc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the physical ABC shunt-admittance matrix in S/km.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">positive_susceptance</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">*</span> <span class="mf">1.0e-6</span>
+            <span class="n">zero_susceptance</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">C0</span> <span class="o">*</span> <span class="mf">1.0e-6</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">positive_susceptance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1.0e-6</span>
+            <span class="n">zero_susceptance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">*</span> <span class="mf">1.0e-6</span>
+
+        <span class="k">return</span> <span class="n">sequence_to_phase_matrix</span><span class="p">(</span>
+            <span class="n">positive_sequence_value</span><span class="o">=</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">positive_susceptance</span><span class="p">,</span>
+            <span class="n">zero_sequence_value</span><span class="o">=</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">zero_susceptance</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">z_phases_nabc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the phase indices corresponding to ``z_nabc``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y_phases_nabc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the phase indices corresponding to ``y_nabc``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">C</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>

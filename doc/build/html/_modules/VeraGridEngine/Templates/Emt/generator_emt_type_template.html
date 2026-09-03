@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Emt.generator_emt_type_template &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Templates.Emt.generator_emt_type_template &mdash; VeraGrid 6.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -528,7 +525,10 @@
         <span class="n">q_B</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
         <span class="n">p_C</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
         <span class="n">q_C</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">delta</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">Ra</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_init</span><span class="p">)</span> <span class="o">-</span> <span class="n">omega</span> <span class="o">*</span> <span class="p">(</span><span class="n">Lmq</span> <span class="o">+</span> <span class="n">La</span><span class="p">)</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_init</span><span class="p">))</span> <span class="o">/</span>
+            <span class="p">(</span><span class="n">vpk_init</span> <span class="o">+</span> <span class="n">Ra</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_init</span><span class="p">)</span> <span class="o">+</span> <span class="n">omega</span> <span class="o">*</span> <span class="p">(</span><span class="n">Lmq</span> <span class="o">+</span> <span class="n">La</span><span class="p">)</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_init</span><span class="p">))</span>
+        <span class="p">),</span>
     <span class="p">}</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">omega_base</span> <span class="p">:</span> <span class="n">omega_base</span><span class="p">,</span>
@@ -544,10 +544,6 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">omega</span><span class="p">:</span> <span class="n">omega_ref</span><span class="p">,</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">Ra</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_init</span><span class="p">)</span> <span class="o">-</span> <span class="n">omega</span> <span class="o">*</span> <span class="p">(</span><span class="n">Lmq</span> <span class="o">+</span> <span class="n">La</span><span class="p">)</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_init</span><span class="p">))</span> <span class="o">/</span>
-            <span class="p">(</span><span class="n">vpk_init</span> <span class="o">+</span> <span class="n">Ra</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_init</span><span class="p">)</span> <span class="o">+</span> <span class="n">omega</span> <span class="o">*</span> <span class="p">(</span><span class="n">Lmq</span> <span class="o">+</span> <span class="n">La</span><span class="p">)</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_init</span><span class="p">))</span>
-        <span class="p">),</span>
         <span class="n">theta</span><span class="p">:</span> <span class="n">phi_v_init</span> <span class="o">+</span> <span class="n">delta</span><span class="p">,</span>
 
         <span class="n">v_d</span><span class="p">:</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
@@ -972,7 +968,8 @@
         <span class="c1"># --------------------------------------------------------------------------</span>
         <span class="c1"># Initialization auxiliaries obtained from PF</span>
         <span class="c1"># --------------------------------------------------------------------------</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">delta</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">atan</span><span class="p">((</span><span class="n">Ra</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_init</span><span class="p">)</span> <span class="o">-</span> <span class="n">w_elec</span> <span class="o">*</span> <span class="n">Lq</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_init</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+                    <span class="n">vpk_init</span> <span class="o">+</span> <span class="n">Ra</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_init</span><span class="p">)</span> <span class="o">+</span> <span class="n">w_elec</span> <span class="o">*</span> <span class="n">Lq</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_init</span><span class="p">))),</span>
         <span class="n">d_v_A</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
         <span class="n">d_v_B</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
         <span class="n">d_v_C</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
@@ -1001,9 +998,7 @@
         <span class="n">w_mec_base</span><span class="p">:</span> <span class="n">omega_base</span><span class="p">,</span>
         <span class="n">w_mec</span><span class="p">:</span> <span class="n">c1</span><span class="p">,</span>
         <span class="n">w_elec</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">p_poles</span><span class="p">)</span> <span class="o">*</span> <span class="n">w_mec</span><span class="p">,</span>
-        <span class="c1"># Rotor angle initialization based on Load Angle (delta)</span>
-        <span class="n">delta</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">atan</span><span class="p">((</span><span class="n">Ra</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_init</span><span class="p">)</span> <span class="o">-</span> <span class="n">w_elec</span> <span class="o">*</span> <span class="n">Lq</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_init</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
-                    <span class="n">vpk_init</span> <span class="o">+</span> <span class="n">Ra</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_init</span><span class="p">)</span> <span class="o">+</span> <span class="n">w_elec</span> <span class="o">*</span> <span class="n">Lq</span> <span class="o">*</span> <span class="n">ipk_init</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_init</span><span class="p">))),</span>
+        <span class="c1"># Rotor angle is owned and initialized by the event dictionary.</span>
         <span class="n">theta_elec</span><span class="p">:</span> <span class="n">phi_v_init</span> <span class="o">+</span> <span class="n">delta</span><span class="p">,</span>
 
         <span class="c1"># Terminal dq voltages and currents</span>
@@ -1864,7 +1859,6 @@
 
     <span class="n">events_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="c1"># Exciter (AVR) parameters</span>
-        <span class="n">UsRefPu</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># reference voltage (pu)</span>
         <span class="n">AEz</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.02</span><span class="p">),</span>  <span class="c1"># saturation gain</span>
         <span class="n">BEz</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.5</span><span class="p">),</span>  <span class="c1"># saturation exponential coefficient</span>
         <span class="n">Se_threshold</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>  <span class="c1"># saturation threshold</span>
@@ -1911,6 +1905,7 @@
     <span class="n">y2_init</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Kf&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">vf_init</span>
     <span class="n">y4_init</span> <span class="o">=</span> <span class="n">field_feedback_init</span>
     <span class="n">y3_init</span> <span class="o">=</span> <span class="n">field_feedback_init</span> <span class="o">/</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Ka&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">events_dict</span><span class="p">[</span><span class="n">UsRefPu</span><span class="p">]</span> <span class="o">=</span> <span class="n">us_ref_init</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
         <span class="n">state_eqs</span><span class="o">=</span><span class="p">[</span>
             <span class="p">(</span><span class="n">Vm</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span> <span class="o">/</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;tR&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
@@ -1941,7 +1936,6 @@
             <span class="n">Efe</span><span class="p">:</span> <span class="n">field_feedback_init</span><span class="p">,</span>
             <span class="n">y4</span><span class="p">:</span> <span class="n">y4_init</span><span class="p">,</span>
             <span class="n">y3</span><span class="p">:</span> <span class="n">y3_init</span><span class="p">,</span>
-            <span class="n">UsRefPu</span><span class="p">:</span> <span class="n">us_ref_init</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
     <span class="p">)</span>

@@ -44,6 +44,12 @@ def newton_raphson_fx(problem: PfFormulationTemplate,
     # set the problem state
     error, converged, _, f = problem.update(x, update_controls=False)
 
+    if not np.all(np.isfinite(f)):
+        logger.add_error("Newton-Raphson's initial residual is not finite")
+        return problem.get_solution(elapsed=time.time() - start, iterations=0)
+    else:
+        pass
+
     iteration = 0
     error0 = error
     error_evolution = np.zeros(max_iter + 1)
@@ -88,6 +94,12 @@ def newton_raphson_fx(problem: PfFormulationTemplate,
                                  value=len(f), expected_value=J.shape[0])
                 return problem.get_solution(elapsed=time.time() - start, iterations=iteration)
 
+            if not np.all(np.isfinite(f)) or not np.all(np.isfinite(J.data)):
+                logger.add_error(f"Newton-Raphson's linear system is not finite @iter {iteration}:")
+                return problem.get_solution(elapsed=time.time() - start, iterations=iteration)
+            else:
+                pass
+
             try:
 
                 # compute update step: J x Δx = Δg
@@ -100,6 +112,12 @@ def newton_raphson_fx(problem: PfFormulationTemplate,
             if not ok:
                 logger.add_error(f"Newton-Raphson's Jacobian is singular @iter {iteration}:")
                 return problem.get_solution(elapsed=time.time() - start, iterations=iteration)
+
+            if not np.all(np.isfinite(dx)):
+                logger.add_error(f"Newton-Raphson's update is not finite @iter {iteration}:")
+                return problem.get_solution(elapsed=time.time() - start, iterations=iteration)
+            else:
+                pass
 
             # line search
             mu = trust0

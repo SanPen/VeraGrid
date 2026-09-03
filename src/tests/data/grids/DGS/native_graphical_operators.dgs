@@ -1,0 +1,20 @@
+$$BlkDiv;FID(a:40);OP(a:1);loc_name(a:80)
+  DIV;C;Divide power by voltage
+$$BlkMul;FID(a:40);OP(a:1);loc_name(a:80)
+  MUL;C;Multiply signals
+$$BlkSwt;FID(a:40);OP(a:1);loc_name(a:80);iNeg(i)
+  SWT;C;Select signal;0
+$$BlkGoto;FID(a:40);OP(a:1);loc_name(a:80);sSig:SIZEROW(i);sSig:0(a)
+  GOTO;C;Route shared signals;2;route_a,route_b
+$$BlkSig;FID(a:40);OP(a:1);inodfrom(i);loc_name(a:80);iconfrom(i);inodto(i);iconto(i);pnodfrom(p);pnodto(p)
+  D_IN_0;C;0;Pord;0;0;0;;DIV
+  D_IN_1;C;0;Vt;0;1;0;;DIV
+  D_OUT;C;2;Ip_unlim;0;0;0;DIV;
+  M_IN_0;C;0;a;0;0;0;;MUL
+  M_IN_1;C;0;b;0;1;0;;MUL
+  M_IN_2;C;0;c;0;2;0;;MUL
+  M_OUT;C;3;product;0;0;0;MUL;
+  S_IN_0;C;0;default_input;0;0;0;;SWT
+  S_IN_1;C;0;changed_input;0;1;0;;SWT
+  S_CONTROL;C;0;control;0;0;4;;SWT
+  S_OUT;C;3;selected;0;0;0;SWT;

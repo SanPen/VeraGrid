@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.NTC.ntc_results &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.NTC.ntc_results &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -112,6 +112,37 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.results_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsTemplate</span><span class="p">,</span> <span class="n">ResultsProperty</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">StrVec</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">ObjVec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">StudyResultsType</span><span class="p">,</span> <span class="n">ResultTypes</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">SolutionState</span>
+
+
+<div class="viewcode-block" id="contingency_report_row_order">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_results.contingency_report_row_order">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">contingency_report_row_order</span><span class="p">(</span><span class="n">entries</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Order contingency-flow report rows so hours stay together.</span>
+
+<span class="sd">    Time is the primary key. Outage index and watched-branch index follow so</span>
+<span class="sd">    each hour stays grouped the same way the formulation stored the pairs.</span>
+
+<span class="sd">    :param entries: list of (t, m, c, ...) tuples</span>
+<span class="sd">    :return: permutation of row indices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_rep</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_rep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">time_keys</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_rep</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">monitor_keys</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_rep</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">group_keys</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_rep</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">i_rep</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">i_rep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rep</span><span class="p">):</span>
+            <span class="n">entry_i</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="n">entries</span><span class="p">[</span><span class="n">i_rep</span><span class="p">]</span>
+            <span class="c1"># (t, m, c, ...) as stored when the pair was formulated</span>
+            <span class="n">time_keys</span><span class="p">[</span><span class="n">i_rep</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">entry_i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">monitor_keys</span><span class="p">[</span><span class="n">i_rep</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">entry_i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">group_keys</span><span class="p">[</span><span class="n">i_rep</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">entry_i</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="c1"># lexsort: last key is primary, so time, then outage, then watched line</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">((</span><span class="n">monitor_keys</span><span class="p">,</span> <span class="n">group_keys</span><span class="p">,</span> <span class="n">time_keys</span><span class="p">))</span></div>
+
 
 
 <div class="viewcode-block" id="OptimalNetTransferCapacityResults">
@@ -618,7 +649,10 @@
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Contingency group index&#39;</span><span class="p">,</span> <span class="s1">&#39;Contingency group&#39;</span><span class="p">,</span>
                        <span class="s1">&#39;Monitored index&#39;</span><span class="p">,</span> <span class="s1">&#39;Monitored branch&#39;</span><span class="p">,</span>
                        <span class="s1">&#39;Flow (MW)&#39;</span><span class="p">,</span> <span class="s1">&#39;Loading (%)&#39;</span><span class="p">,</span> <span class="s1">&#39;Relaxation slack (MW)&#39;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contingency_flows_list</span><span class="p">:</span>
+            <span class="n">row_order</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">contingency_report_row_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contingency_flows_list</span><span class="p">)</span>
+            <span class="n">i_ord</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="k">for</span> <span class="n">i_ord</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row_order</span><span class="p">)):</span>
+                <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contingency_flows_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">row_order</span><span class="p">[</span><span class="n">i_ord</span><span class="p">])]</span>
                 <span class="c1"># The strict formulation stores (t, m, c, flow) with no slacks,</span>
                 <span class="c1"># while the non-strict one stores (t, m, c, flow, neg_slack, pos_slack).</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strict_formulation</span><span class="p">:</span>

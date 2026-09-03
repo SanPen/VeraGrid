@@ -236,6 +236,41 @@ def test_dae_editor_opens_automatic_completion_after_two_characters() -> None:
     application.processEvents()
 
 
+def test_dae_editor_teardown_detaches_completer_event_targets() -> None:
+    """Remove popup filters before deferred Qt object destruction.
+
+    :return: None.
+    """
+    application: QtWidgets.QApplication = get_qt_application()
+    editor: DaeCodeEditor = DaeCodeEditor()
+    completer: QtWidgets.QCompleter | None = editor._qt_completer
+    assert completer is not None
+    popup: QtWidgets.QAbstractItemView = completer.popup()
+    popup_viewport: QtWidgets.QWidget = popup.viewport()
+
+    editor.prepare_to_delete()
+    editor.prepare_to_delete()
+
+    assert editor._qt_completer is None
+    assert completer.widget() is None
+    assert completer.model() is None
+    assert not editor._completion_shortcut.isEnabled()
+
+    # Events delivered before DeferredDelete must no longer pass through the
+    # Python editor that used to filter the completer popup and its viewport.
+    QtWidgets.QApplication.sendEvent(
+        popup,
+        QtCore.QEvent(QtCore.QEvent.Type.User),
+    )
+    QtWidgets.QApplication.sendEvent(
+        popup_viewport,
+        QtCore.QEvent(QtCore.QEvent.Type.User),
+    )
+    editor.deleteLater()
+    QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.Type.DeferredDelete)
+    application.processEvents()
+
+
 def test_editor_subclasses_survive_repeated_qt_lifecycles() -> None:
     """Guard against Shiboken corruption in the intermediate widget class.
 
@@ -248,6 +283,7 @@ def test_editor_subclasses_survive_repeated_qt_lifecycles() -> None:
         dae_editor: DaeCodeEditor = DaeCodeEditor()
         scripting_editor.setPlainText(str(editor_index))
         dae_editor.setPlainText(str(editor_index))
+        dae_editor.prepare_to_delete()
         scripting_editor.deleteLater()
         dae_editor.deleteLater()
         QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.Type.DeferredDelete)

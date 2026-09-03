@@ -1703,27 +1703,43 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-    <span class="c1"># Promote unresolved event parameters (Const(None)) to algebraic unknowns.</span>
-    <span class="c1"># Prefer ordered init-equation updates when available, then fall back to an</span>
-    <span class="c1"># inferred update from the actual equilibrium residuals.</span>
+    <span class="c1"># Symbolic event expressions become local algebraic initialization</span>
+    <span class="c1"># constraints ``event_parameter - expression = 0``. Adding both the</span>
+    <span class="c1"># variable and its residual preserves a square pseudo-transient system.</span>
+    <span class="c1"># Const(None) remains the legacy/external seeding form and keeps the former</span>
+    <span class="c1"># inferred-reference update path because it has no owned expression.</span>
     <span class="n">equilibrium_reference_update_eqs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">blk</span> <span class="ow">in</span> <span class="n">mdl_work</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">():</span>
-        <span class="n">unresolved</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">var</span> <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">event_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="n">initializable_event_parameters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Const</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">event_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
         <span class="p">]</span>
-        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">unresolved</span><span class="p">:</span>
-            <span class="n">update_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">event_expression</span> <span class="ow">in</span> <span class="n">initializable_event_parameters</span><span class="p">:</span>
             <span class="n">ordered_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Const</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">ordered_init_update_eqs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ordered_expr</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ordered_expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
-                <span class="n">update_expr</span> <span class="o">=</span> <span class="n">ordered_expr</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event_expression</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+                <span class="n">update_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_find_equilibrium_reference_update_eq</span><span class="p">(</span>
+                    <span class="n">mdl</span><span class="o">=</span><span class="n">mdl_work</span><span class="p">,</span>
+                    <span class="n">ref_var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">update_expr</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">update_expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
+                    <span class="n">equilibrium_reference_update_eqs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_expr</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">update_expr</span> <span class="o">=</span> <span class="n">_find_equilibrium_reference_update_eq</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl_work</span><span class="p">,</span> <span class="n">ref_var</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">update_expr</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">update_expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">):</span>
-                <span class="n">equilibrium_reference_update_eqs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">update_expr</span>
-            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ordered_expr</span><span class="p">,</span> <span class="n">Expr</span><span class="p">):</span>
+                    <span class="n">initialization_expression</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">ordered_expr</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">initialization_expression</span> <span class="o">=</span> <span class="n">event_expression</span>
+                <span class="n">blk</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">var</span> <span class="o">-</span> <span class="n">initialization_expression</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">())</span>
+
+            <span class="n">event_is_algebraic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">algebraic_var</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span>
+                <span class="k">for</span> <span class="n">algebraic_var</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">algebraic_vars</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">event_is_algebraic</span><span class="p">:</span>
                 <span class="k">pass</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">):</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">blk</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
             <span class="k">del</span> <span class="n">blk</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
     

@@ -106,7 +106,7 @@ def test_complex_vector_plot_uses_selected_modes_and_states() -> None:
     for text_artist in mode_axes.texts:
         component_labels.add(text_artist.get_text())
     assert len(mode_axes.patches) == 2
-    assert component_labels == {"delta1", "delta2"}
+    assert component_labels == set(["delta1", "delta2"])
     assert mode_axes.get_title() == "Mode 1\nf=1.250 Hz"
     assert mode_axes.get_xlabel() == "Real"
     assert mode_axes.get_ylabel() == "Imaginary"

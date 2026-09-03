@@ -12,7 +12,8 @@ from numba import types
 from numba.experimental import jitclass
 import numpy as np
 from scipy.sparse import csc_matrix
-from scipy.sparse.linalg._dsolve._superlu import gstrf, SuperLU
+from scipy.sparse.linalg import splu
+from scipy.sparse.linalg._dsolve._superlu import SuperLU
 from VeraGridEngine.basic_structures import IntVec, IntMat, Vec, CxVec
 
 
@@ -599,29 +600,89 @@ def scipy_to_cxmat(mat: csc_matrix) -> CxCSC:
     return x
 
 
+def is_valid_for_super_lu(A: CSC) -> bool:
+    """
+    Check that a CSC matrix is structurally safe to pass to SuperLU.
+
+    :param A: CSC matrix.
+    :return: True when the matrix storage is consistent.
+    """
+    valid: bool = True
+
+    if A.n_rows > 0 and A.n_cols > 0:
+        pass
+    else:
+        valid = False
+
+    if valid and len(A.indptr) == A.n_cols + 1:
+        pass
+    else:
+        valid = False
+
+    if valid and len(A.data) == len(A.indices):
+        pass
+    else:
+        valid = False
+
+    if valid and A.nnz == len(A.data):
+        pass
+    else:
+        valid = False
+
+    if valid and A.indptr[0] == 0:
+        pass
+    else:
+        valid = False
+
+    if valid and A.indptr[-1] == len(A.data):
+        pass
+    else:
+        valid = False
+
+    if valid and np.all(np.diff(A.indptr) >= 0):
+        pass
+    else:
+        valid = False
+
+    if valid and len(A.indices) > 0:
+        indices_are_valid: bool = bool(np.all((A.indices >= 0) & (A.indices < A.n_rows)))
+        if indices_are_valid:
+            pass
+        else:
+            valid = False
+    else:
+        pass
+
+    if valid and np.all(np.isfinite(A.data)):
+        pass
+    else:
+        valid = False
+
+    return valid
+
+
 def spfactor(A: CSC) -> None | SuperLU:
     """
     Sparse factorization with SuperLU
     :param A: CSC matrix
     :return: SuperLU factorization object
     """
-    permc_spec = None
-    diag_pivot_thresh = None
-    relax = None
-    panel_size = None
-    _options = dict(DiagPivotThresh=diag_pivot_thresh,
-                    ColPerm=permc_spec,
-                    PanelSize=panel_size,
-                    Relax=relax)
+    if A.n_rows == A.n_cols:
+        pass
+    else:
+        return None
 
-    if _options["ColPerm"] == "NATURAL":
-        _options["SymmetricMode"] = True
+    if is_valid_for_super_lu(A=A):
+        pass
+    else:
+        return None
 
     try:
-        ret = gstrf(A.n_cols, A.nnz, A.data, A.indices, A.indptr,
-                    ilu=False, options=_options, csc_construct_func=None)
+        matrix: csc_matrix = mat_to_scipy(csc=A)
+        matrix.check_format(full_check=True)
+        ret: SuperLU = splu(matrix)
         return ret
-    except RuntimeError:
+    except (RuntimeError, ValueError):
         return None
 
 

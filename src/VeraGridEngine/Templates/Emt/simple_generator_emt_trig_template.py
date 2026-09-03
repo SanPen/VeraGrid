@@ -187,7 +187,7 @@ def get_simple_generator_emt_template_trig_transform(
         phi: vf.add_const(None),
         Vpk: vf.add_const(None),
         Ipk: vf.add_const(None),
-        delta: vf.add_const(None),
+        delta: sym.atan((Ra * Ipk * sym.sin(phi) - omega * (Lmq + La) * Ipk * sym.cos(phi)) / (Vpk + Ra * Ipk * sym.cos(phi) + omega * (Lmq + La) * Ipk * sym.sin(phi))),
     }
 
     templ.block.api_obj_mapping = {
@@ -200,7 +200,6 @@ def get_simple_generator_emt_template_trig_transform(
     templ.block.init_eqs = {
         et: vf.add_const(0.0),
         omega: omega_ref,
-        delta: sym.atan((Ra * Ipk * sym.sin(phi) - omega * (Lmq + La) * Ipk * sym.cos(phi)) / (Vpk + Ra * Ipk * sym.cos(phi) + omega * (Lmq + La) * Ipk * sym.sin(phi))),
         theta: phi_v + delta,
         u_cos: sym.cos(theta),
         u_sin: sym.sin(theta),

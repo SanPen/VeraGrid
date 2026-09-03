@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PLL explicit PI &mdash; VeraGrid 6.5.16 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Qac / Vac control" href="vsc_reactive_control.html" />
+    <link rel="prev" title="Converter electrical equations" href="vsc_electrical.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../rms_simulations.html">⏱️ RMS simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../dynamic_model_library_index.html">📚 Dynamic model library</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../dynamic_model_library_index.html#authoring-models">Authoring models</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../dynamic_model_library_index.html#device-templates">Device templates</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">RMS device templates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../EMT/index.html">EMT device templates</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../dynamic_model_library_index.html#reusable-blocks-and-logic">Reusable blocks and logic</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+          <li class="breadcrumb-item"><a href="../../dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+          <li class="breadcrumb-item"><a href="index.html">RMS device templates</a></li>
+      <li class="breadcrumb-item active">PLL explicit PI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/md_source/dyn_templates/RMS/vsc_pll.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="pll-explicit-pi">
+<h1>PLL explicit PI<a class="headerlink" href="#pll-explicit-pi" title="Link to this heading"></a></h1>
+<p><strong>Library:</strong> RMS VSC → Control blocks → PLL explicit PI<br />
+<strong>Catalogue type:</strong> <code class="docutils literal notranslate"><span class="pre">VSC_PLL_RMS</span></code><br />
+<strong>Builder:</strong> <code class="docutils literal notranslate"><span class="pre">build_vsc_pll_rms()</span></code> in <code class="docutils literal notranslate"><span class="pre">hvdc_vsc_gfl_rms_template_v2.py</span></code>.</p>
+<section id="purpose-and-interface">
+<h2>Purpose and interface<a class="headerlink" href="#purpose-and-interface" title="Link to this heading"></a></h2>
+<p>The synchronous-reference-frame PLL estimates the AC voltage angle and frequency and supplies the voltage components used by the <a class="reference internal" href="vsc_electrical.html"><span class="std std-doc">electrical model</span></a>. It contains the <code class="docutils literal notranslate"><span class="pre">PLL</span> <span class="pre">coordinates</span></code> and <code class="docutils literal notranslate"><span class="pre">PLL_integrator</span></code> children.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Direction</p></th>
+<th class="head"><p>Position</p></th>
+<th class="head"><p>Signal</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vm</span></code></p></td>
+<td><p>AC terminal voltage magnitude, pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Input</p></td>
+<td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Va</span></code></p></td>
+<td><p>AC terminal voltage angle, rad</p></td>
+</tr>
+<tr class="row-even"><td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vd</span></code></p></td>
+<td><p>d-axis voltage, pu</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output</p></td>
+<td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vq</span></code></p></td>
+<td><p>q-axis voltage, pu</p></td>
+</tr>
+<tr class="row-even"><td><p>Output</p></td>
+<td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">omega</span></code></p></td>
+<td><p>Estimated frequency, pu</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">theta</span></code> is an internal state, not an output port. Physical inputs carry the <code class="docutils literal notranslate"><span class="pre">Vmt</span></code> and <code class="docutils literal notranslate"><span class="pre">Vat</span></code> power-flow mappings.</p>
+</section>
+<section id="equations">
+<h2>Equations<a class="headerlink" href="#equations" title="Link to this heading"></a></h2>
+<div class="math">
+<p><img src="../../../_images/math/6483f8b10b45bbbcb3c69fce7dced0918ab14fcc.svg" alt="e_{PLL}=V_m\sin(V_a-\theta),\qquad
+v_d=V_m\sin(V_a-\theta),\qquad
+v_q=V_m\cos(V_a-\theta),"/></p>
+</div><div class="math">
+<p><img src="../../../_images/math/d70172b5260a5483d3f71b8475e264a2c8b6eff2.svg" alt="\dot{\xi}_{PLL}=e_{PLL},\qquad
+\omega=K_{p,PLL}e_{PLL}+K_{i,PLL}\xi_{PLL},\qquad
+\dot{\theta}=2\pi f_n(\omega-1)."/></p>
+</div><p>The nominal frequency is represented by the integrator bias; there is no separate <code class="docutils literal notranslate"><span class="pre">+1</span></code> term in the PI output equation. Do not substitute a d-axis-aligned PLL without adapting the converter equations and controls.</p>
+</section>
+<section id="dynamic-parameters">
+<h2>Dynamic parameters<a class="headerlink" href="#dynamic-parameters" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fn</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50.0</span></code> Hz</p></td>
+<td><p>Nominal frequency used for angle dynamics</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Kp_pll</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.001</span></code></p></td>
+<td><p>Proportional gain</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Ki_pll</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
+<td><p>Integral gain</p></td>
+</tr>
+</tbody>
+</table>
+<p>These parameters belong to the <code class="docutils literal notranslate"><span class="pre">PLL</span> <span class="pre">coordinates</span></code> child’s <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>. Set <code class="docutils literal notranslate"><span class="pre">fn</span></code> consistently with the network frequency; it is not automatically linked to <code class="docutils literal notranslate"><span class="pre">fBase</span></code> by this component.</p>
+</section>
+<section id="initialization-and-wiring">
+<h2>Initialization and wiring<a class="headerlink" href="#initialization-and-wiring" title="Link to this heading"></a></h2>
+<p>Initialization sets <code class="docutils literal notranslate"><span class="pre">theta</span> <span class="pre">=</span> <span class="pre">Va</span></code>, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">vq</span> <span class="pre">=</span> <span class="pre">Vm</span></code>, and <code class="docutils literal notranslate"><span class="pre">omega</span> <span class="pre">=</span> <span class="pre">1</span></code>. The PI state is initialized from its output bias, giving <code class="docutils literal notranslate"><span class="pre">xi_PLL</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">/</span> <span class="pre">Ki_pll</span></code> at zero error.</p>
+<p>Connect <code class="docutils literal notranslate"><span class="pre">Vm/Va</span></code> to the VSC’s AC terminal inputs, then connect all three outputs to the corresponding inputs of <a class="reference internal" href="vsc_electrical.html"><span class="std std-doc">Converter electrical equations</span></a>. In <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code> control mode, also connect <code class="docutils literal notranslate"><span class="pre">vq</span></code> to the <a class="reference internal" href="vsc_reactive_control.html"><span class="std std-doc">Qac / Vac control</span></a>. This PLL has no selectable power-control mode.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vsc_electrical.html" class="btn btn-neutral float-left" title="Converter electrical equations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vsc_reactive_control.html" class="btn btn-neutral float-right" title="Qac / Vac control" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

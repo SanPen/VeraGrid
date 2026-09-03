@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Filtering package &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Utils.Filtering package &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -565,7 +566,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.Filtering.results_table_filtering.results_table_value_to_search_text">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Filtering.results_table_filtering.</span></span><span class="sig-name descname"><span class="pre">results_table_value_to_search_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable" title="VeraGridEngine.Simulations.results_table.ResultsTable"><span class="pre">ResultsTable</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Filtering/results_table_filtering.html#results_table_value_to_search_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Filtering.results_table_filtering.results_table_value_to_search_text" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Filtering.results_table_filtering.</span></span><span class="sig-name descname"><span class="pre">results_table_value_to_search_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Simulations.html#VeraGridEngine.Simulations.results_table.ResultsTable" title="VeraGridEngine.Simulations.results_table.ResultsTable"><span class="pre">ResultsTable</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Filtering/results_table_filtering.html#results_table_value_to_search_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Filtering.results_table_filtering.results_table_value_to_search_text" title="Link to this definition"></a></dt>
 <dd><p>Build the searchable text for one results-table value.</p>
 <p>Both the raw value and the value formatted as shown by <code class="docutils literal notranslate"><span class="pre">ResultsModel</span></code> are
 included so a user can search for the exact text visible in the table.</p>
@@ -603,7 +604,7 @@ A query matching only column labels retains all rows for those columns.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.Filtering.results_table_filtering.try_numeric">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Filtering.results_table_filtering.</span></span><span class="sig-name descname"><span class="pre">try_numeric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Filtering/results_table_filtering.html#try_numeric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Filtering.results_table_filtering.try_numeric" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Filtering.results_table_filtering.</span></span><span class="sig-name descname"><span class="pre">try_numeric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Filtering/results_table_filtering.html#try_numeric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Filtering.results_table_filtering.try_numeric" title="Link to this definition"></a></dt>
 <dd><p>Check whether a value can be converted to a floating-point number.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

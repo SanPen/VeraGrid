@@ -35,6 +35,7 @@ class CleanRoomDriver(DriverTemplate):
         Run thread
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self.report_progress(0.0)
 
         spec = HierarchicalZipSpec(

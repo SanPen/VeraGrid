@@ -55,10 +55,6 @@ class FakeSelectionGui:
         self._selected_buses: List[Tuple[int, vge.Bus, object | None]] = selected_buses
         self.info_messages: List[str] = list()
         self.warning_messages: List[str] = list()
-        self.contingency_checks_diag: object | None = None
-        self.ra_checks_diag: object | None = None
-        self.investment_checks_diag: object | None = None
-        self.sc_selector_dialogue: object | None = None
         self.check_list_dialogue_cls = diagrams_module.CheckListDialogue
         self.dynamic_event_dialogue_cls = diagrams_module.DynamicEventEditor
         self.short_circuit_selector_cls = diagrams_module.ShortCircuitSelector

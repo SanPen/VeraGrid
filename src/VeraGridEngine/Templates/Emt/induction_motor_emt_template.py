@@ -322,7 +322,6 @@ def _build_common_events(
     block.event_dict[parameters["slip_min"]] = vf.add_const(1e-3)
     block.event_dict[parameters["slip_max"]] = vf.add_const(1.0)
     block.event_dict[parameters["speed_eps"]] = vf.add_const(1e-3)
-    block.event_dict[parameters["t_load_nom"]] = vf.add_const(None)
     return parameters
 
 
@@ -617,6 +616,11 @@ def get_induction_motor_single_cage_emt_template(
         i_c_peak=i_c_peak,
     )
 
+    # Runtime parameters own their initialization expressions directly.
+    block.event_dict[params["t_load_nom"]] = (
+        torque_e - params["d"] * (omega_r - c_one)
+    ) / sym.max(omega_r * sym.abs(omega_r), c_speed_eps * c_speed_eps)
+
     block.init_eqs = dict({
         # Initialize transformed terminal voltages from the same Clarke equations used during simulation.
         v_alpha: v_alpha_expr,
@@ -643,8 +647,6 @@ def get_induction_motor_single_cage_emt_template(
         q_motor: sym.imag(s_motor_init),
         # Initialize electromagnetic torque from the same torque equation used in the algebraic model.
         torque_e: c_three_halves * params["omega_base"] * (psi_s_alpha * i_s_beta - psi_s_beta * i_s_alpha),
-        # Back-calculate the nominal load-torque coefficient to make the initial mechanical balance consistent.
-        params["t_load_nom"]: (torque_e - params["d"] * (omega_r - c_one)) / sym.max(omega_r * sym.abs(omega_r), c_speed_eps * c_speed_eps),
         # Initialize mechanical torque from the nominal load coefficient and speed law.
         torque_m: params["t_load_nom"] * torque_speed_term,
     })
@@ -990,6 +992,11 @@ def get_induction_motor_double_cage_emt_template(
         i_c_peak=i_c_peak,
     )
 
+    # Runtime parameters own their initialization expressions directly.
+    block.event_dict[params["t_load_nom"]] = (
+        torque_e - params["d"] * (omega_r - c_one)
+    ) / sym.max(omega_r * sym.abs(omega_r), c_speed_eps * c_speed_eps)
+
     block.init_eqs = dict({
         # Initialize transformed terminal voltages from the same Clarke equations used during simulation.
         v_alpha: v_alpha_expr,
@@ -1020,8 +1027,6 @@ def get_induction_motor_double_cage_emt_template(
         q_motor: sym.imag(s_motor_init),
         # Initialize electromagnetic torque from the same torque equation used in the algebraic model.
         torque_e: c_three_halves * params["omega_base"] * (psi_s_alpha * i_s_beta - psi_s_beta * i_s_alpha),
-        # Back-calculate the nominal load-torque coefficient to make the initial mechanical balance consistent.
-        params["t_load_nom"]: (torque_e - params["d"] * (omega_r - c_one)) / sym.max(omega_r * sym.abs(omega_r), c_speed_eps * c_speed_eps),
         # Initialize mechanical torque from the nominal load coefficient and speed law.
         torque_m: params["t_load_nom"] * torque_speed_term,
     })

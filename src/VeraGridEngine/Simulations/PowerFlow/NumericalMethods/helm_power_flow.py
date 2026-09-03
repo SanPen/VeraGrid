@@ -497,7 +497,7 @@ class HelmPreparation:
 
 
 def helm_preparation_dY(Yseries, V0, S0, Ysh0, pq, pv, sl, pqpv, verbose: int = 0,
-                        logger: Logger = None) -> HelmPreparation:
+                        logger: Logger | None = None) -> HelmPreparation:
     """
     This function returns the constant objects to run many HELM simulations
 

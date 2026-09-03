@@ -707,7 +707,7 @@ LEGACY_LANGUAGE_ALIASES: dict[ApplicationLanguage, set[str]] = {
         "Espanhol",
         "西班牙语",
     },
-    ApplicationLanguage.POLISH: {
+    ApplicationLanguage.POLISH: set([
         "بولندي",
         "Polonès",
         "Polnisch",
@@ -720,7 +720,7 @@ LEGACY_LANGUAGE_ALIASES: dict[ApplicationLanguage, set[str]] = {
         "Pools",
         "Polonês",
         "波兰语",
-    },
+    ]),
 }
 
 

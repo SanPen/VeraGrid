@@ -9,6 +9,7 @@ from typing import List, Tuple, Union
 from VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_input_gui import Ui_Dialog
 from VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog import ExcelDialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
+from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, exec_dialog_safely
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.Substation import Bus
@@ -313,14 +314,17 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
         :param text: Text to display
         :param title: Name of the window
         """
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
-        msg.setText(text)
-        # msg.setInformativeText("This is additional information")
-        msg.setWindowTitle(title)
-        # msg.setDetailedText("The details are as follows:")
-        msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
-        retval = msg.exec()
+        msg: QtWidgets.QMessageBox = QtWidgets.QMessageBox()
+        try:
+            msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
+            msg.setText(text)
+            # msg.setInformativeText("This is additional information")
+            msg.setWindowTitle(title)
+            # msg.setDetailedText("The details are as follows:")
+            msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
+            msg.exec()
+        finally:
+            delete_dialog_safely(dialog=msg)
 
     def dropEvent(self, event):
         """
@@ -471,9 +475,12 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
             elif file_extension in ['.xlsx', '.xls']:
 
                 # select the sheet from the file
-                excel_window = ExcelDialog(self, filename)
-                excel_window.exec()
-                sheet_index = excel_window.excel_sheet
+                excel_window: ExcelDialog = ExcelDialog(self, filename)
+                try:
+                    excel_window.exec()
+                    sheet_index: int | None = excel_window.excel_sheet
+                finally:
+                    delete_dialog_safely(dialog=excel_window)
 
                 if sheet_index is not None:
                     self.original_data_frame = pd.read_excel(filename, sheet_name=sheet_index, index_col=None)
@@ -489,8 +496,8 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
                 for hdr in duplicate_hdr:
                     logger.add_error("Duplicated header", device=hdr)
 
-                logs_dialogue = LogsDialogue(name=self.tr("Duplicated headers"), logger=logger, expand_all=True)
-                logs_dialogue.exec()
+                logs_dialogue: LogsDialogue = LogsDialogue(name=self.tr("Duplicated headers"), logger=logger, expand_all=True)
+                exec_dialog_safely(dialog=logs_dialogue)
 
                 # filter the headers
                 self.original_data_frame = self.original_data_frame[unique_hdr]

@@ -259,6 +259,7 @@ class AvailableTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
         Run thread
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         mode_2_int = {AvailableTransferMode.Generation: 0,
                       AvailableTransferMode.InstalledPower: 1,

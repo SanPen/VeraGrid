@@ -242,6 +242,7 @@ class CatalogueOptimizationDriver(DriverTemplate):
         Entry point invoked by the session thread; runs NSGA-3 and finalises the results.
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         self.logger.add_info(msg="Solver", value="NSGA-3")
         self.logger.add_info(msg="Max evaluations", value=f"{self.options.max_eval}")

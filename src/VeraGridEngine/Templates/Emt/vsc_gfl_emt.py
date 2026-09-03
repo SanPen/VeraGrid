@@ -391,14 +391,15 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
         vq_hat: v_q_c - (v_q_g + L*(omega)*i_d),
     }
     
-    # Add control-specific initialization
+    # Each selected control reference owns its power-flow-derived event
+    # initialization expression.
     if control1 in [ConverterControlType.Pac, ConverterControlType.Pdc]:
-        init_eqs[P_ref] = P
+        event_dict[P_ref] = P
 
     if control2 == ConverterControlType.Qac:
-        init_eqs[Q_ref] = Q
+        event_dict[Q_ref] = Q
     elif control2 == ConverterControlType.Vm_ac:
-        init_eqs[Vm_ac_ref] = v_q_g
+        event_dict[Vm_ac_ref] = v_q_g
         # For AC voltage control, initialize i_d_ref based on initial reactive power
         init_eqs[i_d_ref] = vfactory.add_const(2.0) * Q / v_q_g
 

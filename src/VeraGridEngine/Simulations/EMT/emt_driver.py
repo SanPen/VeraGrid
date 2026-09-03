@@ -168,6 +168,7 @@ class EmtSimulationDriver(DriverTemplate):
             pf_results=self.pf_results,
             pf_results_3ph=self.pf_results_3Ph,
             progress_signal=self.progress_signal,
+            logger= self.logger,
         )
         self.problem = problem
 

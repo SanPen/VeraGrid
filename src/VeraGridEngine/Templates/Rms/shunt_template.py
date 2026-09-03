@@ -23,9 +23,16 @@ class ShuntTemplate(TemplateDefinition):
         return get_shunt_template(self.vf, self.get_value("name"), self.get_value("phasor"))
 
 
-def ShuntLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
-    templ = RmsModelTemplate()
+def ShuntLoadBuild(vfactory: VarFactory, name: str = "Shunt RMS template") -> RmsModelTemplate:
+    """Build the polar-voltage constant-admittance shunt model.
+
+    :param vfactory: Factory that owns the model's symbolic variables.
+    :param name: Name assigned to the generated RMS model template.
+    :return: Configured polar shunt RMS model template.
+    """
+    templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.ShuntDevice
+    templ.name = name
     res_block = Block()
     pi = math.pi
     # Inputs:
@@ -70,11 +77,19 @@ def ShuntLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     res_block.in_vars = inputs
 
     templ.block = res_block
+    templ.comment = 'Shunt RMS constant-admittance polar model'
     return templ
 
-def ShuntPhasorBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
-    templ = RmsModelTemplate()
+def ShuntPhasorBuild(vfactory: VarFactory, name: str = "Shunt phasor RMS template") -> RmsModelTemplate:
+    """Build the rectangular-phasor constant-admittance shunt model.
+
+    :param vfactory: Factory that owns the model's symbolic variables.
+    :param name: Name assigned to the generated RMS model template.
+    :return: Configured phasor-current shunt RMS model template.
+    """
+    templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.ShuntDevice
+    templ.name = name
     res_block = Block()
     # Inputs:
     inputs = [
@@ -122,9 +137,22 @@ def ShuntPhasorBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     res_block.in_vars = inputs
 
     templ.block = res_block
+    templ.comment = 'Shunt RMS constant-admittance phasor-current model'
     return templ
 
-def get_shunt_template(vfactory: VarFactory, name: str = "", phasor:bool = True) -> RmsModelTemplate:
+def get_shunt_template(
+        vfactory: VarFactory,
+        name: str = "Shunt phasor RMS template",
+        phasor: bool = True,
+) -> RmsModelTemplate:
+    """Select and build the requested shunt formulation.
+
+    :param vfactory: Factory that owns the model's symbolic variables.
+    :param name: Name assigned to the generated RMS model template.
+    :param phasor: Select the rectangular-phasor model when ``True`` or the
+        polar-voltage model when ``False``.
+    :return: Configured shunt RMS model template.
+    """
     if phasor:
         return ShuntPhasorBuild(vfactory, name)
     else:

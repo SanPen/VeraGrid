@@ -95,6 +95,7 @@ class NodeGroupsDriver(DriverTemplate):
         :return: ``None``.
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self.report_progress(0.0)
 
         n: int = self.grid.get_bus_number()

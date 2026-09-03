@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Diagrams package &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Devices.Diagrams package &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -544,6 +545,11 @@ is preserved.</p>
 </section>
 <section id="module-VeraGridEngine.Devices.Diagrams.block_diagram">
 <span id="veragridengine-devices-diagrams-block-diagram-module"></span><h2>VeraGridEngine.Devices.Diagrams.block_diagram module<a class="headerlink" href="#module-VeraGridEngine.Devices.Diagrams.block_diagram" title="Link to this heading"></a></h2>
+<p>Persist the graphical projection of one symbolic block hierarchy.</p>
+<p><code class="docutils literal notranslate"><span class="pre">BlockDiagram</span></code> stores editor layout, visible ports, and wire routing only.
+Electrical assembly must resolve physical connectivity from <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code>
+and symbolic behavior from <code class="docutils literal notranslate"><span class="pre">Block</span></code>; diagram records are never authoritative
+runtime topology.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Diagrams.block_diagram.</span></span><span class="sig-name descname"><span class="pre">BlockDiagram</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram" title="Link to this definition"></a></dt>
@@ -628,6 +634,31 @@ is preserved.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.get_projection_node">
+<span class="sig-name descname"><span class="pre">get_projection_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode" title="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode"><span class="pre">BlockDiagramProjectionNode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagram.get_projection_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.get_projection_node" title="Link to this definition"></a></dt>
+<dd><p>Return one declared projection position when it exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layout_uid</strong> – Deterministic semantic projection identifier.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matching projection node or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.get_projection_node_data_dict">
+<span class="sig-name descname"><span class="pre">get_projection_node_data_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagram.get_projection_node_data_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.get_projection_node_data_dict" title="Link to this definition"></a></dt>
+<dd><p>Return every derived projection position for persistence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Projection positions keyed by deterministic semantic uid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.parse">
 <span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagram.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.parse" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
@@ -650,6 +681,38 @@ is preserved.</p>
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.parse_nodes">
 <span class="sig-name descname"><span class="pre">parse_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagram.parse_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.parse_nodes" title="Link to this definition"></a></dt>
 <dd><p>Parse node data from dictionary</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.parse_projection_nodes">
+<span class="sig-name descname"><span class="pre">parse_projection_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projection_nodes_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagram.parse_projection_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.parse_projection_nodes" title="Link to this definition"></a></dt>
+<dd><p>Parse Qt-free derived projection positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>projection_nodes_data</strong> – Declarative projection-node records.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.set_projection_node_position">
+<span class="sig-name descname"><span class="pre">set_projection_node_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagram.set_projection_node_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.set_projection_node_position" title="Link to this definition"></a></dt>
+<dd><p>Create or update one stable derived projection position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout_uid</strong> – Deterministic semantic projection identifier.</p></li>
+<li><p><strong>x</strong> – Scene x coordinate.</p></li>
+<li><p><strong>y</strong> – Scene y coordinate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -799,6 +862,85 @@ is preserved.</p>
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramNode.y">
 <span class="sig-name descname"><span class="pre">y</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramNode.y" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Diagrams.block_diagram.</span></span><span class="sig-name descname"><span class="pre">BlockDiagramProjectionNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagramProjectionNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Store one Qt-free position in a derived semantic projection.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode" title="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode"><span class="pre">BlockDiagramProjectionNode</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagramProjectionNode.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.copy" title="Link to this definition"></a></dt>
+<dd><p>Return an independent projection position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Copied projection node.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_layout_uid">
+<span class="sig-name descname"><span class="pre">get_layout_uid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagramProjectionNode.get_layout_uid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_layout_uid" title="Link to this definition"></a></dt>
+<dd><p>Return the deterministic projection identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Stable projection identifier.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_projection_node_dict">
+<span class="sig-name descname"><span class="pre">get_projection_node_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagramProjectionNode.get_projection_node_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_projection_node_dict" title="Link to this definition"></a></dt>
+<dd><p>Return the declarative persistence record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON-compatible projection position.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_x">
+<span class="sig-name descname"><span class="pre">get_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagramProjectionNode.get_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_x" title="Link to this definition"></a></dt>
+<dd><p>Return the persisted scene x coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Scene x coordinate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_y">
+<span class="sig-name descname"><span class="pre">get_y</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagramProjectionNode.get_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_y" title="Link to this definition"></a></dt>
+<dd><p>Return the persisted scene y coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Scene y coordinate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.set_position">
+<span class="sig-name descname"><span class="pre">set_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Diagrams/block_diagram.html#BlockDiagramProjectionNode.set_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.set_position" title="Link to this definition"></a></dt>
+<dd><p>Replace the persisted scene position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – New scene x coordinate.</p></li>
+<li><p><strong>y</strong> – New scene y coordinate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

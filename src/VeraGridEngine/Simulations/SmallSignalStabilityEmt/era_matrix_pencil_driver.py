@@ -257,6 +257,7 @@ class EraMatrixPencilDriver(DriverTemplate):
         :return: None.
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         time_step: float = float(self._emt_options.time_step)
         ringdown_time: float = float(self._era_options.get_t_ringdown())

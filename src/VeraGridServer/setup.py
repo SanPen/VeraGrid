@@ -63,7 +63,7 @@ dependencies = ["numpy>=2.2.0,<3",
                 "requests>=2.33.0",
                 "websockets>=9.1",
                 "cryptography>=46.0.7",
-                "psycopg>=3.3.4",
+                "psycopg[binary]>=3.3.4",
                 "VeraGridEngine==" + __VeraGridServer_VERSION__,  # the VeraGridEngine version must be exactly the same
                 ]
 

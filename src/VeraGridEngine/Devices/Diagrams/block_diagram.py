@@ -2,10 +2,85 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+"""Persist the graphical projection of one symbolic block hierarchy.
+
+``BlockDiagram`` stores editor layout, visible ports, and wire routing only.
+Electrical assembly must resolve physical connectivity from ``MultiCircuit``
+and symbolic behavior from ``Block``; diagram records are never authoritative
+runtime topology.
+"""
+
 from __future__ import annotations
 
 from typing import Dict, Any, Sequence
 from dataclasses import dataclass
+
+
+class BlockDiagramProjectionNode:
+    """Store one Qt-free position in a derived semantic projection."""
+
+    __slots__ = ("_layout_uid", "_x", "_y")
+
+    def __init__(self, layout_uid: int, x: float, y: float) -> None:
+        """Initialize one stable projection position.
+
+        :param layout_uid: Deterministic semantic projection identifier.
+        :param x: Scene x coordinate.
+        :param y: Scene y coordinate.
+        :return: None.
+        """
+        self._layout_uid: int = int(layout_uid)
+        self._x: float = float(x)
+        self._y: float = float(y)
+
+    def get_layout_uid(self) -> int:
+        """Return the deterministic projection identifier.
+
+        :return: Stable projection identifier.
+        """
+        return self._layout_uid
+
+    def get_x(self) -> float:
+        """Return the persisted scene x coordinate.
+
+        :return: Scene x coordinate.
+        """
+        return self._x
+
+    def get_y(self) -> float:
+        """Return the persisted scene y coordinate.
+
+        :return: Scene y coordinate.
+        """
+        return self._y
+
+    def set_position(self, x: float, y: float) -> None:
+        """Replace the persisted scene position.
+
+        :param x: New scene x coordinate.
+        :param y: New scene y coordinate.
+        :return: None.
+        """
+        self._x = float(x)
+        self._y = float(y)
+
+    def get_projection_node_dict(self) -> Dict[str, float | int]:
+        """Return the declarative persistence record.
+
+        :return: JSON-compatible projection position.
+        """
+        return dict(layout_uid=self._layout_uid, x=self._x, y=self._y)
+
+    def copy(self) -> "BlockDiagramProjectionNode":
+        """Return an independent projection position.
+
+        :return: Copied projection node.
+        """
+        return BlockDiagramProjectionNode(
+            layout_uid=self._layout_uid,
+            x=self._x,
+            y=self._y,
+        )
 
 
 @dataclass
@@ -48,6 +123,7 @@ class BlockDiagramNode:
             data['sub_diagram'] = {
                 "nodes": self.sub_diagram.get_node_data_dict(),
                 "connections": self.sub_diagram.get_con_data_dict(),
+                "projection_nodes": self.sub_diagram.get_projection_node_data_dict(),
             }
         return data
 
@@ -138,10 +214,11 @@ class BlockDiagram:
         self.status: str | None = None
         self.node_data: Dict[int, BlockDiagramNode] = dict()
         self.con_data: Dict[int, BlockDiagramConnection] = dict()
+        self.projection_node_data: Dict[int, BlockDiagramProjectionNode] = dict()
 
 
     def empty(self) -> bool:
-        return not self.node_data and not self.con_data
+        return not self.node_data and not self.con_data and not self.projection_node_data
 
     def copy(self):
         """
@@ -155,6 +232,9 @@ class BlockDiagram:
 
         diag.node_data = {key: val.copy() for key, val in self.node_data.items()}
         diag.con_data = {key: val.copy() for key, val in self.con_data.items()}
+        diag.projection_node_data = {
+            key: val.copy() for key, val in self.projection_node_data.items()
+        }
 
         return diag
 
@@ -246,6 +326,54 @@ class BlockDiagram:
                       self.con_data.items()}
         return graph_info
 
+    def get_projection_node_data_dict(self) -> Dict[int, Dict[str, float | int]]:
+        """Return every derived projection position for persistence.
+
+        :return: Projection positions keyed by deterministic semantic uid.
+        """
+        graph_info: Dict[int, Dict[str, float | int]] = dict()
+        layout_uid: int
+        projection_node: BlockDiagramProjectionNode
+        for layout_uid, projection_node in self.projection_node_data.items():
+            graph_info[layout_uid] = projection_node.get_projection_node_dict()
+        return graph_info
+
+    def set_projection_node_position(
+            self,
+            layout_uid: int,
+            x: float,
+            y: float,
+    ) -> None:
+        """Create or update one stable derived projection position.
+
+        :param layout_uid: Deterministic semantic projection identifier.
+        :param x: Scene x coordinate.
+        :param y: Scene y coordinate.
+        :return: None.
+        """
+        projection_node: BlockDiagramProjectionNode | None = (
+            self.projection_node_data.get(layout_uid, None)
+        )
+        if projection_node is None:
+            self.projection_node_data[layout_uid] = BlockDiagramProjectionNode(
+                layout_uid=layout_uid,
+                x=x,
+                y=y,
+            )
+        else:
+            projection_node.set_position(x=x, y=y)
+
+    def get_projection_node(
+            self,
+            layout_uid: int,
+    ) -> BlockDiagramProjectionNode | None:
+        """Return one declared projection position when it exists.
+
+        :param layout_uid: Deterministic semantic projection identifier.
+        :return: Matching projection node or ``None``.
+        """
+        return self.projection_node_data.get(layout_uid, None)
+
     def to_dict(self):
         """
         to dictionary function
@@ -254,7 +382,8 @@ class BlockDiagram:
             "status": self.status,
             # "block_counters": self.block_counters,
             "nodes_data": self.get_node_data_dict(),
-            "cons_data": self.get_con_data_dict()
+            "cons_data": self.get_con_data_dict(),
+            "projection_nodes_data": self.get_projection_node_data_dict(),
         }
 
 
@@ -266,6 +395,7 @@ class BlockDiagram:
         """
         nodes_data: Dict[str, Any]
         cons_data: Dict[str, Any]
+        projection_nodes_data: Dict[int | str, Dict[str, float | int]]
 
         # Legacy dynamic block diagrams can omit editor-only sections. Treat
         # those omissions as an empty diagram so project loading remains
@@ -273,14 +403,17 @@ class BlockDiagram:
         if data is None:
             nodes_data = dict()
             cons_data = dict()
+            projection_nodes_data = dict()
             self.status = None
         else:
             nodes_data = data.get("nodes_data", dict())
             cons_data = data.get("cons_data", dict())
+            projection_nodes_data = data.get("projection_nodes_data", dict())
             self.status = data.get("status", None)
 
         self.parse_nodes(nodes_data)
         self.parse_branches(cons_data)
+        self.parse_projection_nodes(projection_nodes_data)
 
 
     def parse_nodes(self, nodes_data) -> None:
@@ -294,6 +427,9 @@ class BlockDiagram:
                 subdiagram = BlockDiagram()
                 subdiagram.parse_nodes(node["sub_diagram"].get("nodes", dict()))
                 subdiagram.parse_branches(node["sub_diagram"].get("connections", dict()))
+                subdiagram.parse_projection_nodes(
+                    node["sub_diagram"].get("projection_nodes", dict())
+                )
             else:
                 pass
 
@@ -310,6 +446,26 @@ class BlockDiagram:
                 algeb_outs=node.get('algeb_outs', list()),
                 color=node.get('color', '#f5fdff'),
                 sub_diagram=subdiagram
+            )
+
+    def parse_projection_nodes(
+            self,
+            projection_nodes_data: Dict[int | str, Dict[str, float | int]],
+    ) -> None:
+        """Parse Qt-free derived projection positions.
+
+        :param projection_nodes_data: Declarative projection-node records.
+        :return: None.
+        """
+        self.projection_node_data = dict()
+        uid_value: int | str
+        node_data: Dict[str, float | int]
+        for uid_value, node_data in projection_nodes_data.items():
+            layout_uid: int = int(node_data.get("layout_uid", int(uid_value)))
+            self.projection_node_data[layout_uid] = BlockDiagramProjectionNode(
+                layout_uid=layout_uid,
+                x=float(node_data.get("x", 0.0)),
+                y=float(node_data.get("y", 0.0)),
             )
 
     def parse_branches(self, con_data) -> None:

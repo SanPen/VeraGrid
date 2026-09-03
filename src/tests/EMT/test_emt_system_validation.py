@@ -29,7 +29,10 @@ from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes
     ConverterControlType, DeviceType, SolverType, VarPowerFlowReferenceType
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
+from VeraGridEngine.Templates.Emt.load_RLC_emt_template import (
+    get_grounding_link_emt_template,
+    get_shunt_r_emt_template,
+)
 from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.transformer_emt_template import get_transformer_emt_template
@@ -300,6 +303,114 @@ def _make_external_mapping_block(refs: list[VarPowerFlowReferenceType], name_suf
         out_vars.append(var)
 
     return Block(external_mapping=external_mapping, out_vars=out_vars)
+
+
+def _restore_version_three_grounding_block(
+        block: Block,
+        disconnect_internal_voltage: bool,
+) -> Block:
+    """Restore one legacy grounding fixture through the production migration.
+
+    :param block: Canonical grounding block to downgrade.
+    :param disconnect_internal_voltage: Break the child-to-parent voltage link.
+    :return: Parsed version-three block after declarative migration.
+    """
+    if disconnect_internal_voltage:
+        isolated_voltage: Var = Var(name="isolated_ground_voltage")
+        ideal_ground_block: Block = block.children[0]
+        ideal_ground_block.in_vars[0] = isolated_voltage
+        ideal_ground_block.algebraic_eqs[0] = isolated_voltage
+    else:
+        pass
+
+    legacy_data: dict[str, object] = block.to_dict()
+    legacy_contract: object = legacy_data["dynamic_model_contract"]
+    assert isinstance(legacy_contract, dict)
+    legacy_contract["version"] = 3
+    legacy_contract.pop("emt_internal_grounding_link")
+    legacy_contract.pop("rms_physical_measurement_point")
+    legacy_children_data: object = legacy_data["children"]
+    assert isinstance(legacy_children_data, list)
+    legacy_child_data: object
+    for legacy_child_data in legacy_children_data:
+        assert isinstance(legacy_child_data, dict)
+        legacy_child_contract: object = legacy_child_data["dynamic_model_contract"]
+        assert isinstance(legacy_child_contract, dict)
+        legacy_child_contract["version"] = 3
+        legacy_child_contract.pop("emt_internal_grounding_link")
+        legacy_child_contract.pop("rms_physical_measurement_point")
+    else:
+        pass
+    return Block.parse(data=legacy_data)
+
+
+def test_connection_validation_counts_typed_internal_ground_without_diagram() -> None:
+    """Consume canonical grounding even when its editor projection is empty.
+
+    :return: None.
+    """
+    grid: gce.MultiCircuit = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus: gce.Bus = gce.Bus(name="NeutralBus", Vnom=20.0)
+    load: gce.Load = gce.Load(name="GroundedLoad", P=1.0, Q=0.0)
+    grid.add_bus(bus)
+    grid.add_load(bus=bus, api_obj=load)
+    bus.emt_model = _make_external_mapping_block(
+        refs=list((VarPowerFlowReferenceType.v_N,)),
+        name_suffix="neutral_bus",
+    )
+    grounding_block: Block = get_grounding_link_emt_template(
+        vf=grid.var_factory,
+        include_r=True,
+        include_l=False,
+        include_c=False,
+        nested=True,
+        direct_r_value=1.0,
+        name="grounding_without_magic_name",
+    ).block
+    grounding_block.diagram.node_data.clear()
+    grounding_block.diagram.con_data.clear()
+    load.emt_model = _restore_version_three_grounding_block(
+        block=grounding_block,
+        disconnect_internal_voltage=False,
+    )
+    problem: EmtProblemDae = _build_interface_validation_problem(grid=grid)
+
+    problem._validate_connections()
+
+
+def test_connection_validation_rejects_disconnected_legacy_ground_decoy() -> None:
+    """Reject a legacy ground-shaped child disconnected from its parent node.
+
+    :return: None.
+    """
+    grid: gce.MultiCircuit = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus: gce.Bus = gce.Bus(name="FloatingNeutralBus", Vnom=20.0)
+    load: gce.Load = gce.Load(name="DecoyGroundLoad", P=1.0, Q=0.0)
+    grid.add_bus(bus)
+    grid.add_load(bus=bus, api_obj=load)
+    bus.emt_model = _make_external_mapping_block(
+        refs=list((VarPowerFlowReferenceType.v_N,)),
+        name_suffix="floating_neutral_bus",
+    )
+    decoy_block: Block = get_grounding_link_emt_template(
+        vf=grid.var_factory,
+        include_r=True,
+        include_l=False,
+        include_c=False,
+        nested=True,
+        direct_r_value=1.0,
+        name="legacy_decoy_without_magic_name",
+    ).block
+    decoy_block.diagram.node_data.clear()
+    decoy_block.diagram.con_data.clear()
+    load.emt_model = _restore_version_three_grounding_block(
+        block=decoy_block,
+        disconnect_internal_voltage=True,
+    )
+    problem: EmtProblemDae = _build_interface_validation_problem(grid=grid)
+
+    with pytest.raises(EmtTopologyError, match="Floating bus phases detected"):
+        problem._validate_connections()
 
 
 def test_emt_template_assignment_materializes_missing_bus_shell() -> None:

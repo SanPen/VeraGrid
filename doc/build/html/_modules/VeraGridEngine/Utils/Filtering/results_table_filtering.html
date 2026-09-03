@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Filtering.results_table_filtering &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Utils.Filtering.results_table_filtering &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -135,7 +135,7 @@
 
 <div class="viewcode-block" id="try_numeric">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Filtering.html#VeraGridEngine.Utils.Filtering.results_table_filtering.try_numeric">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">try_numeric</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">try_numeric</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check whether a value can be converted to a floating-point number.</span>
 
@@ -152,7 +152,7 @@
 
 <div class="viewcode-block" id="results_table_value_to_search_text">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Filtering.html#VeraGridEngine.Utils.Filtering.results_table_filtering.results_table_value_to_search_text">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">results_table_value_to_search_text</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">ResultsTable</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">results_table_value_to_search_text</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">ResultsTable</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build the searchable text for one results-table value.</span>
 

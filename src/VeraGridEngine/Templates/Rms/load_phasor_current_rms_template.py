@@ -8,7 +8,10 @@ from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlo
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 
 
-def get_load_phasor_current_rms_template(vfactory: VarFactory, name:str = '') -> RmsModelTemplate:
+def get_load_phasor_current_rms_template(
+        vfactory: VarFactory,
+        name: str = "Load phasor current RMS template",
+) -> RmsModelTemplate:
     """
     Get the RMS template model of the load in current-balance phasor coordinates.
 
@@ -82,4 +85,5 @@ def get_load_phasor_current_rms_template(vfactory: VarFactory, name:str = '') ->
     templ.block.out_vars = [Ir, Ii]
     templ.block.in_vars = inputs
 
+    templ.comment = 'Load RMS constant-power phasor-current model'
     return templ

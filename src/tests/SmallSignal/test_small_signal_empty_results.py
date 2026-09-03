@@ -95,7 +95,7 @@ def test_small_signal_complex_tables_declare_their_plot_contracts() -> None:
     :return: None.
     """
     results: SmallSignalStabilityRmsResults = SmallSignalStabilityRmsResults(
-        eigenvalues=np.array([-1.0 + 2.0j, -1.0 - 2.0j], dtype=complex),
+        eigenvalues=np.array((-1.0 + 2.0j, -1.0 - 2.0j), dtype=complex),
         right_eigenvectors=np.array(
             ((1.0 + 0.0j, 1.0 + 0.0j), (0.0 + 1.0j, 0.0 - 1.0j)),
             dtype=complex,

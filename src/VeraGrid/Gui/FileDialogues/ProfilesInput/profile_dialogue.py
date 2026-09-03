@@ -26,6 +26,7 @@ from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGrid.Gui.gui_functions import ComboModel, get_list_model
 from VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui import Ui_Dialog
 from VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog import ExcelDialog
+from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, exec_dialog_safely
 from VeraGrid.Gui.messages import error_msg, info_msg
 from VeraGrid.Gui.toast_widget import ToastManager
 from VeraGridEngine import DeviceType
@@ -475,8 +476,6 @@ class ProfileInputGUI(QtWidgets.QDialog):
 
         self.profile_names = list()
 
-        self.excel_dialogue: ExcelDialog | None = None
-
         # click
         self.ui.open_button.clicked.connect(self.import_profile)
         self.ui.set_multiplier_button.clicked.connect(lambda: self.set_multiplier(MultiplierType.Mult))
@@ -551,9 +550,12 @@ class ProfileInputGUI(QtWidgets.QDialog):
             elif file_extension in ['.xlsx', '.xls']:
 
                 # select the sheet from the file
-                self.excel_dialogue = ExcelDialog(self, filename)
-                self.excel_dialogue.exec()
-                sheet_index = self.excel_dialogue.excel_sheet
+                excel_dialogue: ExcelDialog = ExcelDialog(self, filename)
+                try:
+                    excel_dialogue.exec()
+                    sheet_index: int | None = excel_dialogue.excel_sheet
+                finally:
+                    delete_dialog_safely(dialog=excel_dialogue)
 
                 if sheet_index is not None:
                     df = pd.read_excel(filename, sheet_name=sheet_index, index_col=0)
@@ -709,11 +711,11 @@ class ProfileInputGUI(QtWidgets.QDialog):
 
         else:
             if logger.has_logs():
-                dlg = LogsDialogue(self.tr("Import issues"), logger)
+                dlg: LogsDialogue = LogsDialogue(self.tr("Import issues"), logger)
                 dlg.setModal(True)
-                dlg.exec()
+                exec_dialog_safely(dialog=dlg)
 
-    def plot_selected(self):
+    def plot_selected(self) -> None:
         """
         Plot the selected profile
         """
@@ -723,7 +725,7 @@ class ProfileInputGUI(QtWidgets.QDialog):
                 col_name = self.original_data_frame.columns[idx]
                 try:
                     plt.ion()
-                    self.fig = plt.Figure(figsize=(8, 6))
+                    self.fig = plt.figure(figsize=(8, 6))
                     ax = self.fig.add_subplot(111)
                     self.original_data_frame[col_name].plot(ax=ax)
                     plt.show()

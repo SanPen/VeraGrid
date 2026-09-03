@@ -132,6 +132,7 @@ class PowerFlowDriver(DriverTemplate):
         Pack run_pf for the QThread
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         if self.engine == EngineType.GSLV and not GSLV_AVAILABLE:
             self.engine = EngineType.VeraGrid
             self.logger.add_warning('Failed back to VeraGrid')

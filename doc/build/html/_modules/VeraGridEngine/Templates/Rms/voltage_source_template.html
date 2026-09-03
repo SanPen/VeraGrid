@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Rms.voltage_source_template &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Templates.Rms.voltage_source_template &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -118,7 +119,7 @@
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.voltage_source_template.VoltageSourceBuild">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">VoltageSourceBuild</span><span class="p">(</span>
     <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Voltage source RMS template&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an RMS voltage-source template with P/Q capability limits.</span>
 
@@ -210,6 +211,144 @@
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">root_block</span>
 
     <span class="k">return</span> <span class="n">templ</span></div>
+
+
+
+<div class="viewcode-block" id="build_thevenin_voltage_source">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.voltage_source_template.build_thevenin_voltage_source">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_thevenin_voltage_source</span><span class="p">(</span>
+        <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">resistance_pu</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">reactance_pu</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an RMS external-network source behind its DGS impedance.</span>
+
+<span class="sd">    PowerFactory ``ElmXnet`` objects are ideal internal voltage sources behind</span>
+<span class="sd">    the positive-sequence impedance derived from ``snss`` and ``rntxn``.  The</span>
+<span class="sd">    terminal voltage therefore changes when the connected system exchanges</span>
+<span class="sd">    power, even though the source&#39;s internal voltage remains constant.  This</span>
+<span class="sd">    template retains that physical distinction and works with both the polar</span>
+<span class="sd">    P/Q DAE and the rectangular-current phasor formulation.</span>
+
+<span class="sd">    :param vfactory: Symbolic variable factory shared by the circuit.</span>
+<span class="sd">    :param resistance_pu: Positive-sequence source resistance on system base.</span>
+<span class="sd">    :param reactance_pu: Positive-sequence source reactance on system base.</span>
+<span class="sd">    :param name: Optional human-readable template name.</span>
+<span class="sd">    :return: External-network RMS template with a finite Thevenin impedance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">RmsModelTemplate</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">GeneratorDevice</span>
+
+    <span class="c1"># Terminal voltage is supplied by the connected AC bus.  Power and current</span>
+    <span class="c1"># are both retained so either supported RMS network formulation can stamp</span>
+    <span class="c1"># the same physical source without rebuilding the template.</span>
+    <span class="n">voltage_magnitude</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Vm&quot;</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">voltage_angle</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Va&quot;</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">active_power</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;P&quot;</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">reactive_power</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Q&quot;</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">current_real</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Ir&quot;</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ir</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">current_imaginary</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Ii&quot;</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ii</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">source_voltage</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;E_internal&quot;</span><span class="p">)</span>
+    <span class="n">source_angle</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;A_internal&quot;</span><span class="p">)</span>
+    <span class="n">resistance</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;R1&quot;</span><span class="p">)</span>
+    <span class="n">reactance</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;X1&quot;</span><span class="p">)</span>
+
+    <span class="n">terminal_voltage_real</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">voltage_magnitude</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">voltage_angle</span><span class="p">)</span>
+    <span class="n">terminal_voltage_imaginary</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">voltage_magnitude</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">voltage_angle</span><span class="p">)</span>
+    <span class="n">internal_voltage_real</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">terminal_voltage_real</span>
+        <span class="o">+</span> <span class="n">resistance</span> <span class="o">*</span> <span class="n">current_real</span>
+        <span class="o">-</span> <span class="n">reactance</span> <span class="o">*</span> <span class="n">current_imaginary</span>
+    <span class="p">)</span>
+    <span class="n">internal_voltage_imaginary</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">terminal_voltage_imaginary</span>
+        <span class="o">+</span> <span class="n">reactance</span> <span class="o">*</span> <span class="n">current_real</span>
+        <span class="o">+</span> <span class="n">resistance</span> <span class="o">*</span> <span class="n">current_imaginary</span>
+    <span class="p">)</span>
+
+    <span class="c1"># The power/current identities use the injection sign convention</span>
+    <span class="c1"># S = V * conj(I).  The last two equations impose E = V + Z*I, which is the</span>
+    <span class="c1"># Thevenin source contract exported by ElmXnet.</span>
+    <span class="n">block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">active_power</span><span class="p">,</span>
+            <span class="n">reactive_power</span><span class="p">,</span>
+            <span class="n">current_real</span><span class="p">,</span>
+            <span class="n">current_imaginary</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">active_power</span> <span class="o">-</span> <span class="n">voltage_magnitude</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">voltage_angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">current_real</span>
+                <span class="o">+</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">voltage_angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">current_imaginary</span>
+            <span class="p">),</span>
+            <span class="n">reactive_power</span> <span class="o">-</span> <span class="n">voltage_magnitude</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">voltage_angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">current_real</span>
+                <span class="o">-</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">voltage_angle</span><span class="p">)</span> <span class="o">*</span> <span class="n">current_imaginary</span>
+            <span class="p">),</span>
+            <span class="n">source_voltage</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">source_angle</span><span class="p">)</span> <span class="o">-</span> <span class="n">internal_voltage_real</span><span class="p">,</span>
+            <span class="n">source_voltage</span> <span class="o">*</span> <span class="n">sym</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">source_angle</span><span class="p">)</span> <span class="o">-</span> <span class="n">internal_voltage_imaginary</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span>
+            <span class="n">resistance</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">resistance_pu</span><span class="p">)),</span>
+            <span class="n">reactance</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">reactance_pu</span><span class="p">)),</span>
+        <span class="p">}),</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span>
+            <span class="n">source_voltage</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+            <span class="n">source_angle</span><span class="p">:</span> <span class="n">Const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="p">}),</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span>
+            <span class="n">source_voltage</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="n">internal_voltage_real</span> <span class="o">*</span> <span class="n">internal_voltage_real</span>
+                <span class="o">+</span> <span class="n">internal_voltage_imaginary</span> <span class="o">*</span> <span class="n">internal_voltage_imaginary</span>
+            <span class="p">),</span>
+            <span class="n">source_angle</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+                <span class="n">internal_voltage_imaginary</span><span class="p">,</span>
+                <span class="n">internal_voltage_real</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">}),</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">voltage_magnitude</span><span class="p">,</span> <span class="n">voltage_angle</span><span class="p">]),</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">active_power</span><span class="p">,</span>
+            <span class="n">reactive_power</span><span class="p">,</span>
+            <span class="n">current_real</span><span class="p">,</span>
+            <span class="n">current_imaginary</span><span class="p">,</span>
+        <span class="p">]),</span>
+    <span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;Thevenin Voltage Source&quot;</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">active_power</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">reactive_power</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ir</span><span class="p">:</span> <span class="n">current_real</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ii</span><span class="p">:</span> <span class="n">current_imaginary</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">:</span> <span class="n">voltage_magnitude</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">:</span> <span class="n">voltage_angle</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">R1</span><span class="p">:</span> <span class="n">resistance</span><span class="p">,</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">X1</span><span class="p">:</span> <span class="n">reactance</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">block</span>
+    <span class="k">return</span> <span class="n">template</span></div>
 
 </pre></div>
 

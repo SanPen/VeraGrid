@@ -15,7 +15,16 @@ import VeraGridEngine.Devices as dev
 import VeraGridEngine.Templates as tem
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, BRANCH_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES
 from VeraGridEngine.Devices.Parents.editable_device import GCPROP_TYPES
-from VeraGridEngine.enumerations import DeviceType, ActionType, FmuTemplateDomain, ParamPowerFlowReferenceType
+from VeraGridEngine.Devices.Dynamic.template_classification import (
+    classify_dynamic_template_block,
+)
+from VeraGridEngine.enumerations import (
+    ActionType,
+    DeviceType,
+    DynamicTemplateCategory,
+    FmuTemplateDomain,
+    ParamPowerFlowReferenceType,
+)
 from VeraGridEngine.basic_structures import Logger, ListSet
 from VeraGridEngine.data_logger import DataLogger
 
@@ -6385,12 +6394,41 @@ class Assets:
 
     def get_rms_models_by_device_type(self, tpe: DeviceType) -> List[dev.RmsModelTemplate]:
         """
-        Get a list of RmsModelTemplate filtering by device type
-        :param tpe:
-        :return:
+        Return complete RMS device templates assignable to one host type.
+
+        Internal controls remain registered in ``rms_models`` for composition,
+        but they must not appear in a physical device property selector.
+
+        :param tpe: Physical host device type.
+        :return: Matching complete RMS device templates.
         """
-        # return [elm for elm in self.rms_models if elm.tpe == tpe]
-        return [elm for elm in self.rms_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
+        result: List[dev.RmsModelTemplate] = list()
+        template: dev.RmsModelTemplate
+        for template in self.rms_models:
+            if (
+                    template.tpe == tpe
+                    and classify_dynamic_template_block(template.block)
+                    is DynamicTemplateCategory.DEVICE
+            ):
+                result.append(template)
+            else:
+                pass
+        return result
+
+    def get_rms_templates_for_editor(self, tpe: DeviceType) -> List[dev.RmsModelTemplate]:
+        """Return RMS device, component and measurement templates for editing.
+
+        :param tpe: Device type whose internal model is being composed.
+        :return: Compatible RMS templates grouped later by their typed contract.
+        """
+        result: List[dev.RmsModelTemplate] = list()
+        template: dev.RmsModelTemplate
+        for template in self.rms_models:
+            if _matches_dynamic_template_device_type(tpe, template.tpe):
+                result.append(template)
+            else:
+                pass
+        return result
 
     def get_loaded_rms_models_by_device_type(self, tpe: DeviceType) -> List[dev.RmsModelTemplate]:
         """
@@ -6399,8 +6437,18 @@ class Assets:
         :param tpe: Supported device type.
         :return: Matching loaded RMS templates.
         """
-        # return [elm for elm in self._rms_models if elm.tpe == tpe]
-        return [elm for elm in self._rms_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
+        result: List[dev.RmsModelTemplate] = list()
+        template: dev.RmsModelTemplate
+        for template in self._rms_models:
+            if (
+                    template.tpe == tpe
+                    and classify_dynamic_template_block(template.block)
+                    is DynamicTemplateCategory.DEVICE
+            ):
+                result.append(template)
+            else:
+                pass
+        return result
 
     # ------------------------------------------------------------------------------------------------------------------
     # EmtModel
@@ -6459,11 +6507,38 @@ class Assets:
 
     def get_emt_models_by_device_type(self, tpe: DeviceType) -> List[dev.EmtModelTemplate]:
         """
-        Get a list of EmtModelTemplate filtering by device type
-        :param tpe:
-        :return:
+        Return complete EMT device templates assignable to one host type.
+
+        :param tpe: Physical host device type.
+        :return: Matching complete EMT device templates.
         """
-        return [elm for elm in self.emt_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
+        result: List[dev.EmtModelTemplate] = list()
+        template: dev.EmtModelTemplate
+        for template in self.emt_models:
+            if (
+                    template.tpe == tpe
+                    and classify_dynamic_template_block(template.block)
+                    is DynamicTemplateCategory.DEVICE
+            ):
+                result.append(template)
+            else:
+                pass
+        return result
+
+    def get_emt_templates_for_editor(self, tpe: DeviceType) -> List[dev.EmtModelTemplate]:  # TODO: SANPEN: WTF is this? GUI code on the engine?
+        """Return EMT device, component and measurement templates for editing.
+
+        :param tpe: Device type whose internal model is being composed.
+        :return: Compatible EMT templates grouped later by their typed contract.
+        """
+        result: List[dev.EmtModelTemplate] = list()
+        template: dev.EmtModelTemplate
+        for template in self.emt_models:
+            if _matches_dynamic_template_device_type(tpe, template.tpe):
+                result.append(template)
+            else:
+                pass
+        return result
 
     def get_loaded_emt_models_by_device_type(self, tpe: DeviceType) -> List[dev.EmtModelTemplate]:
         """
@@ -6472,7 +6547,18 @@ class Assets:
         :param tpe: Supported device type.
         :return: Matching loaded EMT templates.
         """
-        return [elm for elm in self._emt_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
+        result: List[dev.EmtModelTemplate] = list()
+        template: dev.EmtModelTemplate
+        for template in self._emt_models:
+            if (
+                    template.tpe == tpe
+                    and classify_dynamic_template_block(template.block)
+                    is DynamicTemplateCategory.DEVICE
+            ):
+                result.append(template)
+            else:
+                pass
+        return result
 
     @property
     def fmu_templates(self) -> List[dev.FmuTemplate]:
@@ -6606,11 +6692,11 @@ class Assets:
 
         if domain == FmuTemplateDomain.RMS:
             native_templates: List[dev.RmsModelTemplate | dev.EmtModelTemplate | dev.FmuTemplate] = list(
-                self.get_rms_models_by_device_type(tpe)
+                self.get_rms_templates_for_editor(tpe)
             )
         else:
             if domain == FmuTemplateDomain.EMT:
-                native_templates = list(self.get_emt_models_by_device_type(tpe))
+                native_templates = list(self.get_emt_templates_for_editor(tpe))
             else:
                 raise ValueError(f"Unsupported dynamic template domain {domain}")
 
@@ -8531,6 +8617,7 @@ class Assets:
                 DeviceType.ZoneDevice: self.zones,
                 DeviceType.SubstationDevice: self.substations,
                 DeviceType.VoltageLevelDevice: self.voltage_levels,
+                DeviceType.BusBarDevice: self.bus_bars,
                 DeviceType.CountryDevice: self.countries,
                 DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.Owner: self.owners,
@@ -8607,6 +8694,7 @@ class Assets:
                 DeviceType.Technology: self.technologies,
                 DeviceType.Owner: self.owners,
                 DeviceType.ModellingAuthority: self.modelling_authorities,
+                DeviceType.MarketUnitDevice: self.market_units,
                 DeviceType.FacilityDevice: self.facilities,
                 DeviceType.BusDevice: self.buses,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),
@@ -8639,11 +8727,20 @@ class Assets:
 
         elif elm_type == DeviceType.LineDevice:
             elm = dev.Line()
+            any_line_templates: List[ALL_DEV_TYPES] = list()
+            for line_template_list in (
+                    self.overhead_line_types,
+                    self.underground_cable_types,
+                    self.sequence_line_types):
+                for line_template in line_template_list:
+                    any_line_templates.append(line_template)
+
             dictionary_of_lists = {
                 DeviceType.Owner: self.owners,
                 DeviceType.BranchGroupDevice: self.branch_groups,
                 DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.BusDevice: self.buses,
+                DeviceType.AnyLineTemplateDevice: any_line_templates,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),
                 DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(elm_type),
             }
@@ -8687,8 +8784,8 @@ class Assets:
                 DeviceType.Owner: self.owners,
                 DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.BusDevice: self.buses,
-                # DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),
-                # DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(elm_type),
+                DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),
+                DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(elm_type),
             }
 
         elif elm_type == DeviceType.TransformerNwDevice:
@@ -8712,11 +8809,18 @@ class Assets:
 
         elif elm_type == DeviceType.VscDevice:
             elm = dev.VSC()
+            bus_or_branch_devices: List[ALL_DEV_TYPES] = list()
+            for bus in self.buses:
+                bus_or_branch_devices.append(bus)
+            for branch in self.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
+                bus_or_branch_devices.append(branch)
+
             dictionary_of_lists = {
                 DeviceType.Owner: self.owners,
                 DeviceType.BranchGroupDevice: self.branch_groups,
                 DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.BusDevice: self.buses,
+                DeviceType.BusOrBranch: bus_or_branch_devices,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),
                 DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(elm_type),
             }
@@ -8745,11 +8849,20 @@ class Assets:
 
         elif elm_type == DeviceType.DCLineDevice:
             elm = dev.DcLine()
+            any_line_templates: List[ALL_DEV_TYPES] = list()
+            for line_template_list in (
+                    self.overhead_line_types,
+                    self.underground_cable_types,
+                    self.sequence_line_types):
+                for line_template in line_template_list:
+                    any_line_templates.append(line_template)
+
             dictionary_of_lists = {
                 DeviceType.Owner: self.owners,
                 DeviceType.BranchGroupDevice: self.branch_groups,
                 DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.BusDevice: self.buses,
+                DeviceType.AnyLineTemplateDevice: any_line_templates,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),
                 DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(elm_type),
             }
@@ -8758,6 +8871,7 @@ class Assets:
             elm = dev.Substation()
             dictionary_of_lists = {
                 DeviceType.Owner: self.owners,
+                DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.CountryDevice: self.get_countries(),
                 DeviceType.CommunityDevice: self.get_communities(),
                 DeviceType.RegionDevice: self.get_regions(),
@@ -8778,6 +8892,7 @@ class Assets:
             elm = dev.VoltageLevel()
             dictionary_of_lists = {
                 DeviceType.Owner: self.owners,
+                DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.SubstationDevice: self.get_substations(),
             }
 
@@ -8814,8 +8929,8 @@ class Assets:
             elm = dev.ShortCircuitEvent()
 
         elif elm_type == DeviceType.RemedialActionDevice:
-            elm = dev.Contingency()
-            dictionary_of_lists = {DeviceType.RemedialActionDevice: self.remedial_action_groups, }
+            elm = dev.RemedialAction()
+            dictionary_of_lists = {DeviceType.RemedialActionGroupDevice: self.remedial_action_groups, }
 
         elif elm_type == DeviceType.RemedialActionGroupDevice:
             elm = dev.RemedialActionGroup()
@@ -8849,6 +8964,7 @@ class Assets:
         elif elm_type == DeviceType.OverheadLineTypeDevice:
             elm = dev.OverheadLineType()
             dictionary_of_lists = {
+                DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(DeviceType.LineDevice),
                 DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(DeviceType.LineDevice),
             }
@@ -8856,6 +8972,7 @@ class Assets:
         elif elm_type == DeviceType.SequenceLineDevice:
             elm = dev.SequenceLineType()
             dictionary_of_lists = {
+                DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(DeviceType.LineDevice),
                 DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(DeviceType.LineDevice),
             }
@@ -8863,6 +8980,7 @@ class Assets:
         elif elm_type == DeviceType.UnderGroundLineDevice:
             elm = dev.UndergroundLineType()
             dictionary_of_lists = {
+                DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(DeviceType.LineDevice),
                 DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(DeviceType.LineDevice),
             }
@@ -8870,6 +8988,7 @@ class Assets:
         elif elm_type == DeviceType.TransformerTypeDevice:
             elm = dev.TransformerType()
             dictionary_of_lists = {
+                DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.RmsModelTemplateDevice: self.get_loaded_rms_models_by_device_type(
                     DeviceType.Transformer2WDevice),
                 DeviceType.EmtModelTemplateDevice: self.get_loaded_emt_models_by_device_type(
@@ -8878,7 +8997,10 @@ class Assets:
 
         elif elm_type == DeviceType.FluidNodeDevice:
             elm = dev.FluidNode()
-            dictionary_of_lists = {DeviceType.ModellingAuthority: self.modelling_authorities, }
+            dictionary_of_lists = {
+                DeviceType.ModellingAuthority: self.modelling_authorities,
+                DeviceType.BusDevice: self.buses,
+            }
 
         elif elm_type == DeviceType.FluidPathDevice:
             elm = dev.FluidPath()
@@ -8944,7 +9066,11 @@ class Assets:
 
         elif elm_type == DeviceType.ControlPc:
             elm = dev.ControlPc()
-            dictionary_of_lists = dict()
+            dictionary_of_lists = {
+                DeviceType.ModellingAuthority: self.modelling_authorities,
+                DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),
+                DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(elm_type),
+            }
 
         elif elm_type == DeviceType.RmsEventDevice:
             elm = dev.RmsEvent()
@@ -9061,7 +9187,7 @@ class Assets:
 
     def refine_pointer_objects(self,
                                logger: Logger,
-                               all_elements_dict: Tuple[Dict[str, ALL_DEV_TYPES], bool] | None = None):
+                               all_elements_dict: Dict[str, ALL_DEV_TYPES] | None = None) -> None:
         """
         Find the device types of pointer objects
         :param logger:

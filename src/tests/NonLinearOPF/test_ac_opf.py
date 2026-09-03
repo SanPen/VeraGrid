@@ -86,50 +86,32 @@ def case14() -> tuple[NonlinearOPFResults, NonlinearOPFResults, NonlinearOPFResu
     return base_sol, slack_sol, tap_sol, tap_slack_sol
 
 
-def case14_ctrlQ_shunts() -> NonlinearOPFResults:
+def test_monitored_tap_control_hessian_entries_are_scalar() -> None:
     """
-    Test case14 from matpower. Tests multiple situations
-    :return:
+    Check that monitored tap-control Hessian entries stay scalar-valued.
+
+    :return: None.
     """
-    cwd = os.getcwd()
-    print(cwd)
 
-    # Go back two directories
-    file_path = os.path.join('data', 'grids', 'Matpower', 'case14.matpower')
+    file_path: str = os.path.join('data', 'grids', 'Matpower', 'case14.matpower')
+    grid: gce.MultiCircuit = gce.FileOpen(file_path).open()
 
-    grid = gce.FileOpen(file_path).open()
+    for transformer in grid.transformers2w:
+        transformer.monitor_loading = True
 
-    for ll in range(len(grid.lines)):
-        grid.lines[ll].monitor_loading = True
+    grid.transformers2w[0].tap_phase_control_mode = TapPhaseControl.Pt
+    grid.transformers2w[0].tap_module_control_mode = TapModuleControl.Qt
 
-    csh = gce.ControllableShunt(name="Cshunt", Bmin=0.0, Bmax=18.0)
-    grid.add_controllable_shunt(bus=grid.buses[3], api_obj=csh)
-    grid.generators[2].Snom = 25.0
+    opf_options: gce.OptimalPowerFlowOptions = gce.OptimalPowerFlowOptions(
+        ips_method=gce.SolverType.NR,
+        ips_iterations=1,
+        acopf_mode=gce.AcOpfMode.ACOPFstd,
+        ips_init_with_pf=False
+    )
 
-    file_path_csh = os.path.join('data', 'output', 'case14_csh.veragrid')
-    gce.save_file(grid, filename=file_path_csh)
+    res: NonlinearOPFResults = run_nonlinear_opf(grid=grid, opf_options=opf_options)
 
-    grid = gce.FileOpen(file_path_csh).open()
-
-    pf_options = gce.PowerFlowOptions(control_q=False)
-    pf_drv = gce.PowerFlowDriver(grid=grid, options=pf_options)
-    pf_drv.run()
-
-    opf_options = gce.OptimalPowerFlowOptions(ips_method=gce.SolverType.NR,
-                                              ips_tolerance=1e-8,
-                                              ips_iterations=50,
-                                              acopf_mode=gce.AcOpfMode.ACOPFstd,
-                                              ips_control_q_limits=True,
-                                              acopf_v0=pf_drv.results.voltage,
-                                              acopf_S0=pf_drv.results.Sbus,
-                                              verbose=0)
-
-    base_sol = run_nonlinear_opf(grid=grid, opf_options=opf_options)
-
-    # delete
-    os.remove(file_path_csh)
-
-    return base_sol
+    assert len(res.Vm) == len(grid.buses)
 
 
 def case_pegase89() -> NonlinearOPFResults:
@@ -154,11 +136,14 @@ def test_ieee9():
     va_test = [0.0, 0.0854008, 0.05670578, -0.0429894, -0.0695051, 0.0105133, -0.0208879, 0.0157974, -0.0805577]
     Pg_test = [0.897986, 1.343206, 0.941874]
     Qg_test = [0.129387, 0.00047729, -0.226197]
+    lam_p_test = [24.755716, 24.034502, 24.075908, 24.755902, 24.998474,
+                  24.075908, 24.253897, 24.034502, 24.998487]
     res = case9()
     assert np.allclose(res.Vm, vm_test, atol=1e-3)
     assert np.allclose(res.Va, va_test, atol=1e-3)
     assert np.allclose(res.Pg, Pg_test, atol=1e-3)
     assert np.allclose(res.Qg, Qg_test, atol=1e-3)
+    assert np.allclose(res.lam_p, lam_p_test, atol=1e-3)
     # pass
 
 
@@ -298,21 +283,61 @@ def test_pegase89():
     assert np.allclose(res.Qg, Qg_test, atol=1e-3)
 
 
-def test_ieee14_controlQ_controllableshunts():
+def test_ieee14_controlQ_controllable_shunts():
+    """
+
+    :return:
+    """
     vm_test = [1.0600, 1.0398, 1.0044, 1.0195, 1.0194, 1.0600, 1.0488,
                1.0600, 1.0463, 1.0413, 1.0471, 1.0450, 1.0403, 1.0255]
     va_test = [-0.0000, -0.0707, -0.1772, -0.1527, -0.1304, -0.2198, -0.1900,
                -0.1683, -0.2233, -0.2277, -0.2260, -0.2343, -0.2351, -0.2462]
 
     Pg_test = [1.957688, 0.370331, 0.220336, 0.000012, 0.136859]
-    Qg_test = [0.000001, 0.217937, 0.120408, 0.095518, 0.068983, 0.0, 0.178715]
+    Qg_test = [0.000001, 0.340503, 0.128659, 0.126620, 0.088964, 0.0, 0.0]
 
-    res = case14_ctrlQ_shunts()
+    cwd = os.getcwd()
+    print(cwd)
+
+    # Go back two directories
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case14.matpower')
+
+    grid = gce.FileOpen(file_path).open()
+
+    for ll in range(len(grid.lines)):
+        grid.lines[ll].monitor_loading = True
+
+    csh = gce.ControllableShunt(name="Cshunt", Bmin=0.0, Bmax=18.0)
+    grid.add_controllable_shunt(bus=grid.buses[3], api_obj=csh)
+    grid.generators[2].Snom = 25.0
+
+    file_path_csh = os.path.join('data', 'output', 'case14_csh.veragrid')
+    gce.save_file(grid, filename=file_path_csh)
+
+    grid = gce.FileOpen(file_path_csh).open()
+
+    pf_options = gce.PowerFlowOptions(control_q=False)
+    pf_drv = gce.PowerFlowDriver(grid=grid, options=pf_options)
+    pf_drv.run()
+
+    opf_options = gce.OptimalPowerFlowOptions(ips_method=gce.SolverType.NR,
+                                              ips_tolerance=1e-8,
+                                              ips_iterations=50,
+                                              acopf_mode=gce.AcOpfMode.ACOPFstd,
+                                              ips_control_q_limits=True,
+                                              acopf_v0=pf_drv.results.voltage,
+                                              acopf_S0=pf_drv.results.Sbus,
+                                              verbose=0)
+
+    res = run_nonlinear_opf(grid=grid, opf_options=opf_options)
 
     assert np.allclose(res.Vm, vm_test, atol=1e-2)
     assert np.allclose(res.Va, va_test, atol=1e-2)
     assert np.allclose(res.Pg, Pg_test, atol=1e-2)
     assert np.allclose(np.r_[res.Qg, res.Qsh], Qg_test, atol=1e-2)
+
+    # delete
+    os.remove(file_path_csh)
 
 
 def superconductor() -> NonlinearOPFResults:

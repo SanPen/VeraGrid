@@ -485,6 +485,7 @@ class AvailableTransferCapacityDriver(DriverTemplate):
         Run thread
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         self.report_text("Analyzing")
         self.report_progress(0.0)

@@ -98,6 +98,7 @@ class MapLineSegment(QGraphicsLineItem):
         self.setZValue(0)
         self._context_lat: float | None = None
         self._context_lon: float | None = None
+        self._context_scene_pos: QPointF | None = None
 
         self.setFlag(self.GraphicsItemFlag.ItemIsSelectable, False)
         self.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
@@ -129,8 +130,15 @@ class MapLineSegment(QGraphicsLineItem):
         """
         Delete the connections
         """
-        self.first.delete_hosting_connection(self)
-        self.second.delete_hosting_connection(self)
+        if self in self.first.get_hosting_line_segments():
+            self.first.delete_hosting_connection(self)
+        else:
+            pass
+
+        if self in self.second.get_hosting_line_segments():
+            self.second.delete_hosting_connection(self)
+        else:
+            pass
 
     def get_associated_widgets(self) -> List[MapLineContainer]:
         """
@@ -354,6 +362,7 @@ class MapLineSegment(QGraphicsLineItem):
 
         scene_pos = event.scenePos()  # Position in scene coordinates
         x, y = scene_pos.x(), scene_pos.y()
+        self._context_scene_pos = scene_pos
         self._context_lat, self._context_lon = self.editor.to_lat_lon(x=x, y=y)
         add_menu_entry(menu=menu,
                        text=translate_context_menu_text("Open in Street view"),
@@ -464,31 +473,15 @@ class MapLineSegment(QGraphicsLineItem):
         """
         self.editor.set_active_status_to_profile(self.api_object)
 
-    def add_node(self):
+    def add_node(self) -> None:
         """
-        Add a path to the container by adding a new graphical segment
+        Add a path to the container by adding a new graphical segment.
         """
 
-        if len(self.container.nodes_list) == 0:
-            self.container.insert_new_node_at_position(0)
-
-        elif len(self.container.nodes_list) == 1:
-            if self.second == self.container.substation_to() or self.first == self.container.substation_to():
-                self.container.insert_new_node_at_position(1)
-            else:
-                self.container.insert_new_node_at_position(0)
+        if self._context_scene_pos is not None:
+            self.container.add_node_at_scene_position(scene_pos=self._context_scene_pos)
         else:
-            if self.second == self.container.substation_to() or self.first == self.container.substation_to():
-                self.container.insert_new_node_at_position(len(self.container.nodes_list))
-
-            elif self.second == self.container.substation_from() or self.first == self.container.substation_from():
-                self.container.insert_new_node_at_position(0)
-
-            else:
-                if self.first.index > self.second.index:
-                    self.container.insert_new_node_at_position(self.second.index)
-                elif self.first.index < self.second.index:
-                    self.container.insert_new_node_at_position(self.second.index)
+            pass
 
     def open_street_view_context(self) -> None:
         """

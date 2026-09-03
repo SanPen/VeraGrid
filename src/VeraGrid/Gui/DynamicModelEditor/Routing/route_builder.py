@@ -91,18 +91,7 @@ class RouteBuilder:
         :param routing_graph: Graph under construction.
         :return: None.
         """
-        route_points: list[RoutingPoint] = self._build_stubbed_route_points()
-        # The builder owns the only topology-from-scratch step. Once the full
-        # point chain is known, the graph is materialized in one deterministic
-        # pass so later editor operations only transform existing nodes.
-        self._build_graph_from_route_points(routing_graph, route_points)
-
-    def _build_stubbed_route_points(self) -> list[RoutingPoint]:
-        """
-        Build one full route including both terminal stubs.
-
-        :return: Route points including both ports and both stubs.
-        """
+        # route_points: list[RoutingPoint] = self._build_stubbed_route_points()
         route_points: list[RoutingPoint] = list()
         source_stub: RoutingPoint = self._build_stub_point(
             port_position=self._source_position,
@@ -127,7 +116,10 @@ class RouteBuilder:
         for inner_point in inner_route_points:
             route_points.append(inner_point.copy())
         route_points.append(self._destination_position.copy())
-        return route_points
+        # The builder owns the only topology-from-scratch step. Once the full
+        # point chain is known, the graph is materialized in one deterministic
+        # pass so later editor operations only transform existing nodes.
+        self._build_graph_from_route_points(routing_graph, route_points)
 
     def _build_minimal_route_points(
             self,
@@ -152,11 +144,18 @@ class RouteBuilder:
             # The minimal non-aligned route still uses one deterministic elbow.
             # More advanced path construction belongs to future routing phases,
             # not to this foundational builder.
-            elbow_point: RoutingPoint = RoutingPoint(
-                x_pos=end_position.get_x(),
+            elbow_point1: RoutingPoint = RoutingPoint(
+                x_pos=((end_position.get_x() - start_position.get_x())/2)+start_position.get_x(),
                 y_pos=start_position.get_y(),
             )
-            route_points.append(elbow_point)
+
+            elbow_point2: RoutingPoint = RoutingPoint(
+                x_pos=((end_position.get_x() - start_position.get_x())/2)+start_position.get_x(),
+                y_pos=end_position.get_y(),
+            )
+
+            route_points.append(elbow_point1)
+            route_points.append(elbow_point2)
             route_points.append(end_position.copy())
 
         return route_points

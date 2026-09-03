@@ -100,4 +100,5 @@ def get_line_phasor_rms_template(vfactory: VarFactory, name="Line_phasor_rms_tem
 
     templ.block.in_vars = inputs
 
+    templ.comment = 'AC line RMS phasor-current model'
     return templ

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.NTC.ntc_ts_results &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.NTC.ntc_ts_results &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -110,8 +110,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.results_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsTemplate</span><span class="p">,</span> <span class="n">ResultsProperty</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultTypes</span><span class="p">,</span> <span class="n">StudyResultsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultTypes</span><span class="p">,</span> <span class="n">StudyResultsType</span><span class="p">,</span> <span class="n">SolutionState</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.results_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsTable</span><span class="p">,</span> <span class="n">DeviceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.NTC.ntc_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">contingency_report_row_order</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrVec</span><span class="p">,</span> <span class="n">DateVec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">CxMat</span><span class="p">,</span> <span class="n">ObjMat</span><span class="p">,</span> <span class="n">BoolVec</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># Only imports the below statements during type checking</span>
@@ -250,6 +251,8 @@
                 <span class="p">],</span>
                 <span class="n">ResultTypes</span><span class="o">.</span><span class="n">FlowReports</span><span class="p">:</span> <span class="p">[</span>
                     <span class="n">ResultTypes</span><span class="o">.</span><span class="n">NetTransferCapacity</span><span class="p">,</span>
+                    <span class="n">ResultTypes</span><span class="o">.</span><span class="n">NetTransferCapacitySlack</span><span class="p">,</span>
+                    <span class="n">ResultTypes</span><span class="o">.</span><span class="n">NetTransferCapacityStatus</span><span class="p">,</span>
                     <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ContingencyFlowsReport</span><span class="p">,</span>
                     <span class="n">ResultTypes</span><span class="o">.</span><span class="n">InterSpaceBranchPower</span><span class="p">,</span>
                     <span class="n">ResultTypes</span><span class="o">.</span><span class="n">InterSpaceBranchLoading</span><span class="p">,</span>
@@ -318,6 +321,62 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">converged</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OptimalNetTransferCapacityTimeSeriesResults.get_total_slack_mw">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.get_total_slack_mw">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_total_slack_mw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Total limit-relaxation slack of each time step in MW.</span>
+
+<span class="sd">        Base-case overload slacks plus post-contingency relaxation slacks.</span>
+<span class="sd">        Strict runs have no flow slacks, so the result is zero per hour.</span>
+
+<span class="sd">        :return: slack per time step in MW</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+        <span class="n">total</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overloads</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strict_formulation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">total</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contingency_flows_list</span><span class="p">:</span>
+                <span class="n">t_i</span><span class="p">,</span> <span class="n">m_i</span><span class="p">,</span> <span class="n">c_i</span><span class="p">,</span> <span class="n">flow_i</span><span class="p">,</span> <span class="n">neg_i</span><span class="p">,</span> <span class="n">pos_i</span> <span class="o">=</span> <span class="n">item</span>
+                <span class="n">t_int</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">t_i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">t_int</span> <span class="o">&lt;</span> <span class="n">n_time</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">neg_i</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pos_i</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                        <span class="n">total</span><span class="p">[</span><span class="n">t_int</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">neg_i</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pos_i</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">return</span> <span class="n">total</span></div>
+
+
+<div class="viewcode-block" id="OptimalNetTransferCapacityTimeSeriesResults.get_solution_states">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.get_solution_states">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_solution_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slack_tol_mw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SolutionState</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Classify each time step as Optimal, Relaxed, or NotOptimal.</span>
+
+<span class="sd">        Optimal: the solver converged and total slack is within tolerance.</span>
+<span class="sd">        Relaxed: the solver converged, but only by relaxing limits.</span>
+<span class="sd">        NotOptimal: the solver did not reach optimality.</span>
+
+<span class="sd">        :param slack_tol_mw: total slack below which the hour counts as clean</span>
+<span class="sd">        :return: one solution state per time step</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">slacks</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_total_slack_mw</span><span class="p">()</span>
+        <span class="n">n_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+        <span class="n">states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SolutionState</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">t</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_time</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">converged</span><span class="p">[</span><span class="n">t</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">slacks</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">slack_tol_mw</span><span class="p">:</span>
+                    <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SolutionState</span><span class="o">.</span><span class="n">Optimal</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SolutionState</span><span class="o">.</span><span class="n">Relaxed</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SolutionState</span><span class="o">.</span><span class="n">NotOptimal</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">states</span></div>
 
 
 <div class="viewcode-block" id="OptimalNetTransferCapacityTimeSeriesResults.mdl">
@@ -529,7 +588,6 @@
             <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">result_type</span> <span class="o">==</span> <span class="n">ResultTypes</span><span class="o">.</span><span class="n">NetTransferCapacity</span><span class="p">:</span>
-            <span class="c1"># achieved inter area exchange per time step</span>
             <span class="k">return</span> <span class="n">ResultsTable</span><span class="p">(</span>
                 <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                 <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span>
@@ -540,13 +598,46 @@
                 <span class="n">idx_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span>
             <span class="p">)</span>
 
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="o">==</span> <span class="n">ResultTypes</span><span class="o">.</span><span class="n">NetTransferCapacitySlack</span><span class="p">:</span>
+            <span class="n">slacks</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_total_slack_mw</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">ResultsTable</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">slacks</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;Total slack (MW)&#39;</span><span class="p">]),</span>
+                <span class="n">title</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">result_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;(MW)&#39;</span><span class="p">,</span>
+                <span class="n">cols_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span><span class="p">,</span>
+                <span class="n">idx_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span>
+            <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">result_type</span> <span class="o">==</span> <span class="n">ResultTypes</span><span class="o">.</span><span class="n">NetTransferCapacityStatus</span><span class="p">:</span>
+            <span class="c1"># enum quality of each hour, kept off the float table</span>
+            <span class="n">states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SolutionState</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_solution_states</span><span class="p">()</span>
+            <span class="n">n_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_time</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+            <span class="n">t</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_time</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">ResultsTable</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;Status&#39;</span><span class="p">]),</span>
+                <span class="n">title</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">result_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="n">cols_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span><span class="p">,</span>
+                <span class="n">idx_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span>
+            <span class="p">)</span>
+
         <span class="k">elif</span> <span class="n">result_type</span> <span class="o">==</span> <span class="n">ResultTypes</span><span class="o">.</span><span class="n">ContingencyFlowsReport</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Time index&#39;</span><span class="p">,</span> <span class="s1">&#39;Monitored index&#39;</span><span class="p">,</span> <span class="s1">&#39;Contingency group index&#39;</span><span class="p">,</span>
                        <span class="s1">&#39;Time array&#39;</span><span class="p">,</span> <span class="s1">&#39;Contingency branch&#39;</span><span class="p">,</span> <span class="s1">&#39;Contingency group&#39;</span><span class="p">,</span>
                        <span class="s1">&#39;Flow (MW)&#39;</span><span class="p">,</span> <span class="s1">&#39;Loading (%)&#39;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contingency_flows_list</span><span class="p">:</span>
+            <span class="n">row_order</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">contingency_report_row_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contingency_flows_list</span><span class="p">)</span>
+            <span class="n">i_ord</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="k">for</span> <span class="n">i_ord</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row_order</span><span class="p">)):</span>
+                <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contingency_flows_list</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">row_order</span><span class="p">[</span><span class="n">i_ord</span><span class="p">])]</span>
                 <span class="c1"># The strict formulation stores (t, m, c, flow) with no slacks,</span>
                 <span class="c1"># while the non-strict one stores (t, m, c, flow, neg_slack, pos_slack).</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strict_formulation</span><span class="p">:</span>

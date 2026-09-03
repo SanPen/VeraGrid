@@ -3,7 +3,6 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-import gc
 import os
 import pathlib
 import tempfile
@@ -29,6 +28,7 @@ from VeraGrid.Gui.FileDialogues.MatpowerDialogue.matpower_export import Matpower
 from VeraGrid.Gui.FileDialogues.UcteDialogue.ucte_export import UcteExportDialogue
 from VeraGrid.Gui.Main.SubClasses.Model.scenarios import ScenariosMain
 from VeraGrid.Gui.FileDialogues.ServerFileDialog import ServerFileDialogue
+from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, exec_dialog_safely, is_dialog_available
 from VeraGrid.Gui.FileDialogues.CGMESDialogue.cgmes_export import CgmesExportDialogue
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_export import PsseExportDialogue
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_import import PsseImportDialogue
@@ -37,6 +37,7 @@ from VeraGridEngine.Devices.multiverse import MultiVerse, ScenarioNode
 from VeraGridEngine.Compilers.circuit_to_pgm import PGM_AVAILABLE
 from VeraGridEngine.IO.file_save import FileSavingOptions
 from VeraGridEngine.IO.file_open import determine_file_type, FileOpen
+from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import SimulationTypes, FileType
 from VeraGridEngine.IO.veragrid.contingency_parser import import_contingencies_from_json, export_contingencies_json_file
 from VeraGridEngine.IO.veragrid.catalogue import save_catalogue, load_catalogue
@@ -77,6 +78,21 @@ def get_session_tree_icon_map(session_data_dict: Dict[str, Dict[str, List[str]]]
     return icon_map
 
 
+def open_logger_requires_dialog(logger: Logger) -> bool:
+    """Return whether a successful file-open log needs a modal dialogue.
+
+    Informational import diagnostics remain available in the logger but do not
+    interrupt a successful GUI open. Warnings and errors remain visible because
+    they describe states that require review before using the imported circuit.
+
+    :param logger: File-open diagnostic logger to classify.
+    :return: ``True`` when the logger contains at least one warning or error.
+    """
+    warning_count: int = logger.warning_count()
+    error_count: int = logger.error_count()
+    return warning_count > 0 or error_count > 0
+
+
 class IoMain(ScenariosMain):
     """
     Inputs-Outputs Main
@@ -111,7 +127,6 @@ class IoMain(ScenariosMain):
         self.dgs_export_dialogue: DgsExportDialogue | None = None
         self.matpower_export_dialogue: MatpowerExportDialogue | None = None
         self.ucte_export_dialogue: UcteExportDialogue | None = None
-        self.server_file_dialogue: ServerFileDialogue | None = None
         self.remote_database_file_idtag: str = ""
         self.remote_database_model_idtag: str = ""
         self.remote_database_file_name: str = ""
@@ -326,7 +341,6 @@ class IoMain(ScenariosMain):
             self.add_map_diagram()
             self.set_diagram_widget(self.diagram_widgets_list[0])
 
-        self.collect_memory()
         return True
 
     def new_project(self) -> None:
@@ -378,8 +392,8 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        self.server_file_dialogue = ServerFileDialogue(parent=self, app=self)
-        self.server_file_dialogue.exec()
+        server_file_dialogue: ServerFileDialogue = ServerFileDialogue(parent=self, app=self)
+        exec_dialog_safely(dialog=server_file_dialogue)
 
     def clear_remote_database_context(self) -> None:
         """
@@ -784,24 +798,31 @@ class IoMain(ScenariosMain):
             options.file_type = determine_file_type(file_name)
 
             if options.file_type is None and bool_prompt_to_ask_if_unclear:
-                self.file_selector = FileTypeSelector(file_name=file_name)
-                self.file_selector.exec()
-                options.file_type = self.file_selector.file_type
+                file_selector: FileTypeSelector = FileTypeSelector(file_name=file_name)
+                try:
+                    file_selector.exec()
+                    options.file_type = file_selector.file_type
+                finally:
+                    delete_dialog_safely(dialog=file_selector)
 
                 if options.file_type == FileType.CGMES:
-                    self.cgmes_import_dialogue = CgmesImportDialogue(app=self, options=options)
-                    self.cgmes_import_dialogue.exec()
+                    cgmes_import_dialogue: CgmesImportDialogue = CgmesImportDialogue(app=self, options=options)
+                    exec_dialog_safely(dialog=cgmes_import_dialogue)
+                else:
+                    pass
 
             elif options.file_type == FileType.PSSE_raw or options.file_type == FileType.PSSE_rawx:
-                self.psse_import_dialogue = PsseImportDialogue(app=self, options=options)
-                self.psse_import_dialogue.exec()
+                psse_import_dialogue: PsseImportDialogue = PsseImportDialogue(app=self, options=options)
+                exec_dialog_safely(dialog=psse_import_dialogue)
                 # NOTE: options will be modified inside
             elif options.file_type == FileType.CGMES:
-                self.cgmes_import_dialogue = CgmesImportDialogue(app=self, options=options)
-                self.cgmes_import_dialogue.exec()
+                cgmes_import_dialogue = CgmesImportDialogue(app=self, options=options)
+                exec_dialog_safely(dialog=cgmes_import_dialogue)
             elif options.file_type == FileType.DGS:
-                self.dgs_import_dialogue = DgsImportDialogue(app=self, options=options)
-                self.dgs_import_dialogue.exec()
+                dgs_import_dialogue: DgsImportDialogue = DgsImportDialogue(options=options)
+                exec_dialog_safely(dialog=dgs_import_dialogue)
+            else:
+                pass
 
             # create thread
             self.open_file_thread_object = filedrv.FileOpenThread(
@@ -945,15 +966,19 @@ class IoMain(ScenariosMain):
                         self.rosetta_gui.show()
                     else:
                         # else, show the logger if it is necessary
-                        if len(self.open_file_thread_object.logger) > 0:
+                        if open_logger_requires_dialog(self.open_file_thread_object.logger):
                             dlg = LogsDialogue(self.tr('Open CGMES file logger'), self.open_file_thread_object.logger)
                             dlg.exec()
+                        else:
+                            pass
 
                 else:
                     # else, show the logger if it is necessary
-                    if len(self.open_file_thread_object.logger) > 0:
+                    if open_logger_requires_dialog(self.open_file_thread_object.logger):
                         dlg = LogsDialogue(self.tr('Open file logger'), self.open_file_thread_object.logger)
                         dlg.exec()
+                    else:
+                        pass
 
                 if self._pending_remote_database_context is not None:
                     self.remote_database_file_idtag = str(self._pending_remote_database_context["file_idtag"])
@@ -982,7 +1007,6 @@ class IoMain(ScenariosMain):
 
         self._pending_remote_database_context = None
         self.cleanup_temporary_remote_downloads()
-        self.collect_memory()
         self.setup_time_sliders()
         self.get_circuit_snapshot_datetime()
         self.change_theme_mode()
@@ -1073,10 +1097,12 @@ class IoMain(ScenariosMain):
 
             new_circuit = self.open_file_thread_object.circuit
 
-            if len(self.open_file_thread_object.logger) > 0:
+            if open_logger_requires_dialog(self.open_file_thread_object.logger):
                 dlg = LogsDialogue(self.tr('Open file logger'),
                                    self.open_file_thread_object.logger)
                 dlg.exec()
+            else:
+                pass
 
             if self.open_file_thread_object.valid:
 
@@ -1300,15 +1326,14 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        # Re-enable the cyclic GC that was disabled in save_file_now() before the worker
-        # thread started. This slot runs on the main thread (queued from done_signal), so any
-        # collection it now allows will finalize Qt objects on the correct thread.
-        gc.enable()
-
         if self.save_file_thread_object.logger is not None:
             if len(self.save_file_thread_object.logger) > 0:
-                dlg = LogsDialogue(self.tr('Save file logger'), self.save_file_thread_object.logger)
-                dlg.exec()
+                dlg: LogsDialogue = LogsDialogue(self.tr('Save file logger'), self.save_file_thread_object.logger)
+                exec_dialog_safely(dialog=dlg)
+            else:
+                pass
+        else:
+            pass
 
         self.stuff_running_now.remove(SimulationTypes.FileSave)
 
@@ -1326,20 +1351,22 @@ class IoMain(ScenariosMain):
         )
         self.ui.diskSessionsTreeView.setModel(mdl)
 
-        # call the garbage collector to free memory
-        self.collect_memory()
-
     def grid_generator(self) -> None:
         """
         Open the random-grid generator dialogue and optionally replace the project.
 
         :return: None.
         """
-        self.grid_generator_dialogue = GridGeneratorGUI(parent=self)
-        self.grid_generator_dialogue.resize(int(1.61 * 600.0), 550)  # golden ratio
-        self.grid_generator_dialogue.exec()
+        grid_generator_dialogue: GridGeneratorGUI = GridGeneratorGUI(parent=self)
+        grid_generator_dialogue.resize(int(1.61 * 600.0), 550)  # golden ratio
+        try:
+            grid_generator_dialogue.exec()
+            generator_applied: bool = grid_generator_dialogue.applied
+            generated_circuit: MultiCircuit = grid_generator_dialogue.circuit
+        finally:
+            delete_dialog_safely(dialog=grid_generator_dialogue)
 
-        if self.grid_generator_dialogue.applied:
+        if generator_applied:
 
             if self.circuit.valid_for_simulation() > 0:
                 reply = QtWidgets.QMessageBox.question(self, self.tr('Message'),
@@ -1351,7 +1378,7 @@ class IoMain(ScenariosMain):
                 if reply == QtWidgets.QMessageBox.StandardButton.No:
                     return
 
-            self.circuit = self.grid_generator_dialogue.circuit
+            self.circuit = generated_circuit
 
             # create schematic
             self.redraw_current_diagram()
@@ -1388,13 +1415,17 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        self.coordinates_window = CoordinatesInputGUI(grid=self.circuit, parent=self)
+        coordinates_window: CoordinatesInputGUI = CoordinatesInputGUI(grid=self.circuit, parent=self)
+        try:
+            coordinates_window.exec()
+            coordinates_accepted: bool = coordinates_window.was_accepted
+        finally:
+            delete_dialog_safely(dialog=coordinates_window)
 
-        if self.coordinates_window is not None:
-            self.coordinates_window.exec()
-
-            if self.coordinates_window.was_accepted:
-                self.set_xy_from_lat_lon()
+        if coordinates_accepted:
+            self.set_xy_from_lat_lon()
+        else:
+            pass
 
     def export_object_profiles(self) -> None:
         """
@@ -1686,7 +1717,6 @@ class IoMain(ScenariosMain):
         self.update_date_dependent_combos()
         self.update_from_to_list_views()
         self.clear_results()
-        self.collect_memory()
         self.setup_time_sliders()
         self.get_circuit_snapshot_datetime()
         self.change_theme_mode()
@@ -1697,8 +1727,19 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        self.psse_export_dialogue = PsseExportDialogue(app=self)
-        self.psse_export_dialogue.show()
+        dialog: PsseExportDialogue | None = self.psse_export_dialogue
+        if is_dialog_available(dialog=dialog):
+            pass
+        else:
+            dialog = PsseExportDialogue(app=self)
+            self.psse_export_dialogue = dialog
+
+        if dialog is not None:
+            dialog.show()
+            dialog.raise_()
+            dialog.activateWindow()
+        else:
+            pass
 
     def export_power_factory(self) -> None:
         """
@@ -1706,8 +1747,19 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        self.dgs_export_dialogue = DgsExportDialogue(app=self)
-        self.dgs_export_dialogue.show()
+        dialog: DgsExportDialogue | None = self.dgs_export_dialogue
+        if is_dialog_available(dialog=dialog):
+            pass
+        else:
+            dialog = DgsExportDialogue(app=self)
+            self.dgs_export_dialogue = dialog
+
+        if dialog is not None:
+            dialog.show()
+            dialog.raise_()
+            dialog.activateWindow()
+        else:
+            pass
 
     def export_matpower(self) -> None:
         """
@@ -1715,8 +1767,19 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        self.matpower_export_dialogue = MatpowerExportDialogue(app=self)
-        self.matpower_export_dialogue.show()
+        dialog: MatpowerExportDialogue | None = self.matpower_export_dialogue
+        if is_dialog_available(dialog=dialog):
+            pass
+        else:
+            dialog = MatpowerExportDialogue(app=self)
+            self.matpower_export_dialogue = dialog
+
+        if dialog is not None:
+            dialog.show()
+            dialog.raise_()
+            dialog.activateWindow()
+        else:
+            pass
 
     def export_ucte(self) -> None:
         """
@@ -1724,8 +1787,19 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        self.ucte_export_dialogue = UcteExportDialogue(app=self)
-        self.ucte_export_dialogue.show()
+        dialog: UcteExportDialogue | None = self.ucte_export_dialogue
+        if is_dialog_available(dialog=dialog):
+            pass
+        else:
+            dialog = UcteExportDialogue(app=self)
+            self.ucte_export_dialogue = dialog
+
+        if dialog is not None:
+            dialog.show()
+            dialog.raise_()
+            dialog.activateWindow()
+        else:
+            pass
 
     def export_cim(self) -> None:
         """
@@ -1766,8 +1840,19 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        self.cgmes_dialogue = CgmesExportDialogue(app=self)
-        self.cgmes_dialogue.show()
+        dialog: CgmesExportDialogue | None = self.cgmes_dialogue
+        if is_dialog_available(dialog=dialog):
+            pass
+        else:
+            dialog = CgmesExportDialogue(app=self)
+            self.cgmes_dialogue = dialog
+
+        if dialog is not None:
+            dialog.show()
+            dialog.raise_()
+            dialog.activateWindow()
+        else:
+            pass
 
     def export_power_grid_models(self) -> None:
         """

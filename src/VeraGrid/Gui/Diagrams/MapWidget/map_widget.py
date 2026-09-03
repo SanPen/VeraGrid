@@ -1580,7 +1580,9 @@ class MapWidget(QWidget):
             # to set some state variables
             self.resizeEvent()
 
-        self.zoom_callback(level)
+            self.zoom_callback(level)
+        else:
+            pass
 
         return result
 

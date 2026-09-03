@@ -154,7 +154,6 @@ def get_esd1_rms_template(vfactory: VarFactory, name: str = "ESD1 RMS template")
         state_vars=[ipout, iqout, soc],
         in_vars=inputs,
         init_eqs={
-            pext0: zero,
             soc: soc0,
             pref: pref_expr,
             pext: pext_expr,
@@ -215,4 +214,5 @@ def get_esd1_rms_template(vfactory: VarFactory, name: str = "ESD1 RMS template")
     templ.block.api_obj_mapping = block.api_obj_mapping
     templ.block.in_vars = inputs
     templ.block.out_vars = block.out_vars
+    templ.comment = 'Battery ESD1 RMS model'
     return templ

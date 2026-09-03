@@ -34,7 +34,8 @@ from VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver import co
     compute_dP
 from VeraGridEngine.Simulations.NTC.ntc_opf import (add_corrective_contingency_formulation,
                                                     get_contingency_monitorable_branches,
-                                                    compute_vsc_pmode3_saturation_rates)
+                                                    compute_vsc_pmode3_saturation_rates,
+                                                    fill_worst_contingency_per_branch)
 from VeraGridEngine.IO.file_system import opf_file_path
 
 
@@ -726,6 +727,12 @@ class BranchNtcVars:
 
         self.inter_space_branches: List[Tuple[int, float]] = list()  # index, sense
 
+        # per-hour worst N-1 gets group index in the grid list, or -1 when N-1 is not worse than N
+        self.worst_contingency_idx = np.full((nt, n_elm), -1, dtype=int)
+        self.worst_contingency_flow = np.zeros((nt, n_elm), dtype=float)
+        self.worst_contingency_loading = np.zeros((nt, n_elm), dtype=float)
+        self.alpha_n1_worst = np.zeros((nt, n_elm), dtype=float)
+
     def get_values(self, Sbase: float, model: OrToolsLpModel) -> "BranchNtcVars":
         """
         Return an instance of this class where the arrays content are not LP vars but their value
@@ -741,6 +748,10 @@ class BranchNtcVars:
         data.alpha = self.alpha
         data.inter_space_branches = self.inter_space_branches
         data.monitor_logic = self.monitor_logic
+        data.worst_contingency_idx = self.worst_contingency_idx
+        data.worst_contingency_flow = self.worst_contingency_flow
+        data.worst_contingency_loading = self.worst_contingency_loading
+        data.alpha_n1_worst = self.alpha_n1_worst
 
         for t in range(nt):
             for i in range(n_elm):
@@ -2015,6 +2026,8 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
                                                       bus_data_t=nc.bus_data)
     )
 
+    report_mctg: Union[LinearMultiContingencies, None] = None
+
     if zonal_grouping == ZonalGrouping.NoGrouping:
 
         # declare the linear analysis and compute the PTDF and LODF
@@ -2089,6 +2102,7 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
                              ptdf_threshold=lodf_threshold,
                              lodf_threshold=lodf_threshold,
                              with_corrective_converter_df=corrective_contingencies)
+                report_mctg = mctg
 
                 alpha_n1 = compute_alpha_n1(
                     ptdf=ls.PTDF,
@@ -2157,6 +2171,22 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
 
     # gather the values of the variables
     vars_v = mip_vars.get_values(Sbase=grid.Sbase, model=lp_model)
+
+    # one numeric N-1 pass on the final operating point
+    fill_worst_contingency_per_branch(
+        grid=grid,
+        multi_contingencies=report_mctg,
+        f0_mw=np.asarray(vars_v.branch_vars.flows[t_idx, :], dtype=float),
+        hvdc0_mw=np.asarray(vars_v.hvdc_vars.flows[t_idx, :], dtype=float),
+        vsc0_mw=np.asarray(vars_v.vsc_vars.flows[t_idx, :], dtype=float),
+        inj0_mw=np.asarray(vars_v.bus_vars.Pinj[t_idx, :], dtype=float),
+        contingency_rates_mw=np.asarray(vars_v.branch_vars.contingency_rates[t_idx, :], dtype=float),
+        alpha=np.asarray(vars_v.branch_vars.alpha[t_idx, :], dtype=float),
+        worst_idx=vars_v.branch_vars.worst_contingency_idx[t_idx, :],
+        worst_flow=vars_v.branch_vars.worst_contingency_flow[t_idx, :],
+        worst_loading=vars_v.branch_vars.worst_contingency_loading[t_idx, :],
+        alpha_n1_worst=vars_v.branch_vars.alpha_n1_worst[t_idx, :],
+    )
 
     # fill the power shift
     vars_v.power_shift = vars_v.bus_vars.delta_p[:, bus_a1_idx]

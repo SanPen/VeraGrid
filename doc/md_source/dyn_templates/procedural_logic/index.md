@@ -19,6 +19,8 @@ hard_saturation
 time_delay
 moving_average
 gradient_limiter
+conditional_diagnostic
+delayed_switch_event
 flipflop
 analog_flipflop
 pickup_dropoff

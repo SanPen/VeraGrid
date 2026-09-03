@@ -343,19 +343,35 @@ def dpr_power_mismatch(Ybus: CscMat,
     :return: Power-flow mismatch norm.
     """
 
-    Scalc: CxVec = cf.compute_power(Ybus, V)
-    q_idx: IntVec = np.r_[pq, pqv]
+    if dpr_voltage_is_valid(V=V):
+        Scalc: CxVec = cf.compute_power(Ybus, V)
+        q_idx: IntVec = np.r_[pq, pqv]
 
-    # The mismatch must match the algebraic model solved by the coefficient matrix:
-    # active power at every non-slack bus, reactive power at PQ/PVQ buses, and PVQ voltage magnitude constraints.
-    fx: np.ndarray = np.r_[
-        (Scalc - S0)[no_slack].real,
-        (Scalc - S0)[q_idx].imag,
-        np.abs(V[pqv]) - np.abs(Vset[pqv])
-    ]
-    norm_f: float = float(cf.compute_fx_error(fx))
+        # The mismatch must match the algebraic model solved by the coefficient matrix:
+        # active power at every non-slack bus, reactive power at PQ/PVQ buses, and PVQ voltage magnitude constraints.
+        fx: np.ndarray = np.r_[
+            (Scalc - S0)[no_slack].real,
+            (Scalc - S0)[q_idx].imag,
+            np.abs(V[pqv]) - np.abs(Vset[pqv])
+        ]
+        norm_f: float = float(cf.compute_fx_error(fx))
+    else:
+        norm_f = np.inf
 
     return norm_f
+
+
+def dpr_voltage_is_valid(V: CxVec) -> bool:
+    """
+    Check that a DPR voltage candidate is numerically usable.
+
+    :param V: Full voltage vector candidate.
+    :return: True if the voltage can safely be used in sparse nonlinear calculations.
+    """
+
+    valid: bool = bool(np.all(np.isfinite(V)) and np.all(np.abs(V) < 1.0e6))
+
+    return valid
 
 
 def dpr_angle_guard(V: CxVec, sl: IntVec, no_slack: IntVec) -> bool:
@@ -624,7 +640,9 @@ def dpr_select_candidate(Ybus: CscMat,
                                                     pq=pq,
                                                     pqv=pqv,
                                                     Vset=Vset)
-            scaled_ok: bool = bool(np.isfinite(scaled_norm) and dpr_angle_guard(Vscaled, sl, no_slack))
+            scaled_ok: bool = bool(np.isfinite(scaled_norm)
+                                   and dpr_voltage_is_valid(V=Vscaled)
+                                   and dpr_angle_guard(Vscaled, sl, no_slack))
 
             if scaled_ok and scaled_norm < candidate_norm:
                 Vcandidate = Vscaled
@@ -1013,7 +1031,7 @@ def helm_coefficients_dpr(Ybus: CscMat, Yseries: CscMat, V0: CxVec | None, Vset:
                           use_classical_germ: bool = False,
                           allow_dynamic_restart: bool = True,
                           verbose: bool = False, logger: Logger = None) -> tuple[np.ndarray, np.ndarray, np.ndarray,
-                                                                                  CxVec, int, bool]:
+CxVec, int, bool]:
     """
     Compute DPRHEM coefficients and final voltage state.
 
@@ -1106,6 +1124,10 @@ def helm_dpr_fixed_model(nc: NumericalCircuit,
     """
 
     start_time: float = time.time()
+
+    if logger is not None:
+        logger.add_info("HELM: use_classical_germ", value=use_classical_germ)
+
     Vset: CxVec = nc.bus_data.Vbus
 
     # Fixed-model solve: these bus sets and matrices must remain constant for the whole coefficient computation.
@@ -1251,11 +1273,14 @@ def helm_dpr_fixed_model(nc: NumericalCircuit,
 def helm_dpr(nc: NumericalCircuit,
              Ybus: CscMat, Yf: CscMat, Yt: CscMat, Yshunt_bus: CxVec,
              Yseries: CscMat, V0: CxVec | None, S0: CxVec, Ysh0: CxVec,
-             pq: IntVec, pv: IntVec, vd: IntVec, no_slack: IntVec,
-             tolerance: float = 1e-6, max_coefficients: int = 30, use_pade: bool = True,
-             restart_order: int = 6, max_restarts: int = 20,
+             pq: IntVec, pv: IntVec, vd: IntVec, no_slack: IntVec, pqv: IntVec | None = None, p: IntVec | None = None,
+             tolerance: float = 1e-6,
+             max_coefficients: int = 30,
+             use_pade: bool = True,
+             restart_order: int = 6,
+             max_restarts: int = 20,
              use_classical_germ: bool = False,
-             control_q: bool = False, pqv: IntVec | None = None, p: IntVec | None = None,
+             control_q: bool = False,
              Qmin: Vec | None = None, Qmax: Vec | None = None,
              control_discrete_shunts: bool = False, control_qv_droop: bool = False,
              distributed_slack: bool = False, bus_installed_power: Vec | None = None,

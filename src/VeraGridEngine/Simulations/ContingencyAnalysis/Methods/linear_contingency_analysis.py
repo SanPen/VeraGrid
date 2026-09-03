@@ -28,7 +28,8 @@ def linear_contingency_analysis(nc: NumericalCircuit,
                                 is_cancel: Callable[[], bool] | None,
                                 t: int | None = None,
                                 t_prob=1.0,
-                                logger: Logger | None = None, ) -> ContingencyAnalysisResults:
+                                logger: Logger | None = None,
+                                report_progress: bool = False) -> ContingencyAnalysisResults:
     """
     Run N-1 simulation in series with HELM, non-linear solution
     :param nc: NumericalCircuit
@@ -45,6 +46,7 @@ def linear_contingency_analysis(nc: NumericalCircuit,
     :param t: time index, if None the snapshot is used
     :param t_prob: probability of te time
     :param logger: logger instance
+    :param report_progress
     :return: returns the results
     """
 
@@ -133,11 +135,12 @@ def linear_contingency_analysis(nc: NumericalCircuit,
 
         # report progress
         if t is None:
-            if report_text is not None:
+            if report_text is not None and report_progress:
                 report_text(
-                    f'Contingency group: {linear_multiple_contingencies.contingency_groups_used[ic].name}')
+                    f'Contingency group: {linear_multiple_contingencies.contingency_groups_used[ic].name}'
+                )
 
-            if report_progress2 is not None:
+            if report_progress2 is not None and report_progress:
                 report_progress2(ic, len(linear_multiple_contingencies.multi_contingencies))
 
         if is_cancel is not None:

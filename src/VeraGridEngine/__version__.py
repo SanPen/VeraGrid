@@ -6,7 +6,7 @@ import datetime
 _current_year_ = datetime.datetime.now().year
 
 # remember to keep a three-number version!!!
-__VeraGridEngine_VERSION__ = "6.5.6"
+__VeraGridEngine_VERSION__ = "6.5.16"
 
 url = 'https://github.com/SanPen/VeraGrid'
 
@@ -24,7 +24,7 @@ You can obtain one at https://mozilla.org/MPL/2.0/.
 
 The source of VeraGrid can be found at:
 """ + url + "\n\n"
-copyright_msg = 'Copyright (C) 2015-' + str(_current_year_) + ' Santiago Peñate Vera'
+copyright_msg = 'Copyright (C) 2015-' + str(_current_year_) + ' Santiago Peñate Vera et. al.'
 
 contributors_msg = 'Michel Lavoie (Transformer automation)\n'
 contributors_msg += 'Bengt Lüers (Better testing)\n'
@@ -49,5 +49,7 @@ contributors_msg += 'Marina Rosés Gibert (RMS and EMT)\n'
 contributors_msg += 'María Sans Esqué (RMS and EMT)\n'
 contributors_msg += 'Pablo de Juan Vela (RMS, EMT and Tensors for EMT)\n'
 contributors_msg += 'Andrés Mauricio Díaz Caicedo (RMS, EMT and FMU interfaces)\n'
+contributors_msg += 'Ilan Mitrani Hadida (Procedural investment generation)\n'
+contributors_msg += 'Titouan Delorme (Better Power Factory import)\n'
 
 about_msg += copyright_msg + '\n' + contributors_msg

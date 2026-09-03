@@ -128,8 +128,9 @@ def get_templates_for_entry(entry: DynamicEditorEntry, mode: DynamicSimulationMo
         return list(entry.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.EMT))
 
     if mode == DynamicSimulationMode.RMS:
-        return list(entry.circuit.get_rms_models_by_device_type(api_object.device_type))
-    return list(entry.circuit.get_emt_models_by_device_type(api_object.device_type))
+        return list(entry.circuit.get_rms_templates_for_editor(api_object.device_type))
+    else:
+        return list(entry.circuit.get_emt_templates_for_editor(api_object.device_type))
 
 
 def get_block_for_entry(entry: DynamicEditorEntry, mode: DynamicSimulationMode) -> Any:

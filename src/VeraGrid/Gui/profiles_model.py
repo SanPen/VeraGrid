@@ -14,7 +14,7 @@ from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.Profiles.profile_device import ProfileDevice
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType
-from VeraGrid.Gui.gui_functions import (ComboDelegate, TextDelegate, FloatDelegate, ComplexDelegate)
+from VeraGrid.Gui.gui_functions import (BoolCheckboxDelegate, ComboDelegate, TextDelegate, FloatDelegate, ComplexDelegate)
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 
 
@@ -158,7 +158,7 @@ class ProfilesModel(WrappableTableModel):
                 self.parent.setItemDelegate(None)
 
         elif self.data_format is bool:
-            delegate = ComboDelegate(self.parent, [True, False], ['True', 'False'])
+            delegate = BoolCheckboxDelegate(self.parent)
             self.parent.setItemDelegate(delegate)
 
         elif isinstance(self.data_format, type) and issubclass(self.data_format, Enum):
@@ -214,7 +214,20 @@ class ProfilesModel(WrappableTableModel):
         """
 
         if self.editable and index.column() not in self.non_editable_indices:
-            return QtCore.Qt.ItemFlag.ItemIsEditable | QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
+            if self.data_format is bool:
+                flags: QtCore.Qt.ItemFlag = (
+                    QtCore.Qt.ItemFlag.ItemIsEnabled
+                    | QtCore.Qt.ItemFlag.ItemIsSelectable
+                    | QtCore.Qt.ItemFlag.ItemIsUserCheckable
+                )
+            else:
+                flags = (
+                    QtCore.Qt.ItemFlag.ItemIsEditable
+                    | QtCore.Qt.ItemFlag.ItemIsEnabled
+                    | QtCore.Qt.ItemFlag.ItemIsSelectable
+                )
+
+            return flags
         else:
             return QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
 
@@ -234,7 +247,7 @@ class ProfilesModel(WrappableTableModel):
         """
         return len(self.elements)
 
-    def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.ItemDataRole.DisplayRole) -> Union[str, None]:
+    def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.ItemDataRole.DisplayRole) -> Any:
         """
         Get the data to display
         :param index:
@@ -242,18 +255,36 @@ class ProfilesModel(WrappableTableModel):
         :return:
         """
         if index.isValid():
+            c: int = index.column()
+            r: int = index.row()
+            profile_attr_name: str = self.elements[c].properties_with_profile[self.magnitude]
+            profile: Any = getattr(self.elements[c], profile_attr_name)
+
             if role == QtCore.Qt.ItemDataRole.DisplayRole:
-                c = index.column()
-                r = index.row()
-                profile_attr_name = self.elements[c].properties_with_profile[self.magnitude]
-                profile = getattr(self.elements[c], profile_attr_name)
-                return str(profile[r])
+                if self.data_format is bool:
+                    return ""
+                else:
+                    return str(profile[r])
+
+            elif role == QtCore.Qt.ItemDataRole.EditRole:
+                return profile[r]
+
+            elif role == QtCore.Qt.ItemDataRole.CheckStateRole:
+                if self.data_format is bool:
+                    if bool(profile[r]):
+                        return QtCore.Qt.CheckState.Checked
+                    else:
+                        return QtCore.Qt.CheckState.Unchecked
+                else:
+                    pass
+            else:
+                pass
 
         return None
 
     def setData(self,
                 index: QtCore.QModelIndex,
-                value: float,
+                value: Any,
                 role: QtCore.Qt.ItemDataRole = QtCore.Qt.ItemDataRole.DisplayRole) -> bool:
         """
         Set data by simple editor (whatever text)
@@ -262,12 +293,27 @@ class ProfilesModel(WrappableTableModel):
         :param role:
         :return:
         """
-        c = index.column()
+        c: int = index.column()
         if c not in self.non_editable_indices:
-            r = index.row()
-            profile_attr_name = self.elements[index.column()].properties_with_profile[self.magnitude]
-            profile = getattr(self.elements[index.column()], profile_attr_name)
+            r: int = index.row()
+            profile_attr_name: str = self.elements[index.column()].properties_with_profile[self.magnitude]
+            profile: Any = getattr(self.elements[index.column()], profile_attr_name)
+
+            if role == QtCore.Qt.ItemDataRole.CheckStateRole and self.data_format is bool:
+                value = value == QtCore.Qt.CheckState.Checked or value == int(QtCore.Qt.CheckState.Checked.value)
+            else:
+                pass
+
             profile[r] = value
+            self.dataChanged.emit(
+                index,
+                index,
+                [
+                    QtCore.Qt.ItemDataRole.DisplayRole,
+                    QtCore.Qt.ItemDataRole.EditRole,
+                    QtCore.Qt.ItemDataRole.CheckStateRole,
+                ],
+            )
 
             # self.add_state(columns=[c], action_name='')
         else:

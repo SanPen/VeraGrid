@@ -384,9 +384,9 @@
         <span class="n">phi_v_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
         <span class="n">Ipk_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
         <span class="n">phi_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-        <span class="n">P_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-        <span class="n">Q_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
-        <span class="n">V_ref</span><span class="p">:</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">P_ref</span><span class="p">:</span> <span class="n">Pe_init_expr</span><span class="p">,</span>
+        <span class="n">Q_ref</span><span class="p">:</span> <span class="n">Qe_init_expr</span><span class="p">,</span>
+        <span class="n">V_ref</span><span class="p">:</span> <span class="n">Epk_init_expr</span><span class="p">,</span>
     <span class="p">})</span>
 
     <span class="c1"># Initialization equations.</span>
@@ -422,9 +422,6 @@
         <span class="n">Pe</span><span class="p">:</span> <span class="n">Pe_init_expr</span><span class="p">,</span>
         <span class="n">Qe</span><span class="p">:</span> <span class="n">Qe_init_expr</span><span class="p">,</span>
 
-        <span class="n">P_ref</span><span class="p">:</span> <span class="n">Pe_init_expr</span><span class="p">,</span>
-        <span class="n">Q_ref</span><span class="p">:</span> <span class="n">Qe_init_expr</span><span class="p">,</span>
-        <span class="n">V_ref</span><span class="p">:</span> <span class="n">Epk_init_expr</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="c1"># Differential initialization equations.</span>

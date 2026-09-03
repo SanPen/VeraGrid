@@ -188,6 +188,7 @@ def get_gencls_rms_template(
     template.block.in_vars = list((vm_var, va_var))
     template.block.out_vars = list((pg_var, qg_var))
     template.block.name = name
+    template.comment = 'Generator GENCLS RMS model'
     return template
 
 
@@ -259,6 +260,7 @@ def get_complete_gencls_rms_template(
     template.block.in_vars = list((machine_block.in_vars[0], machine_block.in_vars[1]))
     template.block.out_vars = list((machine_block.out_vars[0], machine_block.out_vars[1]))
     template.block.name = name
+    template.comment = 'Complete generator GENCLS RMS model'
     return template
 
 

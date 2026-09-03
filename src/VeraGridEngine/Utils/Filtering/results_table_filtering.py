@@ -27,7 +27,7 @@ def object_extract(elm: ALL_DEV_TYPES, args: List[str]) -> Any:
             return None
     return p
 
-def try_numeric(value: Any) -> bool:
+def try_numeric(value: object) -> bool:
     """
     Check whether a value can be converted to a floating-point number.
 
@@ -41,7 +41,7 @@ def try_numeric(value: Any) -> bool:
         return False
 
 
-def results_table_value_to_search_text(table: ResultsTable, value: Any) -> str:
+def results_table_value_to_search_text(table: ResultsTable, value: object) -> str:
     """
     Build the searchable text for one results-table value.
 

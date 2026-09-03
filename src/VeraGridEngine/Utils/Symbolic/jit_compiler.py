@@ -198,6 +198,20 @@ class EmptySparseJacobianEvaluator:
         _unused_args: Tuple[Vec, Vec, Vec, Vec, float] = (vrs, diff, vprms, cprms, h)
         return self._matrix
 
+    def get_sparsity(self) -> Tuple[np.ndarray, np.ndarray, int, int]:
+        """Return the empty CSC structure through the common evaluator contract.
+
+        :return: Row indices, column pointers, row count, and column count.
+        """
+        row_count: int = int(self._matrix.shape[0])
+        column_count: int = int(self._matrix.shape[1])
+        return (
+            self._matrix.indices,
+            self._matrix.indptr,
+            row_count,
+            column_count,
+        )
+
 
 class EmptyVecSparseJacobianEvaluator:
     """
@@ -288,6 +302,20 @@ class SparseJacobianEvaluatorWrapper:
         """
         self._filler_fn(vrs, diff, vprms, cprms, h, self._matrix.data)
         return self._matrix
+
+    def get_sparsity(self) -> Tuple[np.ndarray, np.ndarray, int, int]:
+        """Return the reusable CSC structure through the evaluator contract.
+
+        :return: Row indices, column pointers, row count, and column count.
+        """
+        row_count: int = int(self._matrix.shape[0])
+        column_count: int = int(self._matrix.shape[1])
+        return (
+            self._matrix.indices,
+            self._matrix.indptr,
+            row_count,
+            column_count,
+        )
 
 
 class EventParameterFunctionWrapper:

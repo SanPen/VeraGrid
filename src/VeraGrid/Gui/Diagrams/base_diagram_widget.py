@@ -307,6 +307,7 @@ class BaseDiagramWidget(QSplitter):
         """
         self.left_panel_toolbox.setItemText(0, self._translate_library_label())
         self.left_panel_toolbox.setItemText(1, self._translate_properties_label())
+        self.library_model.retranslate()
 
     def set_video_export_active(self, value: bool) -> None:
         """
@@ -475,8 +476,9 @@ class BaseDiagramWidget(QSplitter):
         """
         if len(selected) > 0:
 
-            # get the set of all affected GenericDiagramWidget instances
-            extended: Set[ALL_DEV_TYPES] = set()
+            # Collect affected devices by stable id instead of hashing the device object.
+            extended: List[ALL_DEV_TYPES] = list()
+            extended_keys: Set[Tuple[str, str]] = set()
 
             for graphic_obj in selected:
 
@@ -484,15 +486,28 @@ class BaseDiagramWidget(QSplitter):
                     owner_graphic: GenericDiagramWidget | None = self._get_delete_owner_graphic(graphic_obj=graphic_obj)
 
                     if owner_graphic is not None:
-                        extended.add(owner_graphic.api_object)
+                        device: ALL_DEV_TYPES = owner_graphic.api_object
+                        device_key: Tuple[str, str] = (device.device_type.value, device.idtag)
+                        if device_key not in extended_keys:
+                            extended_keys.add(device_key)
+                            extended.append(device)
+                        else:
+                            pass
 
                         for child_item in owner_graphic.get_associated_devices():
                             if child_item is not None:
-                                extended.add(child_item)
+                                child_key: Tuple[str, str] = (child_item.device_type.value, child_item.idtag)
+                                if child_key not in extended_keys:
+                                    extended_keys.add(child_key)
+                                    extended.append(child_item)
+                                else:
+                                    pass
+                            else:
+                                pass
                     else:
                         pass
 
-            extended_lst: List[ALL_DEV_TYPES] = list(extended)
+            extended_lst: List[ALL_DEV_TYPES] = extended
 
             dlg = DeleteDialogue(
                 names_list=[f"{device.device_type.value}: "

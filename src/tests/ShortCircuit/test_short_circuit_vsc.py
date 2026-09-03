@@ -4,6 +4,8 @@ from VeraGridEngine.enumerations import ConverterControlType, MethodShortCircuit
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import SolverType
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles import PfAcDcWithNegativePoles
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx import newton_raphson_fx
+import VeraGridEngine.Simulations.Derivatives.csc_derivatives as deriv
+from VeraGridEngine.Utils.Sparse.csc2 import mat_to_scipy
 import numpy as np
 
 
@@ -33,6 +35,65 @@ def solve_with_autodiff(grid, pf_options):
                              trust=pf_options.trust_radius,
                              verbose=pf_options.verbose,
                              logger=logger)
+
+
+# Alex review required: validate compact static SC rows for a non-contiguous bipolar VSC subset.
+def test_bipolar_sc_derivative_blocks_use_compact_rows() -> None:
+    """Keep bipolar-current derivatives aligned with their compact balance rows.
+
+    The balance block contains only converters with a negative DC pole, while
+    its column blocks may contain a larger, non-contiguous converter subset.
+
+    :return: None.
+    """
+    bipolar_vsc_indices: np.ndarray = np.array([2], dtype=int)
+    unknown_pfp_indices: np.ndarray = np.array([0, 2], dtype=int)
+    unknown_pfn_indices: np.ndarray = np.array([2], dtype=int)
+    unknown_vm_indices: np.ndarray = np.array([0, 2, 3], dtype=int)
+    voltage_magnitude: np.ndarray = np.array([1.0, 1.0, 1.1, 0.2], dtype=float)
+    voltage_angle: np.ndarray = np.zeros(4, dtype=float)
+    positive_power: np.ndarray = np.array([0.0, 0.0, 4.0], dtype=float)
+    negative_power: np.ndarray = np.array([0.0, 0.0, -2.0], dtype=float)
+    positive_bus: np.ndarray = np.array([0, 1, 2], dtype=int)
+    negative_bus: np.ndarray = np.array([-1, -1, 3], dtype=int)
+
+    d_balance_d_pfp: np.ndarray = mat_to_scipy(
+        deriv.dIvsc_dPfpvsc_csc(
+            bipolar_vsc_indices,
+            unknown_pfp_indices,
+            voltage_magnitude,
+            voltage_angle,
+            negative_bus,
+        )
+    ).toarray()
+    d_balance_d_pfn: np.ndarray = mat_to_scipy(
+        deriv.dIvsc_dPfnvsc_csc(
+            bipolar_vsc_indices,
+            unknown_pfn_indices,
+            voltage_magnitude,
+            voltage_angle,
+            positive_bus,
+        )
+    ).toarray()
+    d_balance_d_vm: np.ndarray = mat_to_scipy(
+        deriv.dIvsc_dVm_csc(
+            bipolar_vsc_indices,
+            len(voltage_magnitude),
+            unknown_vm_indices,
+            positive_power,
+            negative_power,
+            voltage_angle,
+            positive_bus,
+            negative_bus,
+        )
+    ).toarray()
+
+    assert d_balance_d_pfp.shape == (1, 2)
+    assert np.allclose(d_balance_d_pfp, np.array([[0.0, 0.2]]))
+    assert d_balance_d_pfn.shape == (1, 1)
+    assert np.allclose(d_balance_d_pfn, np.array([[1.1]]))
+    assert d_balance_d_vm.shape == (1, 3)
+    assert np.allclose(d_balance_d_vm, np.array([[0.0, -2.0, 4.0]]))
 
 
 def test_short_circuit_vsc_3buses():

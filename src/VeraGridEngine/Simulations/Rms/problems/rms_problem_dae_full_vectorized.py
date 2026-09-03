@@ -9,27 +9,47 @@ import pandas as pd
 import scipy.sparse as sp
 
 
-from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, DeviceType, DynamicEventTransitionType
+from VeraGridEngine.enumerations import (
+    DeviceType,
+    DynamicEventTransitionType,
+    ParamPowerFlowReferenceType,
+    RmsVectorizedNodalBalanceKind,
+)
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise, get_expression_vars, hard_sat)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, SymbolicDerivative, SymbolicJacobian
-from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.block import (
+    Block,
+    RmsTerminalPowerContribution,
+    RmsTerminalSide,
+)
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, RmsInitializationMethod
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import (init_explicit_common,
+                                                                            build_explicit_external_uid_values,
                                                                             build_rms_single_equation_compiler)
 from VeraGridEngine.Simulations.Rms.initialization import init_pseudo_transient
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import (
+    RmsProblemTemplate,
+    rectangular_current_from_power,
+)
+from VeraGridEngine.Simulations.Rms.problems.rms_terminal_power_assembly import (
+    assemble_rms_terminal_power_contributions,
+)
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler, RMSCompilerVec
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import get_bus_rms_algebraic_vars
+from VeraGridEngine.Utils.Symbolic.bus_rms_template import (
+    build_dc_bus_nodal_power_equation,
+    dc_bus_rms_model_has_capacitive_state,
+    get_bus_rms_algebraic_vars,
+)
 from VeraGridEngine.Utils.procedural_logic import build_boundary_updater_from_block
 from VeraGridEngine.IO.fmu.importer.experimental_cs import (
     advance_rms_fmu_cs_devices,
@@ -55,6 +75,452 @@ from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import (
 
 from VeraGridEngine.Utils.procedural_logic import BlockProceduralLogicUpdater
 from VeraGridEngine.Utils.rms_models_types import build_equivalence_classes_dict
+
+
+class RmsVectorizedTerminalBalanceLayout:
+    """Store fixed vector rows and physical buses for one RMS model class.
+
+    One compiled equivalence class evaluates the same terminal expressions for
+    several device instances. The layout records the exact rows emitted by that
+    class and the topology-owned bus of each instance, so runtime assembly does
+    not infer balance ownership from variable names or from the final rows of a
+    generated vector.
+    """
+
+    __slots__ = (
+        "_terminal_sides",
+        "_active_power_references",
+        "_reactive_power_references",
+        "_active_row_indices",
+        "_reactive_row_indices",
+        "_active_bus_indices",
+        "_reactive_bus_indices",
+    )
+
+    def __init__(
+            self,
+            contributions: List[RmsTerminalPowerContribution],
+            active_row_indices: List[int],
+            reactive_row_indices: List[int],
+    ) -> None:
+        """Create the immutable row portion of one vectorized layout.
+
+        :param contributions: Ordered physical terminal declarations.
+        :param active_row_indices: Compiled row for each active contribution.
+        :param reactive_row_indices: Compiled rows for declarations carrying Q.
+        :return: None.
+        """
+        self._terminal_sides: List[RmsTerminalSide] = list(
+            contribution.get_terminal_side() for contribution in contributions
+        )
+        self._active_power_references: List[VarPowerFlowReferenceType] = list(
+            contribution.get_active_power_reference() for contribution in contributions
+        )
+        self._reactive_power_references: List[VarPowerFlowReferenceType | None] = list(
+            contribution.get_reactive_power_reference() for contribution in contributions
+        )
+        self._active_row_indices: List[int] = list(active_row_indices)
+        self._reactive_row_indices: List[int] = list(reactive_row_indices)
+        self._active_bus_indices: List[List[int]] = list(
+            list() for _ in active_row_indices
+        )
+        self._reactive_bus_indices: List[List[int]] = list(
+            list() for _ in reactive_row_indices
+        )
+
+    def validate_contract(
+            self,
+            contributions: List[RmsTerminalPowerContribution],
+    ) -> None:
+        """Reject a model instance whose terminal contract differs by class.
+
+        :param contributions: Contract of the device instance being registered.
+        :return: None.
+        """
+        terminal_sides: List[RmsTerminalSide] = list(
+            contribution.get_terminal_side() for contribution in contributions
+        )
+        active_references: List[VarPowerFlowReferenceType] = list(
+            contribution.get_active_power_reference() for contribution in contributions
+        )
+        reactive_references: List[VarPowerFlowReferenceType | None] = list(
+            contribution.get_reactive_power_reference() for contribution in contributions
+        )
+        if (
+                terminal_sides == self._terminal_sides
+                and active_references == self._active_power_references
+                and reactive_references == self._reactive_power_references
+        ):
+            pass
+        else:
+            raise ValueError(
+                "Structurally equivalent RMS models declare different terminal balance contracts"
+            )
+
+    def add_device_topology(self, bus_indices: List[int]) -> None:
+        """Register the physical buses of one device instance.
+
+        :param bus_indices: One topology-owned bus per terminal declaration.
+        :return: None.
+        """
+        if len(bus_indices) == len(self._terminal_sides):
+            pass
+        else:
+            raise ValueError("RMS terminal topology does not match the vectorized contract")
+
+        contribution_index: int = 0
+        reactive_index: int = 0
+        while contribution_index < len(bus_indices):
+            self._active_bus_indices[contribution_index].append(
+                bus_indices[contribution_index]
+            )
+            if self._reactive_power_references[contribution_index] is None:
+                pass
+            else:
+                self._reactive_bus_indices[reactive_index].append(
+                    bus_indices[contribution_index]
+                )
+                reactive_index += 1
+            contribution_index += 1
+
+    def accumulate(
+            self,
+            rhs_algebraic: np.ndarray,
+            active_power_balance: ObjVec,
+            active_power_balance_used: BoolVec,
+            reactive_power_balance: ObjVec,
+            reactive_power_balance_used: BoolVec,
+    ) -> None:
+        """Accumulate compiled terminal rows into the nodal power balances.
+
+        :param rhs_algebraic: Evaluated class equations by row and instance.
+        :param active_power_balance: Active nodal accumulator.
+        :param active_power_balance_used: Active accumulator occupancy mask.
+        :param reactive_power_balance: Reactive nodal accumulator.
+        :param reactive_power_balance_used: Reactive accumulator occupancy mask.
+        :return: None.
+        """
+        active_index: int = 0
+        while active_index < len(self._active_row_indices):
+            active_values: np.ndarray = rhs_algebraic[
+                self._active_row_indices[active_index]
+            ]
+            active_instance_index: int = 0
+            while active_instance_index < len(self._active_bus_indices[active_index]):
+                setP(
+                    active_power_balance,
+                    active_power_balance_used,
+                    self._active_bus_indices[active_index][active_instance_index],
+                    active_values[active_instance_index],
+                )
+                active_instance_index += 1
+            active_index += 1
+
+        reactive_index: int = 0
+        while reactive_index < len(self._reactive_row_indices):
+            reactive_values: np.ndarray = rhs_algebraic[
+                self._reactive_row_indices[reactive_index]
+            ]
+            reactive_instance_index: int = 0
+            while reactive_instance_index < len(self._reactive_bus_indices[reactive_index]):
+                setQ(
+                    reactive_power_balance,
+                    reactive_power_balance_used,
+                    self._reactive_bus_indices[reactive_index][reactive_instance_index],
+                    reactive_values[reactive_instance_index],
+                )
+                reactive_instance_index += 1
+            reactive_index += 1
+
+
+class RmsVectorizedLegacyBalanceLayout:
+    """Build one explicit transient layout for a contract-free model class.
+
+    This compatibility object derives declarations only from established
+    version-1 external mappings. It exists for one compilation, is never
+    attached to the model or persisted, and cannot replace a partial explicit
+    physical contract.
+    """
+
+    __slots__ = (
+        "_terminal_sides",
+        "_active_power_references",
+        "_reactive_power_references",
+        "_active_expressions",
+        "_reactive_expressions",
+        "_active_row_indices",
+        "_reactive_row_indices",
+        "_active_bus_indices",
+        "_reactive_bus_indices",
+    )
+
+    def __init__(
+            self,
+            contributions: List[RmsTerminalPowerContribution],
+            active_expressions: List[Expr | Var],
+            reactive_expressions: List[Expr | Var],
+    ) -> None:
+        """Capture the references selected by a representative legacy model.
+
+        :param contributions: Synthetic transient declarations from v1 mappings.
+        :param active_expressions: Signed active expressions in declaration order.
+        :param reactive_expressions: Signed reactive expressions where available.
+        :return: None.
+        """
+        if (
+            len(contributions) == len(active_expressions)
+            and len(reactive_expressions) <= len(contributions)
+        ):
+            pass
+        else:
+            raise ValueError("Legacy RMS balance expressions do not match their references")
+        self._terminal_sides: List[RmsTerminalSide] = list(
+            contribution.get_terminal_side() for contribution in contributions
+        )
+        self._active_power_references: List[VarPowerFlowReferenceType] = list(
+            contribution.get_active_power_reference() for contribution in contributions
+        )
+        self._reactive_power_references: List[VarPowerFlowReferenceType | None] = list(
+            contribution.get_reactive_power_reference() for contribution in contributions
+        )
+        self._active_expressions: List[Expr | Var] = list(active_expressions)
+        self._reactive_expressions: List[Expr | Var] = list(reactive_expressions)
+        self._active_row_indices: List[int] = list()
+        self._reactive_row_indices: List[int] = list()
+        self._active_bus_indices: List[List[int]] = list(
+            list() for _ in active_expressions
+        )
+        self._reactive_bus_indices: List[List[int]] = list(
+            list() for _ in reactive_expressions
+        )
+
+    def validate_and_add_device(
+            self,
+            contributions: List[RmsTerminalPowerContribution],
+            bus_indices: List[int],
+    ) -> None:
+        """Validate one equivalent instance and retain its physical buses.
+
+        :param contributions: Synthetic declarations of the instance.
+        :param bus_indices: Physical bus for every declaration.
+        :return: None.
+        """
+        terminal_sides: List[RmsTerminalSide] = list(
+            contribution.get_terminal_side() for contribution in contributions
+        )
+        active_references: List[VarPowerFlowReferenceType] = list(
+            contribution.get_active_power_reference() for contribution in contributions
+        )
+        reactive_references: List[VarPowerFlowReferenceType | None] = list(
+            contribution.get_reactive_power_reference() for contribution in contributions
+        )
+        if (
+            terminal_sides == self._terminal_sides
+            and active_references == self._active_power_references
+            and reactive_references == self._reactive_power_references
+            and len(bus_indices) == len(self._terminal_sides)
+        ):
+            pass
+        else:
+            raise ValueError(
+                "Structurally equivalent legacy RMS models expose different power references"
+            )
+
+        contribution_index: int = 0
+        reactive_index: int = 0
+        while contribution_index < len(bus_indices):
+            self._active_bus_indices[contribution_index].append(
+                bus_indices[contribution_index]
+            )
+            if self._reactive_power_references[contribution_index] is None:
+                pass
+            else:
+                self._reactive_bus_indices[reactive_index].append(
+                    bus_indices[contribution_index]
+                )
+                reactive_index += 1
+            contribution_index += 1
+
+    def finalize(self, compiled_equations: List[Expr]) -> None:
+        """Append captured expressions and freeze their exact compiled rows.
+
+        :param compiled_equations: Representative class equation list.
+        :return: None.
+        """
+        if len(self._active_row_indices) == 0 and len(self._reactive_row_indices) == 0:
+            row_start: int = len(compiled_equations)
+            self._active_row_indices = list(
+                range(row_start, row_start + len(self._active_expressions))
+            )
+            reactive_start: int = row_start + len(self._active_expressions)
+            self._reactive_row_indices = list(
+                range(reactive_start, reactive_start + len(self._reactive_expressions))
+            )
+            compiled_equations.extend(self._active_expressions)
+            compiled_equations.extend(self._reactive_expressions)
+        else:
+            raise ValueError("Legacy RMS balance layout was finalized more than once")
+
+    def accumulate(
+            self,
+            rhs_algebraic: np.ndarray,
+            active_power_balance: ObjVec,
+            active_power_balance_used: BoolVec,
+            reactive_power_balance: ObjVec,
+            reactive_power_balance_used: BoolVec,
+    ) -> None:
+        """Accumulate only the legacy references that the class declares.
+
+        :param rhs_algebraic: Evaluated class equations by row and instance.
+        :param active_power_balance: Active nodal accumulator.
+        :param active_power_balance_used: Active accumulator occupancy mask.
+        :param reactive_power_balance: Reactive nodal accumulator.
+        :param reactive_power_balance_used: Reactive accumulator occupancy mask.
+        :return: None.
+        """
+        active_index: int = 0
+        while active_index < len(self._active_row_indices):
+            active_values: np.ndarray = rhs_algebraic[
+                self._active_row_indices[active_index]
+            ]
+            active_buses: List[int] = self._active_bus_indices[active_index]
+            if len(active_values) == len(active_buses):
+                pass
+            else:
+                raise ValueError("Legacy RMS active-power layout has inconsistent instance count")
+            active_instance_index: int = 0
+            while active_instance_index < len(active_buses):
+                setP(
+                    active_power_balance,
+                    active_power_balance_used,
+                    active_buses[active_instance_index],
+                    active_values[active_instance_index],
+                )
+                active_instance_index += 1
+            active_index += 1
+
+        reactive_index: int = 0
+        while reactive_index < len(self._reactive_row_indices):
+            reactive_values: np.ndarray = rhs_algebraic[
+                self._reactive_row_indices[reactive_index]
+            ]
+            reactive_buses: List[int] = self._reactive_bus_indices[reactive_index]
+            if len(reactive_values) == len(reactive_buses):
+                pass
+            else:
+                raise ValueError("Legacy RMS reactive-power layout has inconsistent instance count")
+            reactive_instance_index: int = 0
+            while reactive_instance_index < len(reactive_buses):
+                setQ(
+                    reactive_power_balance,
+                    reactive_power_balance_used,
+                    reactive_buses[reactive_instance_index],
+                    reactive_values[reactive_instance_index],
+                )
+                reactive_instance_index += 1
+            reactive_index += 1
+
+
+class RmsVectorizedNodalBalanceLayout:
+    """Store the exact compiled nodal rows shared by RHS and Jacobians.
+
+    Each entry records its physical bus and evaluation rule at equation-build
+    time. Capacitive DC rows additionally retain the UID of their bus-local
+    power variable; other row kinds must not own one.
+    """
+
+    __slots__ = (
+        "_kinds",
+        "_bus_indices",
+        "_local_power_variable_uids",
+    )
+
+    def __init__(self) -> None:
+        """Create an initially empty nodal layout.
+
+        :return: None.
+        """
+        self._kinds: List[RmsVectorizedNodalBalanceKind] = list()
+        self._bus_indices: List[int] = list()
+        self._local_power_variable_uids: List[int | None] = list()
+
+    def add_row(
+            self,
+            kind: RmsVectorizedNodalBalanceKind,
+            bus_index: int,
+            local_power_variable_uid: int | None,
+    ) -> None:
+        """Register one row at the same time its equation is compiled.
+
+        :param kind: Runtime evaluation rule of the row.
+        :param bus_index: Physical bus owning the balance.
+        :param local_power_variable_uid: Bus-local P variable for capacitive DC.
+        :return: None.
+        """
+        if kind is RmsVectorizedNodalBalanceKind.CAPACITIVE_DC_POWER:
+            if local_power_variable_uid is None:
+                raise ValueError("Capacitive DC nodal row lacks its local power variable")
+            else:
+                pass
+        else:
+            if local_power_variable_uid is None:
+                pass
+            else:
+                raise ValueError("Non-capacitive nodal row cannot own a local power variable")
+        self._kinds.append(kind)
+        self._bus_indices.append(bus_index)
+        self._local_power_variable_uids.append(local_power_variable_uid)
+
+    def evaluate(
+            self,
+            variables: Vec,
+            variable_index_by_uid: Dict[int, int],
+            active_power_balance: ObjVec,
+            reactive_power_balance: ObjVec,
+    ) -> np.ndarray:
+        """Evaluate exactly the nodal rows registered during construction.
+
+        :param variables: Current global state and algebraic variable vector.
+        :param variable_index_by_uid: Global variable UID-to-index mapping.
+        :param active_power_balance: Runtime active-power accumulator.
+        :param reactive_power_balance: Runtime reactive-power accumulator.
+        :return: Nodal residual values in compiled row order.
+        """
+        values: np.ndarray = np.empty(len(self._kinds))
+        row_index: int = 0
+        while row_index < len(self._kinds):
+            kind: RmsVectorizedNodalBalanceKind = self._kinds[row_index]
+            bus_index: int = self._bus_indices[row_index]
+            if kind is RmsVectorizedNodalBalanceKind.ACTIVE_POWER:
+                values[row_index] = active_power_balance[bus_index]
+            else:
+                if kind is RmsVectorizedNodalBalanceKind.REACTIVE_POWER:
+                    values[row_index] = reactive_power_balance[bus_index]
+                else:
+                    if kind is RmsVectorizedNodalBalanceKind.CAPACITIVE_DC_POWER:
+                        local_power_uid: int | None = (
+                            self._local_power_variable_uids[row_index]
+                        )
+                        if local_power_uid is None:
+                            raise ValueError("Capacitive DC row lost its local power variable")
+                        else:
+                            local_power_index: int | None = variable_index_by_uid.get(
+                                local_power_uid,
+                                None,
+                            )
+                            if local_power_index is None:
+                                raise ValueError(
+                                    "Capacitive DC local power variable is not compiled"
+                                )
+                            else:
+                                values[row_index] = (
+                                    variables[local_power_index]
+                                    - active_power_balance[bus_index]
+                                )
+                    else:
+                        raise ValueError("Unsupported RMS vectorized nodal balance kind")
+            row_index += 1
+        return values
 
 def assign_static_parameters(elm:Any, parameter_reference: ParamPowerFlowReferenceType) -> Const:
     if elm.device_type == DeviceType.LineDevice:
@@ -284,6 +750,54 @@ def get_all_uids_from_block_composition_dict(block_composition_dict: Dict[int, L
     return [uid for uids in block_composition_dict.values() for uid in uids]
 
 
+def validate_terminal_contract_modes_for_equivalence_classes(
+        grid: MultiCircuit,
+        equivalence_dict: Dict[int, List[int]],
+) -> None:
+    """Reject vectorized classes that mix typed and legacy network interfaces.
+
+    A compiled equivalence class shares one residual layout. Mixing terminal
+    contract modes would therefore make that layout dependent on device order
+    and could omit an instance from the nodal balance.
+
+    :param grid: Physical grid whose root RMS models form the classes.
+    :param equivalence_dict: Representative-to-member root model UID mapping.
+    :return: None.
+    :raises ValueError: If one class mixes typed and legacy root contracts.
+    """
+    contract_mode_by_uid: Dict[int, bool] = dict()
+    elm: ALL_DEV_TYPES
+    for elm in grid.get_branches_iter():
+        contract_mode_by_uid[elm.rms_model.uid] = bool(
+            len(elm.rms_model.dynamic_model_contract.rms_terminal_power_contributions) > 0
+        )
+    for elm in grid.get_injection_devices_iter():
+        contract_mode_by_uid[elm.rms_model.uid] = bool(
+            len(elm.rms_model.dynamic_model_contract.rms_terminal_power_contributions) > 0
+        )
+
+    representative_uid: int
+    member_uids: List[int]
+    for representative_uid, member_uids in equivalence_dict.items():
+        representative_mode: bool | None = contract_mode_by_uid.get(
+            representative_uid,
+            None,
+        )
+        member_uid: int
+        for member_uid in member_uids:
+            member_mode: bool | None = contract_mode_by_uid.get(member_uid, None)
+            if (
+                representative_mode is not None
+                and member_mode is not None
+                and representative_mode is not member_mode
+            ):
+                raise ValueError(
+                    "Structurally equivalent RMS models must use the same terminal-power contract mode"
+                )
+            else:
+                pass
+
+
 class RmsProblemDaeFullVec(RmsProblemTemplate):
     """
     DAE (Differential-Algebraic Equation) class to store and manage.
@@ -312,18 +826,23 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                  pf_results: PowerFlowResults,
                  progress_signal: DummySignal | None = None,
                  progress_text: DummySignal | None = None,
-                 cancel_checker=False
-                 ):
-        """
+                 cancel_checker: bool = False,
+                 logger: Logger | None = None) -> None:
+        """Build the fully vectorized RMS differential-algebraic problem.
 
-        :param grid:
-        :param options:
-        :param pf_results:
+        :param grid: Grid containing the static network and RMS models.
+        :param options: RMS simulation and initialization options.
+        :param pf_results: Power-flow operating point used for initialization.
+        :param progress_signal: Optional signal used to report numeric progress.
+        :param progress_text: Optional signal used to report progress messages.
+        :param cancel_checker: Compatibility flag reserved for cancellation checks.
+        :param logger: Optional logger used for model and initialization diagnostics.
+        :return: None.
         """
         super().__init__(progress_signal=progress_signal,
                          progress_text=progress_text)
 
-        self.logger = Logger()
+        self.logger: Logger | None = logger
         self.grid: MultiCircuit = grid
         self.power_flow_results: PowerFlowResults = pf_results
         self.Sf = self.power_flow_results.Sf / self.grid.Sbase
@@ -338,9 +857,11 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         self._algebraic_vars: List[Var] = list()
         self._algebraic_eqs: List[Expr] = list()
 
-        # for vectorization, we need to compute blocks separately and also balance equations
-        self._balance_equations_p: List[Expr] = list()
-        self._balance_equations_q: List[Expr] = list()
+        # Keep the exact nodal row order used by both RHS and Jacobian assembly.
+        self._balance_equations: List[Expr | Const] = list()
+        self._nodal_balance_layout: RmsVectorizedNodalBalanceLayout = (
+            RmsVectorizedNodalBalanceLayout()
+        )
 
         # for vectorization, a dict of [equivalence class uid, list of expressions], every item corresponds to a type of model
         # when precessing the first model op a type the dictionaries will be filled.
@@ -362,6 +883,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         self._cp_gather_idx: Dict[int, np.ndarray] = dict()
         self._rhs_state_scatter_idx: Dict[int, np.ndarray] = dict()
         self._rhs_algeb_scatter_idx: Dict[int, np.ndarray] = dict()
+        self._rhs_algeb_source_rows: Dict[int, np.ndarray] = dict()
+        self._device_algebraic_rows_by_model_type: Dict[int, List[int]] = dict()
 
         # Jacobian vectorization: per-type column offsets for global assembly
         self._jac_state_col_off: Dict[int, np.ndarray] = dict()
@@ -491,6 +1014,15 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         self.mdl_index2busfrom: Dict[int, List[int]] = dict()
         self.mdl_index2busto: Dict[int, List[int]] = dict()
         self.line_model_types: List[int] = list()
+        self._terminal_balance_layout_by_model_type: Dict[
+            int,
+            RmsVectorizedTerminalBalanceLayout,
+        ] = dict()
+        self._legacy_balance_layout_by_model_type: Dict[
+            int,
+            RmsVectorizedLegacyBalanceLayout,
+        ] = dict()
+        self._legacy_registered_model_uids: Set[int] = set()
 
 
         # We put algebraic_vars that are actually states first
@@ -508,6 +1040,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         self._glob_time: Var = Var(self.TIME_NAME)
         self._compiler_names_dict[self._glob_time.uid] = self.TIME_NAME
         self._uid2idx_t[self._glob_time.uid] = 0
+        self._external_time_parameter: Var = Var("rms_external_time")
+        self._external_time_uids: Set[int] = set()
 
         # Dictionary of state and algebraic vars
         self.sys_vars: Dict[int, Var] = dict()
@@ -535,6 +1069,10 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         print("starting to type models")
 
         self.equivalence_dict, self.variables_equivalence_dict, self.block_composition_dict, self.reference_class_for_all_blocks_dict = build_equivalence_classes_dict(self.grid)
+        validate_terminal_contract_modes_for_equivalence_classes(
+            grid=self.grid,
+            equivalence_dict=self.equivalence_dict,
+        )
 
         print("typing models done!")
         ######################################## Initialize devices ########################################
@@ -545,7 +1083,6 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         for bus_num, elm in enumerate(self.grid.buses):
 
             self.bus_dict[elm] = bus_num
-
 
             self.add_variables_to_compilation_dicts(elm, elm.rms_model)
 
@@ -568,9 +1105,12 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         for branch_num, elm in enumerate(self.grid.get_branches_iter(add_vsc=False, add_hvdc=False, add_switch=True)):
 
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
 
                 assign_static_api_object_mapping_for_device(grid=self.grid,
@@ -648,8 +1188,11 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                             uid2idx_params=self._uid2idx_params,
                             uid2idx_event_params=self._uid2idx_event_params,
                             params_array=self._parameters_values,
-                            compile_single_equation=compile_single_equation,
-                            verbose=bool(self.options.verbose > 0),
+                        compile_single_equation=compile_single_equation,
+                        external_uid_values=self._get_explicit_external_uid_values(
+                            mdl=elm.rms_model,
+                        ),
+                        verbose=bool(self.options.verbose > 0),
                         )
                     elif self.options.initialization_method == RmsInitializationMethod.PseudoTransient:
                         self.init_guess = init_pseudo_transient(
@@ -682,22 +1225,38 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                 f = self.bus_dict[elm.bus_from]
                 t = self.bus_dict[elm.bus_to]
 
-                setP(P, P_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Pf))
-                setP(P, P_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Pt))
-                if not elm.bus_from.is_dc and VarPowerFlowReferenceType.Qf in elm.rms_model.external_mapping:
-                    setQ(Q, Q_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Qf))
+                if len(elm.rms_model.dynamic_model_contract.rms_terminal_power_contributions) > 0:
+                    assemble_rms_terminal_power_contributions(
+                        model=elm.rms_model,
+                        bus_from_index=f,
+                        bus_to_index=t,
+                        bus_from_is_dc=elm.bus_from.is_dc,
+                        bus_to_is_dc=elm.bus_to.is_dc,
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                    )
                 else:
-                    pass
-                if not elm.bus_to.is_dc and VarPowerFlowReferenceType.Qt in elm.rms_model.external_mapping:
-                    setQ(Q, Q_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Qt))
-                else:
-                    pass
+                    setP(P, P_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Pf))
+                    setP(P, P_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Pt))
+                    if not elm.bus_from.is_dc and VarPowerFlowReferenceType.Qf in elm.rms_model.external_mapping:
+                        setQ(Q, Q_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Qf))
+                    else:
+                        pass
+                    if not elm.bus_to.is_dc and VarPowerFlowReferenceType.Qt in elm.rms_model.external_mapping:
+                        setQ(Q, Q_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Qt))
+                    else:
+                        pass
         # Populating VSCs init guess
         for i, elm in enumerate(self.grid.get_vsc()):
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
                 mdl = elm.rms_model
 
@@ -718,36 +1277,80 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                 pt_init = St_vsc[i].real
                 qt_init = St_vsc[i].imag
                 vm_t = np.abs(self.power_flow_results.voltage[t])
-                im_init = np.sqrt(pt_init * pt_init + qt_init * qt_init) / (vm_t + 1e-12)
+                im_init: float = float(
+                    np.sqrt(pt_init * pt_init + qt_init * qt_init)
+                    / (vm_t + 1e-12)
+                )
 
                 if i < len(self.power_flow_results.It_vsc):
-                    it_mag = np.abs(self.power_flow_results.It_vsc[i]) / self.grid.Sbase
+                    # Power-flow VSC currents already use the system per-unit
+                    # base expected by the RMS physical-terminal equations.
+                    it_mag: float = float(
+                        np.abs(self.power_flow_results.It_vsc[i])
+                    )
                     if np.isfinite(it_mag) and it_mag > 0.0:
                         im_init = it_mag
+                    else:
+                        pass
+                else:
+                    pass
 
                 self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, Sf_vsc)
                 self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, pt_init)
                 self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, qt_init)
+                dc_voltage_init: float = float(
+                    np.abs(self.power_flow_results.voltage[f])
+                )
+                dc_current_init: float = float(self.power_flow_results.If_vsc[i])
+                self.set_init_guess(
+                    mdl,
+                    VarPowerFlowReferenceType.Vf_dc,
+                    dc_voltage_init,
+                )
+                self.set_init_guess(
+                    mdl,
+                    VarPowerFlowReferenceType.Idc,
+                    dc_current_init,
+                )
                 if VarPowerFlowReferenceType.Im in mdl.external_mapping:
-                    im_init = float(np.abs(self.power_flow_results.It_vsc[i]) / self.grid.Sbase)
                     self.set_init_guess(mdl, VarPowerFlowReferenceType.Im, im_init)
                 else:
                     pass
 
-                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
-                if VarPowerFlowReferenceType.Qt in mdl.external_mapping and not elm.bus_to.is_dc:
-                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
+                if len(mdl.dynamic_model_contract.rms_terminal_power_contributions) > 0:
+                    # New templates declare their physical terminal powers
+                    # independently from selectable signal ports.
+                    assemble_rms_terminal_power_contributions(
+                        model=mdl,
+                        bus_from_index=f,
+                        bus_to_index=t,
+                        bus_from_is_dc=elm.bus_from.is_dc,
+                        bus_to_is_dc=elm.bus_to.is_dc,
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                    )
                 else:
-                    pass
+                    # Version-one and custom legacy VSC models retain their
+                    # historical power-reference coupling during migration.
+                    setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                    setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                    if VarPowerFlowReferenceType.Qt in mdl.external_mapping and not elm.bus_to.is_dc:
+                        setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
+                    else:
+                        pass
                 self.sys_block.add(mdl)
 
         # Populating HVDC init guess (similar to VSCs)
         for i, elm in enumerate(self.grid.get_hvdc()):
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
                 mdl = elm.rms_model
 
@@ -761,10 +1364,23 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
                 f = self.bus_dict[elm.bus_from]
                 t = self.bus_dict[elm.bus_to]
-                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
-                setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
-                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
+                if len(mdl.dynamic_model_contract.rms_terminal_power_contributions) > 0:
+                    assemble_rms_terminal_power_contributions(
+                        model=mdl,
+                        bus_from_index=f,
+                        bus_to_index=t,
+                        bus_from_is_dc=elm.bus_from.is_dc,
+                        bus_to_is_dc=elm.bus_to.is_dc,
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                    )
+                else:
+                    setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                    setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                    setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
+                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
                 self.sys_block.add(mdl)
 
         # initialize injections
@@ -772,9 +1388,12 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         for elm in grid.get_vsc():
 
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
 
                 # find init values for the variables of this model
@@ -817,6 +1436,9 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                         uid2idx_event_params=self._uid2idx_event_params,
                         params_array=self._parameters_values,
                         compile_single_equation=compile_single_equation,
+                        external_uid_values=self._get_explicit_external_uid_values(
+                            mdl=elm.rms_model,
+                        ),
                         verbose=bool(self.options.verbose > 0),
                     )
 
@@ -854,9 +1476,12 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         for elm in grid.get_injection_devices_iter():
 
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
                 bus_index = self.bus_dict[elm.bus]
 
@@ -876,11 +1501,60 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                     self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Q,
                                         Sdev.imag)
 
+                    # Keep power and current coordinates on the identical
+                    # converged operating point before explicit initialization.
+                    has_current_real: bool = (
+                        VarPowerFlowReferenceType.Ir
+                        in elm.rms_model.external_mapping
+                    )
+                    has_current_imaginary: bool = (
+                        VarPowerFlowReferenceType.Ii
+                        in elm.rms_model.external_mapping
+                    )
+                    if has_current_real and has_current_imaginary:
+                        current_real: float
+                        current_imaginary: float
+                        current_real, current_imaginary = rectangular_current_from_power(
+                            power=complex(Sdev),
+                            voltage=complex(self.power_flow_results.voltage[bus_index]),
+                        )
+                        self.set_init_guess(
+                            elm.rms_model,
+                            VarPowerFlowReferenceType.Ir,
+                            current_real,
+                        )
+                        self.set_init_guess(
+                            elm.rms_model,
+                            VarPowerFlowReferenceType.Ii,
+                            current_imaginary,
+                        )
+                    else:
+                        pass
+
                 k = self.bus_dict[elm.bus]
-                if VarPowerFlowReferenceType.P in elm.rms_model.external_mapping:
-                    setP(P, P_used, k, elm.rms_model.E(VarPowerFlowReferenceType.P))
-                if VarPowerFlowReferenceType.Q in elm.rms_model.external_mapping:
-                    setQ(Q, Q_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Q))
+                if len(elm.rms_model.dynamic_model_contract.rms_terminal_power_contributions) > 0:
+                    assemble_rms_terminal_power_contributions(
+                        model=elm.rms_model,
+                        bus_from_index=None,
+                        bus_to_index=None,
+                        bus_from_is_dc=None,
+                        bus_to_is_dc=None,
+                        active_power_balance=P,
+                        active_power_balance_used=P_used,
+                        reactive_power_balance=Q,
+                        reactive_power_balance_used=Q_used,
+                        bus_index=k,
+                        bus_is_dc=elm.bus.is_dc,
+                    )
+                else:
+                    if VarPowerFlowReferenceType.P in elm.rms_model.external_mapping:
+                        setP(P, P_used, k, elm.rms_model.E(VarPowerFlowReferenceType.P))
+                    else:
+                        pass
+                    if VarPowerFlowReferenceType.Q in elm.rms_model.external_mapping:
+                        setQ(Q, Q_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Q))
+                    else:
+                        pass
 
                 if self.options.initialization_method == RmsInitializationMethod.Explicit:
 
@@ -914,6 +1588,9 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                         uid2idx_event_params=self._uid2idx_event_params,
                         params_array=self._parameters_values,
                         compile_single_equation=compile_single_equation,
+                        external_uid_values=self._get_explicit_external_uid_values(
+                            mdl=elm.rms_model,
+                        ),
                         verbose=bool(self.options.verbose > 0),
                     )
                     # initialize variables with no init equation assigned
@@ -972,7 +1649,10 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
         total_init_explicit_time += time.perf_counter() - t0
         # print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
-        self.logger.add_info("Total time explicit initialization", value=total_init_explicit_time)
+        if self.logger is not None:
+            self.logger.add_info("Total time explicit initialization", value=total_init_explicit_time)
+        else:
+            pass
         if self.progress_signal is not None:
             self.progress_signal.emit(10)
 
@@ -1004,22 +1684,81 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             else:
                 pass
 
+        # Freeze legacy auxiliary rows only after every model instance has
+        # populated its final equivalence class and physical bus mappings.
+        self._finalize_legacy_balance_layouts()
+
         # add the nodal balance equations
-        ac_virtual_buses = [elm.bus_to.idtag for elm in grid.get_vsc()]
         for i, elm in enumerate(self.grid.buses):
             if not P_used[i] and not Q_used[i]:
-                self.logger.add_error("Isolated bus", value=i)
+                raise ValueError("Isolated RMS bus has no nodal balance equation")
             else:
                 if elm.is_dc:
-                    self._algebraic_eqs.append(P[i])
-                elif (elm.idtag in ac_virtual_buses):
-                    self._algebraic_eqs.append(P[i])
+                    dc_balance_equation: Expr | Const = build_dc_bus_nodal_power_equation(
+                        bus_rms_model=elm.rms_model,
+                        nodal_power_balance=P[i],
+                    )
+                    self._algebraic_eqs.append(dc_balance_equation)
+                    self._balance_equations.append(dc_balance_equation)
+                    has_capacitive_state: bool = dc_bus_rms_model_has_capacitive_state(
+                        bus_rms_model=elm.rms_model,
+                    )
+                    if has_capacitive_state:
+                        local_power_variable: Var | None = elm.rms_model.external_mapping.get(
+                            VarPowerFlowReferenceType.P,
+                            None,
+                        )
+                        if isinstance(local_power_variable, Var):
+                            self._nodal_balance_layout.add_row(
+                                kind=RmsVectorizedNodalBalanceKind.CAPACITIVE_DC_POWER,
+                                bus_index=i,
+                                local_power_variable_uid=local_power_variable.uid,
+                            )
+                        else:
+                            raise ValueError(
+                                "Capacitive DC bus lacks its compiled local power variable"
+                            )
+                    else:
+                        self._nodal_balance_layout.add_row(
+                            kind=RmsVectorizedNodalBalanceKind.ACTIVE_POWER,
+                            bus_index=i,
+                            local_power_variable_uid=None,
+                        )
                 else:
+                    # Converter terminals remain physical AC buses in the
+                    # canonical topology, with both reactive and active rows.
                     self._algebraic_eqs.append(Q[i])
                     self._algebraic_eqs.append(P[i])
-                    # vectorization
-                    self._balance_equations_p.append(P[i])
-                    self._balance_equations_q.append(Q[i])
+                    self._balance_equations.append(Q[i])
+                    self._balance_equations.append(P[i])
+                    self._nodal_balance_layout.add_row(
+                        kind=RmsVectorizedNodalBalanceKind.REACTIVE_POWER,
+                        bus_index=i,
+                        local_power_variable_uid=None,
+                    )
+                    self._nodal_balance_layout.add_row(
+                        kind=RmsVectorizedNodalBalanceKind.ACTIVE_POWER,
+                        bus_index=i,
+                        local_power_variable_uid=None,
+                    )
+
+        # Imported time inputs retain their source UIDs but share one typed
+        # runtime value slot. Register it before dt/delta so the established
+        # final-two integration-parameter layout remains unchanged.
+        self._variable_parameters.append(self._external_time_parameter)
+        self._event_parameters_eqs0.append(Const(0.0))
+        self._runtime_all_parameters_source.append(self._external_time_parameter)
+        self._runtime_all_eqs_source.append(Const(0.0))
+        self._compiler_names_dict[self._external_time_parameter.uid] = (
+            f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
+        )
+        self._alias_names_dict[self._external_time_parameter.uid] = (
+            f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
+        )
+        self._uid2idx_event_params[self._external_time_parameter.uid] = (
+            self._n_event_params
+        )
+        self._n_event_params += 1
 
         # We define the parameter dt and delta
         self._dt = Var(name='dt')
@@ -1083,10 +1822,62 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         self._compiler_names_dict[self._glob_time.uid] = self.TIME_NAME
         self._alias_names_dict[self._glob_time.uid] = self.TIME_NAME
         self._uid2idx_t[self._glob_time.uid] = 0
+        self._bind_external_time_compiler_names()
 
         for it, eq in enumerate(self._event_parameters_eqs0):
             if isinstance(eq, Const) and eq.value is None:
                 raise Exception(f' Event parameter {self._variable_parameters[it]} has None Value')
+
+    def _get_explicit_external_uid_values(self, mdl: Block) -> Dict[int, float]:
+        """Bind imported explicit inputs and retain exact time-source UIDs.
+
+        :param mdl: Symbolic model whose explicit equations can consume time.
+        :return: Startup input values keyed by exact imported variable UIDs.
+        """
+        external_uid_values: Dict[int, float] = build_explicit_external_uid_values(
+            mdl=mdl,
+            external_name_values=dict(((self.TIME_NAME, 0.0),)),
+        )
+        external_time_uid: int
+        for external_time_uid in external_uid_values:
+            self._external_time_uids.add(external_time_uid)
+        return external_uid_values
+
+    def _bind_external_time_compiler_names(self) -> None:
+        """Route imported time UIDs through the typed runtime parameter slot.
+
+        :return: None.
+        """
+        external_time_index: int | None = self._uid2idx_event_params.get(
+            self._external_time_parameter.uid,
+            None,
+        )
+        if external_time_index is None:
+            pass
+        else:
+            external_time_uid: int
+            for external_time_uid in self._external_time_uids:
+                self._compiler_names_dict[external_time_uid] = (
+                    f"{self.VARIABLE_PARAMS_NAME}[{external_time_index}]"
+                )
+                self._alias_names_dict[external_time_uid] = (
+                    f"{self.VARIABLE_PARAMS_NAME}_{external_time_index}"
+                )
+
+    def _set_external_time_value(self, time_value: float) -> None:
+        """Store the current solver time in the typed runtime parameter slot.
+
+        :param time_value: Current local RMS solver time in seconds.
+        :return: None.
+        """
+        external_time_index: int | None = self._uid2idx_event_params.get(
+            self._external_time_parameter.uid,
+            None,
+        )
+        if external_time_index is None or self._variable_parameters_values is None:
+            pass
+        else:
+            self._variable_parameters_values[external_time_index] = float(time_value)
 
     def set_events_group(self, rms_events_group: RmsEventsGroup):
         """
@@ -1264,6 +2055,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         self._event_parameters_eqs = list(active_runtime_eqs)
 
         self._rebuild_runtime_parameter_partition()
+        self._bind_external_time_compiler_names()
         self._initialize_mode_event_state()
         self._initialize_procedural_logic_updater()
 
@@ -1316,6 +2108,16 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                 )
 
                 rhs_algeb_fn = rms_compiler.compile_rhs(self._algebraic_eqs_equiv_class_dict[model_type], "rhs_algeb_" + str(model_type))
+                device_algebraic_rows: List[int] = (
+                    self._device_algebraic_rows_by_model_type.get(
+                        model_type,
+                        list(),
+                    )
+                )
+                device_algebraic_equations: List[Expr] = list(
+                    self._algebraic_eqs_equiv_class_dict[model_type][row_index]
+                    for row_index in device_algebraic_rows
+                )
                 if len(self._state_eqs_equiv_class_dict[model_type]) != 0:
                     t0 = _tic()
                     rhs_state_fn = rms_compiler.compile_rhs(self._state_eqs_equiv_class_dict[model_type], "rhs_state_" + str(model_type))
@@ -1330,16 +2132,16 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                     timings["J12 (dF/dy)"] = _toc(t0)
 
                     t0 = _tic()
-                    j21_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j21_" + str(model_type))
+                    j21_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._state_vars_equiv_class_dict[model_type], "j21_" + str(model_type))
                     timings["J21 (dG/dx)"] = _toc(t0)
 
                     t0 = _tic()
-                    j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
+                    j22_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
                     timings["J22 (dG/dy)"] = _toc(t0)
 
                 else:
                     t0 = _tic()
-                    j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
+                    j22_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
                     timings["J22 only (no states)"] = _toc(t0)
 
                     rhs_state_fn = None
@@ -1354,8 +2156,6 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                 self._j12_fn_by_types[model_type] = j12_fn
                 self._j21_fn_by_types[model_type] = j21_fn
                 self._j22_fn_by_types[model_type] = j22_fn
-
-        self._balance_equations = [val for pair in zip(self._balance_equations_q, self._balance_equations_p) for val in pair]
 
         self._jbalance_state_fn = rms_compiler_all_models.compile_sparse_jacobian(
             self._balance_equations, self._state_vars, "j_balance_state"
@@ -1415,7 +2215,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
         self._constant_params = np.array([const.value for const in self._parameters_values])
 
-        self._block_boundary_updater = build_boundary_updater_from_block(self)
+        # Both RMS update paths must share the same isolated runtime state.
+        self._block_boundary_updater = self._procedural_logic_updater
 
         if self.options.verbose > 0:
             print(f"\nTotal compile time: {sum(timings.values()):.4f} s")
@@ -1579,15 +2380,11 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         return min(t_mode, t_proc)
 
     def _initialize_procedural_logic_updater(self) -> None:
-        entries: List = list()
-        for blk in self.sys_block.get_all_blocks():
-            if blk.procedural_logic:
-                entries.extend(blk.procedural_logic)
-        if len(entries) == 0:
-            self._procedural_logic_updater = None
-            return
+        """Build solver-owned procedural state without binding model entries.
 
-        self._procedural_logic_updater = BlockProceduralLogicUpdater(self, entries)
+        :return: None.
+        """
+        self._procedural_logic_updater = build_boundary_updater_from_block(self)
 
     def _register_runtime_event_parameters(self, dev: ALL_DEV_TYPES, mdl: Block) -> None:
         """
@@ -1805,7 +2602,10 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                 return float(expression.value)
 
         if isinstance(expression, Var):
-            if expression.uid == self._glob_time.uid or expression.name == self.TIME_NAME:
+            if (
+                    expression.uid == self._glob_time.uid
+                    or expression.uid in self._external_time_uids
+            ):
                 return float(t)
 
             if expression.uid in self._uid2idx_event_params:
@@ -1843,6 +2643,9 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             uid_bindings[uid] = float(x[idx])
 
         uid_bindings[self._glob_time.uid] = float(t)
+        external_time_uid: int
+        for external_time_uid in self._external_time_uids:
+            uid_bindings[external_time_uid] = float(t)
 
         try:
             return float(expression.eval_uid(uid_bindings))
@@ -1896,6 +2699,9 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
         if self.get_all_vars_number() > 0 and self.get_variable_parameter_number() > 0:
             self._initialize_latched_mode_defaults(t=float(t0), x=self.get_x0())
+        else:
+            pass
+        self._set_external_time_value(time_value=float(t0))
 
     def def_event_params_fn(self, ev_param: Vec, t: float) -> Vec:
         """
@@ -1980,6 +2786,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
         self._variable_parameters_values = self.def_event_params_fn(self._variable_parameters_values, t)
         self._apply_scheduled_mode_events(scheduled_time, self._variable_parameters_values)
+        self._set_external_time_value(time_value=float(t))
 
         if self._block_boundary_updater is not None and x_snapshot is not None:
             if self._constant_params is None:
@@ -1997,11 +2804,295 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             self._procedural_logic_updater.update(t=t, x=x, params=params)
         self._variable_parameters_values[:] = params[: len(self._variable_parameters)]
 
-    def add_variables_to_compilation_dicts(self, elm: ALL_DEV_TYPES, mdl: Block):
+    def add_variables_to_compilation_dicts(
+            self,
+            elm: ALL_DEV_TYPES,
+            mdl: Block,
+    ) -> None:
+        """Register one block tree in the vectorized compilation mappings.
+
+        The physical network device remains constant while recursion visits
+        the root model and every symbolic child. This preserves the association
+        needed to project compiled variables back to the owning device.
+
+        :param elm: Physical VeraGrid device owning the complete model tree.
+        :param mdl: Current canonical block in the recursive traversal.
+        :return: None.
+        """
 
         self.add_block_variables_to_compilation_dicts(elm, mdl)
         for child in mdl.children:
             self.add_variables_to_compilation_dicts(elm, child)
+
+    def _get_terminal_balance_model_type(self, mdl: Block) -> int | None:
+        """Return the vectorized equivalence-class owner of one root model.
+
+        :param mdl: Root device model whose physical contract is being registered.
+        :return: Representative model UID, or None when no class owns the model.
+        """
+        if mdl.uid in self.equivalence_dict:
+            model_type: int | None = mdl.uid
+        else:
+            model_type = next(
+                (
+                    representative_uid
+                    for representative_uid, member_uids
+                    in self.reference_class_for_all_blocks_dict.items()
+                    if mdl.uid in member_uids
+                ),
+                None,
+            )
+        return model_type
+
+    def _register_terminal_balance_contract(
+            self,
+            elm: ALL_DEV_TYPES,
+            mdl: Block,
+            model_type: int,
+    ) -> None:
+        """Register one physical device in its compiled terminal layout.
+
+        The representative contributes signed symbolic rows once. Every
+        equivalent instance contributes only its topology-owned bus indices.
+
+        :param elm: Physical network device owning the model.
+        :param mdl: Canonical root RMS block of that device.
+        :param model_type: Representative vectorized model UID.
+        :return: None.
+        """
+        contributions: List[RmsTerminalPowerContribution] = (
+            mdl.dynamic_model_contract.rms_terminal_power_contributions
+        )
+        layout: RmsVectorizedTerminalBalanceLayout | None = (
+            self._terminal_balance_layout_by_model_type.get(model_type, None)
+        )
+
+        if layout is None:
+            if mdl.uid == model_type:
+                active_expressions: List[Expr | Var] = list()
+                reactive_expressions: List[Expr | Var] = list()
+                contribution: RmsTerminalPowerContribution
+                for contribution in contributions:
+                    terminal_side: RmsTerminalSide = contribution.get_terminal_side()
+                    active_var: Var = mdl.E(
+                        contribution.get_active_power_reference()
+                    )
+                    active_expression: Expr | Var
+                    if terminal_side is RmsTerminalSide.BUS:
+                        active_expression = active_var
+                    else:
+                        active_expression = -active_var
+                    active_expressions.append(active_expression)
+
+                    reactive_reference: VarPowerFlowReferenceType | None = (
+                        contribution.get_reactive_power_reference()
+                    )
+                    if reactive_reference is None:
+                        pass
+                    else:
+                        reactive_var: Var = mdl.E(reactive_reference)
+                        reactive_expression: Expr | Var
+                        if terminal_side is RmsTerminalSide.BUS:
+                            reactive_expression = reactive_var
+                        else:
+                            reactive_expression = -reactive_var
+                        reactive_expressions.append(reactive_expression)
+
+                row_start: int = len(
+                    self._algebraic_eqs_equiv_class_dict[model_type]
+                )
+                active_row_indices: List[int] = list(
+                    range(row_start, row_start + len(active_expressions))
+                )
+                reactive_row_start: int = row_start + len(active_expressions)
+                reactive_row_indices: List[int] = list(
+                    range(
+                        reactive_row_start,
+                        reactive_row_start + len(reactive_expressions),
+                    )
+                )
+                self._algebraic_eqs_equiv_class_dict[model_type].extend(
+                    active_expressions
+                )
+                self._algebraic_eqs_equiv_class_dict[model_type].extend(
+                    reactive_expressions
+                )
+                layout = RmsVectorizedTerminalBalanceLayout(
+                    contributions=contributions,
+                    active_row_indices=active_row_indices,
+                    reactive_row_indices=reactive_row_indices,
+                )
+                self._terminal_balance_layout_by_model_type[model_type] = layout
+            else:
+                raise ValueError(
+                    "Vectorized RMS terminal contract was registered before its representative"
+                )
+        else:
+            layout.validate_contract(contributions=contributions)
+
+        bus_indices: List[int] = list()
+        contribution: RmsTerminalPowerContribution
+        contribution_index: int = 0
+        while contribution_index < len(contributions):
+            contribution = contributions[contribution_index]
+            terminal_side = contribution.get_terminal_side()
+            if terminal_side is RmsTerminalSide.BUS:
+                bus_index: int = self.bus_dict[elm.bus]
+            else:
+                if terminal_side is RmsTerminalSide.FROM:
+                    bus_index = self.bus_dict[elm.bus_from]
+                else:
+                    if terminal_side is RmsTerminalSide.TO:
+                        bus_index = self.bus_dict[elm.bus_to]
+                    else:
+                        raise ValueError("Unsupported RMS terminal side")
+            bus_indices.append(bus_index)
+            contribution_index += 1
+        layout.add_device_topology(bus_indices=bus_indices)
+
+    def _register_legacy_balance_candidate(
+            self,
+            elm: ALL_DEV_TYPES,
+            mdl: Block,
+            model_type: int,
+    ) -> None:
+        """Register references and topology of one contract-free root model.
+
+        :param elm: Physical device owning the legacy model.
+        :param mdl: Root legacy RMS block.
+        :param model_type: Representative vectorized model UID.
+        :return: None.
+        """
+        if mdl.uid in self._legacy_registered_model_uids:
+            return
+        else:
+            self._legacy_registered_model_uids.add(mdl.uid)
+
+        contributions: List[RmsTerminalPowerContribution] = list()
+        bus_indices: List[int] = list()
+        active_expressions: List[Expr | Var] = list()
+        reactive_expressions: List[Expr | Var] = list()
+        mapping: Dict[VarPowerFlowReferenceType, Var | None] = mdl.external_mapping
+
+        if elm in self.grid.get_injection_devices_iter():
+            active_var: Var | None = mapping.get(VarPowerFlowReferenceType.P, None)
+            reactive_var: Var | None = mapping.get(VarPowerFlowReferenceType.Q, None)
+            if isinstance(active_var, Var):
+                reactive_reference: VarPowerFlowReferenceType | None
+                if isinstance(reactive_var, Var):
+                    reactive_reference = VarPowerFlowReferenceType.Q
+                    reactive_expressions.append(reactive_var)
+                else:
+                    reactive_reference = None
+                contributions.append(RmsTerminalPowerContribution(
+                    terminal_side=RmsTerminalSide.BUS,
+                    active_power_reference=VarPowerFlowReferenceType.P,
+                    reactive_power_reference=reactive_reference,
+                ))
+                active_expressions.append(active_var)
+                bus_indices.append(self.bus_dict[elm.bus])
+            else:
+                pass
+        else:
+            from_active_var: Var | None = mapping.get(
+                VarPowerFlowReferenceType.Pf,
+                None,
+            )
+            from_reactive_var: Var | None = mapping.get(
+                VarPowerFlowReferenceType.Qf,
+                None,
+            )
+            if isinstance(from_active_var, Var):
+                from_reactive_reference: VarPowerFlowReferenceType | None
+                if isinstance(from_reactive_var, Var):
+                    from_reactive_reference = VarPowerFlowReferenceType.Qf
+                    reactive_expressions.append(-from_reactive_var)
+                else:
+                    from_reactive_reference = None
+                contributions.append(RmsTerminalPowerContribution(
+                    terminal_side=RmsTerminalSide.FROM,
+                    active_power_reference=VarPowerFlowReferenceType.Pf,
+                    reactive_power_reference=from_reactive_reference,
+                ))
+                active_expressions.append(-from_active_var)
+                bus_indices.append(self.bus_dict[elm.bus_from])
+            else:
+                pass
+
+            to_active_var: Var | None = mapping.get(
+                VarPowerFlowReferenceType.Pt,
+                None,
+            )
+            to_reactive_var: Var | None = mapping.get(
+                VarPowerFlowReferenceType.Qt,
+                None,
+            )
+            if isinstance(to_active_var, Var):
+                to_reactive_reference: VarPowerFlowReferenceType | None
+                if isinstance(to_reactive_var, Var):
+                    to_reactive_reference = VarPowerFlowReferenceType.Qt
+                    reactive_expressions.append(-to_reactive_var)
+                else:
+                    to_reactive_reference = None
+                contributions.append(RmsTerminalPowerContribution(
+                    terminal_side=RmsTerminalSide.TO,
+                    active_power_reference=VarPowerFlowReferenceType.Pt,
+                    reactive_power_reference=to_reactive_reference,
+                ))
+                active_expressions.append(-to_active_var)
+                bus_indices.append(self.bus_dict[elm.bus_to])
+            else:
+                pass
+
+        if len(contributions) > 0:
+            layout: RmsVectorizedLegacyBalanceLayout | None = (
+                self._legacy_balance_layout_by_model_type.get(model_type, None)
+            )
+            if layout is None:
+                if mdl.uid == model_type:
+                    layout = RmsVectorizedLegacyBalanceLayout(
+                        contributions=contributions,
+                        active_expressions=active_expressions,
+                        reactive_expressions=reactive_expressions,
+                    )
+                    self._legacy_balance_layout_by_model_type[model_type] = layout
+                else:
+                    raise ValueError(
+                        "Legacy RMS balance candidate was registered before its representative"
+                    )
+            else:
+                pass
+            layout.validate_and_add_device(
+                contributions=contributions,
+                bus_indices=bus_indices,
+            )
+        else:
+            pass
+
+    def _finalize_legacy_balance_layouts(self) -> None:
+        """Append and describe legacy balance rows after device registration.
+
+        Repeated visits to an equivalence-class representative can rebuild its
+        compiled equation list while devices are initialized. Finalization at
+        this boundary guarantees that explicit legacy rows cannot be erased by
+        a later visit and that all instance bus lists are complete.
+
+        :return: None.
+        """
+        model_type: int
+        layout: RmsVectorizedLegacyBalanceLayout
+        for model_type, layout in self._legacy_balance_layout_by_model_type.items():
+            terminal_layout: RmsVectorizedTerminalBalanceLayout | None = (
+                self._terminal_balance_layout_by_model_type.get(model_type, None)
+            )
+            if terminal_layout is None:
+                layout.finalize(
+                    compiled_equations=self._algebraic_eqs_equiv_class_dict[model_type]
+                )
+            else:
+                raise ValueError(
+                    "Structurally equivalent RMS models mix typed and legacy balance layouts"
+                )
 
     def add_block_variables_to_compilation_dicts(self, elm: ALL_DEV_TYPES, mdl: Block):
         """
@@ -2015,6 +3106,26 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         :return:
         :rtype: None
         """
+
+        is_root_device_model: bool = mdl.uid == elm.rms_model.uid
+        has_terminal_contract: bool = bool(
+            is_root_device_model
+            and len(mdl.dynamic_model_contract.rms_terminal_power_contributions) > 0
+        )
+        is_physical_device_root: bool = bool(
+            is_root_device_model and not isinstance(elm, Bus)
+        )
+        terminal_model_type: int | None
+        if is_physical_device_root:
+            terminal_model_type = self._get_terminal_balance_model_type(mdl=mdl)
+            if terminal_model_type is None:
+                raise ValueError(
+                    "Root RMS model has no vectorized equivalence-class owner"
+                )
+            else:
+                pass
+        else:
+            terminal_model_type = None
 
         if mdl.uid in self.equivalence_dict.keys():
             self._compiler_names_dict_vect[mdl.uid] = dict()
@@ -2031,66 +3142,84 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             self._variable_parameters_equiv_class_dict[mdl.uid] = list()
             self._state_eqs_equiv_class_dict[mdl.uid] = list()
             self._algebraic_eqs_equiv_class_dict[mdl.uid] = list()
+            self._device_algebraic_rows_by_model_type[mdl.uid] = list()
             self._balance_eqs_p_equiv_class_dict[mdl.uid] = np.zeros(6, dtype=object)
             self._balance_eqs_q_equiv_class_dict[mdl.uid] = np.zeros(6, dtype=object)
 
             # we add bus variables for vectorization
+            class_idx = self._class_n_vars.get(mdl.uid, 0)
             if elm in self.grid.get_branches_iter():
-                branch_bus_models: List[Block] = list((elm.bus_from.rms_model, elm.bus_to.rms_model))
-                bus_model: Block
-                bus_voltage_var: Var | None
+                Vdcf, Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
+                if Vdcf is not None:
+                    self._compiler_names_dict_vect[mdl.uid][Vdcf.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Vdcf.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Vdcf.uid] = class_idx
+                    if dc_bus_rms_model_has_capacitive_state(elm.bus_from.rms_model):
+                        self._state_vars_equiv_class_dict[mdl.uid].append(Vdcf)
+                    else:
+                        self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vdcf)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
+                else:
+                    self._compiler_names_dict_vect[mdl.uid][Vmf.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Vmf.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Vmf.uid] = class_idx
+                    self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vmf)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
+                    class_idx = self._class_n_vars.get(mdl.uid, 0)
+                    self._compiler_names_dict_vect[mdl.uid][Vaf.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Vaf.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Vaf.uid] = class_idx
+                    self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vaf)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
 
-                for bus_model in branch_bus_models:
-                    voltage_dc: Var | None
-                    voltage_magnitude: Var | None
-                    voltage_angle: Var | None
-                    voltage_dc, voltage_magnitude, voltage_angle = get_bus_rms_algebraic_vars(
-                        bus_rms_model=bus_model,
-                    )
-                    bus_voltage_vars: Tuple[Var | None, Var | None, Var | None] = (
-                        voltage_dc,
-                        voltage_magnitude,
-                        voltage_angle,
-                    )
-                    for bus_voltage_var in bus_voltage_vars:
-                        if bus_voltage_var is not None:
-                            class_idx = self._class_n_vars.get(mdl.uid, 0)
-                            self._compiler_names_dict_vect[mdl.uid][bus_voltage_var.uid] = f"{self.VARS_NAME}[{class_idx}]"
-                            self._alias_names_dict_vect[mdl.uid][bus_voltage_var.uid] = f"{self.VARS_NAME}_{class_idx}"
-                            self._uid2idx_vars_vec[mdl.uid][bus_voltage_var.uid] = class_idx
-                            self._algebraic_vars_equiv_class_dict[mdl.uid].append(bus_voltage_var)
-                            self._class_n_vars[mdl.uid] = class_idx + 1
-                        else:
-                            pass
-            else:
-                pass
+                class_idx = self._class_n_vars.get(mdl.uid, 0)
+                Vdct, Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
+                if Vdct is not None:
+                    self._compiler_names_dict_vect[mdl.uid][Vdct.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Vdct.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Vdct.uid] = class_idx
+                    if dc_bus_rms_model_has_capacitive_state(elm.bus_to.rms_model):
+                        self._state_vars_equiv_class_dict[mdl.uid].append(Vdct)
+                    else:
+                        self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vdct)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
+                else:
+                    self._compiler_names_dict_vect[mdl.uid][Vmt.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Vmt.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Vmt.uid] = class_idx
+                    self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vmt)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
+                    class_idx = self._class_n_vars.get(mdl.uid, 0)
+                    self._compiler_names_dict_vect[mdl.uid][Vat.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Vat.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Vat.uid] = class_idx
+                    self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vat)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
 
             if elm in self.grid.get_injection_devices_iter():
-                injection_voltage_dc: Var | None
-                injection_voltage_magnitude: Var | None
-                injection_voltage_angle: Var | None
-                injection_voltage_dc, injection_voltage_magnitude, injection_voltage_angle = get_bus_rms_algebraic_vars(
-                    bus_rms_model=elm.bus.rms_model,
-                )
-                injection_bus_voltage_vars: Tuple[Var | None, Var | None, Var | None] = (
-                    injection_voltage_dc,
-                    injection_voltage_magnitude,
-                    injection_voltage_angle,
-                )
-                injection_bus_voltage_var: Var | None
-
-                for injection_bus_voltage_var in injection_bus_voltage_vars:
-                    if injection_bus_voltage_var is not None:
-                        class_idx = self._class_n_vars.get(mdl.uid, 0)
-                        self._compiler_names_dict_vect[mdl.uid][injection_bus_voltage_var.uid] = f"{self.VARS_NAME}[{class_idx}]"
-                        self._alias_names_dict_vect[mdl.uid][injection_bus_voltage_var.uid] = f"{self.VARS_NAME}_{class_idx}"
-                        self._uid2idx_vars_vec[mdl.uid][injection_bus_voltage_var.uid] = class_idx
-                        self._algebraic_vars_equiv_class_dict[mdl.uid].append(injection_bus_voltage_var)
-                        self._class_n_vars[mdl.uid] = class_idx + 1
+                Vdc, Vm, Va = get_bus_rms_algebraic_vars(elm.bus.rms_model)
+                class_idx = self._class_n_vars.get(mdl.uid, 0)
+                if Vdc is not None:
+                    self._compiler_names_dict_vect[mdl.uid][Vdc.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Vdc.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Vdc.uid] = class_idx
+                    if dc_bus_rms_model_has_capacitive_state(elm.bus.rms_model):
+                        self._state_vars_equiv_class_dict[mdl.uid].append(Vdc)
                     else:
-                        pass
-            else:
-                pass
+                        self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vdc)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
+                else:
+                    self._compiler_names_dict_vect[mdl.uid][Vm.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Vm.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Vm.uid] = class_idx
+                    self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vm)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
+                    class_idx = self._class_n_vars.get(mdl.uid, 0)
+                    self._compiler_names_dict_vect[mdl.uid][Va.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                    self._alias_names_dict_vect[mdl.uid][Va.uid] = f"{self.VARS_NAME}_{class_idx}"
+                    self._uid2idx_vars_vec[mdl.uid][Va.uid] = class_idx
+                    self._algebraic_vars_equiv_class_dict[mdl.uid].append(Va)
+                    self._class_n_vars[mdl.uid] = class_idx + 1
 
 
         equiv_class_uid = next((uid for uid, list_uid in self.block_composition_dict.items() if mdl.uid in list_uid), None)
@@ -2137,20 +3266,20 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                     self._balance_eqs_p_equiv_class_dict[equiv_class_uid][0] = v
 
                 if v.ref == VarPowerFlowReferenceType.Pf:
-                    self._balance_eqs_p_equiv_class_dict[equiv_class_uid][2] = v
+                    self._balance_eqs_p_equiv_class_dict[equiv_class_uid][2] = -v
                     self.line_model_types.append(equiv_class_uid)
 
                 if v.ref == VarPowerFlowReferenceType.Pt:
-                    self._balance_eqs_p_equiv_class_dict[equiv_class_uid][3] = v
+                    self._balance_eqs_p_equiv_class_dict[equiv_class_uid][3] = -v
 
                 if v.ref == VarPowerFlowReferenceType.Q:
                     self._balance_eqs_q_equiv_class_dict[equiv_class_uid][1] = v
 
                 if v.ref == VarPowerFlowReferenceType.Qf:
-                    self._balance_eqs_q_equiv_class_dict[equiv_class_uid][4] = v
+                    self._balance_eqs_q_equiv_class_dict[equiv_class_uid][4] = -v
 
                 if v.ref == VarPowerFlowReferenceType.Qt:
-                    self._balance_eqs_q_equiv_class_dict[equiv_class_uid][5] = v
+                    self._balance_eqs_q_equiv_class_dict[equiv_class_uid][5] = -v
 
                 if v.ref == VarPowerFlowReferenceType.P:
                     if equiv_class_uid not in self.mdl_index2bus.keys():
@@ -2306,13 +3435,57 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         if equiv_class_uid:
 
             self._state_eqs_equiv_class_dict[equiv_class_uid].extend(mdl.state_eqs)
+            algebraic_row_start: int = len(
+                self._algebraic_eqs_equiv_class_dict[equiv_class_uid]
+            )
+            self._device_algebraic_rows_by_model_type[equiv_class_uid].extend(
+                range(
+                    algebraic_row_start,
+                    algebraic_row_start + len(mdl.algebraic_eqs),
+                )
+            )
             self._algebraic_eqs_equiv_class_dict[equiv_class_uid].extend(mdl.algebraic_eqs)
-            balance_eqs_p_list = [val for val in self._balance_eqs_p_equiv_class_dict[equiv_class_uid] if val != 0]
-            self._algebraic_eqs_equiv_class_dict[equiv_class_uid].extend(balance_eqs_p_list)
-            balance_eqs_q_list = [val for val in self._balance_eqs_q_equiv_class_dict[equiv_class_uid] if val != 0]
-            self._algebraic_eqs_equiv_class_dict[equiv_class_uid].extend(balance_eqs_q_list)
+            if has_terminal_contract:
+                self._register_terminal_balance_contract(
+                    elm=elm,
+                    mdl=mdl,
+                    model_type=equiv_class_uid,
+                )
+            else:
+                if is_root_device_model:
+                    if equiv_class_uid in self._terminal_balance_layout_by_model_type:
+                        raise ValueError(
+                            "Structurally equivalent RMS models must use the same terminal-power contract mode"
+                        )
+                    else:
+                        pass
+                else:
+                    pass
             print("")
+        else:
+            if has_terminal_contract:
+                if terminal_model_type is None:
+                    raise ValueError("RMS terminal contract lacks a model type")
+                else:
+                    self._register_terminal_balance_contract(
+                        elm=elm,
+                        mdl=mdl,
+                        model_type=terminal_model_type,
+                    )
+            else:
+                pass
 
+        if is_physical_device_root and not has_terminal_contract:
+            if terminal_model_type is None:
+                raise ValueError("Legacy RMS model lacks a vectorized equivalence class")
+            else:
+                self._register_legacy_balance_candidate(
+                    elm=elm,
+                    mdl=mdl,
+                    model_type=terminal_model_type,
+                )
+        else:
+            pass
 
         self._model_state_eq_start_idx[mdl.uid] = len(self._state_eqs)
         self._state_eqs.extend(mdl.state_eqs)
@@ -2720,13 +3893,28 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                     idx_rhs_state[:, inst_idx] = start + np.arange(n_state_eqs, dtype=np.intp)
                 self._rhs_state_scatter_idx[model_type] = idx_rhs_state
 
-            n_algeb_eqs = len(self._algebraic_eqs_equiv_class_dict.get(model_type, []))
-            if n_algeb_eqs:
-                idx_rhs_algeb = np.zeros((n_algeb_eqs, n_inst), dtype=np.intp)
+            device_algebraic_rows: List[int] = (
+                self._device_algebraic_rows_by_model_type.get(model_type, list())
+            )
+            n_device_algebraic_eqs: int = len(device_algebraic_rows)
+            if n_device_algebraic_eqs > 0:
+                idx_rhs_algeb = np.zeros(
+                    (n_device_algebraic_eqs, n_inst),
+                    dtype=np.intp,
+                )
                 for inst_idx, uid in enumerate([model_type] + self.equivalence_dict.get(model_type, [])):
                     start = self._model_algebraic_eq_start_idx[uid]
-                    idx_rhs_algeb[:, inst_idx] = start + np.arange(n_algeb_eqs, dtype=np.intp)
+                    idx_rhs_algeb[:, inst_idx] = start + np.arange(
+                        n_device_algebraic_eqs,
+                        dtype=np.intp,
+                    )
                 self._rhs_algeb_scatter_idx[model_type] = idx_rhs_algeb
+                self._rhs_algeb_source_rows[model_type] = np.array(
+                    device_algebraic_rows,
+                    dtype=np.intp,
+                )
+            else:
+                pass
 
     def update_input_matrices_by_model(self, x: Vec, dx: Vec):
         _t0 = time.time()
@@ -2774,7 +3962,6 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         return complete_rhs_state
 
     def rhs_algebraic_vec(self, x: Vec, dx: Vec) -> Vec:
-        n = len(self.grid.buses)
         self.P_vec[:] = 0.0
         self.P_used_vec[:] = False
         self.Q_vec[:] = 0.0
@@ -2796,8 +3983,14 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             if rhs_algeb.ndim == 1:
                 rhs_algeb = rhs_algeb.reshape(-1, 1)
             scatter_idx = self._rhs_algeb_scatter_idx.get(model_type)
-            if scatter_idx is not None:
-                complete_rhs_algeb[scatter_idx] = rhs_algeb
+            source_rows: np.ndarray | None = self._rhs_algeb_source_rows.get(
+                model_type,
+                None,
+            )
+            if scatter_idx is not None and source_rows is not None:
+                complete_rhs_algeb[scatter_idx] = rhs_algeb[source_rows, :]
+            else:
+                pass
             if not hasattr(self, '_prof_timings'):
                 self._prof_timings = {}
             self._prof_timings['rhs_algeb_filler_total'] = self._prof_timings.get('rhs_algeb_filler_total', 0.0) + _t1 - _t0
@@ -2807,47 +4000,42 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             # power balance. Internal sub-block classes can have algebraic RHS
             # functions too, but they do not own bus mappings and therefore
             # must be skipped here.
-            if model_type in self.line_model_types:
-                bus_from_list = self.mdl_index2busfrom.get(model_type)
-                bus_to_list = self.mdl_index2busto.get(model_type)
-
-                if bus_from_list is None or bus_to_list is None:
-                    continue
-
-                Pf_value_array = rhs_algeb[-4]
-                Pt_value_array = rhs_algeb[-3]
-                Qf_value_array = rhs_algeb[-2]
-                Qt_value_array = rhs_algeb[-1]
-                for i, value in enumerate(Pf_value_array):
-                    bus_num = bus_from_list[i]
-                    setP(self.P_vec, self.P_used_vec, bus_num, value)
-                for i, value in enumerate(Pt_value_array):
-                    bus_num = bus_to_list[i]
-                    setP(self.P_vec, self.P_used_vec, bus_num, value)
-                for i, value in enumerate(Qf_value_array):
-                    bus_num = bus_from_list[i]
-                    setQ(self.Q_vec, self.Q_used_vec, bus_num, value)
-                for i, value in enumerate(Qt_value_array):
-                    bus_num = bus_to_list[i]
-                    setQ(self.Q_vec, self.Q_used_vec, bus_num, value)
+            terminal_layout: RmsVectorizedTerminalBalanceLayout | None = (
+                self._terminal_balance_layout_by_model_type.get(model_type, None)
+            )
+            if terminal_layout is not None:
+                terminal_layout.accumulate(
+                    rhs_algebraic=rhs_algeb,
+                    active_power_balance=self.P_vec,
+                    active_power_balance_used=self.P_used_vec,
+                    reactive_power_balance=self.Q_vec,
+                    reactive_power_balance_used=self.Q_used_vec,
+                )
             else:
-                bus_list = self.mdl_index2bus.get(model_type)
+                legacy_layout: RmsVectorizedLegacyBalanceLayout | None = (
+                    self._legacy_balance_layout_by_model_type.get(model_type, None)
+                )
+                if legacy_layout is not None:
+                    legacy_layout.accumulate(
+                        rhs_algebraic=rhs_algeb,
+                        active_power_balance=self.P_vec,
+                        active_power_balance_used=self.P_used_vec,
+                        reactive_power_balance=self.Q_vec,
+                        reactive_power_balance_used=self.Q_used_vec,
+                    )
+                else:
+                    pass
 
-                if bus_list is None:
-                    continue
-
-                P_value_array = rhs_algeb[-2]
-                Q_value_array = rhs_algeb[-1]
-                for i, value in enumerate(P_value_array):
-                    bus_num = bus_list[i]
-                    setP(self.P_vec, self.P_used_vec, bus_num, value)
-                for i, value in enumerate(Q_value_array):
-                    bus_num = bus_list[i]
-                    setQ(self.Q_vec, self.Q_used_vec, bus_num, value)
-
-        rhs_energy_balance = np.empty(2 * n)
-        rhs_energy_balance[0::2] = self.Q_vec
-        rhs_energy_balance[1::2] = self.P_vec
+        rhs_energy_balance: np.ndarray = self._nodal_balance_layout.evaluate(
+            variables=x,
+            variable_index_by_uid=self._uid2idx_vars,
+            active_power_balance=self.P_vec,
+            reactive_power_balance=self.Q_vec,
+        )
+        if len(rhs_energy_balance) == len(self._balance_equations):
+            pass
+        else:
+            raise ValueError("RMS nodal RHS layout differs from its compiled equations")
         complete_rhs_algeb[-len(rhs_energy_balance):] = rhs_energy_balance
         # energy balance equations
         # if self._rhs_algeb_energy_balance_fn is None:

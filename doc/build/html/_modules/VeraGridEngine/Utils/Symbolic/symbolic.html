@@ -2711,6 +2711,8 @@
         <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="n">arg_expr</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">log</span><span class="p">(</span><span class="n">arg_expr</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;log10&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">log10</span><span class="p">(</span><span class="n">arg_expr</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;sqrt&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">arg_expr</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;asin&quot;</span><span class="p">:</span>
@@ -2723,6 +2725,8 @@
         <span class="k">return</span> <span class="n">sinh</span><span class="p">(</span><span class="n">arg_expr</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;cosh&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cosh</span><span class="p">(</span><span class="n">arg_expr</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;tanh&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tanh</span><span class="p">(</span><span class="n">arg_expr</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;abs&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">arg_expr</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;real&quot;</span><span class="p">:</span>
@@ -2747,24 +2751,26 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown function &#39;</span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_get_symbolic_parser_function_names_internal</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_symbolic_parser_unary_function_names_internal</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the list of public unary functions accepted by the parser.</span>
+<span class="sd">    Return the public unary functions accepted by the symbolic parser.</span>
 
 <span class="sd">    :return: Supported unary parser function names.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">((</span>
         <span class="s2">&quot;sin&quot;</span><span class="p">,</span>
         <span class="s2">&quot;cos&quot;</span><span class="p">,</span>
         <span class="s2">&quot;tan&quot;</span><span class="p">,</span>
         <span class="s2">&quot;exp&quot;</span><span class="p">,</span>
         <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;log10&quot;</span><span class="p">,</span>
         <span class="s2">&quot;sqrt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;asin&quot;</span><span class="p">,</span>
         <span class="s2">&quot;acos&quot;</span><span class="p">,</span>
         <span class="s2">&quot;atan&quot;</span><span class="p">,</span>
         <span class="s2">&quot;sinh&quot;</span><span class="p">,</span>
         <span class="s2">&quot;cosh&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tanh&quot;</span><span class="p">,</span>
         <span class="s2">&quot;abs&quot;</span><span class="p">,</span>
         <span class="s2">&quot;real&quot;</span><span class="p">,</span>
         <span class="s2">&quot;imag&quot;</span><span class="p">,</span>
@@ -2775,16 +2781,28 @@
         <span class="s2">&quot;floor&quot;</span><span class="p">,</span>
         <span class="s2">&quot;ceil&quot;</span><span class="p">,</span>
         <span class="s2">&quot;round&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
+    <span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_symbolic_parser_binary_function_names_internal</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the public binary functions accepted by the symbolic parser.</span>
+
+<span class="sd">    :return: Supported two-argument parser function names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">((</span>
+        <span class="s2">&quot;atan2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+    <span class="p">))</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_ast_to_symbolic</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">,</span> <span class="n">symbol_namespace</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">NUMBER</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert a restricted Python AST into a symbolic expression tree.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert one restricted Python AST node into a symbolic expression.</span>
 
-<span class="sd">    :param node:</span>
-<span class="sd">    :param symbol_namespace:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param node: Python syntax node belonging to the parsed expression.</span>
+<span class="sd">    :param symbol_namespace: Explicit symbolic identities accepted by name.</span>
+<span class="sd">    :return: Symbolic expression or comparison represented by ``node``.</span>
+<span class="sd">    :raises ValueError: If the node uses unsupported syntax or identities.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">left_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span>
     <span class="n">right_expr</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span>
@@ -2836,8 +2854,27 @@
                     <span class="k">return</span> <span class="n">_call_symbolic_parser_function</span><span class="p">(</span><span class="n">function_name</span><span class="p">,</span> <span class="n">right_expr</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Function calls require a symbolic argument&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">keywords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">function_name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">id</span>
+                <span class="n">left_expr</span> <span class="o">=</span> <span class="n">_ast_to_symbolic</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">symbol_namespace</span><span class="p">)</span>
+                <span class="n">right_expr</span> <span class="o">=</span> <span class="n">_ast_to_symbolic</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">symbol_namespace</span><span class="p">)</span>
+
+                <span class="c1"># Binary parser functions are kept in the same symbolic</span>
+                <span class="c1"># catalogue as unary functions so every editor and importer</span>
+                <span class="c1"># observes one authoritative language definition.</span>
+                <span class="n">binary_function_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">_get_symbolic_parser_binary_function_names_internal</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">function_name</span> <span class="ow">in</span> <span class="n">binary_function_names</span>
+                        <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left_expr</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)</span>
+                        <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right_expr</span><span class="p">,</span> <span class="n">Expr</span><span class="p">)):</span>
+                    <span class="k">return</span> <span class="n">Func2</span><span class="p">(</span><span class="n">function_name</span><span class="p">,</span> <span class="n">left_expr</span><span class="p">,</span> <span class="n">right_expr</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Unknown two-argument function &#39;</span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                    <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only single-argument function calls are supported&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only supported one- or two-argument functions are allowed&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only named functions are supported&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Compare</span><span class="p">):</span>
@@ -2869,12 +2906,13 @@
 <div class="viewcode-block" id="string_to_symbolic">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic.string_to_symbolic">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">string_to_symbolic</span><span class="p">(</span><span class="n">expression_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">symbol_namespace</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">NUMBER</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">Comparison</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parse a textual symbolic expression into a symbolic tree using a safe AST walk.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse restricted source text into a symbolic expression tree.</span>
 
-<span class="sd">    :param expression_text:</span>
-<span class="sd">    :param symbol_namespace:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param expression_text: Python-like symbolic expression without assignments.</span>
+<span class="sd">    :param symbol_namespace: Explicit symbolic identities accepted by name.</span>
+<span class="sd">    :return: Parsed symbolic expression or comparison.</span>
+<span class="sd">    :raises SyntaxError: If ``expression_text`` is not valid Python expression syntax.</span>
+<span class="sd">    :raises ValueError: If the expression uses unsupported syntax or identities.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">expression_tree</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">expression_text</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eval&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_ast_to_symbolic</span><span class="p">(</span><span class="n">expression_tree</span><span class="p">,</span> <span class="n">symbol_namespace</span><span class="p">)</span></div>
@@ -2885,12 +2923,33 @@
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic.get_symbolic_parser_function_names">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_symbolic_parser_function_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the public function names accepted by :func:`string_to_symbolic`.</span>
+<span class="sd">    Return every public function accepted by :func:`string_to_symbolic`.</span>
 
-<span class="sd">    :return:</span>
+<span class="sd">    :return: Detached ordered list of unary and binary function names.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">function_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_symbolic_parser_function_names_internal</span><span class="p">()</span>
+    <span class="n">function_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_symbolic_parser_unary_function_names_internal</span><span class="p">()</span>
+    <span class="n">function_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_get_symbolic_parser_binary_function_names_internal</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">function_names</span></div>
+
+
+
+<div class="viewcode-block" id="get_symbolic_parser_function_arity">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic.get_symbolic_parser_function_arity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_symbolic_parser_function_arity</span><span class="p">(</span><span class="n">function_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the positional arity of one public symbolic parser function.</span>
+
+<span class="sd">    :param function_name: Function name obtained from symbolic source text.</span>
+<span class="sd">    :return: Required positional argument count, or ``None`` when unsupported.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unary_function_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_symbolic_parser_unary_function_names_internal</span><span class="p">()</span>
+    <span class="n">binary_function_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_symbolic_parser_binary_function_names_internal</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">function_name</span> <span class="ow">in</span> <span class="n">unary_function_names</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">function_name</span> <span class="ow">in</span> <span class="n">binary_function_names</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">result</span></div>
 
 
 
@@ -2942,6 +3001,7 @@
     <span class="s2">&quot;symbolic_to_string&quot;</span><span class="p">,</span>
     <span class="s2">&quot;string_to_symbolic&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_symbolic_parser_function_names&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_symbolic_parser_function_arity&quot;</span><span class="p">,</span>
     <span class="s2">&quot;hard_sat&quot;</span><span class="p">,</span>
     <span class="s2">&quot;f_exc&quot;</span><span class="p">,</span>
     <span class="s1">&#39;expression2numba&#39;</span><span class="p">,</span>

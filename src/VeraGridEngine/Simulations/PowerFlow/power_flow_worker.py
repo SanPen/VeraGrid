@@ -61,6 +61,19 @@ def _get_generator_q_for_split(nc: NumericalCircuit, V: CxVec) -> Vec:
     return q0_gen
 
 
+def voltage_guess_is_usable(V: CxVec) -> bool:
+    """
+    Check whether a voltage guess can safely seed nonlinear sparse solvers.
+
+    :param V: Voltage vector.
+    :return: True if the voltage vector is finite and numerically bounded.
+    """
+
+    usable: bool = bool(np.all(np.isfinite(V)) and np.all(np.abs(V) < 1.0e6))
+
+    return usable
+
+
 def __solve_island_complete_support(nc: NumericalCircuit,
                                     indices: SimulationIndices,
                                     options: PowerFlowOptions,
@@ -137,6 +150,12 @@ def __solve_island_complete_support(nc: NumericalCircuit,
         return solution, report
 
     else:
+        if voltage_guess_is_usable(V=V0):
+            V0 = V0
+        else:
+            logger.add_warning("Ignoring unusable power flow voltage guess")
+            V0 = nc.bus_data.Vbus
+
         final_solution = NumericPowerFlowResults(V=V0,
                                                  converged=False,
                                                  norm_f=1e200,
@@ -278,8 +297,12 @@ def __solve_island_complete_support(nc: NumericalCircuit,
             else:
                 pass
 
+            solution_is_usable: bool = bool(np.isfinite(solution.norm_f)
+                                            and np.all(np.isfinite(solution.V))
+                                            and np.all(np.abs(solution.V) < 1.0e6))
+
             # record the method used, if it improved the solution
-            if abs(solution.norm_f) < abs(final_solution.norm_f):
+            if solution_is_usable and abs(solution.norm_f) < abs(final_solution.norm_f):
                 report.add(method=solver_type,
                            converged=solution.converged,
                            error=solution.norm_f,
@@ -405,6 +428,11 @@ def __solve_island_limited_support(island: NumericalCircuit,
         return solution, report
 
     else:
+        if voltage_guess_is_usable(V=V0):
+            V0 = V0
+        else:
+            logger.add_warning("Ignoring unusable power flow voltage guess")
+            V0 = island.bus_data.Vbus
 
         adm = island.get_admittance_matrices()
 
@@ -442,39 +470,41 @@ def __solve_island_limited_support(island: NumericalCircuit,
             if solver_type == SolverType.HELM:
                 adms = island.get_series_admittance_matrices()
 
-                solution = pflw.helm_dpr(nc=island,
-                                         Ybus=adm.Ybus,
-                                         Yf=adm.Yf,
-                                         Yt=adm.Yt,
-                                         Yshunt_bus=adm.Yshunt_bus,
-                                         Yseries=adms.Yseries,
-                                         V0=V0,
-                                         S0=Sbase_plus_hvdc,
-                                         Ysh0=adms.Yshunt,
-                                         pq=indices.pq,
-                                         pv=indices.pv,
-                                         vd=indices.vd,
-                                         no_slack=indices.no_slack,
-                                         tolerance=options.tolerance,
-                                         max_coefficients=options.max_iter,
-                                         use_pade=False,
-                                         use_classical_germ=False,
-                                         control_q=options.control_Q,
-                                         pqv=indices.pqv,
-                                         p=indices.p,
-                                         Qmin=Qmin,
-                                         Qmax=Qmax,
-                                         control_discrete_shunts=np.any(
-                                             island.shunt_data.control_mode_int == ShuntControlMode.Discrete.idx()
-                                         ),
-                                         control_qv_droop=np.any(
-                                             island.generator_data.control_mode_int == GeneratorControlMode.QVDroop.idx()
-                                         ),
-                                         distributed_slack=options.distributed_slack,
-                                         bus_installed_power=island.bus_data.installed_power,
-                                         controls_tol=options.controls_start_tolerance,
-                                         verbose=options.verbose,
-                                         logger=logger)
+                solution = pflw.helm_dpr(
+                    nc=island,
+                    Ybus=adm.Ybus,
+                    Yf=adm.Yf,
+                    Yt=adm.Yt,
+                    Yshunt_bus=adm.Yshunt_bus,
+                    Yseries=adms.Yseries,
+                    V0=V0,
+                    S0=Sbase_plus_hvdc,
+                    Ysh0=adms.Yshunt,
+                    pq=indices.pq,
+                    pv=indices.pv,
+                    vd=indices.vd,
+                    pqv=indices.pqv,
+                    p=indices.p,
+                    no_slack=indices.no_slack,
+                    tolerance=options.tolerance,
+                    max_coefficients=options.max_iter,
+                    use_pade=False,
+                    use_classical_germ=not options.use_stored_guess,
+                    control_q=options.control_Q,
+                    Qmin=Qmin,
+                    Qmax=Qmax,
+                    control_discrete_shunts=np.any(
+                        island.shunt_data.control_mode_int == ShuntControlMode.Discrete.idx()
+                    ),
+                    control_qv_droop=np.any(
+                        island.generator_data.control_mode_int == GeneratorControlMode.QVDroop.idx()
+                    ),
+                    distributed_slack=options.distributed_slack,
+                    bus_installed_power=island.bus_data.installed_power,
+                    controls_tol=options.controls_start_tolerance,
+                    verbose=options.verbose,
+                    logger=logger
+                )
 
             # type DC
             elif solver_type == SolverType.Linear:
@@ -700,8 +730,12 @@ def __solve_island_limited_support(island: NumericalCircuit,
             else:
                 pass
 
+            solution_is_usable: bool = bool(np.isfinite(solution.norm_f)
+                                            and np.all(np.isfinite(solution.V))
+                                            and np.all(np.abs(solution.V) < 1.0e6))
+
             # record the method used, if it improved the solution
-            if abs(solution.norm_f) < abs(final_solution.norm_f):
+            if solution_is_usable and abs(solution.norm_f) < abs(final_solution.norm_f):
                 report.add(method=solver_type,
                            converged=solution.converged,
                            error=solution.norm_f,
@@ -818,6 +852,13 @@ def __multi_island_pf_nc_complete_support(nc: NumericalCircuit,
                 hvdc_idx=island.hvdc_data.original_idx,
                 vsc_idx=island.vsc_data.original_idx
             )
+
+            # TODO: SANPEN: This must be inside apply_from_island, looks like fucking AI garbage
+            # Preserve the numerical bus modes actually used by this island,
+            # including any automatically promoted angular reference.
+            results.bus_types[island.bus_data.original_idx] = (
+                island.bus_data.bus_types
+            )
             results.convergence_reports.append(report)
 
         else:
@@ -908,6 +949,11 @@ def __multi_island_pf_nc_limited_support(nc: NumericalCircuit,
                 hvdc_idx=island.hvdc_data.original_idx,
                 vsc_idx=island.vsc_data.original_idx
             )
+            # Preserve the numerical bus modes actually used by this island,
+            # including any automatically promoted angular reference.
+            results.bus_types[island.bus_data.original_idx] = (
+                island.bus_data.bus_types
+            )
             results.convergence_reports.append(report)
 
         else:
@@ -955,9 +1001,17 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         )
         V0 = results_0.voltage
     else:
-        V0 = nc.bus_data.Vbus if V_guess is None else V_guess[nc.bus_data.original_idx]
+        if V_guess is None:
+            V0 = nc.bus_data.Vbus
+        else:
+            V0 = V_guess[nc.bus_data.original_idx]
+            if voltage_guess_is_usable(V=V0):
+                V0 = V0
+            else:
+                logger.add_warning("Ignoring unusable power flow voltage guess")
+                V0 = nc.bus_data.Vbus
 
-    if nc.active_branch_data.any_pf_control:
+    if nc.active_branch_data.any_pf_control and options.solver_type != SolverType.HELM:
 
         results = __multi_island_pf_nc_complete_support(
             nc=nc,
@@ -993,7 +1047,9 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         q0_gen = _get_generator_q_for_split(nc=nc, V=V_for_q)
 
         vm_abs: Vec = np.abs(results.voltage)
-        slack_bus_mask: np.ndarray = (nc.bus_data.bus_types == BusMode.Slack_tpe.value)
+        slack_bus_mask: np.ndarray = (
+                results.bus_types == BusMode.Slack_tpe.value
+        )
         fixed_load_bus: CxVec = (
                 nc.load_data.get_injections_per_bus()
                 + results.voltage * np.conj(
@@ -1037,6 +1093,7 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             v_ctrl_val_gen=GeneratorControlMode.V.idx(),
             qv_droop_val_gen=GeneratorControlMode.QVDroop.idx(),
             Vm=vm_abs,
+            enforce_q_limits=options.control_Q,
             atol=1e-12,
         )
 
@@ -1054,23 +1111,6 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             Qmax_batt=nc.battery_data.qmax,
             batt_status=nc.battery_data.active,
             Q0_batt=results.battery_q,
-            atol=1e-12,
-        )
-
-        results.gen_p, results.battery_p = split_slack_bus_quantity_between_generators_and_batteries(
-            Qbus=results.Sbus.real,
-            Qfixed_bus=fixed_non_generator_bus.real,
-            slack_bus_mask=slack_bus_mask,
-            gen_bus_idx=nc.generator_data.bus_idx,
-            Qmin_gen=nc.generator_data.pmin,
-            Qmax_gen=nc.generator_data.pmax,
-            gen_status=nc.generator_data.active,
-            Q0_gen=nc.generator_data.p,
-            batt_bus_idx=nc.battery_data.bus_idx,
-            Qmin_batt=nc.battery_data.pmin,
-            Qmax_batt=nc.battery_data.pmax,
-            batt_status=nc.battery_data.active,
-            Q0_batt=nc.battery_data.p,
             atol=1e-12,
         )
 
@@ -1101,6 +1141,25 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             results.gen_p = nc.generator_data.p
             results.battery_p = nc.battery_data.p
 
+        # Reference generators absorb the final solved residual after all
+        # non-reference active-power allocations have been established.
+        results.gen_p, results.battery_p = split_slack_bus_quantity_between_generators_and_batteries(
+            Qbus=results.Sbus.real,
+            Qfixed_bus=fixed_non_generator_bus.real,
+            slack_bus_mask=slack_bus_mask,
+            gen_bus_idx=nc.generator_data.bus_idx,
+            Qmin_gen=nc.generator_data.pmin,
+            Qmax_gen=nc.generator_data.pmax,
+            gen_status=nc.generator_data.active,
+            Q0_gen=results.gen_p,
+            batt_bus_idx=nc.battery_data.bus_idx,
+            Qmin_batt=nc.battery_data.pmin,
+            Qmax_batt=nc.battery_data.pmax,
+            batt_status=nc.battery_data.active,
+            Q0_batt=results.battery_p,
+            atol=1e-12,
+        )
+
         return results
 
     else:
@@ -1121,7 +1180,9 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         q0_gen = _get_generator_q_for_split(nc=nc, V=V_for_q)
 
         vm_abs: Vec = np.abs(results.voltage)
-        slack_bus_mask: np.ndarray = (nc.bus_data.bus_types == BusMode.Slack_tpe.value)
+        slack_bus_mask: np.ndarray = (
+                results.bus_types == BusMode.Slack_tpe.value
+        )
         fixed_load_bus: CxVec = (
                 nc.load_data.get_injections_per_bus()
                 + results.voltage * np.conj(
@@ -1163,6 +1224,7 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             v_ctrl_val_gen=GeneratorControlMode.V.idx(),
             qv_droop_val_gen=GeneratorControlMode.QVDroop.idx(),
             Vm=vm_abs,
+            enforce_q_limits=options.control_Q,
             atol=1e-12,
         )
 

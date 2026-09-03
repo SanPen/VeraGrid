@@ -279,9 +279,9 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         phi_v_ref: vf.add_const(None),
         Ipk_ref: vf.add_const(None),
         phi_ref: vf.add_const(None),
-        P_ref: vf.add_const(None),
-        Q_ref: vf.add_const(None),
-        V_ref: vf.add_const(None),
+        P_ref: Pe_init_expr,
+        Q_ref: Qe_init_expr,
+        V_ref: Epk_init_expr,
     })
 
     # Initialization equations.
@@ -317,9 +317,6 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         Pe: Pe_init_expr,
         Qe: Qe_init_expr,
 
-        P_ref: Pe_init_expr,
-        Q_ref: Qe_init_expr,
-        V_ref: Epk_init_expr,
     }
 
     # Differential initialization equations.

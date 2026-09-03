@@ -80,6 +80,7 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
         """
 
         self.tic()
+        self.report_text("Compiling and configuring...")
         self.__cancel__ = False
         self.report_text('Computing TS linear analysis...')
         lin_ts = LinearAnalysisTs(grid=self.grid,

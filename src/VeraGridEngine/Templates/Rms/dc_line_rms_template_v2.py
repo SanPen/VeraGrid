@@ -25,12 +25,12 @@ class DcLineRmsTemplateV2(TemplateDefinition):
     __slots__ = ()
 
     def __init__(self, vf: VarFactory) -> None:
-        """Define the parameters exposed by the dynamic model editor.
+        """Define the structural options exposed by the dynamic editor.
 
         The static :class:`DcLine` device provides the resistance through
-        ``dc_line_r_pu`` when the template is assigned. Inductance is retained
-        as a dynamic-model parameter because the static device has no matching
-        inductance property.
+        ``dc_line_r_pu`` when the template is assigned. Inductance belongs to
+        ``event_dict`` and is edited as a dynamic parameter after construction,
+        rather than being passed as a structural builder option.
 
         :param vf: Variable factory that owns the generated RMS variables.
         :return: None.
@@ -38,20 +38,6 @@ class DcLineRmsTemplateV2(TemplateDefinition):
         super().__init__(
             vf,
             params=list((
-                TemplateProp(
-                    name="resistance",
-                    units="p.u.",
-                    descr="Series DC-line resistance used when no static device value is assigned.",
-                    tpe=float,
-                    value=0.01,
-                ),
-                TemplateProp(
-                    name="inductance",
-                    units="p.u.",
-                    descr="Series DC-line inductance associated with the current state.",
-                    tpe=float,
-                    value=0.05,
-                ),
                 TemplateProp(
                     name="name",
                     units="",
@@ -67,22 +53,16 @@ class DcLineRmsTemplateV2(TemplateDefinition):
 
         :return: Configured explicit-state RMS DC-line template.
         """
-        resistance: float = self.get_value("resistance")
-        inductance: float = self.get_value("inductance")
         name: str = self.get_value("name")
         return build_dc_line_rms_v2(
             vfactory=self.vf,
             name=name,
-            resistance=resistance,
-            inductance=inductance,
         )
 
 
 def build_dc_line_rms_v2(
         vfactory: VarFactory,
         name: str = "DC line",
-        resistance: float = 0.01,
-        inductance: float = 0.05,
 ) -> RmsModelTemplate:
     """Build a series R-L DC line with current as an ordinary RMS state.
 
@@ -97,9 +77,6 @@ def build_dc_line_rms_v2(
 
     :param vfactory: Variable factory used to construct the symbolic model.
     :param name: Root block and template display name.
-    :param resistance: Default series resistance in p.u.; assignment to a
-        :class:`DcLine` replaces it through ``dc_line_r_pu``.
-    :param inductance: Series inductance in p.u.
     :return: Reusable RMS template for a static DC-line device.
     """
     # Create every interface variable with its authoritative power-flow
@@ -121,10 +98,14 @@ def build_dc_line_rms_v2(
     # electrical terminals at the root level for device-to-bus connections.
     equations_block: Block = Block(
         name="R-L DC line equations",
-        parameters=dict((
-            (resistance_parameter, vfactory.add_const(float(resistance))),
-            (inductance_parameter, vfactory.add_const(float(inductance))),
-        )),
+        # Resistance has no template fallback: the RMS assembler must provide
+        # the static DcLine.R_corrected value through api_obj_mapping. A null
+        # constant registers the required compile-time parameter without
+        # inventing an independent dynamic-model value.
+        parameters=dict(((resistance_parameter, vfactory.add_const(None)),)),
+        # Inductance has no static-device counterpart. Keep it as an editable
+        # runtime parameter whose default belongs exclusively to this model.
+        event_dict=dict(((inductance_parameter, vfactory.add_const(0.05)),)),
         state_vars=list((current_from,)),
         state_eqs=list((current_rhs,)),
         algebraic_vars=list((power_from, power_to)),

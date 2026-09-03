@@ -205,6 +205,7 @@ class StochasticPowerFlowDriver(DriverTemplate):
         :return: ``None``.
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self.__cancel__ = False
 
         if self.simulation_type == StochasticPowerFlowType.MonteCarlo:

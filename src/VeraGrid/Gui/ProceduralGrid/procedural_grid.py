@@ -95,6 +95,16 @@ class ProceduralGridWindow(QtWidgets.QDialog):
         # method currently shown in the combo box at construction time.
         self._on_method_changed()
 
+    def done(self, result: int) -> None:
+        """
+        Release plot resources before the modal dialog closes.
+
+        :param result: Qt dialog result code.
+        :return: None.
+        """
+        self.ui.plotWidget.dispose()
+        QtWidgets.QDialog.done(self, result)
+
     def _invalidate_preview(self) -> None:
         """
         Discard the previously computed preview state and disable Accept until the

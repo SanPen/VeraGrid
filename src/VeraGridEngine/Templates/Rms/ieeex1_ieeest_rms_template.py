@@ -437,6 +437,7 @@ def get_ieeex1_rms_template(
     template.block.in_vars = list((vm_var, omega_var, stabilizer_var))
     template.block.out_vars = list((vf_var, vi_var))
     template.block.name = name
+    template.comment = 'Generator IEEEX1 exciter RMS model'
     return template
 
 
@@ -564,6 +565,7 @@ def get_ieeest_rms_template(
     template.block.in_vars = list((vm_var, omega_var, te_var, tm_var, frequency_var))
     template.block.out_vars = list((stabilizer_output,))
     template.block.name = name
+    template.comment = 'Generator IEEEST stabilizer RMS model'
     return template
 
 
@@ -641,4 +643,5 @@ def get_complete_genrou_ieeex1_ieeest_rms_template(
     template.block.in_vars = list((machine_block.in_vars[0], machine_block.in_vars[1]))
     template.block.out_vars = list((machine_block.out_vars[0], machine_block.out_vars[1]))
     template.block.name = name
+    template.comment = 'Complete generator GENROU with IEEEX1, IEEEST, and TGOV1N RMS model'
     return template

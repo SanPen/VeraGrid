@@ -23,6 +23,10 @@ from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import (init
                                                                             build_rms_single_equation_compiler)
 from VeraGridEngine.Simulations.Rms.initialization import init_pseudo_transient
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import (
+    _resolve_rms_constant_parameter_value,
+    _resolve_rms_runtime_parameter_expression,
+)
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
@@ -311,17 +315,21 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                  options: RmsOptions,
                  pf_results: PowerFlowResults,
                  progress_signal: DummySignal | None = None,
-                 progress_text: DummySignal | None = None, ):
+                 progress_text: DummySignal | None = None,
+                 logger: Logger | None = None):
         """
 
-        :param grid:
-        :param options:
-        :param pf_results:
+        :param grid: MultiCircuit
+        :param options: RmsOptions
+        :param pf_results: PowerFlowResults
+        :param progress_signal: DummySignal
+        :param progress_text: DummySignal
+        :param logger: Logger
         """
         super().__init__(progress_signal=progress_signal,
                          progress_text=progress_text)
 
-        self.logger = Logger()
+        self.logger = logger
         self.grid: MultiCircuit = grid
         self.power_flow_results: PowerFlowResults = pf_results
         self.Sf = self.power_flow_results.Sf / self.grid.Sbase
@@ -541,9 +549,12 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         for branch_num, elm in enumerate(self.grid.get_branches_iter(add_vsc=False, add_hvdc=False, add_switch=True)):
 
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
 
                 assign_static_api_object_mapping_for_device(grid=self.grid,
@@ -668,9 +679,12 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         # Populating VSCs init guess
         for i, elm in enumerate(self.grid.get_vsc()):
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
                 mdl = elm.rms_model
 
@@ -691,18 +705,28 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 pt_init = St_vsc[i].real
                 qt_init = St_vsc[i].imag
                 vm_t = np.abs(self.power_flow_results.voltage[t])
-                im_init = np.sqrt(pt_init * pt_init + qt_init * qt_init) / (vm_t + 1e-12)
+                im_init: float = float(
+                    np.sqrt(pt_init * pt_init + qt_init * qt_init)
+                    / (vm_t + 1e-12)
+                )
 
                 if i < len(self.power_flow_results.It_vsc):
-                    it_mag = np.abs(self.power_flow_results.It_vsc[i]) / self.grid.Sbase
+                    # Power-flow VSC currents already use the system per-unit
+                    # base expected by the RMS physical-terminal equations.
+                    it_mag: float = float(
+                        np.abs(self.power_flow_results.It_vsc[i])
+                    )
                     if np.isfinite(it_mag) and it_mag > 0.0:
                         im_init = it_mag
+                    else:
+                        pass
+                else:
+                    pass
 
                 self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, Sf_vsc)
                 self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, pt_init)
                 self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, qt_init)
                 if VarPowerFlowReferenceType.Im in mdl.external_mapping:
-                    im_init = float(np.abs(self.power_flow_results.It_vsc[i]) / self.grid.Sbase)
                     self.set_init_guess(mdl, VarPowerFlowReferenceType.Im, im_init)
                 else:
                     pass
@@ -718,9 +742,12 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         # Populating HVDC init guess (similar to VSCs)
         for i, elm in enumerate(self.grid.get_hvdc()):
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
                 mdl = elm.rms_model
 
@@ -745,9 +772,12 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         for elm in grid.get_vsc():
 
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
 
                 # find init values for the variables of this model
@@ -827,9 +857,12 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         for elm in grid.get_injection_devices_iter():
 
             if elm.rms_model.empty():
-                self.logger.add_error("No RMS model",
-                                      device_class=elm.device_type.value,
-                                      device=elm.name)
+                if self.logger is not None:
+                    self.logger.add_error("No RMS model",
+                                          device_class=elm.device_type.value,
+                                          device=elm.name)
+                else:
+                    pass
             else:
                 bus_index = bus_dict[elm.bus]
 
@@ -944,7 +977,10 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
         total_init_explicit_time += time.perf_counter() - t0
         # print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
-        self.logger.add_info("Total time explicit initialization", value=total_init_explicit_time)
+        if self.logger is not None:
+            self.logger.add_info("Total time explicit initialization", value=total_init_explicit_time)
+        else:
+            pass
         if self.progress_signal is not None:
             self.progress_signal.emit(10)
 
@@ -980,7 +1016,10 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         ac_virtual_buses = [elm.bus_to.idtag for elm in grid.get_vsc()]
         for i, elm in enumerate(self.grid.buses):
             if not P_used[i] and not Q_used[i]:
-                self.logger.add_error("Isolated bus", value=i)
+                if self.logger is not None:
+                    self.logger.add_error("Isolated bus", value=i)
+                else:
+                    pass
             else:
                 if elm.is_dc:
                     self._algebraic_eqs.append(P[i])
@@ -2079,6 +2118,15 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             self._n_vars += 1
 
         for ep, const in mdl.parameters.items():
+            resolved_parameter_value: Const = _resolve_rms_constant_parameter_value(
+                device=elm,
+                root_block=elm.rms_model,
+                owner_block=mdl,
+                parameter=ep,
+                declared_value=const,
+                static_parameter_values=self._static_parameters_values_mapping,
+            )
+
             # if ep.name == "g":
             #     print("")
             # if ep.uid in self._uid2idx_params:
@@ -2099,11 +2147,10 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
             self._uid2idx_params[ep.uid] = self._n_params
             self._constant_parameters.append(ep)
-            # search value in self._static_parameters_values_mapping
-            if ep in self._static_parameters_values_mapping:
-                self._parameters_values.append(self._static_parameters_values_mapping[ep])
-            else:
-                self._parameters_values.append(const)
+            # Register only the already validated concrete value. This keeps a
+            # missing static mapping from reaching the numerical compiler as a
+            # late, context-free ``None`` conversion error.
+            self._parameters_values.append(resolved_parameter_value)
             self._n_params += 1
 
         # m is for variable parameters
@@ -2111,6 +2158,14 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
         # Todo: function inside a function, refactor this!
         def _register_event_parameter(ep: Var, eq: Expr | Const, runtime_eq: Expr | Const | None = None) -> None:
+            effective_eq: Expr | Const = _resolve_rms_runtime_parameter_expression(
+                device=elm,
+                owner_block=mdl,
+                parameter=ep,
+                declared_expression=eq,
+                is_discrete_parameter=ep.uid in self._discrete_event_parameter_uids,
+            )
+
             if ep.uid in self._uid2idx_event_params:
                 raise ValueError(f"Event parameter '{ep.name}' (uid={ep.uid}) is already registered in the system. "
                                  f"Previous device may have created a duplicate event parameter.")
@@ -2126,16 +2181,6 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             self._compiler_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
             self._alias_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
             self._uid2idx_event_params[ep.uid] = self._n_event_params
-
-            effective_eq: Expr | Const = eq
-            if isinstance(eq, Const) and eq.value is None:
-                init_eq_for_ep: Expr | Const | None = None
-                for init_var, init_eq in mdl.init_eqs.items():
-                    if init_var.uid == ep.uid:
-                        init_eq_for_ep = init_eq
-                        break
-                if init_eq_for_ep is not None:
-                    effective_eq = init_eq_for_ep
 
             self._variable_parameters.append(ep)
             self._event_parameters_eqs0.append(effective_eq)

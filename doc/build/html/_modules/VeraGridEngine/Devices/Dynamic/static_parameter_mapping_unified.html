@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -1473,6 +1474,7 @@
                                                     <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">vsc_kdp_pu</span><span class="p">,</span>
                                                     <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">vsc_min_ac_voltage_pu</span><span class="p">,</span>
                                                     <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">dc_line_r_pu</span><span class="p">,</span>
+                                                    <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">dc_line_l_pu_seconds</span><span class="p">,</span>
                                                     <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">dc_line_length_km</span><span class="p">,</span>
                                                     <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_rated_power_mva</span><span class="p">,</span>
                                                     <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">transformer_winding1_rated_voltage_ll_kv</span><span class="p">,</span>
@@ -3269,15 +3271,15 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assign static VSC parameters exposed by ``mdl.api_obj_mapping``.</span>
 
-<span class="sd">    PF-derived quantities such as converter initial active power or converter</span>
-<span class="sd">    losses are intentionally not assigned here. They are initialization data, not</span>
-<span class="sd">    static API-object data.</span>
+<span class="sd">    Loss coefficients are static device data, unlike the operating-point losses</span>
+<span class="sd">    and terminal powers that must be obtained from power-flow initialization.</span>
 
-<span class="sd">    :param problem_mapping:</span>
+<span class="sd">    :param problem_mapping: Destination for resolved constant parameters.</span>
 <span class="sd">    :param grid: Static network model.</span>
 <span class="sd">    :param vsc: VSC device.</span>
-<span class="sd">    :param mdl: VSC EMT block.</span>
+<span class="sd">    :param mdl: VSC RMS or EMT block exposing the requested static mappings.</span>
 <span class="sd">    :param logger: Optional logger.</span>
+<span class="sd">    :param direct_assigned_keys: Keys already handled by the direct property mapper.</span>
 <span class="sd">    :return: None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">vsc</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -3295,6 +3297,34 @@
         <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
         <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">omega_base</span><span class="p">,</span>
         <span class="n">value</span><span class="o">=</span><span class="n">omega_base</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+        <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># The direct mapper deliberately delegates these coefficients to the VSC</span>
+    <span class="c1"># handler. Resolve the actual device values, including zero, without adding</span>
+    <span class="c1"># template fallbacks or changing the dynamic event parameters.</span>
+    <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+        <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">alpha1</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">vsc</span><span class="o">.</span><span class="n">alpha1</span><span class="p">),</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+        <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+        <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">alpha2</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">vsc</span><span class="o">.</span><span class="n">alpha2</span><span class="p">),</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+        <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+        <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">alpha3</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">vsc</span><span class="o">.</span><span class="n">alpha3</span><span class="p">),</span>
         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
         <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
         <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
@@ -3403,22 +3433,42 @@
         <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
-        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
-        <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">g</span><span class="p">,</span>
-        <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">R</span> <span class="o">/</span> <span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">R</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">transformer</span><span class="o">.</span><span class="n">X</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span>
-        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
-        <span class="n">device_name</span><span class="o">=</span><span class="n">transformer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
+    <span class="n">needs_series_admittance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">g</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">api_obj_mapping</span>
+        <span class="ow">or</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">b</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">api_obj_mapping</span>
     <span class="p">)</span>
-    <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
-        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
-        <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
-        <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="n">transformer</span><span class="o">.</span><span class="n">X</span> <span class="o">/</span> <span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">R</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">transformer</span><span class="o">.</span><span class="n">X</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)),</span>
-        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
-        <span class="n">device_name</span><span class="o">=</span><span class="n">transformer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">needs_series_admittance</span><span class="p">:</span>
+        <span class="n">series_impedance_square</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="n">transformer</span><span class="o">.</span><span class="n">R</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">transformer</span><span class="o">.</span><span class="n">X</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">series_impedance_square</span> <span class="o">&gt;</span> <span class="mf">1.0e-24</span><span class="p">:</span>
+            <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+                <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">g</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">R</span> <span class="o">/</span> <span class="n">series_impedance_square</span><span class="p">),</span>
+                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="n">transformer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+                <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">b</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="n">transformer</span><span class="o">.</span><span class="n">X</span> <span class="o">/</span> <span class="n">series_impedance_square</span><span class="p">),</span>
+                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="n">transformer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">add_static_mapping_warning</span><span class="p">(</span>
+                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                <span class="n">device_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Transformer series admittance requires non-zero impedance.&quot;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">series_impedance_square</span><span class="p">,</span>
+                <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;R squared plus X squared greater than 1e-24&quot;</span><span class="p">,</span>
+                <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;R/X&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
     <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
         <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
         <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">bsh</span><span class="p">,</span>

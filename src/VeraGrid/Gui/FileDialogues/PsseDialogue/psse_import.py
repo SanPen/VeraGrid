@@ -6,7 +6,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from PySide6 import QtWidgets
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_import_gui import Ui_PsseImportDialog
-from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGridEngine.IO.file_open import FileOpenOptions
 from VeraGridEngine.basic_structures import Logger
 
@@ -33,7 +32,6 @@ class PsseImportDialogue(QtWidgets.QDialog):
         self.app = app
 
         self.logger = Logger()
-        self.logs_dialogue: LogsDialogue | None = None
 
         self.options = options
 

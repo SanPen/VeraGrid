@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RMS device templates &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>RMS device templates &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,14 +15,14 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="2W Transformer" href="2w_transformer.html" />
-    <link rel="prev" title="Writing DAE models in VeraGrid" href="../../dae_block_authoring.html" /> 
+    <link rel="prev" title="Dynamic physical network contracts" href="../../dynamic_physical_network_contracts.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modelling.html">📐 Grid Modelling</a></li>
@@ -143,21 +144,34 @@
   <section class="tex2jax_ignore mathjax_ignore" id="rms-device-templates">
 <h1>RMS device templates<a class="headerlink" href="#rms-device-templates" title="Link to this heading"></a></h1>
 <p>These templates model devices in the root-mean-square phasor domain. Select a template to inspect its purpose, equations, parameters, initialization, and interfaces.</p>
+<p>The <a class="reference internal" href="hvdc_components.html"><span class="std std-doc">explicit-state RMS converter blocks</span></a> reference covers the complete HVDC GFL VSC, its nine independently wireable components, and the R-L DC-line model. It includes the selectable Vdc/P and Qac/Vac control modes and the manual-assembly connections.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="2w_transformer.html">2W Transformer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="battery.html">Battery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="complete_generator.html">Complete generator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="converter.html">Converter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_line.html">DC line</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distributed_pv.html">Distributed PV</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exciter.html">Exciter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="genqec.html">GENQEC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="genrou_genrow.html">GENROU/GENROW</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gfm_vsc.html">GFM VSC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="governor.html">Governor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hvdc_components.html">Explicit-state RMS converter blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hvdc_vsc_gfl.html">Complete GFL VSC HVDC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="line.html">Line</a></li>
 <li class="toctree-l1"><a class="reference internal" href="load.html">Load</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stabilizer.html">Stabilizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_active_control.html">Vdc / P control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_current_limiter.html">Current limiter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_dc_link.html">DC-link capacitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_electrical.html">Converter electrical equations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_pll.html">PLL explicit PI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_reactive_control.html">Qac / Vac control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_terminal_power.html">VSC terminal power equations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_vd_hat.html">d-axis current PI controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vsc_vq_hat.html">q-axis current PI controller</a></li>
 </ul>
 </div>
 </section>
@@ -166,7 +180,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../../dae_block_authoring.html" class="btn btn-neutral float-left" title="Writing DAE models in VeraGrid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../dynamic_physical_network_contracts.html" class="btn btn-neutral float-left" title="Dynamic physical network contracts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="2w_transformer.html" class="btn btn-neutral float-right" title="2W Transformer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

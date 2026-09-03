@@ -12,7 +12,6 @@ from PySide6 import QtWidgets
 import VeraGrid.Gui.gui_functions as gf
 import VeraGrid.Session.file_handler as filedrv
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_export_gui import Ui_PsseExportDialog
-from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import FileType, PsseTopologyExportMode, PsseExportMode
 
@@ -42,7 +41,6 @@ class PsseExportDialogue(QtWidgets.QDialog):
         self.app: IoMain = app
 
         self.logger: Logger = Logger()
-        self.logs_dialogue: LogsDialogue | None = None
 
         self.psse_export_modes: list[PsseExportMode] = [
             PsseExportMode.SingleFile,

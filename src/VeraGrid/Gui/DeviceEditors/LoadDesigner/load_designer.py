@@ -634,6 +634,16 @@ class LoadDesigner(QtWidgets.QDialog):
 
         self.generate_from_components()
 
+    def done(self, result: int) -> None:
+        """
+        Release plot resources before the modal dialog closes.
+
+        :param result: Qt dialog result code.
+        :return: None.
+        """
+        self.ui.plotwidget.dispose()
+        QtWidgets.QDialog.done(self, result)
+
     def msg(self, text: str, title: str = "Warning") -> None:
         """
         Show a message box.

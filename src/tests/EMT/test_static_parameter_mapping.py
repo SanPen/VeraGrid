@@ -529,7 +529,13 @@ def test_transformer_missing_keys_are_skipped() -> None:
     grid: SimpleNamespace = _make_grid(fbase=50.0)
     bus_hv: Bus = Bus(name="hv", Vnom=110.0)
     bus_lv: Bus = Bus(name="lv", Vnom=20.0)
-    transformer: Transformer2W = Transformer2W(name="xfmr_skip", bus_from=bus_hv, bus_to=bus_lv)
+    transformer: Transformer2W = Transformer2W(
+        name="xfmr_skip",
+        bus_from=bus_hv,
+        bus_to=bus_lv,
+        r=0.0,
+        x=0.0,
+    )
 
     block: Block = _make_block(dict())
 

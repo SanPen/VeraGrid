@@ -505,14 +505,15 @@
         <span class="n">vq_hat</span><span class="p">:</span> <span class="n">v_q_c</span> <span class="o">-</span> <span class="p">(</span><span class="n">v_q_g</span> <span class="o">+</span> <span class="n">L</span><span class="o">*</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span><span class="o">*</span><span class="n">i_d</span><span class="p">),</span>
     <span class="p">}</span>
     
-    <span class="c1"># Add control-specific initialization</span>
+    <span class="c1"># Each selected control reference owns its power-flow-derived event</span>
+    <span class="c1"># initialization expression.</span>
     <span class="k">if</span> <span class="n">control1</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pac</span><span class="p">,</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Pdc</span><span class="p">]:</span>
-        <span class="n">init_eqs</span><span class="p">[</span><span class="n">P_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span>
+        <span class="n">event_dict</span><span class="p">[</span><span class="n">P_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span>
 
     <span class="k">if</span> <span class="n">control2</span> <span class="o">==</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Qac</span><span class="p">:</span>
-        <span class="n">init_eqs</span><span class="p">[</span><span class="n">Q_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q</span>
+        <span class="n">event_dict</span><span class="p">[</span><span class="n">Q_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q</span>
     <span class="k">elif</span> <span class="n">control2</span> <span class="o">==</span> <span class="n">ConverterControlType</span><span class="o">.</span><span class="n">Vm_ac</span><span class="p">:</span>
-        <span class="n">init_eqs</span><span class="p">[</span><span class="n">Vm_ac_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_q_g</span>
+        <span class="n">event_dict</span><span class="p">[</span><span class="n">Vm_ac_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_q_g</span>
         <span class="c1"># For AC voltage control, initialize i_d_ref based on initial reactive power</span>
         <span class="n">init_eqs</span><span class="p">[</span><span class="n">i_d_ref</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">Q</span> <span class="o">/</span> <span class="n">v_q_g</span>
 

@@ -16,7 +16,7 @@ from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.Utils.Filtering.results_table_filtering import FilterResultsTable
 
 
-def is_missing_result_value(value: Any) -> bool:
+def is_missing_result_value(value: object) -> bool:
     """
     Check whether a scalar result value should be displayed as an empty cell.
 

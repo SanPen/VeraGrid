@@ -3,12 +3,12 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
-from VeraGridEngine.enumerations import DeviceType, WindingType, ParamPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, TapPhaseControl, TapModuleControl, WindingType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
-from VeraGridEngine.Utils.Symbolic.symbolic import sin, cos
+from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var, sin, cos
 from VeraGridEngine.enumerations import WindingsConnection
 
 
@@ -98,8 +98,12 @@ class TrafoRmsTemplate(RmsModelTemplate):
 
         phase_displacement = 0
         theta_hk = Vaf - Vat
+        # Keep terminal powers in the same semantic order as the RMS branch
+        # root interface.  The Dynamic Editor persists graphical ports by
+        # index, so a different order would silently cross Qf and Pt when the
+        # complete transformer block is connected to its device wrappers.
         block = Block(
-            algebraic_vars=[Pf, Pt, Qf, Qt],
+            algebraic_vars=[Pf, Qf, Pt, Qt],
             algebraic_eqs=[
                 # From side: Pf = Re(Vf * (Yff*Vf + Yft*Vt)*)
                 Pf - ((Vmf ** 2 * (gFe / 2 + gt)) / (m * vtap_f) ** 2 - gt / (m * vtap_f * vtap_t) * Vmf * Vmt * cos(
@@ -117,7 +121,7 @@ class TrafoRmsTemplate(RmsModelTemplate):
                     theta_hk - phi - phase_displacement)),
             ],
             in_vars=[Vmf, Vaf, Vmt, Vat],
-            out_vars = [Pf, Pt, Qf, Qt],
+            out_vars=[Pf, Qf, Pt, Qt],
         )
         block.external_mapping = {
             VarPowerFlowReferenceType.Pf: Pf,
@@ -249,6 +253,152 @@ class TrafoRmsTemplate(RmsModelTemplate):
         self._block.out_vars = block.out_vars
 
 
+class IdealTrafoRmsTemplate(RmsModelTemplate):
+    """Represent an ideal two-winding transformer without a fake impedance."""
+
+    __slots__ = (
+        "tpe",
+        "_block",
+    )
+
+    def __init__(
+            self,
+            vf: VarFactory,
+            name: str = "rms_ideal_trafo_template",
+    ) -> None:
+        """Build the fixed-size polar DAE of an ideal transformer.
+
+        The model preserves the exact voltage-ratio and phase constraints while
+        leaving active and reactive transfer powers to the connected bus
+        balances. This is the finite DAE counterpart of the zero-impedance
+        branch contraction used by the static solver.
+
+        :param vf: Variable factory shared by the owning circuit.
+        :param name: Human-readable template name.
+        :return: None.
+        """
+        super().__init__(name=name)
+        self.tpe: DeviceType = DeviceType.Transformer2WDevice
+        self.comment = 'Transformer two-winding ideal RMS model'
+
+        # Four power-flow variables retain the regular transformer interface so
+        # buses and result reporting do not need a case-specific code path.
+        active_power_from: Var = vf.add_var("Pf")
+        active_power_to: Var = vf.add_var("Pt")
+        reactive_power_from: Var = vf.add_var("Qf")
+        reactive_power_to: Var = vf.add_var("Qt")
+        tap_module: Var = vf.add_var("m")
+        tap_phase: Var = vf.add_var("phi")
+        iron_conductance: Var = vf.add_var("gFe")
+        magnetizing_susceptance: Var = vf.add_var("bmu")
+        voltage_tap_from: Var = vf.add_var("vtap_f")
+        voltage_tap_to: Var = vf.add_var("vtap_t")
+        conduction_status: Var = vf.add_var("u")
+
+        voltage_magnitude_from: Var = vf.add_var(
+            "Vmf",
+            VarPowerFlowReferenceType.Vmf,
+        )
+        voltage_angle_from: Var = vf.add_var(
+            "Vaf",
+            VarPowerFlowReferenceType.Vaf,
+        )
+        voltage_magnitude_to: Var = vf.add_var(
+            "Vmt",
+            VarPowerFlowReferenceType.Vmt,
+        )
+        voltage_angle_to: Var = vf.add_var(
+            "Vat",
+            VarPowerFlowReferenceType.Vat,
+        )
+
+        # Virtual taps convert both terminals to the same internal per-unit
+        # base. The ideal branch then enforces equality without a large-number
+        # admittance approximation that would damage the Newton conditioning.
+        internal_voltage_from: Expr = (
+            voltage_magnitude_from / (tap_module * voltage_tap_from)
+        )
+        internal_voltage_to: Expr = voltage_magnitude_to / voltage_tap_to
+        total_squared_voltage: Expr = (
+            internal_voltage_from ** 2 + internal_voltage_to ** 2
+        )
+        total_active_shunt_power: Expr = (
+            iron_conductance * total_squared_voltage / 2.0
+        )
+        total_reactive_shunt_power: Expr = (
+            -magnetizing_susceptance * total_squared_voltage / 2.0
+        )
+
+        # When closed, two equations conserve transfer power and two impose the
+        # ideal voltage constraints. When open, the same four rows reduce to
+        # independent zero-flow equations, preserving a fixed nonsingular DAE.
+        block: Block = Block(
+            algebraic_vars=[
+                active_power_from,
+                active_power_to,
+                reactive_power_from,
+                reactive_power_to,
+            ],
+            algebraic_eqs=[
+                active_power_from
+                + active_power_to
+                - conduction_status * total_active_shunt_power,
+                reactive_power_from
+                + reactive_power_to
+                - conduction_status * total_reactive_shunt_power,
+                conduction_status * (internal_voltage_from - internal_voltage_to)
+                + (1.0 - conduction_status) * active_power_from,
+                conduction_status
+                * (voltage_angle_from - voltage_angle_to - tap_phase)
+                + (1.0 - conduction_status) * reactive_power_from,
+            ],
+            in_vars=[
+                voltage_magnitude_from,
+                voltage_angle_from,
+                voltage_magnitude_to,
+                voltage_angle_to,
+            ],
+        )
+        block.external_mapping = dict({
+            VarPowerFlowReferenceType.Pf: active_power_from,
+            VarPowerFlowReferenceType.Pt: active_power_to,
+            VarPowerFlowReferenceType.Qf: reactive_power_from,
+            VarPowerFlowReferenceType.Qt: reactive_power_to,
+            VarPowerFlowReferenceType.Vaf: voltage_angle_from,
+            VarPowerFlowReferenceType.Vmf: voltage_magnitude_from,
+            VarPowerFlowReferenceType.Vmt: voltage_magnitude_to,
+            VarPowerFlowReferenceType.Vat: voltage_angle_to,
+        })
+        block.api_obj_mapping = dict({
+            ParamPowerFlowReferenceType.gFe: iron_conductance,
+            ParamPowerFlowReferenceType.bsh: magnetizing_susceptance,
+            ParamPowerFlowReferenceType.tap_module: tap_module,
+            ParamPowerFlowReferenceType.tap_phase: tap_phase,
+            ParamPowerFlowReferenceType.vtap_f: voltage_tap_from,
+            ParamPowerFlowReferenceType.vtap_t: voltage_tap_to,
+        })
+        block.parameters[iron_conductance] = vf.add_const(0.0)
+        block.parameters[magnetizing_susceptance] = vf.add_const(0.0)
+        block.parameters[tap_module] = vf.add_const(1.0)
+        block.parameters[tap_phase] = vf.add_const(0.0)
+        block.parameters[voltage_tap_from] = vf.add_const(1.0)
+        block.parameters[voltage_tap_to] = vf.add_const(1.0)
+        block.event_dict[conduction_status] = vf.add_const(1.0)
+        block.dynamic_model_contract.rms_conduction_status_var_uid = conduction_status.uid
+        block.dynamic_model_contract.rms_ideal_transformer = True
+        # An ideal transformer has no local constitutive equation that fixes
+        # transfer power: the two connected nodal balances determine it. Keep
+        # the power-flow Pf/Pt/Qf/Qt seeds until the global DAE is assembled
+        # instead of applying the underdetermined device-local initializer.
+        block.dynamic_model_contract.skip_device_local_explicit_init = True
+        block.dynamic_model_contract.startup_initial_reduced_polish_var_names = list([
+            "Pf",
+            "Pt",
+            "Qf",
+            "Qt",
+        ])
+        self._block: Block = block
+
 class TrafoPhasorRmsTemplate(RmsModelTemplate):
 
     def __init__(self, vf: VarFactory, name: str = "rms_trafo_phasor_template"):
@@ -355,6 +505,18 @@ def get_transformer2w_rms(vf: VarFactory, use_phasor_template: bool = False):
         return TrafoPhasorRmsTemplate(vf=vf)
     return TrafoRmsTemplate(vf=vf)
 
+
+def get_ideal_transformer2w_rms(
+        vf: VarFactory,
+        name: str = "rms_ideal_trafo_template",
+) -> RmsModelTemplate:
+    """Build the exact zero-series-impedance transformer RMS template.
+
+    :param vf: Variable factory shared by the owning circuit.
+    :param name: Human-readable template name.
+    :return: Ideal-transformer RMS template.
+    """
+    return IdealTrafoRmsTemplate(vf=vf, name=name)
 
 def initialize_trafo_rms(trafo: Transformer2W, vf: VarFactory):
     """

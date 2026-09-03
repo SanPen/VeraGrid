@@ -166,6 +166,7 @@ def get_esdc2a_exciter_rms_template(
     template.block.children.append(block)
     template.block.in_vars = list(block.in_vars)
     template.block.out_vars = list(block.out_vars)
+    template.comment = 'Generator ESDC2A exciter RMS model'
     return template
 
 

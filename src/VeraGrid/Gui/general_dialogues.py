@@ -16,9 +16,12 @@ from PySide6.QtWidgets import (QApplication, QDialog, QTableView, QVBoxLayout, Q
 from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex
 from VeraGridEngine.basic_structures import Logger, IntVec
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
 from VeraGrid.Gui.gui_functions import ComboModel, get_list_model, get_checked_indices, get_chck_list_model
+from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.object_model import ObjectsModel
-from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit, FileType, CGMESVersions
+from VeraGridEngine.enumerations import (FaultType, MethodShortCircuit, PhasesShortCircuit, FileType, CGMESVersions,
+                                         DeviceType)
 
 
 class CenteredDialog(QDialog):
@@ -29,19 +32,30 @@ class CenteredDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-    def showEvent(self, event):
+    def showEvent(self, event: QtGui.QShowEvent) -> None:
         """
 
         :param event:
         :return:
         """
         super().showEvent(event)
-        if self.parent():
-            parent_geo = self.parent().geometry()
-            self.move(
-                parent_geo.center().x() - self.width() // 2,
-                parent_geo.center().y() - self.height() // 2
-            )
+        parent_widget: QtWidgets.QWidget | None = self.parentWidget()
+        screen: QtGui.QScreen | None
+        target_center: QtCore.QPoint
+        dialog_geometry: QtCore.QRect = self.frameGeometry()
+
+        if parent_widget is None:
+            screen = QApplication.primaryScreen()
+
+            if screen is None:
+                target_center = QtCore.QPoint(0, 0)
+            else:
+                target_center = screen.availableGeometry().center()
+        else:
+            target_center = parent_widget.window().frameGeometry().center()
+
+        dialog_geometry.moveCenter(target_center)
+        self.move(dialog_geometry.topLeft())
 
 
 class NewProfilesStructureDialogue(CenteredDialog):
@@ -216,6 +230,93 @@ class MTreeExpandHook(QtCore.QObject):
         return super(MTreeExpandHook, self).eventFilter(self.tree, event)
 
 
+class DeviceSelectorResizeGrip(QtWidgets.QFrame):
+    """
+    Right-corner drag handle for the device selector popup.
+    """
+
+    def __init__(self, target: QtWidgets.QWidget, parent: QtWidgets.QWidget) -> None:
+        """
+        Constructor.
+
+        :param target: Widget resized by the grip.
+        :param parent: Parent widget.
+        """
+        QtWidgets.QFrame.__init__(self, parent=parent)
+
+        self.target: QtWidgets.QWidget = target
+        self.drag_position: QtCore.QPoint | None = None
+        self.start_size: QtCore.QSize = QtCore.QSize()
+        self.start_position: QtCore.QPoint = QtCore.QPoint()
+        self.resize_from_top: bool = False
+
+        # The grip is intentionally small and only acts as a resize handle.
+        self.setFixedSize(16, 16)
+        self.setCursor(QtCore.Qt.CursorShape.SizeFDiagCursor)
+
+    def set_resize_from_top(self, value: bool) -> None:
+        """
+        Select whether vertical resizing is anchored from the top edge.
+
+        :param value: True to resize upward from the top edge.
+        :return: None.
+        """
+        self.resize_from_top = value
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Start a resize drag.
+
+        :param event: Mouse press event.
+        :return: None.
+        """
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+            # Store the initial pointer and size so the move delta can resize the popup.
+            self.drag_position = event.globalPosition().toPoint()
+            self.start_size = self.target.size()
+            self.start_position = self.target.pos()
+            event.accept()
+        else:
+            super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Resize the target during a drag.
+
+        :param event: Mouse move event.
+        :return: None.
+        """
+        if self.drag_position is not None:
+            # Resizing directly avoids relying on native window grips for Qt popup editors.
+            delta: QtCore.QPoint = event.globalPosition().toPoint() - self.drag_position
+            minimum_size: QtCore.QSize = self.target.minimumSizeHint()
+            width: int = max(minimum_size.width(), self.start_size.width() + delta.x())
+            if self.resize_from_top:
+                height: int = max(minimum_size.height(), self.start_size.height() - delta.y())
+                y_position: int = self.start_position.y() + self.start_size.height() - height
+                self.target.move(self.start_position.x(), y_position)
+            else:
+                height = max(minimum_size.height(), self.start_size.height() + delta.y())
+
+            self.target.resize(width, height)
+            event.accept()
+        else:
+            super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Finish a resize drag.
+
+        :param event: Mouse release event.
+        :return: None.
+        """
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+            self.drag_position = None
+            event.accept()
+        else:
+            super().mouseReleaseEvent(event)
+
+
 class LogsDialogue(CenteredDialog):
     """
     New profile dialogue window
@@ -317,6 +418,544 @@ class LogsDialogue(CenteredDialog):
         cb = QtWidgets.QApplication.clipboard()
         cb.clear()
         cb.setText(txt)
+
+
+class DeviceSelectorPanel(QtWidgets.QFrame):
+    """
+    Searchable panel to select one device from a device tree.
+    """
+
+    selection_made = QtCore.Signal(object)
+    selection_cancelled = QtCore.Signal()
+
+    def __init__(self,
+                 devices_by_type: Dict[DeviceType, List[ALL_DEV_TYPES]],
+                 allow_none: bool = False,
+                 parent: QtWidgets.QWidget | None = None) -> None:
+        """
+        Constructor.
+
+        :param devices_by_type: Dictionary with device types and their devices.
+        :param allow_none: Add a selectable None entry.
+        :param parent: Parent widget.
+        """
+        QtWidgets.QFrame.__init__(self, parent=parent)
+
+        self.devices_by_type: Dict[DeviceType, List[ALL_DEV_TYPES]] = devices_by_type
+        self.allow_none: bool = allow_none
+        self.selected_device: ALL_DEV_TYPES | None = None
+        self.has_selection: bool = False
+        self.resize_grip_at_top: bool = False
+
+        # Build the visible search controls before the model is populated.
+        self.main_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(self)
+        self.search_box: QtWidgets.QLineEdit = QtWidgets.QLineEdit(self)
+        self.search_box.setPlaceholderText(self.tr("Search"))
+        self.tree_view: QtWidgets.QTreeView = QtWidgets.QTreeView(self)
+        self.tree_view.setHeaderHidden(True)
+        self.tree_view.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
+
+        # Keep a source model and filter proxy so the item payloads survive searches.
+        self.source_model: QtGui.QStandardItemModel = QtGui.QStandardItemModel(self)
+        self.proxy_model: QtCore.QSortFilterProxyModel = QtCore.QSortFilterProxyModel(self)
+        self.proxy_model.setSourceModel(self.source_model)
+        self.proxy_model.setFilterCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
+        self.proxy_model.setFilterKeyColumn(0)
+        self.proxy_model.setRecursiveFilteringEnabled(True)
+        self.tree_view.setModel(self.proxy_model)
+
+        self.button_box: QtWidgets.QDialogButtonBox = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
+            parent=self,
+        )
+        self.size_grip: DeviceSelectorResizeGrip = DeviceSelectorResizeGrip(target=self, parent=self)
+
+        self.main_layout.addWidget(self.search_box)
+        self.main_layout.addWidget(self.tree_view)
+        self.main_layout.addWidget(self.button_box)
+
+        self.search_box.textChanged.connect(self.apply_filter)
+        self.tree_view.doubleClicked.connect(self.accept_index)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+
+        self.fill_tree()
+        self.position_size_grip()
+
+    def set_resize_grip_at_top(self, value: bool) -> None:
+        """
+        Select the vertical edge used by the resize handle.
+
+        :param value: True to place the handle on the top edge.
+        :return: None.
+        """
+        self.resize_grip_at_top = value
+        self.size_grip.set_resize_from_top(value=value)
+        self.position_size_grip()
+
+    def position_size_grip(self) -> None:
+        """
+        Place the resize handle on the active right border corner of the popup.
+
+        :return: None.
+        """
+        x_position: int = max(0, self.width() - self.size_grip.width())
+
+        if self.resize_grip_at_top:
+            y_position: int = 0
+        else:
+            y_position = max(0, self.height() - self.size_grip.height())
+
+        self.size_grip.move(x_position, y_position)
+        self.size_grip.raise_()
+
+    def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
+        """
+        Keep the resize handle attached to the border while the popup changes size.
+
+        :param event: Resize event.
+        :return: None.
+        """
+        super().resizeEvent(event)
+        self.position_size_grip()
+
+    def _finish_selection(self, selected_device: ALL_DEV_TYPES | None) -> None:
+        """
+        Store and emit one valid selection.
+
+        :param selected_device: Selected device or None.
+        :return: None.
+        """
+        self.selected_device = selected_device
+        self.has_selection = True
+        self.selection_made.emit(selected_device)
+
+    def fill_tree(self) -> None:
+        """
+        Fill the tree model with one top-level row per device type.
+
+        :return: None.
+        """
+        self.source_model.clear()
+
+        if self.allow_none:
+            # The None row clears an existing object link through the same selector flow.
+            none_item: QtGui.QStandardItem = QtGui.QStandardItem(self.tr("None"))
+            none_item.setEditable(False)
+            none_item.setData(True, QtCore.Qt.ItemDataRole.UserRole + 1)
+            self.source_model.appendRow(none_item)
+        else:
+            pass
+
+        for device_type, devices in self.devices_by_type.items():
+            if len(devices) > 0:
+                # Device type rows group leaves but are not assignable values.
+                device_type_item: QtGui.QStandardItem = QtGui.QStandardItem(device_type.value)
+                icon_path: str | None = device_type_icons.get(device_type.value, None)
+                if icon_path is not None:
+                    device_type_item.setIcon(QtGui.QIcon(icon_path))
+                else:
+                    pass
+
+                device_type_item.setEditable(False)
+                device_type_item.setSelectable(False)
+
+                for device in devices:
+                    # Device objects are stored in UserRole while names remain the visible text.
+                    device_item: QtGui.QStandardItem = QtGui.QStandardItem(device.name)
+                    if icon_path is not None:
+                        device_item.setIcon(QtGui.QIcon(icon_path))
+                    else:
+                        pass
+
+                    device_item.setEditable(False)
+                    device_item.setData(device, QtCore.Qt.ItemDataRole.UserRole)
+                    device_item.setData(True, QtCore.Qt.ItemDataRole.UserRole + 1)
+                    device_type_item.appendRow(device_item)
+
+                self.source_model.appendRow(device_type_item)
+            else:
+                pass
+
+        self.tree_view.expandAll()
+
+    def apply_filter(self, text: str) -> None:
+        """
+        Apply the search text to the tree proxy model.
+
+        :param text: Text to search.
+        :return: None.
+        """
+        # Qt's proxy handles recursive matching through the device tree.
+        escaped_text: str = QtCore.QRegularExpression.escape(text)
+        expression: QtCore.QRegularExpression = QtCore.QRegularExpression(escaped_text)
+        expression.setPatternOptions(QtCore.QRegularExpression.PatternOption.CaseInsensitiveOption)
+        self.proxy_model.setFilterRegularExpression(expression)
+        self.tree_view.expandAll()
+
+    def accept_index(self, proxy_index: QtCore.QModelIndex) -> None:
+        """
+        Accept the dialogue when a device leaf is double-clicked.
+
+        :param proxy_index: Index received from the filtered tree view.
+        :return: None.
+        """
+        source_index: QtCore.QModelIndex = self.proxy_model.mapToSource(proxy_index)
+        selected_device: ALL_DEV_TYPES | None = self.source_model.data(
+            source_index,
+            QtCore.Qt.ItemDataRole.UserRole,
+        )
+        is_selectable_value: bool = self.source_model.data(
+            source_index,
+            QtCore.Qt.ItemDataRole.UserRole + 1,
+        ) is True
+
+        if is_selectable_value:
+            self._finish_selection(selected_device=selected_device)
+        else:
+            pass
+
+    def accept(self) -> None:
+        """
+        Accept the dialogue if one device is selected.
+
+        :return: None.
+        """
+        selected_index: QtCore.QModelIndex = self.tree_view.currentIndex()
+
+        if selected_index.isValid():
+            source_index: QtCore.QModelIndex = self.proxy_model.mapToSource(selected_index)
+            selected_device: ALL_DEV_TYPES | None = self.source_model.data(
+                source_index,
+                QtCore.Qt.ItemDataRole.UserRole,
+            )
+            is_selectable_value: bool = self.source_model.data(
+                source_index,
+                QtCore.Qt.ItemDataRole.UserRole + 1,
+            ) is True
+
+            if is_selectable_value:
+                self._finish_selection(selected_device=selected_device)
+            else:
+                pass
+        else:
+            pass
+
+    def reject(self) -> None:
+        """
+        Emit cancellation.
+
+        :return: None.
+        """
+        self.selection_cancelled.emit()
+
+    def get_selected_device(self) -> ALL_DEV_TYPES | None:
+        """
+        Get the selected device.
+
+        :return: Selected device or None.
+        """
+        return self.selected_device
+
+
+class DeviceSelectorDialogue(CenteredDialog):
+    """
+    Dialogue to select one device from a searchable device tree.
+    """
+
+    def __init__(self,
+                 devices_by_type: Dict[DeviceType, List[ALL_DEV_TYPES]],
+                 allow_none: bool = False,
+                 parent: QtWidgets.QWidget | None = None) -> None:
+        """
+        Constructor.
+
+        :param devices_by_type: Dictionary with device types and their devices.
+        :param allow_none: Add a selectable None entry.
+        :param parent: Parent widget.
+        """
+        CenteredDialog.__init__(self, parent=parent)
+
+        self.setWindowTitle(self.tr("Device selection"))
+        self.setSizeGripEnabled(True)
+        self.resize(500, 600)
+
+        self.panel: DeviceSelectorPanel = DeviceSelectorPanel(
+            devices_by_type=devices_by_type,
+            allow_none=allow_none,
+            parent=self,
+        )
+
+        self.main_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(self)
+        self.main_layout.addWidget(self.panel)
+
+        self.panel.selection_made.connect(self.accept)
+        self.panel.selection_cancelled.connect(self.reject)
+
+    def showEvent(self, event: QtGui.QShowEvent) -> None:
+        """
+        Keep the selector visible on the current screen when it opens.
+
+        :param event: Show event.
+        :return: None.
+        """
+        CenteredDialog.showEvent(self, event)
+
+        screen: QtGui.QScreen | None = self.screen()
+
+        if screen is None:
+            screen = QApplication.primaryScreen()
+        else:
+            pass
+
+        if screen is not None:
+            available_geometry: QtCore.QRect = screen.availableGeometry()
+            frame_geometry: QtCore.QRect = self.frameGeometry()
+
+            if frame_geometry.width() > available_geometry.width() or frame_geometry.height() > available_geometry.height():
+                new_width: int = min(self.width(), available_geometry.width())
+                new_height: int = min(self.height(), available_geometry.height())
+                self.resize(new_width, new_height)
+                frame_geometry = self.frameGeometry()
+            else:
+                pass
+
+            if frame_geometry.left() < available_geometry.left():
+                frame_geometry.moveLeft(available_geometry.left())
+            else:
+                pass
+
+            if frame_geometry.right() > available_geometry.right():
+                frame_geometry.moveRight(available_geometry.right())
+            else:
+                pass
+
+            if frame_geometry.top() < available_geometry.top():
+                frame_geometry.moveTop(available_geometry.top())
+            else:
+                pass
+
+            if frame_geometry.bottom() > available_geometry.bottom():
+                frame_geometry.moveBottom(available_geometry.bottom())
+            else:
+                pass
+
+            self.move(frame_geometry.topLeft())
+        else:
+            pass
+
+    @property
+    def has_selection(self) -> bool:
+        """
+        Return whether a selectable row has been accepted.
+
+        :return: True when a value was selected.
+        """
+        return self.panel.has_selection
+
+    def get_selected_device(self) -> ALL_DEV_TYPES | None:
+        """
+        Get the selected device.
+
+        :return: Selected device or None.
+        """
+        return self.panel.get_selected_device()
+
+
+class BusConnectionObject:
+    """
+    Minimal object used by ObjectsModel to edit a list of bus connections.
+    """
+
+    __slots__ = ("device_type", "property_list", "selected_buses")
+
+    def __init__(self, bus_count: int) -> None:
+        """
+        Constructor.
+
+        :param bus_count: Number of bus properties to expose.
+        """
+        self.device_type: DeviceType = DeviceType.BusDevice
+        self.property_list: List[GCProp] = list()
+        self.selected_buses: List[ALL_DEV_TYPES | None] = list()
+
+        if bus_count == 1:
+            self.property_list.append(GCProp(prop_name="bus",
+                                             units="",
+                                             tpe=DeviceType.BusDevice,
+                                             definition="Connection bus"))
+            self.selected_buses.append(None)
+        else:
+            self.property_list.append(GCProp(prop_name="bus_from",
+                                             units="",
+                                             tpe=DeviceType.BusDevice,
+                                             definition="From bus"))
+            self.selected_buses.append(None)
+            self.property_list.append(GCProp(prop_name="bus_to",
+                                             units="",
+                                             tpe=DeviceType.BusDevice,
+                                             definition="To bus"))
+            self.selected_buses.append(None)
+
+            for i in range(2, bus_count):
+                bus_number: int = i + 1
+                self.property_list.append(GCProp(prop_name=f"bus_{bus_number}",
+                                                 units="",
+                                                 tpe=DeviceType.BusDevice,
+                                                 definition=f"Bus {bus_number}"))
+                self.selected_buses.append(None)
+
+    def get_value(self, prop: GCProp, t_idx: int | None) -> ALL_DEV_TYPES | None:
+        """
+        Get one bus property value.
+
+        :param prop: Property descriptor.
+        :param t_idx: Unused time index.
+        :return: Selected bus or None.
+        """
+        for i, local_prop in enumerate(self.property_list):
+            if prop.name == local_prop.name:
+                return self.selected_buses[i]
+            else:
+                pass
+
+        return None
+
+    def set_value(self, prop: GCProp, t_idx: int | None, value: ALL_DEV_TYPES | None) -> None:
+        """
+        Set one bus property value.
+
+        :param prop: Property descriptor.
+        :param t_idx: Unused time index.
+        :param value: Selected bus.
+        :return: None.
+        """
+        for i, local_prop in enumerate(self.property_list):
+            if prop.name == local_prop.name:
+                self.selected_buses[i] = value
+            else:
+                pass
+
+    def get_buses(self) -> List[ALL_DEV_TYPES | None]:
+        """
+        Get the selected buses in property order.
+
+        :return: Selected bus list.
+        """
+        return self.selected_buses
+
+    def __str__(self) -> str:
+        """
+        Get the row header label.
+
+        :return: Object label.
+        """
+        return "Buses"
+
+
+class NewConnectedDeviceDialogue(CenteredDialog):
+    """
+    Dialogue to define a new device name and its connected buses.
+    """
+
+    def __init__(self,
+                 name: str,
+                 bus_count: int,
+                 buses: List[ALL_DEV_TYPES],
+                 parent: QtWidgets.QWidget | None = None,
+                 allow_last_bus_none: bool = False) -> None:
+        """
+        Constructor.
+
+        :param name: Default device name.
+        :param bus_count: Number of buses that must be selected.
+        :param buses: Available buses.
+        :param parent: Parent widget.
+        :param allow_last_bus_none: Allow the last bus slot to remain empty.
+        """
+        CenteredDialog.__init__(self, parent=parent)
+
+        self.setWindowTitle(self.tr("New device"))
+        self.resize(520, 180 + 30 * bus_count)
+
+        self.buses: List[ALL_DEV_TYPES] = buses
+        self.allow_last_bus_none: bool = allow_last_bus_none
+        self.bus_connection: BusConnectionObject = BusConnectionObject(bus_count=bus_count)
+
+        self.main_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(self)
+        self.name_edit: QtWidgets.QLineEdit = QtWidgets.QLineEdit(self)
+        self.name_edit.setText(name)
+        self.bus_table: QtWidgets.QTableView = QtWidgets.QTableView(self)
+        self.bus_model: ObjectsModel = ObjectsModel(
+            objects=[self.bus_connection],
+            property_list=self.bus_connection.property_list,
+            time_index=None,
+            parent=self.bus_table,
+            editable=True,
+            transposed=True,
+            dictionary_of_lists={DeviceType.BusDevice: self.buses},
+        )
+        self.bus_table.setModel(self.bus_model)
+        self.bus_table.horizontalHeader().setStretchLastSection(True)
+
+        self.main_layout.addWidget(QtWidgets.QLabel(self.tr("Name"), self))
+        self.main_layout.addWidget(self.name_edit)
+        self.main_layout.addWidget(self.bus_table)
+
+        self.button_box: QtWidgets.QDialogButtonBox = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
+            parent=self,
+        )
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+        self.main_layout.addWidget(self.button_box)
+
+    def accept(self) -> None:
+        """
+        Accept only when the name and all bus slots are filled.
+
+        :return: None.
+        """
+        has_name: bool = self.name_edit.text().strip() != ""
+        has_all_buses: bool = True
+        has_repeated_buses: bool = False
+        selected_bus_set: set[ALL_DEV_TYPES] = set()
+
+        selected_buses: List[ALL_DEV_TYPES | None] = self.bus_connection.get_buses()
+        last_bus_idx: int = len(selected_buses) - 1
+
+        for bus_idx, selected_bus in enumerate(selected_buses):
+            if selected_bus is None:
+                if self.allow_last_bus_none and bus_idx == last_bus_idx:
+                    pass
+                else:
+                    has_all_buses = False
+            else:
+                if selected_bus in selected_bus_set:
+                    has_repeated_buses = True
+                else:
+                    selected_bus_set.add(selected_bus)
+
+        if has_name and has_all_buses and not has_repeated_buses:
+            CenteredDialog.accept(self)
+        else:
+            pass
+
+    def get_name(self) -> str:
+        """
+        Get the configured device name.
+
+        :return: Device name.
+        """
+        return self.name_edit.text().strip()
+
+    def get_buses(self) -> List[ALL_DEV_TYPES | None]:
+        """
+        Get the selected bus list.
+
+        :return: Selected bus list.
+        """
+        return self.bus_connection.get_buses()
 
 
 class ElementsDialogue(CenteredDialog):

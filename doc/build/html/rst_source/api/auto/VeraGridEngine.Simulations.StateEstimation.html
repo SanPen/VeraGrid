@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.StateEstimation package &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.StateEstimation package &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -600,7 +601,7 @@ ordering: Pinj, Pflow, Qinj, Qflow, Iflow, Vm
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.If">
-<span class="sig-name descname"><span class="pre">If</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.If" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">If</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.If" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -610,7 +611,7 @@ ordering: Pinj, Pflow, Qinj, Qflow, Iflow, Vm
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.It">
-<span class="sig-name descname"><span class="pre">It</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.It" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">It</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.It" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -625,7 +626,7 @@ ordering: Pinj, Pflow, Qinj, Qflow, Iflow, Vm
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Pf_hvdc">
-<span class="sig-name descname"><span class="pre">Pf_hvdc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Pf_hvdc" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">Pf_hvdc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Pf_hvdc" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -635,22 +636,22 @@ ordering: Pinj, Pflow, Qinj, Qflow, Iflow, Vm
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Pt_hvdc">
-<span class="sig-name descname"><span class="pre">Pt_hvdc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Pt_hvdc" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">Pt_hvdc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Pt_hvdc" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Sbus">
-<span class="sig-name descname"><span class="pre">Sbus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Sbus" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">Sbus</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Sbus" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Sf">
-<span class="sig-name descname"><span class="pre">Sf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Sf" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">Sf</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Sf" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.St">
-<span class="sig-name descname"><span class="pre">St</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.St" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">St</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.St" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -660,7 +661,7 @@ ordering: Pinj, Pflow, Qinj, Qflow, Iflow, Vm
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Vbranch">
-<span class="sig-name descname"><span class="pre">Vbranch</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Vbranch" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">Vbranch</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.Vbranch" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -688,22 +689,22 @@ here.
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.battery_q">
-<span class="sig-name descname"><span class="pre">battery_q</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.battery_q" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">battery_q</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.battery_q" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.branch_names">
-<span class="sig-name descname"><span class="pre">branch_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.branch_names" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">branch_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StrVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.branch_names" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.bus_names">
-<span class="sig-name descname"><span class="pre">bus_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.bus_names" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">bus_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StrVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.bus_names" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.bus_types">
-<span class="sig-name descname"><span class="pre">bus_types</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">int64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.bus_types" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">bus_types</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">IntVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.bus_types" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -758,7 +759,7 @@ here.
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.gen_q">
-<span class="sig-name descname"><span class="pre">gen_q</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.gen_q" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">gen_q</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.gen_q" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -799,7 +800,7 @@ here.
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.hvdc_names">
-<span class="sig-name descname"><span class="pre">hvdc_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.hvdc_names" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">hvdc_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StrVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.hvdc_names" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -811,12 +812,12 @@ here.
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.loading">
-<span class="sig-name descname"><span class="pre">loading</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.loading" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">loading</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.loading" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.loading_hvdc">
-<span class="sig-name descname"><span class="pre">loading_hvdc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.loading_hvdc" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">loading_hvdc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.loading_hvdc" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -826,12 +827,12 @@ here.
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.losses">
-<span class="sig-name descname"><span class="pre">losses</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.losses" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">losses</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.losses" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.losses_hvdc">
-<span class="sig-name descname"><span class="pre">losses_hvdc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.losses_hvdc" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">losses_hvdc</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.losses_hvdc" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -859,27 +860,27 @@ here.
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.shunt_q">
-<span class="sig-name descname"><span class="pre">shunt_q</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.shunt_q" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">shunt_q</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.shunt_q" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.tap_angle">
-<span class="sig-name descname"><span class="pre">tap_angle</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.tap_angle" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tap_angle</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.tap_angle" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.tap_module">
-<span class="sig-name descname"><span class="pre">tap_module</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.tap_module" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tap_module</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Vec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.tap_module" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.voltage">
-<span class="sig-name descname"><span class="pre">voltage</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">complex128</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.voltage" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">voltage</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CxVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.voltage" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.vsc_names">
-<span class="sig-name descname"><span class="pre">vsc_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">str_</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.vsc_names" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">vsc_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StrVec</span></span><a class="headerlink" href="#VeraGridEngine.Simulations.StateEstimation.state_estimation_results.StateEstimationResults.vsc_names" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

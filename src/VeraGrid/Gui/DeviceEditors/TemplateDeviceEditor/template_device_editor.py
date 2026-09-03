@@ -18,6 +18,7 @@ from VeraGrid.Gui.DeviceEditors.LineLocationsEditor.line_locations_editor import
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor_gui import Ui_TemplateDeviceEditorDialog
 from VeraGrid.Gui.gui_functions import ComboDelegate, FloatDelegate, IntDelegate, TextDelegate, ComplexDelegate
 from VeraGrid.Gui.Widgets.matplotlibwidget import MatplotlibWidget
+from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely
 from VeraGrid.Gui.messages import warning_msg
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.spread_sheet_table import SpreadsheetTableView
@@ -1081,6 +1082,8 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
             else:
                 axes = list(np.ravel(np.asarray(axes_object)))
 
+            plot_widget.canvas.zoom_axis = axes[0]
+
             axis_index: int
             for axis_index, unit_label in enumerate(unit_labels):
                 axis = axes[axis_index]
@@ -1098,7 +1101,11 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
             axes[len(axes) - 1].set_xlabel("Time index")
             figure.tight_layout()
             plot_widget.redraw()
-            dialog.exec()
+            try:
+                dialog.exec()
+            finally:
+                plot_widget.dispose()
+                delete_dialog_safely(dialog=dialog)
         else:
             self.show_warning_toast("No numeric profile columns available for plotting")
 

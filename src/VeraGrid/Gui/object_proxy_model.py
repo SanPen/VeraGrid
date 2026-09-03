@@ -5,11 +5,56 @@
 
 from enum import Enum
 from typing import Any, Dict, List, Set, Tuple
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 import numpy as np
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Utils.Filtering.objects_filtering import FilterObjects
 from VeraGrid.Gui.object_model import ObjectsModel
+
+
+def parse_bool_text(value: str) -> bool | None:
+    """
+    Parse one spreadsheet boolean value.
+
+    :param value: Clipboard cell text.
+    :return: Boolean value, or None when the text is not a boolean.
+    """
+    text: str = value.strip().casefold()
+
+    if text in ("true", "1", "yes", "y"):
+        return True
+    else:
+        if text in ("false", "0", "no", "n"):
+            return False
+        else:
+            return None
+
+
+def parse_float_text(value: str) -> float | None:
+    """
+    Parse one spreadsheet float value.
+
+    :param value: Clipboard cell text.
+    :return: Floating point value, or None when the text is not a float.
+    """
+    text: str = value.strip().replace(" ", "").replace("\u00a0", "")
+    comma_index: int = text.rfind(",")
+    dot_index: int = text.rfind(".")
+
+    try:
+        parsed_value: float | None = float(text)
+    except ValueError:
+        if comma_index > dot_index:
+            normalized_text: str = text.replace(".", "").replace(",", ".")
+        else:
+            normalized_text = text.replace(",", "")
+
+        try:
+            parsed_value = float(normalized_text)
+        except ValueError:
+            parsed_value = None
+
+    return parsed_value
 
 
 class ObjectModelFilterProxy(QtCore.QSortFilterProxyModel):
@@ -113,9 +158,8 @@ class ObjectModelFilterProxy(QtCore.QSortFilterProxyModel):
                 new_allowed_rows = set()
                 has_error = True
 
-        self.beginFilterChange()
         self._allowed_rows = new_allowed_rows
-        self.endFilterChange(QtCore.QSortFilterProxyModel.Direction.Rows)
+        self.invalidate()
 
         return has_error, error_txt
 
@@ -247,7 +291,6 @@ class ObjectModelFilterProxy(QtCore.QSortFilterProxyModel):
         all_values: Set[str] = set(self.get_column_filter_values(source_column=source_column))
         new_values: Set[str] = set(accepted_values)
 
-        self.beginFilterChange()
         if new_values == all_values:
             if source_column in self._column_filters:
                 self._column_filters.pop(source_column)
@@ -255,7 +298,7 @@ class ObjectModelFilterProxy(QtCore.QSortFilterProxyModel):
                 pass
         else:
             self._column_filters[source_column] = new_values
-        self.endFilterChange(QtCore.QSortFilterProxyModel.Direction.Rows)
+        self.invalidate()
 
     def clear_column_filter(self, source_column: int) -> None:
         """
@@ -264,12 +307,11 @@ class ObjectModelFilterProxy(QtCore.QSortFilterProxyModel):
         :param source_column: Source column index.
         :return: None.
         """
-        self.beginFilterChange()
         if source_column in self._column_filters:
             self._column_filters.pop(source_column)
         else:
             pass
-        self.endFilterChange(QtCore.QSortFilterProxyModel.Direction.Rows)
+        self.invalidate()
 
         if self.has_column_sort(source_column=source_column):
             self.clear_column_sort()
@@ -282,9 +324,8 @@ class ObjectModelFilterProxy(QtCore.QSortFilterProxyModel):
 
         :return: None.
         """
-        self.beginFilterChange()
         self._column_filters = dict()
-        self.endFilterChange(QtCore.QSortFilterProxyModel.Direction.Rows)
+        self.invalidate()
         self.clear_column_sort()
 
     def has_column_filter(self, source_column: int) -> bool:
@@ -495,6 +536,113 @@ class ObjectModelFilterProxy(QtCore.QSortFilterProxyModel):
             cb = QtWidgets.QApplication.clipboard()
             cb.clear()
             cb.setText(txt)
+
+    def parse_clipboard_value(self, value: str, column: int) -> float | int | bool | str | None:
+        """
+        Parse one clipboard cell for the target column type.
+
+        :param value: Clipboard cell text.
+        :param column: Proxy column index.
+        :return: Parsed value, or None when the target column is unsupported or the value is invalid.
+        """
+        parsed_value: float | int | bool | str | None
+
+        if 0 <= column < len(self._mdl.attribute_types):
+            tpe: object = self._mdl.attribute_types[column]
+
+            if tpe is float:
+                parsed_value = parse_float_text(value=value)
+            else:
+                if tpe is int:
+                    try:
+                        parsed_value = int(value)
+                    except ValueError:
+                        parsed_value = None
+                else:
+                    if tpe is bool:
+                        parsed_value = parse_bool_text(value=value)
+                    else:
+                        if tpe is str:
+                            parsed_value = value
+                        else:
+                            parsed_value = None
+        else:
+            parsed_value = None
+
+        return parsed_value
+
+    def paste_from_clipboard(self,
+                             row_idx: int = 0,
+                             col_idx: int = 0,
+                             selected_rows: List[int] | None = None,
+                             selected_cols: List[int] | None = None) -> int:
+        """
+        Paste spreadsheet values into editable scalar object columns.
+
+        :param row_idx: Proxy row where the paste starts.
+        :param col_idx: Proxy column where the paste starts.
+        :param selected_rows: Selected proxy rows used for single-cell fill.
+        :param selected_cols: Selected proxy columns used for single-cell fill.
+        :return: Number of pasted cells.
+        """
+        cb: QtGui.QClipboard = QtWidgets.QApplication.clipboard()
+        text: str = cb.text()
+        rows: List[str] = [line for line in text.splitlines() if len(line) > 0]
+        parsed_rows: List[List[str]] = list()
+        pasted_cells: int = 0
+
+        for row in rows:
+            parsed_rows.append(row.split('\t'))
+
+        if len(parsed_rows) == 0:
+            return pasted_cells
+        else:
+            pass
+
+        if (len(parsed_rows) == 1 and len(parsed_rows[0]) == 1 and
+                selected_rows is not None and selected_cols is not None and
+                len(selected_rows) * len(selected_cols) > 1):
+            value: float | int | bool | str | None
+            selected_row: int
+            selected_col: int
+
+            for selected_row in selected_rows:
+                for selected_col in selected_cols:
+                    value = self.parse_clipboard_value(value=parsed_rows[0][0], column=selected_col)
+                    if value is not None:
+                        index: QtCore.QModelIndex = self.index(selected_row, selected_col)
+                        if index.isValid() and bool(self.flags(index) & QtCore.Qt.ItemFlag.ItemIsEditable):
+                            self.setData(index, value, QtCore.Qt.ItemDataRole.EditRole)
+                            pasted_cells += 1
+                        else:
+                            pass
+                    else:
+                        pass
+        else:
+            values: List[str]
+            cell_text: str
+            paste_row: int
+            paste_col: int
+            parsed_value: float | int | bool | str | None
+            row_number: int
+            col_number: int
+
+            for row_number, values in enumerate(parsed_rows):
+                paste_row = row_idx + row_number
+                for col_number, cell_text in enumerate(values):
+                    paste_col = col_idx + col_number
+                    parsed_value = self.parse_clipboard_value(value=cell_text, column=paste_col)
+                    if parsed_value is not None:
+                        target_index: QtCore.QModelIndex = self.index(paste_row, paste_col)
+                        if target_index.isValid() and bool(self.flags(target_index) & QtCore.Qt.ItemFlag.ItemIsEditable):
+                            self.setData(target_index, parsed_value, QtCore.Qt.ItemDataRole.EditRole)
+                            pasted_cells += 1
+                        else:
+                            pass
+                    else:
+                        pass
+
+        return pasted_cells
 
     def set_time_index(self, time_index: int | None):
         """

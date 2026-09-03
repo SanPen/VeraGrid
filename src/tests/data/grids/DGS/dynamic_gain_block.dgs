@@ -1,0 +1,14 @@
+********************************************************************************
+* Minimal PowerFactory DGS block definition used by the dynamic parser tests.
+********************************************************************************
+
+$$General;ID(a:40);Descr(a:40);Val(a:40)
+  1;Version;5.0
+
+$$BlkDef;ID(a:40);loc_name(a:80);fold_id(p);cOutput(a:80);cInput(a:80);cStates(a:80);cParams(a:80);cIntern(a:80);sAddEquat:SIZEROW(i);sAddEquat:0(a:80)
+  2;Dynamic gain;;y;u;;K;;1;y=K*u
+  3;Unsupported dynamic block;;z;u;;;;1;z=unsupported(u)
+
+$$BlkRef;ID(a:40);OP(a:1);typ_id(p);cdisName(a:80)
+  10;;2;Dynamic gain instance
+  11;;3;Unsupported dynamic block instance

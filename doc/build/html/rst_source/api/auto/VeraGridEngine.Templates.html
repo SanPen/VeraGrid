@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates package &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Templates package &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -1387,13 +1388,7 @@
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.bus_phasor_rms_template.polar_to_phasor"><code class="docutils literal notranslate"><span class="pre">polar_to_phasor()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#module-VeraGridEngine.Templates.Rms.common">VeraGridEngine.Templates.Rms.common module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.common.create_block_of_type"><code class="docutils literal notranslate"><span class="pre">create_block_of_type()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.common.create_emt_wizard_block"><code class="docutils literal notranslate"><span class="pre">create_emt_wizard_block()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.common.create_generic_block"><code class="docutils literal notranslate"><span class="pre">create_generic_block()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.common.create_sum_block"><code class="docutils literal notranslate"><span class="pre">create_sum_block()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#veragridengine-templates-rms-common-module">VeraGridEngine.Templates.Rms.common module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#module-VeraGridEngine.Templates.Rms.dc_voltage_source">VeraGridEngine.Templates.Rms.dc_voltage_source module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCCurrentSource"><code class="docutils literal notranslate"><span class="pre">DCCurrentSource()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCPVSourceAveraged"><code class="docutils literal notranslate"><span class="pre">DCPVSourceAveraged()</span></code></a></li>
@@ -1723,6 +1718,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#module-VeraGridEngine.Templates.Rms.line_rms_template">VeraGridEngine.Templates.Rms.line_rms_template module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.line_rms_template.get_dc_line_rms_template"><code class="docutils literal notranslate"><span class="pre">get_dc_line_rms_template()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.line_rms_template.get_ideal_ac_connector_rms_template"><code class="docutils literal notranslate"><span class="pre">get_ideal_ac_connector_rms_template()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.line_rms_template.get_line_rms_template"><code class="docutils literal notranslate"><span class="pre">get_line_rms_template()</span></code></a></li>
 </ul>
 </li>
@@ -1776,6 +1772,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.load_rms_template.get_load_rms_template"><code class="docutils literal notranslate"><span class="pre">get_load_rms_template()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.load_rms_template.get_voltage_dependent_power_rms_template"><code class="docutils literal notranslate"><span class="pre">get_voltage_dependent_power_rms_template()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#module-VeraGridEngine.Templates.Rms.load_zip_template">VeraGridEngine.Templates.Rms.load_zip_template module</a><ul>
@@ -1848,6 +1845,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#module-VeraGridEngine.Templates.Rms.transformer_rms_template">VeraGridEngine.Templates.Rms.transformer_rms_template module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.IdealTrafoRmsTemplate"><code class="docutils literal notranslate"><span class="pre">IdealTrafoRmsTemplate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.IdealTrafoRmsTemplate.CLASS_NON_EDITABLE_PROPERTIES"><code class="docutils literal notranslate"><span class="pre">IdealTrafoRmsTemplate.CLASS_NON_EDITABLE_PROPERTIES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.IdealTrafoRmsTemplate.CLASS_PROPERTIES_WITH_PROFILE"><code class="docutils literal notranslate"><span class="pre">IdealTrafoRmsTemplate.CLASS_PROPERTIES_WITH_PROFILE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.IdealTrafoRmsTemplate.CLASS_PROPERTY_DECLARATIONS"><code class="docutils literal notranslate"><span class="pre">IdealTrafoRmsTemplate.CLASS_PROPERTY_DECLARATIONS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.IdealTrafoRmsTemplate.CLASS_PROPERTY_LIST"><code class="docutils literal notranslate"><span class="pre">IdealTrafoRmsTemplate.CLASS_PROPERTY_LIST</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.IdealTrafoRmsTemplate.CLASS_REGISTERED_PROPERTIES"><code class="docutils literal notranslate"><span class="pre">IdealTrafoRmsTemplate.CLASS_REGISTERED_PROPERTIES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.IdealTrafoRmsTemplate.tpe"><code class="docutils literal notranslate"><span class="pre">IdealTrafoRmsTemplate.tpe</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.TrafoPhasorRmsTemplate"><code class="docutils literal notranslate"><span class="pre">TrafoPhasorRmsTemplate</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.TrafoPhasorRmsTemplate.CLASS_NON_EDITABLE_PROPERTIES"><code class="docutils literal notranslate"><span class="pre">TrafoPhasorRmsTemplate.CLASS_NON_EDITABLE_PROPERTIES</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.TrafoPhasorRmsTemplate.CLASS_PROPERTIES_WITH_PROFILE"><code class="docutils literal notranslate"><span class="pre">TrafoPhasorRmsTemplate.CLASS_PROPERTIES_WITH_PROFILE</span></code></a></li>
@@ -1865,6 +1871,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.TrafoRmsTemplate.tpe"><code class="docutils literal notranslate"><span class="pre">TrafoRmsTemplate.tpe</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.get_ideal_transformer2w_rms"><code class="docutils literal notranslate"><span class="pre">get_ideal_transformer2w_rms()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.get_transformer2w_rms"><code class="docutils literal notranslate"><span class="pre">get_transformer2w_rms()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.initialize_trafo_rms"><code class="docutils literal notranslate"><span class="pre">initialize_trafo_rms()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.parse_windings_connection"><code class="docutils literal notranslate"><span class="pre">parse_windings_connection()</span></code></a></li>
@@ -1894,6 +1901,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#module-VeraGridEngine.Templates.Rms.voltage_source_template">VeraGridEngine.Templates.Rms.voltage_source_template module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.voltage_source_template.VoltageSourceBuild"><code class="docutils literal notranslate"><span class="pre">VoltageSourceBuild()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.voltage_source_template.build_thevenin_voltage_source"><code class="docutils literal notranslate"><span class="pre">build_thevenin_voltage_source()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Templates.Rms.html#module-VeraGridEngine.Templates.Rms.vsc_ac2ac">VeraGridEngine.Templates.Rms.vsc_ac2ac module</a><ul>

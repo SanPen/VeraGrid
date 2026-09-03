@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -111,7 +112,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csc_matrix</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsProblemDaeVec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_full_vectorized</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RmsProblemDaeFullVec</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.problems.rms_problem_template</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">project_initial_algebraic_state</span><span class="p">,</span>
+    <span class="n">solve_rms_newton_correction</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Sparse.csc</span><span class="w"> </span><span class="kn">import</span> <span class="n">pack_4_by_4_scipy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Mat</span>
 
@@ -121,7 +128,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">BackEulerImplicitIntegrationFullVec</span><span class="p">:</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">problem</span><span class="p">:</span> <span class="n">RmsProblemDaeVec</span><span class="p">,</span>
+                 <span class="n">problem</span><span class="p">:</span> <span class="n">RmsProblemDaeFullVec</span><span class="p">,</span>
                  <span class="n">t0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">t_end</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">h</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -134,7 +141,7 @@
 
 <span class="sd">        :param problem: The DAE solver problem instance containing the system equations and other solver</span>
 <span class="sd">            configurations.</span>
-<span class="sd">        :type problem: RmsProblemDae</span>
+<span class="sd">        :type problem: RmsProblemDaeFullVec</span>
 <span class="sd">        :param t0: The initial time of the simulation.</span>
 <span class="sd">        :type t0: float</span>
 <span class="sd">        :param t_end: The final time of the simulation.</span>
@@ -279,12 +286,38 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">converged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="n">well_initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">x0</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_x0</span><span class="p">()</span>
 
         <span class="c1"># we assume steady state</span>
         <span class="n">dx0</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_diff_var_number</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">update_variable_params</span><span class="p">(</span>
+            <span class="n">t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span>
+            <span class="n">x_snapshot</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+            <span class="n">scheduled_t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t0</span><span class="p">,</span>
+            <span class="n">x0</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">_variable_parameters_values</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">initial_residual</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="n">x0</span><span class="p">,</span> <span class="n">well_initialized</span><span class="p">,</span> <span class="n">initial_residual</span> <span class="o">=</span> <span class="n">project_initial_algebraic_state</span><span class="p">(</span>
+            <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span>
+            <span class="n">initial_values</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+            <span class="n">differential_values</span><span class="o">=</span><span class="n">dx0</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span>
+            <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter_0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">well_initialized</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;RMS algebraic initial projection did not converge&quot;</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="s2">&quot;BackEulerImplicitIntegrationFullVec&quot;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">initial_residual</span><span class="p">,</span>
+                <span class="n">expected_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># timing accumulators</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timings</span> <span class="o">=</span> <span class="p">{</span>
@@ -331,7 +364,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">report_progress2</span><span class="p">(</span><span class="n">step_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
 
                 <span class="n">t_current_macro</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="n">step_idx</span><span class="p">]</span>
-                <span class="n">t_macro_target</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">t_current_macro</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+                <span class="c1"># Derive every macro boundary from the integer step index so</span>
+                <span class="c1"># floating-point accumulation cannot activate an event early.</span>
+                <span class="n">t_macro_target</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t0</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">step_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
 
                 <span class="n">x_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">step_idx</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="n">x_new</span> <span class="o">=</span> <span class="n">x_prev</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -357,16 +392,11 @@
                             <span class="sa">f</span><span class="s2">&quot;Invalid local step size h_eff=</span><span class="si">{</span><span class="n">h_eff</span><span class="si">}</span><span class="s2"> while integrating RMS macro step </span><span class="si">{</span><span class="n">step_idx</span><span class="si">}</span><span class="s2">.&quot;</span>
                         <span class="p">)</span>
 
-                    <span class="c1"># Historical RMS implicit integration evaluates runtime</span>
-                    <span class="c1"># parameters from the previously accepted local time</span>
-                    <span class="c1"># before solving the next substep. Continuous step events</span>
-                    <span class="c1"># in ``event_dict`` therefore remain on the pre-event</span>
-                    <span class="c1"># value on the sample aligned with the event instant,</span>
-                    <span class="c1"># which is the trajectory stored in the regression CSVs.</span>
-                    <span class="c1"># Ramp events still preserve their dedicated continuous</span>
-                    <span class="c1"># interpolation because the symbolic ramp expression is</span>
-                    <span class="c1"># rebuilt from the event metadata inside the problem.</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">update_variable_params</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t_local_prev</span><span class="p">,</span>
+                    <span class="c1"># Continuous controls use the local target so a step at an</span>
+                    <span class="c1"># accepted boundary drives the immediately following</span>
+                    <span class="c1"># interval. Scheduled modes retain the previous time view</span>
+                    <span class="c1"># because their latches own separate boundary semantics.</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">update_variable_params</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t_curr</span><span class="p">,</span>
                                                         <span class="n">x_snapshot</span><span class="o">=</span><span class="n">x_new</span><span class="p">,</span>
                                                         <span class="n">scheduled_t</span><span class="o">=</span><span class="n">t_local_prev</span><span class="p">)</span>
 
@@ -396,20 +426,6 @@
                         <span class="n">residual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
                         <span class="n">substep_converged</span> <span class="o">=</span> <span class="n">residual</span> <span class="o">&lt;</span> <span class="n">tol</span>
 
-                        <span class="k">if</span> <span class="n">step_idx</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">is_first_local_step</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">substep_converged</span><span class="p">:</span>
-                                <span class="k">pass</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="n">well_initialized</span> <span class="o">=</span> <span class="kc">False</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span>
-                                    <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;RMS simulation required iterative initialization&quot;</span><span class="p">,</span>
-                                    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;BackEulerImplicitIntegration&quot;</span><span class="p">,</span>
-                                    <span class="n">value</span><span class="o">=</span><span class="n">residual</span><span class="p">,</span>
-                                    <span class="n">expected_value</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span>
-                                <span class="p">)</span>
-                                <span class="c1"># Continue with Newton iterations after reporting the initialization residual.</span>
-
-
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">substep_converged</span><span class="p">:</span>
                             <span class="n">solved</span> <span class="o">=</span> <span class="kc">False</span>
                             <span class="n">jac_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -417,7 +433,19 @@
                             <span class="n">jac_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
                             <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;jacobian_time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">jac_end</span> <span class="o">-</span> <span class="n">jac_start</span>
                             <span class="n">linear_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-                            <span class="n">delta</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">spsolve</span><span class="p">(</span><span class="n">Jf</span><span class="p">,</span> <span class="o">-</span><span class="n">rhs</span><span class="p">)</span>
+                            <span class="n">reference_indices</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_small_signal_reference_indices</span><span class="p">()</span>
+                            <span class="p">)</span>
+                            <span class="n">reference_column</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+                            <span class="k">if</span> <span class="n">reference_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">reference_column</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">reference_column</span> <span class="o">=</span> <span class="n">reference_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="n">delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">solve_rms_newton_correction</span><span class="p">(</span>
+                                <span class="n">jacobian</span><span class="o">=</span><span class="n">Jf</span><span class="p">,</span>
+                                <span class="n">residual</span><span class="o">=</span><span class="n">rhs</span><span class="p">,</span>
+                                <span class="n">reference_column</span><span class="o">=</span><span class="n">reference_column</span><span class="p">,</span>
+                            <span class="p">)</span>
                             <span class="n">linear_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
                             <span class="n">timings</span><span class="p">[</span><span class="s2">&quot;linear_solver_time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">linear_end</span> <span class="o">-</span> <span class="n">linear_start</span>
                             <span class="n">solved</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
@@ -430,7 +458,7 @@
                                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">singular_dirs</span><span class="p">:</span>
                                     <span class="n">v</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">T</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>  <span class="c1"># variable-space vector</span>
                                     <span class="n">abs_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                                    <span class="n">dominant_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">abs_v</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># top 5 vars</span>
+                                    <span class="n">dominant_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">abs_v</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;stable&quot;</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># top 5 vars</span>
                                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Singular direction </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, σ=</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                                     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">dominant_idx</span><span class="p">:</span>
                                         <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">get_algebraic_var_number</span><span class="p">():</span>

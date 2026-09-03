@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.NTC.ntc_opf &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.NTC.ntc_opf &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -2690,7 +2690,7 @@
 <span class="sd">    :param logger</span>
 <span class="sd">    :param corrective_contingencies: if True, allow corrective re-dispatch of the VSC/HVDC</span>
 <span class="sd">    :param group_indices: subset of multi-contingency indices to formulate (None = all)</span>
-<span class="sd">    :param group_rows: per group index, the row indices to enforce </span>
+<span class="sd">    :param group_rows: per group index, the row indices to enforce</span>
 <span class="sd">    :param vsc_delta_store: per group index, the persistent VSC Δ variable dictionary</span>
 <span class="sd">    :param hvdc_delta_store: per group index, the persistent HVDC Δ variable dictionary</span>
 <span class="sd">    :param preservation_done: group indices whose exchange-preservation equality is already</span>
@@ -2967,7 +2967,7 @@
 <span class="sd">    A P-mode 3 droop saturates when the converter cannot deliver more power, and that limit</span>
 <span class="sd">    is the converter rating or the total rating of the DC branches attached to the</span>
 <span class="sd">    converter&#39;s DC bus, whichever is lower.</span>
-<span class="sd">    </span>
+
 <span class="sd">    :param vsc_data_t: VscData structure</span>
 <span class="sd">    :param branch_data_t: PassiveBranchData structure (contains the DC lines)</span>
 <span class="sd">    :param bus_data_t: BusData structure (provides the is_dc marker)</span>

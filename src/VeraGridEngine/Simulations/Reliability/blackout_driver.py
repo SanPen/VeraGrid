@@ -250,6 +250,7 @@ class CascadingDriver(DriverTemplate):
         @return:
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self.__cancel__ = False
 
         # compile

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -237,6 +237,7 @@
 <span class="sd">        Pack run_pf for the QThread</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s2">&quot;Compiling and configuring...&quot;</span><span class="p">)</span>
 
         <span class="c1"># The three-phase driver can only stay on GSLV when that engine is present.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">==</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">GSLV</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">GSLV_AVAILABLE</span><span class="p">:</span>

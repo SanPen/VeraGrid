@@ -30,6 +30,7 @@ class TapChanger:
         '_m_array',
         '_k_re_array',
         '_k_im_array',
+        '_uses_explicit_table',
     )
 
     def __init__(self,
@@ -86,6 +87,7 @@ class TapChanger:
         self._m_array = np.zeros(self._total_positions)  # tap module positions
         self._k_re_array = np.ones(self._total_positions)  # impedance correction positions (real)
         self._k_im_array = np.ones(self._total_positions)  # impedance correction positions (imag)
+        self._uses_explicit_table: bool = False
         self.recalc()
 
     def copy(self) -> "TapChanger":
@@ -106,7 +108,17 @@ class TapChanger:
         elm._tap_position = self._tap_position
         elm._k_re_array = self._k_re_array.copy()
         elm._k_im_array = self._k_im_array.copy()
-        elm.recalc()
+        table_was_copied: bool = elm.set_tap_module_phase_values(
+            tap_modules=self._m_array,
+            tap_phases=self._tau_array,
+        )
+        if table_was_copied:
+            # ``set_tap_module_phase_values`` marks every accepted table as
+            # explicit.  Restore the source semantic because a generic table
+            # is copied through the same numerical API.
+            elm._uses_explicit_table = self._uses_explicit_table
+        else:
+            elm.recalc()
         return elm
 
     @property
@@ -154,7 +166,12 @@ class TapChanger:
         return self._total_positions
 
     @total_positions.setter
-    def total_positions(self, value: int):
+    def total_positions(self, value: int) -> None:
+        """Set the number of discrete tap positions and resize the tables.
+
+        :param value: Positive number of positions available to the tap changer.
+        :return: None.
+        """
         if isinstance(value, int):
             self._total_positions = value
             self.resize()
@@ -170,7 +187,7 @@ class TapChanger:
         return self._tap_position
 
     @tap_position.setter
-    def tap_position(self, val: int):
+    def tap_position(self, val: int) -> None:
         """
         Set the tap position (zero indexing)
         :param val: tap value
@@ -190,7 +207,7 @@ class TapChanger:
         return self._neutral_position
 
     @neutral_position.setter
-    def neutral_position(self, val: int):
+    def neutral_position(self, val: int) -> None:
         """
         Set the neutral position
         :param val: neutral position value
@@ -215,6 +232,26 @@ class TapChanger:
         return self._tau_array
 
     @property
+    def uses_explicit_table(self) -> bool:
+        """
+        Return whether the tap table came from an explicit native definition.
+
+        :return: ``True`` for imported or user-supplied tables that must retain
+            their discrete entries exactly; ``False`` for arrays derived from
+            the generic VeraGrid tap law.
+        """
+        return self._uses_explicit_table
+
+    @property
+    def impedance_correction_real_array(self) -> np.ndarray:
+        """
+        Get the real impedance correction factors per tap position.
+
+        :return: Array of length ``total_positions``.
+        """
+        return self._k_re_array
+
+    @property
     def impedance_correction_imag_array(self) -> np.ndarray:
         """
         Get the imaginary impedance correction factors per tap position.
@@ -223,6 +260,62 @@ class TapChanger:
         """
         return self._k_im_array
 
+    def set_impedance_correction_values(
+            self,
+            correction_real: np.ndarray,
+            correction_imag: np.ndarray,
+    ) -> bool:
+        """
+        Install exact real and imaginary impedance factors by tap position.
+
+        The stored branch impedance is the neutral reference.  Each factor is
+        applied only when numerical data is compiled, which keeps the tap
+        characteristic reusable after editing or serialisation.
+
+        :param correction_real: Non-negative resistance factors.
+        :param correction_imag: Non-negative reactance factors.
+        :return: ``True`` when both complete arrays were accepted.
+        """
+        real_values: np.ndarray = np.asarray(correction_real, dtype=float)
+        imag_values: np.ndarray = np.asarray(correction_imag, dtype=float)
+        expected_shape: tuple[int, ...] = (self.total_positions,)
+        shapes_are_valid: bool = (
+            real_values.shape == expected_shape
+            and imag_values.shape == expected_shape
+        )
+        values_are_valid: bool = bool(
+            np.all(np.isfinite(real_values))
+            and np.all(real_values >= 0.0)
+            and np.all(np.isfinite(imag_values))
+            and np.all(imag_values >= 0.0)
+        )
+        if shapes_are_valid and values_are_valid:
+            self._k_re_array = real_values.copy()
+            self._k_im_array = imag_values.copy()
+            accepted: bool = True
+        else:
+            accepted = False
+        return accepted
+
+    def get_impedance_correction(self) -> tuple[float, float]:
+        """
+        Return the impedance factors at the current discrete position.
+
+        :return: Resistance and reactance correction factors.
+        """
+        position: int = int(self.tap_position)
+        position_is_valid: bool = (
+            0 <= position < len(self._k_re_array)
+            and 0 <= position < len(self._k_im_array)
+        )
+        if position_is_valid:
+            correction_real: float = float(self._k_re_array[position])
+            correction_imag: float = float(self._k_im_array[position])
+        else:
+            correction_real = 1.0
+            correction_imag = 1.0
+        return correction_real, correction_imag
+
     def resize(self) -> None:
         """
         Resize and recalc the tap positions array
@@ -230,6 +323,10 @@ class TapChanger:
         self._ndv = np.zeros(self.total_positions)
         self._tau_array = np.zeros(self.total_positions)
         self._m_array = np.zeros(self.total_positions)
+        # A resized tap window invalidates the positional correction contract;
+        # reset it explicitly until an importer installs a matching table.
+        self._k_re_array = np.ones(self.total_positions)
+        self._k_im_array = np.ones(self.total_positions)
         self.recalc()
 
     def recalc(self) -> None:
@@ -240,25 +337,68 @@ class TapChanger:
         self._ndv = (positions - self.neutral_position) * self.dV
         self._tau_array = self.get_tap_phase2(positions)
         self._m_array = self.get_tap_module2(positions)
+        self._uses_explicit_table = False
 
-    def to_dict(self) -> Dict[str, Union[str, float]]:
+    def set_tap_module_phase_values(
+            self,
+            tap_modules: np.ndarray,
+            tap_phases: np.ndarray,
+    ) -> bool:
+        """
+        Install one exact discrete complex-tap table.
+
+        This table is required by importers whose native tap law contains a
+        fixed vector-group shift, a winding-side reciprocal or another
+        relationship that cannot be represented by the generic ``dV`` and
+        asymmetry parameters alone.  Core tap-configuration setters still call
+        :meth:`recalc`, intentionally returning the object to its generic law.
+
+        :param tap_modules: Positive tap magnitudes by zero-based position.
+        :param tap_phases: Unwrapped tap phases in radians by position.
+        :return: ``True`` when the complete table was accepted.
+        """
+        module_values: np.ndarray = np.asarray(tap_modules, dtype=float)
+        phase_values: np.ndarray = np.asarray(tap_phases, dtype=float)
+        expected_shape: tuple[int, ...] = (self.total_positions,)
+        shapes_are_valid: bool = (
+            module_values.shape == expected_shape
+            and phase_values.shape == expected_shape
+        )
+        values_are_valid: bool = bool(
+            np.all(np.isfinite(module_values))
+            and np.all(module_values > 0.0)
+            and np.all(np.isfinite(phase_values))
+        )
+        if shapes_are_valid and values_are_valid:
+            self._m_array = module_values.copy()
+            self._tau_array = phase_values.copy()
+            self._uses_explicit_table = True
+            result: bool = True
+        else:
+            result = False
+        return result
+
+    def to_dict(self) -> Dict[str, object]:
         """
         Get a dictionary representation of the tap
         :return:
         """
-        return {
-            "asymmetry_angle": self.asymmetry_angle,
-            "total_positions": self.total_positions,
-            "dV": self.dV,
-            "neutral_position": self.neutral_position,
-            "normal_position": self.normal_position,
-            "tap_position": self._tap_position,
-            "type": str(self.tc_type),
-            "low_step": self._low_step,
-            "negative_low": self._negative_low,
-            "impedance_correction_real": self._k_re_array.tolist(),
-            "impedance_correction_imag": self._k_im_array.tolist(),
-        }
+        tap_data: Dict[str, object] = dict()
+        tap_data["asymmetry_angle"] = self.asymmetry_angle
+        tap_data["total_positions"] = self.total_positions
+        tap_data["dV"] = self.dV
+        tap_data["neutral_position"] = self.neutral_position
+        tap_data["normal_position"] = self.normal_position
+        tap_data["tap_position"] = self._tap_position
+        tap_data["type"] = str(self.tc_type)
+        tap_data["low_step"] = self._low_step
+        tap_data["negative_low"] = self._negative_low
+        tap_data["tap_module_table"] = self._m_array.tolist()
+        tap_data["tap_phase_table"] = self._tau_array.tolist()
+        tap_data["uses_explicit_table"] = self._uses_explicit_table
+        tap_data["impedance_correction_real"] = self._k_re_array.tolist()
+        tap_data["impedance_correction_imag"] = self._k_im_array.tolist()
+        return tap_data
 
     def parse(self, data: Dict[str, Union[str, float]], logger: Logger = Logger()) -> None:
         """
@@ -300,6 +440,57 @@ class TapChanger:
                 logger.add_warning("Incorrect impedance table length")
 
         self.recalc()
+
+        # New files preserve exact native tap tables.  Older files omit these
+        # keys and continue to use the generic VeraGrid tap law above.
+        tap_module_table_obj: object | None = data.get("tap_module_table", None)
+        tap_phase_table_obj: object | None = data.get("tap_phase_table", None)
+        if isinstance(tap_module_table_obj, list) and isinstance(tap_phase_table_obj, list):
+            try:
+                tap_module_table: np.ndarray = np.asarray(tap_module_table_obj, dtype=float)
+                tap_phase_table: np.ndarray = np.asarray(tap_phase_table_obj, dtype=float)
+            except (TypeError, ValueError):
+                exact_table_was_loaded: bool = False
+            else:
+                exact_table_was_loaded = self.set_tap_module_phase_values(
+                    tap_modules=tap_module_table,
+                    tap_phases=tap_phase_table,
+                )
+            if exact_table_was_loaded:
+                explicit_table_object: object | None = data.get(
+                    "uses_explicit_table",
+                    None,
+                )
+                if isinstance(explicit_table_object, bool):
+                    self._uses_explicit_table = explicit_table_object
+                else:
+                    # Legacy files persisted generated tables before recording
+                    # their provenance.  Treat them as generic unless their
+                    # values differ from the current generic tap law.
+                    generic_modules: np.ndarray = self.get_tap_module2(
+                        np.arange(self.total_positions)
+                    )
+                    generic_phases: np.ndarray = self.get_tap_phase2(
+                        np.arange(self.total_positions)
+                    )
+                    self._uses_explicit_table = bool(
+                        not np.allclose(
+                            tap_module_table,
+                            generic_modules,
+                            atol=1.0e-12,
+                            rtol=0.0,
+                        )
+                        or not np.allclose(
+                            tap_phase_table,
+                            generic_phases,
+                            atol=1.0e-12,
+                            rtol=0.0,
+                        )
+                    )
+            else:
+                logger.add_warning("Incorrect exact tap table")
+        else:
+            pass
 
     def to_df(self) -> pd.DataFrame:
         """
@@ -429,6 +620,25 @@ class TapChanger:
             print("tap position out of range")
             return 1.0
 
+    def get_tap_module_at(self, tap_position: int) -> float:
+        """Return the exact stored module at one discrete position.
+
+        Importers may install a native explicit tap table whose direction is
+        not represented by the generic positive ``dV`` parameter.  Station
+        controls therefore need read-only positional access to that table.
+
+        :param tap_position: Zero-based discrete position.
+        :return: Exact tap module, or ``nan`` for an invalid position.
+        """
+        position_is_valid: bool = bool(
+            0 <= tap_position < len(self._m_array)
+        )
+        if position_is_valid:
+            tap_module: float = float(self._m_array[tap_position])
+        else:
+            tap_module = 1.0
+        return tap_module
+
     def set_tap_module(self, tap_module: float) -> float:
         """
         Set the tap position closest to the tap module
@@ -458,28 +668,28 @@ class TapChanger:
         Min tap module, computed on the fly
         :return: float
         """
-        return self.get_tap_module2(tap_position=0)
+        return float(np.min(self._m_array))
 
     def get_tap_module_max(self) -> float:
         """
         Max tap module, computed on the fly
         :return: float
         """
-        return self.get_tap_module2(tap_position=self.total_positions - 1)
+        return float(np.max(self._m_array))
 
     def get_tap_phase_min(self) -> float:
         """
         Min tap phase, computed on the fly
         :return: float
         """
-        return self.get_tap_phase2(tap_position=0)
+        return float(np.min(self._tau_array))
 
     def get_tap_phase_max(self) -> float:
         """
         Maximum tap phase (calculated)
         :return: float
         """
-        return self.get_tap_phase2(tap_position=self.total_positions - 1)
+        return float(np.max(self._tau_array))
 
     def __eq__(self, other: "TapChanger") -> bool:
         """

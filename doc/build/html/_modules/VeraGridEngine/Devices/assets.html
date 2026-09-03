@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.assets &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Devices.assets &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -118,7 +119,16 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span><span class="p">,</span> <span class="n">BRANCH_TYPES</span><span class="p">,</span> <span class="n">INJECTION_DEVICE_TYPES</span><span class="p">,</span> <span class="n">FLUID_TYPES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCPROP_TYPES</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">ActionType</span><span class="p">,</span> <span class="n">FmuTemplateDomain</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.template_classification</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">classify_dynamic_template_block</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ActionType</span><span class="p">,</span>
+    <span class="n">DeviceType</span><span class="p">,</span>
+    <span class="n">DynamicTemplateCategory</span><span class="p">,</span>
+    <span class="n">FmuTemplateDomain</span><span class="p">,</span>
+    <span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">ListSet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.data_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLogger</span>
 
@@ -7719,12 +7729,44 @@
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.assets.Assets.get_rms_models_by_device_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rms_models_by_device_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get a list of RmsModelTemplate filtering by device type</span>
-<span class="sd">        :param tpe:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        Return complete RMS device templates assignable to one host type.</span>
+
+<span class="sd">        Internal controls remain registered in ``rms_models`` for composition,</span>
+<span class="sd">        but they must not appear in a physical device property selector.</span>
+
+<span class="sd">        :param tpe: Physical host device type.</span>
+<span class="sd">        :return: Matching complete RMS device templates.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># return [elm for elm in self.rms_models if elm.tpe == tpe]</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">elm</span> <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rms_models</span> <span class="k">if</span> <span class="n">_matches_dynamic_template_device_type</span><span class="p">(</span><span class="n">tpe</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">tpe</span><span class="p">)]</span></div>
+        <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">template</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span>
+        <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rms_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">tpe</span>
+                    <span class="ow">and</span> <span class="n">classify_dynamic_template_block</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="p">)</span>
+                    <span class="ow">is</span> <span class="n">DynamicTemplateCategory</span><span class="o">.</span><span class="n">DEVICE</span>
+            <span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="Assets.get_rms_templates_for_editor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.assets.Assets.get_rms_templates_for_editor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rms_templates_for_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return RMS device, component and measurement templates for editing.</span>
+
+<span class="sd">        :param tpe: Device type whose internal model is being composed.</span>
+<span class="sd">        :return: Compatible RMS templates grouped later by their typed contract.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">template</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span>
+        <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rms_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_matches_dynamic_template_device_type</span><span class="p">(</span><span class="n">tpe</span><span class="p">,</span> <span class="n">template</span><span class="o">.</span><span class="n">tpe</span><span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="Assets.get_loaded_rms_models_by_device_type">
@@ -7736,8 +7778,18 @@
 <span class="sd">        :param tpe: Supported device type.</span>
 <span class="sd">        :return: Matching loaded RMS templates.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># return [elm for elm in self._rms_models if elm.tpe == tpe]</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">elm</span> <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rms_models</span> <span class="k">if</span> <span class="n">_matches_dynamic_template_device_type</span><span class="p">(</span><span class="n">tpe</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">tpe</span><span class="p">)]</span></div>
+        <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">template</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span>
+        <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rms_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">tpe</span>
+                    <span class="ow">and</span> <span class="n">classify_dynamic_template_block</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="p">)</span>
+                    <span class="ow">is</span> <span class="n">DynamicTemplateCategory</span><span class="o">.</span><span class="n">DEVICE</span>
+            <span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
     <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
@@ -7808,11 +7860,41 @@
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.assets.Assets.get_emt_models_by_device_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_emt_models_by_device_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get a list of EmtModelTemplate filtering by device type</span>
-<span class="sd">        :param tpe:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        Return complete EMT device templates assignable to one host type.</span>
+
+<span class="sd">        :param tpe: Physical host device type.</span>
+<span class="sd">        :return: Matching complete EMT device templates.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">elm</span> <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">emt_models</span> <span class="k">if</span> <span class="n">_matches_dynamic_template_device_type</span><span class="p">(</span><span class="n">tpe</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">tpe</span><span class="p">)]</span></div>
+        <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">template</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span>
+        <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">emt_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">tpe</span>
+                    <span class="ow">and</span> <span class="n">classify_dynamic_template_block</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="p">)</span>
+                    <span class="ow">is</span> <span class="n">DynamicTemplateCategory</span><span class="o">.</span><span class="n">DEVICE</span>
+            <span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="Assets.get_emt_templates_for_editor">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.assets.Assets.get_emt_templates_for_editor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_emt_templates_for_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tpe</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span><span class="p">]:</span>  <span class="c1"># TODO: SANPEN: WTF is this? GUI code on the engine?</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return EMT device, component and measurement templates for editing.</span>
+
+<span class="sd">        :param tpe: Device type whose internal model is being composed.</span>
+<span class="sd">        :return: Compatible EMT templates grouped later by their typed contract.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">template</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span>
+        <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">emt_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_matches_dynamic_template_device_type</span><span class="p">(</span><span class="n">tpe</span><span class="p">,</span> <span class="n">template</span><span class="o">.</span><span class="n">tpe</span><span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="Assets.get_loaded_emt_models_by_device_type">
@@ -7824,7 +7906,18 @@
 <span class="sd">        :param tpe: Supported device type.</span>
 <span class="sd">        :return: Matching loaded EMT templates.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">elm</span> <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models</span> <span class="k">if</span> <span class="n">_matches_dynamic_template_device_type</span><span class="p">(</span><span class="n">tpe</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">tpe</span><span class="p">)]</span></div>
+        <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">template</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span>
+        <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emt_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">tpe</span>
+                    <span class="ow">and</span> <span class="n">classify_dynamic_template_block</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="p">)</span>
+                    <span class="ow">is</span> <span class="n">DynamicTemplateCategory</span><span class="o">.</span><span class="n">DEVICE</span>
+            <span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
     <span class="nd">@property</span>
@@ -7976,11 +8069,11 @@
 
         <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="n">FmuTemplateDomain</span><span class="o">.</span><span class="n">RMS</span><span class="p">:</span>
             <span class="n">native_templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span> <span class="o">|</span> <span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span> <span class="o">|</span> <span class="n">dev</span><span class="o">.</span><span class="n">FmuTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">tpe</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_templates_for_editor</span><span class="p">(</span><span class="n">tpe</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="n">FmuTemplateDomain</span><span class="o">.</span><span class="n">EMT</span><span class="p">:</span>
-                <span class="n">native_templates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">tpe</span><span class="p">))</span>
+                <span class="n">native_templates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_emt_templates_for_editor</span><span class="p">(</span><span class="n">tpe</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported dynamic template domain </span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -10069,6 +10162,7 @@
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">ZoneDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">SubstationDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">substations</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">VoltageLevelDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">voltage_levels</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusBarDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_bars</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">CountryDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Owner</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span>
@@ -10145,6 +10239,7 @@
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Technology</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">technologies</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Owner</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">MarketUnitDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">market_units</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">FacilityDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
@@ -10177,11 +10272,20 @@
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Line</span><span class="p">()</span>
+            <span class="n">any_line_templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">line_template_list</span> <span class="ow">in</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">overhead_line_types</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">underground_cable_types</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sequence_line_types</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">line_template</span> <span class="ow">in</span> <span class="n">line_template_list</span><span class="p">:</span>
+                    <span class="n">any_line_templates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_template</span><span class="p">)</span>
+
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Owner</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">BranchGroupDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_groups</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">AnyLineTemplateDevice</span><span class="p">:</span> <span class="n">any_line_templates</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
             <span class="p">}</span>
@@ -10225,8 +10329,8 @@
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Owner</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
-                <span class="c1"># DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),</span>
-                <span class="c1"># DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(elm_type),</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
             <span class="p">}</span>
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">TransformerNwDevice</span><span class="p">:</span>
@@ -10250,11 +10354,18 @@
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">VscDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VSC</span><span class="p">()</span>
+            <span class="n">bus_or_branch_devices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">buses</span><span class="p">:</span>
+                <span class="n">bus_or_branch_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_branches_iter</span><span class="p">(</span><span class="n">add_vsc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_hvdc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">bus_or_branch_devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
+
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Owner</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">BranchGroupDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_groups</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusOrBranch</span><span class="p">:</span> <span class="n">bus_or_branch_devices</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
             <span class="p">}</span>
@@ -10283,11 +10394,20 @@
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">DCLineDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">DcLine</span><span class="p">()</span>
+            <span class="n">any_line_templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ALL_DEV_TYPES</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">line_template_list</span> <span class="ow">in</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">overhead_line_types</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">underground_cable_types</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sequence_line_types</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">line_template</span> <span class="ow">in</span> <span class="n">line_template_list</span><span class="p">:</span>
+                    <span class="n">any_line_templates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_template</span><span class="p">)</span>
+
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Owner</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">BranchGroupDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch_groups</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">AnyLineTemplateDevice</span><span class="p">:</span> <span class="n">any_line_templates</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
             <span class="p">}</span>
@@ -10296,6 +10416,7 @@
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">()</span>
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Owner</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">CountryDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_countries</span><span class="p">(),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">CommunityDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_communities</span><span class="p">(),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RegionDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_regions</span><span class="p">(),</span>
@@ -10316,6 +10437,7 @@
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">VoltageLevel</span><span class="p">()</span>
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">Owner</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owners</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">SubstationDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_substations</span><span class="p">(),</span>
             <span class="p">}</span>
 
@@ -10352,8 +10474,8 @@
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">ShortCircuitEvent</span><span class="p">()</span>
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">RemedialActionDevice</span><span class="p">:</span>
-            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Contingency</span><span class="p">()</span>
-            <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">RemedialActionDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">remedial_action_groups</span><span class="p">,</span> <span class="p">}</span>
+            <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">RemedialAction</span><span class="p">()</span>
+            <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">RemedialActionGroupDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">remedial_action_groups</span><span class="p">,</span> <span class="p">}</span>
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">RemedialActionGroupDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">RemedialActionGroup</span><span class="p">()</span>
@@ -10387,6 +10509,7 @@
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">OverheadLineTypeDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">OverheadLineType</span><span class="p">()</span>
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">),</span>
             <span class="p">}</span>
@@ -10394,6 +10517,7 @@
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">SequenceLineDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">SequenceLineType</span><span class="p">()</span>
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">),</span>
             <span class="p">}</span>
@@ -10401,6 +10525,7 @@
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">UnderGroundLineDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">UndergroundLineType</span><span class="p">()</span>
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">),</span>
             <span class="p">}</span>
@@ -10408,6 +10533,7 @@
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">TransformerTypeDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">TransformerType</span><span class="p">()</span>
             <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loaded_rms_models_by_device_type</span><span class="p">(</span>
                     <span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer2WDevice</span><span class="p">),</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loaded_emt_models_by_device_type</span><span class="p">(</span>
@@ -10416,7 +10542,10 @@
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">FluidNodeDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">FluidNode</span><span class="p">()</span>
-            <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span> <span class="p">}</span>
+            <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
+            <span class="p">}</span>
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">FluidPathDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">FluidPath</span><span class="p">()</span>
@@ -10482,7 +10611,11 @@
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">ControlPc</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">ControlPc</span><span class="p">()</span>
-            <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">dictionary_of_lists</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">ModellingAuthority</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelling_authorities</span><span class="p">,</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rms_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
+                <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_emt_models_by_device_type</span><span class="p">(</span><span class="n">elm_type</span><span class="p">),</span>
+            <span class="p">}</span>
 
         <span class="k">elif</span> <span class="n">elm_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsEventDevice</span><span class="p">:</span>
             <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">RmsEvent</span><span class="p">()</span>
@@ -10608,7 +10741,7 @@
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Devices.html#VeraGridEngine.Devices.assets.Assets.refine_pointer_objects">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">refine_pointer_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
-                               <span class="n">all_elements_dict</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ALL_DEV_TYPES</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                               <span class="n">all_elements_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ALL_DEV_TYPES</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find the device types of pointer objects</span>
 <span class="sd">        :param logger:</span>

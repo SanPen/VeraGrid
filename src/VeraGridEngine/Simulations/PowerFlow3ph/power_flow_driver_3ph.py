@@ -124,6 +124,7 @@ class PowerFlowDriver3Ph(DriverTemplate):
         Pack run_pf for the QThread
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         # The three-phase driver can only stay on GSLV when that engine is present.
         if self.engine == EngineType.GSLV and not GSLV_AVAILABLE:

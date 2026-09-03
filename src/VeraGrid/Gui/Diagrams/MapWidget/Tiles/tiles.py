@@ -38,6 +38,7 @@ import queue
 from typing import List, Union
 from collections.abc import Callable
 from warnings import warn
+from PySide6.QtCore import QObject, Slot, Qt
 from PySide6.QtGui import QPixmap, QColor
 
 from VeraGrid.Gui.Diagrams.MapWidget.Tiles.base_tiles import BaseTiles
@@ -48,6 +49,32 @@ from VeraGrid.Gui.Diagrams.MapWidget.Tiles.tile_worker import TileWorker
 # # server.  this is the number of days old a tile is before we re-request.
 # # if 'None', never re-request tiles after first satisfied request.
 # RefreshTilesAfterDays = 60
+
+
+class TileCallbackBridge(QObject):
+    """
+    GUI-thread bridge for tile worker results.
+    """
+
+    __slots__ = ('_tiles',)
+
+    def __init__(self, tiles: "Tiles") -> None:
+        """
+        Store the tile source that receives decoded images.
+        """
+        QObject.__init__(self)
+        self._tiles: Tiles = tiles
+
+    @Slot(int, float, float, bytes, bool)
+    def tile_is_available(self, level: int, x: float, y: float, image_data: bytes, error: bool) -> None:
+        """
+        Forward worker bytes to the tile source on this object's Qt thread.
+        """
+        self._tiles.tile_is_available(level=level,
+                                      x=x,
+                                      y=y,
+                                      image_data=image_data,
+                                      error=error)
 
 
 class Tiles(BaseTiles):
@@ -157,6 +184,7 @@ class Tiles(BaseTiles):
 
         # set the list of queued unsatisfied requests to 'empty'
         self.queued_requests = {}
+        self.tile_callback_bridge: TileCallbackBridge = TileCallbackBridge(tiles=self)
 
         # prepare the "pending" and "error" images
         self.pending_tile = QPixmap(256, 256)
@@ -179,7 +207,7 @@ class Tiles(BaseTiles):
             test_url = self.servers[0] + self.url_path.format(Z=0, X=0, Y=0)
             try:
                 r = request.Request(test_url, headers={'User-Agent': 'VeraGrid 5'})
-                request.urlopen(r).read()
+                request.urlopen(r, timeout=5.0).read()
 
             except HTTPError as e:
                 # if it's fatal, log it and die, otherwise try a proxy
@@ -226,12 +254,11 @@ class Tiles(BaseTiles):
                                         server=server,
                                         tile_path=self.url_path,
                                         requests_cue=self.request_queue,
-                                        callback=self.tile_is_available,
-                                        error_tile=self.error_tile,
                                         content_type=self.content_type,
                                         re_request_age=self.re_request_age,
-                                        error_image=self.error_tile,
                                         refresh_tiles_after_days=60)
+                    worker.tile_available.connect(self.tile_callback_bridge.tile_is_available,
+                                                  Qt.ConnectionType.QueuedConnection)
                     self.workers.append(worker)
                     worker.start()
         else:
@@ -375,7 +402,7 @@ class Tiles(BaseTiles):
             worker.stop()
 
         for worker in self.workers:
-            worker.wait(2000)
+            worker.wait(6000)
 
     def get_server_tile(self, level: int, x: float, y: float) -> None:
         """
@@ -410,17 +437,28 @@ class Tiles(BaseTiles):
 
         self.callback = callback
 
-    def tile_is_available(self, level: int, x: float, y: float, image: QPixmap, error: bool):
+    def tile_is_available(self, level: int, x: float, y: float, image_data: bytes, error: bool):
         """
         Callback routine - a 'net tile is available.
 
         level   level for the tile
         x       x coordinate of tile
         y       y coordinate of tile
-        image   tile image data
+        image_data   tile image data
         error   True if image is 'error' image, don't cache in that case
         """
         tile_key: tuple[int, float, float] = (level, x, y)
+        image: QPixmap
+
+        if error:
+            image = self.error_tile
+        else:
+            image = QPixmap()
+            if image.loadFromData(image_data):
+                pass
+            else:
+                image = self.error_tile
+                error = True
 
         # Keep error tiles in the in-memory LRU only.
         # Writing them through the normal cache assignment would persist the red

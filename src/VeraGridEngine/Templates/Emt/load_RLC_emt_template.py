@@ -299,6 +299,8 @@ def get_grounding_link_emt_template(
     :param include_r: Include the resistor branch.
     :param include_l: Include the inductor branch.
     :param include_c: Include the capacitor branch.
+    :param solid_connection: Enforce a zero-voltage grounding connection.
+    :param nested: Omit external network mappings for an internal child block.
     :param direct_r_value: Optional direct resistor value in ohms.
     :param direct_l_value: Optional direct inductance value in henries.
     :param direct_c_value: Optional direct capacitance value in farads.
@@ -331,6 +333,9 @@ def get_grounding_link_emt_template(
     templ.tpe = DeviceType.LoadDevice
     templ.name = name
     templ.block.name = name
+    # Runtime topology reads this typed declaration from the canonical block;
+    # the diagram remains a removable editor projection.
+    templ.block.dynamic_model_contract.emt_internal_grounding_link = True
 
     node_voltage_var: Var = vf.add_var(name=f"v_N", reference=VarPowerFlowReferenceType.v_N)
     current_var: Var = vf.add_var(name=f"i_N", reference=VarPowerFlowReferenceType.i_N)
@@ -1165,7 +1170,6 @@ def get_shunt_r_emt_template(
         voltage_vars[phase_label] = voltage_var
 
         resistance_var: Var = vf.add_var(f"R_{phase_label}_{event_name}")
-        block.event_dict[resistance_var] = vf.add_const(None)
         resistance_vars[phase_label] = resistance_var
 
         pl0_var: Var = vf.add_var(f"Pl0_{phase_label}")

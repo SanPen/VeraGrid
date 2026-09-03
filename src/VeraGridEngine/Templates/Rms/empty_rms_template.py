@@ -23,4 +23,5 @@ def get_empty_rms_template(vf: VarFactory, name: str = "empty_template") -> RmsM
     templ.tpe = DeviceType.NoDevice
     templ.block = Block()
 
+    templ.comment = 'Empty RMS template'
     return templ

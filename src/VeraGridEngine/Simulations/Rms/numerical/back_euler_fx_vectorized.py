@@ -9,6 +9,10 @@ from scipy.sparse import csc_matrix
 from collections.abc import Callable
 
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import RmsProblemDaeVec
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import (
+    project_initial_algebraic_state,
+    solve_rms_newton_correction,
+)
 from VeraGridEngine.Utils.Sparse.csc import pack_4_by_4_scipy
 from VeraGridEngine.basic_structures import Vec, Mat
 
@@ -150,12 +154,38 @@ class BackEulerImplicitIntegrationVec:
         :return:
         """
         converged: bool = False
-        well_initialized: bool = True
 
         x0: Vec = self.problem.get_x0()
 
         # we assume steady state
         dx0: Vec = np.zeros(self.problem.get_diff_var_number(), dtype=float)
+        self.problem.update_variable_params(
+            t=self.t0,
+            x_snapshot=x0,
+            scheduled_t=self.t0,
+        )
+        self.problem.update(
+            self.t0,
+            x0,
+            self.problem._variable_parameters_values,
+        )
+        initial_residual: float
+        x0, well_initialized, initial_residual = project_initial_algebraic_state(
+            problem=self.problem,
+            initial_values=x0,
+            differential_values=dx0,
+            tolerance=self.tol,
+            max_iter=self.max_iter_0,
+        )
+        if well_initialized:
+            pass
+        else:
+            self.problem.logger.add_error(
+                msg="RMS algebraic initial projection did not converge",
+                device="BackEulerImplicitIntegrationVec",
+                value=initial_residual,
+                expected_value=self.tol,
+            )
 
         # timing accumulators
         self._timings = {
@@ -202,7 +232,9 @@ class BackEulerImplicitIntegrationVec:
                 self.problem.report_progress2(step_idx, self.steps)
 
                 t_current_macro: float = self.t[step_idx]
-                t_macro_target: float = t_current_macro + self.h
+                # Derive every macro boundary from the integer step index so
+                # floating-point accumulation cannot activate an event early.
+                t_macro_target: float = self.t0 + float(step_idx + 1) * self.h
 
                 x_prev = self.y[step_idx, :].copy()
                 x_new = x_prev.copy()
@@ -228,16 +260,11 @@ class BackEulerImplicitIntegrationVec:
                             f"Invalid local step size h_eff={h_eff} while integrating RMS macro step {step_idx}."
                         )
 
-                    # Historical RMS implicit integration evaluates runtime
-                    # parameters from the previously accepted local time
-                    # before solving the next substep. Continuous step events
-                    # in ``event_dict`` therefore remain on the pre-event
-                    # value on the sample aligned with the event instant,
-                    # which is the trajectory stored in the regression CSVs.
-                    # Ramp events still preserve their dedicated continuous
-                    # interpolation because the symbolic ramp expression is
-                    # rebuilt from the event metadata inside the problem.
-                    self.problem.update_variable_params(t=t_local_prev,
+                    # Continuous controls use the local target so a step at an
+                    # accepted boundary drives the immediately following
+                    # interval. Scheduled modes retain the previous time view
+                    # because their latches own separate boundary semantics.
+                    self.problem.update_variable_params(t=t_curr,
                                                         x_snapshot=x_new,
                                                         scheduled_t=t_local_prev)
 
@@ -267,31 +294,6 @@ class BackEulerImplicitIntegrationVec:
                         residual = np.linalg.norm(rhs, np.inf)
                         substep_converged = residual < tol
 
-                        if step_idx == 0 and is_first_local_step:
-                            if substep_converged:
-                                # print("System well initialized.")
-                                # print(f"x is {x_new}")
-                                pass
-                            else:
-                                well_initialized = False
-                                self.problem.logger.add_error(
-                                    msg="RMS simulation required iterative initialization",
-                                    device="BackEulerImplicitIntegration",
-                                    value=residual,
-                                    expected_value=tol,
-                                )
-                                # print(f"System requires iterative initialization. Initial DAE residual is {residual}.")
-                                # print(f"rhs is {rhs}")
-                                # non_zero_indexes = np.where(np.abs(rhs) > 1e-7)[0]
-                                # all_eq = self.problem._state_eqs + self.problem._algebraic_eqs
-                                # print("eqs are")
-                                # for i in non_zero_indexes:
-                                #     eq = all_eq[i]
-                                #     print(f"eq {eq} with error {rhs[i]}")
-                                # print("RMS simulation continues iterative initialization after the diagnostic. Check the logger for details.")
-                                # Continue with Newton iterations after reporting the initialization residual.
-
-
                         if not substep_converged:
                             solved = False
                             jac_start = time.time()
@@ -299,7 +301,19 @@ class BackEulerImplicitIntegrationVec:
                             jac_end = time.time()
                             timings["jacobian_time"] += jac_end - jac_start
                             linear_start = time.time()
-                            delta = sp.linalg.spsolve(Jf, -rhs)
+                            reference_indices: tuple[int, int] | None = (
+                                self.problem.get_small_signal_reference_indices()
+                            )
+                            reference_column: int | None
+                            if reference_indices is None:
+                                reference_column = None
+                            else:
+                                reference_column = reference_indices[1]
+                            delta: Vec = solve_rms_newton_correction(
+                                jacobian=Jf,
+                                residual=rhs,
+                                reference_column=reference_column,
+                            )
                             linear_end = time.time()
                             timings["linear_solver_time"] += linear_end - linear_start
                             solved = np.all(np.isfinite(delta))

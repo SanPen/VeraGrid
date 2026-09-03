@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.DataStructures.numerical_circuit &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.DataStructures.numerical_circuit &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -117,7 +117,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.simulation_indices</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationIndices</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.topology</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_islands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">BoolVec</span><span class="p">,</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">CxMat</span><span class="p">,</span> <span class="n">StrVec</span><span class="p">,</span> <span class="n">Logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContingencyOperationTypes</span><span class="p">,</span> <span class="n">GeneratorControlMode</span><span class="p">,</span> <span class="n">ShuntControlMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">BusMode</span><span class="p">,</span> <span class="n">ContingencyOperationTypes</span><span class="p">,</span> <span class="n">GeneratorControlMode</span><span class="p">,</span> <span class="n">ShuntControlMode</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.topology</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.simulation_indices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">si</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.admittance_matrices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ycalc</span>
@@ -348,6 +348,115 @@
         <span class="k">if</span> <span class="n">control_mode_int</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">v_ctrl_val</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">bus_types</span><span class="p">[</span><span class="n">gen_controllable_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">bus_types</span><span class="p">[</span><span class="n">gen_controllable_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="select_ac_phase_reference_buses">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.numerical_circuit.select_ac_phase_reference_buses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_ac_phase_reference_buses</span><span class="p">(</span>
+        <span class="n">bus_types</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+        <span class="n">active_power</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+        <span class="n">bus_active</span><span class="p">:</span> <span class="n">BoolVec</span><span class="p">,</span>
+        <span class="n">is_dc_bus</span><span class="p">:</span> <span class="n">BoolVec</span><span class="p">,</span>
+        <span class="n">branch_from</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+        <span class="n">branch_to</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+        <span class="n">branch_active</span><span class="p">:</span> <span class="n">BoolVec</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select missing angular references in independent AC phase regions.</span>
+
+<span class="sd">    Passive AC branches couple voltage angles. VSC and DC connections transfer</span>
+<span class="sd">    power without coupling the absolute AC phase, so they must not merge the</span>
+<span class="sd">    regions used to select one reference bus.</span>
+
+<span class="sd">    :param bus_types: Compiled bus modes before automatic promotion.</span>
+<span class="sd">    :param active_power: Active-power injections used to rank PV candidates.</span>
+<span class="sd">    :param bus_active: Active state of every bus.</span>
+<span class="sd">    :param is_dc_bus: DC classification of every bus.</span>
+<span class="sd">    :param branch_from: From-bus indices of passive branches.</span>
+<span class="sd">    :param branch_to: To-bus indices of passive branches.</span>
+<span class="sd">    :param branch_active: Active state of passive branches.</span>
+<span class="sd">    :return: PV bus indices that must become angular references.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bus_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bus_types</span><span class="p">)</span>
+    <span class="n">branch_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">branch_from</span><span class="p">)</span>
+    <span class="n">maximum_entry_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">bus_count</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">branch_count</span>
+    <span class="n">row_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">maximum_entry_count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">column_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">maximum_entry_count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">adjacency_data</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">maximum_entry_count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">entry_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">bus_index</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="c1"># Diagonal entries retain isolated active AC buses as one-bus phase regions.</span>
+    <span class="k">for</span> <span class="n">bus_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bus_count</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">bus_active</span><span class="p">[</span><span class="n">bus_index</span><span class="p">])</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">is_dc_bus</span><span class="p">[</span><span class="n">bus_index</span><span class="p">]):</span>
+            <span class="n">row_indices</span><span class="p">[</span><span class="n">entry_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus_index</span>
+            <span class="n">column_indices</span><span class="p">[</span><span class="n">entry_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">bus_index</span>
+            <span class="n">entry_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">branch_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">branch_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">branch_count</span><span class="p">):</span>
+        <span class="n">from_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">branch_from</span><span class="p">[</span><span class="n">branch_index</span><span class="p">])</span>
+        <span class="n">to_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">branch_to</span><span class="p">[</span><span class="n">branch_index</span><span class="p">])</span>
+        <span class="n">connects_active_ac_buses</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">bool</span><span class="p">(</span><span class="n">branch_active</span><span class="p">[</span><span class="n">branch_index</span><span class="p">])</span>
+            <span class="ow">and</span> <span class="n">from_index</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="n">to_index</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">bus_active</span><span class="p">[</span><span class="n">from_index</span><span class="p">])</span>
+            <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">bus_active</span><span class="p">[</span><span class="n">to_index</span><span class="p">])</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">is_dc_bus</span><span class="p">[</span><span class="n">from_index</span><span class="p">])</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">is_dc_bus</span><span class="p">[</span><span class="n">to_index</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">connects_active_ac_buses</span><span class="p">:</span>
+            <span class="n">row_indices</span><span class="p">[</span><span class="n">entry_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">from_index</span>
+            <span class="n">column_indices</span><span class="p">[</span><span class="n">entry_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_index</span>
+            <span class="n">entry_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">row_indices</span><span class="p">[</span><span class="n">entry_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_index</span>
+            <span class="n">column_indices</span><span class="p">[</span><span class="n">entry_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">from_index</span>
+            <span class="n">entry_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">adjacency</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">adjacency_data</span><span class="p">[:</span><span class="n">entry_count</span><span class="p">],</span>
+            <span class="p">(</span><span class="n">row_indices</span><span class="p">[:</span><span class="n">entry_count</span><span class="p">],</span> <span class="n">column_indices</span><span class="p">[:</span><span class="n">entry_count</span><span class="p">]),</span>
+        <span class="p">),</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">bus_count</span><span class="p">,</span> <span class="n">bus_count</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">ac_active</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">bus_active</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">is_dc_bus</span><span class="p">))</span>
+    <span class="n">phase_regions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IntVec</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_islands</span><span class="p">(</span>
+        <span class="n">adj</span><span class="o">=</span><span class="n">adjacency</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="n">ac_active</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">selected_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phase_regions</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">selected_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">phase_region</span><span class="p">:</span> <span class="n">IntVec</span>
+
+    <span class="k">for</span> <span class="n">phase_region</span> <span class="ow">in</span> <span class="n">phase_regions</span><span class="p">:</span>
+        <span class="n">region_modes</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">bus_types</span><span class="p">[</span><span class="n">phase_region</span><span class="p">]</span>
+        <span class="n">has_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">region_modes</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">has_reference</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pv_candidates</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">phase_region</span><span class="p">[</span>
+                <span class="n">region_modes</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">PV_tpe</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pv_candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ranked_candidate_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">active_power</span><span class="p">[</span><span class="n">pv_candidates</span><span class="p">])</span>
+                <span class="p">)</span>
+                <span class="n">selected_indices</span><span class="p">[</span><span class="n">selected_count</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">pv_candidates</span><span class="p">[</span><span class="n">ranked_candidate_index</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">selected_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">selected_indices</span><span class="p">[:</span><span class="n">selected_count</span><span class="p">]</span></div>
 
 
 
@@ -895,18 +1004,64 @@
         <span class="k">if</span> <span class="n">Sbus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">Sbus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_power_injections_pu</span><span class="p">()</span>
 
+        <span class="n">uses_internal_bus_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">bus_types</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">bus_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">bus_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bus_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bus_types</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">si</span><span class="o">.</span><span class="n">SimulationIndices</span><span class="p">(</span><span class="n">bus_types</span><span class="o">=</span><span class="n">bus_types</span><span class="p">,</span>
-                                    <span class="n">Pbus</span><span class="o">=</span><span class="n">Sbus</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
-                                    <span class="n">tap_module_control_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module_control_mode</span><span class="p">,</span>
-                                    <span class="n">tap_phase_control_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_phase_control_mode</span><span class="p">,</span>
-                                    <span class="n">tap_controlled_buses</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_controlled_buses</span><span class="p">,</span>
-                                    <span class="n">F</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">,</span>
-                                    <span class="n">T</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                                    <span class="n">is_dc_bus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
-                                    <span class="n">force_only_pq_pv_vd_types</span><span class="o">=</span><span class="n">force_only_pq_pv_vd_types</span><span class="p">)</span></div>
+        <span class="c1"># TODO: SANPEN: What is this and why is it here? probably colliding with problem-specific logic later</span>
+        <span class="c1"># Promote one PV source in every AC phase region before the generic</span>
+        <span class="c1"># classifier runs. Imported PV/SL semantics remain unchanged in</span>
+        <span class="c1"># MultiCircuit while VSC/DC links stay outside the phase graph.</span>
+        <span class="n">promoted_reference_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">select_ac_phase_reference_buses</span><span class="p">(</span>
+            <span class="n">bus_types</span><span class="o">=</span><span class="n">bus_types</span><span class="p">,</span>
+            <span class="n">active_power</span><span class="o">=</span><span class="n">Sbus</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+            <span class="n">bus_active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+            <span class="n">is_dc_bus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+            <span class="n">branch_from</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">,</span>
+            <span class="n">branch_to</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+            <span class="n">branch_active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">promoted_reference_index</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span>
+        <span class="k">for</span> <span class="n">promoted_reference_index</span> <span class="ow">in</span> <span class="n">promoted_reference_indices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">uses_internal_bus_types</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">set_bus_mode</span><span class="p">(</span>
+                    <span class="n">idx</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">promoted_reference_index</span><span class="p">),</span>
+                    <span class="n">val</span><span class="o">=</span><span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bus_types</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">promoted_reference_index</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span>
+                <span class="p">)</span>
+
+        <span class="n">simulation_indices</span><span class="p">:</span> <span class="n">si</span><span class="o">.</span><span class="n">SimulationIndices</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">SimulationIndices</span><span class="p">(</span>
+            <span class="n">bus_types</span><span class="o">=</span><span class="n">bus_types</span><span class="p">,</span>
+            <span class="n">Pbus</span><span class="o">=</span><span class="n">Sbus</span><span class="o">.</span><span class="n">real</span><span class="p">,</span>
+            <span class="n">tap_module_control_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_module_control_mode</span><span class="p">,</span>
+            <span class="n">tap_phase_control_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_phase_control_mode</span><span class="p">,</span>
+            <span class="n">tap_controlled_buses</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active_branch_data</span><span class="o">.</span><span class="n">tap_controlled_buses</span><span class="p">,</span>
+            <span class="n">F</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">,</span>
+            <span class="n">T</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+            <span class="n">is_dc_bus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+            <span class="n">force_only_pq_pv_vd_types</span><span class="o">=</span><span class="n">force_only_pq_pv_vd_types</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">uses_internal_bus_types</span><span class="p">:</span>
+            <span class="c1"># Keep the physical P/Q/Vm/Va masks synchronized with every</span>
+            <span class="c1"># explicit or automatically selected numerical reference.</span>
+            <span class="n">reference_index</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span>
+            <span class="k">for</span> <span class="n">reference_index</span> <span class="ow">in</span> <span class="n">simulation_indices</span><span class="o">.</span><span class="n">vd</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">set_bus_mode</span><span class="p">(</span>
+                    <span class="n">idx</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">reference_index</span><span class="p">),</span>
+                    <span class="n">val</span><span class="o">=</span><span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Caller-owned bus-type arrays are temporary alternatives and must</span>
+            <span class="c1"># not mutate the canonical control masks stored by this circuit.</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">simulation_indices</span></div>
 
 
 <div class="viewcode-block" id="NumericalCircuit.get_connectivity_matrices">

@@ -633,6 +633,18 @@ class Var(Expr):
     def ref(self) -> VarPowerFlowReferenceType | None:
         return self._ref
 
+    @ref.setter
+    def ref(self, val: VarPowerFlowReferenceType) -> None:
+        """Set the typed physical-network reference of this variable.
+
+        :param val: Physical-network reference to assign.
+        :return: None.
+        """
+        if isinstance(val, VarPowerFlowReferenceType):
+            self._ref = val
+        else:
+            raise ValueError(f"Symbolic variable cannot accept reference {val}")
+
     def _diff1(self, var: Var | str, dt: Var | None = None) -> Expr:
         """
         differentiation
@@ -1472,7 +1484,23 @@ def sqrt(x: Expr) -> Expr:
 
 
 def sqrt_diff(u: Expr, du: Expr) -> Expr:
-    return du / (Const(2) * sqrt(u))
+    """Differentiate a square root with a finite boundary convention.
+
+    The analytical derivative is retained for strictly positive arguments.
+    At zero, where the derivative is not finite, the symbolic runtime uses a
+    zero slope. This is the deterministic boundary convention required by
+    limited expressions such as ``sqrt(max(x, 0))``.
+
+    :param u: Square-root argument.
+    :param du: Derivative of the argument.
+    :return: Symbolic derivative that remains finite at zero.
+    """
+    protected_derivative: Expr = safe_divide(
+        numerator=du,
+        denominator=Const(2) * sqrt(u),
+        zero_denominator_value=Const(1.0),
+    )
+    return protected_derivative * heaviside(u)
 
 
 def asin(x: Expr) -> Expr:
@@ -1623,6 +1651,45 @@ def atan2(x: Expr, y: Expr) -> Expr:
     return Func2("atan2", _to_expr(x), _to_expr(y))
 
 
+def safe_divide(
+        numerator: Expr | NUMBER,
+        denominator: Expr | NUMBER,
+        zero_denominator_value: Expr | NUMBER,
+) -> Expr:
+    """Build a division that remains defined for an exact zero denominator.
+
+    Non-zero denominators retain ordinary division. The caller must state the
+    value that replaces an exact zero denominator so the complete numerical
+    rule remains visible at every equation site.
+
+    :param numerator: Dividend expression.
+    :param denominator: Divisor expression.
+    :param zero_denominator_value: Explicit replacement for an exact zero.
+    :return: Symbolic division with an explicit zero-denominator branch.
+    """
+    numerator_expression: Expr = _to_expr(numerator)
+    denominator_expression: Expr = _to_expr(denominator)
+    zero_denominator_expression: Expr = _to_expr(zero_denominator_value)
+    if (
+            isinstance(zero_denominator_expression, Const)
+            and zero_denominator_expression.value == 0
+    ):
+        raise ValueError("zero_denominator_value must be non-zero")
+    else:
+        pass
+
+    denominator_is_nonzero: Expr = (
+        heaviside(denominator_expression)
+        + heaviside(-denominator_expression)
+    )
+    effective_denominator: Expr = (
+        denominator_is_nonzero * denominator_expression
+        + (Const(1.0) - denominator_is_nonzero)
+        * zero_denominator_expression
+    )
+    return numerator_expression / effective_denominator
+
+
 def hard_sat(x: Expr, x_min: Expr | NUMBER, x_max: Expr | NUMBER) -> Expr:
     """
     Apply a symbolic hard saturation to an expression.
@@ -1754,7 +1821,6 @@ class Func2(Expr):
             return heaviside(y - x) * dx + heaviside(x - y) * dy
         if self.name == "max":
             return heaviside(x - y) * dx + heaviside(y - x) * dy
-
         raise ValueError(f"Unknown binary function '{self.name}'")
 
     # --- simplification ------------------------------------------------------
@@ -1846,6 +1912,13 @@ def _expr_to_dict(expr: Expr | Comparison) -> Dict[str, Any]:
                 "name": expr.name,
                 "uid": expr.uid,
                 "non_mutable_uid": expr.non_mutable_uid,
+                "reference": expr.ref.name if expr.ref is not None else None,
+                "network_conn": expr.network_conn,
+                "shared_reference": (
+                    None
+                    if expr.shared_ref is None
+                    else {"name": expr.shared_ref.name, "uid": expr.shared_ref.uid}
+                ),
                 "base_var": "None"
             }
         else:
@@ -1854,6 +1927,13 @@ def _expr_to_dict(expr: Expr | Comparison) -> Dict[str, Any]:
                 "name": expr.name,
                 "uid": expr.uid,
                 "non_mutable_uid": expr.non_mutable_uid,
+                "reference": expr.ref.name if expr.ref is not None else None,
+                "network_conn": expr.network_conn,
+                "shared_reference": (
+                    None
+                    if expr.shared_ref is None
+                    else {"name": expr.shared_ref.name, "uid": expr.shared_ref.uid}
+                ),
                 "base_var": _expr_to_dict(expr.base_var),
             }
 
@@ -1932,8 +2012,57 @@ def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const | Comparison:
             # time that value was also the physical variable identity.
             non_mutable_uid = data["uid"]
 
+        # Preserve the optional physical-network meaning of every variable.
+        # Missing fields keep legacy dictionaries readable.
+        reference_name_data: object = data.get("reference", None)
+        if reference_name_data is None:
+            reference: VarPowerFlowReferenceType | None = None
+        elif (
+                isinstance(reference_name_data, str)
+                and reference_name_data in VarPowerFlowReferenceType.__members__
+        ):
+            reference = VarPowerFlowReferenceType.__members__[reference_name_data]
+        else:
+            raise ValueError(
+                f"Unknown power-flow variable reference '{reference_name_data}'"
+            )
+
+        network_conn_data: object = data.get("network_conn", False)
+        if isinstance(network_conn_data, bool):
+            network_conn: bool = network_conn_data
+        else:
+            raise TypeError("Variable network_conn must be a boolean")
+
+        shared_reference_data: object = data.get("shared_reference", None)
+        if shared_reference_data is None:
+            shared_reference: SharedVarReferenceType | None = None
+        elif isinstance(shared_reference_data, dict):
+            shared_reference_name: object = shared_reference_data.get("name", None)
+            shared_reference_uid: object = shared_reference_data.get("uid", None)
+            if (
+                    isinstance(shared_reference_name, str)
+                    and isinstance(shared_reference_uid, int)
+                    and not isinstance(shared_reference_uid, bool)
+            ):
+                shared_reference = SharedVarReferenceType(
+                    name=shared_reference_name,
+                    uid=shared_reference_uid,
+                )
+            else:
+                raise TypeError(
+                    "Variable shared_reference must contain a string name and integer uid"
+                )
+        else:
+            raise TypeError("Variable shared_reference must be a dictionary or None")
+
         if data["base_var"] == "None":
-            obj = Var(name=data["name"], non_mutable_uid=non_mutable_uid)
+            obj = Var(
+                name=data["name"],
+                reference=reference,
+                network_conn=network_conn,
+                shared_reference=shared_reference,
+                non_mutable_uid=non_mutable_uid,
+            )
         else:
             # reconstruct base_var
             base_data = data["base_var"]
@@ -1942,6 +2071,9 @@ def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const | Comparison:
                 raise TypeError("base_var must be a Var")
 
             obj = Var(name=data["name"],
+                      reference=reference,
+                      network_conn=network_conn,
+                      shared_reference=shared_reference,
                       non_mutable_uid=non_mutable_uid,
                       base_var=base_var)
 
@@ -2621,6 +2753,7 @@ __all__ = [
     "heaviside",
     "rand",
     "atan2",
+    "safe_divide",
     "piecewise",
     "symbolic_to_string",
     "string_to_symbolic",

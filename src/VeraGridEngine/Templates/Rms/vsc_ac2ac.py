@@ -21,6 +21,7 @@ def VscAc2acModel(vfactory: VarFactory, name: str = "VscAc2acModel") -> RmsModel
     :return: RmsModelTemplate containing the VSC AC2AC model
     """
     templ = RmsModelTemplate()
+    templ.name = name
     templ.tpe = DeviceType.VscDevice
     
     
@@ -93,4 +94,5 @@ def VscAc2acModel(vfactory: VarFactory, name: str = "VscAc2acModel") -> RmsModel
     vsc_block.name = name
     templ.block = vsc_block
     
+    templ.comment = 'VSC AC-to-AC RMS model'
     return templ

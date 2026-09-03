@@ -360,6 +360,7 @@ class InvestmentsEvaluationDriver(DriverTemplate):
         """
 
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         self.logger.add_info(msg="Solver", value=f"{self.options.solver.value}")
         self.logger.add_info(msg="Max evaluations", value=f"{self.options.max_eval}")

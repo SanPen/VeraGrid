@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -707,8 +707,8 @@
     <span class="c1"># 5. STRICT MATCHING</span>
     <span class="c1"># To avoid Arnoldi asymmetries, we use a metric that combines Re and Im.</span>
     <span class="c1"># We sort from lowest to highest natural frequency.</span>
-    <span class="n">order_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues_R</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues_R</span><span class="o">.</span><span class="n">real</span><span class="p">))</span>
-    <span class="n">order_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues_L</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues_L</span><span class="o">.</span><span class="n">real</span><span class="p">))</span>
+    <span class="n">order_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues_R</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues_R</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;stable&quot;</span><span class="p">)</span>
+    <span class="n">order_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues_L</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues_L</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;stable&quot;</span><span class="p">)</span>
 
     <span class="n">eigenvalues_R</span> <span class="o">=</span> <span class="n">eigenvalues_R</span><span class="p">[</span><span class="n">order_R</span><span class="p">]</span>
 

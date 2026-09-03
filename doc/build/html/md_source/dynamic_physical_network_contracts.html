@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic physical network contracts &mdash; VeraGrid 6.5.16 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RMS device templates" href="dyn_templates/RMS/index.html" />
+    <link rel="prev" title="Writing DAE models in VeraGrid" href="dae_block_authoring.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="rms_simulations.html">⏱️ RMS simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="dynamic_model_library_index.html">📚 Dynamic model library</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="dynamic_model_library_index.html#authoring-models">Authoring models</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="dae_block_authoring.html">Writing DAE models in VeraGrid</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Dynamic physical network contracts</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dynamic_model_library_index.html#device-templates">Device templates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dynamic_model_library_index.html#reusable-blocks-and-logic">Reusable blocks and logic</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+          <li class="breadcrumb-item"><a href="dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+      <li class="breadcrumb-item active">Dynamic physical network contracts</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/dynamic_physical_network_contracts.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="dynamic-physical-network-contracts">
+<h1>Dynamic physical network contracts<a class="headerlink" href="#dynamic-physical-network-contracts" title="Link to this heading"></a></h1>
+<p>RMS and EMT dynamic models contain two different kinds of connection:</p>
+<ul class="simple">
+<li><p><strong>signal connections</strong> join visible block ports and carry controller,
+measurement, and command values;</p></li>
+<li><p><strong>physical connections</strong> join devices to buses and determine which network
+balance equation owns each electrical contribution.</p></li>
+</ul>
+<p>These connections must not be inferred from one another. A signal can be
+copied, hidden, or routed through several controller blocks without changing
+electrical topology. Conversely, a physical terminal can contribute to the
+network even when its power or current is not exposed as a visible signal.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> is the only owner of physical topology. A canonical symbolic
+<code class="docutils literal notranslate"><span class="pre">Block</span></code> declares <em>what</em> electrical quantity belongs to each named terminal,
+while the RMS or EMT problem resolves that terminal to a bus from the assigned
+VeraGrid device. Dynamic diagrams never create a second electrical graph.</p>
+<section id="declarative-contract-lifecycle">
+<h2>Declarative contract lifecycle<a class="headerlink" href="#declarative-contract-lifecycle" title="Link to this heading"></a></h2>
+<p>Physical declarations are stored in the block’s <code class="docutils literal notranslate"><span class="pre">DynamicModelContract</span></code>. They
+contain typed terminal and variable references, not copied expressions or
+references to DGS parser objects. The lifecycle is:</p>
+<ol class="arabic simple">
+<li><p>Parse and validate the source representation.</p></li>
+<li><p>Build the canonical VeraGrid <code class="docutils literal notranslate"><span class="pre">Block</span></code> as soon as source references permit.</p></li>
+<li><p>Add typed physical declarations to that block.</p></li>
+<li><p>Assign the block to a device in <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code>.</p></li>
+<li><p>Validate every declaration before changing a nodal balance.</p></li>
+<li><p>Resolve terminal sides through the device’s physical buses and assemble the
+contribution.</p></li>
+</ol>
+<p>The contract is serialized as versioned declarative data. Loading is
+fail-closed: missing, extra, mistyped, or incompatible fields are rejected.
+Imported models are never persisted as generated Python code, and no parallel
+import-stage model graph is retained.</p>
+</section>
+<section id="rms-terminal-power-assembly">
+<h2>RMS terminal-power assembly<a class="headerlink" href="#rms-terminal-power-assembly" title="Link to this heading"></a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">RmsTerminalPowerContribution</span></code> selects one of these terminal sides:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Side</p></th>
+<th class="head"><p>Device topology</p></th>
+<th class="head"><p>Active reference</p></th>
+<th class="head"><p>Reactive reference</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BUS</span></code></p></td>
+<td><p>one-terminal device bus</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q</span></code> or none</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FROM</span></code></p></td>
+<td><p>branch <code class="docutils literal notranslate"><span class="pre">bus_from</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Pf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Qf</span></code> or none</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TO</span></code></p></td>
+<td><p>branch <code class="docutils literal notranslate"><span class="pre">bus_to</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Pt</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Qt</span></code> or none</p></td>
+</tr>
+</tbody>
+</table>
+<p>For <code class="docutils literal notranslate"><span class="pre">FROM</span></code> and <code class="docutils literal notranslate"><span class="pre">TO</span></code>, positive P/Q means power flowing from the connected bus
+into the device. The nodal injection is therefore the negative of the declared
+value. <code class="docutils literal notranslate"><span class="pre">BUS</span></code> uses the injection convention: positive means power flowing from
+the device into the network, so it enters the nodal balance unchanged.</p>
+<p>A reactive reference is optional only where the terminal can be DC. Declaring
+reactive power on a bus that topology identifies as DC is an error. The
+assembler validates the complete device contract before mutating either the
+active or reactive balance, preventing partial injection from an invalid
+terminal.</p>
+<section id="vectorized-rms-invariant">
+<h3>Vectorized RMS invariant<a class="headerlink" href="#vectorized-rms-invariant" title="Link to this heading"></a></h3>
+<p>The fully vectorized problem compiles the representative member of each
+symbolic equivalence class once. Every other member must declare the same
+ordered terminal sides and P/Q references. Members contribute only their own
+physical bus indices. Compiled row indices are recorded when their equations
+are appended and are shared by residual and Jacobian evaluation.</p>
+<p>A transient compatibility layout exists for old, contract-free version-1
+models whose established external mappings are unambiguous. It is an in-memory
+bridge, is never persisted, and must not be used to guess incomplete new
+contracts.</p>
+</section>
+</section>
+<section id="emt-terminal-current-assembly">
+<h2>EMT terminal-current assembly<a class="headerlink" href="#emt-terminal-current-assembly" title="Link to this heading"></a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">EmtTerminalCurrentContribution</span></code> declares a terminal side, a conductor, and
+the current reference owned by the canonical block.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Terminal side</p></th>
+<th class="head"><p>Physical owner</p></th>
+<th class="head"><p>Nodal sign</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BUS</span></code></p></td>
+<td><p>one-terminal device bus</p></td>
+<td><p>positive device injection</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FROM</span></code></p></td>
+<td><p>branch <code class="docutils literal notranslate"><span class="pre">bus_from</span></code></p></td>
+<td><p>negative branch current</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TO</span></code></p></td>
+<td><p>branch <code class="docutils literal notranslate"><span class="pre">bus_to</span></code></p></td>
+<td><p>negative branch current</p></td>
+</tr>
+</tbody>
+</table>
+<p>The supported conductors are <code class="docutils literal notranslate"><span class="pre">DC</span></code>, <code class="docutils literal notranslate"><span class="pre">NEUTRAL</span></code>, <code class="docutils literal notranslate"><span class="pre">PHASE_A</span></code>, <code class="docutils literal notranslate"><span class="pre">PHASE_B</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">PHASE_C</span></code>. A DC conductor can connect only to a DC bus shell. Neutral and phase
+conductors can connect only to an AC NABC shell. The current reference must
+also match its conductor (<code class="docutils literal notranslate"><span class="pre">Idc</span></code>/<code class="docutils literal notranslate"><span class="pre">If_dc</span></code>/<code class="docutils literal notranslate"><span class="pre">It_dc</span></code>, or the corresponding N/A/B/C
+reference). All declarations are resolved and validated before the first KCL
+entry changes.</p>
+<p>Grounding inside a composite EMT model is declarative. A child marked with
+<code class="docutils literal notranslate"><span class="pre">emt_internal_grounding_link</span></code> closes the model’s internal neutral-to-ground
+equation and is not assembled as an independent <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> terminal.
+Legacy migration recognizes only the established grounding-link structure;
+ambiguous blocks remain invalid instead of being classified by a name alone.</p>
+</section>
+<section id="physical-rms-measurements">
+<h2>Physical RMS measurements<a class="headerlink" href="#physical-rms-measurements" title="Link to this heading"></a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">RmsPhysicalMeasurementPoint</span></code> records a meter’s exact identity and
+selection metadata:</p>
+<ul class="simple">
+<li><p>source FID of the native meter or built-in measurement slot;</p></li>
+<li><p>target FID of the measured VeraGrid bus or device;</p></li>
+<li><p>typed terminal side;</p></li>
+<li><p>quantity kind (<code class="docutils literal notranslate"><span class="pre">VOLTAGE</span></code>, <code class="docutils literal notranslate"><span class="pre">CURRENT</span></code>, <code class="docutils literal notranslate"><span class="pre">POWER</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">PHASE_LOCKED_LOOP</span></code>);</p></li>
+<li><p>ordered output signal names and their canonical variable UIDs.</p></li>
+</ul>
+<p>The solved expressions remain owned by the meter <code class="docutils literal notranslate"><span class="pre">Block</span></code>. This lets runtime
+code index measurements without retaining the DGS parser graph or duplicating
+symbolic variables.</p>
+<p>PowerFactory terminal ordinals are interpreted against the exact target type:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Target</p></th>
+<th class="head"><p>DGS ordinal</p></th>
+<th class="head"><p>VeraGrid side</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>one-terminal device</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BUS</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>ordinary branch</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FROM</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>ordinary branch</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TO</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ElmVsc</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TO</span></code> (AC terminal)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Any other ordinal is invalid. Import does not silently redirect it to another
+terminal. Voltage and PLL measurements must target a bus. Current and power
+meters must resolve an exact device terminal, including the special retained
+series-branch resolution used when PowerFactory omits a native valve row. An
+ambiguous topology produces no fallback binding.</p>
+</section>
+<section id="dgs-vsc-ownership">
+<h2>DGS VSC ownership<a class="headerlink" href="#dgs-vsc-ownership" title="Link to this heading"></a></h2>
+<p>For an imported VSC, DC active power belongs to <code class="docutils literal notranslate"><span class="pre">FROM</span></code>/<code class="docutils literal notranslate"><span class="pre">Pf</span></code>; AC active and
+reactive power belong to <code class="docutils literal notranslate"><span class="pre">TO</span></code>/<code class="docutils literal notranslate"><span class="pre">Pt</span></code> and <code class="docutils literal notranslate"><span class="pre">TO</span></code>/<code class="docutils literal notranslate"><span class="pre">Qt</span></code>. The converter’s physical
+contract makes those quantities available to the RMS nodal assembler even
+when P/Q are hidden from visible signal ports. Hiding them prevents accidental
+controller wiring from becoming network ownership; it does not remove the
+variables from the model’s external mapping.</p>
+<p>The DGS adapter binds topology and equipment parameters to one device-specific
+copy of the template. Operating-point P/Q/current values come from the solved
+power flow before explicit initialization. Imported <code class="docutils literal notranslate"><span class="pre">m:*</span></code> snapshots can
+validate the reconstructed state, but they are not an alternative initializer.</p>
+</section>
+<section id="validation-checklist">
+<h2>Validation checklist<a class="headerlink" href="#validation-checklist" title="Link to this heading"></a></h2>
+<p>When adding or importing a physical dynamic model, verify that:</p>
+<ul class="simple">
+<li><p>every network contribution has one typed declaration;</p></li>
+<li><p>every declaration references a variable owned by the same canonical block;</p></li>
+<li><p>terminal sides agree with the assigned device topology;</p></li>
+<li><p>DC and AC quantities are not mixed;</p></li>
+<li><p>equivalent vectorized instances declare the same ordered contract;</p></li>
+<li><p>visible ports contain only intended signal interfaces;</p></li>
+<li><p>meter source and target FIDs are exact and output names pair one-to-one with
+output UIDs;</p></li>
+<li><p>invalid or ambiguous topology fails before nodal balances are mutated;</p></li>
+<li><p>serialization round-trips the declarative contract without parser objects or
+generated source code.</p></li>
+</ul>
+<p>These invariants keep scalar, vectorized, imported, and persisted models on the
+same physical interpretation.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dae_block_authoring.html" class="btn btn-neutral float-left" title="Writing DAE models in VeraGrid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dyn_templates/RMS/index.html" class="btn btn-neutral float-right" title="RMS device templates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -10,6 +10,7 @@ Start with the authoring guide when creating a new symbolic model or modifying a
 :maxdepth: 1
 
 dae_block_authoring
+dynamic_physical_network_contracts
 ```
 
 ## Device templates

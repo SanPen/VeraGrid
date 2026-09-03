@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import math
 import webbrowser
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, List, Tuple, Union
 
 from PySide6.QtCore import QPoint, QPointF, Qt
 from PySide6.QtGui import QColor, QPen
@@ -168,6 +168,7 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         Remove all segments from the scene
         """
         for segment in self.segments_list:
+            segment.delete_from_associations()
             if segment.scene() is not None:
                 self.editor.diagram_scene.removeItem(segment)
             else:
@@ -375,6 +376,11 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         for nod in self.nodes_list:
             if nod.index > node.index:
                 nod.index = nod.index - 1
+            else:
+                pass
+
+        for i, location in enumerate(self.api_object.locations.data):
+            location.seq = i
 
         self.editor.remove_line_location_graphic(node)
         self.redraw_segments()
@@ -460,7 +466,7 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         :param scene_pos: click position in scene coordinates
         """
         if len(self.segments_list) == 0:
-            self.insert_new_node_at_position(0)
+            self.insert_new_node_at_position(index=0, scene_pos=scene_pos)
             return
 
         closest_segment_index = 0
@@ -471,8 +477,10 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
             if dist < closest_distance:
                 closest_distance = dist
                 closest_segment_index = i
+            else:
+                pass
 
-        self.insert_new_node_at_position(closest_segment_index)
+        self.insert_new_node_at_position(index=closest_segment_index, scene_pos=scene_pos)
 
     def _open_street_view_context(self) -> None:
         """
@@ -702,161 +710,88 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         """
         return self.editor.graphics_manager.query(elm=self.api_object.get_substation_from())
 
-    def insert_new_node_at_position(self, index: int):
+    def get_new_node_coordinates(self, index: int, scene_pos: QPointF | None) -> Tuple[float, float] | None:
         """
-        Creates a new node in the list at the given position
-        :param index:
-        :return:
+        Get coordinates for a new waypoint.
+
+        :param index: waypoint insertion index.
+        :param scene_pos: optional clicked map position.
+        :return: waypoint latitude and longitude, or ``None`` when no endpoints exist.
         """
-
-        # Check if the index is valid
-        if 1 <= index < len(self.api_object.locations.data) and len(self.api_object.locations.data) > 1:
-
-            nd1 = self.nodes_list[index]
-            nd2 = self.nodes_list[index - 1]
-
-            # Create a new API object for the node. Assuming `api_object.locations.data` holds coordinates or similar data
-            new_api_node_data = self.api_object.locations.data[index]
-
-            new_lat = ((nd2.lat + nd1.lat) / 2)
-            new_long = ((nd2.lon + nd1.lon) / 2)
-
-            new_api_object = LineLocation(lat=new_lat,
-                                          lon=new_long,
-                                          z=new_api_node_data.alt,
-                                          seq=new_api_node_data.seq,
-                                          name=new_api_node_data.name,
-                                          idtag=None,  # generates new UUID
-                                          code=new_api_node_data.code)
-
-            self.api_object.locations.data.insert(index, new_api_object)
-
-            # Create a new graphical node item
-
-            graphic_obj = self.editor.create_line_location_graphic(line_container=self,
-                                                                    api_object=new_api_object,
-                                                                    lat=new_api_object.lat,
-                                                                    lon=new_api_object.long,
-                                                                    index=index)
-
-            idx = 0
-
-            for nod in self.nodes_list:
-
-                if idx >= index:
-                    nod.index = nod.index + 1
-
-                idx = idx + 1
-
-            # Add the node to the nodes list
-            self.nodes_list.insert(index, graphic_obj)
-
-            graphic_obj.update_position()
-
-            # Update connectors if necessary
-            self.redraw_segments()
-
-            # Return the newly created node
-            return graphic_obj
-
-        elif len(self.api_object.locations.data) == 0:
-
-            substation_from_graphics = self.editor.graphics_manager.query(elm=self.api_object.get_substation_from())
-            substation_to_graphics = self.editor.graphics_manager.query(elm=self.api_object.get_substation_to())
-
-            nd1 = substation_from_graphics
-            nd2 = substation_to_graphics
-
-            new_lat = ((nd2.lat + nd1.lat) / 2)
-            new_long = ((nd2.lon + nd1.lon) / 2)
-
-            new_api_object = LineLocation(lat=new_lat,
-                                          lon=new_long,
-                                          z=0,
-                                          seq=0,
-                                          name="New node",
-                                          idtag="",
-                                          code="")
-
-            self.api_object.locations.data.insert(0, new_api_object)
-
-            # Create a new graphical node item
-
-            graphic_obj = self.editor.create_line_location_graphic(line_container=self,
-                                                                    api_object=new_api_object,
-                                                                    lat=new_api_object.lat,
-                                                                    lon=new_api_object.long,
-                                                                    index=0)
-
-            # Add the node to the nodes list
-            self.nodes_list.insert(0, graphic_obj)
-
-            graphic_obj.update_position()
-
-            # Update connectors if necessary
-            self.redraw_segments()
-
-            # Return the newly created node
-            return graphic_obj
-
-        elif 0 == index or index >= len(self.api_object.locations.data) - 1:
-
-            substation_from_graphics = self.editor.graphics_manager.query(elm=self.api_object.get_substation_from())
-            substation_to_graphics = self.editor.graphics_manager.query(elm=self.api_object.get_substation_to())
-
-            nd1 = substation_from_graphics
-            nd2 = substation_to_graphics
-
-            if index == 0:
-                nd2 = self.nodes_list[0]
-
-            if index >= len(self.nodes_list):
-                nd1 = self.nodes_list[len(self.nodes_list) - 1]
-
-            new_lat = ((nd2.lat + nd1.lat) / 2)
-            new_long = ((nd2.lon + nd1.lon) / 2)
-
-            new_api_object = LineLocation(lat=new_lat,
-                                          lon=new_long,
-                                          z=0,
-                                          seq=0,
-                                          name="New node",
-                                          idtag="",
-                                          code="")
-
-            self.api_object.locations.data.insert(index, new_api_object)
-
-            # Create a new graphical node item
-
-            graphic_obj = self.editor.create_line_location_graphic(line_container=self,
-                                                                    api_object=new_api_object,
-                                                                    lat=new_api_object.lat,
-                                                                    lon=new_api_object.long,
-                                                                    index=index)
-
-            idx = 0
-
-            for nod in self.nodes_list:
-
-                if idx >= index:
-                    nod.index = nod.index + 1
-
-                idx = idx + 1
-
-            # Add the node to the nodes list
-            self.nodes_list.insert(index, graphic_obj)
-
-            graphic_obj.update_position()
-
-            # Update connectors if necessary
-            self.redraw_segments()
-
-            # Return the newly created node
-            return graphic_obj
-
+        # Context-menu insertion must use the clicked map coordinate.
+        if scene_pos is not None:
+            lat: float
+            lon: float
+            lat, lon = self.editor.to_lat_lon(x=scene_pos.x(), y=scene_pos.y())
+            return lat, lon
         else:
-            #     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-            #     logging.info("Invalid node index")
+            pass
+
+        substation_from_graphics = self.editor.graphics_manager.query(elm=self.api_object.get_substation_from())
+        substation_to_graphics = self.editor.graphics_manager.query(elm=self.api_object.get_substation_to())
+
+        if substation_from_graphics is not None and substation_to_graphics is not None:
+            # Without a click position, preserve the old midpoint behaviour.
+            nd1 = substation_from_graphics if index == 0 else self.nodes_list[index - 1]
+            nd2 = substation_to_graphics if index == len(self.nodes_list) else self.nodes_list[index]
+            return (nd1.lat + nd2.lat) / 2.0, (nd1.lon + nd2.lon) / 2.0
+        else:
+            return None
+
+    def insert_new_node_at_position(self,
+                                    index: int,
+                                    scene_pos: QPointF | None = None) -> LineLocationGraphicItem | None:
+        """
+        Creates a new node in the list at the given position.
+
+        :param index: waypoint insertion index.
+        :param scene_pos: optional clicked map position.
+        :return: Created waypoint graphic object.
+        """
+        if 0 <= index <= len(self.nodes_list):
+            coordinates: Tuple[float, float] | None = self.get_new_node_coordinates(index=index, scene_pos=scene_pos)
+
+            if coordinates is not None:
+                new_lat: float
+                new_long: float
+                new_lat, new_long = coordinates
+
+                new_api_object = LineLocation(lat=new_lat,
+                                              lon=new_long,
+                                              z=0.0,
+                                              seq=index,
+                                              name="New node",
+                                              idtag=None,
+                                              code="")
+
+                self.api_object.locations.data.insert(index, new_api_object)
+
+                for i, location in enumerate(self.api_object.locations.data):
+                    location.seq = i
+
+                graphic_obj = self.editor.create_line_location_graphic(line_container=self,
+                                                                       api_object=new_api_object,
+                                                                       lat=new_api_object.lat,
+                                                                       lon=new_api_object.long,
+                                                                       index=index)
+
+                for nod in self.nodes_list:
+                    if nod.index >= index:
+                        nod.index = nod.index + 1
+                    else:
+                        pass
+
+                self.nodes_list.insert(index, graphic_obj)
+
+                graphic_obj.update_position()
+
+                # Rebuild the affected line segments around the inserted waypoint.
+                self.redraw_segments()
+
+                return graphic_obj
+            else:
+                return None
+        else:
             return None
 
     def split_line(self, index):

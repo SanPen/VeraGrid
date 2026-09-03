@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Rms.line_rms_template &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Templates.Rms.line_rms_template &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -115,7 +112,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsModelTemplate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Var</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
 
@@ -145,7 +142,7 @@
     <span class="n">b</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
     <span class="n">bsh</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;bsh&quot;</span><span class="p">)</span>
 
-    <span class="n">u</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
 
     <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
 
@@ -160,10 +157,10 @@
 
     <span class="n">pi2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Pf</span> <span class="o">-</span> <span class="p">((</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">pi2</span><span class="p">))),</span>
-        <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Qf</span> <span class="o">-</span> <span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">bsh</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">pi2</span><span class="p">))),</span>
-        <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Pt</span> <span class="o">-</span> <span class="p">((</span><span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pi2</span><span class="p">))),</span>
-        <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Qt</span> <span class="o">-</span> <span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">bsh</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pi2</span><span class="p">))),</span>
+        <span class="n">Pf</span> <span class="o">-</span> <span class="n">u</span> <span class="o">*</span> <span class="p">((</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">pi2</span><span class="p">)),</span>
+        <span class="n">Qf</span> <span class="o">-</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">bsh</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">pi2</span><span class="p">)),</span>
+        <span class="n">Pt</span> <span class="o">-</span> <span class="n">u</span> <span class="o">*</span> <span class="p">((</span><span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pi2</span><span class="p">)),</span>
+        <span class="n">Qt</span> <span class="o">-</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">bsh</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="n">g</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pi2</span><span class="p">)),</span>
     <span class="p">]</span>
 
     <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
@@ -192,59 +189,108 @@
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">,</span> <span class="n">Qf</span><span class="p">,</span> <span class="n">Qt</span><span class="p">]</span>
+    <span class="c1"># The fixed-size DAE keeps the branch compiled while a scheduled event</span>
+    <span class="c1"># changes only this retained conduction parameter.</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">uid</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">uid</span>
 
 
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;AC line RMS pi-equivalent model&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
 
 <div class="viewcode-block" id="get_dc_line_rms_template">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.line_rms_template.get_dc_line_rms_template">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_dc_line_rms_template</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DC_Line_rms_template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dc_line_rms_template</span><span class="p">(</span>
+        <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DC_Line_rms_template&quot;</span><span class="p">,</span>
+        <span class="n">use_dynamic_inductance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the RMS template model of a DC line with series R-L dynamics.</span>
+<span class="sd">    Build the RMS series R-L model of a DC line.</span>
+
+<span class="sd">    The retained status input opens the driving voltage while preserving the</span>
+<span class="sd">    fixed DAE dimensions and the physical current decay.</span>
+
+<span class="sd">    :param vfactory: Symbolic variable factory shared by the circuit.</span>
+<span class="sd">    :param name: Human-readable RMS template name.</span>
+<span class="sd">    :param use_dynamic_inductance: Use the imported nonzero series inductance</span>
+<span class="sd">        and represent current as a differential state. When ``False``, retain</span>
+<span class="sd">        the exact purely resistive algebraic branch law.</span>
+<span class="sd">    :return: DC-line RMS template selected from the physical branch data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span><span class="p">:</span> <span class="n">RmsModelTemplate</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">DCLineDevice</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
-    <span class="n">Vdcf</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Vdcf&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmf</span><span class="p">)</span>
-    <span class="n">Vdct</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Vdct&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmt</span><span class="p">)</span>
+    <span class="n">Vdcf</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Vdcf&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmf</span><span class="p">)</span>
+    <span class="n">Vdct</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Vdct&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmt</span><span class="p">)</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Vdcf</span><span class="p">,</span> <span class="n">Vdct</span><span class="p">]</span>
 
-    <span class="n">If_dc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;If_dc&quot;</span><span class="p">)</span>
-    <span class="n">Pf</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pf&quot;</span><span class="p">)</span>
-    <span class="n">Pt</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pt&quot;</span><span class="p">)</span>
-    <span class="n">dIf_dcdt</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_diff_var</span><span class="p">(</span><span class="s2">&quot;dIf_dcdt&quot;</span><span class="p">,</span> <span class="n">base_var</span><span class="o">=</span><span class="n">If_dc</span><span class="p">)</span>
+    <span class="n">If_dc</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;If_dc&quot;</span><span class="p">)</span>
+    <span class="n">Pf</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pf&quot;</span><span class="p">)</span>
+    <span class="n">Pt</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pt&quot;</span><span class="p">)</span>
+    <span class="n">r</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
 
-    <span class="n">r</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
-    <span class="n">l</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">)</span>
-
-    <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+    <span class="n">block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
 
     <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
-    <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 
-    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">If_dc</span><span class="p">,</span> <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">]</span>
-    <span class="n">block</span><span class="o">.</span><span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">dIf_dcdt</span><span class="p">]</span>
-
-    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">l</span> <span class="o">*</span> <span class="n">dIf_dcdt</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">If_dc</span> <span class="o">-</span> <span class="p">(</span><span class="n">Vdcf</span> <span class="o">-</span> <span class="n">Vdct</span><span class="p">),</span>
-        <span class="n">Pf</span> <span class="o">-</span> <span class="n">Vdcf</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
-        <span class="n">Pt</span> <span class="o">+</span> <span class="n">Vdct</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
-    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">use_dynamic_inductance</span><span class="p">:</span>
+        <span class="c1"># A cable with exported series inductance stores magnetic energy, so</span>
+        <span class="c1"># its current is a genuine state. This explicit ODE form is the normal</span>
+        <span class="c1"># RMS contract and avoids embedding a differential variable in an</span>
+        <span class="c1"># algebraic row, which produces a badly scaled mixed DAE near events.</span>
+        <span class="n">l</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">If_dc</span><span class="p">])</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vdcf</span> <span class="o">-</span> <span class="n">Vdct</span><span class="p">)</span> <span class="o">-</span> <span class="n">r</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">)</span> <span class="o">/</span> <span class="n">l</span><span class="p">,</span>
+        <span class="p">])</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">])</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+            <span class="n">Pf</span> <span class="o">-</span> <span class="n">u</span> <span class="o">*</span> <span class="n">Vdcf</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
+            <span class="n">Pt</span> <span class="o">+</span> <span class="n">u</span> <span class="o">*</span> <span class="n">Vdct</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
+        <span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># A branch with no exported inductance has no magnetic state. Keeping</span>
+        <span class="c1"># its exact Ohm-law equation avoids introducing an arbitrary epsilon or</span>
+        <span class="c1"># a fictitious time constant into static or dynamic studies.</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">If_dc</span><span class="p">,</span> <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">])</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+            <span class="n">r</span> <span class="o">*</span> <span class="n">If_dc</span> <span class="o">-</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vdcf</span> <span class="o">-</span> <span class="n">Vdct</span><span class="p">),</span>
+            <span class="n">Pf</span> <span class="o">-</span> <span class="n">u</span> <span class="o">*</span> <span class="n">Vdcf</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
+            <span class="n">Pt</span> <span class="o">+</span> <span class="n">u</span> <span class="o">*</span> <span class="n">Vdct</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
+        <span class="p">])</span>
     <span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">If_dc</span><span class="p">:</span> <span class="p">(</span><span class="n">Vdcf</span> <span class="o">-</span> <span class="n">Vdct</span><span class="p">)</span> <span class="o">/</span> <span class="n">r</span><span class="p">,</span>
-        <span class="n">Pf</span><span class="p">:</span> <span class="n">Vdcf</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
-        <span class="n">Pt</span><span class="p">:</span> <span class="o">-</span><span class="n">Vdct</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
+        <span class="c1"># Initial conditions obey the same retained conduction flag as the</span>
+        <span class="c1"># runtime equations, so an initially open line starts de-energized.</span>
+        <span class="n">If_dc</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vdcf</span> <span class="o">-</span> <span class="n">Vdct</span><span class="p">)</span> <span class="o">/</span> <span class="n">r</span><span class="p">,</span>
+        <span class="n">Pf</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="n">Vdcf</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
+        <span class="n">Pt</span><span class="p">:</span> <span class="o">-</span><span class="n">u</span> <span class="o">*</span> <span class="n">Vdct</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">block</span><span class="o">.</span><span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">dIf_dcdt</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+    <span class="c1"># Converter startup initializers can refine the DC terminal voltages after</span>
+    <span class="c1"># the branch&#39;s first explicit seed. Re-evaluate the same acyclic physical</span>
+    <span class="c1"># closure at the end of every global startup sweep so the first implicit</span>
+    <span class="c1"># step sees one coherent V/I/P operating point.</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">post_init_seed_eqs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">If_dc</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="p">(</span><span class="n">Vdcf</span> <span class="o">-</span> <span class="n">Vdct</span><span class="p">)</span> <span class="o">/</span> <span class="n">r</span><span class="p">,</span>
+        <span class="n">Pf</span><span class="p">:</span> <span class="n">u</span> <span class="o">*</span> <span class="n">Vdcf</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
+        <span class="n">Pt</span><span class="p">:</span> <span class="o">-</span><span class="n">u</span> <span class="o">*</span> <span class="n">Vdct</span> <span class="o">*</span> <span class="n">If_dc</span><span class="p">,</span>
     <span class="p">}</span>
-
     <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">If_dc</span><span class="p">,</span> <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">])</span>
     <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="c1"># The DC implementation is stored as one child block, matching the AC line</span>
+    <span class="c1"># layout above. Registering the child is essential: otherwise its current,</span>
+    <span class="c1"># equations, and initialization contract never reach RMS compilation even</span>
+    <span class="c1"># though the root external mapping still exposes their variables.</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmf</span><span class="p">:</span> <span class="n">Vdcf</span><span class="p">,</span>
@@ -255,13 +301,185 @@
     <span class="p">}</span>
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># A native DC-line device exposes its physical resistance through the</span>
+        <span class="c1"># dedicated dynamic reference.</span>
+        <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">dc_line_r_pu</span><span class="p">:</span> <span class="n">r</span><span class="p">,</span>
+        <span class="c1"># DGS ElmLne cables retain the normal Line device identity and expose</span>
+        <span class="c1"># their imported resistance through the generic typed reference.</span>
         <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">,</span>
-        <span class="c1">#ParamPowerFlowReferenceType.l: l,</span>
     <span class="p">}</span>
 
-    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="k">if</span> <span class="n">use_dynamic_inductance</span><span class="p">:</span>
+        <span class="c1"># The variable exists only in the RL topology selected above. Excluding</span>
+        <span class="c1"># this key from the resistive topology makes a zero-inductance model</span>
+        <span class="c1"># structurally explicit and prevents accidental division by zero.</span>
+        <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span><span class="p">[</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">dc_line_l_pu_seconds</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="n">l</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
 
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">If_dc</span><span class="p">,</span> <span class="n">Pf</span><span class="p">,</span> <span class="n">Pt</span><span class="p">])</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">uid</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">uid</span>
+
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;DC line RMS series R-L model&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
+
+
+
+<div class="viewcode-block" id="get_ideal_ac_connector_rms_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.line_rms_template.get_ideal_ac_connector_rms_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ideal_ac_connector_rms_template</span><span class="p">(</span>
+        <span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DGS ideal AC connector RMS shell&quot;</span><span class="p">,</span>
+        <span class="n">enforce_voltage_constraint</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an exact fixed-size RMS model for an ideal AC connector.</span>
+
+<span class="sd">    A zero-impedance AC line is a topological contraction in PowerFactory. Its</span>
+<span class="sd">    RMS counterpart must therefore conserve terminal powers and impose equal</span>
+<span class="sd">    voltage phasors while closed. Reusing this module&#39;s regular line wrapper</span>
+<span class="sd">    preserves the symbolic port and UID topology expected by the circuit-wide</span>
+<span class="sd">    DAE assembler.</span>
+
+<span class="sd">    :param vfactory: Variable factory shared by the owning circuit.</span>
+<span class="sd">    :param name: Human-readable model name used by diagnostics and the GUI.</span>
+<span class="sd">    :param enforce_voltage_constraint: Include this connector in the active</span>
+<span class="sd">        topology forest. A redundant chord retains zero transfer power.</span>
+<span class="sd">    :return: Exact ideal-connector RMS template with regular line ports.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">RmsModelTemplate</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="c1"># The terminal variables use exactly the standard line ordering so bus</span>
+    <span class="c1"># mappings and result extraction require no connector-specific handling.</span>
+    <span class="n">voltage_magnitude_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Vmf&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmf</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">voltage_angle_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Vaf&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vaf</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">voltage_magnitude_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Vmt&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmt</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">voltage_angle_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Vat&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vat</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">voltage_magnitude_from</span><span class="p">,</span>
+        <span class="n">voltage_angle_from</span><span class="p">,</span>
+        <span class="n">voltage_magnitude_to</span><span class="p">,</span>
+        <span class="n">voltage_angle_to</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="n">active_power_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Pf&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pf</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">active_power_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Pt&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pt</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">reactive_power_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Qf&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qf</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">reactive_power_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="s2">&quot;Qt&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qt</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">conduction_status</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
+    <span class="n">topology_constraint_status</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;c_topology&quot;</span><span class="p">)</span>
+    <span class="n">constraint_mode</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">conduction_status</span> <span class="o">*</span> <span class="n">topology_constraint_status</span>
+
+    <span class="c1"># Closed connectors conserve P/Q and contract both polar-voltage</span>
+    <span class="c1"># coordinates. Open connectors reduce the same four rows to zero terminal</span>
+    <span class="c1"># flows, which preserves the fixed DAE dimensions across switching events.</span>
+    <span class="n">block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">()</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">conduction_status</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">topology_constraint_status</span><span class="p">]</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span>
+        <span class="mf">1.0</span> <span class="k">if</span> <span class="n">enforce_voltage_constraint</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">active_power_from</span><span class="p">,</span>
+        <span class="n">active_power_to</span><span class="p">,</span>
+        <span class="n">reactive_power_from</span><span class="p">,</span>
+        <span class="n">reactive_power_to</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">constraint_mode</span> <span class="o">*</span> <span class="p">(</span><span class="n">active_power_from</span> <span class="o">+</span> <span class="n">active_power_to</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">constraint_mode</span><span class="p">)</span> <span class="o">*</span> <span class="n">active_power_from</span><span class="p">,</span>
+        <span class="n">constraint_mode</span> <span class="o">*</span> <span class="p">(</span><span class="n">reactive_power_from</span> <span class="o">+</span> <span class="n">reactive_power_to</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">constraint_mode</span><span class="p">)</span> <span class="o">*</span> <span class="n">reactive_power_from</span><span class="p">,</span>
+        <span class="n">constraint_mode</span> <span class="o">*</span> <span class="p">(</span><span class="n">voltage_magnitude_from</span> <span class="o">-</span> <span class="n">voltage_magnitude_to</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">constraint_mode</span><span class="p">)</span> <span class="o">*</span> <span class="n">active_power_to</span><span class="p">,</span>
+        <span class="n">constraint_mode</span> <span class="o">*</span> <span class="p">(</span><span class="n">voltage_angle_from</span> <span class="o">-</span> <span class="n">voltage_angle_to</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">constraint_mode</span><span class="p">)</span> <span class="o">*</span> <span class="n">reactive_power_to</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">active_power_from</span><span class="p">,</span>
+        <span class="n">active_power_to</span><span class="p">,</span>
+        <span class="n">reactive_power_from</span><span class="p">,</span>
+        <span class="n">reactive_power_to</span><span class="p">,</span>
+    <span class="p">])</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="c1"># The root/child layout intentionally matches ``get_line_rms_template``.</span>
+    <span class="c1"># This detail is part of the VarFactory connection contract in a massive</span>
+    <span class="c1"># import and prevents unrelated dynamic blocks from being deduplicated.</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vaf</span><span class="p">:</span> <span class="n">voltage_angle_from</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vat</span><span class="p">:</span> <span class="n">voltage_angle_to</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmf</span><span class="p">:</span> <span class="n">voltage_magnitude_from</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmt</span><span class="p">:</span> <span class="n">voltage_magnitude_to</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pf</span><span class="p">:</span> <span class="n">active_power_from</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pt</span><span class="p">:</span> <span class="n">active_power_to</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qf</span><span class="p">:</span> <span class="n">reactive_power_from</span><span class="p">,</span>
+        <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qt</span><span class="p">:</span> <span class="n">reactive_power_to</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">out_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+        <span class="n">active_power_from</span><span class="p">,</span>
+        <span class="n">active_power_to</span><span class="p">,</span>
+        <span class="n">reactive_power_from</span><span class="p">,</span>
+        <span class="n">reactive_power_to</span><span class="p">,</span>
+    <span class="p">])</span>
+
+    <span class="c1"># The global nodal balances determine transfer power. Device-local</span>
+    <span class="c1"># initialization would be underdetermined, so retain the power-flow seeds</span>
+    <span class="c1"># until the complete DAE is assembled and polished.</span>
+    <span class="n">polish_variable_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="s2">&quot;Pf&quot;</span><span class="p">,</span> <span class="s2">&quot;Pt&quot;</span><span class="p">,</span> <span class="s2">&quot;Qf&quot;</span><span class="p">,</span> <span class="s2">&quot;Qt&quot;</span><span class="p">])</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span> <span class="o">=</span> <span class="n">conduction_status</span><span class="o">.</span><span class="n">uid</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_topology_constraint_status_var_uid</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">topology_constraint_status</span><span class="o">.</span><span class="n">uid</span>
+    <span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_ideal_ac_connector</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">skip_device_local_explicit_init</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">startup_initial_reduced_polish_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">polish_variable_names</span>
+    <span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span> <span class="o">=</span> <span class="n">conduction_status</span><span class="o">.</span><span class="n">uid</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_topology_constraint_status_var_uid</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">topology_constraint_status</span><span class="o">.</span><span class="n">uid</span>
+    <span class="p">)</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_ideal_ac_connector</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">skip_device_local_explicit_init</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">startup_initial_reduced_polish_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">polish_variable_names</span>
+    <span class="p">)</span>
+
+    <span class="n">template</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Ideal AC connector RMS model&#39;</span>
+    <span class="k">return</span> <span class="n">template</span></div>
 
 </pre></div>
 

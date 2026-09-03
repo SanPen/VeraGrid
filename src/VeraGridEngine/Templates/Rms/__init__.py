@@ -22,7 +22,18 @@ from VeraGridEngine.Templates.Rms.voltage_source_template import VoltageSourceBu
 from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
 from VeraGridEngine.Templates.Rms.hvdc_vsc_gfl_rms_template_v2 import (
     HvdcVscGflRmsTemplate,
+    VscActiveControlRmsTemplate,
+    VscReactiveControlRmsTemplate,
     build_hvdc_vsc_gfl_rms,
+    build_vsc_pll_rms,
+    build_vsc_electrical_rms,
+    build_vsc_active_control_rms,
+    build_vsc_reactive_control_rms,
+    build_vsc_current_limiter_rms,
+    build_vsc_vd_hat_rms,
+    build_vsc_vq_hat_rms,
+    build_vsc_dc_link_rms,
+    build_vsc_terminal_power_rms,
     get_hvdc_vdc_q_vsc_rms,
     get_hvdc_pdc_q_vsc_rms,
 )
@@ -30,3 +41,86 @@ from VeraGridEngine.Templates.Rms.dc_line_rms_template_v2 import DcLineRmsTempla
 from VeraGridEngine.Templates.Rms.dc_voltage_source import DCPVSourceAveraged
 from VeraGridEngine.Templates.Rms.basic_devices import get_pll_transform_rms, get_pi_current_controller, get_pi_power_controller, get_gfl_converter_rms
 from VeraGridEngine.Templates.Rms.empty_rms_template import get_empty_rms_template
+
+
+from VeraGridEngine.Templates.Rms.international_standards.ac1a import build_ac1a_template
+from VeraGridEngine.Templates.Rms.international_standards.ac1c import build_ac1c_template
+from VeraGridEngine.Templates.Rms.international_standards.ac6a import build_ac6a_template
+from VeraGridEngine.Templates.Rms.international_standards.ac6c import build_ac6c_template
+from VeraGridEngine.Templates.Rms.international_standards.ac7b import build_ac7b_template
+from VeraGridEngine.Templates.Rms.international_standards.ac7c import build_ac7c_template
+from VeraGridEngine.Templates.Rms.international_standards.ac8b import build_ac8b_template
+from VeraGridEngine.Templates.Rms.international_standards.ac8c import build_ac8c_template
+from VeraGridEngine.Templates.Rms.international_standards.bbsex1 import build_bbsex1_template
+from VeraGridEngine.Templates.Rms.international_standards.besscbcurrentsourcenoplantcontrol import build_besscbcurrentsourcenoplantcontrol_template
+from VeraGridEngine.Templates.Rms.international_standards.dc1a import build_dc1a_template
+from VeraGridEngine.Templates.Rms.international_standards.dc1c import build_dc1c_template
+from VeraGridEngine.Templates.Rms.international_standards.exac1 import build_exac1_template
+from VeraGridEngine.Templates.Rms.international_standards.govhydro4 import build_govhydro4_template
+from VeraGridEngine.Templates.Rms.international_standards.govsteam1 import build_govsteam1_template
+from VeraGridEngine.Templates.Rms.international_standards.govsteameu import build_govsteameu_template
+from VeraGridEngine.Templates.Rms.international_standards.ieeeg1 import build_ieeeg1_template
+from VeraGridEngine.Templates.Rms.international_standards.ieeeg2 import build_ieeeg2_template
+from VeraGridEngine.Templates.Rms.international_standards.ieeet1 import build_ieeet1_template
+from VeraGridEngine.Templates.Rms.international_standards.ieeex2 import build_ieeex2_template
+from VeraGridEngine.Templates.Rms.international_standards.ieex2a import build_ieex2a_template
+from VeraGridEngine.Templates.Rms.international_standards.maxex2 import build_maxex2_template
+from VeraGridEngine.Templates.Rms.international_standards.oel2c import build_oel2c_template
+from VeraGridEngine.Templates.Rms.international_standards.oel3c import build_oel3c_template
+from VeraGridEngine.Templates.Rms.international_standards.oel4c import build_oel4c_template
+from VeraGridEngine.Templates.Rms.international_standards.oel5c import build_oel5c_template
+from VeraGridEngine.Templates.Rms.international_standards.pss1aomega import build_pss1aomega_template
+from VeraGridEngine.Templates.Rms.international_standards.pss1apgen import build_pss1apgen_template
+from VeraGridEngine.Templates.Rms.international_standards.pss2a import build_pss2a_template
+from VeraGridEngine.Templates.Rms.international_standards.pss2b import build_pss2b_template
+from VeraGridEngine.Templates.Rms.international_standards.pss2c import build_pss2c_template
+from VeraGridEngine.Templates.Rms.international_standards.pss3b import build_pss3b_template
+from VeraGridEngine.Templates.Rms.international_standards.pss3c import build_pss3c_template
+from VeraGridEngine.Templates.Rms.international_standards.pss6c import build_pss6c_template
+from VeraGridEngine.Templates.Rms.international_standards.psskundur import build_psskundur_template
+from VeraGridEngine.Templates.Rms.international_standards.pvcurrentsourcebnoplantcontrol import build_pvcurrentsourcebnoplantcontrol_template
+from VeraGridEngine.Templates.Rms.international_standards.pvvoltagesourceanoplantcontrol import build_pvvoltagesourceanoplantcontrol_template
+from VeraGridEngine.Templates.Rms.international_standards.pvvoltagesourcebnoplantcontrol import build_pvvoltagesourcebnoplantcontrol_template
+from VeraGridEngine.Templates.Rms.international_standards.reecb import build_reecb_template
+from VeraGridEngine.Templates.Rms.international_standards.reecc import build_reecc_template
+from VeraGridEngine.Templates.Rms.international_standards.regcbcs import build_regcbcs_template
+from VeraGridEngine.Templates.Rms.international_standards.repca import build_repca_template
+from VeraGridEngine.Templates.Rms.international_standards.scl1c import build_scl1c_template
+from VeraGridEngine.Templates.Rms.international_standards.scl2c import build_scl2c_template
+from VeraGridEngine.Templates.Rms.international_standards.scrx import build_scrx_template
+from VeraGridEngine.Templates.Rms.international_standards.sexs import build_sexs_template
+from VeraGridEngine.Templates.Rms.international_standards.st1a import build_st1a_template
+from VeraGridEngine.Templates.Rms.international_standards.st1c import build_st1c_template
+from VeraGridEngine.Templates.Rms.international_standards.st4b import build_st4b_template
+from VeraGridEngine.Templates.Rms.international_standards.st4c import build_st4c_template
+from VeraGridEngine.Templates.Rms.international_standards.st5b import build_st5b_template
+from VeraGridEngine.Templates.Rms.international_standards.st5c import build_st5c_template
+from VeraGridEngine.Templates.Rms.international_standards.st6b import build_st6b_template
+from VeraGridEngine.Templates.Rms.international_standards.st6c import build_st6c_template
+from VeraGridEngine.Templates.Rms.international_standards.st7b import build_st7b_template
+from VeraGridEngine.Templates.Rms.international_standards.st7c import build_st7c_template
+from VeraGridEngine.Templates.Rms.international_standards.st9c import build_st9c_template
+from VeraGridEngine.Templates.Rms.international_standards.tgov3 import build_tgov3_template
+from VeraGridEngine.Templates.Rms.international_standards.uel1 import build_uel1_template
+from VeraGridEngine.Templates.Rms.international_standards.uel2c import build_uel2c_template
+from VeraGridEngine.Templates.Rms.international_standards.vrkundur import build_vrkundur_template
+from VeraGridEngine.Templates.Rms.international_standards.wpp4bcurrentsource2020 import build_wpp4bcurrentsource2020_template
+from VeraGridEngine.Templates.Rms.international_standards.wt4acurrentsource import build_wt4acurrentsource_template
+from VeraGridEngine.Templates.Rms.international_standards.wt4acurrentsource2020 import build_wt4acurrentsource2020_template
+from VeraGridEngine.Templates.Rms.international_standards.wt4bcurrentsource2020 import build_wt4bcurrentsource2020_template
+from VeraGridEngine.Templates.Rms.international_standards.wt4bcurrentsource import build_wt4bcurrentsource_template
+from VeraGridEngine.Templates.Rms.international_standards.wt4injector import build_wt4injector_template
+from VeraGridEngine.Templates.Rms.international_standards.wtg4acurrentsource import build_wtg4acurrentsource_template
+from VeraGridEngine.Templates.Rms.international_standards.wtg4bcurrentsource import build_wtg4bcurrentsource_template
+from VeraGridEngine.Templates.Rms.international_standards.ieeevc_1981 import build_ieeevc_1981_template
+from VeraGridEngine.Templates.Rms.international_standards.esdc2a import build_esdc2a_template
+from VeraGridEngine.Templates.Rms.international_standards.frqtpa import build_frqtpa_template
+from VeraGridEngine.Templates.Rms.international_standards.vtgtpa import build_vtgtpa_template
+from VeraGridEngine.Templates.Rms.international_standards.cimtr1 import build_cimtr1_template
+from VeraGridEngine.Templates.Rms.international_standards.cimw import build_cimw_template
+from VeraGridEngine.Templates.Rms.international_standards.gensal import build_gensal_template
+from VeraGridEngine.Templates.Rms.international_standards.genrou import build_genrou_template
+from VeraGridEngine.Templates.Rms.international_standards.ggov1 import build_ggov1_template
+from VeraGridEngine.Templates.Rms.international_standards.hygov import build_hygov_template
+from VeraGridEngine.Templates.Rms.international_standards.ieel import build_ieel_template
+from VeraGridEngine.Templates.Rms.international_standards.tgov1 import build_tgov1_template

@@ -191,6 +191,7 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
 
             self.results.fluid_node_p2x_flow = opf_vars.fluid_node_vars.p2x_flow[0, :]
             self.results.fluid_node_current_level = opf_vars.fluid_node_vars.current_level[0, :]
+            self.results.fluid_node_fluid_value = opf_vars.fluid_node_vars.fluid_value[0, :]
             self.results.fluid_node_spillage = opf_vars.fluid_node_vars.spillage[0, :]
             self.results.fluid_node_flow_in = opf_vars.fluid_node_vars.flow_in[0, :]
             self.results.fluid_node_flow_out = opf_vars.fluid_node_vars.flow_out[0, :]
@@ -297,6 +298,17 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
 
         return self.results
 
+    def run_gslv_opf(self) -> "pg.OptimalPowerFlowResults":
+        """Run one snapshot OPF with the configured GSLV backend.
+
+        :return: Native GSLV optimal-power-flow results for the current grid.
+        """
+        return gslv_opf(circuit=self.grid,
+                        opf_options=self.options,
+                        time_series=False,
+                        time_indices=None,
+                        logger=self.logger)
+
     def run(self):
         """
 
@@ -304,6 +316,7 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
         """
 
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         if self.engine == EngineType.GSLV:
             if not GSLV_AVAILABLE:
@@ -328,11 +341,7 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
             else:
                 self.report_text('Running Non-Linear OPF with GSLV...')
 
-            gslv_res = gslv_opf(circuit=self.grid,
-                                opf_options=self.options,
-                                time_series=False,
-                                time_indices=None,
-                                logger=self.logger)
+            gslv_res = self.run_gslv_opf()
 
             self.results.voltage = gslv_res.voltage[0, :]
             self.results.Sbus = gslv_res.Sbus[0, :]

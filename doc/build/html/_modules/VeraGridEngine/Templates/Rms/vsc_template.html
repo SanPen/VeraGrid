@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Rms.vsc_template &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Templates.Rms.vsc_template &mdash; VeraGrid 6.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -281,7 +278,7 @@
     <span class="n">Km</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Km&#39;</span><span class="p">)</span>
     <span class="n">Ts</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Ts_controller&#39;</span><span class="p">)</span>
     <span class="n">event_dict</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">vref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">vref</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="n">Km</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span>
         <span class="n">Ts</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span>
         <span class="n">Kp</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>
@@ -289,7 +286,7 @@
         <span class="n">Temp</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">300.0</span><span class="p">),</span>
         <span class="n">G</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
         <span class="n">Gref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
-        <span class="n">Pref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">Pref</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
         <span class="n">Tref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">300.0</span><span class="p">),</span>
         <span class="n">gamma_p</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="o">-</span><span class="mf">0.001</span><span class="p">),</span>
         <span class="n">vdc_ref</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.033</span><span class="p">),</span>
@@ -297,11 +294,6 @@
 
     <span class="n">Ppv</span> <span class="o">=</span> <span class="p">(</span><span class="n">G</span> <span class="o">/</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">Pref</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamma_p</span> <span class="o">*</span> <span class="p">(</span><span class="n">Temp</span> <span class="o">-</span> <span class="n">Tref</span><span class="p">)))</span>
     <span class="n">i_dc_ref</span> <span class="o">=</span> <span class="n">Ppv</span> <span class="o">/</span> <span class="n">vdc_ref</span>
-    <span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">vref</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">Pref</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
-    <span class="p">}</span>
-
     <span class="n">block_vhs_control</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tf_to_diffblock_with_antiwindup</span><span class="p">(</span>
         <span class="n">vfactory</span><span class="p">,</span>
         <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">Vm</span> <span class="o">-</span> <span class="n">vref</span><span class="p">),</span>
@@ -322,7 +314,6 @@
         <span class="p">],</span>
         <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span><span class="n">vdc_ref</span><span class="p">],</span>
         <span class="n">in_vars</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
-        <span class="n">init_eqs</span><span class="o">=</span><span class="n">init_eqs</span><span class="p">,</span>
         <span class="c1"># children = [block_vhs_control],</span>
         <span class="n">event_dict</span><span class="o">=</span><span class="n">event_dict</span><span class="p">,</span>
     <span class="p">)</span>
@@ -438,7 +429,7 @@
         <span class="n">rho_e</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.68e-8</span><span class="p">),</span>
         <span class="n">C_temp</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
         <span class="n">G</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">),</span>
-        <span class="n">iL0</span><span class="p">:</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">iL0</span><span class="p">:</span> <span class="n">Idc</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="n">iD</span> <span class="o">-</span> <span class="n">vD</span> <span class="o">/</span> <span class="n">Rsh</span><span class="p">)</span>
     <span class="p">}</span>
 
     <span class="n">qe</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.60217662e-19</span><span class="p">)</span>  <span class="c1"># Electron charge (C)</span>
@@ -478,7 +469,6 @@
             <span class="n">Idc</span><span class="p">:</span> <span class="n">Pdc</span> <span class="o">/</span> <span class="n">Vdc</span><span class="p">,</span>
             <span class="n">vD</span><span class="p">:</span> <span class="n">Vdc</span> <span class="o">+</span> <span class="n">Rse</span> <span class="o">*</span> <span class="n">Idc</span><span class="p">,</span>
             <span class="n">iD</span><span class="p">:</span> <span class="n">Is</span> <span class="o">*</span> <span class="p">(</span><span class="n">sym</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">vD</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">v_T</span><span class="p">))</span> <span class="o">-</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span>
-            <span class="n">iL0</span><span class="p">:</span> <span class="n">Idc</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span> <span class="n">iD</span> <span class="o">-</span> <span class="n">vD</span> <span class="o">/</span> <span class="n">Rsh</span><span class="p">),</span>
             <span class="n">iL</span><span class="p">:</span> <span class="n">Idc</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span> <span class="n">iD</span> <span class="o">-</span> <span class="n">vD</span> <span class="o">/</span> <span class="n">Rsh</span><span class="p">),</span>
         <span class="p">}</span>
     <span class="p">)</span>

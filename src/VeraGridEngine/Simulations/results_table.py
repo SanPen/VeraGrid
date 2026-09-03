@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union, List, Mapping, cast
+from typing import Union, List, Mapping
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -648,7 +648,7 @@ class ResultsTable:
             self.data_c[
                 np.ix_(
                     row_indices,
-                    np.array([x_column_index, y_column_index], dtype=np.int64),
+                np.array((x_column_index, y_column_index), dtype=np.int64),
                 )
             ],
             dtype=float,
@@ -832,7 +832,7 @@ class ResultsTable:
         plot_position: int
         mode_index: int
         for plot_position, mode_index in enumerate(mode_indices):
-            mode_axes: Axes = cast(Axes, flat_axes[plot_position])
+            mode_axes: Axes = flat_axes[plot_position]
             mode_values: np.ndarray = np.asarray(
                 self.data_c[state_indices, mode_index],
                 dtype=complex,
@@ -911,7 +911,7 @@ class ResultsTable:
         # Unused grid cells are hidden so selecting two or five modes does not
         # leave distracting empty coordinate systems in the figure.
         for plot_position in range(number_of_modes, int(flat_axes.size)):
-            unused_axes: Axes = cast(Axes, flat_axes[plot_position])
+            unused_axes: Axes = flat_axes[plot_position]
             unused_axes.set_visible(False)
 
         figure.suptitle(self.title, fontsize=13, fontweight="bold")

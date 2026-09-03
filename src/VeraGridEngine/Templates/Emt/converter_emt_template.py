@@ -7,7 +7,13 @@ import numpy as np
 from typing import List, Dict, Tuple
 from VeraGridEngine.enumerations import DeviceType, ConverterControlType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
+from VeraGridEngine.Utils.Symbolic.block import (
+    Block,
+    EmtTerminalConductor,
+    EmtTerminalCurrentContribution,
+    EmtTerminalSide,
+    VarPowerFlowReferenceType,
+)
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
@@ -333,6 +339,28 @@ def get_emt_ideal_converter(
     templ.block.api_obj_mapping = converter_block.api_obj_mapping
     templ.block.in_vars = inputs
     templ.block.out_vars = converter_block.out_vars
+    templ.block.dynamic_model_contract.emt_terminal_current_contributions = list((
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.FROM,
+            conductor=EmtTerminalConductor.DC,
+            current_reference=VarPowerFlowReferenceType.Idc,
+        ),
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.TO,
+            conductor=EmtTerminalConductor.PHASE_A,
+            current_reference=VarPowerFlowReferenceType.i_A,
+        ),
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.TO,
+            conductor=EmtTerminalConductor.PHASE_B,
+            current_reference=VarPowerFlowReferenceType.i_B,
+        ),
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.TO,
+            conductor=EmtTerminalConductor.PHASE_C,
+            current_reference=VarPowerFlowReferenceType.i_C,
+        ),
+    ))
 
     return templ
 
@@ -1043,5 +1071,27 @@ def get_full_pseudo_emt_converter(
         VarPowerFlowReferenceType.Vpk: vsc_block.out_vars[10],
     }
     templ.block.api_obj_mapping = dict(vsc_block.api_obj_mapping)
+    templ.block.dynamic_model_contract.emt_terminal_current_contributions = list((
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.FROM,
+            conductor=EmtTerminalConductor.DC,
+            current_reference=VarPowerFlowReferenceType.Idc,
+        ),
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.TO,
+            conductor=EmtTerminalConductor.PHASE_A,
+            current_reference=VarPowerFlowReferenceType.i_A,
+        ),
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.TO,
+            conductor=EmtTerminalConductor.PHASE_B,
+            current_reference=VarPowerFlowReferenceType.i_B,
+        ),
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.TO,
+            conductor=EmtTerminalConductor.PHASE_C,
+            current_reference=VarPowerFlowReferenceType.i_C,
+        ),
+    ))
 
     return templ

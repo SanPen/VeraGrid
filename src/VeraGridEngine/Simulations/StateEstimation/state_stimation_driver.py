@@ -315,6 +315,7 @@ class StateEstimationDriver(DriverTemplate):
         :return:
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         n = len(self.grid.buses)
         m = self.grid.get_branch_number(add_vsc=False,
                                         add_hvdc=False,

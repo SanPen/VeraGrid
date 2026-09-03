@@ -6,6 +6,7 @@
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_multilinear import EmtProblemMultilinear
 from VeraGridEngine.Devices import MultiCircuit
+from VeraGridEngine.basic_structures import Logger
 
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.enumerations import EmtProblemTypes
@@ -25,7 +26,8 @@ def build_emt_problem(grid: MultiCircuit,
                       options: EmtOptions,
                       pf_results: PowerFlowResults | None = None,
                       pf_results_3ph: PowerFlowResults3Ph | None = None,
-                      progress_signal: DummySignal | None = None):
+                      progress_signal: DummySignal | None = None,
+                      logger: Logger|None = None):
     if options.problem_type in EMT_PROBLEM_CLASS_MAP:
         problem_cls = EMT_PROBLEM_CLASS_MAP[options.problem_type]
     else:
@@ -37,4 +39,5 @@ def build_emt_problem(grid: MultiCircuit,
         pf_results=pf_results,
         pf_results_3ph =pf_results_3ph,
         progress_signal=progress_signal,
+        logger=logger
     )

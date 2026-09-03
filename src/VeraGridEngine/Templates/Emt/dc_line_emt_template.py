@@ -7,7 +7,12 @@ from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
-from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.block import (
+    Block,
+    EmtTerminalConductor,
+    EmtTerminalCurrentContribution,
+    EmtTerminalSide,
+)
 
 
 def get_dc_line_emt_template(vf: VarFactory, name: str = "dc_line_emt_template") -> EmtModelTemplate:
@@ -139,6 +144,18 @@ def get_dc_line_emt_template(vf: VarFactory, name: str = "dc_line_emt_template")
     templ.block.parameters = block.parameters
     templ.block.in_vars = block.in_vars
     templ.block.out_vars = block.out_vars
+    templ.block.dynamic_model_contract.emt_terminal_current_contributions = list((
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.FROM,
+            conductor=EmtTerminalConductor.DC,
+            current_reference=VarPowerFlowReferenceType.If_dc,
+        ),
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.TO,
+            conductor=EmtTerminalConductor.DC,
+            current_reference=VarPowerFlowReferenceType.It_dc,
+        ),
+    ))
 
     return templ
 
@@ -360,6 +377,18 @@ def get_dc_line_with_power_input_emt_template(vf: VarFactory, name: str = "dc_li
     templ.block.parameters = block.parameters
     templ.block.in_vars = block.in_vars
     templ.block.out_vars = block.out_vars
+    templ.block.dynamic_model_contract.emt_terminal_current_contributions = list((
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.FROM,
+            conductor=EmtTerminalConductor.DC,
+            current_reference=VarPowerFlowReferenceType.If_dc,
+        ),
+        EmtTerminalCurrentContribution(
+            terminal_side=EmtTerminalSide.TO,
+            conductor=EmtTerminalConductor.DC,
+            current_reference=VarPowerFlowReferenceType.It_dc,
+        ),
+    ))
 
     return templ
 

@@ -166,6 +166,7 @@ def get_line_complex_rms_template(vfactory: VarFactory, name="Line_complex_rms_t
 
     templ.block.in_vars = inputs
 
+    templ.comment = 'AC line RMS complex-voltage model'
     return templ
 
 

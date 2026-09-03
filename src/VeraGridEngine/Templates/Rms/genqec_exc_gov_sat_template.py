@@ -246,6 +246,7 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> R
         name="genqec"
     )
 
+    templ.comment = 'Generator GENQEC RMS model with quadratic saturation'
     return templ
 
 
@@ -438,6 +439,7 @@ def get_governor_rms(vfactory: VarFactory, name: str = "Governor") -> RmsModelTe
 
     )
 
+    templ.comment = 'Reusable generator governor RMS control block'
     return templ
 
 
@@ -546,6 +548,7 @@ def get_stabilizer_rms(vfactory: VarFactory, name: str = "stabilizer") -> RmsMod
     templ.block.add(vars_block)
     templ.block.add(block_1)
 
+    templ.comment = 'Reusable generator stabilizer RMS control block'
     return templ
 
 
@@ -629,7 +632,6 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
 
     events_dict = {
         # Exciter (AVR) parameters
-        UsRefPu: vfactory.add_const(None),  # reference voltage (pu)
         AEz: vfactory.add_const(0.02),  # saturation gain
         BEz: vfactory.add_const(1.5),  # saturation exponential coefficient
         Se_threshold: vfactory.add_const(1.0),  # saturation threshold
@@ -778,6 +780,7 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
         },
     )
 
+    templ.comment = 'Reusable generator exciter RMS control block'
     return templ
 
 
@@ -906,7 +909,7 @@ def OELBuild(vfactory: VarFactory, name: str = "OEL") -> RmsModelTemplate:
         SW1: vfactory.add_const(1.0),
     }
 
-    oel_block.event_params = event_dict
+    oel_block.event_dict = event_dict
     # equations
     block_Ipu, Ipu = tf_to_block(
         var_factory=vfactory,
@@ -1068,4 +1071,5 @@ def get_complete_generator_template_rms(vfactory: VarFactory, name="complete_gen
 
     templ.block.name = name
 
+    templ.comment = 'Complete generator RMS model with GENQEC, exciter, governor, and stabilizer'
     return templ

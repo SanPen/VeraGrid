@@ -22,7 +22,7 @@ import VeraGridEngine.Utils.Symbolic.symbolic_ml as sym_ml
 from VeraGridEngine.Utils.Symbolic.block_helpers import to_implicit
 
 
-def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
+def get_genqec_phasor(vfactory: VarFactory, name: str = "GENQEC phasor RMS template") -> RmsModelTemplate:
     """
     Generator with quadratic saturation for phasor-based RMS simulation.
     
@@ -371,6 +371,7 @@ def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         children=[ml_trig_block, ml_positive_part]
     )
 
+    templ.comment = 'Generator GENQEC phasor-current RMS model'
     return templ
 
 
@@ -490,4 +491,5 @@ def get_complete_generator_template_phasor(vfactory: VarFactory,
     templ.block.in_vars = [Vr_input, Vi_input]
     templ.block.out_vars = [Irg_out, Iig_out]
 
+    templ.comment = 'Complete generator phasor RMS model'
     return templ

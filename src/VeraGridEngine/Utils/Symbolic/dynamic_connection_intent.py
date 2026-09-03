@@ -6,13 +6,60 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, TYPE_CHECKING
+from typing import Dict, Protocol, Sequence
 
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
-if TYPE_CHECKING:
-    from VeraGridEngine.Utils.Symbolic.block import Block
-    from VeraGridEngine.Utils.Symbolic.symbolic import Var
+
+class ConnectionIntentVariable(Protocol):
+    """Expose the immutable variable identity required by intent parsing."""
+
+    __slots__ = ()
+
+    @property
+    def non_mutable_uid(self) -> int:
+        """Return the stable symbolic variable identifier.
+
+        :return: Stable variable identifier.
+        """
+        ...
+
+
+class ConnectionIntentBlock(Protocol):
+    """Expose the bounded block structure required by intent parsing."""
+
+    __slots__ = ()
+
+    @property
+    def uid(self) -> int:
+        """Return the block identifier.
+
+        :return: Stable block identifier.
+        """
+        ...
+
+    @property
+    def in_vars(self) -> Sequence[ConnectionIntentVariable]:
+        """Return the block input variables.
+
+        :return: Ordered input variables.
+        """
+        ...
+
+    @property
+    def out_vars(self) -> Sequence[ConnectionIntentVariable]:
+        """Return the block output variables.
+
+        :return: Ordered output variables.
+        """
+        ...
+
+    def get_all_blocks(self) -> Sequence["ConnectionIntentBlock"]:
+        """Return this block and its bounded descendants.
+
+        :return: Ordered block traversal.
+        """
+        ...
 
 
 class DynamicConnectionIntentOrigin(Enum):
@@ -202,12 +249,14 @@ def _parse_origin(value: object) -> DynamicConnectionIntentOrigin | None:
     :param value: Persisted candidate value.
     :return: Parsed origin or ``None`` when invalid.
     """
-    if value == DynamicConnectionIntentOrigin.USER.value:
-        return DynamicConnectionIntentOrigin.USER
-    elif value == DynamicConnectionIntentOrigin.TEMPLATE_DERIVED.value:
-        return DynamicConnectionIntentOrigin.TEMPLATE_DERIVED
+    if isinstance(value, str):
+        try:
+            result: DynamicConnectionIntentOrigin | None = DynamicConnectionIntentOrigin(value)
+        except ValueError:
+            result = None
     else:
-        return None
+        result = None
+    return result
 
 
 def _parse_direction(data: Dict[str, object]) -> DynamicConnectionIntentDirection | None:
@@ -226,12 +275,16 @@ def _parse_direction(data: Dict[str, object]) -> DynamicConnectionIntentDirectio
     else:
         pass
 
-    if direction_value == DynamicConnectionIntentDirection.INPUT.value or direction_value == "input":
-        return DynamicConnectionIntentDirection.INPUT
-    elif direction_value == DynamicConnectionIntentDirection.OUTPUT.value or direction_value == "output":
-        return DynamicConnectionIntentDirection.OUTPUT
+    if isinstance(direction_value, str):
+        try:
+            result: DynamicConnectionIntentDirection | None = DynamicConnectionIntentDirection(
+                direction_value.upper()
+            )
+        except ValueError:
+            result = None
     else:
-        return None
+        result = None
+    return result
 
 
 def _parse_root_reference(value: object) -> VarPowerFlowReferenceType | None:
@@ -241,23 +294,18 @@ def _parse_root_reference(value: object) -> VarPowerFlowReferenceType | None:
     :param value: Persisted reference value.
     :return: Parsed reference or ``None`` when invalid.
     """
-    candidate: VarPowerFlowReferenceType
-
-    if not isinstance(value, str):
-        return None
+    if isinstance(value, str):
+        try:
+            result: VarPowerFlowReferenceType | None = VarPowerFlowReferenceType(value)
+        except ValueError:
+            result = None
     else:
-        pass
-
-    for candidate in VarPowerFlowReferenceType:
-        if candidate.value == value:
-            return candidate
-        else:
-            pass
-
-    return None
+        result = None
+    return result
 
 
-def _find_internal_block(root_block: "Block", internal_block_uid: int) -> "Block | None":
+def _find_internal_block(root_block: ConnectionIntentBlock,
+                         internal_block_uid: int) -> ConnectionIntentBlock | None:
     """
     Locate the internal block referenced by one intent.
 
@@ -265,7 +313,7 @@ def _find_internal_block(root_block: "Block", internal_block_uid: int) -> "Block
     :param internal_block_uid: Persisted child block UID.
     :return: Matching block or ``None`` when absent.
     """
-    candidate_block: Block
+    candidate_block: ConnectionIntentBlock
 
     for candidate_block in root_block.get_all_blocks():
         if candidate_block.uid == internal_block_uid:
@@ -277,7 +325,7 @@ def _find_internal_block(root_block: "Block", internal_block_uid: int) -> "Block
 
 
 def _resolve_internal_variable_uid(data: Dict[str, object],
-                                   internal_block: "Block",
+                                   internal_block: ConnectionIntentBlock,
                                    direction: DynamicConnectionIntentDirection) -> int | None:
     """
     Resolve the stable variable UID, including the legacy positional format.
@@ -289,8 +337,8 @@ def _resolve_internal_variable_uid(data: Dict[str, object],
     """
     variable_uid_value: object = data.get("internal_variable_uid", None)
     port_index_value: object
-    variables: list[Var]
-    candidate_var: Var
+    variables: Sequence[ConnectionIntentVariable]
+    candidate_var: ConnectionIntentVariable
 
     if direction == DynamicConnectionIntentDirection.INPUT:
         variables = internal_block.in_vars
@@ -318,7 +366,7 @@ def _resolve_internal_variable_uid(data: Dict[str, object],
 
 
 def dynamic_connection_intent_from_dict(data: Dict[str, object],
-                                        root_block: "Block") -> DynamicConnectionIntent | None:
+                                        root_block: ConnectionIntentBlock) -> DynamicConnectionIntent | None:
     """
     Build one typed intent from current or legacy persisted fields.
 
@@ -331,7 +379,7 @@ def dynamic_connection_intent_from_dict(data: Dict[str, object],
     root_reference: VarPowerFlowReferenceType | None = _parse_root_reference(data.get("root_ref", None))
     internal_block_uid_value: object = data.get("internal_block_uid", None)
     suppressed_value: object = data.get("suppressed", False)
-    internal_block: Block | None
+    internal_block: ConnectionIntentBlock | None
     internal_variable_uid: int | None
 
     if origin is None or direction is None or root_reference is None:

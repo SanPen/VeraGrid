@@ -43,7 +43,12 @@ from VeraGridEngine.IO.others.rte_parser import rte2veragrid
 from VeraGridEngine.IO.others.anarede import PWFParser
 from VeraGridEngine.IO.iidm.iidm_parser_pypowsybl import IidmParser
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.enumerations import CGMESVersions, CgmesTopologyMode, FileType
+from VeraGridEngine.enumerations import (
+    CGMESVersions,
+    CgmesTopologyMode,
+    DynamicSimulationMode,
+    FileType,
+)
 
 
 class FileOpenOptions:
@@ -69,6 +74,7 @@ class FileOpenOptions:
                  # DGS
                  dgs_use_vsc_for_injections: bool = False,
                  dgs_use_dynamic_information: bool = False,
+                 dgs_dynamic_simulation_mode: DynamicSimulationMode | None = None,
                  ):
         """
         :param file_type: FileType to load, none is unsure
@@ -113,6 +119,7 @@ class FileOpenOptions:
         # DGS
         self.dgs_use_vsc_for_injections: bool = dgs_use_vsc_for_injections
         self.dgs_use_dynamic_information: bool = dgs_use_dynamic_information
+        self.dgs_dynamic_simulation_mode: DynamicSimulationMode | None = dgs_dynamic_simulation_mode
 
 
 def open_cgmes(files: List[str] | str,
@@ -631,7 +638,8 @@ class FileOpen:
                     self.file_name,
                     logger_=self.logger,
                     use_vsc_for_injections=self.options.dgs_use_vsc_for_injections,
-                    use_dynamic_information=self.options.dgs_use_dynamic_information
+                    use_dynamic_information=self.options.dgs_use_dynamic_information,
+                    dynamic_simulation_mode=self.options.dgs_dynamic_simulation_mode,
                 )
             else:
                 self.logger.add("File name is not a string")

@@ -7,6 +7,7 @@ from typing import Tuple
 import numpy as np
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
+from VeraGridEngine.Devices.Branches.sequence_line_type import sequence_to_phase_matrix
 from VeraGridEngine.enumerations import PrpCat
 
 
@@ -212,6 +213,39 @@ class UndergroundLineType(DynamicDevice):
         positive sequence shunt admittance in S per unit of length
         """
         return 1j * self.B
+
+    @property
+    def z_nabc(self) -> np.ndarray:
+        """Return the physical ABC series-impedance matrix in Ohm/km."""
+        return sequence_to_phase_matrix(
+            positive_sequence_value=self.R + 1j * self.X,
+            zero_sequence_value=self.R0 + 1j * self.X0,
+        )
+
+    @property
+    def y_nabc(self) -> np.ndarray:
+        """Return the physical ABC shunt-admittance matrix in S/km."""
+        if abs(self.C) > 0.0 or abs(self.C0) > 0.0:
+            positive_susceptance = 2.0 * np.pi * self.freq * self.C * 1.0e-6
+            zero_susceptance = 2.0 * np.pi * self.freq * self.C0 * 1.0e-6
+        else:
+            positive_susceptance = self.B * 1.0e-6
+            zero_susceptance = self.B0 * 1.0e-6
+
+        return sequence_to_phase_matrix(
+            positive_sequence_value=1j * positive_susceptance,
+            zero_sequence_value=1j * zero_susceptance,
+        )
+
+    @property
+    def z_phases_nabc(self) -> np.ndarray:
+        """Return the phase indices corresponding to ``z_nabc``."""
+        return np.array([1, 2, 3], dtype=int)
+
+    @property
+    def y_phases_nabc(self) -> np.ndarray:
+        """Return the phase indices corresponding to ``y_nabc``."""
+        return np.array([1, 2, 3], dtype=int)
 
     @property
     def C(self) -> float:

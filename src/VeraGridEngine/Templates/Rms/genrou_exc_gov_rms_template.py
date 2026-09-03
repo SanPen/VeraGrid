@@ -935,6 +935,7 @@ def get_genrou_rms_template(
     template.block.in_vars = list((vm_var, va_var))
     template.block.out_vars = list((pg_var, qg_var))
     template.block.name = name
+    template.comment = 'Generator GENROU RMS model'
     return template
 
 
@@ -1051,6 +1052,7 @@ def get_tgov1_rms_template(
     template.block.in_vars = list((omega_var, te_var))
     template.block.out_vars = list((tm_var,))
     template.block.name = name
+    template.comment = 'Generator TGOV1 turbine-governor RMS model'
     return template
 
 
@@ -1179,6 +1181,7 @@ def get_exst1_rms_template(
     template.block.in_vars = list((xadifd_var, vm_var, vpss_var))
     template.block.out_vars = list((vf_var,))
     template.block.name = name
+    template.comment = 'Generator EXST1 exciter RMS model'
     return template
 
 
@@ -1384,6 +1387,7 @@ def get_esst3a_rms_template(
     template.block.in_vars = list(block.in_vars)
     template.block.out_vars = list((vf_var,))
     template.block.name = name
+    template.comment = 'Generator ESST3A exciter RMS model'
     return template
 
 
@@ -1467,6 +1471,7 @@ def get_complete_genrou_rms_template(
     template.block.in_vars = list((machine_block.in_vars[0], machine_block.in_vars[1]))
     template.block.out_vars = list((machine_block.out_vars[0], machine_block.out_vars[1]))
     template.block.name = name
+    template.comment = 'Complete generator GENROU RMS model'
     return template
 
 

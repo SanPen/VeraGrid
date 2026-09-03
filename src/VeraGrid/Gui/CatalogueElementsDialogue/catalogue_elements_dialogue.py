@@ -288,6 +288,14 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
         #                                function_ptr=tem.get_exciter_rms)
         #                )
         actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+                                       args=(self._circuit.var_factory, 'Voltage source'),
+                                       name='Voltage source',
+                                       voltage_text='',
+                                       power_text='',
+                                       unique_key='rms:VoltageSourceBuild',
+                                       function_ptr=tem.VoltageSourceBuild)
+                       )
+        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
                                        args=(self._circuit.var_factory,),
                                        name='Complete generator',
                                        voltage_text='',
@@ -310,6 +318,14 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
                                        power_text='',
                                        unique_key='rms:get_line_rms_template',
                                        function_ptr=tem.get_line_rms_template)
+                       )
+        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+                                       args=(self._circuit.var_factory, 'DC line'),
+                                       name='DC line',
+                                       voltage_text='',
+                                       power_text='',
+                                       unique_key='rms:build_dc_line_rms_v2',
+                                       function_ptr=tem.build_dc_line_rms_v2)
                        )
         actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
                                        args=(self._circuit.var_factory,),
@@ -345,7 +361,7 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
                         )
         actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
                                        args=(self._circuit.var_factory,),
-                                       name='GFM VSC',
+                                       name='GFL VSC',
                                        voltage_text='',
                                        power_text='',
                                        unique_key='rms:build_vsc_rms',
@@ -645,9 +661,22 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
         for tpe in self._circuit.sequence_line_types:
             existing_keys[f"Sequence line types|{tpe.name}|{tpe.Vnom}|{tpe.Imax}"] = True
         for tpe in self._circuit.rms_models:
-            existing_keys[f"RMS model templates|{tpe.name}"] = True
+            rms_catalogue_key: str = tpe.code
+            if len(rms_catalogue_key) == 0:
+                # Legacy catalogue entries did not persist their stable action
+                # key, so retain their display name as a compatibility fallback.
+                rms_catalogue_key = tpe.name
+            else:
+                pass
+            existing_keys[f"RMS model templates|{rms_catalogue_key}"] = True
         for tpe in self._circuit.emt_models:
-            existing_keys[f"EMT model templates|{tpe.name}"] = True
+            emt_catalogue_key: str = tpe.code
+            if len(emt_catalogue_key) == 0:
+                # Apply the same compatibility path to legacy EMT templates.
+                emt_catalogue_key = tpe.name
+            else:
+                pass
+            existing_keys[f"EMT model templates|{emt_catalogue_key}"] = True
 
         return existing_keys
 

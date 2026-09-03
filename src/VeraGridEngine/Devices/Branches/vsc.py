@@ -8,7 +8,7 @@ import warnings
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-from typing import List, Tuple, TYPE_CHECKING
+from typing import List, Tuple
 from VeraGridEngine.Devices.Profiles import ProfileDevice, ProfileEnum, ProfileFloat
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (BuildStatus, ConverterControlType, ConverterFaultControlType, PrpCat,
@@ -16,9 +16,6 @@ from VeraGridEngine.enumerations import (BuildStatus, ConverterControlType, Conv
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.editable_device import get_at
-
-if TYPE_CHECKING:
-    from VeraGridEngine.Devices.types import BRANCH_TYPES
 
 
 class VSC(BranchParent):
@@ -32,6 +29,16 @@ class VSC(BranchParent):
         '_alpha1',
         '_alpha2',
         '_alpha3',
+        # Final dynamic data consumed by the RMS adapter.
+        # r_series/x_series cannot be recovered from alpha3 because it combines losses;
+        # dc_voltage_base may differ from the bus base; the capacitance
+        # MMC capacitance already reduces Cmod/Nsm, and the reactor DC side is binary.
+        '_r_series',
+        '_x_series',
+        '_dc_voltage_base',
+        '_dc_link_capacitance_uf',
+        '_mmc_arm_capacitance_uf',
+        '_mmc_consider_arm_reactor_dc',
         '_control1',
         '_control1_prof',
         '_control1_dev',
@@ -105,6 +112,43 @@ class VSC(BranchParent):
             tpe=float,
             definition='Losses quadratic parameter (IEC 62751-2 loss Correction, resistive loss).',
             dyn_ref=ParamPowerFlowReferenceType.alpha3,
+        ),
+        # Persist only the six irreducible dynamic inputs owned by the adapter.
+        GCProp(
+            prop_name='r_series',
+            units='p.u.',
+            tpe=float,
+            definition='Converter series-reactor resistance on the converter base.',
+        ),
+        GCProp(
+            prop_name='x_series',
+            units='p.u.',
+            tpe=float,
+            definition='Converter series-reactor reactance on the converter base.',
+        ),
+        GCProp(
+            prop_name='dc_voltage_base',
+            units='kV',
+            tpe=float,
+            definition='Native converter DC voltage base used by dynamic models.',
+        ),
+        GCProp(
+            prop_name='dc_link_capacitance_uf',
+            units='uF',
+            tpe=float,
+            definition='Equivalent capacitance directly across the DC terminals.',
+        ),
+        GCProp(
+            prop_name='mmc_arm_capacitance_uf',
+            units='uF',
+            tpe=float,
+            definition='Equivalent capacitance of one MMC arm.',
+        ),
+        GCProp(
+            prop_name='mmc_consider_arm_reactor_dc',
+            units='',
+            tpe=bool,
+            definition='Whether the MMC arm reactor is represented on the DC side.',
         ),
 
         GCProp(
@@ -326,28 +370,36 @@ class VSC(BranchParent):
                  bus_from: Bus | None = None,
                  bus_to: Bus | None = None,
                  bus_dc_n: Bus | None = None,
-                 name='VSC',
+                 name: str = 'VSC',
                  idtag: str | None = None,
-                 code='',
-                 active=True,
+                 code: str = '',
+                 active: bool = True,
                  design_rate: float = 9999.0,
                  rate: float = 9999.0,
-                 alpha1=0.0001,
-                 alpha2=0.015,
-                 alpha3=0.2,
-                 mttf=0.0,
-                 mttr=0.0,
-                 cost=100,
-                 contingency_factor=1.0,
+                 alpha1: float = 0.0001,
+                 alpha2: float = 0.015,
+                 alpha3: float = 0.2,
+                 # Dynamic inputs owned solely by the VSC; do not retain
+                 # redundant Pcu/uk/Rarm/Larm/Cmod/Nsm source values.
+                 r_series: float = 0.0,
+                 x_series: float = 0.0,
+                 dc_voltage_base: float = 0.0,
+                 dc_link_capacitance_uf: float = 0.0,
+                 mmc_arm_capacitance_uf: float = 0.0,
+                 mmc_consider_arm_reactor_dc: bool = False,
+                 mttf: float = 0.0,
+                 mttr: float = 0.0,
+                 cost: float = 100.0,
+                 contingency_factor: float = 1.0,
                  protection_rating_factor: float = 1.4,
-                 contingency_enabled=True,
-                 monitor_loading=True,
-                 capex=0.0,
-                 opex=0.0,
+                 contingency_enabled: bool = True,
+                 monitor_loading: bool = True,
+                 capex: float = 0.0,
+                 opex: float = 0.0,
                  build_status: BuildStatus = BuildStatus.Commissioned,
 
                  control1: ConverterControlType = ConverterControlType.Q_droop,
-                 control1_dev: Bus | BRANCH_TYPES | None = None,
+                 control1_dev: Bus | BranchParent | None = None,
                  control1_val: float = 1.0,
                  control1_val_min: float = -9999.0,
                  control1_val_max: float = 9999.0,
@@ -357,7 +409,7 @@ class VSC(BranchParent):
                  control1_droop_val_max: float = 1.1,
 
                  control2: ConverterControlType = ConverterControlType.Vm_dc,
-                 control2_dev: Bus | BRANCH_TYPES | None = None,
+                 control2_dev: Bus | BranchParent | None = None,
                  control2_val: float = 0.0,
                  control2_val_min: float = -9999.0,
                  control2_val_max: float = 9999.0,
@@ -371,7 +423,7 @@ class VSC(BranchParent):
                  min_ac_voltage: float = 0.1,
                  ysvs: float = 0.0,
                  x: float = 0.0,
-                 y: float = 0.0):
+                 y: float = 0.0) -> None:
         """
         Voltage source converter (VSC) with 3 terminals
         :param bus_from: bus_dc_p
@@ -388,6 +440,12 @@ class VSC(BranchParent):
         :param alpha1:
         :param alpha2:
         :param alpha3:
+        :param r_series: Converter series-reactor resistance in per unit.
+        :param x_series: Converter series-reactor reactance in per unit.
+        :param dc_voltage_base: Native DC voltage base in kV.
+        :param dc_link_capacitance_uf: Equivalent DC-terminal capacitance in microfarads.
+        :param mmc_arm_capacitance_uf: Equivalent capacitance of one MMC arm in microfarads.
+        :param mmc_consider_arm_reactor_dc: Whether the arm reactor is represented on the DC side.
         :param mttf:
         :param mttr:
         :param cost:
@@ -492,6 +550,14 @@ class VSC(BranchParent):
         self.alpha1 = float(alpha1)
         self.alpha2 = float(alpha2)
         self.alpha3 = float(alpha3)
+        # Transfer one canonical copy of the dynamic data and
+        # discard DGS source fields that have already been reduced.
+        self.r_series = r_series
+        self.x_series = x_series
+        self.dc_voltage_base = dc_voltage_base
+        self.dc_link_capacitance_uf = dc_link_capacitance_uf
+        self.mmc_arm_capacitance_uf = mmc_arm_capacitance_uf
+        self.mmc_consider_arm_reactor_dc = mmc_consider_arm_reactor_dc
 
         # u_setpoint_min: float = 0.9, -> min_val
         # u_setpoint_max: float = 1.1, -> max_val
@@ -506,7 +572,7 @@ class VSC(BranchParent):
 
         self._control1: ConverterControlType = control1
         self._control1_prof: ProfileEnum = ProfileEnum(default_value=control1, enum_type=ConverterControlType)
-        self._control1_dev: Bus | BRANCH_TYPES | None = control1_dev
+        self._control1_dev: Bus | BranchParent | None = control1_dev
         self._control1_dev_prof: ProfileDevice = ProfileDevice(default_value=control1_dev,
                                                                device_type=DeviceType.BusOrBranch)
         self._control1_val = float(control1_val)
@@ -522,7 +588,7 @@ class VSC(BranchParent):
 
         self._control2: ConverterControlType = control2
         self._control2_prof: ProfileEnum = ProfileEnum(default_value=control2, enum_type=ConverterControlType)
-        self._control2_dev: Bus | BRANCH_TYPES | None = control2_dev
+        self._control2_dev: Bus | BranchParent | None = control2_dev
         self._control2_dev_prof: ProfileDevice = ProfileDevice(default_value=control2_dev,
                                                                device_type=DeviceType.BusOrBranch)
         self._control2_val = float(control2_val)
@@ -1396,6 +1462,110 @@ class VSC(BranchParent):
         :return: None
         """
         self._alpha3 = float(val)
+
+    # Provide typed RMS-adapter access to the five final values without
+    # retaining the source DGS row.
+    @property
+    def r_series(self) -> float:
+        """Get the converter series-reactor resistance.
+
+        :return: Series resistance in per unit.
+        """
+        return self._r_series
+
+    @r_series.setter
+    def r_series(self, val: float) -> None:
+        """Set the converter series-reactor resistance.
+
+        :param val: Series resistance in per unit.
+        :return: None.
+        """
+        self._r_series = float(val)
+
+    @property
+    def x_series(self) -> float:
+        """Get the converter series-reactor reactance.
+
+        :return: Series reactance in per unit.
+        """
+        return self._x_series
+
+    @x_series.setter
+    def x_series(self, val: float) -> None:
+        """Set the converter series-reactor reactance.
+
+        :param val: Series reactance in per unit.
+        :return: None.
+        """
+        self._x_series = float(val)
+
+    @property
+    def dc_voltage_base(self) -> float:
+        """Get the native converter DC voltage base.
+
+        :return: DC voltage base in kV.
+        """
+        return self._dc_voltage_base
+
+    @dc_voltage_base.setter
+    def dc_voltage_base(self, val: float) -> None:
+        """Set the native converter DC voltage base.
+
+        :param val: DC voltage base in kV.
+        :return: None.
+        """
+        self._dc_voltage_base = float(val)
+
+    @property
+    def dc_link_capacitance_uf(self) -> float:
+        """Get the capacitance represented directly across the DC terminals.
+
+        :return: DC-terminal capacitance in microfarads.
+        """
+        return self._dc_link_capacitance_uf
+
+    @dc_link_capacitance_uf.setter
+    def dc_link_capacitance_uf(self, val: float) -> None:
+        """Set the capacitance represented directly across the DC terminals.
+
+        :param val: DC-terminal capacitance in microfarads.
+        :return: None.
+        """
+        self._dc_link_capacitance_uf = float(val)
+
+    @property
+    def mmc_arm_capacitance_uf(self) -> float:
+        """Get the equivalent capacitance of one MMC arm.
+
+        :return: Arm capacitance in microfarads.
+        """
+        return self._mmc_arm_capacitance_uf
+
+    @mmc_arm_capacitance_uf.setter
+    def mmc_arm_capacitance_uf(self, val: float) -> None:
+        """Set the equivalent capacitance of one MMC arm.
+
+        :param val: Arm capacitance in microfarads.
+        :return: None.
+        """
+        self._mmc_arm_capacitance_uf = float(val)
+
+    @property
+    def mmc_consider_arm_reactor_dc(self) -> bool:
+        """Get whether the MMC arm reactor is represented on the DC side.
+
+        :return: True when the arm reactor belongs to the DC-side representation.
+        """
+        return self._mmc_consider_arm_reactor_dc
+
+    @mmc_consider_arm_reactor_dc.setter
+    def mmc_consider_arm_reactor_dc(self, val: bool) -> None:
+        """Set whether the MMC arm reactor is represented on the DC side.
+
+        :param val: DC-side arm-reactor representation flag.
+        :return: None.
+        """
+        self._mmc_consider_arm_reactor_dc = bool(val)
 
     @property
     def min_ac_voltage(self) -> float:

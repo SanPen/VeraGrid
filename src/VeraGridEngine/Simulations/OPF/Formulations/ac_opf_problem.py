@@ -2086,7 +2086,7 @@ class NonLinearOptimalPfProblem:
         dSfdmdt = lil_matrix((self.ntapt, self.ntapm), dtype=complex)
         dStdmdt = lil_matrix((self.ntapt, self.ntapm), dtype=complex)
 
-        for k_pos, k in enumerate(self.k_m):
+        for m_pos, k in enumerate(self.k_m):
             f = self.from_idx[k]
             t = self.to_idx[k]
             Vf = self.V[f]
@@ -2120,44 +2120,44 @@ class NonLinearOptimalPfProblem:
             lin = np.where(self.k_tau == k)[0]  # TODO: should pass along the control type and check that instead
 
             if len(lin) != 0:
-                k_pos = lin[0]
+                tau_pos: int = int(lin[0])
                 # If the trafo is controlled for both module and phase, compute these derivatives. Otherwise, they are 0
                 dSfdmdt_ = - Vf * 1j * (np.conj(yk * Vt) / (mp2 * tap_unit))
                 dStdmdt_ = Vt * 1j * (np.conj(yk * Vf) / (mp2 * tap_unit_c))
 
-                dSbusdmdt[k_pos, k_pos] = ((dSfdmdt_ * lam[f]).real + (dSfdmdt_ * lam[f + self.nbus]).imag
-                                           + (dStdmdt_ * lam[t]).real + (dStdmdt_ * lam[t + self.nbus]).imag)
+                dSbusdmdt[tau_pos, m_pos] = ((dSfdmdt_ * lam[f]).real + (dSfdmdt_ * lam[f + self.nbus]).imag
+                                             + (dStdmdt_ * lam[t]).real + (dStdmdt_ * lam[t + self.nbus]).imag)
                 if k in self.br_mon_idx:
                     # This is only included if the branch is monitored.
-                    li = np.where(self.br_mon_idx == k)[0]  # TODO: Why is this here?
-                    dSfdmdt[k_pos, k_pos] = dSfdmdt_ * self.Sf[li].conj() * mu[li]
-                    dStdmdt[k_pos, k_pos] = dStdmdt_ * self.St[li].conj() * mu[li + self.n_br_mon]
+                    mon_pos: int = int(np.where(self.br_mon_idx == k)[0][0])
+                    dSfdmdt[tau_pos, m_pos] = dSfdmdt_ * self.Sf[mon_pos].conj() * mu[mon_pos]
+                    dStdmdt[tau_pos, m_pos] = dStdmdt_ * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
 
             # Compute the hessian terms merging Sf and St into Sbus
-            dSbusdmdm[k_pos, k_pos] = ((dSfdmdm_ * lam[f]).real + (dSfdmdm_ * lam[f + self.nbus]).imag
+            dSbusdmdm[m_pos, m_pos] = ((dSfdmdm_ * lam[f]).real + (dSfdmdm_ * lam[f + self.nbus]).imag
                                        + (dStdmdm_ * lam[t]).real + (dStdmdm_ * lam[t + self.nbus]).imag)
-            dSbusdmdva[f, k_pos] = ((dSfdmdva_f * lam[f]).real + (dSfdmdva_f * lam[f + self.nbus]).imag
+            dSbusdmdva[f, m_pos] = ((dSfdmdva_f * lam[f]).real + (dSfdmdva_f * lam[f + self.nbus]).imag
                                     + (dStdmdva_f * lam[t]).real + (dStdmdva_f * lam[t + self.nbus]).imag)
-            dSbusdmdva[t, k_pos] = ((dSfdmdva_t * lam[f]).real + (dSfdmdva_t * lam[f + self.nbus]).imag
+            dSbusdmdva[t, m_pos] = ((dSfdmdva_t * lam[f]).real + (dSfdmdva_t * lam[f + self.nbus]).imag
                                     + (dStdmdva_t * lam[t]).real + (dStdmdva_t * lam[t + self.nbus]).imag)
-            dSbusdmdvm[f, k_pos] = ((dSfdmdvm_f * lam[f]).real + (dSfdmdvm_f * lam[f + self.nbus]).imag
+            dSbusdmdvm[f, m_pos] = ((dSfdmdvm_f * lam[f]).real + (dSfdmdvm_f * lam[f + self.nbus]).imag
                                     + (dStdmdvm_f * lam[t]).real + (dStdmdvm_f * lam[t + self.nbus]).imag)
-            dSbusdmdvm[t, k_pos] = ((dSfdmdvm_t * lam[f]).real + (dSfdmdvm_t * lam[f + self.nbus]).imag
+            dSbusdmdvm[t, m_pos] = ((dSfdmdvm_t * lam[f]).real + (dSfdmdvm_t * lam[f + self.nbus]).imag
                                     + (dStdmdvm_t * lam[t]).real + (dStdmdvm_t * lam[t + self.nbus]).imag)
 
             if k in self.br_mon_idx:
                 # Hessian terms, only for monitored lines
-                li = np.where(self.br_mon_idx == k)[0]  # TODO: Why is this here?
-                dSfdmdm[k_pos, k_pos] = dSfdmdm_ * self.Sf[li].conj() * mu[li]
-                dStdmdm[k_pos, k_pos] = dStdmdm_ * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdmdva[f, k_pos] = dSfdmdva_f * self.Sf[li].conj() * mu[li]
-                dStdmdva[f, k_pos] = dStdmdva_f * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdmdva[t, k_pos] = dSfdmdva_t * self.Sf[li].conj() * mu[li]
-                dStdmdva[t, k_pos] = dStdmdva_t * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdmdvm[f, k_pos] = dSfdmdvm_f * self.Sf[li].conj() * mu[li]
-                dStdmdvm[f, k_pos] = dStdmdvm_f * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdmdvm[t, k_pos] = dSfdmdvm_t * self.Sf[li].conj() * mu[li]
-                dStdmdvm[t, k_pos] = dStdmdvm_t * self.St[li].conj() * mu[li + self.n_br_mon]
+                mon_pos = int(np.where(self.br_mon_idx == k)[0][0])
+                dSfdmdm[m_pos, m_pos] = dSfdmdm_ * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdmdm[m_pos, m_pos] = dStdmdm_ * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdmdva[f, m_pos] = dSfdmdva_f * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdmdva[f, m_pos] = dStdmdva_f * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdmdva[t, m_pos] = dSfdmdva_t * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdmdva[t, m_pos] = dStdmdva_t * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdmdvm[f, m_pos] = dSfdmdvm_f * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdmdvm[f, m_pos] = dStdmdvm_f * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdmdvm[t, m_pos] = dSfdmdvm_t * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdmdvm[t, m_pos] = dStdmdvm_t * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
 
         for k_pos, k in enumerate(self.k_tau):
             f = self.from_idx[k]
@@ -2203,19 +2203,19 @@ class NonLinearOptimalPfProblem:
                                        + (dStdtdt_ * lam[t]).real + (dStdtdt_ * lam[t + self.nbus]).imag)
 
             if k in self.br_mon_idx:
-                li = np.where(self.br_mon_idx == k)[0]  # TODO: Why is this here?
-                dSfdtdt[k_pos, k_pos] = dSfdtdt_ * self.Sf[li].conj() * mu[li]
-                dStdtdt[k_pos, k_pos] = dStdtdt_ * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdtdva[f, k_pos] = dSfdtdva_f * self.Sf[li].conj() * mu[li]
-                dStdtdva[f, k_pos] = dStdtdva_f * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdtdva[t, k_pos] = dSfdtdva_t * self.Sf[li].conj() * mu[li]
-                dStdtdva[t, k_pos] = dStdtdva_t * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdtdvm[f, k_pos] = dSfdtdvm_f * self.Sf[li].conj() * mu[li]
-                dStdtdvm[f, k_pos] = dStdtdvm_f * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdtdvm[t, k_pos] = dSfdtdvm_t * self.Sf[li].conj() * mu[li]
-                dStdtdvm[t, k_pos] = dStdtdvm_t * self.St[li].conj() * mu[li + self.n_br_mon]
-                dSfdtdt[k_pos, k_pos] = dSfdtdt_ * self.Sf[li].conj() * mu[li]
-                dStdtdt[k_pos, k_pos] = dStdtdt_ * self.St[li].conj() * mu[li + self.n_br_mon]
+                mon_pos = int(np.where(self.br_mon_idx == k)[0][0])
+                dSfdtdt[k_pos, k_pos] = dSfdtdt_ * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdtdt[k_pos, k_pos] = dStdtdt_ * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdtdva[f, k_pos] = dSfdtdva_f * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdtdva[f, k_pos] = dStdtdva_f * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdtdva[t, k_pos] = dSfdtdva_t * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdtdva[t, k_pos] = dStdtdva_t * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdtdvm[f, k_pos] = dSfdtdvm_f * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdtdvm[f, k_pos] = dStdtdvm_f * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdtdvm[t, k_pos] = dSfdtdvm_t * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdtdvm[t, k_pos] = dStdtdvm_t * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
+                dSfdtdt[k_pos, k_pos] = dSfdtdt_ * self.Sf[mon_pos].conj() * mu[mon_pos]
+                dStdtdt[k_pos, k_pos] = dStdtdt_ * self.St[mon_pos].conj() * mu[mon_pos + self.n_br_mon]
 
         return (dSbusdmdm, dSfdmdm, dStdmdm,
                 dSbusdmdvm, dSfdmdvm, dStdmdvm,
@@ -2249,8 +2249,14 @@ class NonLinearOptimalPfProblem:
         Pg[self.gen_nondisp_idx] = np.real(self.Sg_undis)
         Qg[self.gen_nondisp_idx] = np.imag(self.Sg_undis)
 
-        # convert the Lagrange multipliers to significant ones
-        lam_p, lam_q = ips_results.lam[:self.nbus], ips_results.lam[self.nbus: 2 * self.nbus]
+        # The IPS problem uses p.u. balance equations and a scaled objective; undo both factors for economic results.
+        lambda_scale: float = self.objective_scale * self.Sbase
+        if lambda_scale > 0.0:
+            lam_p: Vec = ips_results.lam[:self.nbus] / lambda_scale
+            lam_q: Vec = ips_results.lam[self.nbus: 2 * self.nbus] / lambda_scale
+        else:
+            lam_p = ips_results.lam[:self.nbus]
+            lam_q = ips_results.lam[self.nbus: 2 * self.nbus]
 
         loading = np.abs(self.allSf) / (self.rates + 1e-9)
 

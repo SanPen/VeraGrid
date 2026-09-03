@@ -12,6 +12,7 @@ from VeraGrid.Gui.GridReduce.grid_reduce_gui import Ui_ReduceDialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGrid.Gui.messages import yes_no_question, warning_msg
 from VeraGrid.Gui.gui_functions import ComboModel, get_list_model
+from VeraGrid.Gui.dialog_lifecycle import exec_dialog_safely
 from VeraGrid.Session.session import SimulationSession
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -41,8 +42,6 @@ class GridReduceDialogue(QtWidgets.QDialog):
         self.setModal(True)
 
         self.logger = Logger()
-        self.logs_dialogue: LogsDialogue | None = None
-
         self.ui.listView.setModel(get_list_model(list(selected_buses_set)))
 
         methods_mdl = ComboModel(
@@ -187,8 +186,8 @@ class GridReduceDialogue(QtWidgets.QDialog):
                     raise NotImplementedError("Reduction method not supported")
 
                 if logger.has_logs():
-                    self.logs_dialogue = LogsDialogue(name=self.tr("Import profiles"), logger=logger)
-                    self.logs_dialogue.exec()
+                    logs_dialogue: LogsDialogue = LogsDialogue(name=self.tr("Import profiles"), logger=logger)
+                    exec_dialog_safely(dialog=logs_dialogue)
 
                 self.did_reduce = True
             else:

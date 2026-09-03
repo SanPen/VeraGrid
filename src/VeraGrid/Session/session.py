@@ -126,6 +126,12 @@ class GcThread(QThread):
             # the numerical run starts.  Once execution fails that shell is
             # not a valid study result and must not remain available to the UI.
             self.driver.results = None
+
+            # Preserve diagnostics emitted by the engine before the exception.
+            # The post-processing GUI owns the presentation, while the generic
+            # worker only transports the engine logger across the thread
+            # boundary.
+            self.logger += self.driver.logger
             self.driver.logger.add_error(error_message)
             self.logger.add_error(error_message)
             self.progress_text.emit(f"Error: {error_message}")

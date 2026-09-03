@@ -14,7 +14,7 @@ from VeraGridEngine.Devices import RemedialAction
 from VeraGridEngine.Topology.simulation_indices import SimulationIndices
 from VeraGridEngine.Topology.topology import find_islands
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, BoolVec, Mat, CxMat, StrVec, Logger
-from VeraGridEngine.enumerations import ContingencyOperationTypes, GeneratorControlMode, ShuntControlMode
+from VeraGridEngine.enumerations import BusMode, ContingencyOperationTypes, GeneratorControlMode, ShuntControlMode
 import VeraGridEngine.Topology.topology as tp
 import VeraGridEngine.Topology.simulation_indices as si
 import VeraGridEngine.Topology.admittance_matrices as ycalc
@@ -237,6 +237,112 @@ def correct_bus_types(gen_idx: IntVec,
         if control_mode_int[i] == v_ctrl_val:
             if bus_types[gen_controllable_bus_idx[i]] != 2:
                 bus_types[gen_controllable_bus_idx[i]] = 2
+
+
+def select_ac_phase_reference_buses(
+        bus_types: IntVec,
+        active_power: Vec,
+        bus_active: BoolVec,
+        is_dc_bus: BoolVec,
+        branch_from: IntVec,
+        branch_to: IntVec,
+        branch_active: BoolVec,
+) -> IntVec:
+    """Select missing angular references in independent AC phase regions.
+
+    Passive AC branches couple voltage angles. VSC and DC connections transfer
+    power without coupling the absolute AC phase, so they must not merge the
+    regions used to select one reference bus.
+
+    :param bus_types: Compiled bus modes before automatic promotion.
+    :param active_power: Active-power injections used to rank PV candidates.
+    :param bus_active: Active state of every bus.
+    :param is_dc_bus: DC classification of every bus.
+    :param branch_from: From-bus indices of passive branches.
+    :param branch_to: To-bus indices of passive branches.
+    :param branch_active: Active state of passive branches.
+    :return: PV bus indices that must become angular references.
+    """
+    bus_count: int = len(bus_types)
+    branch_count: int = len(branch_from)
+    maximum_entry_count: int = bus_count + 2 * branch_count
+    row_indices: IntVec = np.empty(maximum_entry_count, dtype=np.int64)
+    column_indices: IntVec = np.empty(maximum_entry_count, dtype=np.int64)
+    adjacency_data: IntVec = np.ones(maximum_entry_count, dtype=np.int64)
+    entry_count: int = 0
+    bus_index: int
+
+    # Diagonal entries retain isolated active AC buses as one-bus phase regions.
+    for bus_index in range(bus_count):
+        if bool(bus_active[bus_index]) and not bool(is_dc_bus[bus_index]):
+            row_indices[entry_count] = bus_index
+            column_indices[entry_count] = bus_index
+            entry_count += 1
+        else:
+            pass
+
+    branch_index: int
+    for branch_index in range(branch_count):
+        from_index: int = int(branch_from[branch_index])
+        to_index: int = int(branch_to[branch_index])
+        connects_active_ac_buses: bool = (
+            bool(branch_active[branch_index])
+            and from_index >= 0
+            and to_index >= 0
+            and bool(bus_active[from_index])
+            and bool(bus_active[to_index])
+            and not bool(is_dc_bus[from_index])
+            and not bool(is_dc_bus[to_index])
+        )
+        if connects_active_ac_buses:
+            row_indices[entry_count] = from_index
+            column_indices[entry_count] = to_index
+            entry_count += 1
+            row_indices[entry_count] = to_index
+            column_indices[entry_count] = from_index
+            entry_count += 1
+        else:
+            pass
+
+    adjacency: sp.csc_matrix = sp.csc_matrix(
+        (
+            adjacency_data[:entry_count],
+            (row_indices[:entry_count], column_indices[:entry_count]),
+        ),
+        shape=(bus_count, bus_count),
+    )
+    ac_active: BoolVec = np.logical_and(bus_active, np.logical_not(is_dc_bus))
+    phase_regions: List[IntVec] = find_islands(
+        adj=adjacency,
+        active=ac_active,
+    )
+    selected_indices: IntVec = np.empty(len(phase_regions), dtype=np.int64)
+    selected_count: int = 0
+    phase_region: IntVec
+
+    for phase_region in phase_regions:
+        region_modes: IntVec = bus_types[phase_region]
+        has_reference: bool = bool(
+            np.any(region_modes == BusMode.Slack_tpe.value)
+        )
+        if has_reference:
+            pass
+        else:
+            pv_candidates: IntVec = phase_region[
+                region_modes == BusMode.PV_tpe.value
+            ]
+            if len(pv_candidates) == 0:
+                pass
+            else:
+                ranked_candidate_index: int = int(
+                    np.argmax(active_power[pv_candidates])
+                )
+                selected_indices[selected_count] = int(
+                    pv_candidates[ranked_candidate_index]
+                )
+                selected_count += 1
+
+    return selected_indices[:selected_count]
 
 
 class DataStructType(Enum):
@@ -731,18 +837,64 @@ class NumericalCircuit:
         if Sbus is None:
             Sbus = self.get_power_injections_pu()
 
+        uses_internal_bus_types: bool = bus_types is None
         if bus_types is None:
             bus_types = self.bus_data.bus_types
+        else:
+            bus_types = np.array(bus_types, dtype=int, copy=True)
 
-        return si.SimulationIndices(bus_types=bus_types,
-                                    Pbus=Sbus.real,
-                                    tap_module_control_mode=self.active_branch_data.tap_module_control_mode,
-                                    tap_phase_control_mode=self.active_branch_data.tap_phase_control_mode,
-                                    tap_controlled_buses=self.active_branch_data.tap_controlled_buses,
-                                    F=self.passive_branch_data.F,
-                                    T=self.passive_branch_data.T,
-                                    is_dc_bus=self.bus_data.is_dc,
-                                    force_only_pq_pv_vd_types=force_only_pq_pv_vd_types)
+        # TODO: SANPEN: What is this and why is it here? probably colliding with problem-specific logic later
+        # Promote one PV source in every AC phase region before the generic
+        # classifier runs. Imported PV/SL semantics remain unchanged in
+        # MultiCircuit while VSC/DC links stay outside the phase graph.
+        promoted_reference_indices: IntVec = select_ac_phase_reference_buses(
+            bus_types=bus_types,
+            active_power=Sbus.real,
+            bus_active=self.bus_data.active,
+            is_dc_bus=self.bus_data.is_dc,
+            branch_from=self.passive_branch_data.F,
+            branch_to=self.passive_branch_data.T,
+            branch_active=self.passive_branch_data.active,
+        )
+        promoted_reference_index: np.int64
+        for promoted_reference_index in promoted_reference_indices:
+            if uses_internal_bus_types:
+                self.bus_data.set_bus_mode(
+                    idx=int(promoted_reference_index),
+                    val=BusMode.Slack_tpe,
+                )
+            else:
+                bus_types[int(promoted_reference_index)] = (
+                    BusMode.Slack_tpe.value
+                )
+
+        simulation_indices: si.SimulationIndices = si.SimulationIndices(
+            bus_types=bus_types,
+            Pbus=Sbus.real,
+            tap_module_control_mode=self.active_branch_data.tap_module_control_mode,
+            tap_phase_control_mode=self.active_branch_data.tap_phase_control_mode,
+            tap_controlled_buses=self.active_branch_data.tap_controlled_buses,
+            F=self.passive_branch_data.F,
+            T=self.passive_branch_data.T,
+            is_dc_bus=self.bus_data.is_dc,
+            force_only_pq_pv_vd_types=force_only_pq_pv_vd_types,
+        )
+
+        if uses_internal_bus_types:
+            # Keep the physical P/Q/Vm/Va masks synchronized with every
+            # explicit or automatically selected numerical reference.
+            reference_index: np.int64
+            for reference_index in simulation_indices.vd:
+                self.bus_data.set_bus_mode(
+                    idx=int(reference_index),
+                    val=BusMode.Slack_tpe,
+                )
+        else:
+            # Caller-owned bus-type arrays are temporary alternatives and must
+            # not mutate the canonical control masks stored by this circuit.
+            pass
+
+        return simulation_indices
 
     def get_connectivity_matrices(self) -> tp.ConnectivityMatrices:
         """

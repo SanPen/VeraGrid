@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Dynamic.emt_template &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Devices.Dynamic.emt_template &mdash; VeraGrid 6.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -113,7 +110,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.pointer_device_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointerDeviceParent</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">normalize_event_parameter_initialization</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">SubObjectType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCProp</span>
@@ -211,11 +208,7 @@
         <span class="n">result</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span>
         <span class="n">result</span><span class="o">.</span><span class="n">selected_to_merge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_to_merge</span>
         <span class="n">result</span><span class="o">.</span><span class="n">diff_changes</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diff_changes</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">enable_auto_updates</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">disable_auto_updates</span><span class="p">()</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">_EditableDevice__auto_update_enabled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EditableDevice__auto_update_enabled</span>
 
         <span class="n">result</span><span class="o">.</span><span class="n">_device_idtag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_idtag</span>
         <span class="n">result</span><span class="o">.</span><span class="n">_tpe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpe</span>
@@ -228,10 +221,10 @@
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Materialize and return the normalized EMT symbolic block.</span>
 
-<span class="sd">        :return:</span>
+<span class="sd">        :return: EMT symbolic block using one initialization source per event parameter.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_builder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">built_template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
@@ -240,12 +233,19 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
 
+        <span class="n">normalize_event_parameter_initialization</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_block</span>
 
     <span class="nd">@block</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Block</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace the EMT block and normalize legacy event initialization.</span>
+
+<span class="sd">        :param obj: Complete symbolic block assigned to the template.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_builder</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_block</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="n">normalize_event_parameter_initialization</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EmtModelTemplate.set_lazy_builder">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.emt_template.EmtModelTemplate.set_lazy_builder">[docs]</a>

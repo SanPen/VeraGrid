@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles &mdash; VeraGrid 6.5.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../../_static/documentation_options.js?v=1095f081"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -59,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -112,7 +109,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numba</span><span class="w"> </span><span class="kn">import</span> <span class="n">njit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">lil_matrix</span><span class="p">,</span> <span class="n">isspmatrix_csc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csc_matrix</span><span class="p">,</span> <span class="n">isspmatrix_csc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.admittance_matrices</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_admittances_fast</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericPowerFlowResults</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowOptions</span>
@@ -120,7 +117,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Derivatives.csc_derivatives</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">deriv</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Derivatives.csc_derivatives</span><span class="w"> </span><span class="kn">import</span> <span class="n">dSbus_dV_with_I0_numba_sparse_csc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.NumericalMethods.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_closest_number</span><span class="p">,</span> <span class="n">make_complex</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Sparse.csc2</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">CSC</span><span class="p">,</span> <span class="n">CxCSC</span><span class="p">,</span> <span class="n">scipy_to_mat</span><span class="p">,</span> <span class="n">sp_slice</span><span class="p">,</span> <span class="n">csc_stack_2d_ff</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Sparse.csc2</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">CSC</span><span class="p">,</span> <span class="n">CxCSC</span><span class="p">,</span> <span class="n">mat_to_scipy</span><span class="p">,</span> <span class="n">scipy_to_mat</span><span class="p">,</span> <span class="n">sp_slice</span><span class="p">,</span> <span class="n">csc_stack_2d_ff</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">control_q_for_generalized_method</span><span class="p">,</span>
                                                                                      <span class="n">DiscreteShuntControlState</span><span class="p">,</span>
                                                                                      <span class="n">QvDroopControlState</span><span class="p">,</span>
@@ -286,6 +283,7 @@
 
     <span class="c1"># -------- ROW 1 + ROW 2 (Sbus): bus-bus derivatives (including I0 Norton current) --------</span>
     <span class="n">dSy_dVm_x</span><span class="p">,</span> <span class="n">dSy_dVa_x</span> <span class="o">=</span> <span class="n">dSbus_dV_with_I0_numba_sparse_csc</span><span class="p">(</span><span class="n">Yx</span><span class="p">,</span> <span class="n">Yp</span><span class="p">,</span> <span class="n">Yi</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Vm</span><span class="p">,</span> <span class="n">I0</span><span class="p">)</span>
+
     <span class="n">dS_dVm</span> <span class="o">=</span> <span class="n">CxCSC</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">nbus</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dSy_dVm_x</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">Yi</span><span class="p">,</span> <span class="n">Yp</span><span class="p">,</span> <span class="n">dSy_dVm_x</span><span class="p">)</span>
     <span class="n">dS_dVa</span> <span class="o">=</span> <span class="n">CxCSC</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">nbus</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dSy_dVa_x</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">Yi</span><span class="p">,</span> <span class="n">Yp</span><span class="p">,</span> <span class="n">dSy_dVa_x</span><span class="p">)</span>
 
@@ -744,33 +742,81 @@
 
 <div class="viewcode-block" id="calc_autodiff_jacobian">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow.Formulations.html#VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles.calc_autodiff_jacobian">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">calc_autodiff_jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">],</span> <span class="n">Vec</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_autodiff_jacobian</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">],</span> <span class="n">Vec</span><span class="p">],</span>
+                           <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                           <span class="n">sparsity</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span>
+                           <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute the Jacobian matrix of `func` at `x` using finite differences.</span>
+<span class="sd">    Compute a sparse finite-difference Jacobian using column coloring.</span>
+
+<span class="sd">    Columns with disjoint residual support are perturbed together. The values</span>
+<span class="sd">    remain finite differences of ``func``; the supplied analytic matrix is</span>
+<span class="sd">    used only as the structural sparsity contract.</span>
 
 <span class="sd">    :param func: function accepting a vector x and args, and returning either a vector or a</span>
 <span class="sd">                 tuple where the first argument is a vector and the second.</span>
 <span class="sd">    :param x: Point at which to evaluate the Jacobian (numpy array).</span>
+<span class="sd">    :param sparsity: Structural Jacobian pattern at the current formulation state.</span>
 <span class="sd">    :param h: Small step for finite difference.</span>
 <span class="sd">    :return: Jacobian matrix as a CSC matrix.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">f0</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">nx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">f0</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">n_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f0</span><span class="p">)</span>
+    <span class="n">structural_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">=</span> <span class="n">mat_to_scipy</span><span class="p">(</span><span class="n">sparsity</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">structural_matrix</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">structural_matrix</span><span class="o">.</span><span class="n">nnz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">conflict_matrix</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">=</span> <span class="p">(</span><span class="n">structural_matrix</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">structural_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span>
+    <span class="n">column_colors</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">used_color_stamp</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">color_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="n">n_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">f0</span><span class="p">)</span>
+    <span class="c1"># Alex review required: accelerate the static PF finite-difference Jacobian without changing its equations.</span>
+    <span class="n">column_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">column_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
+        <span class="n">data_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="k">for</span> <span class="n">data_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
+                <span class="n">conflict_matrix</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">column_index</span><span class="p">],</span>
+                <span class="n">conflict_matrix</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">column_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+            <span class="n">conflicting_column</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">conflict_matrix</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">data_index</span><span class="p">]</span>
+            <span class="n">conflicting_color</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">column_colors</span><span class="p">[</span><span class="n">conflicting_column</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">conflicting_color</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">used_color_stamp</span><span class="p">[</span><span class="n">conflicting_color</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_index</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
 
-    <span class="n">jac</span> <span class="o">=</span> <span class="n">lil_matrix</span><span class="p">((</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">nx</span><span class="p">))</span>
+        <span class="n">selected_color</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">selected_color</span> <span class="o">&lt;</span> <span class="n">color_count</span> <span class="ow">and</span> <span class="n">used_color_stamp</span><span class="p">[</span><span class="n">selected_color</span><span class="p">]</span> <span class="o">==</span> <span class="n">column_index</span><span class="p">:</span>
+            <span class="n">selected_color</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">selected_color</span> <span class="o">==</span> <span class="n">color_count</span><span class="p">:</span>
+            <span class="n">color_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">column_colors</span><span class="p">[</span><span class="n">column_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">selected_color</span>
 
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nx</span><span class="p">):</span>
-        <span class="n">x_plus_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x_plus_h</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
-        <span class="n">f_plus_h</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x_plus_h</span><span class="p">)</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_plus_h</span> <span class="o">-</span> <span class="n">f0</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
-                <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">jacobian_data</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">structural_matrix</span><span class="o">.</span><span class="n">nnz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">color_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">color_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">color_count</span><span class="p">):</span>
+        <span class="n">color_columns</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">column_colors</span> <span class="o">==</span> <span class="n">color_index</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">x_plus_h</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x_plus_h</span><span class="p">[</span><span class="n">color_columns</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h</span>
+        <span class="n">f_plus_h</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x_plus_h</span><span class="p">)</span>
+        <span class="n">finite_difference</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_plus_h</span> <span class="o">-</span> <span class="n">f0</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
 
-    <span class="k">return</span> <span class="n">scipy_to_mat</span><span class="p">(</span><span class="n">jac</span><span class="o">.</span><span class="n">tocsc</span><span class="p">())</span></div>
+        <span class="k">for</span> <span class="n">column_index</span> <span class="ow">in</span> <span class="n">color_columns</span><span class="p">:</span>
+            <span class="n">column_start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">structural_matrix</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">column_index</span><span class="p">]</span>
+            <span class="n">column_end</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">structural_matrix</span><span class="o">.</span><span class="n">indptr</span><span class="p">[</span><span class="n">column_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">structural_rows</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">structural_matrix</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">column_start</span><span class="p">:</span><span class="n">column_end</span><span class="p">]</span>
+            <span class="n">jacobian_data</span><span class="p">[</span><span class="n">column_start</span><span class="p">:</span><span class="n">column_end</span><span class="p">]</span> <span class="o">=</span> <span class="n">finite_difference</span><span class="p">[</span><span class="n">structural_rows</span><span class="p">]</span>
+
+    <span class="n">jacobian</span><span class="p">:</span> <span class="n">csc_matrix</span> <span class="o">=</span> <span class="n">csc_matrix</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">jacobian_data</span><span class="p">,</span>
+            <span class="n">structural_matrix</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">structural_matrix</span><span class="o">.</span><span class="n">indptr</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+        <span class="p">),</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">nx</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">scipy_to_mat</span><span class="p">(</span><span class="n">jacobian</span><span class="p">)</span></div>
 
 
 
@@ -1336,8 +1382,14 @@
 
                     <span class="k">if</span> <span class="n">control1_bus_device</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">is_vm_controlled</span><span class="p">[</span><span class="n">control1_bus_device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="c1"># Grid-forming voltage control fixes Vm, while the</span>
+                        <span class="c1"># converter&#39;s unknown Qt still needs the nodal Q row.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">is_q_controlled</span><span class="p">[</span><span class="n">control1_bus_device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">if</span> <span class="n">control2_bus_device</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">is_va_controlled</span><span class="p">[</span><span class="n">control2_bus_device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="c1"># Grid-forming angle control fixes Va, while the</span>
+                        <span class="c1"># converter&#39;s unknown Pt still needs the nodal P row.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">is_p_controlled</span><span class="p">[</span><span class="n">control2_bus_device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="n">u_vsc_pfp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">F_dcn</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
@@ -1443,8 +1495,14 @@
 
                     <span class="k">if</span> <span class="n">control1_bus_device</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">is_va_controlled</span><span class="p">[</span><span class="n">control1_bus_device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="c1"># Grid-forming angle control fixes Va, while the</span>
+                        <span class="c1"># converter&#39;s unknown Pt still needs the nodal P row.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">is_p_controlled</span><span class="p">[</span><span class="n">control1_bus_device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">if</span> <span class="n">control2_bus_device</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">is_vm_controlled</span><span class="p">[</span><span class="n">control2_bus_device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="c1"># Grid-forming voltage control fixes Vm, while the</span>
+                        <span class="c1"># converter&#39;s unknown Qt still needs the nodal Q row.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">is_q_controlled</span><span class="p">[</span><span class="n">control2_bus_device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="n">u_vsc_pfp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">F_dcn</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
@@ -3210,8 +3268,11 @@
             <span class="n">autodiff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_autodiff_jacobian</span>
 
         <span class="k">if</span> <span class="n">autodiff</span><span class="p">:</span>
+            <span class="c1"># TODO: SANPEN: And what if the Jacobian is not complete because we haven&#39;t computed the derivatives and we want the autodiff for debugging? Again, AI Slop</span>
+            <span class="n">sparsity</span><span class="p">:</span> <span class="n">CSC</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span><span class="p">(</span><span class="n">autodiff</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">J</span><span class="p">:</span> <span class="n">CSC</span> <span class="o">=</span> <span class="n">calc_autodiff_jacobian</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_f</span><span class="p">,</span>
                                             <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">var2x</span><span class="p">(),</span>
+                                            <span class="n">sparsity</span><span class="o">=</span><span class="n">sparsity</span><span class="p">,</span>
                                             <span class="n">h</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">J</span>
         <span class="k">else</span><span class="p">:</span>

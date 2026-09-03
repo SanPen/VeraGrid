@@ -571,17 +571,18 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
         q_B: vf.add_const(None),
         p_C: vf.add_const(None),
         q_C: vf.add_const(None),
-        # The phasor placeholders are resolved during explicit initialization
-        # from the PF-derived EMT references before ``delta`` is consumed.
-        phi_v: vf.add_const(None),
-        phi: vf.add_const(None),
-        Vpk: vf.add_const(None),
-        Ipk: vf.add_const(None),
-        # ``delta`` depends on PF-derived phasor values that are only available
-        # after explicit initialization resolves the placeholder runtime refs.
-        # Keeping it as a runtime placeholder prevents an invalid early evaluation
-        # with zero-valued defaults during problem construction.
-        delta: vf.add_const(None),
+        # PF-derived phasor expressions initialize their runtime parameters
+        # before ``delta`` is consumed.
+        phi_v: phi_v_init,
+        phi: phi_init,
+        Vpk: vpk_init,
+        Ipk: ipk_init,
+        # ``delta`` belongs to the runtime-parameter initialization graph and
+        # depends on the PF-derived phasor expressions above.
+        delta: sym.atan(
+            (Ra * Ipk * sym.sin(phi) - omega_ref * (Lmq + La) * Ipk * sym.cos(phi)) /
+            (Vpk + Ra * Ipk * sym.cos(phi) + omega_ref * (Lmq + La) * Ipk * sym.sin(phi))
+        ),
         Kq_share: vf.add_const(0.2),
     }
     templ.block.api_obj_mapping = {
@@ -600,18 +601,6 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     templ.block.init_eqs = {
         et: vf.add_const(0.0),
         omega: omega_ref,
-
-        # The initialization first materializes the PF-consistent phasor values
-        # into runtime parameters. This makes the subsequent ``delta`` evaluation
-        # independent from unresolved bus algebraic variables.
-        phi_v: phi_v_init,
-        phi: phi_init,
-        Vpk: vpk_init,
-        Ipk: ipk_init,
-        delta: sym.atan(
-            (Ra * Ipk * sym.sin(phi) - omega_ref * (Lmq + La) * Ipk * sym.cos(phi)) /
-            (Vpk + Ra * Ipk * sym.cos(phi) + omega_ref * (Lmq + La) * Ipk * sym.sin(phi))
-        ),
 
         theta: phi_v + delta,
 

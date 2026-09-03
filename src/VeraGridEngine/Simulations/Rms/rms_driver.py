@@ -156,6 +156,7 @@ class RmsSimulationDriver(DriverTemplate):
             options=self.options,
             pf_results=self.pf_results,
             progress_signal=self.progress_signal,
+            logger=self.logger,
         )
         self.problem = problem
 

@@ -513,24 +513,28 @@ class EditableDevice(metaclass=EditableDeviceMeta):
             tpe=str,
             definition='Unique ID',
             editable=False,
+            cat=[PrpCat.MT],
         ),
         GCProp(
             prop_name='name',
             units='',
             tpe=str,
             definition='Name of the device.',
+            cat=[PrpCat.TP],
         ),
         GCProp(
             prop_name='code',
             units='',
             tpe=str,
             definition='Secondary ID',
+            cat=[PrpCat.MT],
         ),
         GCProp(
             prop_name='rdfid',
             units='',
             tpe=str,
             definition='RDF ID for further compatibility',
+            cat=[PrpCat.MT],
         ),
         GCProp(
             prop_name='action',
@@ -538,6 +542,7 @@ class EditableDevice(metaclass=EditableDeviceMeta):
             tpe=ActionType,
             definition='Object action to perform.\nOnly used for model merging.',
             display=False,
+            cat=[PrpCat.TP],
         ),
         GCProp(
             prop_name='selected_to_merge',
@@ -546,12 +551,14 @@ class EditableDevice(metaclass=EditableDeviceMeta):
             definition='Whether this object should be applied during diff merge.',
             display=False,
             editable=False,
+            cat=[PrpCat.MT],
         ),
         GCProp(
             prop_name='comment',
             units='',
             tpe=str,
             definition='User comment',
+            cat=[PrpCat.MT],
         ),
         GCProp(
             prop_name='diff_changes',
@@ -559,6 +566,7 @@ class EditableDevice(metaclass=EditableDeviceMeta):
             tpe=SubObjectType.MergeInformation,
             display=False,
             editable=False,
+            cat=[PrpCat.MT],
         )
     )
     CLASS_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = tuple()

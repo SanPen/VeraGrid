@@ -1052,6 +1052,12 @@ class BranchNtcVars:
 
         self.inter_space_branches: List[Tuple[int, float]] = list()  # index, sense
 
+        # per-hour worst N-1: group index in the grid list, or -1 when N-1 is not worse than N
+        self.worst_contingency_idx = np.full((nt, n_elm), -1, dtype=int)
+        self.worst_contingency_flow = np.zeros((nt, n_elm), dtype=float)
+        self.worst_contingency_loading = np.zeros((nt, n_elm), dtype=float)
+        self.alpha_n1_worst = np.zeros((nt, n_elm), dtype=float)
+
     def get_values(self, Sbase: float, model: LpModel) -> "BranchNtcVars":
         """
         Return an instance of this class where the arrays content are not LP vars but their value
@@ -1067,6 +1073,10 @@ class BranchNtcVars:
         data.alpha = self.alpha
         data.inter_space_branches = self.inter_space_branches
         data.monitor_logic = self.monitor_logic
+        data.worst_contingency_idx = self.worst_contingency_idx
+        data.worst_contingency_flow = self.worst_contingency_flow
+        data.worst_contingency_loading = self.worst_contingency_loading
+        data.alpha_n1_worst = self.alpha_n1_worst
 
         for t in range(nt):
             for i in range(n_elm):
@@ -2414,6 +2424,118 @@ def screen_contingency_violations(multi_contingencies: List[LinearMultiContingen
     return admissions
 
 
+def fill_worst_contingency_per_branch(grid: MultiCircuit,
+                                      multi_contingencies: Union[LinearMultiContingencies, None],
+                                      f0_mw: Vec,
+                                      hvdc0_mw: Vec,
+                                      vsc0_mw: Vec,
+                                      inj0_mw: Vec,
+                                      contingency_rates_mw: Vec,
+                                      alpha: Vec,
+                                      worst_idx: IntVec,
+                                      worst_flow: Vec,
+                                      worst_loading: Vec,
+                                      alpha_n1_worst: Vec) -> None:
+    """
+    For every branch, keep the contingency group that maximises post-contingency loading.
+
+    The N-state loading is the starting point. A group is recorded only when its N-1
+    loading is strictly worse, so an unaffected line keeps index -1 and N-1 flow = N flow.
+
+    :param grid: circuit that owns the contingency groups
+    :param multi_contingencies: formulated multi-contingencies, or None when N-1 is off
+    :param f0_mw: solved N-state branch flows (MW)
+    :param hvdc0_mw: solved N-state HVDC flows (MW)
+    :param vsc0_mw: solved N-state VSC flows (MW)
+    :param inj0_mw: solved N-state bus injections (MW)
+    :param contingency_rates_mw: branch contingency ratings (MW)
+    :param alpha: N-state exchange sensitivity of every branch
+    :param worst_idx: output, group index per branch, filled in place
+    :param worst_flow: output, N-1 flow (MW) of the worst group, filled in place
+    :param worst_loading: output, |N-1 flow| / contingency rate, filled in place
+    :param alpha_n1_worst: output, exchange sensitivity under the worst group, filled in place
+    :return: None
+    """
+    # numeric copies so LP extracts still enter the sparse matvecs as float
+    f0: Vec = np.asarray(f0_mw, dtype=float)
+    hvdc0: Vec = np.asarray(hvdc0_mw, dtype=float)
+    vsc0: Vec = np.asarray(vsc0_mw, dtype=float)
+    inj0: Vec = np.asarray(inj0_mw, dtype=float)
+    rates: Vec = np.asarray(contingency_rates_mw, dtype=float)
+    alpha_n: Vec = np.asarray(alpha, dtype=float)
+
+    # N-state is the baseline so no group is assigned until some outage raises the loading
+    worst_idx[:] = -1
+    worst_flow[:] = f0
+    worst_loading[:] = np.abs(f0) / (rates + 1e-20)
+    alpha_n1_worst[:] = 0.0
+
+    if multi_contingencies is None:
+        return
+    else:
+        n_used: int = len(multi_contingencies.multi_contingencies)
+        if n_used == 0:
+            return
+        else:
+            # map each formulated group onto the full grid group index used by the report
+            all_groups = grid.get_contingency_groups()
+            id_to_i: Dict[str, int] = dict()
+            i_g: int
+            for i_g in range(len(all_groups)):
+                id_to_i[all_groups[i_g].idtag] = i_g
+
+            used_groups = multi_contingencies.contingency_groups_used
+            c: int
+            for c in range(n_used):
+                contingency: LinearMultiContingency = multi_contingencies.multi_contingencies[c]
+
+                mapped_i = id_to_i.get(used_groups[c].idtag, None)
+                if mapped_i is None:
+                    result_idx_c: int = -1
+                else:
+                    result_idx_c = int(mapped_i)
+
+                # the same linear N-1 combination as the lazy screening, evaluated in MW
+                fc: Vec = f0.copy()
+                if len(contingency.branch_indices) > 0:
+                    fc = fc + contingency.mlodf_factors @ f0[contingency.branch_indices]
+                else:
+                    pass  # this group outages no AC branch
+
+                if len(contingency.hvdc_indices) > 0 and hvdc0.size > 0:
+                    fc = fc + contingency.hvdc_odf @ hvdc0[contingency.hvdc_indices]
+                else:
+                    pass  # this group outages no HVDC
+
+                if len(contingency.vsc_indices) > 0 and vsc0.size > 0:
+                    fc = fc + contingency.vsc_odf @ vsc0[contingency.vsc_indices]
+                else:
+                    pass  # this group outages no VSC
+
+                if len(contingency.bus_indices) > 0 and inj0.size > 0:
+                    fc = fc + contingency.compensated_ptdf_factors @ (
+                            contingency.injections_factor * inj0[contingency.bus_indices])
+                else:
+                    pass  # this group outages no injection
+
+                # N-1 exchange sensitivity of the monitored flow with alpha plus the LODF redistribution
+                alpha_c: Vec = alpha_n.copy()
+                if len(contingency.branch_indices) > 0:
+                    alpha_c = alpha_c + contingency.mlodf_factors @ alpha_n[contingency.branch_indices]
+                else:
+                    pass  # converter only outages do not shift the AC alpha through MLODF
+
+                loading_c: Vec = np.abs(fc) / (rates + 1e-20)
+                better: BoolVec = loading_c > worst_loading
+                worst_loading[better] = loading_c[better]
+                worst_flow[better] = fc[better]
+                if result_idx_c >= 0:
+                    worst_idx[better] = result_idx_c
+                else:
+                    pass  # unmapped group so we keep the previous index
+                alpha_n1_worst[better] = alpha_c[better]
+
+
 def add_linear_branches_contingencies_formulation(t_idx: int,
                                                   Sbase: float,
                                                   branch_data_t: PassiveBranchData,
@@ -2462,7 +2584,7 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
     :param logger
     :param corrective_contingencies: if True, allow corrective re-dispatch of the VSC/HVDC
     :param group_indices: subset of multi-contingency indices to formulate (None = all)
-    :param group_rows: per group index, the row indices to enforce 
+    :param group_rows: per group index, the row indices to enforce
     :param vsc_delta_store: per group index, the persistent VSC Δ variable dictionary
     :param hvdc_delta_store: per group index, the persistent HVDC Δ variable dictionary
     :param preservation_done: group indices whose exchange-preservation equality is already
@@ -2733,7 +2855,7 @@ def compute_vsc_pmode3_saturation_rates(vsc_data_t: VscData,
     A P-mode 3 droop saturates when the converter cannot deliver more power, and that limit
     is the converter rating or the total rating of the DC branches attached to the
     converter's DC bus, whichever is lower.
-    
+
     :param vsc_data_t: VscData structure
     :param branch_data_t: PassiveBranchData structure (contains the DC lines)
     :param bus_data_t: BusData structure (provides the is_dc marker)
@@ -3738,6 +3860,22 @@ def run_linear_ntc_opf(grid: MultiCircuit,
 
     # gather the values of the variables
     vars_v = mip_vars.get_values(Sbase=grid.Sbase, model=lp_model)
+
+    # one numeric N-1 pass on the final operating point
+    fill_worst_contingency_per_branch(
+        grid=grid,
+        multi_contingencies=lazy_mctg,
+        f0_mw=np.asarray(vars_v.branch_vars.flows[t_idx, :], dtype=float),
+        hvdc0_mw=np.asarray(vars_v.hvdc_vars.flows[t_idx, :], dtype=float),
+        vsc0_mw=np.asarray(vars_v.vsc_vars.flows[t_idx, :], dtype=float),
+        inj0_mw=np.asarray(vars_v.bus_vars.Pinj[t_idx, :], dtype=float),
+        contingency_rates_mw=np.asarray(vars_v.branch_vars.contingency_rates[t_idx, :], dtype=float),
+        alpha=np.asarray(vars_v.branch_vars.alpha[t_idx, :], dtype=float),
+        worst_idx=vars_v.branch_vars.worst_contingency_idx[t_idx, :],
+        worst_flow=vars_v.branch_vars.worst_contingency_flow[t_idx, :],
+        worst_loading=vars_v.branch_vars.worst_contingency_loading[t_idx, :],
+        alpha_n1_worst=vars_v.branch_vars.alpha_n1_worst[t_idx, :],
+    )
 
     # fill the power shift
     vars_v.power_shift = vars_v.bus_vars.delta_p[:, bus_a1_idx]

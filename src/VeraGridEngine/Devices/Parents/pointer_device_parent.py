@@ -32,7 +32,7 @@ class PointerDeviceParent(EditableDevice):
             tpe=str,
             definition='Unique ID',
             editable=False,
-            cat=[PrpCat.TP],
+            cat=list([PrpCat.TP]),
         ),
         GCProp(
             prop_name='tpe',
@@ -40,7 +40,7 @@ class PointerDeviceParent(EditableDevice):
             tpe=DeviceType,
             definition='Device type',
             editable=False,
-            cat=[PrpCat.TP],
+            cat=list([PrpCat.TP]),
         ),
         GCProp(
             prop_name='device_name',
@@ -48,7 +48,7 @@ class PointerDeviceParent(EditableDevice):
             tpe=str,
             definition='Device name',
             editable=False,
-            cat=[PrpCat.TP],
+            cat=list([PrpCat.TP]),
         ),
     )
 

@@ -1,0 +1,1394 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📑 VeraGrid scripting guide &mdash; VeraGrid 6.5.16 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🔎 Grid analysis" href="grid_analysis.html" />
+    <link rel="prev" title="📊 User interface" href="user_interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">📑 VeraGrid scripting guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#console-objects">Console objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-run-studies">How to run studies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#api-helpers">API helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#gui-session-results">GUI session results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opening-and-saving-files">Opening and saving files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-and-editing-a-grid">Building and editing a grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#time-series">Time series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#power-flow">Power flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#three-phase-power-flow">Three-phase power flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linear-analysis">Linear analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contingencies">Contingencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#short-circuit">Short circuit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optimal-power-flow">Optimal power flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transfer-capacity">Transfer capacity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continuation-power-flow">Continuation power flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sigma-analysis">Sigma analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stochastic-power-flow">Stochastic power flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clustering">Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#state-estimation">State estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputs-analysis-and-model-debugging">Inputs analysis and model debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nodal-hosting-capacity">Nodal hosting capacity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reliability-and-cascading">Reliability and cascading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#investments-and-catalogue-optimization">Investments and catalogue optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rms-dynamics">RMS dynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#emt-dynamics">EMT dynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#small-signal-stability">Small-signal stability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#topology-compilation-and-arrays">Topology, compilation, and arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#result-export">Result export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#practical-patterns">Practical patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#source-documentation-map">Source documentation map</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">📑 VeraGrid scripting guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/veragrid_scripting_guide.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="veragrid-scripting-guide">
+<h1>📑 VeraGrid scripting guide<a class="headerlink" href="#veragrid-scripting-guide" title="Link to this heading"></a></h1>
+<p>The Scripting tab is an embedded Python environment connected to the open
+VeraGrid GUI. Use it to inspect the current model, edit the live grid, run
+blocking engine studies, plot results, and export data without leaving the
+project.</p>
+<p>The panel has two parts:</p>
+<ul class="simple">
+<li><p>the editor, where named scripts can be written and saved;</p></li>
+<li><p>the console, where individual commands can be executed interactively.</p></li>
+</ul>
+<p>Saved scripts are stored in the VeraGrid user folder under <code class="docutils literal notranslate"><span class="pre">scripts</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">scripts_folder</span> <span class="o">=</span> <span class="n">user_folder</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/scripts&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scripts_folder</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="console-objects">
+<h2>Console objects<a class="headerlink" href="#console-objects" title="Link to this heading"></a></h2>
+<p>The console is initialized with these objects:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app</span></code></p></td>
+<td><p>Active VeraGrid GUI object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">circuit</span></code></p></td>
+<td><p>The same object as <code class="docutils literal notranslate"><span class="pre">app.circuit</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg</span></code></p></td>
+<td><p>Imported <code class="docutils literal notranslate"><span class="pre">VeraGridEngine</span></code> package.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">np</span></code></p></td>
+<td><p>Imported NumPy package.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pd</span></code></p></td>
+<td><p>Imported pandas package.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plt</span></code></p></td>
+<td><p>Imported Matplotlib pyplot package.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hlp</span></code></p></td>
+<td><p>Function that prints the console quick reference.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">clc</span></code></p></td>
+<td><p>Function that clears the console.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">user_folder</span></code></p></td>
+<td><p>Function returning the VeraGrid user folder.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hlp</span><span class="p">()</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">circuit</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">session</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">app.circuit</span></code> is the live <code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> object. Changes made through this
+object modify the open grid in memory. Save the project afterwards when the
+changes should persist.</p>
+</section>
+<section id="how-to-run-studies">
+<h2>How to run studies<a class="headerlink" href="#how-to-run-studies" title="Link to this heading"></a></h2>
+<p>For scripts, use the blocking helpers exposed by <code class="docutils literal notranslate"><span class="pre">src/VeraGridEngine/api.py</span></code>.
+They return the result object directly and are the preferred way to run a study
+from the scripting panel.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Do not use GUI launch methods as the normal scripting interface. They are
+asynchronous button workflows, so the next console line can run before the
+study result exists. Use them only when you intentionally want to trigger the
+GUI workflow and read <code class="docutils literal notranslate"><span class="pre">app.session</span></code> later.</p>
+<section id="api-helpers">
+<h3>API helpers<a class="headerlink" href="#api-helpers" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Helper</p></th>
+<th class="head"><p>Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.open_file(path)</span></code></p></td>
+<td><p>Open any supported grid file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.save_file(grid,</span> <span class="pre">path)</span></code></p></td>
+<td><p>Save a grid file.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.open_multiverse(path)</span></code></p></td>
+<td><p>Open a VeraGrid multiverse file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.save_multiverse(mv,</span> <span class="pre">path)</span></code></p></td>
+<td><p>Save a multiverse file.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.open_cgmes(files)</span></code></p></td>
+<td><p>Open CGMES XML or ZIP files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.save_cgmes_file(...)</span></code></p></td>
+<td><p>Export CGMES profiles.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.power_flow(grid,</span> <span class="pre">options=None)</span></code></p></td>
+<td><p>Snapshot AC power flow.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.power_flow3ph(grid,</span> <span class="pre">options=None)</span></code></p></td>
+<td><p>Snapshot three-phase power flow.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.power_flow_ts(grid,</span> <span class="pre">options=None)</span></code></p></td>
+<td><p>Time-series AC power flow.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.power_flow3ph_ts(grid,</span> <span class="pre">options=None)</span></code></p></td>
+<td><p>Three-phase time-series power flow.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.linear_power_flow(grid,</span> <span class="pre">options=None)</span></code></p></td>
+<td><p>Snapshot PTDF and LODF analysis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.linear_power_flow_ts(grid,</span> <span class="pre">options=None)</span></code></p></td>
+<td><p>Time-series linear analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.short_circuit(grid,</span> <span class="pre">fault_index,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Short-circuit analysis at one bus.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.continuation_power_flow(grid,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Voltage-stability continuation run.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.linear_opf(grid,</span> <span class="pre">options=...)</span></code></p></td>
+<td><p>Linear optimal power flow.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.nonlinear_opf(grid,</span> <span class="pre">opf_options=...)</span></code></p></td>
+<td><p>AC nonlinear optimal power flow.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.simple_opf(grid,</span> <span class="pre">options=...)</span></code></p></td>
+<td><p>Greedy-dispatch OPF.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.balanced_pf(grid,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Greedy OPF followed by power flow.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.contingency_analysis(grid,</span> <span class="pre">options=None)</span></code></p></td>
+<td><p>Snapshot contingency analysis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vg.contingencies_ts(grid,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Time-series contingency analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vg.clustering(grid,</span> <span class="pre">n_points=100)</span></code></p></td>
+<td><p>Time-series representative samples.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Some studies do not have a convenience function in <code class="docutils literal notranslate"><span class="pre">api.py</span></code>. Use their driver
+directly, call <code class="docutils literal notranslate"><span class="pre">run()</span></code>, then read <code class="docutils literal notranslate"><span class="pre">driver.results</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">SigmaAnalysisDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="gui-session-results">
+<h2>GUI session results<a class="headerlink" href="#gui-session-results" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">app.session</span></code> stores studies completed through GUI workflows. It is useful for
+reading results that already exist in the GUI, but blocking <code class="docutils literal notranslate"><span class="pre">vg.*</span></code> helpers
+return their result directly and do not need <code class="docutils literal notranslate"><span class="pre">app.session</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span><span class="p">,</span> <span class="n">results</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">power_flow</span>
+<span class="k">if</span> <span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No GUI power-flow result is available&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Session property</p></th>
+<th class="head"><p>Result object</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.clustering</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ClusteringResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.power_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PowerFlowResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.power_flow_3ph</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PowerFlowResults3Ph</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.power_flow_ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PowerFlowTimeSeriesResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.power_flow_3ph_ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PowerFlowTimeSeriesResults3Ph</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.state_estimation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StateEstimationResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.short_circuit</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ShortCircuitResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.linear_power_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LinearAnalysisResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.linear_power_flow_ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LinearAnalysisTimeSeriesResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.contingency</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ContingencyAnalysisResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.contingency_ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ContingencyAnalysisTimeSeriesResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.continuation_power_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ContinuationPowerFlowResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.net_transfer_capacity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AvailableTransferCapacityResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.net_transfer_capacity_ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AvailableTransferCapacityTimeSeriesResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.optimal_power_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OptimalPowerFlowResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.optimal_power_flow_ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OptimalPowerFlowTimeSeriesResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.optimal_net_transfer_capacity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.optimal_net_transfer_capacity_ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.nodal_capacity_optimization</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NodalCapacityResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.nodal_capacity_optimization_ts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NodalCapacityTimeSeriesResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.reliability_analysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ReliabilityResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.rms_dynamic_simulation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RmsResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.emt_dynamic_simulation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EmtResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.stochastic_power_flow</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StochasticPowerFlowResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.sigma_analysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SigmaAnalysisResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.cascade</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CascadingResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.inputs_analysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InputsAnalysisResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.investments_evaluation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InvestmentsEvaluationResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.catalogue_optimization</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InvestmentsEvaluationResults</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.node_groups_driver</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NodeGroupsResults</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">app.session.small_signal_stability_simulation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityRmsResults</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Use <code class="docutils literal notranslate"><span class="pre">results.mdl(vg.ResultTypes.X)</span></code> when you need the same table model shown
+in the Results tab.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">table</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BusVoltageModule</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="opening-and-saving-files">
+<h2>Opening and saving files<a class="headerlink" href="#opening-and-saving-files" title="Link to this heading"></a></h2>
+<p>Use the API helpers when the path is known.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;case.veragrid&quot;</span><span class="p">)</span>
+<span class="n">vg</span><span class="o">.</span><span class="n">save_file</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="s2">&quot;case_copy.veragrid&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To make a file from a path the active GUI circuit, open it with the engine API
+and pass the loaded grid to the GUI setter. This replaces <code class="docutils literal notranslate"><span class="pre">app.circuit</span></code>, clears
+old study results, updates time controls, and creates a bus-branch diagram.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;/home/user/grids/case.veragrid&quot;</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">set_circuit</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">create_diagram</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">create_diagram=False</span></code> for very large files when you only need to run
+scripted studies and do not need the schematic immediately.</p>
+<p>CGMES can be loaded from a ZIP file, a list of XML files, or a mixture of XML
+and ZIP boundary files.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">([</span><span class="s2">&quot;grid_EQ.xml&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_TP.xml&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_SV.xml&quot;</span><span class="p">])</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_cgmes</span><span class="p">(</span><span class="s2">&quot;model_cgmes.zip&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For CGMES export, provide the boundary set and optionally a solved power flow
+so the SV profile can be written.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf_results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">save_cgmes_file</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;exported_cgmes.zip&quot;</span><span class="p">,</span>
+    <span class="n">cgmes_boundary_set_path</span><span class="o">=</span><span class="s2">&quot;boundary.zip&quot;</span><span class="p">,</span>
+    <span class="n">cgmes_version</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">CGMESVersions</span><span class="o">.</span><span class="n">v2_4_15</span><span class="p">,</span>
+    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For PSS/E RAW or RAWX export with a selected time step, use <code class="docutils literal notranslate"><span class="pre">FileSave</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">FileSavingOptions</span><span class="p">(</span>
+    <span class="n">file_type</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">FileType</span><span class="o">.</span><span class="n">PSSE_raw</span><span class="p">,</span>
+    <span class="n">raw_version</span><span class="o">=</span><span class="s2">&quot;35&quot;</span><span class="p">,</span>
+    <span class="n">t_idx</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">vg</span><span class="o">.</span><span class="n">FileSave</span><span class="p">(</span>
+    <span class="n">circuit</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;network_t3.raw&quot;</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="building-and-editing-a-grid">
+<h2>Building and editing a grid<a class="headerlink" href="#building-and-editing-a-grid" title="Link to this heading"></a></h2>
+<p>Create VeraGrid device objects and add them to <code class="docutils literal notranslate"><span class="pre">app.circuit</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">circuit</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="n">bus1</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus 1&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">110.0</span><span class="p">))</span>
+<span class="n">bus2</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus 2&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mf">110.0</span><span class="p">))</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;G1&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">100.0</span><span class="p">))</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;L2&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">80.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mf">30.0</span><span class="p">))</span>
+
+<span class="n">line</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Line 1-2&quot;</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">create_schematic_from_api</span><span class="p">()</span>
+<span class="n">app</span><span class="o">.</span><span class="n">adjust_all_node_width</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Common device collections include:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Collection</p></th>
+<th class="head"><p>Typical add method</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.buses</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_bus(vg.Bus(...))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.lines</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_line(vg.Line(...))</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.transformers2w</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_transformer2w(vg.Transformer2W(...))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.hvdc_lines</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_hvdc(vg.HvdcLine(...))</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.vsc_devices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_vsc(vg.VSC(...))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.loads</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_load(bus=bus,</span> <span class="pre">api_obj=vg.Load(...))</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.generators</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_generator(bus=bus,</span> <span class="pre">api_obj=vg.Generator(...))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.batteries</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_battery(bus=bus,</span> <span class="pre">api_obj=vg.Battery(...))</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.shunts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_shunt(bus=bus,</span> <span class="pre">api_obj=vg.Shunt(...))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.static_generators</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_static_generator(...)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.current_injections</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_current_injection(...)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.contingency_groups</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_contingency_group(...)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.contingencies</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_contingency(...)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.short_circuit_events</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_short_circuit_event(...)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.investments_groups</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_investments_group(...)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.investments</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">grid.add_investment(...)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid.rms_events_groups</span></code></p></td>
+<td><p>RMS event-group add methods.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">grid.emt_events_groups</span></code></p></td>
+<td><p>EMT event-group add methods.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Inspect a live object with <code class="docutils literal notranslate"><span class="pre">dir(obj)</span></code> or by printing its properties directly.
+The device reference files under <code class="docutils literal notranslate"><span class="pre">doc/md_source/devices</span></code> describe registered
+properties for each device type.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bus</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="n">bus</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="time-series">
+<h2>Time series<a class="headerlink" href="#time-series" title="Link to this heading"></a></h2>
+<p>Time-series studies require profiles in the grid and a valid time profile.
+The GUI can import CSV or Excel profiles from the database tab. From the
+console, inspect the time axis and profile count before launching a run.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">circuit</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">time_profile</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Run every time index:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow_ts</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Run selected indices:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">time_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow_ts</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">time_indices</span><span class="o">=</span><span class="n">time_indices</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Run representative samples and expand them back to the full time axis:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">clusters</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">clustering</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow_ts</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">clustering_results</span><span class="o">=</span><span class="n">clusters</span><span class="p">,</span>
+    <span class="n">auto_expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Time-series result matrices normally use row <code class="docutils literal notranslate"><span class="pre">time</span></code> and column <code class="docutils literal notranslate"><span class="pre">device</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vm_t0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+<span class="n">loading_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vm_t0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loading_max</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="power-flow">
+<h2>Power flow<a class="headerlink" href="#power-flow" title="Link to this heading"></a></h2>
+<p>Power flow solves the steady-state network. Options include the solver,
+tolerance, maximum iterations, distributed slack, reactive power controls, tap
+controls, remote-voltage controls, temperature correction, and impedance
+tolerances.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">converged</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Important <code class="docutils literal notranslate"><span class="pre">PowerFlowResults</span></code> fields:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p>Complex bus voltage.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p>Complex bus power injection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code>, <code class="docutils literal notranslate"><span class="pre">St</span></code></p></td>
+<td><p>Complex branch power at from and to sides.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">If</span></code>, <code class="docutils literal notranslate"><span class="pre">It</span></code></p></td>
+<td><p>Complex branch current at from and to sides.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p>Branch loading.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">losses</span></code></p></td>
+<td><p>Complex branch losses.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pf_hvdc</span></code>, <code class="docutils literal notranslate"><span class="pre">Pt_hvdc</span></code>, <code class="docutils literal notranslate"><span class="pre">loading_hvdc</span></code></p></td>
+<td><p>HVDC results.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pfp_vsc</span></code>, <code class="docutils literal notranslate"><span class="pre">Pfn_vsc</span></code>, <code class="docutils literal notranslate"><span class="pre">Vdc_vsc</span></code>, <code class="docutils literal notranslate"><span class="pre">loading_vsc</span></code></p></td>
+<td><p>VSC results.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gen_p</span></code>, <code class="docutils literal notranslate"><span class="pre">gen_q</span></code>, <code class="docutils literal notranslate"><span class="pre">battery_p</span></code>, <code class="docutils literal notranslate"><span class="pre">battery_q</span></code>, <code class="docutils literal notranslate"><span class="pre">shunt_q</span></code></p></td>
+<td><p>Device outputs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">converged</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code></p></td>
+<td><p>Solver status.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Plot bus voltage magnitudes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Bus index&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Voltage [p.u.]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="three-phase-power-flow">
+<h2>Three-phase power flow<a class="headerlink" href="#three-phase-power-flow" title="Link to this heading"></a></h2>
+<p>Three-phase power flow is used for unbalanced networks. It provides neutral and
+phase A, B, and C quantities for buses and branches.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow3ph</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_voltage_3ph_df</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_current_3ph_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Important fields include <code class="docutils literal notranslate"><span class="pre">voltage_A</span></code>, <code class="docutils literal notranslate"><span class="pre">voltage_B</span></code>, <code class="docutils literal notranslate"><span class="pre">voltage_C</span></code>, <code class="docutils literal notranslate"><span class="pre">Sf_A</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Sf_B</span></code>, <code class="docutils literal notranslate"><span class="pre">Sf_C</span></code>, <code class="docutils literal notranslate"><span class="pre">If_A</span></code>, <code class="docutils literal notranslate"><span class="pre">If_B</span></code>, <code class="docutils literal notranslate"><span class="pre">If_C</span></code>, <code class="docutils literal notranslate"><span class="pre">loading_A</span></code>, <code class="docutils literal notranslate"><span class="pre">loading_B</span></code>,
+<code class="docutils literal notranslate"><span class="pre">loading_C</span></code>, <code class="docutils literal notranslate"><span class="pre">gen_q_A</span></code>, <code class="docutils literal notranslate"><span class="pre">battery_q_A</span></code>, and <code class="docutils literal notranslate"><span class="pre">shunt_q_A</span></code>, with equivalent
+fields for the other phases.</p>
+<p>Three-phase time series uses the same pattern:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow3ph_ts</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage_A</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="linear-analysis">
+<h2>Linear analysis<a class="headerlink" href="#linear-analysis" title="Link to this heading"></a></h2>
+<p>Linear analysis computes PTDF and LODF sensitivity factors and approximate
+branch flows. It is useful for screening, transfer studies, contingency
+analysis, and time-series approximations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">LinearAnalysisOptions</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">linear_power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">PTDF</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">LODF</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Important <code class="docutils literal notranslate"><span class="pre">LinearAnalysisResults</span></code> fields:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PTDF</span></code></p></td>
+<td><p>Power transfer distribution factors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LODF</span></code></p></td>
+<td><p>Line outage distribution factors.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HvdcDF</span></code>, <code class="docutils literal notranslate"><span class="pre">HvdcODF</span></code></p></td>
+<td><p>HVDC distribution and outage factors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">VscDF</span></code>, <code class="docutils literal notranslate"><span class="pre">VscODF</span></code></p></td>
+<td><p>VSC distribution and outage factors.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Sf</span></code></p></td>
+<td><p>Linear branch flows.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Sbus</span></code></p></td>
+<td><p>Corrected bus injections.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">voltage</span></code></p></td>
+<td><p>Linear voltage estimate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loading</span></code></p></td>
+<td><p>Linear branch loading.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Time-series linear analysis:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">linear_power_flow_ts</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">LinearAnalysisOptions</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">Sf</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="contingencies">
+<h2>Contingencies<a class="headerlink" href="#contingencies" title="Link to this heading"></a></h2>
+<p>Contingencies are modelled with contingency groups and contingency objects. The
+analysis can use linear factors or full power flow, depending on the options.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">circuit</span>
+<span class="n">line</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">group</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">ContingencyGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Line 1 outage&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_contingency_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+<span class="n">contingency</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Contingency</span><span class="p">(</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">line</span><span class="p">,</span>
+    <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+    <span class="n">prop</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">ContingencyOperationTypes</span><span class="o">.</span><span class="n">Active</span><span class="p">,</span>
+    <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_contingency</span><span class="p">(</span><span class="n">contingency</span><span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">ContingencyAnalysisOptions</span><span class="p">(</span>
+    <span class="n">contingency_method</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">ContingencyMethod</span><span class="o">.</span><span class="n">PowerFlow</span><span class="p">,</span>
+    <span class="n">contingency_groups</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups</span><span class="p">(),</span>
+    <span class="n">pf_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">contingency_analysis</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Time-series contingencies:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">contingencies_ts</span><span class="p">(</span>
+    <span class="n">circuit</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">use_clustering</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">n_points</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">contingency_method</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">ContingencyMethod</span><span class="o">.</span><span class="n">Linear</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="short-circuit">
+<h2>Short circuit<a class="headerlink" href="#short-circuit" title="Link to this heading"></a></h2>
+<p>Use the helper for a bus-index fault. If no power-flow result is supplied, the
+helper runs one first.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf_results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">short_circuit</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">fault_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">fault_type</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">FaultType</span><span class="o">.</span><span class="n">LG</span><span class="p">,</span>
+    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">SCpower</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For custom short-circuit events, add the event and use the driver directly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">event</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">ShortCircuitEvent</span><span class="p">(</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">fault_type</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">FaultType</span><span class="o">.</span><span class="n">LLG</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">MethodShortCircuit</span><span class="o">.</span><span class="n">sequences</span><span class="p">,</span>
+    <span class="n">phases</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PhasesShortCircuit</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">add_short_circuit_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">ShortCircuitDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">ShortCircuitOptions</span><span class="p">(),</span>
+    <span class="n">pf_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+</section>
+<section id="optimal-power-flow">
+<h2>Optimal power flow<a class="headerlink" href="#optimal-power-flow" title="Link to this heading"></a></h2>
+<p>Linear OPF is the usual planning-screening workflow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">(</span>
+    <span class="n">solver</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">LINEAR_OPF</span><span class="p">,</span>
+    <span class="n">mip_solver</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">MIPSolvers</span><span class="o">.</span><span class="n">HIGHS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">linear_opf</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">generator_power</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">load_shedding</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">bus_shadow_prices</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>AC nonlinear OPF:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">nonlinear_opf</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">opf_options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+    <span class="n">plot_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Greedy dispatch followed by a balanced power flow:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">balanced_pf</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Time-series OPF is a direct driver workflow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">(</span>
+    <span class="n">solver</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">LINEAR_OPF</span><span class="p">,</span>
+    <span class="n">mip_solver</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">MIPSolvers</span><span class="o">.</span><span class="n">HIGHS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowTimeSeriesDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+    <span class="n">time_indices</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+</section>
+<section id="transfer-capacity">
+<h2>Transfer capacity<a class="headerlink" href="#transfer-capacity" title="Link to this heading"></a></h2>
+<p>Available transfer capacity needs source buses, receiving buses, monitored
+branches, and branch senses. The <code class="docutils literal notranslate"><span class="pre">bus_idx_from</span></code> and <code class="docutils literal notranslate"><span class="pre">bus_idx_to</span></code> arrays define
+the transfer direction. The monitored branch arrays define what is reported.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bus_idx_from</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">bus_idx_to</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">idx_br</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">sense_br</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">AvailableTransferCapacityOptions</span><span class="p">(</span>
+    <span class="n">bus_idx_from</span><span class="o">=</span><span class="n">bus_idx_from</span><span class="p">,</span>
+    <span class="n">bus_idx_to</span><span class="o">=</span><span class="n">bus_idx_to</span><span class="p">,</span>
+    <span class="n">idx_br</span><span class="o">=</span><span class="n">idx_br</span><span class="p">,</span>
+    <span class="n">sense_br</span><span class="o">=</span><span class="n">sense_br</span><span class="p">,</span>
+    <span class="n">dT</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">AvailableTransferMode</span><span class="o">.</span><span class="n">Generation</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">AvailableTransferCapacityDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+<p>Time-series ATC:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">AvailableTransferCapacityTimeSeriesDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+    <span class="n">time_indices</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+<p>Optimal net transfer capacity uses OPF internally.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ntc_options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalNetTransferCapacityOptions</span><span class="p">(</span>
+    <span class="n">sending_bus_idx</span><span class="o">=</span><span class="n">bus_idx_from</span><span class="p">,</span>
+    <span class="n">receiving_bus_idx</span><span class="o">=</span><span class="n">bus_idx_to</span><span class="p">,</span>
+    <span class="n">transfer_method</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">AvailableTransferMode</span><span class="o">.</span><span class="n">InstalledPower</span><span class="p">,</span>
+    <span class="n">opf_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">lin_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">LinearAnalysisOptions</span><span class="p">(),</span>
+<span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">OptimalNetTransferCapacityDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">ntc_options</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+</section>
+<section id="continuation-power-flow">
+<h2>Continuation power flow<a class="headerlink" href="#continuation-power-flow" title="Link to this heading"></a></h2>
+<p>Continuation power flow traces the voltage-stability curve from a solved base
+case toward a target loading direction.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf_results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">continuation_power_flow</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+    <span class="n">factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">stop_at</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">CpfStopAt</span><span class="o">.</span><span class="n">Full</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">lambdas</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltages</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Pass a vector as <code class="docutils literal notranslate"><span class="pre">factor</span></code> when the loading direction must be bus-specific.</p>
+</section>
+<section id="sigma-analysis">
+<h2>Sigma analysis<a class="headerlink" href="#sigma-analysis" title="Link to this heading"></a></h2>
+<p>Sigma analysis estimates proximity to voltage collapse. It has no helper in
+<code class="docutils literal notranslate"><span class="pre">api.py</span></code>, so use the driver directly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">SigmaAnalysisDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">classical_sigma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">sigma_re</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">sigma_im</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="stochastic-power-flow">
+<h2>Stochastic power flow<a class="headerlink" href="#stochastic-power-flow" title="Link to this heading"></a></h2>
+<p>Stochastic power flow samples load and generation uncertainty using Monte Carlo
+or Latin Hypercube sampling.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">StochasticPowerFlowDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">mc_tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">sampling_points</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+    <span class="n">simulation_type</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">StochasticPowerFlowType</span><span class="o">.</span><span class="n">LatinHypercube</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">loading</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="clustering">
+<h2>Clustering<a class="headerlink" href="#clustering" title="Link to this heading"></a></h2>
+<p>Clustering selects representative time steps from the time-series profiles and
+stores the sample probabilities.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">clustering</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">time_indices</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">sampled_probabilities</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use the result as an input to time-series helpers:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf_ts</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow_ts</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">clustering_results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+    <span class="n">auto_expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="state-estimation">
+<h2>State estimation<a class="headerlink" href="#state-estimation" title="Link to this heading"></a></h2>
+<p>State estimation uses measurement devices attached to the grid, such as active
+and reactive power measurements, voltage measurements, and current
+measurements.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">StateEstimationOptions</span><span class="p">()</span>
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">StateEstimationDriver</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">Sbus</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Add measurement devices through the model before running the driver. The
+measurement device docs describe <code class="docutils literal notranslate"><span class="pre">PfMeasurement</span></code>, <code class="docutils literal notranslate"><span class="pre">QfMeasurement</span></code>,
+<code class="docutils literal notranslate"><span class="pre">VmMeasurement</span></code>, <code class="docutils literal notranslate"><span class="pre">IfMeasurement</span></code>, and the other supported measurement classes.</p>
+</section>
+<section id="inputs-analysis-and-model-debugging">
+<h2>Inputs analysis and model debugging<a class="headerlink" href="#inputs-analysis-and-model-debugging" title="Link to this heading"></a></h2>
+<p>Inputs analysis builds the model summary tables used by the debugging tools.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">InputsAnalysisDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="n">table</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">LoadPower</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">to_df</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Use diagnostics from the GUI when you need the full interactive repair flow.
+Use scripting when you need reproducible inspections:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bus</span><span class="o">.</span><span class="n">Vnom</span><span class="p">,</span> <span class="n">bus</span><span class="o">.</span><span class="n">active</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="nodal-hosting-capacity">
+<h2>Nodal hosting capacity<a class="headerlink" href="#nodal-hosting-capacity" title="Link to this heading"></a></h2>
+<p>Nodal hosting capacity optimizes how much generation or load can be connected
+at selected buses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">capacity_nodes_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">NodalCapacityOptions</span><span class="p">(</span>
+    <span class="n">opf_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">OptimalPowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">capacity_nodes_idx</span><span class="o">=</span><span class="n">capacity_nodes_idx</span><span class="p">,</span>
+    <span class="n">nodal_capacity_sign</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">NodalCapacityMethod</span><span class="o">.</span><span class="n">LinearOptimization</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">NodalCapacityDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+<p>Time-series nodal capacity:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">NodalCapacityTimeSeriesDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+    <span class="n">time_indices</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+</section>
+<section id="reliability-and-cascading">
+<h2>Reliability and cascading<a class="headerlink" href="#reliability-and-cascading" title="Link to this heading"></a></h2>
+<p>Reliability studies sample outage states and generation adequacy with a power
+flow model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">ReliabilityStudyDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">pf_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">reliability_mode</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">ReliabilityMode</span><span class="o">.</span><span class="n">GenerationAdequacy</span><span class="p">,</span>
+    <span class="n">time_indices</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_all_time_indices</span><span class="p">(),</span>
+    <span class="n">n_sim</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+<p>Cascading analysis removes branches according to the selected cascade criteria.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">CascadingDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">PowerFlowOptions</span><span class="p">(),</span>
+    <span class="n">triggering_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+</section>
+<section id="investments-and-catalogue-optimization">
+<h2>Investments and catalogue optimization<a class="headerlink" href="#investments-and-catalogue-optimization" title="Link to this heading"></a></h2>
+<p>Investment studies evaluate candidate devices grouped under investment groups.
+Create the candidate investments in the grid first, then select the investment
+evaluation driver and options matching the optimization method documented in
+<code class="docutils literal notranslate"><span class="pre">investment_optimization.md</span></code> and <code class="docutils literal notranslate"><span class="pre">catalogue_element_optimization.md</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">InvestmentsGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Candidate reinforcements&quot;</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">add_investments_group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+<span class="n">investment</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">Investment</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Build line 1-2&quot;</span><span class="p">,</span>
+    <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+    <span class="n">CAPEX</span><span class="o">=</span><span class="mf">100000.0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">add_investment</span><span class="p">(</span><span class="n">investment</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The result object reports the evaluated combinations, objective values, costs,
+losses, overload scores, voltage scores, and reliability terms according to
+the selected objective function.</p>
+</section>
+<section id="rms-dynamics">
+<h2>RMS dynamics<a class="headerlink" href="#rms-dynamics" title="Link to this heading"></a></h2>
+<p>RMS dynamic simulation starts from a solved balanced power flow and uses RMS
+model templates plus RMS events.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf_results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">RmsSimulationDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">RmsOptions</span><span class="p">(),</span>
+    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use the dynamic model library docs for the available RMS blocks, generator
+models, converter controls, loads, HVDC components, and event definitions.</p>
+</section>
+<section id="emt-dynamics">
+<h2>EMT dynamics<a class="headerlink" href="#emt-dynamics" title="Link to this heading"></a></h2>
+<p>EMT simulation can start from three-phase or balanced power-flow results. Use
+three-phase results for unbalanced phase-domain cases.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf3</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow3ph</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">EmtSimulationDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">EmtOptions</span><span class="p">(),</span>
+    <span class="n">pf_results_3ph</span><span class="o">=</span><span class="n">pf3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The EMT docs cover the EMT model templates, solver settings, faults, lines,
+transformers, converters, controls, and event groups.</p>
+</section>
+<section id="small-signal-stability">
+<h2>Small-signal stability<a class="headerlink" href="#small-signal-stability" title="Link to this heading"></a></h2>
+<p>RMS small-signal stability linearizes the RMS dynamic model around the
+operating point.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf_results</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">SmallSignalStabilityRmsDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">rms_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">RmsOptions</span><span class="p">(),</span>
+    <span class="n">sss_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">RmsSmallSignalStabilityOptions</span><span class="p">(),</span>
+    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+<p>EMT small-signal stability uses the EMT limit-cycle and Floquet workflow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf3</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow3ph</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">SmallSignalStabilityEmtDriver</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">emt_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">EmtOptions</span><span class="p">(),</span>
+    <span class="n">sss_options</span><span class="o">=</span><span class="n">vg</span><span class="o">.</span><span class="n">SmallSignalStabilityEmtOptions</span><span class="p">(),</span>
+    <span class="n">pf_results</span><span class="o">=</span><span class="n">pf3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+</pre></div>
+</div>
+</section>
+<section id="topology-compilation-and-arrays">
+<h2>Topology, compilation, and arrays<a class="headerlink" href="#topology-compilation-and-arrays" title="Link to this heading"></a></h2>
+<p>For numerical inspection, compile the current circuit at a snapshot or time
+index.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">Ybus</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Topology processing separates islands, applies connectivity, and builds the
+arrays consumed by the solvers. Use the topology and data-model docs when you
+need to inspect compiled buses, branches, injections, HVDC, VSC, or sparse
+matrix structures.</p>
+</section>
+<section id="result-export">
+<h2>Result export<a class="headerlink" href="#result-export" title="Link to this heading"></a></h2>
+<p>Many result objects expose data-frame helpers.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+
+<span class="n">pf</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;bus_results.csv&quot;</span><span class="p">)</span>
+<span class="n">pf</span><span class="o">.</span><span class="n">get_branch_df</span><span class="p">()</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s2">&quot;branch_results.xlsx&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When a result table is available through <code class="docutils literal notranslate"><span class="pre">mdl</span></code>, convert it through the table
+model:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">table</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">vg</span><span class="o">.</span><span class="n">ResultTypes</span><span class="o">.</span><span class="n">BusVoltageModule</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;voltage_table.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Matplotlib is already available as <code class="docutils literal notranslate"><span class="pre">plt</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">voltage</span><span class="p">),</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Bus&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Voltage [p.u.]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="practical-patterns">
+<h2>Practical patterns<a class="headerlink" href="#practical-patterns" title="Link to this heading"></a></h2>
+<p>Always keep the result returned by the blocking helper:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pf</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">pf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">get_bus_df</span><span class="p">())</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No result returned&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Save model edits explicitly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="o">.</span><span class="n">buses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Main bus&quot;</span>
+<span class="n">vg</span><span class="o">.</span><span class="n">save_file</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="s2">&quot;edited_case.veragrid&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Refresh the schematic after programmatic model edits:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">create_schematic_from_api</span><span class="p">()</span>
+<span class="n">app</span><span class="o">.</span><span class="n">adjust_all_node_width</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Run the same calculation for many files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;case1.veragrid&quot;</span><span class="p">,</span> <span class="s2">&quot;case2.veragrid&quot;</span><span class="p">,</span> <span class="s2">&quot;case3.veragrid&quot;</span><span class="p">]</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">pf</span> <span class="o">=</span> <span class="n">vg</span><span class="o">.</span><span class="n">power_flow</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">path</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">converged</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">loading</span><span class="p">)))])</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;converged&quot;</span><span class="p">,</span> <span class="s2">&quot;max_loading&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="source-documentation-map">
+<h2>Source documentation map<a class="headerlink" href="#source-documentation-map" title="Link to this heading"></a></h2>
+<p>Use these files for the full theory and GUI background behind each scripting
+workflow:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Topic</p></th>
+<th class="head"><p>Detailed docs</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Installation and UI</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">installation.md</span></code>, <code class="docutils literal notranslate"><span class="pre">user_interface.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Grid structure and topology</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">structure.md</span></code>, <code class="docutils literal notranslate"><span class="pre">topology.md</span></code>, <code class="docutils literal notranslate"><span class="pre">data_models.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Model editing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">modelling.md</span></code>, <code class="docutils literal notranslate"><span class="pre">device_relationships.md</span></code>, <code class="docutils literal notranslate"><span class="pre">devices/*.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>File import and export</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">file_operations.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Diagnostics</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">model_debugging.md</span></code>, <code class="docutils literal notranslate"><span class="pre">grid_analysis.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Power flow</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">power_flow.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Linear factors</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">linear_analysis.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optimal power flow</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">optimal_power_flow.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Contingencies</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">contingency_analysis.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Short circuit</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">short_circuit.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Stochastic studies</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stochastic_power_flow.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Continuation and sigma</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">continuation_power_flow.md</span></code>, <code class="docutils literal notranslate"><span class="pre">sigma_analysis.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Transfer capacity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">net_transfer_capacity.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Clustering and reduction</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">clustering.md</span></code>, <code class="docutils literal notranslate"><span class="pre">grid_reduction.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Procedural grids</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">procedural_grid.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Nodal hosting capacity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">nodal_hosting_capacity.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Reliability and cascading</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">reliability.md</span></code>, <code class="docutils literal notranslate"><span class="pre">cascading.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Investments</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">investment_optimization.md</span></code>, <code class="docutils literal notranslate"><span class="pre">catalogue_element_optimization.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Dynamic simulations</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dynamic_simulations.md</span></code>, <code class="docutils literal notranslate"><span class="pre">rms_simulations.md</span></code>, <code class="docutils literal notranslate"><span class="pre">emt_simulations.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Practical dynamic sessions</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RMS_practical_session.md</span></code>, <code class="docutils literal notranslate"><span class="pre">EMT_practical_session.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Small-signal stability</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">small_signal_stability_rms.md</span></code>, <code class="docutils literal notranslate"><span class="pre">small_signal_stability_emt.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Dynamic model library</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dynamic_model_library_index.md</span></code>, <code class="docutils literal notranslate"><span class="pre">dyn_templates/**/*.md</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>DAE block authoring</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dae_block_authoring.md</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Plugins</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plugins.md</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="user_interface.html" class="btn btn-neutral float-left" title="📊 User interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="grid_analysis.html" class="btn btn-neutral float-right" title="🔎 Grid analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

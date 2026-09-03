@@ -1,0 +1,38 @@
+********************************************************************************
+* Portable parent-to-child graphical signal binding contract.
+********************************************************************************
+
+$$General;ID(a:40);Descr(a:40);Val(a:40)
+  1;Version;5.0
+
+$$BlkDef;FID(a:40);OP(a:1);loc_name(a:80);isMacro(i);level(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);sIntern:SIZEROW(i);sIntern:0(a);sAddEquat:SIZEROW(i);sAddEquat:0(a);cOutput(a);cInput(a);cIntern(a)
+  FRAME;C;Frame;0;0;1;public_y;1;external_x;0;;0;;public_y;external_x;
+  MACRO;C;Graphical parent;1;4;1;public_y;1;external_x;3;produced_internal,blank_internal,routed_internal;1;inc(public_y)=produced_internal+blank_internal+routed_internal;public_y;external_x;produced_internal,blank_internal,routed_internal
+
+$$ElmComp;FID(a:40);loc_name(a:80);typ_id(p);pblk:SIZEROW(i);pblk:0(p);pelm:SIZEROW(i);pelm:0(p)
+  ROOT;Graphical root;FRAME;1;SLOT;1;DSL
+
+$$BlkSlot;FID(a:40);OP(a:1);loc_name(a:80);element(p);filtmod(a:80);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a)
+  SLOT;C;Graphical parent;DSL;ElmDsl;1;public_y;1;external_x
+
+$$ElmDsl;FID(a:40);loc_name(a:80);fold_id(p);typ_id(p);params:SIZEROW(i);params:0(r)
+  DSL;Graphical parent instance;ROOT;MACRO;0;
+
+$$BlkMul;FID(a:40);OP(a:1);loc_name(a:80)
+  MUL;C;Multiply parent inputs
+
+$$BlkSum;FID(a:40);OP(a:1);loc_name(a:80);iInput0(i);iInput0:act(i);iInput1(i);iInput1:act(i);iInput2(i);iInput2:act(i);iInput3(i);iInput3:act(i)
+  SUM_ZERO;C;Consume disconnected input;0;1;0;1;2;0;2;0
+  SUM_ROUTE;C;Consume routed input;0;1;0;1;2;0;2;0
+
+$$BlkFrom;FID(a:40);OP(a:1);sSig:SIZEROW(i);sSig:0(a);loc_name(a:80)
+  FROM_ROUTE;C;1;routed_internal;Read routed internal
+
+$$BlkSig;FID(a:40);OP(a:1);inodfrom(i);loc_name(a:80);iconfrom(i);inodto(i);iconto(i);pnodfrom(p);pnodto(p)
+  ROOT_TO_MUL_0;C;0;external_x;1;0;0;MACRO;MUL
+  ROOT_TO_MUL_1;C;0;external_x;1;1;0;MACRO;MUL
+  MUL_TO_ZERO;C;2;produced_internal;0;0;0;MUL;SUM_ZERO
+  MUL_TO_ROOT;C;2;public_y;0;0;2;MUL;MACRO
+  BLANK_TO_ZERO;C;0;blank_internal;0;1;0;;SUM_ZERO
+  ROOT_TO_ROUTE;C;0;external_x;1;0;0;MACRO;SUM_ROUTE
+  BLANK_TO_ROUTE;C;0;routed_internal;0;1;0;;SUM_ROUTE

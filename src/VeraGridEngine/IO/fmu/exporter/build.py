@@ -281,21 +281,40 @@ def _direct_c_build(cfg: ExportConfig, source_dir: Path, build_dir: Path) -> Pat
     else:
         pass
 
-    output_path = build_dir / cfg.library_name
+    # Resolve every compiler operand before changing the child working
+    # directory so direct builds remain independent from the caller location.
+    resolved_source_dir: Path = source_dir.resolve()
+    resolved_build_dir: Path = build_dir.resolve()
+    output_path: Path = resolved_build_dir / cfg.library_name
+    compiler_path: Path = Path(compiler_cmd)
+    compiler_working_directory: Path | None
+    if compiler_path.is_absolute():
+        # MSYS2 compiler helpers load sibling runtime DLLs from the compiler
+        # directory. A scoped child cwd provides that lookup without PATH edits.
+        compiler_working_directory = compiler_path.parent
+    else:
+        compiler_working_directory = None
     cmd: list[str] = list()
     cmd.append(compiler_cmd)
     cmd.extend(_direct_build_link_flags(cfg.target_platform))
     cmd.extend(_direct_build_compile_flags(cfg.target_platform))
-    cmd.extend(["-I", str(source_dir / "include")])
-    cmd.extend(["-I", str(source_dir / "src")])
+    cmd.extend(["-I", str(resolved_source_dir / "include")])
+    cmd.extend(["-I", str(resolved_source_dir / "src")])
     cmd.extend(["-o", str(output_path)])
-    cmd.append(str(source_dir / "src" / "runtime_fmi2.c"))
-    cmd.append(str(source_dir / "src" / "model_instance.c"))
-    cmd.append(str(source_dir / "src" / "solver.c"))
-    cmd.append(str(source_dir / "src" / "generated_model.c"))
-    cmd.append(str(source_dir / "src" / "generated_procedural.c"))
+    cmd.append(str(resolved_source_dir / "src" / "runtime_fmi2.c"))
+    cmd.append(str(resolved_source_dir / "src" / "model_instance.c"))
+    cmd.append(str(resolved_source_dir / "src" / "solver.c"))
+    cmd.append(str(resolved_source_dir / "src" / "generated_model.c"))
+    cmd.append(str(resolved_source_dir / "src" / "generated_procedural.c"))
     cmd.extend(_direct_build_math_flags(cfg.target_platform))
-    subprocess.run(cmd, check=True, capture_output=True, text=True, env=env)
+    subprocess.run(
+        cmd,
+        check=True,
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=compiler_working_directory,
+    )
     if not output_path.exists():
         raise FileNotFoundError(f"Direct gcc build did not produce {output_path}")
     else:

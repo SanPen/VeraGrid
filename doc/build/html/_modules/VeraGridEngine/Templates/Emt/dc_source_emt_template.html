@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Emt.dc_source_emt_template &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Templates.Emt.dc_source_emt_template &mdash; VeraGrid 6.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -306,9 +303,12 @@
     <span class="n">i_dc</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;i_dc&quot;</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">)</span>
     <span class="n">v_src</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;V_src&quot;</span><span class="p">)</span>
     <span class="n">g_src</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;g_src&quot;</span><span class="p">)</span>
-    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">v_src</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span>
-        <span class="kc">None</span> <span class="k">if</span> <span class="n">source_voltage_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">source_voltage_value</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">source_voltage_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># A source voltage derived from the power-flow operating point is an</span>
+        <span class="c1"># event-parameter expression, not a DAE initialization unknown.</span>
+        <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">v_src</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_dc</span> <span class="o">+</span> <span class="n">i_dc</span> <span class="o">/</span> <span class="n">g_src</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">v_src</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">source_voltage_value</span><span class="p">))</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">g_src</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">source_conductance_value</span><span class="p">))</span>
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">in_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">v_dc</span><span class="p">]</span>
@@ -320,7 +320,6 @@
         <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">:</span> <span class="n">i_dc</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">i_dc</span><span class="p">]</span> <span class="o">=</span> <span class="n">g_src</span> <span class="o">*</span> <span class="p">(</span><span class="n">v_src</span> <span class="o">-</span> <span class="n">v_dc</span><span class="p">)</span>
-    <span class="n">templ</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span><span class="p">[</span><span class="n">v_src</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_dc</span> <span class="o">+</span> <span class="n">i_dc</span> <span class="o">/</span> <span class="n">g_src</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 

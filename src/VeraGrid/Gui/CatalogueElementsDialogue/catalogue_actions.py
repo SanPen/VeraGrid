@@ -8,6 +8,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Callable, Tuple, Any
 
+from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
+from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 
 
@@ -173,10 +175,14 @@ class CatalogueAction:
         else:
             obj = self._function_ptr(*self._args)
 
-        if obj is None:
-            pass
-        else:
+        if isinstance(obj, RmsModelTemplate):
+            # Persist the catalogue action identity on the reusable template.
+            # The display name may be edited later, while this stable code lets
+            # subsequent catalogue imports recognize the original entry.
+            obj.code = self._unique_key
             circuit.add_rms_model(obj)
+        else:
+            pass
 
     def _execute_add_emt_template(self, circuit: MultiCircuit) -> None:
         """
@@ -190,7 +196,10 @@ class CatalogueAction:
         else:
             obj = self._function_ptr(*self._args)
 
-        if obj is None:
-            pass
-        else:
+        if isinstance(obj, EmtModelTemplate):
+            # RMS and EMT catalogue entries use the same stable-identity
+            # contract so duplicate prevention is independent of display names.
+            obj.code = self._unique_key
             circuit.add_emt_model(obj)
+        else:
+            pass

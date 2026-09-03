@@ -11,6 +11,7 @@ from PySide6 import QtCore, QtWidgets
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
 
 from VeraGrid.Gui.SystemScaler.system_scaler_ui import Ui_Dialog
 from VeraGrid.Gui.gui_functions import ComboDelegate, FloatDelegate
@@ -969,6 +970,26 @@ class SystemScaler(QtWidgets.QDialog):
         self.ui.plotButton.clicked.connect(self.plot_scaling)
         self.ui.addButton.clicked.connect(self.add_checkpoint)
         self.ui.removeButton.clicked.connect(self.remove_checkpoint)
+        self._plot_disposed: bool = False
+
+    def done(self, result: int) -> None:
+        """
+        Release Matplotlib resources before the modal dialog closes.
+
+        :param result: Qt dialog result code.
+        :return: None.
+        """
+        if self._plot_disposed:
+            pass
+        else:
+            self._plot_disposed = True
+            self.plot_figure.clear()
+            plt.close(self.plot_figure)
+            self.plot_toolbar.setParent(None)
+            self.plot_toolbar.deleteLater()
+            self.plot_canvas.setParent(None)
+            self.plot_canvas.deleteLater()
+        QtWidgets.QDialog.done(self, result)
 
     def set_checkpoints_delegates(self) -> None:
         """

@@ -3,67 +3,75 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import List, Dict, Union
+from __future__ import annotations
+
+from typing import List, Dict, Union, TYPE_CHECKING
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType
-from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics import FluidNodeGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics import FluidPathGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics import LineGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.winding_graphics import WindingGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.dc_line_graphics import DcLineGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformer2w_graphics import TransformerGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.hvdc_graphics import HvdcGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics import VscGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.upfc_graphics import UpfcGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.series_reactance_graphics import SeriesReactanceGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformer3w_graphics import Transformer3WGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformerNw_graphics import TransformerNWGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics import GeneratorGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
-from VeraGrid.Gui.Diagrams.MapWidget.Substation.voltage_level_graphic_item import VoltageLevelGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.Branches.line_location_graphic_item import LineLocationGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_segment import MapLineSegment
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics import MapBatteryGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics import MapGeneratorGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics import MapLoadGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics import MapExternalGridGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics import MapStaticGeneratorGraphicItem
 
-ALL_BUS_BRACH_GRAPHICS = Union[
-    BusGraphicItem,
-    FluidNodeGraphicItem,
-    FluidPathGraphicItem,
-    LineGraphicItem,
-    WindingGraphicItem,
-    DcLineGraphicItem,
-    TransformerGraphicItem,
-    HvdcGraphicItem,
-    VscGraphicItem,
-    UpfcGraphicItem,
-    SeriesReactanceGraphicItem,
-    LineGraphicTemplateItem,
-    Transformer3WGraphicItem,
-    TransformerNWGraphicItem,
-    GeneratorGraphicItem,
-]
+if TYPE_CHECKING:
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics import FluidNodeGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_path_graphics import FluidPathGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics import LineGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.winding_graphics import WindingGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.dc_line_graphics import DcLineGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformer2w_graphics import TransformerGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.hvdc_graphics import HvdcGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics import VscGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.upfc_graphics import UpfcGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.series_reactance_graphics import SeriesReactanceGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformer3w_graphics import Transformer3WGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformerNw_graphics import TransformerNWGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics import GeneratorGraphicItem
+    from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
+    from VeraGrid.Gui.Diagrams.MapWidget.Substation.voltage_level_graphic_item import VoltageLevelGraphicItem
+    from VeraGrid.Gui.Diagrams.MapWidget.Branches.line_location_graphic_item import LineLocationGraphicItem
+    from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
+    from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_segment import MapLineSegment
+    from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics import MapBatteryGraphicItem
+    from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics import MapGeneratorGraphicItem
+    from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics import MapLoadGraphicItem
+    from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics import MapExternalGridGraphicItem
+    from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics import MapStaticGeneratorGraphicItem
 
-ALL_MAP_GRAPHICS = Union[
-    MapLineContainer,
-    VoltageLevelGraphicItem,
-    LineLocationGraphicItem,
-    SubstationGraphicItem,
-    MapLineSegment,
-    MapBatteryGraphicItem,
-    MapGeneratorGraphicItem,
-    MapLoadGraphicItem,
-    MapExternalGridGraphicItem,
-    MapStaticGeneratorGraphicItem
-]
+    ALL_BUS_BRACH_GRAPHICS = Union[
+        BusGraphicItem,
+        FluidNodeGraphicItem,
+        FluidPathGraphicItem,
+        LineGraphicItem,
+        WindingGraphicItem,
+        DcLineGraphicItem,
+        TransformerGraphicItem,
+        HvdcGraphicItem,
+        VscGraphicItem,
+        UpfcGraphicItem,
+        SeriesReactanceGraphicItem,
+        LineGraphicTemplateItem,
+        Transformer3WGraphicItem,
+        TransformerNWGraphicItem,
+        GeneratorGraphicItem,
+    ]
 
-ALL_GRAPHICS = Union[ALL_BUS_BRACH_GRAPHICS, ALL_MAP_GRAPHICS]
+    ALL_MAP_GRAPHICS = Union[
+        MapLineContainer,
+        VoltageLevelGraphicItem,
+        LineLocationGraphicItem,
+        SubstationGraphicItem,
+        MapLineSegment,
+        MapBatteryGraphicItem,
+        MapGeneratorGraphicItem,
+        MapLoadGraphicItem,
+        MapExternalGridGraphicItem,
+        MapStaticGeneratorGraphicItem
+    ]
+
+    ALL_GRAPHICS = Union[ALL_BUS_BRACH_GRAPHICS, ALL_MAP_GRAPHICS]
+else:
+    ALL_BUS_BRACH_GRAPHICS = object
+    ALL_MAP_GRAPHICS = object
+    ALL_GRAPHICS = object
 
 
 class GraphicsManager:

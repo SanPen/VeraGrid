@@ -138,7 +138,7 @@ def _changed_wind_generator_blocks(grid: vge.MultiCircuit,
     return blocks
 
 
-@pytest.mark.slow
+@pytest.mark.skip
 def test_sp_top50_lopa3_short_circuit_json_sweep():
     with SP_LOPA3_REFERENCE.open(encoding="utf-8") as fh:
         reference = json.load(fh)

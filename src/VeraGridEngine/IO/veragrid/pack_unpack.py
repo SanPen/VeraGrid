@@ -14,10 +14,11 @@ import numpy as np
 from enum import EnumMeta as EnumType
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-import VeraGridEngine.Devices as dev
+import VeraGridEngine.Devices as devices
 from VeraGridEngine.Devices.Parents.editable_device import GCProp, EditableDevice
 from VeraGridEngine.Devices.Profiles import AnyProfile
 from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockSaver, BlockParser, Block
+from VeraGridEngine.Utils.procedural_logic import ProceduralLogicCodec
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, VERAGRID_FILE_TYPE
 from VeraGridEngine.Devices.Diagrams.base_diagram import copy_diagrams
 from VeraGridEngine.enumerations import (DiagramType, DeviceType, SubObjectType, TapPhaseControl, TapModuleControl,
@@ -25,10 +26,7 @@ from VeraGridEngine.enumerations import (DiagramType, DeviceType, SubObjectType,
 
 ProfileDictionary = Dict[str, bool | int | str | dict[str, dict[int, Any | None] | dict[Any, Any]] | Any]
 
-ModelDictionary = dict[str,
-dict[str, dict[str, str] | list[dict[str, str]]]
-| dict[str, list[dict[str, Any]] | dict[int, list[Any]] | dict[int, dict[str, Any]] | list[int]]
-]
+ModelDictionary = Dict[str, object]
 
 
 def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
@@ -41,121 +39,121 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
     # loading algorithm is able to find the object substitutions
 
     return {
-        'modelling_authority': dev.ModellingAuthority(),
+        'modelling_authority': devices.ModellingAuthority(),
 
-        'area': dev.Area(),
-        'zone': dev.Zone(),
+        'area': devices.Area(),
+        'zone': devices.Zone(),
 
-        'country': dev.Country(),
-        'community': dev.Community(),
-        'region': dev.Region(),
-        'municipality': dev.Municipality(),
+        'country': devices.Country(),
+        'community': devices.Community(),
+        'region': devices.Region(),
+        'municipality': devices.Municipality(),
 
-        'owner': dev.Owner(),
+        'owner': devices.Owner(),
 
-        'substation': dev.Substation(),
-        'voltage_level': dev.VoltageLevel(),
+        'substation': devices.Substation(),
+        'voltage_level': devices.VoltageLevel(),
 
-        'technology': dev.Technology(),
+        'technology': devices.Technology(),
 
-        'fuel': dev.Fuel(),
+        'fuel': devices.Fuel(),
 
-        'emission': dev.EmissionGas(),
+        'emission': devices.EmissionGas(),
 
-        'facility': dev.Facility(),
+        'facility': devices.Facility(),
 
-        'market_unit': dev.MarketUnit(),
+        'market_unit': devices.MarketUnit(),
 
-        'rms_model_template': dev.RmsModelTemplate(),
-        'emt_model_template': dev.EmtModelTemplate(),
-        'fmu_template': dev.FmuTemplate(),
+        'rms_model_template': devices.RmsModelTemplate(),
+        'emt_model_template': devices.EmtModelTemplate(),
+        'fmu_template': devices.FmuTemplate(),
 
-        'bus': dev.Bus(),
+        'bus': devices.Bus(),
 
-        'bus_bar': dev.BusBar(),
+        'bus_bar': devices.BusBar(),
 
-        'load': dev.Load(),
+        'load': devices.Load(),
 
-        'static_generator': dev.StaticGenerator(),
+        'static_generator': devices.StaticGenerator(),
 
-        'battery': dev.Battery(),
+        'battery': devices.Battery(),
 
-        'generator': dev.Generator(),
+        'generator': devices.Generator(),
 
-        'shunt': dev.Shunt(),
+        'shunt': devices.Shunt(),
 
-        'linear_shunt': dev.ControllableShunt(),
+        'linear_shunt': devices.ControllableShunt(),
 
-        'external_grid': dev.ExternalGrid(),
+        'external_grid': devices.ExternalGrid(),
 
-        'current_injection': dev.CurrentInjection(),
+        'current_injection': devices.CurrentInjection(),
 
-        'wires': dev.Wire(),
-        'overhead_line_types': dev.OverheadLineType(),
-        'underground_cable_types': dev.UndergroundLineType(),
-        'sequence_line_types': dev.SequenceLineType(),
-        'transformer_types': dev.TransformerType(),
+        'wires': devices.Wire(),
+        'overhead_line_types': devices.OverheadLineType(),
+        'underground_cable_types': devices.UndergroundLineType(),
+        'sequence_line_types': devices.SequenceLineType(),
+        'transformer_types': devices.TransformerType(),
 
-        'branch_group': dev.BranchGroup(),
+        'branch_group': devices.BranchGroup(),
 
-        'branch': dev.Branch(),
-        'transformer2w': dev.Transformer2W(),
+        'branch': devices.Branch(),
+        'transformer2w': devices.Transformer2W(),
 
-        'windings': dev.Winding(),
-        'transformer3w': dev.Transformer3W(),
-        'transformernw': dev.TransformerNW(),
+        'windings': devices.Winding(),
+        'transformer3w': devices.Transformer3W(),
+        'transformernw': devices.TransformerNW(),
 
-        'line': dev.Line(),
-        'dc_line': dev.DcLine(),
+        'line': devices.Line(),
+        'dc_line': devices.DcLine(),
 
-        'hvdc': dev.HvdcLine(),
+        'hvdc': devices.HvdcLine(),
 
-        'vsc': dev.VSC(),
-        'upfc': dev.UPFC(),
+        'vsc': devices.VSC(),
+        'upfc': devices.UPFC(),
 
-        'series_reactance': dev.SeriesReactance(),
+        'series_reactance': devices.SeriesReactance(),
 
-        'switch': dev.Switch(),
+        'switch': devices.Switch(),
 
-        'contingency_group': dev.ContingencyGroup(),
-        'contingency': dev.Contingency(),
-        'short_circuit_definition': dev.ShortCircuitEvent(),
+        'contingency_group': devices.ContingencyGroup(),
+        'contingency': devices.Contingency(),
+        'short_circuit_definition': devices.ShortCircuitEvent(),
 
-        'remedial_action_group': dev.RemedialActionGroup(),
-        'remedial_action': dev.RemedialAction(),
+        'remedial_action_group': devices.RemedialActionGroup(),
+        'remedial_action': devices.RemedialAction(),
 
-        'investments_group': dev.InvestmentsGroup(),
-        'investment': dev.Investment(),
+        'investments_group': devices.InvestmentsGroup(),
+        'investment': devices.Investment(),
 
-        'rms_event_group': dev.RmsEventsGroup(),
-        'rms_event': dev.RmsEvent(),
+        'rms_event_group': devices.RmsEventsGroup(),
+        'rms_event': devices.RmsEvent(),
 
-        'emt_event_group': dev.EmtEventsGroup(),
-        'emt_event': dev.EmtEvent(),
+        'emt_event_group': devices.EmtEventsGroup(),
+        'emt_event': devices.EmtEvent(),
 
-        'dynamic_plot': dev.DynamicPlot(),
-        'dynamic_plot_entry': dev.DynamicPlotEntry(),
+        'dynamic_plot': devices.DynamicPlot(),
+        'dynamic_plot_entry': devices.DynamicPlotEntry(),
 
-        'fluid_node': dev.FluidNode(),
-        'fluid_path': dev.FluidPath(),
-        'fluid_turbine': dev.FluidTurbine(),
-        'fluid_pump': dev.FluidPump(),
-        'fluid_p2x': dev.FluidP2x(),
+        'fluid_node': devices.FluidNode(),
+        'fluid_path': devices.FluidPath(),
+        'fluid_turbine': devices.FluidTurbine(),
+        'fluid_pump': devices.FluidPump(),
+        'fluid_p2x': devices.FluidP2x(),
 
-        'pi_measurement': dev.PiMeasurement(),
-        'qi_measurement': dev.QiMeasurement(),
-        'pf_measurement': dev.PfMeasurement(),
-        'qf_measurement': dev.QfMeasurement(),
-        'if_measurement': dev.IfMeasurement(),
-        'pt_measurement': dev.PtMeasurement(),
-        'qt_measurement': dev.QtMeasurement(),
-        'it_measurement': dev.ItMeasurement(),
-        'vm_measurement': dev.VmMeasurement(),
-        'va_measurement': dev.VaMeasurement(),
-        'pg_measurement': dev.PgMeasurement(),
-        'qg_measurement': dev.QgMeasurement(),
+        'pi_measurement': devices.PiMeasurement(),
+        'qi_measurement': devices.QiMeasurement(),
+        'pf_measurement': devices.PfMeasurement(),
+        'qf_measurement': devices.QfMeasurement(),
+        'if_measurement': devices.IfMeasurement(),
+        'pt_measurement': devices.PtMeasurement(),
+        'qt_measurement': devices.QtMeasurement(),
+        'it_measurement': devices.ItMeasurement(),
+        'vm_measurement': devices.VmMeasurement(),
+        'va_measurement': devices.VaMeasurement(),
+        'pg_measurement': devices.PgMeasurement(),
+        'qg_measurement': devices.QgMeasurement(),
 
-        'control_pc': dev.ControlPc(),
+        'control_pc': devices.ControlPc(),
     }
 
 
@@ -617,9 +615,9 @@ def get_profile_from_dict(profile: AnyProfile,
                           data: Dict[str, Any | Dict[str, Any]],
                           collection: Union[None, Dict[str, Any]] = None):
     """
-    Create a profile from json dict data
+    Create a profile from JSON declarative data.
     :param profile: Profile object to fill in
-    :param data: Json dict data
+    :param data: JSON profile declaration.
     :param collection: if the collection is provided, it will be used to convert idtags into objects
     :return: None
     """
@@ -669,6 +667,7 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
 
     :param elm:
     :param block_saver:
+    :param project_directory: Directory used to store portable FMU paths.
     :return:
     """
 
@@ -766,7 +765,7 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
 def gather_model_as_jsons(circuit: MultiCircuit,
                           project_directory: Path | None = None) -> ModelDictionary:
     """
-    Transform a MultiCircuit into a collection of Json files
+    Transform a ``MultiCircuit`` into a collection of JSON records.
     :param circuit:
     :param project_directory:
     :return:
@@ -775,7 +774,7 @@ def gather_model_as_jsons(circuit: MultiCircuit,
     if circuit.has_time_series:
         circuit.ensure_profiles_exist()
 
-    data: Dict[str, Union[Dict[str, str], List[Dict[str, str]]]] = dict()
+    data: ModelDictionary = dict()
 
     block_saver = BlockSaver(circuit.var_factory)
 
@@ -817,18 +816,6 @@ def gather_model_as_jsons(circuit: MultiCircuit,
 
     # At this point I already have the symbolic data stored in block_saver
 
-    dictionary_save = {
-        "model_data": data,
-        "symbolic_data": {
-            "vars": block_saver.get_vars_to_save(),
-            "consts": block_saver.get_const_to_save(),
-            "diff_vars": block_saver.get_diff_vars_to_save(),
-            "shared_references": block_saver.get_shared_references_to_save(),
-            "blocks": block_saver.get_blocks(),
-            "main_block_uids": block_saver.main_block_uids,
-        }
-    }
-
     return {
         "model_data": data,
         "symbolic_data": {
@@ -859,7 +846,7 @@ def search_property(template_elm: ALL_DEV_TYPES,
     gc_prop = template_elm.registered_properties.get(property_to_search, None)
 
     if gc_prop is None:
-        # the property is not in the headers, search in the the old list
+        # The property is not in the headers, so search the legacy-name list.
         current_prop_name = old_props_dict.get(property_to_search, None)
 
         if current_prop_name:
@@ -871,8 +858,8 @@ def search_property(template_elm: ALL_DEV_TYPES,
             gc_prop = template_elm.registered_properties.get(current_prop_name, None)
             return gc_prop
         else:
-            # the property does not exists in the registries, this is a bug
-            logger.add_error('the property does not exists in the registries',
+            # A property absent from both registries identifies invalid input.
+            logger.add_error('The property does not exist in the registries',
                              device=str(template_elm.device_type),
                              value=property_to_search)
             return None
@@ -893,7 +880,7 @@ def look_for_property(elm: ALL_DEV_TYPES, property_name) -> Union[GCProp, None]:
         # the property of the file exists directly
         return device_property_definition
     else:
-        # the property does not exists directly, look in the older properties
+        # A missing direct property may still use a legacy property name.
         for name, prop in elm.registered_properties.items():
             if property_name in prop.old_names:
                 return prop
@@ -946,14 +933,14 @@ class CreatedOnTheFly:
         """
         # legacy operations: this is from when area, zone and substation were strings,
         # now we create those objects on the fly
-        self.legacy_area_dict: Dict[str, dev.Area] = dict()
-        self.legacy_zone_dict: Dict[str, dev.Zone] = dict()
-        self.legacy_substation_dict: Dict[str, dev.Substation] = dict()
+        self.legacy_area_dict: Dict[str, devices.Area] = dict()
+        self.legacy_zone_dict: Dict[str, devices.Zone] = dict()
+        self.legacy_substation_dict: Dict[str, devices.Substation] = dict()
 
-        self.contingency_groups: List[dev.ContingencyGroup] = list()
-        self.contingencies: List[dev.Contingency] = list()
+        self.contingency_groups: List[devices.ContingencyGroup] = list()
+        self.contingencies: List[devices.Contingency] = list()
 
-        self.technologies: Dict[str, dev.Technology] = dict()
+        self.technologies: Dict[str, devices.Technology] = dict()
 
     def get_create_area(self, property_value):
         """
@@ -963,7 +950,7 @@ class CreatedOnTheFly:
         """
         area = self.legacy_area_dict.get(property_value, None)
         if area is None:
-            area = dev.Area(name=str(property_value))
+            area = devices.Area(name=str(property_value))
             self.legacy_area_dict[property_value] = area
         return area
 
@@ -975,7 +962,7 @@ class CreatedOnTheFly:
         """
         zone = self.legacy_zone_dict.get(property_value, None)
         if zone is None:
-            zone = dev.Zone(name=str(property_value))
+            zone = devices.Zone(name=str(property_value))
             self.legacy_zone_dict[property_value] = zone
         return zone
 
@@ -987,7 +974,7 @@ class CreatedOnTheFly:
         """
         substation = self.legacy_substation_dict.get(property_value, None)
         if substation is None:
-            substation = dev.Substation(name=str(property_value))
+            substation = devices.Substation(name=str(property_value))
             self.legacy_substation_dict[property_value] = substation
         return substation
 
@@ -997,13 +984,13 @@ class CreatedOnTheFly:
         :param elm:
         :return:
         """
-        con_group = dev.ContingencyGroup(name=elm.name)
-        conn = dev.Contingency(device=elm, prop=ContingencyOperationTypes.Active, group=con_group)
+        con_group = devices.ContingencyGroup(name=elm.name)
+        conn = devices.Contingency(device=elm, prop=ContingencyOperationTypes.Active, group=con_group)
 
         self.contingency_groups.append(con_group)
         self.contingencies.append(conn)
 
-    def create_technology(self, elm: dev.Generator, tech_name: str):
+    def create_technology(self, elm: devices.Generator, tech_name: str) -> None:
         """
 
         :param elm:
@@ -1014,7 +1001,7 @@ class CreatedOnTheFly:
         tech = self.technologies.get(tech_name, None)
 
         if tech is None:
-            tech = dev.Technology(name=tech_name)
+            tech = devices.Technology(name=tech_name)
             self.technologies[tech_name] = tech
 
         elm.technologies.add_object(api_object=tech, val=1.0)
@@ -1156,7 +1143,7 @@ def parse_object_type_from_dataframe(
                         elif isinstance(gc_prop.tpe, SubObjectType):
 
                             if gc_prop.tpe == SubObjectType.GeneratorQCurve:
-                                q_curve: dev.GeneratorQCurve = elm.get_snapshot_value(gc_prop)
+                                q_curve: devices.GeneratorQCurve = elm.get_snapshot_value(gc_prop)
 
                                 if isinstance(property_value, str):
                                     q_curve.parse(json.loads(property_value))
@@ -1218,7 +1205,7 @@ def parse_object_type_from_dataframe(
                         if dfp is not None:
                             try:
                                 elm.set_profile(gc_prop, arr=dfp.values[:, i].astype(gc_prop.tpe))
-                            except TypeError as terr:
+                            except TypeError:
                                 logger.add_error(msg="Cannot set profile value",
                                                  device_property=gc_prop.profile_name,
                                                  device=elm.name)
@@ -1232,7 +1219,7 @@ def parse_object_type_from_dataframe(
                                 logger.add_info(msg='No profile for the property', value=gc_prop.name)
 
                 else:
-                    # the property does not exists, neither in the old names
+                    # The property exists under neither its current nor legacy name.
                     skip = False
                     if template_elm.device_type == DeviceType.ShuntDevice:
                         if property_name in ['is_controlled', 'Bmin', 'Bmax', 'Vset']:
@@ -1285,8 +1272,8 @@ def parse_object_type_from_dataframe(
 
 def search_property_into_json(json_entry: dict, prop: GCProp):
     """
-    Find property in Json entry
-    :param json_entry: json of an object
+    Find a property in one JSON entry.
+    :param json_entry: JSON declaration for one object.
     :param prop: GCProp
     :return: value or None if not found
     """
@@ -1356,8 +1343,8 @@ def search_and_apply_json_profile(json_entry: Dict[str, Dict[str, Union[str, Uni
                                   property_value: Any,
                                   collection: Union[None, Dict[str, Any]] = None) -> None:
     """
-    Search from the property profiles into the json and apply it
-    :param json_entry: Json entry of an object
+    Find and apply property profiles declared in JSON.
+    :param json_entry: JSON entry for one object.
     :param gc_prop: GCProp
     :param elm: THe device to set the profile into
     :param property_value: The snapshot value
@@ -1366,7 +1353,7 @@ def search_and_apply_json_profile(json_entry: Dict[str, Dict[str, Union[str, Uni
     """
     if gc_prop.has_profile():
 
-        # search the profile in the json
+        # Resolve the profile from the JSON declaration.
         json_profile = json_entry.get(gc_prop.profile_name, None)
 
         profile: AnyProfile = elm.get_profile(magnitude=gc_prop.name)
@@ -1412,7 +1399,7 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
         # for property_name_, property_value in json_entry.items():
         for property_name, gc_prop in template_elm.registered_properties.items():
 
-            # search for the property in the json
+            # Resolve the property from the JSON declaration.
             property_value = search_property_into_json(json_entry=json_entry, prop=gc_prop)
 
             if property_value is not None:
@@ -1480,8 +1467,8 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
 
                                 if gc_prop.tpe == SubObjectType.GeneratorQCurve:
 
-                                    # get the curve object and fill it with the json data
-                                    q_curve: dev.GeneratorQCurve = elm.get_snapshot_value(prop=gc_prop)
+                                    # Fill the curve object from its JSON declaration.
+                                    q_curve: devices.GeneratorQCurve = elm.get_snapshot_value(prop=gc_prop)
                                     if isinstance(property_value, str):
                                         q_curve.parse(json.loads(property_value))
                                     else:
@@ -1489,29 +1476,29 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
 
                                 elif gc_prop.tpe == SubObjectType.LineLocations:
 
-                                    # get the line locations object and fill it with the json data
-                                    locations_obj: dev.LineLocations = elm.get_snapshot_value(prop=gc_prop)
+                                    # Fill the line locations from their JSON declaration.
+                                    locations_obj: devices.LineLocations = elm.get_snapshot_value(prop=gc_prop)
                                     locations_obj.parse(property_value)
 
                                 elif gc_prop.tpe == SubObjectType.ListOfWires:
 
-                                    # get the line locations object and fill it with the json data
-                                    list_of_wires: dev.ListOfWires = elm.get_snapshot_value(prop=gc_prop)
+                                    # Fill the wire collection from its JSON declaration.
+                                    list_of_wires: devices.ListOfWires = elm.get_snapshot_value(prop=gc_prop)
                                     list_of_wires.parse(data=property_value,
                                                         wire_dict=elements_dict_by_type[DeviceType.WireDevice])
 
 
                                 elif gc_prop.tpe == SubObjectType.ImpedanceTripletList:
 
-                                    # get the line locations object and fill it with the json data
-                                    impedance_triplet_list: dev.ImpedanceTripletList = elm.get_snapshot_value(
+                                    # Fill the impedance triplets from their JSON declaration.
+                                    impedance_triplet_list: devices.ImpedanceTripletList = elm.get_snapshot_value(
                                         prop=gc_prop)
                                     impedance_triplet_list.parse(data=property_value)
 
                                 elif gc_prop.tpe == SubObjectType.TapChanger:
 
-                                    # get the line locations object and fill it with the json data
-                                    tc_obj: dev.TapChanger = elm.get_snapshot_value(prop=gc_prop)
+                                    # Fill the tap changer from its JSON declaration.
+                                    tc_obj: devices.TapChanger = elm.get_snapshot_value(prop=gc_prop)
                                     tc_obj.parse(property_value, logger=logger)
 
                                 elif gc_prop.tpe == SubObjectType.Array:
@@ -1521,8 +1508,8 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
 
                                 elif gc_prop.tpe == SubObjectType.AdmittanceMatrix:
 
-                                    # get the line locations object and fill it with the json data
-                                    adm_mat: SubObjectType.AdmittanceMatrix = elm.get_snapshot_value(prop=gc_prop)
+                                    # Fill the admittance matrix from its JSON declaration.
+                                    adm_mat: devices.AdmittanceMatrix = elm.get_snapshot_value(prop=gc_prop)
                                     adm_mat.parse(property_value)
 
                                 elif gc_prop.tpe == SubObjectType.DaeBlockType:
@@ -1647,7 +1634,7 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                     # the property is idtag
                     pass
             else:
-                # the object property was not found in the json entry
+                # The object property was not present in the JSON entry.
                 pass
 
         if template_elm.device_type == DeviceType.Transformer3WDevice:
@@ -1712,10 +1699,10 @@ def handle_legacy_jsons(model_data: Dict[str, List],
     if ge_data_list is not None:
         for entry in ge_data_list:
             gen_idtag = entry.get('generator', None)
-            emision_idtag = entry.get('emission', None)
+            emission_idtag = entry.get('emission', None)
             rate = entry.get('rate', 1.0)
             generator = elements_dict_by_type[DeviceType.GeneratorDevice].get(gen_idtag, None)
-            emission = elements_dict_by_type[DeviceType.EmissionGasDevice].get(emision_idtag, None)
+            emission = elements_dict_by_type[DeviceType.EmissionGasDevice].get(emission_idtag, None)
             if generator is not None and emission is not None:
                 generator.emissions.add_object(api_object=emission, val=rate)
                 logger.add_info("Converted legacy generator emission association",
@@ -1781,7 +1768,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
         time_df = data['time']
         try:
             circuit.time_profile = pd.to_datetime(time_df.values[:, 0], dayfirst=True, format='mixed')
-        except ValueError as err:
+        except ValueError:
             circuit.time_profile = pd.to_datetime(time_df.values[:, 0], dayfirst=True)
     else:
         circuit.time_profile = None
@@ -1811,7 +1798,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
             # fill in the objects
             if df.shape[0] > 0:
 
-                devices, devices_dict, on_the_fly = parse_object_type_from_dataframe(
+                parsed_devices, devices_dict, on_the_fly = parse_object_type_from_dataframe(
                     main_df=df,
                     template_elm=template_elm,
                     elements_dict_by_type=elements_dict_by_type,
@@ -1841,7 +1828,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
 
                 # add the devices to the circuit
                 circuit.set_elements_list_by_type(device_type=template_elm.device_type,
-                                                  devices=devices,
+                                                  devices=parsed_devices,
                                                   logger=logger)
 
             else:
@@ -1857,10 +1844,14 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
         item_count += 1
 
     # ------------------------------------------------------------------------------------------------------------------
-    # New way of parsing information from .model files (Json files)
+    # Parse the declarative information stored in JSON ``.model`` files.
     # These files are just .json stored in the model_data inside the zip file
 
-    block_parser = BlockParser(circuit.var_factory, logger=logger)
+    block_parser = BlockParser(
+        var_factory=circuit.var_factory,
+        logger=logger,
+        procedural_logic_codec=ProceduralLogicCodec(),
+    )
     symbolic_data: Dict[str, Any] | None = data.get('symbolic_data', None)
     if symbolic_data is not None:
         if len(symbolic_data) > 0:
@@ -1916,7 +1907,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
                 data_list = model_data.get(object_type_key, None)
 
                 if data_list is not None:
-                    devices, devices_dict = parse_object_type_from_json(
+                    parsed_devices, devices_dict = parse_object_type_from_json(
                         template_elm=template_elm,
                         data_list=data_list,
                         elements_dict_by_type=elements_dict_by_type,
@@ -1932,7 +1923,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
 
                     # add the devices to the circuit
                     circuit.set_elements_list_by_type(device_type=template_elm.device_type,
-                                                      devices=devices,
+                                                      devices=parsed_devices,
                                                       logger=logger)
                 else:
                     # Legacy and optional sections should not generate warnings when absent.
@@ -1993,7 +1984,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
             else:
                 elm.set_device(elm=referenced_elm)
 
-    # delete pointer elemnts to missing references
+    # Delete pointer elements that refer to missing objects.
     for elm in to_delete:
         circuit.delete_element(elm)
         logger.add_error(msg="Invalid pointer element deleted",
@@ -2012,8 +2003,8 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
 
             if ((tower_name in elements_dict_by_type[DeviceType.OverheadLineTypeDevice].keys()) and
                     (wire_name in elements_dict_by_type[DeviceType.WireDevice].keys())):
-                tower: dev.OverheadLineType = elements_dict_by_type[DeviceType.OverheadLineTypeDevice][tower_name]
-                wire: dev.Wire = elements_dict_by_type[DeviceType.WireDevice][wire_name]
+                tower: devices.OverheadLineType = elements_dict_by_type[DeviceType.OverheadLineTypeDevice][tower_name]
+                wire: devices.Wire = elements_dict_by_type[DeviceType.WireDevice][wire_name]
                 xpos = df['xpos'].values[i]
                 ypos = df['ypos'].values[i]
                 phase = df['phase'].values[i]
@@ -2036,12 +2027,12 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
             for diagram_dict in list_of_diagrams:
 
                 if diagram_dict['type'] in [DiagramType.Schematic.value, "bus-branch"]:
-                    diagram = dev.SchematicDiagram()
+                    diagram = devices.SchematicDiagram()
                     diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
                     circuit.add_diagram(diagram)
 
                 elif diagram_dict['type'] == DiagramType.SubstationLineMap.value:
-                    diagram = dev.MapDiagram()
+                    diagram = devices.MapDiagram()
                     diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
                     circuit.add_diagram(diagram)
                 else:
@@ -2076,7 +2067,7 @@ def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
                           metadata: Dict[str, Dict[str, int | float] | int | None],
                           text_func: Union[Callable, None] = None,
                           progress_func: Union[Callable, None] = None,
-                          logger: Logger = Logger()) -> dev.MultiVerse:
+                          logger: Logger = Logger()) -> devices.MultiVerse:
     """
 
     :param data:
@@ -2086,7 +2077,7 @@ def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
     :param logger:
     :return:
     """
-    mv = dev.MultiVerse(current_model=None)
+    mv = devices.MultiVerse(current_model=None)
 
     diffs_dict: Dict[str, MultiCircuit] = dict()
     diagrams_dict: Dict[str, List[Dict[str, Any]]] = dict()
@@ -2098,7 +2089,7 @@ def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
     # - Root nodes store a full authoritative MultiCircuit.
     # - Non-root nodes store only the electrical delta against their parent.
     #
-    # This has two non-obvious consequences during load:
+    # This has two non-obvious effects on loading:
     #
     # 1. Electrical references in child payloads may legitimately point to objects that are
     #    not present in the child's delta payload, because those objects live in the parent /
@@ -2117,7 +2108,7 @@ def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
     #   scenario, never against the raw delta payload.
     node_metadata = get_multiverse_node_metadata(metadata)
     ordered_records = order_multiverse_records(metadata)
-    all_elements_dict = dict()
+    all_elements_dict: Dict[str, ALL_DEV_TYPES] = dict()
 
     for record in ordered_records:
         node_id = int(record["node_id"])
@@ -2188,12 +2179,12 @@ def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
 
             for diagram_dict in diagrams_dict.get(circuit_idtag, list()):
                 if diagram_dict['type'] in [DiagramType.Schematic.value, "bus-branch"]:
-                    diagram = dev.SchematicDiagram()
+                    diagram = devices.SchematicDiagram()
                     diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
                     parsed_diagrams.append(diagram)
 
                 elif diagram_dict['type'] == DiagramType.SubstationLineMap.value:
-                    diagram = dev.MapDiagram()
+                    diagram = devices.MapDiagram()
                     diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
                     parsed_diagrams.append(diagram)
 

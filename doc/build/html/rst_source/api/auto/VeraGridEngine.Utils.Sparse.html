@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Sparse package &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Utils.Sparse package &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -380,7 +381,7 @@ stack csc sparse float matrices like this:
 <p>numba CSC matrix struct</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.Sparse.csc2.CSC.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.CSC#1adf6217620&lt;n_rows:int32,n_cols:int32,nnz:int32,data:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),indices:array(int32,</span> <span class="pre">1d,</span> <span class="pre">A),indptr:array(int32,</span> <span class="pre">1d,</span> <span class="pre">A),format:unicode_type&gt;</span></span><a class="headerlink" href="#VeraGridEngine.Utils.Sparse.csc2.CSC.class_type" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.CSC#77086afd1220&lt;n_rows:int32,n_cols:int32,nnz:int32,data:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),indices:array(int32,</span> <span class="pre">1d,</span> <span class="pre">A),indptr:array(int32,</span> <span class="pre">1d,</span> <span class="pre">A),format:unicode_type&gt;</span></span><a class="headerlink" href="#VeraGridEngine.Utils.Sparse.csc2.CSC.class_type" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -392,7 +393,7 @@ stack csc sparse float matrices like this:
 <p>numba CSC matrix struct</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.Sparse.csc2.CxCSC.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.CxCSC#1adf6279450&lt;n_rows:int32,n_cols:int32,nnz:int32,data:array(complex128,</span> <span class="pre">1d,</span> <span class="pre">A),indices:array(int32,</span> <span class="pre">1d,</span> <span class="pre">A),indptr:array(int32,</span> <span class="pre">1d,</span> <span class="pre">A),format:unicode_type&gt;</span></span><a class="headerlink" href="#VeraGridEngine.Utils.Sparse.csc2.CxCSC.class_type" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.CxCSC#77087881fb60&lt;n_rows:int32,n_cols:int32,nnz:int32,data:array(complex128,</span> <span class="pre">1d,</span> <span class="pre">A),indices:array(int32,</span> <span class="pre">1d,</span> <span class="pre">A),indptr:array(int32,</span> <span class="pre">1d,</span> <span class="pre">A),format:unicode_type&gt;</span></span><a class="headerlink" href="#VeraGridEngine.Utils.Sparse.csc2.CxCSC.class_type" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -623,6 +624,20 @@ m_cols = 3</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Extended matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.Sparse.csc2.is_valid_for_super_lu">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Sparse.csc2.</span></span><span class="sig-name descname"><span class="pre">is_valid_for_super_lu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Utils.Sparse.csc2.CSC" title="VeraGridEngine.Utils.Sparse.csc2.CSC"><span class="pre">CSC</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Sparse/csc2.html#is_valid_for_super_lu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Sparse.csc2.is_valid_for_super_lu" title="Link to this definition"></a></dt>
+<dd><p>Check that a CSC matrix is structurally safe to pass to SuperLU.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A</strong> – CSC matrix.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True when the matrix storage is consistent.</p>
 </dd>
 </dl>
 </dd></dl>

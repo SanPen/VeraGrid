@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Models &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>Data Models &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
@@ -2901,7 +2902,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>voltage_level</p></td>
-<td><p>Bus</p></td>
+<td><p>Voltage level</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
 <td><p></p></td>
@@ -10307,7 +10308,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>R0</p></td>
+<tr class="row-odd"><td><p>G</p></td>
+<td><p>float</p></td>
+<td><p>p.u.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Total positive sequence shunt conductance.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>R0</p></td>
 <td><p>float</p></td>
 <td><p>p.u.</p></td>
 <td><p>False</p></td>
@@ -10316,7 +10326,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>X0</p></td>
+<tr class="row-odd"><td><p>X0</p></td>
 <td><p>float</p></td>
 <td><p>p.u.</p></td>
 <td><p>False</p></td>
@@ -10325,12 +10335,21 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>B0</p></td>
+<tr class="row-even"><td><p>B0</p></td>
 <td><p>float</p></td>
 <td><p>p.u.</p></td>
 <td><p>False</p></td>
 <td><p></p></td>
 <td><p>Total zero sequence shunt susceptance.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>G0</p></td>
+<td><p>float</p></td>
+<td><p>p.u.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Total zero sequence shunt conductance.</p></td>
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
@@ -10361,7 +10380,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>ys</p></td>
+<tr class="row-odd"><td><p>G2</p></td>
+<td><p>float</p></td>
+<td><p>p.u.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Total negative sequence shunt conductance.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>ys</p></td>
 <td><p>Admittance Matrix</p></td>
 <td><p>p.u.</p></td>
 <td><p>False</p></td>
@@ -10370,7 +10398,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>ysh</p></td>
+<tr class="row-odd"><td><p>ysh</p></td>
 <td><p>Admittance Matrix</p></td>
 <td><p>p.u.</p></td>
 <td><p>False</p></td>
@@ -10379,7 +10407,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>tolerance</p></td>
+<tr class="row-even"><td><p>tolerance</p></td>
 <td><p>float</p></td>
 <td><p>%</p></td>
 <td><p>False</p></td>
@@ -10388,7 +10416,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>circuit_idx</p></td>
+<tr class="row-odd"><td><p>circuit_idx</p></td>
 <td><p>int</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -10397,7 +10425,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>length</p></td>
+<tr class="row-even"><td><p>length</p></td>
 <td><p>float</p></td>
 <td><p>km</p></td>
 <td><p>False</p></td>
@@ -10406,7 +10434,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>template</p></td>
+<tr class="row-odd"><td><p>template</p></td>
 <td><p>Any line template</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -10415,7 +10443,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>locations</p></td>
+<tr class="row-even"><td><p>locations</p></td>
 <td><p>Line locations</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -10424,7 +10452,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>possible_tower_types</p></td>
+<tr class="row-odd"><td><p>possible_tower_types</p></td>
 <td><p>AssociationsList</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -10433,7 +10461,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>possible_underground_line_types</p></td>
+<tr class="row-even"><td><p>possible_underground_line_types</p></td>
 <td><p>AssociationsList</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -10442,7 +10470,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>possible_sequence_line_types</p></td>
+<tr class="row-odd"><td><p>possible_sequence_line_types</p></td>
 <td><p>AssociationsList</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13934,7 +13962,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>R0</p></td>
+<tr class="row-even"><td><p>G</p></td>
+<td><p>float</p></td>
+<td><p>uS/km</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Positive-sequence shunt conductance per km</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>R0</p></td>
 <td><p>float</p></td>
 <td><p>Ohm/km</p></td>
 <td><p>False</p></td>
@@ -13943,7 +13980,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>X0</p></td>
+<tr class="row-even"><td><p>X0</p></td>
 <td><p>float</p></td>
 <td><p>Ohm/km</p></td>
 <td><p>False</p></td>
@@ -13952,12 +13989,21 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>B0</p></td>
+<tr class="row-odd"><td><p>B0</p></td>
 <td><p>float</p></td>
 <td><p>uS/km</p></td>
 <td><p>False</p></td>
 <td><p></p></td>
 <td><p>Zero-sequence shunt susceptance per km</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>G0</p></td>
+<td><p>float</p></td>
+<td><p>uS/km</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Zero-sequence shunt conductance per km</p></td>
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
@@ -19763,6 +19809,60 @@
 <td><p>False</p></td>
 <td><p></p></td>
 <td><p>Losses quadratic parameter (IEC 62751-2 loss Correction, resistive loss).</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>r_series</p></td>
+<td><p>float</p></td>
+<td><p>p.u.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Converter series-reactor resistance on the converter base.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>x_series</p></td>
+<td><p>float</p></td>
+<td><p>p.u.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Converter series-reactor reactance on the converter base.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>dc_voltage_base</p></td>
+<td><p>float</p></td>
+<td><p>kV</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Native converter DC voltage base used by dynamic models.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>dc_link_capacitance_uf</p></td>
+<td><p>float</p></td>
+<td><p>uF</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Equivalent capacitance directly across the DC terminals.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>mmc_arm_capacitance_uf</p></td>
+<td><p>float</p></td>
+<td><p>uF</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Equivalent capacitance of one MMC arm.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>mmc_consider_arm_reactor_dc</p></td>
+<td><p>bool</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Whether the MMC arm reactor is represented on the DC side.</p></td>
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>

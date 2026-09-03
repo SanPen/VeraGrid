@@ -1,0 +1,17 @@
+********************************************************************************
+* Portable physical and vendor slots without exported pElm targets.
+********************************************************************************
+
+$$General;ID(a:40);Descr(a:40);Val(a:40)
+  1;Version;5.0
+
+$$BlkDef;FID(a:40);OP(a:1);loc_name(a:80);isMacro(i);level(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);sIntern:SIZEROW(i);sIntern:0(a);sAddEquat:SIZEROW(i);sAddEquat:0(a);cOutput(a);cInput(a);cIntern(a)
+  FRAME;C;Reference frame;0;0;1;public_y;1;external_x;0;;0;;public_y;external_x;
+
+$$ElmComp;FID(a:40);loc_name(a:80);typ_id(p);pblk:SIZEROW(i);pblk:0(p);pelm:SIZEROW(i);pelm:0(p)
+  PHYSICAL_ROOT;Physical reference root;FRAME;1;PHYSICAL_SLOT;0;
+  VENDOR_ROOT;Vendor reference root;FRAME;1;VENDOR_SLOT;0;
+
+$$BlkSlot;FID(a:40);OP(a:1);loc_name(a:80);element(p);filtmod(a:80);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a)
+  PHYSICAL_SLOT;C;Physical phase measurement;;ElmPhi*;3;cosphi,sinphi,Fmeas;0;
+  VENDOR_SLOT;C;Vendor extension reference;;VendorPhysical*;0;;0;

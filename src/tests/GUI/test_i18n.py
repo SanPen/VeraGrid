@@ -25,6 +25,8 @@ from VeraGrid.Gui.i18n import (
 from VeraGrid.Gui.update_translations import (
     _collect_empty_unfinished_sources,
     _collect_finished_translation_memory,
+    _collect_python_translation_messages,
+    _get_diagram_library_translation_messages,
     _finish_non_empty_unfinished_translations,
     _replace_empty_unfinished_translations,
 )
@@ -157,6 +159,59 @@ def test_short_circuit_selector_rebuilds_method_combo_without_transient_none(qt_
 
     assert errors == []
     assert isinstance(dialog.ui.cb_method.currentData(), MethodShortCircuit)
+
+
+def test_update_translations_collects_schematic_library_labels() -> None:
+    """
+    The translation updater should collect schematic library labels that use stable DeviceType drag data.
+    """
+    gui_root: Path = Path(__file__).resolve().parents[2] / "VeraGrid" / "Gui"
+    messages: dict[str, set[str]] = _collect_python_translation_messages(gui_root=gui_root)
+    schematic_messages: set[str] | None = messages.get("SchematicLibraryModel", None)
+
+    assert schematic_messages is not None
+    assert "Bus" in schematic_messages
+    assert "Connectivity bus" in schematic_messages
+    assert "3W-Transformer" in schematic_messages
+    assert "NW-Transformer" in schematic_messages
+    assert "Fluid-node" in schematic_messages
+    assert "VSC" in schematic_messages
+    assert "Drag & drop {name} into the schematic" in schematic_messages
+
+
+def test_update_translations_collects_map_library_labels() -> None:
+    """
+    The translation updater should collect map library labels that use stable DeviceType drag data.
+    """
+    gui_root: Path = Path(__file__).resolve().parents[2] / "VeraGrid" / "Gui"
+    messages: dict[str, set[str]] = _collect_python_translation_messages(gui_root=gui_root)
+    map_messages: set[str] | None = messages.get("MapLibraryModel", None)
+
+    assert map_messages is not None
+    assert "Substation" in map_messages
+    assert "Drag & drop {name} into the schematic" in map_messages
+
+
+def test_update_translations_includes_runtime_diagram_library_labels() -> None:
+    """
+    Runtime diagram library labels should be explicitly available for every catalog sync.
+    """
+    messages: dict[str, set[str]] = _get_diagram_library_translation_messages()
+    schematic_messages: set[str] | None = messages.get("SchematicLibraryModel", None)
+    map_messages: set[str] | None = messages.get("MapLibraryModel", None)
+
+    assert schematic_messages is not None
+    assert "Bus" in schematic_messages
+    assert "Connectivity bus" in schematic_messages
+    assert "3W-Transformer" in schematic_messages
+    assert "NW-Transformer" in schematic_messages
+    assert "Fluid-node" in schematic_messages
+    assert "VSC" in schematic_messages
+    assert "Drag & drop {name} into the schematic" in schematic_messages
+
+    assert map_messages is not None
+    assert "Substation" in map_messages
+    assert "Drag & drop {name} into the schematic" in map_messages
 
 
 def test_install_translators_loads_spanish_catalog(qt_app: object) -> None:

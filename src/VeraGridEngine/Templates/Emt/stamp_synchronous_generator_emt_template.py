@@ -525,7 +525,7 @@ def get_stamp_ac4a_exciter_emt(vf: VarFactory, name: str = "stamp_ac4a_exciter")
         in_vars=[irpu, v_a, v_b, v_c, vpss],
         out_vars=[vf_out],
         event_dict={
-            us_ref: vf.add_const(None),
+            us_ref: vc + y_fb - vpss + verr,
             ka: vf.add_const(200.0),
             ta: vf.add_const(0.015),
             tb: vf.add_const(10.0),
@@ -547,7 +547,6 @@ def get_stamp_ac4a_exciter_emt(vf: VarFactory, name: str = "stamp_ac4a_exciter")
             y_ll: x_avr / ka,
             x_ll: y_ll,
             verr: y_ll,
-            us_ref: vc + y_fb - vpss + verr,
         },
         name=name,
     )

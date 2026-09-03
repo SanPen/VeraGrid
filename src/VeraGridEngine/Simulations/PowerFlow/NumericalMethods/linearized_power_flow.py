@@ -426,11 +426,12 @@ def acdc_lin_pf(nc: NumericalCircuit,
 
         if nc.bus_data.is_dc[f] and nc.bus_data.is_dc[t]:
             # this is a dc branch
-            ys = float(nc.passive_branch_data.active[k]) / (nc.passive_branch_data.R[k] + 1e-20)
+            ys: float = float(nc.passive_branch_data.active[k]) / (nc.passive_branch_data.R[k] + 1e-20)
 
         elif not nc.bus_data.is_dc[f] and not nc.bus_data.is_dc[t]:
-            # this is an ac branch
-            ys = float(nc.passive_branch_data.active[k]) / (nc.passive_branch_data.X[k] + 1e-20)
+            # AC branch, where the DC susceptance includes the tap module
+            m: float = float(nc.active_branch_data.tap_module[k])
+            ys = float(nc.passive_branch_data.active[k]) / (nc.passive_branch_data.X[k] * m + 1e-20)
 
         else:
             # this is an error

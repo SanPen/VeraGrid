@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>380</width>
-    <height>200</height>
+    <height>230</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,17 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="2" column="0">
+       <widget class="QLabel" name="dgsDynamicSimulationModeLabel">
+        <property name="text">
+         <string>Dynamic simulation mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="dgsDynamicSimulationModeComboBox"/>
+      </item>
+      <item row="3" column="0" colspan="2">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Orientation::Vertical</enum>
@@ -47,7 +57,7 @@
         </property>
        </spacer>
       </item>
-      <item row="3" column="0" colspan="2">
+      <item row="4" column="0" colspan="2">
        <widget class="QPushButton" name="importButton">
         <property name="text">
          <string>Import</string>

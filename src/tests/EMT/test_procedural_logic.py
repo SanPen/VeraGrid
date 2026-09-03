@@ -3,9 +3,10 @@
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
+import math
 import time
 import statistics
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Mapping, Optional, Tuple
 
 import numpy as np
 import pytest
@@ -23,13 +24,49 @@ from VeraGridEngine.Utils.procedural_logic import (
     ifelse,
     lastvalue,
     picdro,
+    ProceduralLogicCodec,
     reset,
+    sampled_value,
     select,
 )
 from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonTraceCollector
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import Comparison, Const, Expr, Var
+from VeraGridEngine.Utils.Symbolic.symbolic import atan2, Comparison, Const, Expr, Var
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
+
+
+def _read_benchmark_float(
+        statistics_data: Mapping[str, object],
+        field_name: str,
+) -> float:
+    """Read one numeric statistic from an offline benchmark result.
+
+    :param statistics_data: Benchmark fields produced by the local test run.
+    :param field_name: Required numeric statistic name.
+    :return: Statistic converted to floating-point representation.
+    """
+    raw_value: object = statistics_data.get(field_name, None)
+    if isinstance(raw_value, (float, int)) and not isinstance(raw_value, bool):
+        return float(raw_value)
+    else:
+        raise TypeError(f"Benchmark field '{field_name}' must be numeric")
+
+
+def _read_benchmark_integer(
+        statistics_data: Mapping[str, object],
+        field_name: str,
+) -> int:
+    """Read one exact integer statistic from an offline benchmark result.
+
+    :param statistics_data: Benchmark fields produced by the local test run.
+    :param field_name: Required integer statistic name.
+    :return: Exact integer statistic.
+    """
+    raw_value: object = statistics_data.get(field_name, None)
+    if isinstance(raw_value, int) and not isinstance(raw_value, bool):
+        return raw_value
+    else:
+        raise TypeError(f"Benchmark field '{field_name}' must be an integer")
 
 
 class GenericEmtProblem(EmtProblemTemplate):
@@ -400,11 +437,20 @@ def create_boolean_operator_system(vf: VarFactory) -> Tuple[Block, Dict[str, Var
     )
 
     block.procedural_logic = [
-        picdro(x_fast > 0.65, 1.0e-3, 0.0, output=trip_fast),
-        picdro(bool_and(x_fast > 0.45, x_slow > 0.30), 2.0e-3, 0.0, output=trip_and),
-        flipflop(bool_or(trip_fast > 0.5, trip_and > 0.5), 0.0, output=master_trip),
+        picdro(x_fast > 0.65, Const(1.0e-3), Const(0.0), output=trip_fast),
+        picdro(
+            bool_and(x_fast > 0.45, x_slow > 0.30),
+            Const(2.0e-3),
+            Const(0.0),
+            output=trip_and,
+        ),
+        flipflop(
+            bool_or(trip_fast > 0.5, trip_and > 0.5),
+            Const(0.0),
+            output=master_trip,
+        ),
         lastvalue(x_mem, output=x_mem_last),
-        reset(x_mem, master_trip > 0.5, 0.0),
+        reset(x_mem, master_trip > 0.5, Const(0.0)),
     ]
 
     return block, {
@@ -544,7 +590,7 @@ def _build_benchmark_case(builder) -> Tuple[GenericEmtProblem, JitSymbolicSolver
         method=DynamicIntegrationMethod.DaeTrapezoidal,
         verbose=False,
     )
-    logic_snapshot = problem.sys_block._procedural_logic_to_dict()
+    logic_snapshot = problem.sys_block.serialize_procedural_logic_entries()
     return problem, solver, logic_snapshot
 
 
@@ -553,7 +599,10 @@ def _run_benchmark_simulation(
     solver: JitSymbolicSolver,
     logic_snapshot: list[dict[str, object]],
 ) -> Dict[str, object]:
-    problem.sys_block.procedural_logic = Block._procedural_logic_from_dict(logic_snapshot)
+    problem.sys_block.procedural_logic = Block.reconstruct_procedural_logic_entries(
+        data=logic_snapshot,
+        procedural_logic_codec=ProceduralLogicCodec(),
+    )
     updater = build_boundary_updater_from_block(problem)
 
     collector = NewtonTraceCollector()
@@ -584,7 +633,7 @@ def benchmark_switch_formulation(builder, measured_runs: int = 3) -> Dict[str, o
         for _ in range(measured_runs)
     ]
 
-    elapsed = [float(item["elapsed_s"]) for item in measured]
+    elapsed = [_read_benchmark_float(item, "elapsed_s") for item in measured]
     mean_iterations = [float(np.mean(item["iterations_per_step"])) for item in measured]
     max_iterations = [float(np.max(item["iterations_per_step"])) for item in measured]
 
@@ -592,7 +641,9 @@ def benchmark_switch_formulation(builder, measured_runs: int = 3) -> Dict[str, o
         "median_elapsed_s": statistics.median(elapsed),
         "mean_newton_iterations": statistics.median(mean_iterations),
         "max_newton_iterations": statistics.median(max_iterations),
-        "records_per_run": [int(item["trace_records"]) for item in measured],
+        "records_per_run": [
+            _read_benchmark_integer(item, "trace_records") for item in measured
+        ],
         "elapsed_samples": elapsed,
         "mean_iteration_samples": mean_iterations,
         "max_iteration_samples": max_iterations,
@@ -653,7 +704,10 @@ def test_block_roundtrip_preserves_procedural_logic() -> None:
     vf = VarFactory()
     block, _ = create_integrator_trip_system_with_logic(vf)
 
-    restored = Block.parse(block.to_dict())
+    restored = Block.parse(
+        data=block.to_dict(),
+        procedural_logic_codec=ProceduralLogicCodec(),
+    )
 
     assert len(restored.procedural_logic) == 1
     logic = restored.procedural_logic[0]
@@ -676,10 +730,12 @@ def test_boundary_updater_builds_from_block_logic() -> None:
         glob_time=vf.add_var("t_glob"),
         static_parameter_values_mapping=static_parameter_values_mapping,
     )
+    canonical_logic: object = block.procedural_logic[0]
 
     updater = build_boundary_updater_from_block(problem)
     assert updater is not None
     assert len(updater.logic_entries) == 1
+    assert updater.logic_entries[0] is not canonical_logic
 
     params = problem.event_params_values.copy()
     x = problem.get_x0().copy()
@@ -689,6 +745,52 @@ def test_boundary_updater_builds_from_block_logic() -> None:
     forced_time = updater.get_next_forced_event_time(0.0, 0.01)
     assert forced_time is not None
     assert pytest.approx(forced_time, abs=1e-7) == 1.5e-3
+
+
+def test_sampled_value_uses_declarative_atan2_argument_order() -> None:
+    """Evaluate procedural ``atan2(imaginary, real)`` without generated code.
+
+    :return: None.
+    """
+    vf: VarFactory = VarFactory()
+    imaginary: Var = vf.add_var("imaginary")
+    real: Var = vf.add_var("real")
+    angle: Var = vf.add_var("angle")
+    block: Block = Block(
+        name="ProceduralAtan2Test",
+        algebraic_vars=list((imaginary, real)),
+        algebraic_eqs=list((imaginary, real)),
+        event_dict=dict(((angle, Const(0.0)),)),
+        procedural_logic=list((
+            sampled_value(
+                output=angle,
+                source=atan2(imaginary, real),
+                name="sample_angle",
+            ),
+        )),
+    )
+    block.unify_blocks()
+    block = Block.parse(
+        data=block.to_dict(),
+        procedural_logic_codec=ProceduralLogicCodec(),
+    )
+    problem: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var("t_glob_atan2"),
+        static_parameter_values_mapping=dict(),
+    )
+    updater: BoundaryUpdateWrapper | None = build_boundary_updater_from_block(problem)
+
+    assert updater is not None
+
+    state: np.ndarray = problem.get_x0().copy()
+    parameters: np.ndarray = problem.event_params_values.copy()
+    state[problem.get_var_idx(imaginary)] = 1.0
+    state[problem.get_var_idx(real)] = 0.0
+    updater.update(t=0.0, x=state, params=parameters)
+
+    angle_idx: int = problem.uid2idx_event_params[angle.uid]
+    assert parameters[angle_idx] == pytest.approx(math.pi / 2.0)
 
 
 def test_procedural_logic_demo_path_trips_mode_during_simulation() -> None:
@@ -864,7 +966,7 @@ def test_protection_chain_freezes_integrator_with_exact_substep_alignment() -> N
     """
     The retained mode parameter must freeze the integrator after the protection trips.
 
-    This test validates four behaviours:
+    This test validates four behaviors:
     1. ``mode_dict`` parameters are classified as retained runtime modes.
     2. The protection chain can latch a future trip time.
     3. The solver can align a substep exactly at a non-grid trip time.
@@ -1043,15 +1145,21 @@ def test_procedural_switch_reduces_newton_iterations(
     """
     Test that procedural mode switch reduces Newton iterations compared to embedded ifelse/select.
     """
-    procedural_mean = float(procedural_stats["mean_newton_iterations"])
-    procedural_max = float(procedural_stats["max_newton_iterations"])
+    procedural_mean = _read_benchmark_float(
+        procedural_stats,
+        "mean_newton_iterations",
+    )
+    procedural_max = _read_benchmark_float(
+        procedural_stats,
+        "max_newton_iterations",
+    )
 
     for label, stats in {
         "ifelse_internal": internal_ifelse_stats,
         "select_internal": internal_select_stats,
     }.items():
-        internal_mean = float(stats["mean_newton_iterations"])
-        internal_max = float(stats["max_newton_iterations"])
+        internal_mean = _read_benchmark_float(stats, "mean_newton_iterations")
+        internal_max = _read_benchmark_float(stats, "max_newton_iterations")
 
         assert internal_mean > 4.0 * procedural_mean, \
             f"Expected embedded {label} to require much more Newton work: internal={stats}, procedural={procedural_stats}"
@@ -1070,13 +1178,16 @@ def test_procedural_switch_reduces_runtime_after_warmup(
     """
     Test that procedural mode switch is faster after warmup compared to embedded ifelse/select.
     """
-    procedural_elapsed = float(procedural_stats["median_elapsed_s"])
+    procedural_elapsed = _read_benchmark_float(
+        procedural_stats,
+        "median_elapsed_s",
+    )
 
     for label, stats in {
         "ifelse_internal": internal_ifelse_stats,
         "select_internal": internal_select_stats,
     }.items():
-        internal_elapsed = float(stats["median_elapsed_s"])
+        internal_elapsed = _read_benchmark_float(stats, "median_elapsed_s")
 
         assert procedural_elapsed < internal_elapsed, \
             f"Expected procedural mode switch to be faster after warm-up than {label}: internal={stats}, procedural={procedural_stats}"
@@ -1090,10 +1201,10 @@ def test_internal_select_and_ifelse_have_same_benchmark_profile(
     Test that internal select and ifelse have the same benchmark profile.
     """
     assert pytest.approx(
-        float(internal_ifelse_stats["mean_newton_iterations"]),
+        _read_benchmark_float(internal_ifelse_stats, "mean_newton_iterations"),
         abs=1e-9
-    ) == float(internal_select_stats["mean_newton_iterations"])
+    ) == _read_benchmark_float(internal_select_stats, "mean_newton_iterations")
     assert pytest.approx(
-        float(internal_ifelse_stats["max_newton_iterations"]),
+        _read_benchmark_float(internal_ifelse_stats, "max_newton_iterations"),
         abs=1e-9
-    ) == float(internal_select_stats["max_newton_iterations"])
+    ) == _read_benchmark_float(internal_select_stats, "max_newton_iterations")

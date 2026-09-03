@@ -77,4 +77,5 @@ def get_line_rms_ml_template(vfactory: VarFactory, name="Line_rms_template") -> 
 
     templ.block.in_vars = inputs
 
+    templ.comment = 'AC line RMS multilinear model'
     return templ

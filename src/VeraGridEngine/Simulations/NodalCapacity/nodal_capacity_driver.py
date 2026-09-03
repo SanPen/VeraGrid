@@ -282,6 +282,7 @@ class NodalCapacityDriver(DriverTemplate):
         :return:
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         if self.engine == EngineType.VeraGrid:
             if self.options.method == NodalCapacityMethod.LinearOptimization:

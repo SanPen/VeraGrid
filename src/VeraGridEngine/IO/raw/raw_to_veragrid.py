@@ -557,12 +557,16 @@ def get_veragrid_shunt_switched(
     # (step 0 = neutral/off, step k = first k blocks on).
     cum_b = np.insert(np.cumsum([n * b for n, b in zip(n_list, b_list)]), 0, 0.0)
     init_step = int(np.argmin(np.abs(cum_b - psse_elm.BINIT))) if len(cum_b) > 1 else 0
+    b_min = float(np.min(cum_b)) if len(cum_b) > 0 else 0.0
+    b_max = float(np.max(cum_b)) if len(cum_b) > 0 else 0.0
 
     elm = dev.ControllableShunt(
         name='Switched shunt ' + busnum_id,
         code=busnum_id,
         active=bool(psse_elm.STAT),
         B=b_init,
+        Bmin=b_min,
+        Bmax=b_max,
         step=init_step,
         vset=vset,
         vmin=float(psse_elm.VSWLO),
@@ -666,12 +670,11 @@ def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, 
         Qmax = psse_elm.QT
         Q = psse_elm.QG
 
-    # A non-slack generator with no reactive range (QT == QB) cannot regulate voltage.
-    # Keep the slack machine as voltage-controlled even when its reactive range is zero,
-    # because the RAW slack/reference bus still defines the system angle and voltage target.
     bus = psse_bus_dict[psse_elm.I]
     if Qmax == Qmin and not bus.is_slack:
-        control_mode = GeneratorControlMode.Q
+        has_wind_pf_reactive_control = psse_elm.WMOD == 2 and abs(abs(psse_elm.WPF) - 1.0) > 1e-6
+        if not has_wind_pf_reactive_control:
+            control_mode = GeneratorControlMode.Q
 
     elm = dev.Generator(
         name=name,
@@ -1127,29 +1130,7 @@ def get_veragrid_transformer(
         tr3w.winding2.tap_phase = np.deg2rad(psse_elm.ANG2)
         tr3w.winding3.tap_phase = np.deg2rad(psse_elm.ANG3)
 
-        # STAT=2/3/4 means winding 1/2/3 is individually out of service
-        if psse_elm.STAT == 0:
-            tr3w.winding1.active = False
-            tr3w.winding2.active = False
-            tr3w.winding3.active = False
-        elif psse_elm.STAT == 1:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = True
-            tr3w.winding3.active = True
-        elif psse_elm.STAT == 2:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = False
-            tr3w.winding3.active = True
-        elif psse_elm.STAT == 3:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = True
-            tr3w.winding3.active = False
-        elif psse_elm.STAT == 4:
-            tr3w.winding1.active = False
-            tr3w.winding2.active = True
-            tr3w.winding3.active = True
-
-        # STAT=2/3/4 means winding 1/2/3 is individually out of service
+        # STAT=2/3/4 means winding 2/3/1 is individually out of service
         if psse_elm.STAT == 0:
             tr3w.winding1.active = False
             tr3w.winding2.active = False
@@ -1191,9 +1172,9 @@ def get_veragrid_transformer(
 
         elif psse_elm.CW == 3:
 
-            tr3w.winding1.tap_module = psse_elm.WINDV1 / NOMV1
-            tr3w.winding2.tap_module = psse_elm.WINDV2 / NOMV2
-            tr3w.winding3.tap_module = psse_elm.WINDV3 / NOMV3
+            tr3w.winding1.tap_module = psse_elm.WINDV1 * NOMV1 / bus_1.Vnom
+            tr3w.winding2.tap_module = psse_elm.WINDV2 * NOMV2 / bus_2.Vnom
+            tr3w.winding3.tap_module = psse_elm.WINDV3 * NOMV3 / bus_3.Vnom
         else:
             raise Exception('Unknown impedance combination CW=' + str(psse_elm.CZ))
 
@@ -1294,6 +1275,15 @@ def get_veragrid_line(psse_elm: RawBranchLike,
     if protection_factor == 0:
         protection_factor = 1.4
 
+    active = bool(psse_elm.ST)
+
+    if active and (not bus_from.active or not bus_to.active):
+        active = False
+        logger.add_warning(
+            msg="Branch connected to inactive bus imported as inactive",
+            device=code,
+        )
+
     branch = dev.Line(bus_from=bus_from,
                       bus_to=bus_to,
                       idtag=psse_elm.idtag,
@@ -1305,7 +1295,7 @@ def get_veragrid_line(psse_elm: RawBranchLike,
                       rate=rate1,
                       contingency_factor=round(contingency_factor, 6),
                       protection_rating_factor=round(protection_factor, 6),
-                      active=bool(psse_elm.ST),
+                      active=active,
                       mttf=0,
                       mttr=0,
                       length=psse_elm.LEN)

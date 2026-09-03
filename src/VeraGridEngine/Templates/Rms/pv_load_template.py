@@ -24,7 +24,8 @@ class PvLoadRmsTemplate(TemplateDefinition):
         return PVLoadBuild(self.vf, self.get_value("name"), self.get_value("Pg0_val"), self.get_value("Vg0_val"))
 
 
-def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) -> RmsModelTemplate:
+def PVLoadBuild(vfactory: VarFactory, name: str = "PV load RMS template",
+                Pg0_val: float = 1.0, Vg0_val: float = 1.0) -> RmsModelTemplate:
     """
     Builds an RMS model template for a PV load with reactive power limits.
     
@@ -40,17 +41,15 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
         Vh = Vg0      if Qmax_G < Qh < Qmin_G
         Qg = Qmin_G   if Qh <= Qmin_G
     
-    Args:
-        vfactory: VarFactory instance for creating variables
-        name (str): Name of the PV load model
-        Pg0 (float): Initial active power (pu)
-        Qg0 (float): Initial reactive power (pu)
-    
-    Returns:
-        RmsModelTemplate: Configured RMS model template for PV load simulation
+    :param vfactory: Factory that owns the model's symbolic variables.
+    :param name: Name assigned to the generated RMS model template.
+    :param Pg0_val: Initial active power in per unit.
+    :param Vg0_val: Initial voltage reference in per unit.
+    :return: Configured PV-load RMS model template.
     """
     templ = RmsModelTemplate()
     templ.tpe = DeviceType.LoadDevice
+    templ.name = name
     
     # Input: Vm (voltage magnitude)
     Vm = vfactory.add_var("Vm")
@@ -108,5 +107,6 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
     
     templ.block.in_vars = inputs
     
+    templ.comment = 'Load RMS PV voltage-dependent model'
     return templ
 

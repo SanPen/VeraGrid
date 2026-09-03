@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -124,6 +125,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.rms_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.initialization</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_explicit</span><span class="p">,</span> <span class="n">init_pseudo_transient</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.problems.rms_problem_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsProblemTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.problems.rms_terminal_power_assembly</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">assemble_rms_terminal_power_contributions</span><span class="p">,</span>
+    <span class="n">convert_rms_ac_power_balance_to_current_balance</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Events.rms_events_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsEventsGroup</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
@@ -486,11 +491,27 @@
                 <span class="n">f</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]</span>
 
-                <span class="c1"># Phasor formulation: use current balance instead of power balance</span>
-                <span class="n">setIr</span><span class="p">(</span><span class="n">Ir</span><span class="p">,</span> <span class="n">Ir_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Irf</span><span class="p">))</span>
-                <span class="n">setIr</span><span class="p">(</span><span class="n">Ir</span><span class="p">,</span> <span class="n">Ir_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Irt</span><span class="p">))</span>
-                <span class="n">setIi</span><span class="p">(</span><span class="n">Ii</span><span class="p">,</span> <span class="n">Ii_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Iif</span><span class="p">))</span>
-                <span class="n">setIi</span><span class="p">(</span><span class="n">Ii</span><span class="p">,</span> <span class="n">Ii_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Iit</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_terminal_power_contributions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># A declared equipment power interface is converted to KCL</span>
+                    <span class="c1"># only after every physical device has been assembled.</span>
+                    <span class="n">assemble_rms_terminal_power_contributions</span><span class="p">(</span>
+                        <span class="n">model</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">,</span>
+                        <span class="n">bus_from_index</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+                        <span class="n">bus_to_index</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+                        <span class="n">bus_from_is_dc</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                        <span class="n">bus_to_is_dc</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                        <span class="n">active_power_balance</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
+                        <span class="n">active_power_balance_used</span><span class="o">=</span><span class="n">P_used</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance_used</span><span class="o">=</span><span class="n">Q_used</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Preserve native phasor-current templates that have not</span>
+                    <span class="c1"># migrated to the hidden terminal-power contract.</span>
+                    <span class="n">setIr</span><span class="p">(</span><span class="n">Ir</span><span class="p">,</span> <span class="n">Ir_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Irf</span><span class="p">))</span>
+                    <span class="n">setIr</span><span class="p">(</span><span class="n">Ir</span><span class="p">,</span> <span class="n">Ir_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Irt</span><span class="p">))</span>
+                    <span class="n">setIi</span><span class="p">(</span><span class="n">Ii</span><span class="p">,</span> <span class="n">Ii_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Iif</span><span class="p">))</span>
+                    <span class="n">setIi</span><span class="p">(</span><span class="n">Ii</span><span class="p">,</span> <span class="n">Ii_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Iit</span><span class="p">))</span>
 
         <span class="c1"># Populating VSCs init guess</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_vsc</span><span class="p">()):</span>
@@ -515,9 +536,40 @@
 
                 <span class="n">f</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]</span>
-                <span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pf</span><span class="p">))</span>
-                <span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pt</span><span class="p">))</span>
-                <span class="n">setQ</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qt</span><span class="p">))</span>
+                <span class="n">dc_voltage_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_flow_results</span><span class="o">.</span><span class="n">voltage</span><span class="p">[</span><span class="n">f</span><span class="p">])</span>
+                <span class="p">)</span>
+                <span class="n">dc_current_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_flow_results</span><span class="o">.</span><span class="n">If_vsc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_init_guess</span><span class="p">(</span>
+                    <span class="n">mdl</span><span class="p">,</span>
+                    <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vf_dc</span><span class="p">,</span>
+                    <span class="n">dc_voltage_init</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_init_guess</span><span class="p">(</span>
+                    <span class="n">mdl</span><span class="p">,</span>
+                    <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">,</span>
+                    <span class="n">dc_current_init</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_terminal_power_contributions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># New templates declare their physical terminal powers</span>
+                    <span class="c1"># independently from selectable signal ports.</span>
+                    <span class="n">assemble_rms_terminal_power_contributions</span><span class="p">(</span>
+                        <span class="n">model</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+                        <span class="n">bus_from_index</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+                        <span class="n">bus_to_index</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+                        <span class="n">bus_from_is_dc</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                        <span class="n">bus_to_is_dc</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                        <span class="n">active_power_balance</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
+                        <span class="n">active_power_balance_used</span><span class="o">=</span><span class="n">P_used</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance_used</span><span class="o">=</span><span class="n">Q_used</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Version-one and custom legacy VSC models retain their</span>
+                    <span class="c1"># historical power-reference coupling during migration.</span>
+                    <span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pf</span><span class="p">))</span>
+                    <span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pt</span><span class="p">))</span>
+                    <span class="n">setQ</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qt</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sys_block</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
 
         <span class="c1"># Populating HVDC init guess (similar to VSCs)</span>
@@ -541,10 +593,23 @@
 
                 <span class="n">f</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]</span>
-                <span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pf</span><span class="p">))</span>
-                <span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pt</span><span class="p">))</span>
-                <span class="n">setQ</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qf</span><span class="p">))</span>
-                <span class="n">setQ</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qt</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_terminal_power_contributions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">assemble_rms_terminal_power_contributions</span><span class="p">(</span>
+                        <span class="n">model</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+                        <span class="n">bus_from_index</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+                        <span class="n">bus_to_index</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+                        <span class="n">bus_from_is_dc</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                        <span class="n">bus_to_is_dc</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                        <span class="n">active_power_balance</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
+                        <span class="n">active_power_balance_used</span><span class="o">=</span><span class="n">P_used</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance_used</span><span class="o">=</span><span class="n">Q_used</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pf</span><span class="p">))</span>
+                    <span class="n">setP</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">P_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pt</span><span class="p">))</span>
+                    <span class="n">setQ</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q_used</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qf</span><span class="p">))</span>
+                    <span class="n">setQ</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Q_used</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">-</span><span class="n">mdl</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qt</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sys_block</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
 
         <span class="c1"># initialize injections</span>
@@ -713,11 +778,31 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">set_init_guess</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span> <span class="n">Sdev</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
 
                 <span class="n">k</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span>
-                <span class="c1"># Phasor formulation: use current balance</span>
-                <span class="k">if</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ir</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">:</span>
-                    <span class="n">setIr</span><span class="p">(</span><span class="n">Ir</span><span class="p">,</span> <span class="n">Ir_used</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ir</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ii</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">:</span>
-                    <span class="n">setIi</span><span class="p">(</span><span class="n">Ii</span><span class="p">,</span> <span class="n">Ii_used</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ii</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_terminal_power_contributions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">assemble_rms_terminal_power_contributions</span><span class="p">(</span>
+                        <span class="n">model</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">,</span>
+                        <span class="n">bus_from_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">bus_to_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">bus_from_is_dc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">bus_to_is_dc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">active_power_balance</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
+                        <span class="n">active_power_balance_used</span><span class="o">=</span><span class="n">P_used</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance_used</span><span class="o">=</span><span class="n">Q_used</span><span class="p">,</span>
+                        <span class="n">bus_index</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+                        <span class="n">bus_is_dc</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Legacy phasor models contribute their selected current</span>
+                    <span class="c1"># outputs directly until they declare a power terminal.</span>
+                    <span class="k">if</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ir</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">:</span>
+                        <span class="n">setIr</span><span class="p">(</span><span class="n">Ir</span><span class="p">,</span> <span class="n">Ir_used</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ir</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">if</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ii</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">external_mapping</span><span class="p">:</span>
+                        <span class="n">setIi</span><span class="p">(</span><span class="n">Ii</span><span class="p">,</span> <span class="n">Ii_used</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ii</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">initialization_method</span> <span class="o">==</span> <span class="n">RmsInitializationMethod</span><span class="o">.</span><span class="n">Explicit</span><span class="p">:</span>
 
@@ -777,12 +862,40 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">):</span>
             <span class="n">mdl</span> <span class="o">=</span> <span class="n">block_deep_copy</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">Ir_used</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Ii_used</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Isolated bus&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                    <span class="c1"># DC buses have one voltage coordinate, so their physical</span>
+                    <span class="c1"># terminal-power contract produces one active-power balance.</span>
+                    <span class="k">if</span> <span class="n">Q_used</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Reactive-power balance found on a DC bus&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">P_used</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Isolated bus&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Phasor formulation uses current balance equations</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ir</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ii</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="c1"># Convert device terminal powers before emitting the two</span>
+                    <span class="c1"># real-valued Kirchhoff current equations of an AC bus.</span>
+                    <span class="n">convert_rms_ac_power_balance_to_current_balance</span><span class="p">(</span>
+                        <span class="n">bus_index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+                        <span class="n">voltage_real</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vr</span><span class="p">),</span>
+                        <span class="n">voltage_imaginary</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">E</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vi</span><span class="p">),</span>
+                        <span class="n">active_power_balance</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
+                        <span class="n">active_power_balance_used</span><span class="o">=</span><span class="n">P_used</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+                        <span class="n">reactive_power_balance_used</span><span class="o">=</span><span class="n">Q_used</span><span class="p">,</span>
+                        <span class="n">real_current_balance</span><span class="o">=</span><span class="n">Ir</span><span class="p">,</span>
+                        <span class="n">real_current_balance_used</span><span class="o">=</span><span class="n">Ir_used</span><span class="p">,</span>
+                        <span class="n">imaginary_current_balance</span><span class="o">=</span><span class="n">Ii</span><span class="p">,</span>
+                        <span class="n">imaginary_current_balance_used</span><span class="o">=</span><span class="n">Ii_used</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">Ir_used</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Ii_used</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Isolated bus&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Phasor AC buses own real and imaginary KCL residuals.</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ir</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_algebraic_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ii</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
 
         <span class="c1"># self._variable_parameters: List[Var] = list()</span>
         <span class="c1"># self._event_parameters_eqs: List[Expr | Const] = list()</span>

@@ -11,7 +11,6 @@ from PySide6 import QtWidgets
 
 import VeraGrid.Session.file_handler as filedrv
 from VeraGrid.Gui.FileDialogues.DgsDialogue.dgs_export_gui import Ui_DgsExportDialog
-from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import DgsExportMode, FileType
 
@@ -41,7 +40,6 @@ class DgsExportDialogue(QtWidgets.QDialog):
         self.app: IoMain = app
 
         self.logger: Logger = Logger()
-        self.logs_dialogue: LogsDialogue | None = None
 
         self.dgs_export_modes: list[DgsExportMode] = [
             DgsExportMode.SingleFile,

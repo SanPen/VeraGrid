@@ -535,6 +535,17 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
         # Run the first analysis immediately so the dashboard opens populated.
         self.analyze_all()
 
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Release plot resources when the analysis window closes.
+
+        :param event: Qt close event.
+        :return: None.
+        """
+        self.balancePlotWidget.dispose()
+        self.ui.sigmaPlotWidget.dispose()
+        QtWidgets.QMainWindow.closeEvent(self, event)
+
     def tr(self, source_text: str, disambiguation: str | None = None, n: int = -1) -> str:
         """
         Translate runtime strings through the ``MainWindow`` catalog context.

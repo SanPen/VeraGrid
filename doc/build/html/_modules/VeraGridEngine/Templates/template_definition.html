@@ -107,11 +107,13 @@
 <span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.emt_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtModelTemplate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindingType</span><span class="p">,</span> <span class="n">V_I_CurveSequenceType</span><span class="p">,</span> <span class="n">WaveformSequenceType</span><span class="p">,</span> <span class="n">X_Y_SequenceType</span><span class="p">,</span> <span class="n">X_Y_Z_Matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ConverterControlType</span><span class="p">,</span> <span class="n">WindingType</span><span class="p">,</span> <span class="n">V_I_CurveSequenceType</span><span class="p">,</span>
+                                         <span class="n">WaveformSequenceType</span><span class="p">,</span> <span class="n">X_Y_SequenceType</span><span class="p">,</span> <span class="n">X_Y_Z_Matrix</span><span class="p">)</span>
 
 
 
@@ -122,6 +124,7 @@
     <span class="n">Type</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">Type</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">Type</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Vec</span><span class="p">]],</span>
+    <span class="n">Type</span><span class="p">[</span><span class="n">ConverterControlType</span><span class="p">],</span>
     <span class="n">Type</span><span class="p">[</span><span class="n">WindingType</span><span class="p">],</span>
     <span class="n">Type</span><span class="p">[</span><span class="n">V_I_CurveSequenceType</span><span class="p">],</span>
     <span class="n">Type</span><span class="p">[</span><span class="n">WaveformSequenceType</span><span class="p">],</span>
@@ -145,17 +148,40 @@
         <span class="s2">&quot;display&quot;</span><span class="p">,</span>
         <span class="s2">&quot;editable&quot;</span><span class="p">,</span>
         <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;allowed_values&quot;</span><span class="p">,</span>
 
     <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">descr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tpe</span><span class="p">:</span> <span class="n">TEMPLATEPROP_TYPES</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">units</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">descr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">tpe</span><span class="p">:</span> <span class="n">TEMPLATEPROP_TYPES</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">allowed_values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Enum</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Describe one editable input of a symbolic template builder.</span>
+
+<span class="sd">        When ``allowed_values`` is provided for an enum property, editors must</span>
+<span class="sd">        offer only that subset instead of every member of the enum class.</span>
+
+<span class="sd">        :param name: Property identifier used by the template builder.</span>
+<span class="sd">        :param units: Units displayed by property editors.</span>
+<span class="sd">        :param descr: Human-readable explanation of the property.</span>
+<span class="sd">        :param tpe: Runtime type expected by the template builder.</span>
+<span class="sd">        :param value: Default property value.</span>
+<span class="sd">        :param allowed_values: Optional ordered subset of permitted enum members.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">units</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">descr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">descr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tpe</span><span class="p">:</span> <span class="n">TEMPLATEPROP_TYPES</span> <span class="o">=</span> <span class="n">tpe</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">display</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allowed_values</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Enum</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">None</span> <span class="k">if</span> <span class="n">allowed_values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">allowed_values</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
 
 

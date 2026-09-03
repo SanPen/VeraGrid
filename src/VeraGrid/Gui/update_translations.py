@@ -475,6 +475,36 @@ def _get_runtime_tree_label_sources() -> list[str]:
     return sorted(source_texts)
 
 
+def _get_diagram_library_translation_messages() -> dict[str, set[str]]:
+    """
+    Return runtime-built diagram library labels grouped by their Qt context.
+
+    :returns: Qt context to source texts mapping.
+    """
+    messages: dict[str, set[str]] = dict()
+    schematic_messages: set[str] = set()
+    map_messages: set[str] = set()
+
+    # The library models use translated display strings but DeviceType values
+    # for drag/drop identity. These labels are runtime-built and must be kept
+    # in every catalog even when Qt's source scanner misses them.
+    schematic_messages.add("Bus")
+    schematic_messages.add("Connectivity bus")
+    schematic_messages.add("3W-Transformer")
+    schematic_messages.add("NW-Transformer")
+    schematic_messages.add("Fluid-node")
+    schematic_messages.add("VSC")
+    schematic_messages.add("Drag & drop {name} into the schematic")
+
+    map_messages.add("Substation")
+    map_messages.add("Drag & drop {name} into the schematic")
+
+    messages["SchematicLibraryModel"] = schematic_messages
+    messages["MapLibraryModel"] = map_messages
+
+    return messages
+
+
 def _build_unfinished_ts_message(source_text: str) -> str:
     """
     Build one untranslated Qt Linguist message block.
@@ -1200,6 +1230,10 @@ def update_translations(ai_config: LocalAiTranslationConfig | None = None) -> No
     ts_files: list[Path]
     tree_label_sources: list[str] = _get_runtime_tree_label_sources()
     python_messages: dict[str, set[str]]
+    diagram_library_messages: dict[str, set[str]]
+    context_name: str
+    source_texts: set[str]
+    catalog_source_texts: set[str] | None
 
     translations_dir.mkdir(parents=True, exist_ok=True)
     ts_files = _get_translation_source_files(translations_dir=translations_dir)
@@ -1210,6 +1244,14 @@ def update_translations(ai_config: LocalAiTranslationConfig | None = None) -> No
         pass
 
     python_messages = _collect_python_translation_messages(gui_root=gui_root)
+    diagram_library_messages = _get_diagram_library_translation_messages()
+
+    for context_name, source_texts in diagram_library_messages.items():
+        catalog_source_texts = python_messages.get(context_name, None)
+        if catalog_source_texts is None:
+            python_messages[context_name] = set(source_texts)
+        else:
+            catalog_source_texts.update(source_texts)
 
     # Update all catalogs in one lupdate pass so every translation file sees the same source tree.
     _run_command(

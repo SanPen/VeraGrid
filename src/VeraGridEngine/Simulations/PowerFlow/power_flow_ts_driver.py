@@ -165,6 +165,7 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         """
 
         self.tic()
+        self.report_text("Compiling and configuring...")
 
         if self.engine == EngineType.GSLV and not GSLV_AVAILABLE:
             self.engine = EngineType.VeraGrid

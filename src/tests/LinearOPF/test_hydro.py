@@ -67,6 +67,8 @@ def test_hydro_opf2():
 
     assert np.allclose(opf_driv.results.generator_power, p_results)
     assert np.allclose(opf_driv.results.fluid_path_flow, l_results)
+    assert np.min(opf_driv.results.fluid_node_fluid_value) >= 0.0
+    assert np.max(opf_driv.results.fluid_node_fluid_value) > 0.0
 
 
 def test_hydro_opf3():
@@ -159,6 +161,8 @@ def test_hydro_opf_simple1():
 
     assert np.allclose(opf_driv.results.fluid_node_current_level, l_results)
     assert np.allclose(opf_driv.results.generator_power, p_results)
+    assert opf_driv.results.fluid_node_fluid_value.shape == opf_driv.results.fluid_node_current_level.shape
+    assert np.all(np.isfinite(opf_driv.results.fluid_node_fluid_value))
 
 
 def test_hydro_opf_simple2():

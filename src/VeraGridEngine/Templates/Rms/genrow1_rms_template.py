@@ -113,4 +113,5 @@ def get_genrow1_rms_template(var_factory: VarFactory, name="Genrow rms template"
     templ.block.in_vars = inputs
     templ.block.out_vars = [P_g, Q_g]
 
+    templ.comment = 'Generator GENROW1 RMS model'
     return templ

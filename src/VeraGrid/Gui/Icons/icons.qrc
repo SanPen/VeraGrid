@@ -63,6 +63,10 @@
     <file>icons/investment_dev.png</file>
     <file>icons/modelling_authority.png</file>
     <file>icons/branch_group.png</file>
+    <file>icons/market_unit.svg</file>
+    <file>icons/market_unit.png</file>
+    <file>icons/control_pc.svg</file>
+    <file>icons/control_pc.png</file>
     <file>icons/contingency_group.png</file>
     <file>icons/contingency.png</file>
     <file>icons/powerplant.png</file>

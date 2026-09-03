@@ -661,6 +661,7 @@ def convert_sequence_line(seq: dev.SequenceLineType, new_id: str) -> TypLne:
     typlne.rline = seq.R
     typlne.xline = seq.X
     typlne.bline = seq.B
+    typlne.gline = seq.G
 
     if seq.use_conductance:
         typlne.cline = seq.Cnf
@@ -668,6 +669,7 @@ def convert_sequence_line(seq: dev.SequenceLineType, new_id: str) -> TypLne:
         typlne.cline = 0.0
 
     typlne.bline0 = seq.B0 if seq.B0 > 0 else 2 * seq.B
+    typlne.gline0 = seq.G0 if seq.G0 > 0 else 2 * seq.G
 
     if seq.use_conductance:
         typlne.cline0 = seq.Cnf0 if seq.Cnf0 > 0 else 2 * seq.Cnf
@@ -903,6 +905,16 @@ def _build_typtr3_and_elmtr3(
     if controlled_side is not None:
         elmtr3.ntrcn = 1
         elmtr3.ictrlside = int(controlled_side)
+        control_winding: dev.Winding = tr3.get_winding(controlled_side)
+        regulation_bus: dev.Bus | None = control_winding.regulation_bus
+        if regulation_bus is tr3.bus1:
+            elmtr3.t3ldc = 0
+        elif regulation_bus is tr3.bus2:
+            elmtr3.t3ldc = 1
+        elif regulation_bus is tr3.bus3:
+            elmtr3.t3ldc = 2
+        else:
+            elmtr3.t3ldc = 3
         if controlled_side == 0:
             elmtr3.usetp = float(winding_hv.get_vset_at(t))
         elif controlled_side == 1:

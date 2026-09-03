@@ -523,7 +523,7 @@ class ValidationSectionDialog(QDialog):
         """
         super().__init__(parent)
         self._section_results: list[ValidationSection] = section_results
-        self.setWindowTitle(self.tr("Model Consistency Validation"))
+        self.setWindowTitle("Model Consistency Validation")
         self.resize(860, 620)
 
         layout: QVBoxLayout = QVBoxLayout(self)
@@ -547,8 +547,8 @@ class ValidationSectionDialog(QDialog):
         scroll_layout.setSpacing(2)
 
         intro_label: QLabel = QLabel(
-            self.tr("Run an informational validation of the edited model structure, mappings, initialization, and port connectivity. "
-            "This check reports issues but does not block saving the model.")
+            "Run an informational validation of the edited model structure, mappings, initialization, and port connectivity. "
+            "This check reports issues but does not block saving the model."
         )
         intro_label.setWordWrap(True)
         scroll_layout.addWidget(intro_label)
@@ -648,7 +648,7 @@ class ValidationSectionDialog(QDialog):
             if section.get_show_issue_label():
                 # The warning label is kept, but spacing is reduced so the table is
                 # still visible together with the section title in normal cases.
-                warning_label: QLabel = QLabel(self.tr("Issues found in this section"))
+                warning_label: QLabel = QLabel("Issues found in this section")
                 warning_label.setStyleSheet("color: #b42318;")
                 warning_label.setContentsMargins(4, 0, 4, 0)
                 section_content_layout.addWidget(warning_label)

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 import sys
 import numpy as np
-from PySide6 import QtWidgets
+from PySide6 import QtGui, QtWidgets
 
 from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_gui import Ui_MainWindow
 from VeraGrid.Gui.results_model import ResultsModel
@@ -78,6 +78,16 @@ class SigmaAnalysisGUI(QtWidgets.QMainWindow):
         self.ui.sigmaMethodComboBox.currentIndexChanged.connect(self.update_dpr_options_enabled)
         self.ui.timeSlider.valueChanged.connect(self.update_time_label)
         self.ui.sigmaRerunButton.clicked.connect(self.rerun_sigma_analysis)
+
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Release plot resources when the analysis window closes.
+
+        :param event: Qt close event.
+        :return: None.
+        """
+        self.ui.plotwidget.dispose()
+        QtWidgets.QMainWindow.closeEvent(self, event)
 
     def setup_time_slider(self, t_idx: int | None) -> None:
         """

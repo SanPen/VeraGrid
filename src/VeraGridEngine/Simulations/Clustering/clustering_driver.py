@@ -38,6 +38,7 @@ class ClusteringDriver(DriverTemplate):
         Run thread
         """
         self.tic()
+        self.report_text("Compiling and configuring...")
         self.report_text("Clustering")
         self.report_progress(0.0)
 

@@ -1874,25 +1874,37 @@ def apply_symbol_mapping(block: Block,
     for external_key in external_keys_to_remove:
         del block.external_mapping[external_key]
 
-    static_keys_to_remove: List[ParamPowerFlowReferenceType] = list()
-    static_key: ParamPowerFlowReferenceType
-    mapped_static_variable: Var
-    for static_key, mapped_static_variable in block.api_obj_mapping.items():
-        if mapped_static_variable is variable:
-            static_keys_to_remove.append(static_key)
-        else:
-            pass
-    for static_key in static_keys_to_remove:
-        del block.api_obj_mapping[static_key]
-
     external_reference: VarPowerFlowReferenceType | None = row.get_external_reference()
-    static_reference: ParamPowerFlowReferenceType | None = row.get_static_reference()
     if external_reference is not None:
         block.external_mapping[external_reference] = variable
     else:
         pass
-    if static_reference is not None and row.get_kind() == BlockSymbolKind.PARAMETER:
-        block.api_obj_mapping[static_reference] = variable
+
+    # A composite root can expose a child-owned parameter through
+    # ``api_obj_mapping``. Such a variable is mapping-only from the root's
+    # perspective and appears there as OUTPUT_ONLY, so that synthetic row must
+    # not delete the authoritative static mapping during an unrelated Apply.
+    manages_static_mapping: bool = (
+        row.get_kind() == BlockSymbolKind.PARAMETER
+        or row.get_original_kind() == BlockSymbolKind.PARAMETER
+    )
+    if manages_static_mapping:
+        static_keys_to_remove: List[ParamPowerFlowReferenceType] = list()
+        static_key: ParamPowerFlowReferenceType
+        mapped_static_variable: Var
+        for static_key, mapped_static_variable in block.api_obj_mapping.items():
+            if mapped_static_variable is variable:
+                static_keys_to_remove.append(static_key)
+            else:
+                pass
+        for static_key in static_keys_to_remove:
+            del block.api_obj_mapping[static_key]
+
+        static_reference: ParamPowerFlowReferenceType | None = row.get_static_reference()
+        if static_reference is not None and row.get_kind() == BlockSymbolKind.PARAMETER:
+            block.api_obj_mapping[static_reference] = variable
+        else:
+            pass
     else:
         pass
 
@@ -2186,13 +2198,18 @@ class SymbolMappingDelegate(QtWidgets.QStyledItemDelegate):
 
 
 class BlockParameterDraftModel(QtCore.QAbstractTableModel):
-    """Table model that stages static values and event expressions until Apply."""
+    """Stage dynamic-parameter expressions from ``event_dict`` until Apply.
+
+    Fixed ``block.parameters`` remain part of the symbolic compiler contract
+    and are managed through the DAE model's Parameters page. General options is
+    exclusively the value editor for runtime-changeable dynamic parameters.
+    """
 
     __slots__ = ("_rows",)
 
     def __init__(self, block: Block, parent: QtCore.QObject | None = None) -> None:
         """
-        Build staged rows recursively from static values and event expressions.
+        Build staged rows recursively from dynamic-parameter expressions.
 
         :param block: Symbolic block used by the operation.
         :param parent: Owning Qt widget.
@@ -2203,25 +2220,19 @@ class BlockParameterDraftModel(QtCore.QAbstractTableModel):
         self._load_rows(block)
 
     def _load_rows(self, block: Block) -> None:
-        """Load every editable numeric constant from a recursive block tree.
+        """Load every user-editable parameter from a recursive block tree.
 
         :param block: Root block whose parameter tree is displayed.
         :return: None.
         """
+        all_blocks: List[Block] = block.get_all_blocks()
         child_block: Block
-        for child_block in block.get_all_blocks():
+        for child_block in all_blocks:
             owner_label: str = child_block.name if child_block is not block else block.name
-            self._append_parameter_rows(
-                category=f"Parameter - {owner_label}",
-                owner=child_block,
-                values=child_block.parameters,
-                kind=BlockSymbolKind.PARAMETER,
-            )
-            self._append_parameter_rows(
+            self._append_event_parameter_rows(
                 category=f"Dynamic parameter - {owner_label}",
                 owner=child_block,
                 values=child_block.event_dict,
-                kind=BlockSymbolKind.EVENT_PARAMETER,
             )
             # Retained modes may have symbolic initialization expressions and
             # execution dependencies. They are edited in Runtime logic, where
@@ -2238,35 +2249,29 @@ class BlockParameterDraftModel(QtCore.QAbstractTableModel):
         self._load_rows(block)
         self.endResetModel()
 
-    def _append_parameter_rows(self,
-                               category: str,
-                               owner: Block,
-                               values: Mapping[Var, Expr],
-                               kind: BlockSymbolKind) -> None:
-        """Append editable parameter mappings from one block dictionary.
+    def _append_event_parameter_rows(self,
+                                     category: str,
+                                     owner: Block,
+                                     values: Mapping[Var, Expr]) -> None:
+        """Append editable dynamic parameters from one ``event_dict``.
 
-        :param category: User-facing constant category and owner label.
-        :param owner: Block containing the supplied parameter mapping.
-        :param values: Variable-to-expression dictionary owned by the block.
-        :param kind: Static or event parameter role represented by the mapping.
+        :param category: User-facing dynamic-parameter category and owner label.
+        :param owner: Block containing the supplied ``event_dict``.
+        :param values: Dynamic parameter-to-expression mapping owned by the block.
         :return: None.
         """
         variable: Var
         expression: Expr
         for variable, expression in values.items():
-            if kind == BlockSymbolKind.PARAMETER and not isinstance(expression, Const):
-                # Static parameters have a numeric-only engine contract.
-                pass
-            else:
-                self._rows.append(
-                    ParameterDraftRow(
-                        category=category,
-                        owner=owner,
-                        variable=variable,
-                        expression=expression,
-                        kind=kind,
-                    )
+            self._rows.append(
+                ParameterDraftRow(
+                    category=category,
+                    owner=owner,
+                    variable=variable,
+                    expression=expression,
+                    kind=BlockSymbolKind.EVENT_PARAMETER,
                 )
+            )
 
     def rowCount(self, parent: QtCore.QModelIndex = QtCore.QModelIndex()) -> int:
         """
@@ -2796,55 +2801,21 @@ class DaeCodeHighlighter(QtGui.QSyntaxHighlighter):
         """
         super().__init__(document)
         self._keyword_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
+        self._keyword_format.setForeground(QtGui.QColor("#7c3aed"))
         self._keyword_format.setFontWeight(QtGui.QFont.Weight.Bold)
         self._number_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
+        self._number_format.setForeground(QtGui.QColor("#0369a1"))
         self._string_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
+        self._string_format.setForeground(QtGui.QColor("#15803d"))
         self._comment_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
+        self._comment_format.setForeground(QtGui.QColor("#64748b"))
         self._comment_format.setFontItalic(True)
         self._symbol_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
+        self._symbol_format.setForeground(QtGui.QColor("#b45309"))
         self._function_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
+        self._function_format.setForeground(QtGui.QColor("#0369a1"))
         self._function_format.setFontWeight(QtGui.QFont.Weight.Bold)
         self._symbol_names: tuple[str, ...] = tuple(symbol_names)
-        self.set_light_mode()
-
-    def apply_theme(self, dark_theme: bool) -> None:
-        """
-        Apply DAE token colors for the current editor theme.
-
-        :param dark_theme: Whether to use the dark token palette.
-        :return: None.
-        """
-        if dark_theme:
-            self._keyword_format.setForeground(QtGui.QColor("#A78BFA"))
-            self._number_format.setForeground(QtGui.QColor("#7DD3FC"))
-            self._string_format.setForeground(QtGui.QColor("#86EFAC"))
-            self._comment_format.setForeground(QtGui.QColor("#94A3B8"))
-            self._symbol_format.setForeground(QtGui.QColor("#FBBF24"))
-            self._function_format.setForeground(QtGui.QColor("#7DD3FC"))
-        else:
-            self._keyword_format.setForeground(QtGui.QColor("#7C3AED"))
-            self._number_format.setForeground(QtGui.QColor("#0369A1"))
-            self._string_format.setForeground(QtGui.QColor("#15803D"))
-            self._comment_format.setForeground(QtGui.QColor("#64748B"))
-            self._symbol_format.setForeground(QtGui.QColor("#B45309"))
-            self._function_format.setForeground(QtGui.QColor("#0369A1"))
-        self.rehighlight()
-
-    def set_dark_mode(self) -> None:
-        """
-        Apply dark DAE syntax colors.
-
-        :return: None.
-        """
-        self.apply_theme(dark_theme=True)
-
-    def set_light_mode(self) -> None:
-        """
-        Apply light DAE syntax colors.
-
-        :return: None.
-        """
-        self.apply_theme(dark_theme=False)
 
     def set_symbol_names(self, symbol_names: Sequence[str]) -> None:
         """
@@ -2920,6 +2891,7 @@ class DaeCodeEditor(BasePythonCodeEditor):
         "_completion_shortcut",
         "_completion_entries",
         "_last_completion_prefix",
+        "_prepared_to_delete",
     )
 
     def __init__(
@@ -2934,6 +2906,7 @@ class DaeCodeEditor(BasePythonCodeEditor):
         :return: None.
         """
         self._qt_completer: QtWidgets.QCompleter | None = None
+        self._prepared_to_delete: bool = False
         super().__init__(parent)
         self._diagnostics: List[DaeCodeDiagnostic] = list()
         self._search_ranges: List[tuple[int, int]] = list()
@@ -2977,6 +2950,63 @@ class DaeCodeEditor(BasePythonCodeEditor):
         )
         self._completion_shortcut.setContext(QtCore.Qt.ShortcutContext.WidgetShortcut)
         self._completion_shortcut.activated.connect(self._trigger_manual_completion)
+
+    def prepare_to_delete(self) -> None:
+        """Detach completion event filters before Qt destroys the editor.
+
+        ``QCompleter`` owns a popup outside the text editor's ordinary widget
+        subtree. Both that popup and its viewport retain event-filter pointers
+        to this Python-backed editor. Removing those pointers while every
+        QObject is still valid prevents queued events from reaching a deleted
+        Shiboken wrapper during a later event-loop pass.
+
+        :return: None.
+        """
+        if self._prepared_to_delete:
+            return
+        else:
+            pass
+
+        self._prepared_to_delete = True
+        completer: QtWidgets.QCompleter | None = self._qt_completer
+        if completer is not None:
+            popup: QtWidgets.QAbstractItemView = completer.popup()
+            popup_viewport: QtWidgets.QWidget = popup.viewport()
+
+            # Remove the Python event filter before detaching the completer.
+            # The popup may otherwise receive a queued Qt event after this
+            # editor's native object has already been released.
+            self.removeEventFilter(self)
+            popup.removeEventFilter(self)
+            popup_viewport.removeEventFilter(self)
+            popup.hide()
+
+            try:
+                completer.activated[QtCore.QModelIndex].disconnect(
+                    self._insert_completion
+                )
+            except (RuntimeError, TypeError):
+                pass
+            completer.setWidget(None)
+            completer.setModel(None)
+            self._qt_completer = None
+        else:
+            pass
+
+        try:
+            self._completion_shortcut.activated.disconnect(
+                self._trigger_manual_completion
+            )
+        except (RuntimeError, TypeError):
+            pass
+        self._completion_shortcut.setEnabled(False)
+
+        # Clear Python-side references only after the Qt completer no longer
+        # observes the model or editor. The parent widget will subsequently
+        # destroy the child QObjects in Qt's normal ownership order.
+        self._completion_model.clear()
+        self._completion_entries.clear()
+        self._search_ranges.clear()
 
     def set_symbol_namespace(self, symbol_namespace: Mapping[str, Expr]) -> None:
         """Replace the symbolic identities accepted by DAE validation.
@@ -4457,6 +4487,27 @@ def _get_documentation_relative_path(block_type_name: str, block_name: str) -> s
         return f"library/catalog/typ_{catalogue_type_match.group(1)}.md"
     else:
         pass
+    # Use persisted native types, not editable display names, for the RMS
+    # components, using the same RMS documentation section as other devices.
+    rms_pages: Dict[BlockType, str] = dict((
+        (BlockType.GFL_VSC_HVDC_RMS, "hvdc_vsc_gfl.md"),
+        (BlockType.VSC_PLL_RMS, "vsc_pll.md"),
+        (BlockType.VSC_ELECTRICAL_RMS, "vsc_electrical.md"),
+        (BlockType.VSC_ACTIVE_CONTROL_RMS, "vsc_active_control.md"),
+        (BlockType.VSC_REACTIVE_CONTROL_RMS, "vsc_reactive_control.md"),
+        (BlockType.VSC_CURRENT_LIMITER_RMS, "vsc_current_limiter.md"),
+        (BlockType.VSC_VD_HAT_RMS, "vsc_vd_hat.md"),
+        (BlockType.VSC_VQ_HAT_RMS, "vsc_vq_hat.md"),
+        (BlockType.VSC_DC_LINK_RMS, "vsc_dc_link.md"),
+        (BlockType.VSC_TERMINAL_POWER_RMS, "vsc_terminal_power.md"),
+        (BlockType.DC_LINE_RMS, "dc_line.md"),
+    ))
+    native_type: BlockType | None = BlockType.__members__.get(normalized, None)
+    rms_page: str | None = rms_pages.get(native_type, None) if native_type is not None else None
+    if rms_page is not None:
+        return "RMS/" + rms_page
+    else:
+        pass
     mapping: Dict[str, str] = dict((("GENERIC", "library/generic.md"), ("CONST", "library/constant.md"), ("GAIN", "library/gain.md"), ("ABS", "library/absolute_value.md"), ("SUM", "library/sum.md"), ("PRODUCT", "library/product.md"), ("FROM_GOTO", "library/from_goto.md"), ("LINE_RMS", "RMS/line.md"), ("LOAD_RMS", "RMS/load.md"), ("GENRAW", "RMS/genrou_genrow.md"), ("GENQEC", "RMS/genqec.md"), ("GOV_RMS", "RMS/governor.md"), ("STAB_RMS", "RMS/stabilizer.md"), ("EXCITER_RMS", "RMS/exciter.md"), ("EMT_GENERATOR", "EMT/sauer_pai_generator.md"), ("GOV_EMT", "EMT/governor.md"), ("STAB_EMT", "EMT/stabilizer.md"), ("EXCITER_EMT", "EMT/exciter.md"), ("EMT_PI_LINE", "EMT/pi_line_abc.md"), ("EMT_BERGERON_LINE", "EMT/bergeron_line_abc.md"), ("EMT_JMARTI_LINE", "EMT/jmarti_line.md"), ("EMT_DC_LINE", "EMT/dc_line.md"), ("EXP_LOAD_EMT", "library/exp_load_emt.md"), ("ZIP_LOAD_EMT", "EMT/zip_load_abc.md"), ("DC_LOAD_EMT", "EMT/dc_load.md"), ("EMT_THEVENIN", "EMT/thevenin_generator.md"), ("TRAFO_EMT", "library/trafo_emt.md"), ("XFMR_TRANSFORMER", "library/xfmr_transformer.md"), ("INDUCTION_MOTOR_EMT", "EMT/single_cage_induction_motor.md"), ("PV_POWER_PLANT_EMT", "EMT/pv_plant_grid_following.md"), ("PV_EMT", "EMT/pv_plant_grid_following.md"), ("COMPLETE_PSEUDO_VSC_EMT", "EMT/full_pseudo_converter.md"), ("GFL_CONVERTER_RMS", "RMS/converter.md"), ("BESS_EMT", "EMT/bess.md"), ("BATTERY_EMT", "library/battery_emt.md"), ("VOLTAGE_SOURCE_EMT", "library/voltage_source_emt.md"), ("CURRENT_SOURCE_EMT", "library/current_source_emt.md"), ("CONTROLLED_VOLTAGE_SOURCE_EMT", "library/controlled_voltage_source_emt.md"), ("CONTROLLED_CURRENT_SOURCE_EMT", "library/controlled_current_source_emt.md"), ("ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT", "library/arbitrary_waveform_voltage_source_emt.md"), ("ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT", "library/arbitrary_waveform_current_source_emt.md"), ("BALANCED_3PH_VOLTAGE_SOURCE_EMT", "library/balanced_3ph_voltage_source_emt.md"), ("BALANCED_3PH_CURRENT_SOURCE_EMT", "library/balanced_3ph_current_source_emt.md"), ("CONTROLLED_BALANCED_3PH_VOLTAGE_SOURCE_EMT", "library/controlled_balanced_3ph_voltage_source_emt.md"), ("CONTROLLED_BALANCED_3PH_CURRENT_SOURCE_EMT", "library/controlled_balanced_3ph_current_source_emt.md"), ("DC_VOLTAGE_SOURCE_EMT", "library/dc_voltage_source_emt.md"), ("DC_CURRENT_SOURCE_EMT", "library/dc_current_source_emt.md"), ("CONTROLLED_DC_VOLTAGE_SOURCE_EMT", "library/controlled_dc_voltage_source_emt.md"), ("CONTROLLED_DC_CURRENT_SOURCE_EMT", "library/controlled_dc_current_source_emt.md"), ("STEP_VOLTAGE_SOURCE_EMT", "library/step_voltage_source_emt.md"), ("STEP_CURRENT_SOURCE_EMT", "library/step_current_source_emt.md"), ("RAMP_VOLTAGE_SOURCE_EMT", "library/ramp_voltage_source_emt.md"), ("RAMP_CURRENT_SOURCE_EMT", "library/ramp_current_source_emt.md"), ("DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT", "library/double_exponential_current_source_emt.md"), ("HEIDLER_CURRENT_SOURCE_EMT", "library/heidler_current_source_emt.md"), ("CIGRE_SURGE_CURRENT_SOURCE_EMT", "library/cigre_surge_current_source_emt.md"), ("R_LOAD_EMT", "library/r_load_emt.md"), ("L_LOAD_EMT", "library/l_load_emt.md"), ("C_LOAD_EMT", "library/c_load_emt.md"), ("RLC_COMBO_EMT", "library/rlc_combo_emt.md"), ("GROUND_EMT", "library/ground_emt.md"), ("GROUNDING_LINK_EMT", "library/grounding_link_emt.md"), ("SWITCH_EMT", "library/switch_emt.md"), ("FAULT_EMT", "EMT/fault.md"), ("NONLINEAR_RESISTOR_EMT", "library/nonlinear_resistor_emt.md"), ("INVERSE_LOOKUP_ARRAY", "library/inverse-lookup-array-object-linear.md"), ("LOOKUP_ARRAY_LINEAR", "library/lookup_array.md"), ("LOOKUP_ARRAY_SPLINE", "library/lookup_array.md"), ("LOOKUP_MATRIX_LINEAR", "library/lookup_matrix.md"), ("LOOKUP_MATRIX_SPLINE", "library/lookup_matrix.md"), ("PI_CURRENT_CONTROLLER", "library/pi_current_controller.md"), ("PI_POWER_CONTROLLER", "library/pi_power_controller.md"), ("PLL_TRANSFORM_RMS", "library/pll_transformer.md"),))
     relative_path: str | None = mapping.get(normalized, None)
     if relative_path is not None:
@@ -4990,6 +5041,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         else:
             self._prepared_to_delete = True
             self._runtime_logic_editor.prepare_to_delete()
+            self._dae_editor.prepare_to_delete()
             self._general_parameter_table.setModel(None)
             self._symbol_table.setModel(None)
             self._parameter_symbol_table.setModel(None)
@@ -5077,22 +5129,6 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             self._tabs.setTabIcon(special_index, QtGui.QIcon(":/Icons/icons/gear.png"))
         else:
             pass
-
-    def set_dark_mode(self) -> None:
-        """Apply the dark theme to the owned code editors.
-
-        :return: None.
-        """
-        self._dae_editor.set_dark_mode()
-        self._dae_highlighter.set_dark_mode()
-
-    def set_light_mode(self) -> None:
-        """Apply the light theme to the owned code editors.
-
-        :return: None.
-        """
-        self._dae_editor.set_light_mode()
-        self._dae_highlighter.set_light_mode()
 
     def _build_general_page(self) -> QtWidgets.QWidget:
         """
@@ -5224,6 +5260,12 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         self._general_parameter_table.setModel(self._general_parameter_proxy)
         parameter_header: QtWidgets.QHeaderView = self._general_parameter_table.horizontalHeader()
         configure_interactive_table_header(parameter_header, list((270, 520, 180,)))
+        # Match the compact catalogue-tree rhythm so long parameter lists show
+        # more engineering data without changing the editable column layout.
+        compact_row_height: int = self._general_parameter_table.fontMetrics().height() + 4
+        general_parameter_vertical_header: QtWidgets.QHeaderView = self._general_parameter_table.verticalHeader()
+        general_parameter_vertical_header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Fixed)
+        general_parameter_vertical_header.setDefaultSectionSize(compact_row_height)
         self._general_parameter_table.setAlternatingRowColors(True)
         self._general_parameter_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         parameters_layout.addWidget(self._general_parameter_table)
@@ -5437,6 +5479,12 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         self._symbol_table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
         self._symbol_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self._symbol_table.verticalHeader().setVisible(False)
+        # Use the same compact row rhythm as the catalogue selector while
+        # retaining the existing resizable columns and horizontal splitter.
+        compact_row_height: int = self._symbol_table.fontMetrics().height() + 4
+        variable_vertical_header: QtWidgets.QHeaderView = self._symbol_table.verticalHeader()
+        variable_vertical_header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Fixed)
+        variable_vertical_header.setDefaultSectionSize(compact_row_height)
         symbol_header: QtWidgets.QHeaderView = self._symbol_table.horizontalHeader()
         configure_interactive_table_header(
             symbol_header,
@@ -5467,6 +5515,9 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         )
         self._parameter_symbol_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self._parameter_symbol_table.verticalHeader().setVisible(False)
+        parameter_vertical_header: QtWidgets.QHeaderView = self._parameter_symbol_table.verticalHeader()
+        parameter_vertical_header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Fixed)
+        parameter_vertical_header.setDefaultSectionSize(compact_row_height)
         # Parameters reuse the staged symbol source model, but configuration
         # constants can never be output ports. Hide the interface-only column
         # instead of presenting a meaningless empty checkbox column.

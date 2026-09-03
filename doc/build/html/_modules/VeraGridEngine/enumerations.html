@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.enumerations &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.enumerations &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -291,15 +292,23 @@
 
 <div class="viewcode-block" id="ShuntControlMode">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.ShuntControlMode">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ShuntControlMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span>  <span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShuntControlMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Modes of operation of shunt control modes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Locked</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Locked&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">Continuous</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Continuous&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">Discrete</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Discrete&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">QVDroop</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;QV droop&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">ReactivePower</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Reactive power&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShuntControlMode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create one shunt-control selector with its native integer code.</span>
+
+<span class="sd">        :param value: Human-readable shunt-control objective.</span>
+<span class="sd">        :param code: Native integer selector used by the source format.</span>
+<span class="sd">        :return: Typed shunt-control enumeration member.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
@@ -340,8 +349,14 @@
     <span class="n">V</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Fixed V, classic PV node</span>
     <span class="n">QVDroop</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Q-V&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Like a PQ node with droop equation update of Q</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GeneratorControlMode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create one generator-control selector with its native integer code.</span>
+
+<span class="sd">        :param value: Human-readable generator-control objective.</span>
+<span class="sd">        :param code: Native integer selector used by the source format.</span>
+<span class="sd">        :return: Typed generator-control enumeration member.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">GeneratorControlMode</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
         <span class="k">return</span> <span class="n">obj</span>
@@ -366,6 +381,233 @@
             <span class="k">return</span> <span class="n">GeneratorControlMode</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">s</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SynchronousMachineSpeedVariationMode">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.SynchronousMachineSpeedVariationMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SynchronousMachineSpeedVariationMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotor-speed treatment in synchronous-machine stator equations.&quot;&quot;&quot;</span>
+
+    <span class="n">Neglected</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Neglected&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">Considered</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Considered&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">PartiallyNeglected</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Partially neglected&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span>
+            <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SynchronousMachineSpeedVariationMode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build one human-readable mode with its native code.</span>
+
+<span class="sd">        :param value: Human-readable mode name.</span>
+<span class="sd">        :param code: Native PowerFactory ``i_speedVar`` code.</span>
+<span class="sd">        :return: Constructed enumeration member.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">SynchronousMachineSpeedVariationMode</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="SynchronousMachineSpeedVariationMode.idx">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.SynchronousMachineSpeedVariationMode.idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the native PowerFactory mode code.</span>
+
+<span class="sd">        :return: Native integer selector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StationControlMode">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationControlMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StationControlMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Control objective used by a non-physical station controller.&quot;&quot;&quot;</span>
+
+    <span class="n">Voltage</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Voltage&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">ReactivePower</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Reactive power&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">PowerFactor</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Power factor&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">TanPhi</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Tan(phi)&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;StationControlMode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create one station-control selector with its native integer code.</span>
+
+<span class="sd">        :param value: Human-readable station-control objective.</span>
+<span class="sd">        :param code: Native PowerFactory station-control selector.</span>
+<span class="sd">        :return: Typed station-control enumeration member.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">StationControlMode</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="StationControlMode.idx">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationControlMode.idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the native PowerFactory control-mode code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StationControlBusSelection">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationControlBusSelection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StationControlBusSelection</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Describe how a station controller selects its regulated bus.&quot;&quot;&quot;</span>
+
+    <span class="n">Explicit</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Explicit controlled bus&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">Automatic</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Automatic bus search&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;StationControlBusSelection&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create one humanized selector with its native integer code.</span>
+
+<span class="sd">        :param value: Human-readable selector name.</span>
+<span class="sd">        :param code: Native PowerFactory ``selBus`` code.</span>
+<span class="sd">        :return: Typed controlled-bus selector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">StationControlBusSelection</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="StationControlBusSelection.idx">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationControlBusSelection.idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the native PowerFactory controlled-bus selector code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StationVoltageSetpointMode">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationVoltageSetpointMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StationVoltageSetpointMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select the voltage target used by a station controller.&quot;&quot;&quot;</span>
+
+    <span class="n">StationController</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Station Controller&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">BusTargetVoltage</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Bus target voltage&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;StationVoltageSetpointMode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create one humanized selector with its native integer code.</span>
+
+<span class="sd">        :param value: Human-readable PowerFactory selector name.</span>
+<span class="sd">        :param code: Native PowerFactory ``uset_mode`` code.</span>
+<span class="sd">        :return: Typed station voltage-setpoint selector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">StationVoltageSetpointMode</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="StationVoltageSetpointMode.idx">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationVoltageSetpointMode.idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the native PowerFactory voltage-setpoint selector code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StationTransformerControlSide">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationTransformerControlSide">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StationTransformerControlSide</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select whether a station controller coordinates step-up transformers.&quot;&quot;&quot;</span>
+
+    <span class="n">NoControl</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">HighVoltageSide</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;HV-Side&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LowVoltageSide</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;LV-Side&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;StationTransformerControlSide&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create one typed transformer-side selector.</span>
+
+<span class="sd">        :param value: Human-readable PowerFactory selector name.</span>
+<span class="sd">        :param code: Native PowerFactory ``iTrfCtrl`` code.</span>
+<span class="sd">        :return: Typed transformer control-side selector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">StationTransformerControlSide</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="StationTransformerControlSide.idx">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationTransformerControlSide.idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the native PowerFactory transformer-side selector code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StationReactivePowerDistribution">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StationReactivePowerDistribution</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Describe the native station reactive-distribution selector.&quot;&quot;&quot;</span>
+
+    <span class="n">AccordingToDispatchedActivePower</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;According to Dispatched Active Power&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">AccordingToRatedPower</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;According to Rated Power&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">IndividualReactivePower</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Individual Reactive Power&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">MaximiseReactiveReserve</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Maximise Reactive Reserve&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">VoltageSetpointAdaption</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Voltage Setpoint Adaption&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="c1"># Keep source-code compatibility while exposing the humanized PowerFactory</span>
+    <span class="c1"># labels as the canonical enum names shown by the application and templates.</span>
+    <span class="n">SourceMode0</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;According to Dispatched Active Power&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">SourceMode1</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;According to Rated Power&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">SourceMode2</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Individual Reactive Power&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">SourceMode3</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Maximise Reactive Reserve&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">SourceMode4</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Voltage Setpoint Adaption&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;StationReactivePowerDistribution&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create one humanized selector with its native integer code.</span>
+
+<span class="sd">        :param value: Human-readable PowerFactory selector name.</span>
+<span class="sd">        :param code: Native PowerFactory distribution code.</span>
+<span class="sd">        :return: Typed distribution selector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">StationReactivePowerDistribution</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="StationReactivePowerDistribution.idx">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.StationReactivePowerDistribution.idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the native PowerFactory distribution code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ReactivePowerLimitState">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.ReactivePowerLimitState">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReactivePowerLimitState</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Describe an optional initial generator reactive-limit active set.&quot;&quot;&quot;</span>
+
+    <span class="n">Unknown</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Unknown&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">AtMinimum</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;At minimum&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">Free</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Free&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">AtMaximum</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;At maximum&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ReactivePowerLimitState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create one human-readable reactive-limit state.</span>
+
+<span class="sd">        :param value: Human-readable state name.</span>
+<span class="sd">        :param code: Stable numerical active-set code.</span>
+<span class="sd">        :return: Typed reactive-limit state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">ReactivePowerLimitState</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_value_</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="ReactivePowerLimitState.idx">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.ReactivePowerLimitState.idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the stable numerical active-set code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span></div>
 </div>
 
 
@@ -632,6 +874,34 @@
 
     <span class="n">CO_SIMULATION</span> <span class="o">=</span> <span class="s2">&quot;CoSimulation&quot;</span>
     <span class="n">MODEL_EXCHANGE</span> <span class="o">=</span> <span class="s2">&quot;ModelExchange&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmiVersion">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.FmiVersion">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmiVersion</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;FMI specification families recognized by VeraGrid.</span>
+
+<span class="sd">    Maintenance documents do not necessarily define a new XML version or ABI.</span>
+<span class="sd">    FMI 1.0.1 and FMI 2.0.x therefore remain in the 1.0 and 2.0 families,</span>
+<span class="sd">    while stable FMI 3.0.x declarations remain in the 3.0 family. Recognizing</span>
+<span class="sd">    a family does not imply that every importer, runtime, or exporter supports</span>
+<span class="sd">    every interface in that family.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">FMI_1_0</span> <span class="o">=</span> <span class="s2">&quot;1.0&quot;</span>
+    <span class="n">FMI_2_0</span> <span class="o">=</span> <span class="s2">&quot;2.0&quot;</span>
+    <span class="n">FMI_3_0</span> <span class="o">=</span> <span class="s2">&quot;3.0&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmuSourceKind">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.FmuSourceKind">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuSourceKind</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kinds of FMU source accepted at the import boundary.&quot;&quot;&quot;</span>
+
+    <span class="n">ZIP</span> <span class="o">=</span> <span class="s2">&quot;zip&quot;</span>
+    <span class="n">DIRECTORY</span> <span class="o">=</span> <span class="s2">&quot;directory&quot;</span></div>
 
 
 
@@ -1278,6 +1548,10 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the stable display representation of the EMT valve type.</span>
+
+<span class="sd">        :return: Human-readable EMT valve-type value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ValveEmtType.argparse">
@@ -1771,13 +2045,13 @@
 
 
 
-
 <div class="viewcode-block" id="WaveformSequenceType">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.WaveformSequenceType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">WaveformSequenceType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Squence points type</span>
 <span class="sd">    &quot;&quot;&quot;</span></div>
+
 
 
 <div class="viewcode-block" id="V_I_CurveSequenceType">
@@ -1788,6 +2062,7 @@
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 
+
 <div class="viewcode-block" id="X_Y_SequenceType">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.X_Y_SequenceType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">X_Y_SequenceType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -1796,14 +2071,13 @@
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 
+
 <div class="viewcode-block" id="X_Y_Z_Matrix">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.X_Y_Z_Matrix">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">X_Y_Z_Matrix</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Squence points type</span>
 <span class="sd">    &quot;&quot;&quot;</span></div>
-
-
 
 
 
@@ -1817,7 +2091,9 @@
     <span class="n">FloatingStar</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">GroundedStar</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Yg&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">Delta</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">ZigZag</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">NeutralZigZag</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Zn&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">FloatingZigZag</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">GroundedZigZag</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Zg&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
@@ -1974,12 +2250,13 @@
 <span class="sd">    ActionType</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">All</span> <span class="o">=</span> <span class="s1">&#39;All&#39;</span>
+    <span class="n">MT</span> <span class="o">=</span> <span class="s1">&#39;Metadata&#39;</span>
+    <span class="n">TP</span> <span class="o">=</span> <span class="s1">&#39;Topology&#39;</span>
     <span class="n">PF</span> <span class="o">=</span> <span class="s1">&#39;Power flow&#39;</span>
     <span class="n">PF3</span> <span class="o">=</span> <span class="s1">&#39;Power flow (unbalanced)&#39;</span>
     <span class="n">SC</span> <span class="o">=</span> <span class="s2">&quot;Short Circuit&quot;</span>
     <span class="n">OPF</span> <span class="o">=</span> <span class="s1">&#39;Optimal Power flow&#39;</span>
     <span class="n">CON</span> <span class="o">=</span> <span class="s2">&quot;Contingencies&quot;</span>
-    <span class="n">TP</span> <span class="o">=</span> <span class="s1">&#39;Topology&#39;</span>
     <span class="n">REL</span> <span class="o">=</span> <span class="s1">&#39;Reliability&#39;</span>
     <span class="n">NTC</span> <span class="o">=</span> <span class="s1">&#39;Net Transfer Capacity&#39;</span>
     <span class="n">INV</span> <span class="o">=</span> <span class="s2">&quot;Investments&quot;</span>
@@ -2061,6 +2338,32 @@
 <span class="c1">#         return list(enum_item.value for enum_item in cls)</span>
 
 
+<div class="viewcode-block" id="DgsDynamicAssociationRole">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DgsDynamicAssociationRole">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DgsDynamicAssociationRole</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Define the physical or logical role of one DGS composite relation.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="n">CompositeController</span> <span class="o">=</span> <span class="s2">&quot;CompositeController&quot;</span>
+    <span class="n">ControllerModel</span> <span class="o">=</span> <span class="s2">&quot;ControllerModel&quot;</span>
+    <span class="n">PhysicalHost</span> <span class="o">=</span> <span class="s2">&quot;PhysicalHost&quot;</span>
+    <span class="n">Measurement</span> <span class="o">=</span> <span class="s2">&quot;Measurement&quot;</span>
+    <span class="n">SwitchActuator</span> <span class="o">=</span> <span class="s2">&quot;SwitchActuator&quot;</span>
+    <span class="n">ValveActuator</span> <span class="o">=</span> <span class="s2">&quot;ValveActuator&quot;</span>
+    <span class="n">PassiveActuator</span> <span class="o">=</span> <span class="s2">&quot;PassiveActuator&quot;</span>
+    <span class="n">Unknown</span> <span class="o">=</span> <span class="s2">&quot;Unknown&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the persistent enum value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the persistent enum representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="DeviceType">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DeviceType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DeviceType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -2114,6 +2417,7 @@
     <span class="n">ItMeasurementDevice</span> <span class="o">=</span> <span class="s1">&#39;It Measurement&#39;</span>
 
     <span class="n">WireDevice</span> <span class="o">=</span> <span class="s1">&#39;Wire&#39;</span>
+    <span class="n">DcCableTypeDevice</span> <span class="o">=</span> <span class="s1">&#39;DC cable type&#39;</span>
     <span class="n">SequenceLineDevice</span> <span class="o">=</span> <span class="s1">&#39;Sequence line&#39;</span>
     <span class="n">UnderGroundLineDevice</span> <span class="o">=</span> <span class="s1">&#39;Underground line&#39;</span>
     <span class="n">OverheadLineTypeDevice</span> <span class="o">=</span> <span class="s1">&#39;Tower&#39;</span>
@@ -3331,6 +3635,7 @@
 
     <span class="c1"># Hydro OPF</span>
     <span class="n">FluidCurrentLevel</span> <span class="o">=</span> <span class="s1">&#39;Reservoir fluid level&#39;</span>
+    <span class="n">FluidValue</span> <span class="o">=</span> <span class="s1">&#39;Fluid value&#39;</span>
     <span class="n">FluidFlowIn</span> <span class="o">=</span> <span class="s1">&#39;Flow entering the node&#39;</span>
     <span class="n">FluidFlowOut</span> <span class="o">=</span> <span class="s1">&#39;Flow exiting the node&#39;</span>
     <span class="n">FluidP2XFlow</span> <span class="o">=</span> <span class="s1">&#39;Flow from the P2X&#39;</span>
@@ -3356,6 +3661,8 @@
     <span class="n">AvailableTransferCapacityAlpha</span> <span class="o">=</span> <span class="s1">&#39;Sensitivity to the exchange&#39;</span>
     <span class="n">AvailableTransferCapacityAlphaN1</span> <span class="o">=</span> <span class="s1">&#39;Sensitivity to the exchange (N-1)&#39;</span>
     <span class="n">NetTransferCapacity</span> <span class="o">=</span> <span class="s1">&#39;Net transfer capacity&#39;</span>
+    <span class="n">NetTransferCapacitySlack</span> <span class="o">=</span> <span class="s1">&#39;Net transfer capacity slack&#39;</span>
+    <span class="n">NetTransferCapacityStatus</span> <span class="o">=</span> <span class="s1">&#39;Net transfer capacity status&#39;</span>
     <span class="n">AvailableTransferCapacityReport</span> <span class="o">=</span> <span class="s1">&#39;ATC Report&#39;</span>
 
     <span class="n">BaseFlowReport</span> <span class="o">=</span> <span class="s1">&#39;Ntc: Base flow report&#39;</span>
@@ -4094,13 +4401,12 @@
 <div class="viewcode-block" id="RmsProblemTypes">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.RmsProblemTypes">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RmsProblemTypes</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-
-    <span class="n">Tensygrid</span>       <span class="o">=</span> <span class="s2">&quot;Tensygrid&quot;</span>
-    <span class="n">PowerBalance</span>    <span class="o">=</span> <span class="s2">&quot;RmsProblemDae&quot;</span>
+    <span class="n">Tensygrid</span> <span class="o">=</span> <span class="s2">&quot;Tensygrid&quot;</span>
+    <span class="n">PowerBalance</span> <span class="o">=</span> <span class="s2">&quot;RmsProblemDae&quot;</span>
     <span class="n">PowerBalanceVectorized</span> <span class="o">=</span> <span class="s2">&quot;RmsProblemDaeVectorized&quot;</span>
     <span class="n">PowerBalanceFullVectorized</span> <span class="o">=</span> <span class="s2">&quot;RmsProblemDaeFullVectorized&quot;</span>
-    <span class="n">CurrentBalance</span>  <span class="o">=</span> <span class="s2">&quot;RmsProblemPhasor&quot;</span>
-    <span class="n">Multilinear</span>     <span class="o">=</span> <span class="s2">&quot;RmsProblemMultilinear&quot;</span>
+    <span class="n">CurrentBalance</span> <span class="o">=</span> <span class="s2">&quot;RmsProblemPhasor&quot;</span>
+    <span class="n">Multilinear</span> <span class="o">=</span> <span class="s2">&quot;RmsProblemMultilinear&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -4450,7 +4756,6 @@
     <span class="n">If_vsc</span> <span class="o">=</span> <span class="s2">&quot;If_vsc&quot;</span>
     <span class="n">It_vsc</span> <span class="o">=</span> <span class="s2">&quot;It_vsc&quot;</span>
 
-
     <span class="c1"># Phasor current references for RMS formulation</span>
     <span class="n">Ir</span> <span class="o">=</span> <span class="s2">&quot;Ir&quot;</span>  <span class="c1"># Real part of bus injection current</span>
     <span class="n">Ii</span> <span class="o">=</span> <span class="s2">&quot;Ii&quot;</span>  <span class="c1"># Imaginary part of bus injection current</span>
@@ -4460,6 +4765,7 @@
     <span class="n">Iit</span> <span class="o">=</span> <span class="s2">&quot;Iit&quot;</span>  <span class="c1"># Imaginary current at branch to end</span>
 
     <span class="n">Vdc</span> <span class="o">=</span> <span class="s2">&quot;Vdc&quot;</span>  <span class="c1"># Bus voltage for DC voltage in p.u.</span>
+    <span class="n">d_Vdc</span> <span class="o">=</span> <span class="s2">&quot;d_Vdc&quot;</span>  <span class="c1"># Bus DC-voltage derivative in p.u. per second.</span>
     <span class="n">Vf_dc</span> <span class="o">=</span> <span class="s2">&quot;Vf_dc&quot;</span>  <span class="c1"># Branch from-side DC voltage in p.u.</span>
     <span class="n">Vt_dc</span> <span class="o">=</span> <span class="s2">&quot;Vt_dc&quot;</span>  <span class="c1"># Branch to-side DC voltage in p.u.</span>
     <span class="n">DcPathModeSeed</span> <span class="o">=</span> <span class="s2">&quot;DcPathModeSeed&quot;</span>  <span class="c1"># PF-derived discrete conduction seed for DC branch EMT devices.</span>
@@ -4896,6 +5202,7 @@
     <span class="n">line_length_km</span> <span class="o">=</span> <span class="s2">&quot;line_length_km&quot;</span>
     <span class="n">dc_line_length_km</span> <span class="o">=</span> <span class="s2">&quot;dc_line_length_km&quot;</span>
     <span class="n">dc_line_r_pu</span> <span class="o">=</span> <span class="s2">&quot;dc_line_r_pu&quot;</span>
+    <span class="n">dc_line_l_pu_seconds</span> <span class="o">=</span> <span class="s2">&quot;dc_line_l_pu_seconds&quot;</span>
 
     <span class="c1"># VSC static parameters</span>
     <span class="n">vsc_kdp_pu</span> <span class="o">=</span> <span class="s2">&quot;vsc_kdp_pu&quot;</span>
@@ -5055,19 +5362,27 @@
 <div class="viewcode-block" id="DynamicSimulationMode">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DynamicSimulationMode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynamicSimulationMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">RMS</span> <span class="o">=</span> <span class="s2">&quot;RMS&quot;</span><span class="p">,</span>
-    <span class="n">EMT</span> <span class="o">=</span> <span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dynamic simulation domains supported by VeraGrid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">RMS</span> <span class="o">=</span> <span class="s2">&quot;RMS&quot;</span>
+    <span class="n">EMT</span> <span class="o">=</span> <span class="s2">&quot;EMT&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the stable dynamic-simulation domain representation.</span>
+
+<span class="sd">        :return: Human-readable dynamic-simulation domain value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DynamicSimulationMode.argparse">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DynamicSimulationMode.argparse">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">argparse</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">argparse</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DynamicSimulationMode | str&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param s:</span>
 <span class="sd">        :return:</span>
@@ -5219,6 +5534,111 @@
 
 
 
+<div class="viewcode-block" id="DynamicTemplateCategory">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTemplateCategory">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicTemplateCategory</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify how one reusable dynamic template may be used.&quot;&quot;&quot;</span>
+
+    <span class="n">DEVICE</span> <span class="o">=</span> <span class="s2">&quot;device&quot;</span>
+    <span class="n">COMPONENT</span> <span class="o">=</span> <span class="s2">&quot;component&quot;</span>
+    <span class="n">MEASUREMENT</span> <span class="o">=</span> <span class="s2">&quot;measurement&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="DynamicBlockVisualRole">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DynamicBlockVisualRole">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicBlockVisualRole</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify the semantic palette of one dynamic-editor block.&quot;&quot;&quot;</span>
+
+    <span class="n">CONTROL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">MEASUREMENT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">DEVICE_TEMPLATE</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="DynamicProjectionLayoutRole">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DynamicProjectionLayoutRole">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicProjectionLayoutRole</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify one stable item in a derived dynamic-editor projection.&quot;&quot;&quot;</span>
+
+    <span class="n">LOCAL_MEASUREMENTS</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">PHYSICAL_DEVICE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">NETWORK_EXCHANGE</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">FROM_TAG</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">GOTO_TAG</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">MEASUREMENT_STATION_FROM</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">MEASUREMENT_STATION_TO</span> <span class="o">=</span> <span class="mi">6</span></div>
+
+
+
+<div class="viewcode-block" id="ProjectionTagConnectionSide">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.ProjectionTagConnectionSide">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProjectionTagConnectionSide</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify the real endpoint represented by a transient signal tag.&quot;&quot;&quot;</span>
+
+    <span class="n">SOURCE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">TARGET</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="RmsVectorizedNodalBalanceKind">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.RmsVectorizedNodalBalanceKind">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RmsVectorizedNodalBalanceKind</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify how one compiled RMS nodal row is evaluated.&quot;&quot;&quot;</span>
+
+    <span class="n">ACTIVE_POWER</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">REACTIVE_POWER</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">CAPACITIVE_DC_POWER</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+
+
+<div class="viewcode-block" id="RmsTerminalSide">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.RmsTerminalSide">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RmsTerminalSide</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify one physical RMS network terminal of a device.&quot;&quot;&quot;</span>
+
+    <span class="n">BUS</span> <span class="o">=</span> <span class="s2">&quot;bus&quot;</span>
+    <span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;from&quot;</span>
+    <span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;to&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="RmsPhysicalMeterKind">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.RmsPhysicalMeterKind">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RmsPhysicalMeterKind</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify the physical quantity selected by one RMS meter.&quot;&quot;&quot;</span>
+
+    <span class="n">VOLTAGE</span> <span class="o">=</span> <span class="s2">&quot;voltage&quot;</span>
+    <span class="n">CURRENT</span> <span class="o">=</span> <span class="s2">&quot;current&quot;</span>
+    <span class="n">POWER</span> <span class="o">=</span> <span class="s2">&quot;power&quot;</span>
+    <span class="n">PHASE_LOCKED_LOOP</span> <span class="o">=</span> <span class="s2">&quot;phase_locked_loop&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EmtTerminalSide">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalSide">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmtTerminalSide</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify one physical EMT network terminal of a device.&quot;&quot;&quot;</span>
+
+    <span class="n">BUS</span> <span class="o">=</span> <span class="s2">&quot;bus&quot;</span>
+    <span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;from&quot;</span>
+    <span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;to&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EmtTerminalConductor">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.EmtTerminalConductor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmtTerminalConductor</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify one instantaneous EMT terminal conductor.&quot;&quot;&quot;</span>
+
+    <span class="n">DC</span> <span class="o">=</span> <span class="s2">&quot;dc&quot;</span>
+    <span class="n">NEUTRAL</span> <span class="o">=</span> <span class="s2">&quot;neutral&quot;</span>
+    <span class="n">PHASE_A</span> <span class="o">=</span> <span class="s2">&quot;phase_a&quot;</span>
+    <span class="n">PHASE_B</span> <span class="o">=</span> <span class="s2">&quot;phase_b&quot;</span>
+    <span class="n">PHASE_C</span> <span class="o">=</span> <span class="s2">&quot;phase_c&quot;</span></div>
+
+
+
 <div class="viewcode-block" id="BlockType">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.BlockType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BlockType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -5305,9 +5725,101 @@
     <span class="n">PI_POWER_CONTROLLER</span> <span class="o">=</span> <span class="s2">&quot;Pi_power_controller&quot;</span>
     <span class="n">GFL_CONVERTER_RMS</span> <span class="o">=</span> <span class="s2">&quot;GFL_converter_rms&quot;</span>
     <span class="n">GFL_VSC_HVDC_RMS</span> <span class="o">=</span> <span class="s2">&quot;GFL_vsc_hvdc&quot;</span>
+    <span class="n">VSC_PLL_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_PLL_RMS&quot;</span>
+    <span class="n">VSC_ELECTRICAL_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_ELECTRICAL_RMS&quot;</span>
+    <span class="n">VSC_ACTIVE_CONTROL_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_ACTIVE_CONTROL_RMS&quot;</span>
+    <span class="n">VSC_REACTIVE_CONTROL_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_REACTIVE_CONTROL_RMS&quot;</span>
+    <span class="n">VSC_CURRENT_LIMITER_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_CURRENT_LIMITER_RMS&quot;</span>
+    <span class="n">VSC_VD_HAT_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_VD_HAT_RMS&quot;</span>
+    <span class="n">VSC_VQ_HAT_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_VQ_HAT_RMS&quot;</span>
+    <span class="n">VSC_DC_LINK_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_DC_LINK_RMS&quot;</span>
+    <span class="n">VSC_TERMINAL_POWER_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_TERMINAL_POWER_RMS&quot;</span>
     <span class="n">VOLTAGE_SOURCE_RMS</span> <span class="o">=</span> <span class="s2">&quot;Voltage_source_rms&quot;</span>
     <span class="n">TRANSFORMER_2W_RMS</span> <span class="o">=</span> <span class="s2">&quot;Transformer_2w_rms&quot;</span>
     <span class="n">DC_LINE_RMS</span> <span class="o">=</span> <span class="s2">&quot;DC_line_rms&quot;</span>
+
+    <span class="c1"># RMS - International standards</span>
+    <span class="n">AC1A</span> <span class="o">=</span> <span class="s1">&#39;ac1a&#39;</span>
+    <span class="n">AC1C</span> <span class="o">=</span> <span class="s1">&#39;ac1c&#39;</span>
+    <span class="n">AC6A</span> <span class="o">=</span> <span class="s1">&#39;ac6a&#39;</span>
+    <span class="n">AC6C</span> <span class="o">=</span> <span class="s1">&#39;ac6c&#39;</span>
+    <span class="n">AC7B</span> <span class="o">=</span> <span class="s1">&#39;ac7b&#39;</span>
+    <span class="n">AC7C</span> <span class="o">=</span> <span class="s1">&#39;ac7c&#39;</span>
+    <span class="n">AC8B</span> <span class="o">=</span> <span class="s1">&#39;ac8b&#39;</span>
+    <span class="n">AC8C</span> <span class="o">=</span> <span class="s1">&#39;ac8c&#39;</span>
+    <span class="n">BBSEX1</span> <span class="o">=</span> <span class="s1">&#39;bbsex1&#39;</span>
+    <span class="n">BESSCBCURRENTSOURCENOPLANTCONTROL</span> <span class="o">=</span> <span class="s1">&#39;besscbcurrentsourcenoplantcontrol&#39;</span>
+    <span class="n">DC1A</span> <span class="o">=</span> <span class="s1">&#39;dc1a&#39;</span>
+    <span class="n">DC1C</span> <span class="o">=</span> <span class="s1">&#39;dc1c&#39;</span>
+    <span class="n">EXAC1</span> <span class="o">=</span> <span class="s1">&#39;exac1&#39;</span>
+    <span class="n">GOVHYDRO4</span> <span class="o">=</span> <span class="s1">&#39;govhydro4&#39;</span>
+    <span class="n">GOVSTEAM1</span> <span class="o">=</span> <span class="s1">&#39;govsteam1&#39;</span>
+    <span class="n">GOVSTEAMEU</span> <span class="o">=</span> <span class="s1">&#39;govsteameu&#39;</span>
+    <span class="n">IEEEG1</span> <span class="o">=</span> <span class="s1">&#39;ieeeg1&#39;</span>
+    <span class="n">IEEEG2</span> <span class="o">=</span> <span class="s1">&#39;ieeeg2&#39;</span>
+    <span class="n">IEEET1</span> <span class="o">=</span> <span class="s1">&#39;ieeet1&#39;</span>
+    <span class="n">IEEEX2</span> <span class="o">=</span> <span class="s1">&#39;ieeex2&#39;</span>
+    <span class="n">IEEX2A</span> <span class="o">=</span> <span class="s1">&#39;ieex2a&#39;</span>
+    <span class="n">MAXEX2</span> <span class="o">=</span> <span class="s1">&#39;maxex2&#39;</span>
+    <span class="n">OEL2C</span> <span class="o">=</span> <span class="s1">&#39;oel2c&#39;</span>
+    <span class="n">OEL3C</span> <span class="o">=</span> <span class="s1">&#39;oel3c&#39;</span>
+    <span class="n">OEL4C</span> <span class="o">=</span> <span class="s1">&#39;oel4c&#39;</span>
+    <span class="n">OEL5C</span> <span class="o">=</span> <span class="s1">&#39;oel5c&#39;</span>
+    <span class="n">PSS1AOMEGA</span> <span class="o">=</span> <span class="s1">&#39;pss1aomega&#39;</span>
+    <span class="n">PSS1APGEN</span> <span class="o">=</span> <span class="s1">&#39;pss1apgen&#39;</span>
+    <span class="n">PSS2A</span> <span class="o">=</span> <span class="s1">&#39;pss2a&#39;</span>
+    <span class="n">PSS2B</span> <span class="o">=</span> <span class="s1">&#39;pss2b&#39;</span>
+    <span class="n">PSS2C</span> <span class="o">=</span> <span class="s1">&#39;pss2c&#39;</span>
+    <span class="n">PSS3B</span> <span class="o">=</span> <span class="s1">&#39;pss3b&#39;</span>
+    <span class="n">PSS3C</span> <span class="o">=</span> <span class="s1">&#39;pss3c&#39;</span>
+    <span class="n">PSS6C</span> <span class="o">=</span> <span class="s1">&#39;pss6c&#39;</span>
+    <span class="n">PSSKUNDUR</span> <span class="o">=</span> <span class="s1">&#39;psskundur&#39;</span>
+    <span class="n">PVCURRENTSOURCEBNOPLANTCONTROL</span> <span class="o">=</span> <span class="s1">&#39;pvcurrentsourcebnoplantcontrol&#39;</span>
+    <span class="n">PVVOLTAGESOURCEANOPLANTCONTROL</span> <span class="o">=</span> <span class="s1">&#39;pvvoltagesourceanoplantcontrol&#39;</span>
+    <span class="n">PVVOLTAGESOURCEBNOPLANTCONTROL</span> <span class="o">=</span> <span class="s1">&#39;pvvoltagesourcebnoplantcontrol&#39;</span>
+    <span class="n">REECB</span> <span class="o">=</span> <span class="s1">&#39;reecb&#39;</span>
+    <span class="n">REECC</span> <span class="o">=</span> <span class="s1">&#39;reecc&#39;</span>
+    <span class="n">REGCBCS</span> <span class="o">=</span> <span class="s1">&#39;regcbcs&#39;</span>
+    <span class="n">REPCA</span> <span class="o">=</span> <span class="s1">&#39;repca&#39;</span>
+    <span class="n">SCL1C</span> <span class="o">=</span> <span class="s1">&#39;scl1c&#39;</span>
+    <span class="n">SCL2C</span> <span class="o">=</span> <span class="s1">&#39;scl2c&#39;</span>
+    <span class="n">SCRX</span> <span class="o">=</span> <span class="s1">&#39;scrx&#39;</span>
+    <span class="n">SEXS</span> <span class="o">=</span> <span class="s1">&#39;sexs&#39;</span>
+    <span class="n">ST1A</span> <span class="o">=</span> <span class="s1">&#39;st1a&#39;</span>
+    <span class="n">ST1C</span> <span class="o">=</span> <span class="s1">&#39;st1c&#39;</span>
+    <span class="n">ST4B</span> <span class="o">=</span> <span class="s1">&#39;st4b&#39;</span>
+    <span class="n">ST4C</span> <span class="o">=</span> <span class="s1">&#39;st4c&#39;</span>
+    <span class="n">ST5B</span> <span class="o">=</span> <span class="s1">&#39;st5b&#39;</span>
+    <span class="n">ST5C</span> <span class="o">=</span> <span class="s1">&#39;st5c&#39;</span>
+    <span class="n">ST6B</span> <span class="o">=</span> <span class="s1">&#39;st6b&#39;</span>
+    <span class="n">ST6C</span> <span class="o">=</span> <span class="s1">&#39;st6c&#39;</span>
+    <span class="n">ST7B</span> <span class="o">=</span> <span class="s1">&#39;st7b&#39;</span>
+    <span class="n">ST7C</span> <span class="o">=</span> <span class="s1">&#39;st7c&#39;</span>
+    <span class="n">ST9C</span> <span class="o">=</span> <span class="s1">&#39;st9c&#39;</span>
+    <span class="n">TGOV3</span> <span class="o">=</span> <span class="s1">&#39;tgov3&#39;</span>
+    <span class="n">UEL1</span> <span class="o">=</span> <span class="s1">&#39;uel1&#39;</span>
+    <span class="n">UEL2C</span> <span class="o">=</span> <span class="s1">&#39;uel2c&#39;</span>
+    <span class="n">VRKUNDUR</span> <span class="o">=</span> <span class="s1">&#39;vrkundur&#39;</span>
+    <span class="n">WPP4BCURRENTSOURCE2020</span> <span class="o">=</span> <span class="s1">&#39;wpp4bcurrentsource2020&#39;</span>
+    <span class="n">WT4ACURRENTSOURCE</span> <span class="o">=</span> <span class="s1">&#39;wt4acurrentsource&#39;</span>
+    <span class="n">WT4ACURRENTSOURCE2020</span> <span class="o">=</span> <span class="s1">&#39;wt4acurrentsource2020&#39;</span>
+    <span class="n">WT4BCURRENTSOURCE2020</span> <span class="o">=</span> <span class="s1">&#39;wt4bcurrentsource2020&#39;</span>
+    <span class="n">WT4BCURRENTSOURCE</span> <span class="o">=</span> <span class="s1">&#39;wt4bcurrentsource&#39;</span>
+    <span class="n">WT4INJECTOR</span> <span class="o">=</span> <span class="s1">&#39;wt4injector&#39;</span>
+    <span class="n">WTG4ACURRENTSOURCE</span> <span class="o">=</span> <span class="s1">&#39;wtg4acurrentsource&#39;</span>
+    <span class="n">WTG4BCURRENTSOURCE</span> <span class="o">=</span> <span class="s1">&#39;wtg4bcurrentsource&#39;</span>
+    <span class="n">IEEEVC_1981</span> <span class="o">=</span> <span class="s1">&#39;ieeevc_1981&#39;</span>
+    <span class="n">ESDC2A</span> <span class="o">=</span> <span class="s1">&#39;esdc2a&#39;</span>
+    <span class="n">FRQTPA</span> <span class="o">=</span> <span class="s1">&#39;frqtpa&#39;</span>
+    <span class="n">VTGTPA</span> <span class="o">=</span> <span class="s1">&#39;vtgtpa&#39;</span>
+    <span class="n">CIMTR1</span> <span class="o">=</span> <span class="s1">&#39;cimtr1&#39;</span>
+    <span class="n">CIMW</span> <span class="o">=</span> <span class="s1">&#39;cimw&#39;</span>
+    <span class="n">GENSAL</span> <span class="o">=</span> <span class="s1">&#39;gensal&#39;</span>
+    <span class="n">GENROU</span> <span class="o">=</span> <span class="s1">&#39;genrou&#39;</span>
+    <span class="n">GGOV1</span> <span class="o">=</span> <span class="s1">&#39;ggov1&#39;</span>
+    <span class="n">HYGOV</span> <span class="o">=</span> <span class="s1">&#39;hygov&#39;</span>
+    <span class="n">IEEL</span> <span class="o">=</span> <span class="s1">&#39;ieel&#39;</span>
+    <span class="n">TGOV1</span> <span class="o">=</span> <span class="s1">&#39;tgov1&#39;</span>
 
     <span class="c1"># EMT</span>
     <span class="n">EMT_GENERATOR</span> <span class="o">=</span> <span class="s2">&quot;EMT_GENERATOR&quot;</span>
@@ -5452,7 +5964,11 @@
     <span class="n">RUNTIME_REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;Runtime parameter&quot;</span>
     <span class="n">TARGET_REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;Mutable target&quot;</span>
     <span class="n">FLOAT</span> <span class="o">=</span> <span class="s2">&quot;Number&quot;</span>
-    <span class="n">OPTIONAL_FLOAT</span> <span class="o">=</span> <span class="s2">&quot;Optional number&quot;</span></div>
+    <span class="n">OPTIONAL_FLOAT</span> <span class="o">=</span> <span class="s2">&quot;Optional number&quot;</span>
+    <span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;Text&quot;</span>
+    <span class="n">REQUIRED_TEXT</span> <span class="o">=</span> <span class="s2">&quot;Required text&quot;</span>
+    <span class="n">INTEGER</span> <span class="o">=</span> <span class="s2">&quot;Integer&quot;</span>
+    <span class="n">BOOLEAN</span> <span class="o">=</span> <span class="s2">&quot;Boolean&quot;</span></div>
 
 
 
@@ -5517,6 +6033,8 @@
     <span class="n">TimeDelay</span> <span class="o">=</span> <span class="s2">&quot;time_delay&quot;</span>
     <span class="n">MovingAverage</span> <span class="o">=</span> <span class="s2">&quot;moving_average&quot;</span>
     <span class="n">GradientLimiter</span> <span class="o">=</span> <span class="s2">&quot;gradient_limiter&quot;</span>
+    <span class="n">ConditionalDiagnostic</span> <span class="o">=</span> <span class="s2">&quot;conditional_diagnostic&quot;</span>
+    <span class="n">DelayedSwitchEvent</span> <span class="o">=</span> <span class="s2">&quot;delayed_switch_event&quot;</span>
     <span class="n">DelayedThresholdLatch</span> <span class="o">=</span> <span class="s2">&quot;delayed_threshold_latch&quot;</span>
     <span class="n">StartupHandover</span> <span class="o">=</span> <span class="s2">&quot;startup_handover&quot;</span>
     <span class="n">ValveState</span> <span class="o">=</span> <span class="s2">&quot;valve_state&quot;</span>
@@ -5627,6 +6145,7 @@
     <span class="n">PLOT_ENTRY</span> <span class="o">=</span> <span class="s2">&quot;plot_entry&quot;</span></div>
 
 
+
 <div class="viewcode-block" id="DynamicTableModelMode">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DynamicTableModelMode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynamicTableModelMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -5639,6 +6158,7 @@
     <span class="n">EQUATIONS</span> <span class="o">=</span> <span class="s2">&quot;equations&quot;</span></div>
 
 
+
 <div class="viewcode-block" id="DynEditorGraphicsModes">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DynEditorGraphicsModes">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynEditorGraphicsModes</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -5647,6 +6167,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">DARK</span> <span class="o">=</span> <span class="s2">&quot;Dark&quot;</span>
     <span class="n">LIGHT</span> <span class="o">=</span> <span class="s2">&quot;Light&quot;</span></div>
+
 
 
 <div class="viewcode-block" id="RoutingAxis">
@@ -5660,6 +6181,7 @@
 
     <span class="n">HORIZONTAL</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span>
     <span class="n">VERTICAL</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span></div>
+
 
 
 <div class="viewcode-block" id="RoutingPortSide">
@@ -5677,6 +6199,7 @@
     <span class="n">BOTTOM</span> <span class="o">=</span> <span class="s2">&quot;bottom&quot;</span></div>
 
 
+
 <div class="viewcode-block" id="RoutingValidationMessageLevel">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.RoutingValidationMessageLevel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RoutingValidationMessageLevel</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -5688,6 +6211,36 @@
 
     <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
     <span class="n">WARNING</span> <span class="o">=</span> <span class="s2">&quot;warning&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="SampledValueEvaluationMode">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.SampledValueEvaluationMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SampledValueEvaluationMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select the numerical boundary that owns a sampled-value update.&quot;&quot;&quot;</span>
+
+    <span class="n">AcceptedBoundary</span> <span class="o">=</span> <span class="s2">&quot;accepted_boundary&quot;</span>
+    <span class="n">ImplicitIterate</span> <span class="o">=</span> <span class="s2">&quot;implicit_iterate&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="VoltageDependentPowerModel">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.VoltageDependentPowerModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VoltageDependentPowerModel</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select the physical voltage law of a static RMS power injection.&quot;&quot;&quot;</span>
+
+    <span class="n">ConstantCurrent</span> <span class="o">=</span> <span class="s2">&quot;ConstantCurrent&quot;</span>
+    <span class="n">ConstantImpedance</span> <span class="o">=</span> <span class="s2">&quot;ConstantImpedance&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="InductionMachineRole">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.InductionMachineRole">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InductionMachineRole</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify whether the shared induction equations inject or consume power.&quot;&quot;&quot;</span>
+
+    <span class="n">GENERATOR</span> <span class="o">=</span> <span class="s2">&quot;generator&quot;</span>
+    <span class="n">MOTOR</span> <span class="o">=</span> <span class="s2">&quot;motor&quot;</span></div>
 
 </pre></div>
 

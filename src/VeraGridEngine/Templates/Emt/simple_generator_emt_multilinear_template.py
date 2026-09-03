@@ -188,7 +188,10 @@ def get_simple_generator_emt_multilinear_template(
         q_B: vf.add_const(None),
         p_C: vf.add_const(None),
         q_C: vf.add_const(None),
-        delta: vf.add_const(None),
+        delta: sym.atan(
+            (Ra * ipk_init * sym.sin(phi_init) - omega * (Lmq + La) * ipk_init * sym.cos(phi_init))
+            / (vpk_init + Ra * ipk_init * sym.cos(phi_init) + omega * (Lmq + La) * ipk_init * sym.sin(phi_init))
+        ),
     }
     templ.block.api_obj_mapping = {
         ParamPowerFlowReferenceType.omega_base: omega_base,
@@ -199,10 +202,6 @@ def get_simple_generator_emt_multilinear_template(
 
     templ.block.init_eqs = {
         omega: omega_ref,
-        delta: sym.atan(
-            (Ra * ipk_init * sym.sin(phi_init) - omega * (Lmq + La) * ipk_init * sym.cos(phi_init))
-            / (vpk_init + Ra * ipk_init * sym.cos(phi_init) + omega * (Lmq + La) * ipk_init * sym.sin(phi_init))
-        ),
         theta: phi_v_init + delta,
         cos_theta: sym.cos(theta),
         sin_theta: sym.sin(theta),

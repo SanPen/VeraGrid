@@ -27,6 +27,133 @@ if TYPE_CHECKING:
 ComboStableKey = Union[str, int, float, bool, None]
 
 
+class BoolCheckboxDelegate(QtWidgets.QStyledItemDelegate):
+    """
+    Delegate that paints boolean values as checkboxes and toggles them on double click.
+    """
+
+    def __init__(self, parent: QtWidgets.QTableView) -> None:
+        """
+        Constructor.
+
+        :param parent: Parent table view.
+        """
+        QtWidgets.QStyledItemDelegate.__init__(self, parent)
+
+    def get_checkbox_rect(self, option: QtWidgets.QStyleOptionViewItem) -> QtCore.QRect:
+        """
+        Get a centered checkbox rectangle for one cell.
+
+        :param option: Cell style option.
+        :return: Checkbox rectangle.
+        """
+        checkbox_option: QtWidgets.QStyleOptionButton = QtWidgets.QStyleOptionButton()
+        style: QtWidgets.QStyle
+
+        if option.widget is not None:
+            style = option.widget.style()
+        else:
+            style = QtWidgets.QApplication.style()
+
+        checkbox_rect: QtCore.QRect = style.subElementRect(
+            QtWidgets.QStyle.SubElement.SE_CheckBoxIndicator,
+            checkbox_option,
+            option.widget,
+        )
+        x_position: int = option.rect.x() + int((option.rect.width() - checkbox_rect.width()) / 2)
+        y_position: int = option.rect.y() + int((option.rect.height() - checkbox_rect.height()) / 2)
+
+        return QtCore.QRect(x_position, y_position, checkbox_rect.width(), checkbox_rect.height())
+
+    def paint(self,
+              painter: QtGui.QPainter,
+              option: QtWidgets.QStyleOptionViewItem,
+              index: QtCore.QModelIndex) -> None:
+        """
+        Paint the cell as a centered checkbox.
+
+        :param painter: Painter.
+        :param option: Cell style option.
+        :param index: Model index.
+        :return: None.
+        """
+        if option.state & QtWidgets.QStyle.StateFlag.State_Selected:
+            painter.fillRect(option.rect, option.palette.highlight())
+        else:
+            painter.fillRect(option.rect, option.palette.base())
+
+        checkbox_option: QtWidgets.QStyleOptionButton = QtWidgets.QStyleOptionButton()
+        checkbox_option.rect = self.get_checkbox_rect(option=option)
+        checkbox_option.state = QtWidgets.QStyle.StateFlag.State_Enabled
+
+        if index.data(QtCore.Qt.ItemDataRole.CheckStateRole) == QtCore.Qt.CheckState.Checked:
+            checkbox_option.state = checkbox_option.state | QtWidgets.QStyle.StateFlag.State_On
+        else:
+            checkbox_option.state = checkbox_option.state | QtWidgets.QStyle.StateFlag.State_Off
+
+        if option.widget is not None:
+            option.widget.style().drawPrimitive(
+                QtWidgets.QStyle.PrimitiveElement.PE_IndicatorCheckBox,
+                checkbox_option,
+                painter,
+                option.widget,
+            )
+        else:
+            QtWidgets.QApplication.style().drawPrimitive(
+                QtWidgets.QStyle.PrimitiveElement.PE_IndicatorCheckBox,
+                checkbox_option,
+                painter,
+            )
+
+    def createEditor(self,
+                     parent: QtWidgets.QWidget,
+                     option: QtWidgets.QStyleOptionViewItem,
+                     index: QtCore.QModelIndex) -> None:
+        """
+        Disable edit widgets for checkbox cells.
+
+        :param parent: Parent widget.
+        :param option: Cell style option.
+        :param index: Model index.
+        :return: None.
+        """
+        del parent
+        del option
+        del index
+        return None
+
+    def editorEvent(self,
+                    event: QtCore.QEvent,
+                    model: QtCore.QAbstractItemModel,
+                    option: QtWidgets.QStyleOptionViewItem,
+                    index: QtCore.QModelIndex) -> bool:
+        """
+        Toggle the boolean value on double click.
+
+        :param event: Editor event.
+        :param model: Table model.
+        :param option: Cell style option.
+        :param index: Model index.
+        :return: True when the value was toggled.
+        """
+        del option
+
+        if event.type() == QtCore.QEvent.Type.MouseButtonDblClick:
+            if isinstance(event, QtGui.QMouseEvent) and event.button() == QtCore.Qt.MouseButton.LeftButton:
+                current_state: object = index.data(QtCore.Qt.ItemDataRole.CheckStateRole)
+
+                if current_state == QtCore.Qt.CheckState.Checked:
+                    new_state: QtCore.Qt.CheckState = QtCore.Qt.CheckState.Unchecked
+                else:
+                    new_state = QtCore.Qt.CheckState.Checked
+
+                return model.setData(index, new_state, QtCore.Qt.ItemDataRole.CheckStateRole)
+            else:
+                return False
+        else:
+            return False
+
+
 def translate_context_menu_text(text: str) -> str:
     """
     Translate one runtime-created context-menu label.

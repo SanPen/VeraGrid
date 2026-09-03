@@ -39,16 +39,19 @@ from VeraGridEngine.IO.raw.versioned.v36.fixed_shunt import RawFixedShuntV36
 from VeraGridEngine.IO.raw.versioned.v36.owner import RawOwnerV36
 from VeraGridEngine.IO.raw.versioned.v36.generator import RawGeneratorV36
 from VeraGridEngine.IO.raw.versioned.v34.transformer import RawTransformerV34
+from VeraGridEngine.IO.raw.versioned.v33.transformer import RawTransformerV33
 from VeraGridEngine.IO.raw.versioned.v35.transformer import RawTransformerV35
 from VeraGridEngine.IO.raw.versioned.v34.vsc_dc_line import RawVscDCLineV34
 from VeraGridEngine.IO.raw.versioned.v35.vsc_dc_line import RawVscDCLineV35
 from VeraGridEngine.IO.raw.raw_parser_writer import interpret_line, read_and_split, read_raw
 from VeraGridEngine.IO.raw.rawx_parser_writer import parse_rawx
-from VeraGridEngine.IO.raw.raw_to_veragrid import get_veragrid_transformer, psse_to_veragrid
+from VeraGridEngine.IO.raw.raw_to_veragrid import (get_veragrid_generator, get_veragrid_line, get_veragrid_shunt_switched,
+                                                   get_veragrid_transformer, psse_to_veragrid)
 from VeraGridEngine.IO.raw.veragrid_to_raw import (RawNodeBreakerExportData, append_psse_terminal,
                                                    get_psse_substation_switch, veragrid_to_raw)
+from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import PsseTopologyExportMode, TapModuleControl
+from VeraGridEngine.enumerations import GeneratorControlMode, PsseTopologyExportMode, ShuntControlMode, TapModuleControl
 
 
 def test_psse35_branch_parser_keeps_ownership_fields() -> None:
@@ -69,6 +72,106 @@ def test_psse35_branch_parser_keeps_ownership_fields() -> None:
     assert branch.F3 == 0.0
     assert branch.O4 == 0
     assert branch.F4 == 0.0
+
+
+def test_psse33_three_winding_cw3_taps_use_bus_voltage_base() -> None:
+    """PSSE CW=3 winding taps are pu of NOMVn and must be moved to the bus base."""
+
+    psse_transformer = RawTransformerV33()
+    psse_transformer.windings = 3
+    psse_transformer.I = 101
+    psse_transformer.J = 102
+    psse_transformer.K = 103
+    psse_transformer.CKT = "1"
+    psse_transformer.CW = 3
+    psse_transformer.CZ = 1
+    psse_transformer.CM = 1
+    psse_transformer.STAT = 1
+    psse_transformer.NAME = "CW3"
+    psse_transformer.R1_2 = 0.01
+    psse_transformer.X1_2 = 0.10
+    psse_transformer.R2_3 = 0.02
+    psse_transformer.X2_3 = 0.20
+    psse_transformer.R3_1 = 0.03
+    psse_transformer.X3_1 = 0.30
+    psse_transformer.SBASE1_2 = 100.0
+    psse_transformer.SBASE2_3 = 100.0
+    psse_transformer.SBASE3_1 = 100.0
+    psse_transformer.WINDV1 = 1.02
+    psse_transformer.WINDV2 = 0.98
+    psse_transformer.WINDV3 = 1.01
+    psse_transformer.NOMV1 = 220.0
+    psse_transformer.NOMV2 = 110.0
+    psse_transformer.NOMV3 = 33.0
+
+    bus_1 = dev.Bus(name="B1", Vnom=230.0)
+    bus_2 = dev.Bus(name="B2", Vnom=115.0)
+    bus_3 = dev.Bus(name="B3", Vnom=34.5)
+
+    transformer, n_windings = get_veragrid_transformer(
+        psse_elm=psse_transformer,
+        psse_bus_dict={101: bus_1, 102: bus_2, 103: bus_3},
+        Sbase=100.0,
+        logger=Logger(),
+        adjust_taps_to_discrete_positions=False,
+        simple_naming=False,
+        flatten_virtual_taps=False,
+    )
+
+    assert n_windings == 3
+    assert np.isclose(transformer.winding1.tap_module, 1.02 * 220.0 / 230.0)
+    assert np.isclose(transformer.winding2.tap_module, 0.98 * 110.0 / 115.0)
+    assert np.isclose(transformer.winding3.tap_module, 1.01 * 33.0 / 34.5)
+
+
+def test_psse_wmod2_non_unity_power_factor_preserves_voltage_control() -> None:
+    """WMOD=2 machines with non-unity WPF can regulate voltage even with tiny Q limits."""
+
+    bus = dev.Bus(name="PV", Vnom=34.5)
+
+    renewable = RawGenerator()
+    renewable.I = 101
+    renewable.ID = "1"
+    renewable.PG = 0.005
+    renewable.QG = 0.0
+    renewable.QT = 0.0
+    renewable.QB = 0.0
+    renewable.VS = 1.04
+    renewable.MBASE = 10.0
+    renewable.STAT = 1
+    renewable.PT = 10.0
+    renewable.PB = 0.0
+    renewable.WMOD = 2
+    renewable.WPF = 0.9999
+
+    generator = get_veragrid_generator(renewable, {101: bus}, logger=Logger())
+
+    assert generator.control_mode == GeneratorControlMode.V
+
+
+def test_psse_zero_reactive_range_unity_power_factor_is_fixed_q() -> None:
+    """Unity-power-factor WMOD=2 machines with no Q range should not force a PV solve."""
+
+    bus = dev.Bus(name="PQ", Vnom=0.5)
+
+    generator_raw = RawGenerator()
+    generator_raw.I = 101
+    generator_raw.ID = "1"
+    generator_raw.PG = 0.9
+    generator_raw.QG = 0.0
+    generator_raw.QT = 0.0
+    generator_raw.QB = 0.0
+    generator_raw.VS = 1.1
+    generator_raw.MBASE = 10.0
+    generator_raw.STAT = 1
+    generator_raw.PT = 10.0
+    generator_raw.PB = 0.0
+    generator_raw.WMOD = 2
+    generator_raw.WPF = 1.0
+
+    generator = get_veragrid_generator(generator_raw, {101: bus}, logger=Logger())
+
+    assert generator.control_mode == GeneratorControlMode.Q
 
 
 def test_parse_rawx_owner_fields_preserve_iowner(tmp_path: Path) -> None:
@@ -121,6 +224,100 @@ def test_branch_ownership_helper_accepts_single_owner_pair() -> None:
     assert branch.F3 == 0.0
     assert branch.O4 == 0
     assert branch.F4 == 0.0
+
+
+def test_psse_branch_connected_to_inactive_bus_imports_inactive() -> None:
+    """PSSE rejects in-service branches at type-4 buses; import them inactive."""
+
+    bus_from = dev.Bus(name="IN_SERVICE", Vnom=132.0)
+    bus_to = dev.Bus(name="OUT_OF_SERVICE", Vnom=132.0, active=False)
+
+    psse_branch = RawBranchV33()
+    psse_branch.I = 101
+    psse_branch.J = 102
+    psse_branch.CKT = "1"
+    psse_branch.NAME = ""
+    psse_branch.R = 0.0
+    psse_branch.X = 1e-4
+    psse_branch.B = 0.0
+    psse_branch.RATEA = 0.0
+    psse_branch.RATEB = 0.0
+    psse_branch.RATEC = 0.0
+    psse_branch.ST = 1
+    psse_branch.LEN = 0.0
+    psse_branch.idtag = None
+
+    line = get_veragrid_line(
+        psse_elm=psse_branch,
+        psse_bus_dict={101: bus_from, 102: bus_to},
+        Sbase=100.0,
+        logger=Logger(),
+        simple_naming=True,
+    )
+
+    assert not line.active
+
+
+def test_compile_with_stored_guess_keeps_angle_but_applies_generator_voltage_schedule() -> None:
+    """PSS/E stored starts keep the angle seed but apply controlled-bus voltage schedules."""
+
+    grid = MultiCircuit()
+    bus = dev.Bus(name="PV", Vnom=220.0, Vm0=1.08, Va0=np.deg2rad(-5.0))
+    gen = dev.Generator(name="G", active=True, P=10.0, vset=1.02)
+    grid.add_bus(bus)
+    grid.add_generator(bus=bus, api_obj=gen)
+
+    nc = compile_numerical_circuit_at(grid, t_idx=None, use_stored_guess=True)
+
+    assert np.isclose(abs(nc.bus_data.Vbus[0]), 1.02)
+    assert np.isclose(np.angle(nc.bus_data.Vbus[0]), np.deg2rad(-5.0))
+
+
+def test_compile_detects_conflicting_remote_voltage_schedules_on_controlled_bus() -> None:
+    """Multiple remote controllers targeting one bus must compare against that bus."""
+
+    grid = MultiCircuit()
+    local_1 = dev.Bus(name="LOCAL_1", Vnom=30.0)
+    local_2 = dev.Bus(name="LOCAL_2", Vnom=30.0)
+    remote = dev.Bus(name="REMOTE", Vnom=220.0, Vm0=1.04)
+    gen_1 = dev.Generator(name="G1", active=True, P=1.0, vset=1.02)
+    gen_2 = dev.Generator(name="G2", active=True, P=1.0, vset=1.05)
+    gen_1.control_bus = remote
+    gen_2.control_bus = remote
+
+    grid.add_bus(local_1)
+    grid.add_bus(local_2)
+    grid.add_bus(remote)
+    grid.add_generator(bus=local_1, api_obj=gen_1)
+    grid.add_generator(bus=local_2, api_obj=gen_2)
+    logger = Logger()
+
+    nc = compile_numerical_circuit_at(grid, t_idx=None, use_stored_guess=True, logger=logger)
+
+    assert logger.error_count() == 1
+    assert np.isclose(abs(nc.bus_data.Vbus[2]), 1.02)
+
+
+def test_compile_does_not_fix_voltage_controller_q_in_remote_regulated_bus() -> None:
+    """Voltage controller QG is solved by the PF, not fixed from the RAW seed."""
+
+    grid = MultiCircuit()
+    local = dev.Bus(name="LOCAL", Vnom=30.0)
+    regulated = dev.Bus(name="REGULATED", Vnom=220.0)
+    local_gen = dev.Generator(name="LOCAL_G", active=True, P=1.0, Q=-15.0, vset=1.04)
+    remote_gen = dev.Generator(name="REMOTE_G", active=True, P=1.0, Q=20.0, vset=1.04)
+    remote_gen.control_bus = regulated
+
+    grid.add_bus(local)
+    grid.add_bus(regulated)
+    grid.add_generator(bus=regulated, api_obj=local_gen)
+    grid.add_generator(bus=local, api_obj=remote_gen)
+
+    nc = compile_numerical_circuit_at(grid, t_idx=None, use_stored_guess=True)
+
+    assert np.allclose(nc.generator_data.q, 0.0)
+    assert np.isclose(nc.get_power_injections()[0].imag, 0.0)
+    assert np.isclose(nc.get_power_injections()[1].imag, 0.0)
 
 
 def test_read_raw_keeps_psse35_system_wide_records_out_of_bus_section(tmp_path: Path) -> None:
@@ -224,6 +421,79 @@ def test_switched_shunt_writer_uses_swrem_before_psse35() -> None:
     raw_values = interpret_line(switched_shunt.get_raw_line(34))
 
     assert raw_values[6] == 77
+
+
+def test_locked_controllable_shunt_compiles_fixed_admittance() -> None:
+    """RAW MODSW=0 switched shunts import as locked controllable shunts and must stay in Ybus."""
+
+    grid = MultiCircuit()
+    bus = dev.Bus(name="BUS1", Vnom=34.5)
+    shunt = dev.ControllableShunt(
+        name="locked shunt",
+        B=-25.0,
+        active=True,
+        control_mode=ShuntControlMode.Locked,
+    )
+    grid.add_bus(bus)
+    grid.add_controllable_shunt(bus=bus, api_obj=shunt)
+
+    nc = compile_numerical_circuit_at(grid, t_idx=None)
+
+    assert nc.shunt_data.active[0]
+    assert np.isclose(nc.shunt_data.Y[0].real, 0.0)
+    assert np.isclose(nc.shunt_data.Y[0].imag, -25.0)
+
+
+def test_psse_switched_shunt_import_uses_block_bounds() -> None:
+    """PSS/e switched-shunt controllable range is the cumulative RAW block range."""
+
+    bus = dev.Bus(name="BUS1", Vnom=115.0)
+    bus.code = "10"
+
+    psse_shunt = RawSwitchedShunt()
+    psse_shunt.I = 10
+    psse_shunt.MODSW = 2
+    psse_shunt.STAT = 1
+    psse_shunt.VSWHI = 1.03
+    psse_shunt.VSWLO = 1.03
+    psse_shunt.RMPCT = 100.0
+    psse_shunt.BINIT = -5.0
+    psse_shunt.set_block(index=1, status=1, steps=1, admittance=-20.0)
+    psse_shunt.set_block(index=2, status=1, steps=1, admittance=15.0)
+
+    shunt = get_veragrid_shunt_switched(
+        psse_elm=psse_shunt,
+        bus=bus,
+        psse_bus_dict={10: bus},
+        logger=Logger(),
+    )
+
+    assert shunt.control_mode == ShuntControlMode.Continuous
+    assert np.isclose(shunt.B, -5.0)
+    assert np.isclose(shunt.Bmin, -20.0)
+    assert np.isclose(shunt.Bmax, 0.0)
+
+
+def test_continuous_controllable_shunt_compiles_signed_q_limits() -> None:
+    """Continuous shunt controls use VeraGrid's load-like Q sign convention."""
+
+    grid = MultiCircuit()
+    bus = dev.Bus(name="BUS1", Vnom=115.0)
+    shunt = dev.ControllableShunt(
+        name="continuous shunt",
+        B=9.38,
+        Bmin=0.0,
+        Bmax=9.38,
+        active=True,
+        control_mode=ShuntControlMode.Continuous,
+    )
+    grid.add_bus(bus)
+    grid.add_controllable_shunt(bus=bus, api_obj=shunt)
+
+    nc = compile_numerical_circuit_at(grid, t_idx=None)
+
+    assert np.isclose(nc.shunt_data.qmin[0], -9.38)
+    assert np.isclose(nc.shunt_data.qmax[0], 0.0)
 
 
 def test_vsc_dc_line_writer_uses_version_specific_control_fields() -> None:

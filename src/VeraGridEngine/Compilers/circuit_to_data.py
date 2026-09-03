@@ -10,6 +10,7 @@ from typing import Dict, Union, TYPE_CHECKING
 from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.Substation.bus import Bus
+from VeraGridEngine.Devices.Fluid.fluid_injection_template import FluidInjectionTemplate
 from VeraGridEngine.Devices.Aggregation.area import Area
 from VeraGridEngine.enumerations import (BusMode, BranchImpedanceMode, ExternalGridMode, DeviceType,
                                          TapModuleControl, TapPhaseControl, HvdcControlType, ConverterControlType,
@@ -73,6 +74,7 @@ def set_bus_control_voltage(i: int,
                             bus_voltage_used: BoolVec,
                             bus_data: BusData,
                             candidate_Vm: float,
+                            use_stored_guess: bool,
                             logger: Logger) -> None:
     """
     Set the bus control voltage
@@ -83,6 +85,7 @@ def set_bus_control_voltage(i: int,
     :param bus_voltage_used: Array of flags indicating if a bus voltage has been modified before
     :param bus_data: BusData
     :param candidate_Vm: Voltage set point that you want to set
+    :param use_stored_guess: Use the stored seed values?
     :param logger: Logger
     """
     if bus_data.bus_types[i] != BusMode.Slack_tpe.value:  # if it is not Slack
@@ -97,23 +100,18 @@ def set_bus_control_voltage(i: int,
             # bus_data.bus_types[i] = BusMode.PV_tpe.value  # set as PV
             bus_data.set_bus_mode(i, BusMode.PV_tpe)
 
-    if not bus_voltage_used[i]:
-        if remote_control and j > -1 and j != i:
-            # initialize the remote bus voltage to the control value but preserve angle while updating magnitude
-            existing_angle = np.angle(bus_data.Vbus[j])
-            bus_data.Vbus[j] = rect(candidate_Vm, existing_angle)
-            bus_voltage_used[j] = True
-        else:
-            # initialize the local bus voltage to the control value but preserve angle while updating magnitude
-            existing_angle = np.angle(bus_data.Vbus[i])
-            bus_data.Vbus[i] = rect(candidate_Vm, existing_angle)
-            bus_voltage_used[i] = True
+    controlled_bus_idx = j if remote_control and j > -1 and j != i else i
 
-    elif candidate_Vm != bus_data.Vbus[i]:
+    if not bus_voltage_used[controlled_bus_idx]:
+        existing_angle = np.angle(bus_data.Vbus[controlled_bus_idx])
+        bus_data.Vbus[controlled_bus_idx] = rect(candidate_Vm, existing_angle)
+        bus_voltage_used[controlled_bus_idx] = True
+
+    elif not np.isclose(candidate_Vm, abs(bus_data.Vbus[controlled_bus_idx])):
         logger.add_error(msg='Different control voltage set points',
                          device=bus_name,
                          value=candidate_Vm,
-                         expected_value=bus_data.Vbus[i])
+                         expected_value=abs(bus_data.Vbus[controlled_bus_idx]))
 
 
 def normalize_upper_bound(lower: float,
@@ -406,6 +404,7 @@ def get_load_data(data: LoadData,
                   bus_data: BusData,
                   t_idx: int | None,
                   logger: Logger,
+                  use_stored_guess: bool = False,
                   opf_results: Union[OptimalPowerFlowResults, None] = None,
                   fill_three_phase: bool = False) -> LoadData:
     """
@@ -703,6 +702,7 @@ def get_load_data(data: LoadData,
                                         bus_data=bus_data,
                                         bus_voltage_used=bus_voltage_used,
                                         candidate_Vm=elm.get_Vm_at(t_idx),
+                                        use_stored_guess=use_stored_guess,
                                         logger=logger)
 
             elif elm.mode == ExternalGridMode.PV:
@@ -714,6 +714,7 @@ def get_load_data(data: LoadData,
                                         bus_data=bus_data,
                                         bus_voltage_used=bus_voltage_used,
                                         candidate_Vm=elm.get_Vm_at(t_idx),
+                                        use_stored_guess=use_stored_guess,
                                         logger=logger)
 
             data.S[ii] += elm.get_S_at(t_idx)
@@ -811,6 +812,7 @@ def get_shunt_data(
         bus_data: BusData,
         t_idx: int | None,
         logger: Logger,
+        use_stored_guess: bool = False,
         control_remote_voltage: bool = True,
         fill_three_phase: bool = False
 ) -> None:
@@ -961,8 +963,12 @@ def get_shunt_data(
             data.vset[ii] = elm.Vset
             data.vmin[ii] = elm.Vmin
             data.vmax[ii] = elm.Vmax
-            data.qmin[ii] = elm.Bmin
-            data.qmax[ii] = elm.Bmax
+            if elm.control_mode == ShuntControlMode.Continuous:
+                data.qmin[ii] = -elm.Bmax
+                data.qmax[ii] = -elm.Bmin
+            else:
+                data.qmin[ii] = elm.Bmin
+                data.qmax[ii] = elm.Bmax
 
             data.step[ii] = elm.step
             data.g_steps.insert(i=ii, x=np.insert(np.cumsum(elm.g_steps), 0, 0))
@@ -970,6 +976,9 @@ def get_shunt_data(
 
             data.active[ii] = elm.get_active_at(t_idx)
             data.cost[ii] = elm.get_Cost_at(t_idx)
+
+            if elm.control_mode == ShuntControlMode.Locked:
+                data.Y[ii] += elm.get_Y_at(t_idx)
 
             if elm.control_mode == ShuntControlMode.Continuous:
                 data.Y[ii] += elm.get_Y_at(t_idx)
@@ -1018,6 +1027,7 @@ def get_shunt_data(
                                         bus_data=bus_data,
                                         bus_voltage_used=bus_voltage_used,
                                         candidate_Vm=elm.get_Vset_at(t_idx),
+                                        use_stored_guess=use_stored_guess,
                                         logger=logger)
 
             if elm.use_kw:
@@ -1045,6 +1055,7 @@ def fill_generator_parent(
         logger: Logger,
         bus_data: BusData,
         t_idx: int | None = None,
+        use_stored_guess: bool = False,
         control_remote_voltage: bool = True,
         fill_three_phase: bool = False
 ) -> None:
@@ -1165,9 +1176,9 @@ def fill_generator_parent(
                                     bus_data=bus_data,
                                     bus_voltage_used=bus_voltage_used,
                                     candidate_Vm=elm.get_Vset_at(t_idx),
+                                    use_stored_guess=use_stored_guess,
                                     logger=logger)
-            # we pick this value to initialize
-            data.q[k] = elm.get_Q_at(t_idx)
+            data.q[k] = 0.0
 
         elif elm.control_mode == GeneratorControlMode.Q:
             data.q[k] = elm.get_Q_at(t_idx)
@@ -1221,6 +1232,7 @@ def get_generator_data(
         t_idx: int | None,
         opf_results: VALID_OPF_RESULTS | None = None,
         time_series: bool = False,
+        use_stored_guess: bool = False,
         control_remote_voltage: bool = True,
         fill_three_phase: bool = False
 ) -> Dict[str, int]:
@@ -1254,6 +1266,7 @@ def get_generator_data(
                               bus_voltage_used=bus_voltage_used,
                               logger=logger,
                               t_idx=t_idx,
+                              use_stored_guess=use_stored_guess,
                               control_remote_voltage=control_remote_voltage,
                               fill_three_phase=fill_three_phase)
 
@@ -1468,8 +1481,17 @@ def fill_controllable_branch(
     ctrl_data.vset[ii] = elm.get_vset_at(t_idx)
 
     if opf_results is not None:
-        ctrl_data.tap_angle[ii] = opf_results.tap_angle[t_idx, ii]
+        if opf_results.tap_angle.ndim == 1:
+            ctrl_data.tap_angle[ii] = opf_results.tap_angle[ii]
+        else:
+            if t_idx is None:
+                ctrl_data.tap_angle[ii] = opf_results.tap_angle[0, ii]
+            else:
+                ctrl_data.tap_angle[ii] = opf_results.tap_angle[t_idx, ii]
+
         ctrl_data.tap_module[ii] = elm.get_tap_module_at(t_idx)
+        ctrl_data.tap_phase_control_mode[ii] = TapPhaseControl.fixed.idx()
+        ctrl_data.tap_module_control_mode[ii] = TapModuleControl.fixed.idx()
     else:
         ctrl_data.tap_angle[ii] = elm.get_tap_phase_at(t_idx)
         ctrl_data.tap_module[ii] = elm.get_tap_module_at(t_idx)
@@ -2269,27 +2291,114 @@ def get_fluid_node_data(data: FluidNodeData,
     return plant_dict
 
 
+def resize_fluid_injection_data(data: FluidTurbineData, nelm: int) -> None:
+    """
+    Resize fluid injection data arrays to the valid compiled entries.
+
+    :param data: Fluid injection data structure.
+    :param nelm: Number of valid compiled entries.
+    :return: None.
+    """
+    if data.nelm == nelm:
+        pass
+    else:
+        data.names = data.names[:nelm].copy()
+        data.idtag = data.idtag[:nelm].copy()
+        data.efficiency = data.efficiency[:nelm].copy()
+        data.max_flow_rate = data.max_flow_rate[:nelm].copy()
+        data.plant_idx = data.plant_idx[:nelm].copy()
+        data.generator_idx = data.generator_idx[:nelm].copy()
+        data.nelm = nelm
+
+
+def get_valid_fluid_injection_indices(elm: FluidInjectionTemplate,
+                                      plant_dict: Dict[str, int],
+                                      gen_dict: Dict[str, int],
+                                      logger: Logger) -> tuple[int | None, int | None]:
+    """
+    Resolve the plant and generator indices for one fluid injection.
+
+    :param elm: Fluid injection device.
+    :param plant_dict: Fluid node index by idtag.
+    :param gen_dict: Generator index by idtag.
+    :param logger: Logger receiving invalid-link errors.
+    :return: Plant and generator indices, or ``None`` for invalid links.
+    """
+    plant_idx: int | None = None
+    gen_idx: int | None = None
+
+    if elm.plant is None:
+        logger.add_error(msg="Fluid injection has no plant",
+                         device=elm.name,
+                         device_class=str(elm.device_type.value),
+                         device_property="plant")
+    else:
+        plant_idx = plant_dict.get(elm.plant.idtag, None)
+        if plant_idx is None:
+            logger.add_error(msg="Fluid injection plant is not in the compiled fluid nodes",
+                             device=elm.name,
+                             device_class=str(elm.device_type.value),
+                             device_property="plant",
+                             object_value=elm.plant.name)
+        else:
+            pass
+
+    if elm.generator is None:
+        logger.add_error(msg="Fluid injection has no generator",
+                         device=elm.name,
+                         device_class=str(elm.device_type.value),
+                         device_property="generator")
+    else:
+        gen_idx = gen_dict.get(elm.generator.idtag, None)
+        if gen_idx is None:
+            logger.add_error(msg="Fluid injection generator is not in the compiled generators",
+                             device=elm.name,
+                             device_class=str(elm.device_type.value),
+                             device_property="generator",
+                             object_value=elm.generator.name)
+        else:
+            pass
+
+    return plant_idx, gen_idx
+
+
 def get_fluid_turbine_data(data: FluidTurbineData,
                            circuit: MultiCircuit,
                            plant_dict: Dict[str, int],
-                           gen_dict: Dict[str, int]) -> FluidTurbineData:
+                           gen_dict: Dict[str, int],
+                           logger: Logger = Logger()) -> FluidTurbineData:
     """
 
     :param data:
     :param circuit:
     :param plant_dict:
     :param gen_dict:
+    :param logger:
     :return:
     """
-    for k, elm in enumerate(circuit.get_fluid_turbines()):
-        data.plant_idx[k] = plant_dict[elm.plant.idtag]
-        data.generator_idx[k] = gen_dict[elm.generator.idtag]
+    k: int = 0
 
-        data.names[k] = elm.name
-        data.idtag[k] = elm.idtag
+    for elm in circuit.get_fluid_turbines():
+        plant_idx, gen_idx = get_valid_fluid_injection_indices(elm=elm,
+                                                               plant_dict=plant_dict,
+                                                               gen_dict=gen_dict,
+                                                               logger=logger)
 
-        data.efficiency[k] = elm.efficiency
-        data.max_flow_rate[k] = elm.max_flow_rate
+        if plant_idx is not None and gen_idx is not None:
+            data.plant_idx[k] = plant_idx
+            data.generator_idx[k] = gen_idx
+
+            data.names[k] = elm.name
+            data.idtag[k] = elm.idtag
+
+            data.efficiency[k] = elm.efficiency
+            data.max_flow_rate[k] = elm.max_flow_rate
+
+            k += 1
+        else:
+            pass
+
+    resize_fluid_injection_data(data=data, nelm=k)
 
     return data
 
@@ -2297,25 +2406,41 @@ def get_fluid_turbine_data(data: FluidTurbineData,
 def get_fluid_pump_data(data: FluidPumpData,
                         circuit: MultiCircuit,
                         plant_dict: Dict[str, int],
-                        gen_dict: Dict[str, int]) -> FluidPumpData:
+                        gen_dict: Dict[str, int],
+                        logger: Logger = Logger()) -> FluidPumpData:
     """
 
     :param data:
     :param circuit:
     :param plant_dict:
     :param gen_dict:
+    :param logger:
     :return:
     """
 
-    for k, elm in enumerate(circuit.get_fluid_pumps()):
-        data.plant_idx[k] = plant_dict[elm.plant.idtag]
-        data.generator_idx[k] = gen_dict[elm.generator.idtag]
+    k: int = 0
 
-        data.names[k] = elm.name
-        data.idtag[k] = elm.idtag
+    for elm in circuit.get_fluid_pumps():
+        plant_idx, gen_idx = get_valid_fluid_injection_indices(elm=elm,
+                                                               plant_dict=plant_dict,
+                                                               gen_dict=gen_dict,
+                                                               logger=logger)
 
-        data.efficiency[k] = elm.efficiency
-        data.max_flow_rate[k] = elm.max_flow_rate
+        if plant_idx is not None and gen_idx is not None:
+            data.plant_idx[k] = plant_idx
+            data.generator_idx[k] = gen_idx
+
+            data.names[k] = elm.name
+            data.idtag[k] = elm.idtag
+
+            data.efficiency[k] = elm.efficiency
+            data.max_flow_rate[k] = elm.max_flow_rate
+
+            k += 1
+        else:
+            pass
+
+    resize_fluid_injection_data(data=data, nelm=k)
 
     return data
 
@@ -2323,25 +2448,41 @@ def get_fluid_pump_data(data: FluidPumpData,
 def get_fluid_p2x_data(data: FluidP2XData,
                        circuit: MultiCircuit,
                        plant_dict: Dict[str, int],
-                       gen_dict: Dict[str, int]) -> FluidP2XData:
+                       gen_dict: Dict[str, int],
+                       logger: Logger = Logger()) -> FluidP2XData:
     """
 
     :param data:
     :param circuit:
     :param plant_dict:
     :param gen_dict:
+    :param logger:
     :return:
     """
 
-    for k, elm in enumerate(circuit.get_fluid_p2xs()):
-        data.plant_idx[k] = plant_dict[elm.plant.idtag]
-        data.generator_idx[k] = gen_dict[elm.generator.idtag]
+    k: int = 0
 
-        data.names[k] = elm.name
-        data.idtag[k] = elm.idtag
+    for elm in circuit.get_fluid_p2xs():
+        plant_idx, gen_idx = get_valid_fluid_injection_indices(elm=elm,
+                                                               plant_dict=plant_dict,
+                                                               gen_dict=gen_dict,
+                                                               logger=logger)
 
-        data.efficiency[k] = elm.efficiency
-        data.max_flow_rate[k] = elm.max_flow_rate
+        if plant_idx is not None and gen_idx is not None:
+            data.plant_idx[k] = plant_idx
+            data.generator_idx[k] = gen_idx
+
+            data.names[k] = elm.name
+            data.idtag[k] = elm.idtag
+
+            data.efficiency[k] = elm.efficiency
+            data.max_flow_rate[k] = elm.max_flow_rate
+
+            k += 1
+        else:
+            pass
+
+    resize_fluid_injection_data(data=data, nelm=k)
 
     return data
 
@@ -2471,6 +2612,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         logger=logger,
         opf_results=opf_results,
         control_remote_voltage=control_remote_voltage,
+        use_stored_guess=use_stored_guess,
         fill_three_phase=fill_three_phase
     )
 
@@ -2496,6 +2638,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         bus_data=nc.bus_data,
         t_idx=t_idx,
         logger=logger,
+        use_stored_guess=use_stored_guess,
         control_remote_voltage=control_remote_voltage,
         fill_three_phase=fill_three_phase
     )
@@ -2508,6 +2651,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         bus_data=nc.bus_data,
         t_idx=t_idx,
         logger=logger,
+        use_stored_guess=use_stored_guess,
         opf_results=opf_results,
         fill_three_phase=fill_three_phase
     )
@@ -2567,21 +2711,27 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
             circuit=circuit,
             plant_dict=plant_dict,
             gen_dict=gen_dict,
+            logger=logger,
         )
+        nc.nfluidturbine = nc.fluid_turbine_data.nelm
 
         get_fluid_pump_data(
             data=nc.fluid_pump_data,
             circuit=circuit,
             plant_dict=plant_dict,
-            gen_dict=gen_dict
+            gen_dict=gen_dict,
+            logger=logger,
         )
+        nc.nfluidpump = nc.fluid_pump_data.nelm
 
         get_fluid_p2x_data(
             data=nc.fluid_p2x_data,
             circuit=circuit,
             plant_dict=plant_dict,
             gen_dict=gen_dict,
+            logger=logger,
         )
+        nc.nfluidp2x = nc.fluid_p2x_data.nelm
 
         get_fluid_path_data(
             data=nc.fluid_path_data,

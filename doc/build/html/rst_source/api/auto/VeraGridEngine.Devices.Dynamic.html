@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Dynamic package &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Devices.Dynamic package &mdash; VeraGrid 6.5.16 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -47,6 +47,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -319,7 +320,10 @@ configuration that can later be copied into a concrete device.</p>
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Dynamic.rms_template.</span></span><span class="sig-name descname"><span class="pre">RmsModelTemplate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idtag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Dynamic/rms_template.html#RmsModelTemplate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.pointer_device_parent.PointerDeviceParent" title="VeraGridEngine.Devices.Parents.pointer_device_parent.PointerDeviceParent"><code class="xref py py-class docutils literal notranslate"><span class="pre">PointerDeviceParent</span></code></a></p>
-<p>This class serves to give flexible access to either a template or a custom model</p>
+<p>Store a reusable RMS model and the type of network device it can model.</p>
+<p><code class="docutils literal notranslate"><span class="pre">tpe</span></code> is the compatible network device type. The dynamic editor uses it to
+offer the template only for matching devices; <code class="docutils literal notranslate"><span class="pre">DeviceType.NoDevice</span></code> marks a
+generic template.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.CLASS_NON_EDITABLE_PROPERTIES">
 <span class="sig-name descname"><span class="pre">CLASS_NON_EDITABLE_PROPERTIES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('idtag',</span> <span class="pre">'selected_to_merge',</span> <span class="pre">'diff_changes',</span> <span class="pre">'device_idtag',</span> <span class="pre">'tpe',</span> <span class="pre">'device_name',</span> <span class="pre">'block')</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.CLASS_NON_EDITABLE_PROPERTIES" title="Link to this definition"></a></dt>
@@ -332,12 +336,12 @@ configuration that can later be copied into a concrete device.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.CLASS_PROPERTY_DECLARATIONS">
-<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:device_idtag,</span> <span class="pre">prop:tpe,</span> <span class="pre">prop:device_name,</span> <span class="pre">prop:block,</span> <span class="pre">prop:tpe)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:device_idtag,</span> <span class="pre">prop:tpe,</span> <span class="pre">prop:device_name,</span> <span class="pre">prop:block)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.CLASS_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.CLASS_PROPERTY_LIST">
-<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:device_idtag,</span> <span class="pre">prop:tpe,</span> <span class="pre">prop:device_name,</span> <span class="pre">prop:block,</span> <span class="pre">prop:tpe)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">CLASS_PROPERTY_LIST</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:idtag,</span> <span class="pre">prop:name,</span> <span class="pre">prop:code,</span> <span class="pre">prop:rdfid,</span> <span class="pre">prop:action,</span> <span class="pre">prop:selected_to_merge,</span> <span class="pre">prop:comment,</span> <span class="pre">prop:diff_changes,</span> <span class="pre">prop:device_idtag,</span> <span class="pre">prop:tpe,</span> <span class="pre">prop:device_name,</span> <span class="pre">prop:block)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.CLASS_PROPERTY_LIST" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -347,7 +351,7 @@ configuration that can later be copied into a concrete device.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.LOCAL_PROPERTY_DECLARATIONS">
-<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:block,</span> <span class="pre">prop:tpe)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">LOCAL_PROPERTY_DECLARATIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.editable_device.GCProp" title="VeraGridEngine.Devices.Parents.editable_device.GCProp"><span class="pre">GCProp</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(prop:block,)</span></span><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.rms_template.RmsModelTemplate.LOCAL_PROPERTY_DECLARATIONS" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -2763,17 +2767,17 @@ template/static-key contract for <code class="docutils literal notranslate"><spa
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified.assign_vsc_static_api_mapping">
 <span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified.</span></span><span class="sig-name descname"><span class="pre">assign_vsc_static_api_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">vsc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dev.VSC</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mdl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block.Block" title="VeraGridEngine.Utils.Symbolic.block.Block"><span class="pre">Block</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">problem_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic.Var" title="VeraGridEngine.Utils.Symbolic.symbolic.Var"><span class="pre">Var</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic.Const" title="VeraGridEngine.Utils.Symbolic.symbolic.Const"><span class="pre">Const</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direct_assigned_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.enumerations.ParamPowerFlowReferenceType" title="VeraGridEngine.enumerations.ParamPowerFlowReferenceType"><span class="pre">ParamPowerFlowReferenceType</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Dynamic/static_parameter_mapping_unified.html#assign_vsc_static_api_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified.assign_vsc_static_api_mapping" title="Link to this definition"></a></dt>
 <dd><p>Assign static VSC parameters exposed by <code class="docutils literal notranslate"><span class="pre">mdl.api_obj_mapping</span></code>.</p>
-<p>PF-derived quantities such as converter initial active power or converter
-losses are intentionally not assigned here. They are initialization data, not
-static API-object data.</p>
+<p>Loss coefficients are static device data, unlike the operating-point losses
+and terminal powers that must be obtained from power-flow initialization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>problem_mapping</strong></p></li>
+<li><p><strong>problem_mapping</strong> – Destination for resolved constant parameters.</p></li>
 <li><p><strong>grid</strong> – Static network model.</p></li>
 <li><p><strong>vsc</strong> – VSC device.</p></li>
-<li><p><strong>mdl</strong> – VSC EMT block.</p></li>
+<li><p><strong>mdl</strong> – VSC RMS or EMT block exposing the requested static mappings.</p></li>
 <li><p><strong>logger</strong> – Optional logger.</p></li>
+<li><p><strong>direct_assigned_keys</strong> – Keys already handled by the direct property mapper.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

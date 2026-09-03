@@ -59,6 +59,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
         ResultsProperty(name='shunt_like_reactive_power', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='fluid_node_p2x_flow', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='fluid_node_current_level', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_node_fluid_value', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='fluid_node_spillage', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='fluid_node_flow_in', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='fluid_node_flow_out', tpe=Vec, old_names=list(), expandable=False),
@@ -121,6 +122,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
         "battery_power",
         "fluid_node_p2x_flow",
         "fluid_node_current_level",
+        "fluid_node_fluid_value",
         "fluid_node_spillage",
         "fluid_node_flow_in",
         "fluid_node_flow_out",
@@ -285,6 +287,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
 
         self.fluid_node_p2x_flow = np.zeros(n_fluid_node, dtype=float)  # m3
         self.fluid_node_current_level = np.zeros(n_fluid_node, dtype=float)  # m3
+        self.fluid_node_fluid_value = np.zeros(n_fluid_node, dtype=float)
         self.fluid_node_spillage = np.zeros(n_fluid_node, dtype=float)  # m3/s
         self.fluid_node_flow_in = np.zeros(n_fluid_node, dtype=float)  # m3/s
         self.fluid_node_flow_out = np.zeros(n_fluid_node, dtype=float)  # m3/s

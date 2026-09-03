@@ -1,0 +1,338 @@
+********************************************************************************
+*
+* DIgSILENT (R) DGS Export V1.8.4
+* Copyright 1997-2026 DIgSILENT GmbH. All rights reserved.
+*
+* DIgSILENT (C) PowerFactory V25.0.6.0
+*
+* Date:     08/19/2026 13:22
+* Project:  HVDC VSC validation exports (Study Case: Base)
+*
+********************************************************************************
+
+
+$$General;FID(a:40);Descr(a:40);Val(a:255)
+  1;Version;7.0
+
+
+$$BlkDef;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);isMacro(i);level(i);sUpLimPar:SIZEROW(i);sUpLimPar:0(a);sUpLimInp:SIZEROW(i);sLowLimPar:SIZEROW(i);sLowLimPar:0(a);sLowLimInp:SIZEROW(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);sStates:SIZEROW(i);sStates:0(a);sParams:SIZEROW(i);sParams:0(a);sIntern:SIZEROW(i);sIntern:0(a);sAddEquat:SIZEROW(i);sAddEquat:0(a);sAddEquat:1(a);sAddEquat:2(a);sAddEquat:3(a);sAddEquat:4(a);sAddEquat:5(a);sAddEquat:6(a);sAddEquat:7(a);sAddEquat:8(a);sAddEquat:9(a);sAddEquat:10(a);sAddEquat:11(a);sAddEquat:12(a);sAddEquat:13(a);sAddEquat:14(a);sAddEquat:15(a);sAddEquat:16(a);sAddEquat:17(a);sAddEquat:18(a);sAddEquat:19(a);sAddEquat:20(a);sAddEquat:21(a);sAddEquat:22(a);sAddEquat:23(a);sAddEquat:24(a);sAddEquat:25(a);sAddEquat:26(a);sAddEquat:27(a);sAddEquat:28(a);sAddEquat:29(a);sAddEquat:30(a);sAddEquat:31(a);sAddEquat:32(a);sAddInter:SIZEROW(i);sAddParam:SIZEROW(i);cOutput(a);cInput(a);cStates(a);cParams(a);cIntern(a)
+  2;C;VSC_Frame;134;0;5;0;;0;0;;0;0;;0;;0;;0;;1;P_act,Pmd,Pmq,Q_act,cosphi,id,id_limit,id_ref,id_ref_lmtd,iq,iq_limit,iq_ref,iq_ref_lmtd,sinphi,u,uDC,ui,ur,vd,vq;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;;;;;P_act,Pmd,Pmq,Q_act,cosphi,id,id_limit,id_ref,id_ref_lmtd,iq,iq_limit,iq_ref,iq_ref_lmtd,sinphi,u,uDC,ui,ur,vd,vq
+  3;C;VSC_Frame_wEPC;134;0;5;0;;0;0;;0;0;;0;;0;;0;;1;Pmd,Pmq,Q_act,cosphi,dI_epc,fe,id,id_limit,id_ref,id_ref_lmtd,iq,iq_limit,iq_ref,iq_ref_lmtd,p,sinphi,u,uDC,ui,ur,vd,vq;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;;;;;Pmd,Pmq,Q_act,cosphi,dI_epc,fe,id,id_limit,id_ref,id_ref_lmtd,iq,iq_limit,iq_ref,iq_ref_lmtd,p,sinphi,u,uDC,ui,ur,vd,vq
+  4;C;EPC_Control_Droop_VSC_MainFrame;135;0;5;0;;0;0;;0;1;P_epc;1;fe;0;;1;dF_max,G_dc,df_trig,dP_max_epc;1;df,dfa,gain,dPepc;7;df=fe-1;dfa=abs(df);gain=select(dfa<df_trig,0,G_dc);dPepc=select(df<0,gain*(dfa-df_trig),-gain*(dfa+df_trig));limfix(dP_max_epc)=(0,);P_epc=lim_const(dPepc,-dP_max_epc,dP_max_epc);inc(P_epc)=0;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;P_epc;fe;;dF_max,G_dc,df_trig,dP_max_epc;df,dfa,gain,dPepc
+  5;C;Current_Limiter;136;0;5;1;i_max_1,i_max_3;0;0;;0;1;id_limit,id_ref_lmtd,iq_ref_lmtd,iq_limit;1;id_ref,u,iq_ref;0;;1;V_fault,C;1;i_mag_1,iq_lim_cal,i_mag_3,id_lim_cal,o1,o10,o11,o12,o13,o14,o15,o2,o3,o4,o5,o6,o7,o8,o9;33;i_mag_1=i_max_1;o2=lim(id_ref,-i_max_1,i_max_1);o10=min(sqrt(max(sqr(i_mag_1)-sqr(o2),0)),0.3);o4=iq_ref;"vardef(i_max_1)='p.u.';'Current Limit'";i_mag_3=i_max_3;o5=lim(iq_ref,-i_max_3,i_max_3);o11=sqrt(max(sqr(i_mag_3)-sqr(o5),0));o3=id_ref;"vardef(i_max_3)='p.u.';'Current Limit'";o1=picdro(u<V_fault,0,0);inc(o1)=select(u<V_fault,1,0);o13=C;o14=1;id_lim_cal=o11;id_ref_lmtd=select(o7,o3,o2);iq_ref_lmtd=select(o8,o5,o4);id_limit=select(o6,o12,o13);iq_limit=select(o9,o14,o15);U_sgnl=o1;o6=U_sgnl;o7=U_sgnl;o8=U_sgnl;o9=U_sgnl;o12=id_lim_cal;iq_lim_cal=o10;o15=iq_lim_cal;inc(id_ref_lmtd)=id_ref;inc(iq_ref_lmtd)=iq_ref;inc(id_limit)=C;inc(iq_limit)=iq_lim_cal;"vardef(V_fault)='p.u.';'Voltage Threshold to Limit id_ref'";"vardef(C)='p.u.';'Current Limit'";0;0;id_limit,id_ref_lmtd,iq_ref_lmtd,iq_limit;id_ref,u,iq_ref;;V_fault,C;i_mag_1,iq_lim_cal,i_mag_3,id_lim_cal,o1,o10,o11,o12,o13,o14,o15,o2,o3,o4,o5,o6,o7,o8,o9
+  6;C;Inner_Control;136;0;5;0;;0;0;;0;1;Pmd,Pmq;1;vd,id_ref_lmtd,id,iq,iq_ref_lmtd,vq,uDC;1;xd,xq;1;Kp_d,Ki_d,wL,Kp_q,Ki_q,V_ac_base,U_dc_base;1;o10,o5,o6,o9,vmd,vmq,yi,yi1,yi2,yi3;27;xd.=Ki_d*yi1;o5=Kp_d*yi1+xd;xq.=Ki_q*yi;o6=Kp_q*yi+xq;Pmd=yi2*V_ac_base/U_dc_base*2*sqrt(2)/sqrt(3);Pmq=yi3*V_ac_base/U_dc_base*2*sqrt(2)/sqrt(3);o10=id*wL;o9=iq*wL;yi2=vmd/uDC;yi3=vmq/uDC;yi1=id_ref_lmtd-id;yi=iq_ref_lmtd-iq;vmd=o5-o9+vd;vmq=o6+vq+o10;inc(xd)=-vd+vmd+wL*iq;inc(xq)=-vq+vmq-wL*id;inc(vmd)=(Pmd*uDC*U_dc_base*sqrt(3))/(2*sqrt(2)*V_ac_base);inc(vmq)=(Pmq*uDC*U_dc_base*sqrt(3))/(2*sqrt(2)*V_ac_base);inc(id_ref_lmtd)=id;inc(iq_ref_lmtd)=iq;"vardef(Kp_d)='p.u.';'Proportional Gain for d-axis'";"vardef(Kp_q)='p.u.';'Proportional Gain for q-axis'";"vardef(Ki_d)='p.u.';'Integral Gain for d-axis'";"vardef(Ki_q)='p.u.';'Integral Gain for q-axis'";"vardef(wL)='p.u.';'Converter Phase Reactance'";"vardef(V_ac_base)='kV';'Converter AC Voltage Base Value'";"vardef(U_dc_base)='kV';'Converter DC Voltage Base Value'";;;;;;;0;0;Pmd,Pmq;vd,id_ref_lmtd,id,iq,iq_ref_lmtd,vq,uDC;xd,xq;Kp_d,Ki_d,wL,Kp_q,Ki_q,V_ac_base,U_dc_base;o10,o5,o6,o9,vmd,vmq,yi,yi1,yi2,yi3
+  7;C;Outer_Ctrl_P;136;0;5;0;;0;0;;0;1;id_ref;1;id_limit,P_act,Pdc_ref,uDC,uDC_ref,id;1;dx;1;P_ctrl_mode,Kp,Ki;1;C_id,min_lim,o3,o4,o5,yi;18;o3=P_ctrl_mode;dx.=Ki*yi;id_ref=lim(Kp*yi+limstate(dx,min_lim,id_limit),min_lim,id_limit);min_lim=-id_limit;C_id=id;inc(C)=id;o5=-P_act+Pdc_ref;o4=uDC-uDC_ref;yi=select(o3,o5,o4);inc(dx)=C_id;inc(id_ref)=C_id;inc(id_limit)=1;inc(min_lim)=-id_limit;inc(Pdc_ref)=P_act;inc(uDC_ref)=uDC;"vardef(P_ctrl_mode)='-';'Control Mode for d-axis (0=uDC_ref,1=Pdc_ref)'";"vardef(Kp)='p.u.';'Proportional Gain'";"vardef(Ki)='p.u.';'Integral Gain'";;;;;;;;;;;;;;;;0;0;id_ref;id_limit,P_act,Pdc_ref,uDC,uDC_ref,id;dx;P_ctrl_mode,Kp,Ki;C_id,min_lim,o3,o4,o5,yi
+  8;C;Outer_Ctrl_P_wEPC-PI_V2;136;0;5;0;;0;0;;0;1;id_ref;1;id_limit,P_epc,P_act,Pdc_ref,uDC,uDC_ref,id;1;dx;1;P_ctrl_mode,Kp,Ki;1;C_id,min_lim,o3,o4,o5,yi;18;o3=P_ctrl_mode;dx.=Ki*yi;id_ref=lim(Kp*yi+limstate(dx,min_lim,id_limit),min_lim,id_limit);min_lim=-id_limit;C_id=id;inc(C)=id;o5=-P_act+Pdc_ref+P_epc;o4=uDC-uDC_ref;yi=select(o3,o5,o4);inc(dx)=C_id;inc(id_ref)=C_id;inc(id_limit)=1;inc(min_lim)=-id_limit;inc(Pdc_ref)=P_act;inc(uDC_ref)=uDC;"vardef(P_ctrl_mode)='-';'Control Mode for d-axis [0=uDC_ref,1=Pdc_ref]'";"vardef(Kp)='p.u.';'Proportional Gain'";"vardef(Ki)='p.u.';'Integral Gain'";;;;;;;;;;;;;;;;0;0;id_ref;id_limit,P_epc,P_act,Pdc_ref,uDC,uDC_ref,id;dx;P_ctrl_mode,Kp,Ki;C_id,min_lim,o3,o4,o5,yi
+  9;C;Outer_Ctrl_Q;136;0;5;1;iq_lim_max;0;1;iq_lim_min;0;1;iq_ref;1;iq,Q_ref,Q_act,u,Vac_ref,iq_limit;1;dx;1;U_fault,K,Q_ctrl_mode,Kp,Ki;1;o1q,o3q,o4q,o5q,u_fault,yiq,C_iq,iq_ref_PI,iq_ref_nonlimited,min_lim,o2,o3,o5,yi;31;u_fault=U_fault;o1q=picdro(u<u_fault,0,0);inc(o1q)=select(u<u_fault,1,0);o3q=U_fault;o4q=yiq*K;yiq=-o3q+u;o5q=o4q+iq_ref_PI;iq_ref_nonlimited=select(o1q,o5q,iq_ref_PI);limfix(Kp)=(0,);limfix(Ki)=[0,);dx.=Ki*yi;iq_ref_PI=lim(Kp*yi+limstate(dx,min_lim-Kp*yi,iq_limit-Kp*yi),min_lim,iq_limit);min_lim=-iq_limit;iq_ref=lim(iq_ref_nonlimited,iq_lim_min,iq_lim_max);o3=Q_ctrl_mode;C_iq=iq;inc(C)=iq;o2=u-Vac_ref;o5=Q_act-Q_ref;yi=select(o3,o5,o2);inc(dx)=C_iq;inc(iq_ref)=C_iq;inc(iq_limit)=1;inc(min_lim)=-iq_limit;inc(Q_ref)=Q_act;inc(Vac_ref)=u;"vardef(Q_ctrl_mode)='-';'Control Mode for q-axis (0=Vac_ref,1=Q_ref)'";"vardef(Kp)='p.u.';'Proportional Gain'";"vardef(Ki)='p.u.';'Integral Gain'";"vardef(K)='p.u.';'Voltage Support Gain'";"vardef(U_fault)='p.u.';'Voltage Threshold'";;;0;0;iq_ref;iq,Q_ref,Q_act,u,Vac_ref,iq_limit;dx;U_fault,K,Q_ctrl_mode,Kp,Ki;o1q,o3q,o4q,o5q,u_fault,yiq,C_iq,iq_ref_PI,iq_ref_nonlimited,min_lim,o2,o3,o5,yi
+  10;C;Vxy_To_dqFrame;136;0;5;0;;0;0;;0;1;vd,vq;1;ur,ui,cosphi,sinphi;0;;0;;0;;4;vd=ur*cosphi+ui*sinphi;vq=ui*cosphi-ur*sinphi;inc(vd)=ur*cosphi+ui*sinphi;inc(vq)=-ur*sinphi+ui*cosphi;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;vd,vq;ur,ui,cosphi,sinphi;;;
+
+
+$$BlkSig;FID(a:40);OP(a:1);inodfrom(i);loc_name(a:80);iconfrom(i);inodto(i);iconto(i);pnodfrom(p);pnodto(p)
+  11;C;0;P_act;2;1;1;73;70
+  12;C;0;Pmd;2;0;1;69;74
+  13;C;1;Pmq;2;1;1;69;74
+  14;C;1;Q_act;2;1;1;73;71
+  15;C;0;cosphi(1);2;2;1;72;74
+  16;C;0;cosphi;2;2;1;72;76
+  17;C;0;id(1);2;3;1;74;70
+  18;C;0;id;2;2;1;74;69
+  19;C;0;id_limit;2;0;1;68;70
+  20;C;0;id_ref;2;0;1;70;68
+  21;C;1;id_ref_lmtd;2;1;1;68;69
+  22;C;1;iq(3);2;3;1;74;69
+  23;C;1;iq;2;0;1;74;71
+  24;C;3;iq_limit;2;3;1;68;71
+  25;C;0;iq_ref;2;2;1;71;68
+  26;C;2;iq_ref_lmtd;2;4;1;68;69
+  27;C;1;sinphi(1);2;3;1;72;74
+  28;C;1;sinphi;2;3;1;72;76
+  29;C;0;u(1);2;1;1;75;68
+  30;C;0;u;2;2;1;75;71
+  31;C;2;uDC(1);2;2;1;74;70
+  32;C;2;uDC;2;6;1;74;69
+  33;C;2;ui;2;1;1;75;76
+  34;C;1;ur;2;0;1;75;76
+  35;C;0;vd;2;0;1;76;69
+  36;C;1;vq;2;5;1;76;69
+  37;C;0;Pmd;2;0;1;79;84
+  38;C;1;Pmq;2;1;1;79;84
+  39;C;1;Q_act;2;1;1;83;81
+  40;C;0;cosphi(1);2;2;1;82;84
+  41;C;0;cosphi;2;2;1;82;86
+  42;C;0;dI_epc;2;4;1;78;80
+  43;C;3;fe(1);2;5;1;85;80
+  44;C;3;fe;2;0;1;85;78
+  45;C;0;id(1);2;2;1;84;79
+  46;C;0;id;2;3;1;84;80
+  47;C;0;id_limit;2;0;1;77;80
+  48;C;0;id_ref;2;0;1;80;77
+  49;C;1;id_ref_lmtd;2;1;1;77;79
+  50;C;1;iq(1);2;3;1;84;79
+  51;C;1;iq;2;0;1;84;81
+  52;C;3;iq_limit;2;3;1;77;81
+  53;C;0;iq_ref;2;2;1;81;77
+  54;C;2;iq_ref_lmtd;2;4;1;77;79
+  55;C;0;p(1);2;1;1;83;80
+  56;C;0;p;2;1;1;83;78
+  57;C;1;sinphi(1);2;3;1;82;84
+  58;C;1;sinphi;2;3;1;82;86
+  59;C;0;u(1);2;2;1;85;81
+  60;C;0;u;2;1;1;85;77
+  61;C;2;uDC(1);2;2;1;84;80
+  62;C;2;uDC(2);2;2;1;84;78
+  63;C;2;uDC;2;6;1;84;79
+  64;C;2;ui;2;1;1;85;86
+  65;C;1;ur;2;0;1;85;86
+  66;C;0;vd;2;0;1;86;79
+  67;C;1;vq;2;5;1;86;79
+
+
+$$BlkSlot;FID(a:40);OP(a:1);loc_name(a:80);sUpLimInp:SIZEROW(i);sLowLimInp:SIZEROW(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);element(p);filtmod(a:80)
+  68;C;Current_Limiter;0;0;1;id_limit,id_ref_lmtd,iq_ref_lmtd,iq_limit;1;id_ref,u,iq_ref;;ElmDsl*
+  69;C;Inner_ctrl_Current;0;0;1;Pmd,Pmq;1;vd,id_ref_lmtd,id,iq,iq_ref_lmtd,vq,uDC;;ElmDsl*
+  70;C;Outer_ctrl_P;0;0;1;id_ref;1;id_limit,P_act,uDC,id;;ElmDsl*
+  71;C;Outer_ctrl_Q;0;0;1;iq_ref;1;iq,Q_act,u,iq_limit;;ElmDsl*
+  72;C;PLL_Unit;0;0;1;cosphi,sinphi;0;;;ElmPhi*
+  73;C;PQ_Measurement_Unit;0;0;1;p,q;0;;;StaPqmea*
+  74;C;VSC Converter;0;0;1;id,iq,uDC;1;Pmd,Pmq,cosref,sinref;;ElmVsc*
+  75;C;Voltage_Measurement_Unit;0;0;1;u,ur,ui;0;;;StaVmea*
+  76;C;Vxy_To_dqFrame;0;0;1;vd,vq;1;ur,ui,cosphi,sinphi;;ElmDsl*
+  77;C;Current_Limiter;0;0;1;id_limit,id_ref_lmtd,iq_ref_lmtd,iq_limit;1;id_ref,u,iq_ref;;ElmDsl*
+  78;C;EPC Block;0;0;1;P_epc;1;fe,p,uDC;;ElmEpc*
+  79;C;Inner_ctrl_Current;0;0;1;Pmd,Pmq;1;vd,id_ref_lmtd,id,iq,iq_ref_lmtd,vq,uDC;;ElmDsl*
+  80;C;Outer_ctrl_P;0;0;1;id_ref;1;id_limit,P_act,uDC,id,P_epc,fe;;ElmDsl*
+  81;C;Outer_ctrl_Q;0;0;1;iq_ref;1;iq,Q_act,u,iq_limit;;ElmDsl*
+  82;C;PLL_Unit;0;0;1;cosphi,sinphi;0;;;ElmPhi*
+  83;C;PQ_Measurement_Unit;0;0;1;p,q;0;;;StaPqmea*
+  84;C;VSC Converter;0;0;1;id,iq,uDC;1;Pmd,Pmq,cosref,sinref;;ElmVsc*
+  85;C;Voltage_Measurement_Unit;0;0;1;u,ur,ui,fe;0;;;StaVmea*
+  86;C;Vxy_To_dqFrame;0;0;1;vd,vq;1;ur,ui,cosphi,sinphi;;ElmDsl*
+
+
+$$ElmComp;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);outserv(i);typ_id(p);contents:SIZEROW(i);dat_src(a:6);pblk:SIZEROW(i);pblk:0(p);pblk:1(p);pblk:2(p);pblk:3(p);pblk:4(p);pblk:5(p);pblk:6(p);pblk:7(p);pblk:8(p);pblk:9(p);pelm:SIZEROW(i);pelm:0(p);pelm:1(p);pelm:2(p);pelm:3(p);pelm:4(p);pelm:5(p);pelm:6(p);pelm:7(p);pelm:8(p);pelm:9(p)
+  87;C;MasterPWM_Model;111;0;2;0;MAN;9;74;73;75;72;76;70;71;68;69;;9;126;220;244;;90;92;93;89;91;
+  88;C;SlavePWM_Model;111;0;3;0;MAN;10;84;83;85;82;86;80;81;77;79;78;10;127;221;245;;95;99;100;94;97;96
+
+
+$$ElmDsl;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);outserv(i);params:SIZEROW(i);params:0(r);params:1(r);params:2(r);params:3(r);params:4(r);params:5(r);params:6(r);pelm:SIZEROW(i);pelm:0(p);pelm:1(p);signal:SIZEROW(i);signal:0(a);signal:1(a);parameterNames(a);oarrmat:SIZEROW(i);iAstabint(i)
+  89;C;Current_limiter;87;5;0;4;0;1;1;1;;;;2;;;2;;;V_fault,C,i_max_1,i_max_3;0;1
+  90;C;Dq-transformation;87;10;0;0;;;;;;;;2;;;2;;;;0;1
+  91;C;Inner_Control_Loops;87;6;0;7;1.43;30;0.2;1.43;30;525;1050;2;;;2;;;Kp_d,Ki_d,wL,Kp_q,Ki_q,V_ac_base,U_dc_base;0;1
+  92;C;Outer_control_P;87;7;0;3;0;1.3;70;;;;;2;;;2;;;P_ctrl_mode,Kp,Ki;0;1
+  93;C;Outer_control_Qnls;87;9;0;7;0;0;0;0.1;10;-1;1;2;;;2;;;U_fault,K,Q_ctrl_mode,Kp,Ki,iq_lim_min,iq_lim_max;0;1
+  94;C;Current_limiter;88;5;0;4;0;1;1;1;;;;2;;;2;;;V_fault,C,i_max_1,i_max_3;0;1
+  95;C;Dq-transformation;88;10;0;0;;;;;;;;2;;;2;;;;0;1
+  96;C;EPC_Droop_nl;88;4;0;4;50;0;0.008;1;;;;2;;;2;;;dF_max,G_dc,df_trig,dP_max_epc;0;0
+  97;C;Inner_Control_Loops;88;6;0;7;1.43;30;0.2;1.43;30;525;1050;2;;;2;;;Kp_d,Ki_d,wL,Kp_q,Ki_q,V_ac_base,U_dc_base;0;1
+  98;C;Outer_control_P;88;7;1;3;1;0;39;;;;;2;;;2;;;P_ctrl_mode,Kp,Ki;0;1
+  99;C;Outer_control_P_wEPC;88;8;0;3;1;0;39;;;;;2;;;2;;;P_ctrl_mode,Kp,Ki;0;1
+  100;C;Outer_control_Qnlm;88;9;0;7;0;0;1;0;40;-1;1;2;;;2;;;U_fault,K,Q_ctrl_mode,Kp,Ki,iq_lim_min,iq_lim_max;0;1
+
+
+$$ElmLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);dline(r);fline(r);GPScoords:MATRIX(a);nlnum(i);inAir(i);outserv(i);m:P:bus1(r);m:Q:bus1(r);m:P:bus2(r);m:Q:bus2(r);c:R1(r);c:X1(r);c:B1(r);c:R0(r);c:X0(r);c:B0(r);c:G1(r);c:G0(r);i_dist(i)
+  101;C;Grid Impedance A;110;247;55;1;;1;0;0;1027.59103554238;66.7338756909929;-1021.08646462188;-0.01218870736587;0.97899997234344482;15.289999961853027;220;1.8315000534057617;41.25;55;0;0;0
+  102;C;Grid Impedance B;110;248;110;1;;1;0;0;999.998971268721;-0.00914676699409;-988.666929276914;101.035680124304;1.9579999446868896;30.579999923706055;440;3.6630001068115234;82.5;110;0;0;0
+  103;C;DC Line;111;249;623;1;;1;0;0;1013.49419600505;0;-1007.10943454972;0;;;;;;;;;0
+  104;C;Line(1);111;248;0.01;1;;1;0;0;999.999999975377;-2.00096485514223e-06;-999.998971279772;0.00914676699423;0.0001779999874997884;0.0027799999807029963;0.039999999105930328;0.00033300000359304249;0.0074999998323619366;0.0099999997764825821;0;0;0
+  105;C;Line;111;247;0.01;1;;1;0;0;1021.08646461109;0.01218870736634;-1021.08528229946;-2.13119130876294e-06;0.0001779999874997884;0.0027799999807029963;0.039999999105930328;0.00033300000359304249;0.0074999998323619366;0.0099999997764825821;0;0;0
+  106;C;Short Line;112;247;0.01;1;;1;0;0;;;;;0.000178;0.00278;0.04;0.000333;0.0075;0.01;0;0;0
+  107;C;Short Line;113;247;0.01;1;;1;0;0;;;;;0.000178;0.00278;0.04;0.000333;0.0075;0.01;0;0;0
+  108;C;Short line 1;112;248;0.01;1;;1;0;0;;;;;0.000178;0.00278;0.04;0.000333;0.0075;0.01;0;0;0
+  109;C;Short line;113;248;0.01;1;;1;0;0;;;;;0.000178;0.00278;0.04;0.000333;0.0075;0.01;0;0;0
+
+
+$$ElmNet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);pDiagram(p)
+  110;C;Grid;;50;
+  111;C;HVDC ver 1;;50;190
+  112;C;HVDC ver 3;;50;191
+  113;C;HVDC ver 2;;50;192
+
+
+$$ElmTerm;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);systype(i);iUsage(i);uknom(r);unknom(r);iminus(i);outserv(i);GPSlat(r);GPSlon(r);vtarget(r);cpZone(p);cpSubstat(p);m:u(r);m:phiu(r);ivpriority(i);dvmin(r);dvmax(r)
+  114;C;Grid A PCC;110;;0;0;400;230.9401;0;0;0;0;1;;;0.99048188750840;-5.65981560946073;-1;-5;5
+  115;C;Grid B PCC;110;;0;0;415;239.6004;0;0;0;0;1;;;1.00234679373328;10.1782348594104;-1;-5;5
+  116;C;Source A terminal;110;;0;0;400;230.9401;0;0;0;0;1;;;1;9.87960565184287e-13;-1;-5;5
+  117;C;Source B terminal;110;;0;0;415;239.6004;0;0;0;0;1;;;1.0000000000003;-5.70622377173452e-13;-1;-5;5
+  118;C;Master_AC;111;;0;0;525;303.1089;0;0;0;0;1;;;0.99048074052676;-5.66085186519735;-1;-5;5
+  119;C;Master_DC;111;246;1;1;1050;1050;0;0;0;0;1;;;1.00000000000004;0;-1;-5;5
+  120;C;Master_HV_bus;111;;0;0;400;230.9401;0;0;0;0;1;;;0.99048074052676;-5.66085174592973;-1;-5;5
+  121;C;Slave_AC;111;;0;0;525;303.1089;0;0;0;0;1;;;1.00234782477042;10.1791554965137;-1;-5;5
+  122;C;Slave_DC;111;246;1;1;1050;1050;0;0;0;0;1;;;0.99370024862455;0;-1;-5;5
+  123;C;Slave_HV_bus;111;;0;0;415;239.6004;0;0;0;0;1;;;1.00234782477042;10.1791553824583;-1;-5;5
+
+
+$$ElmTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);ntnum(i);outserv(i);nntap(i);i_auto(i);ntrcn(i);usetp(r);usp_low(r);usp_up(r);t2ldc(i);c:nntap(r);m:P:bushv(r);m:Q:bushv(r);m:P:buslv(r);m:Q:buslv(r);p_rem(p);cpCtrlNode(p);uset_mode(i);c:thv(r);c:tlv(r);c:w_0(r);c:zshv(r);c:zslv(r);c:ym(r)
+  124;C;2-W Tr_NL_Master;111;250;1;0;0;0;0;1;0.99;1.01;0;0;-1021.08528228867;-5.6871414244597e-09;1021.08528228867;2.13119130876294e-06;;118;0;1;1;1;1.4e-09;1.4e-09;0
+  125;C;2-W Tr_NL_Slave;111;251;1;0;0;0;0;1;0.99;1.01;0;0;999.999999986428;-1.03231627690548e-08;-999.999999986429;2.00096488356394e-06;;121;0;1;1;1;1.4e-09;1.4e-09;0
+
+
+$$ElmVscmono;FID(a:40);OP(a:1);loc_name(a:80);for_name(a:100);fold_id(p);outserv(i);Unom(r);usetp(r);psetp(r);qsetp(r);Pnold(r);P_max(r);i_acdc(i);c_pmod(p);m:P:busac(r);m:Q:busac(r);m:P:busdc(r);m:Q:busdc(r);Snom(r);Pcu(r);uk(r);swtLossFactor(r);resLossFactor(r);usetpdc(r);Unomdc(r);vsctype(i);Cdc(r);Rarm(r);Larm(r);mmcCmod(r);iZarmDCside(i);NmmcSM(i)
+  126;C;Master_PWM_nl;;111;0;525;1;1;0;0;1400;3;87;-1021.08528227788;-5.68712721360498e-09;1013.49419601605;0;1400;14000;20;0;0;1;1050;0;76.80000305175781;0.006;60;10000;0;200
+  127;C;Slave_PWM_nl;;111;0;525;1;1000;0;0;1400;5;88;999.99999999748;-1.03231627690548e-08;-1007.10943453886;0;1400;14000;20;0;0;1;1050;0;76.80000305175781;0.006;60;10000;0;200
+
+
+$$ElmXnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snss(r);rntxn(r);z2tz1(r);snssmin(r);rntxnmin(r);z2tz1min(r);chr_name(a:40);bustp(a:2);pgini(r);qgini(r);phiini(r);usetp(r);outserv(i);Kpf(r);K(r);cmax(r);xd(r);xq(r)
+  128;C;External Grid A;110;10000;0.1;1;8000;0.1;1;;PV;0;0;0;1;0;0;0;1.1;0.2;0.2
+  129;C;External Grid B;110;10000;0.1;1;8000;0.1;1;;PV;0;0;0;1;0;0;0;1.1;0.2;0.2
+
+
+$$IntFolder;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  130;C;Layers;189
+  131;C;Settings;189
+  132;C;Layers;190
+  133;C;Settings;190
+  134;C;Composite Frames;138
+  135;C;Emergency Power Control;138
+  136;C;HVDC Controller;138
+  137;C;VSC Transformer Station;139
+  138;C;HVDC_VSC;140
+  139;C;HVDC_VSC;141
+  140;C;NEAC/DCPS;142
+  141;C;NEAC/DCPS;143
+  142;C;User Defined Models;144
+  143;C;Equipment Type Library;144
+  144;C;Library;193
+  145;C;DC Cable;139
+
+
+$$IntGrf;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iCol(i);iVis(i);iLevel(i);rCenterX(r);rCenterY(r);sSymNam(a:80);pDataObj(p);iRot(i);rSizeX(r);rSizeY(r);sAttr:SIZEROW(i);iCollapsed(i)
+  146;C;Graphical Net Object1(1);189;-16777216;1;1;131.25;133.4375;TermStrip;115;270;0.833333;1;0;1
+  147;C;Graphical Net Object1(2);189;-16777216;1;1;65.625;133.4375;TermStrip;116;270;0.833333;1;0;1
+  148;C;Graphical Net Object1(3);189;-16777216;1;1;175;133.4375;TermStrip;117;270;0.833333;1;0;1
+  149;C;Graphical Net Object1;189;-16777216;1;1;109.375;133.4375;TermStrip;114;270;0.833333;1;0;1
+  150;C;Graphical Net Object5;189;-16777216;1;1;87.5;135.625;d_lin;101;90;1;1;0;1
+  151;C;Graphical Net Object6;189;-16777216;1;1;153.125;135.625;d_lin;102;90;1;1;0;1
+  152;C;Graphical Net Object7;189;-16777216;1;1;39.375;126.875;d_net;128;0;1;1;0;1
+  153;C;Graphical Net Object8;189;-16777216;1;1;201.25;126.875;d_net;129;0;1;1;0;1
+  154;C;Graphical Net Object1(1);190;-16777216;1;1;223.125;107.1875;TermStrip;115;270;0.833333;1;0;1
+  155;C;Graphical Net Object1;190;-16777216;1;1;26.25;111.5625;TermStrip;114;270;0.833333;1;0;1
+  156;C;Graphical Net Object10;190;-16777216;1;1;179.375;109.375;d_tr2;125;270;1;1;0;1
+  157;C;Graphical Net Object11;190;-16777216;1;1;63.4375;109.375;d_tr2;124;270;1;1;0;1
+  158;C;Graphical Net Object13;190;-16777216;1;1;35;109.375;d_lin;105;90;1;1;0;1
+  159;C;Graphical Net Object14(1);190;-16777216;1;1;100.625;109.375;2_vsc;126;0;1;1;0;1
+  160;C;Graphical Net Object15;190;-16777216;1;1;210;109.375;d_lin;104;90;1;1;0;1
+  161;C;Graphical Net Object6(1);190;-16777216;1;1;140;122.5;PointTerm;122;0;1;1;0;1
+  162;C;Graphical Net Object7;190;-16777216;1;1;120.3125;122.5;d_lin;103;90;1;1;0;1
+  163;C;Graphical Net Object8(1);190;-16777216;1;1;100.625;122.5;PointTerm;119;0;1;1;0;1
+  164;C;Graphical Net Object8(2);190;-16777216;1;1;43.75;113.75;TermStrip;120;270;1;1;0;1
+  165;C;Graphical Net Object8(3);190;-16777216;1;1;196.875;109.375;TermStrip;123;270;1;1;0;1
+  166;C;Graphical Net Object8(4);190;-16777216;1;1;87.5;109.375;TermStrip;118;270;1;1;0;1
+  167;C;Graphical Net Object9(1);190;-16777216;1;1;161.875;109.375;TermStrip;121;270;1;1;0;1
+  168;C;Graphical Net Object9;190;-16777216;1;1;140;109.375;2_vsc;127;0;-1;1;0;1
+
+
+$$IntGrfcon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);rX:SIZEROW(i);rX:0(r);rX:1(r);rX:2(r);rY:SIZEROW(i);rY:0(r);rY:1(r);rY:2(r);iDatConNr(i)
+  169;C;GCO_1;150;2;87.5;65.625;;2;135.625;135.625;;0
+  170;C;GCO_2;150;2;87.5;109.375;;2;135.625;135.625;;1
+  171;C;GCO_1;151;2;153.125;131.25;;2;135.625;135.625;;0
+  172;C;GCO_2;151;2;153.125;175;;2;135.625;135.625;;1
+  173;C;GCO_1;152;3;39.375;39.375;65.625;3;131.25;135.625;135.625;0
+  174;C;GCO_1;153;3;201.25;201.25;175;3;131.25;135.625;135.625;0
+  175;C;GCO_1;156;2;175;161.875;;2;109.375;109.375;;1
+  176;C;GCO_2;156;2;183.75;196.875;;2;109.375;109.375;;0
+  177;C;GCO_1;157;2;59.0625;43.75;;2;109.375;109.375;;1
+  178;C;GCO_2;157;2;67.8125;87.5;;2;109.375;109.375;;0
+  179;C;GCO_1;158;2;35;26.25;;2;109.375;109.375;;0
+  180;C;GCO_2;158;2;35;43.75;;2;109.375;109.375;;1
+  181;C;GCO_1;159;2;100.625;100.625;;2;113.75;122.5;;1
+  182;C;GCO_2;159;2;96.25;87.5;;2;109.375;109.375;;0
+  183;C;GCO_1;160;2;210;196.875;;2;109.375;109.375;;0
+  184;C;GCO_2;160;2;210;223.125;;2;109.375;109.375;;1
+  185;C;GCO_1;162;2;120.3125;100.625;;2;122.5;122.5;;0
+  186;C;GCO_2;162;2;120.3125;140;;2;122.5;122.5;;1
+  187;C;GCO_1;168;2;140;140;;2;113.75;122.5;;1
+  188;C;GCO_2;168;2;144.375;161.875;;2;109.375;109.375;;0
+
+
+$$IntGrfnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snap_on(i);ortho_on(i);pDataFolder(p)
+  189;C;Grid;;1;1;110
+  190;C;HVDC ver 1;;1;1;111
+  191;C;HVDC ver 3;;1;1;112
+  192;C;HVDC ver 2;;1;1;113
+
+
+$$IntTemplate;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  193;C;HVDC RMS ver 1;
+
+
+$$StaCubic;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_bus(i);obj_id(p);it2p1(i);it2p2(i);it2p3(i)
+  194;C;Cub_1;114;1;101;0;1;2
+  195;C;Cub_5;114;1;106;0;1;2
+  196;C;Cub_6;114;1;107;0;1;2
+  197;C;Cub_7;114;0;;0;1;2
+  198;C;Cub_8;114;0;105;0;1;2
+  199;C;Cub_1;115;0;102;0;1;2
+  200;C;Cub_5;115;1;108;0;1;2
+  201;C;Cub_6;115;1;109;0;1;2
+  202;C;Cub_7;115;0;;0;1;2
+  203;C;Cub_8;115;1;104;0;1;2
+  204;C;Cub_1;116;0;101;0;1;2
+  205;C;Cub_2;116;0;128;0;1;2
+  206;C;Cub_1;117;1;102;0;1;2
+  207;C;Cub_2;117;0;129;0;1;2
+  208;C;Cub_1(1);118;0;124;0;1;2
+  209;C;Cub_1;118;0;126;0;1;2
+  210;C;Cub_1;119;1;126;0;1;2
+  211;C;Cub_8;119;0;103;0;1;2
+  212;C;Cub_1(1);120;1;105;0;1;2
+  213;C;Cub_1;120;1;124;0;1;2
+  214;C;Cub_1;121;0;125;0;1;2
+  215;C;Cub_2;121;0;127;0;1;2
+  216;C;Cub_1;122;1;127;0;1;2
+  217;C;Cub_8;122;1;103;0;1;2
+  218;C;Cub_1(1);123;0;104;0;1;2
+  219;C;Cub_1;123;1;125;0;1;2
+
+
+$$StaPqmea;FID(a:40);OP(a:1);fold_id(p);pcubic(p);outserv(i);nphase(i);i_orient(i);i_mode(i);Snom(r);nominalFreq(r);it2p(i);samplingFreq(r);samplesPerPeriod(i);samplesPerWindow(i);windowLength(r);rateLim(r);clockPeriod(r);loc_name(a:80)
+  220;C;87;213;0;3;1;2;1400;50;0;1000;20;100;0.1;100;0.02;Master_PWM_PQ Measurement
+  221;C;88;219;0;3;1;2;1400;50;0;1000;20;100;0.1;100;0.02;Slave_PWM_PQ Measurement
+
+
+$$StaSwitch;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);on_off(i);typ_id(p);aUsage(a)
+  222;C;Switch;194;1;;cbk
+  223;C;Switch;195;1;;cbk
+  224;C;Switch;196;1;;cbk
+  225;C;Switch;197;1;;cbk
+  226;C;Switch;198;1;;cbk
+  227;C;Switch;199;1;;cbk
+  228;C;Switch;200;1;;cbk
+  229;C;Switch;201;1;;cbk
+  230;C;Switch;202;1;;cbk
+  231;C;Switch;203;1;;cbk
+  232;C;Switch;204;1;;cbk
+  233;C;Switch;205;1;;cbk
+  234;C;Switch;206;1;;cbk
+  235;C;Switch;207;1;;cbk
+  236;C;Switch;208;1;;cbk
+  237;C;Switch;209;1;;cbk
+  238;C;Switch;212;1;;cbk
+  239;C;Switch;213;1;;cbk
+  240;C;Switch;214;1;;cbk
+  241;C;Switch;215;1;;cbk
+  242;C;Switch;218;1;;cbk
+  243;C;Switch;219;1;;cbk
+
+
+$$StaVmea;FID(a:40);OP(a:1);fold_id(p);pbusbar(p);pbusbar2(p);outserv(i);i_mode(i);iOutput(i);iUdcOutput(i);iFreq(i);freqOutput(i);nominalFreq(r);meatech(i);nphase(i);it2p(i);it2p2(i);samplingFreq(r);samplesPerPeriod(i);samplesPerWindow(i);windowLength(r);rateLim(r);clockPeriod(r);loc_name(a:80)
+  244;C;87;213;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;Master_PWM_Voltage Measurement
+  245;C;88;219;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;Slave_PWM_Voltage Measurement
+
+
+$$TypBar;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uknom(r);Ithlim(r);Tkr(r);Iplim(r)
+  246;C;DC Busbar;139;500;0;1;0
+
+
+$$TypLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uline(r);sline(r);InomAir(r);cohl_(i);rline(r);xline(r);rline0(r);xline0(r);Ithr(r);tmax(r);rtemp(r);systp(i);nlnph(i);nneutral(i);frnom(r);mlei(a:4);bline(r);bline0(r);c:rline(r);c:xline(r);c:bline(r);gline(r);gline0(r)
+  247;C;Overhead Line A;;400;3;1;1;0.0178;0.278;0.0333;0.75;45;80;80;0;3;0;50;As;4;1;0.0178;0.278;4;0;0
+  248;C;Overhead Line B;;415;3;1;1;0.0178;0.278;0.0333;0.75;45;80;80;0;3;0;50;As;4;1;0.0178;0.278;4;0;0
+  249;C;DC Cable-VL/NL/NSL/NC;145;1050;1.35;1.35;0;0.011;0;0;0;0;80;80;1;3;0;50;Cu;0;0;0.011;0;0;0;0
+
+
+$$TypTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);nt2ph(i);strn(r);frnom(r);utrn_h(r);utrn_l(r);uktr(r);pcutr(r);uk0tr(r);ur0tr(r);tr2cn_h(a:4);tr2cn_l(a:4);nt2ag(r);curmg(r);pfe(r);zx0hl_n(r);itapch(i);tap_side(i);dutap(r);phitr(r);nntap0(i);ntpmn(i);ntpmx(i);manuf(a:40);itapzdep(i);iIntPola(i);uktmn(r);uktmx(r);pcutmn(r);pcutmx(r);ukrtmn(r);ukrtmx(r);itrdl(r);itrdl_lv(r);itrdr(r);itrdr_lv(r)
+  250;C;VSC_NL/NC/NSL_master;137;3;1400;50;525;400;0;0;3;0;YN;YN;0;0;0;100;1;0;0;0;0;0;0;;0;0;0;0;0;0;0;0;0.5;0.5;0.5;0.5
+  251;C;VSC_NL/NC/NSL_slave;137;3;1400;50;525;415;0;0;3;0;YN;YN;0;0;0;100;1;0;0;0;0;0;0;;0;0;0;0;0;0;0;0;0.5;0.5;0.5;0.5
+
+$$ElmPhi;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);pbusbar(p);outserv(i);Kp(r);Ki(r)
+252;C;Master_PLL;87;;0;200.01969909667969;10004.1298828125
+253;C;SLAVE_PLL;88;;0;200.01969909667969;10004.1298828125

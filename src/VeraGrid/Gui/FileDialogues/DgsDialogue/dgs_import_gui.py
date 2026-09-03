@@ -8,22 +8,24 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFormLayout,
-    QFrame, QPushButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtCore import QCoreApplication, QMetaObject
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QFormLayout,
+    QFrame,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QVBoxLayout,
+)
 
 class Ui_DgsImportDialog(object):
     def setupUi(self, DgsImportDialog):
         if not DgsImportDialog.objectName():
             DgsImportDialog.setObjectName(u"DgsImportDialog")
-        DgsImportDialog.resize(380, 200)
+        DgsImportDialog.resize(380, 230)
         self.verticalLayout = QVBoxLayout(DgsImportDialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.frame = QFrame(DgsImportDialog)
@@ -41,14 +43,24 @@ class Ui_DgsImportDialog(object):
 
         self.formLayout.setWidget(1, QFormLayout.ItemRole.SpanningRole, self.dgsUseDynamicInformationCheckBox)
 
+        self.dgsDynamicSimulationModeLabel = QLabel(self.frame)
+        self.dgsDynamicSimulationModeLabel.setObjectName(u"dgsDynamicSimulationModeLabel")
+
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.LabelRole, self.dgsDynamicSimulationModeLabel)
+
+        self.dgsDynamicSimulationModeComboBox = QComboBox(self.frame)
+        self.dgsDynamicSimulationModeComboBox.setObjectName(u"dgsDynamicSimulationModeComboBox")
+
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.FieldRole, self.dgsDynamicSimulationModeComboBox)
+
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.formLayout.setItem(2, QFormLayout.ItemRole.SpanningRole, self.verticalSpacer)
+        self.formLayout.setItem(3, QFormLayout.ItemRole.SpanningRole, self.verticalSpacer)
 
         self.importButton = QPushButton(self.frame)
         self.importButton.setObjectName(u"importButton")
 
-        self.formLayout.setWidget(3, QFormLayout.ItemRole.SpanningRole, self.importButton)
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.SpanningRole, self.importButton)
 
 
         self.verticalLayout.addWidget(self.frame)
@@ -63,6 +75,13 @@ class Ui_DgsImportDialog(object):
         DgsImportDialog.setWindowTitle(QCoreApplication.translate("DgsImportDialog", u"DGS Import", None))
         self.dgsUseVscForInjectionsCheckBox.setText(QCoreApplication.translate("DgsImportDialog", u"Use VSC model for controllable injections", None))
         self.dgsUseDynamicInformationCheckBox.setText(QCoreApplication.translate("DgsImportDialog", u"Use dynamic information (when available)", None))
+        self.dgsDynamicSimulationModeLabel.setText(
+            QCoreApplication.translate(
+                "DgsImportDialog",
+                u"Dynamic simulation mode",
+                None,
+            )
+        )
         self.importButton.setText(QCoreApplication.translate("DgsImportDialog", u"Import", None))
     # retranslateUi
 

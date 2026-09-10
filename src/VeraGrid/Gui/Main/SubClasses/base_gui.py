@@ -183,8 +183,6 @@ class BaseMainGui(QMainWindow):
         self.ui.progress_frame.setVisible(self.lock_ui)
 
         self.stuff_running_now: List[SimulationTypes] = list()
-        self._locked_window_enabled_states: Dict[QtWidgets.QWidget, bool] = dict()
-        self._locked_menu_action_enabled_states: Dict[QtGui.QAction, bool] = dict()
 
         self.session: SimulationSession = SimulationSession(name='GUI session')
         self.server_driver: QtCore.QThread | None = None
@@ -399,28 +397,26 @@ class BaseMainGui(QMainWindow):
 
     def LOCK(self, val: bool = True) -> None:
         """
-        Lock the interface while a worker owns the grid state.
+        Mark the interface as busy while a worker owns the grid state.
 
-        :param val: Whether the main interface must reject user interaction.
+        :param val: Whether the main interface must show running-job controls.
         :returns: None.
         """
         self.lock_ui = val
 
-        # Keep the progress controls available while the main editing and run
-        # launch surfaces are disabled. Workers receive the live MultiCircuit,
-        # so diagram/model edits must not race against a running calculation.
+        # Show the running-job controls while leaving the GUI available for
+        # inspection and normal interaction.
         self.ui.progress_frame.setVisible(self.lock_ui)
         self.ui.progress_frame.setEnabled(True)
         self.ui.cancelButton.setEnabled(self.lock_ui)
+
+        # self.ui.mainTabWidget.setVisible(not self.lock_ui)
+        # self.ui.menuBar.setVisible(not self.lock_ui)
+        # self.ui.toolBar.setVisible(not self.lock_ui)
+
         self.ui.mainTabWidget.setEnabled(not self.lock_ui)
-        if self.lock_ui:
-            self.set_menu_bar_actions_locked(locked=True)
-            self.ui.menuBar.setEnabled(False)
-        else:
-            self.ui.menuBar.setEnabled(True)
-            self.set_menu_bar_actions_locked(locked=False)
+        self.ui.menuBar.setEnabled(not self.lock_ui)
         self.ui.toolBar.setEnabled(not self.lock_ui)
-        self.set_open_child_windows_locked(locked=self.lock_ui)
 
     def UNLOCK(self) -> None:
         """
@@ -521,68 +517,6 @@ class BaseMainGui(QMainWindow):
                     pass
 
         return windows
-
-    def set_open_child_windows_locked(self, locked: bool) -> None:
-        """
-        Apply the main GUI lock state to every open child window.
-
-        :param locked: Whether child windows must reject user interaction.
-        :returns: None.
-        """
-        window: QtWidgets.QWidget
-        if locked:
-            for window in self.get_open_lock_managed_windows():
-                if window in self._locked_window_enabled_states:
-                    pass
-                else:
-                    self._locked_window_enabled_states[window] = window.isEnabled()
-                window.setEnabled(False)
-        else:
-            state_items: List[tuple[QtWidgets.QWidget, bool]] = list(self._locked_window_enabled_states.items())
-            window_state: tuple[QtWidgets.QWidget, bool]
-            for window_state in state_items:
-                window = window_state[0]
-                was_enabled: bool = window_state[1]
-                if shiboken6.isValid(window):
-                    window.setEnabled(was_enabled)
-                else:
-                    pass
-            self._locked_window_enabled_states.clear()
-
-    def set_menu_bar_actions_locked(self, locked: bool) -> None:
-        """
-        Apply the main GUI lock state to the menu-bar root actions.
-
-        :param locked: Whether menu-bar root actions must reject user interaction.
-        :returns: None.
-        """
-        menu_action: QtGui.QAction
-        menu: QtWidgets.QMenu | None
-        if locked:
-            for menu_action in self.ui.menuBar.actions():
-                menu = menu_action.menu()
-                if menu_action in self._locked_menu_action_enabled_states:
-                    pass
-                else:
-                    self._locked_menu_action_enabled_states[menu_action] = menu_action.isEnabled()
-                if menu is None:
-                    pass
-                else:
-                    menu.setEnabled(False)
-                menu_action.setEnabled(False)
-        else:
-            state_items: List[tuple[QtGui.QAction, bool]] = list(self._locked_menu_action_enabled_states.items())
-            action_state: tuple[QtGui.QAction, bool]
-            for action_state in state_items:
-                menu_action = action_state[0]
-                was_enabled: bool = action_state[1]
-                menu = menu_action.menu()
-                if menu is None:
-                    pass
-                else:
-                    menu.setEnabled(was_enabled)
-                menu_action.setEnabled(was_enabled)
-            self._locked_menu_action_enabled_states.clear()
 
     def close_open_child_windows(self, delete_windows: bool = False) -> bool:
         """

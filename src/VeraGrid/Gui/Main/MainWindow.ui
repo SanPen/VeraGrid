@@ -283,7 +283,7 @@
                             <x>0</x>
                             <y>0</y>
                             <width>396</width>
-                            <height>322</height>
+                            <height>316</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -362,8 +362,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>262</width>
-                            <height>362</height>
+                            <width>382</width>
+                            <height>360</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -757,8 +757,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>174</width>
-                            <height>240</height>
+                            <width>396</width>
+                            <height>322</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -908,8 +908,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>124</width>
-                            <height>244</height>
+                            <width>396</width>
+                            <height>322</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -2440,8 +2440,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>226</width>
-                 <height>85</height>
+                 <width>274</width>
+                 <height>526</height>
                 </rect>
                </property>
                <attribute name="icon">
@@ -2496,7 +2496,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>86</width>
+                 <width>98</width>
                  <height>88</height>
                 </rect>
                </property>
@@ -10980,6 +10980,19 @@ QProgressBar::chunk{
           <bool>false</bool>
          </property>
         </widget>
+       </item>
+       <item row="0" column="3">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

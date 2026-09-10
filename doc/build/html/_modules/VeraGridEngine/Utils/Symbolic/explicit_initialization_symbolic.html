@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -126,7 +127,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.jit_compiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">RMSCompiler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">expression2numba</span><span class="p">,</span> <span class="n">get_expression_vars</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">normalize_event_parameter_initialization</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">find_vars_order</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinOp</span><span class="p">,</span> <span class="n">Comparison</span><span class="p">,</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">find_vars_order</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.procedural_logic</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampledValueLogic</span>
 
 
 <div class="viewcode-block" id="build_uid_bindings">
@@ -143,6 +145,7 @@
         <span class="n">uid2idx_diff</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">init_guess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">diff_init_guess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">external_uid_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build the UID-to-value bindings needed to evaluate one symbolic expression.</span>
@@ -165,6 +168,9 @@
 <span class="sd">    :type uid2idx_params: Dict[int, int]</span>
 <span class="sd">    :param uid2idx_diff: Differential variable index map.</span>
 <span class="sd">    :type uid2idx_diff: Dict[int, int]</span>
+<span class="sd">    :param init_guess: Previously resolved state and algebraic values.</span>
+<span class="sd">    :param diff_init_guess: Previously resolved differential values.</span>
+<span class="sd">    :param external_uid_values: Explicit values for variables owned outside the symbolic block.</span>
 <span class="sd">    :return: Numeric bindings for the expression variables.</span>
 <span class="sd">    :rtype: Dict[int, float]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -182,7 +188,9 @@
             <span class="k">if</span> <span class="n">state_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">param_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">diff_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">init_guess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vr</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">init_guess</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">external_uid_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vr</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">external_uid_values</span><span class="p">:</span>
+                            <span class="n">resolved_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">external_uid_values</span><span class="p">[</span><span class="n">vr</span><span class="o">.</span><span class="n">uid</span><span class="p">])</span>
+                        <span class="k">elif</span> <span class="n">init_guess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vr</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">init_guess</span><span class="p">:</span>
                             <span class="n">resolved_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">init_guess</span><span class="p">[</span><span class="n">vr</span><span class="o">.</span><span class="n">uid</span><span class="p">])</span>
                         <span class="k">elif</span> <span class="n">diff_init_guess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vr</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">diff_init_guess</span><span class="p">:</span>
                             <span class="n">resolved_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">diff_init_guess</span><span class="p">[</span><span class="n">vr</span><span class="o">.</span><span class="n">uid</span><span class="p">])</span>
@@ -227,6 +235,7 @@
         <span class="n">uid2idx_diff</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">init_guess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">diff_init_guess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">external_uid_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate one explicit initialization equation using the shared bindings.</span>
@@ -249,6 +258,9 @@
 <span class="sd">    :type uid2idx_params: Dict[int, int]</span>
 <span class="sd">    :param uid2idx_diff: Differential variable index map.</span>
 <span class="sd">    :type uid2idx_diff: Dict[int, int]</span>
+<span class="sd">    :param init_guess: Previously resolved state and algebraic values.</span>
+<span class="sd">    :param diff_init_guess: Previously resolved differential values.</span>
+<span class="sd">    :param external_uid_values: Explicit values for variables owned outside the symbolic block.</span>
 <span class="sd">    :return: Evaluated scalar value.</span>
 <span class="sd">    :rtype: float</span>
 <span class="sd">    :raises RuntimeError: If a constant equation has no concrete value.</span>
@@ -268,6 +280,7 @@
             <span class="n">uid2idx_diff</span><span class="o">=</span><span class="n">uid2idx_diff</span><span class="p">,</span>
             <span class="n">init_guess</span><span class="o">=</span><span class="n">init_guess</span><span class="p">,</span>
             <span class="n">diff_init_guess</span><span class="o">=</span><span class="n">diff_init_guess</span><span class="p">,</span>
+            <span class="n">external_uid_values</span><span class="o">=</span><span class="n">external_uid_values</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">eq</span><span class="o">.</span><span class="n">eval_uid</span><span class="p">(</span><span class="n">uid_bindings</span><span class="p">)</span>
@@ -535,7 +548,12 @@
     <span class="n">event_key</span><span class="p">:</span> <span class="n">Var</span>
     <span class="n">event_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">event_key</span><span class="p">,</span> <span class="n">event_value</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">event_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">init_event</span><span class="p">[</span><span class="n">event_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_value</span></div>
+        <span class="n">init_event</span><span class="p">[</span><span class="n">event_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_value</span>
+
+    <span class="n">mode_key</span><span class="p">:</span> <span class="n">Var</span>
+    <span class="n">mode_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">mode_key</span><span class="p">,</span> <span class="n">mode_value</span> <span class="ow">in</span> <span class="n">blk</span><span class="o">.</span><span class="n">mode_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">init_event</span><span class="p">[</span><span class="n">mode_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode_value</span></div>
 
 
 <div class="viewcode-block" id="build_init_dict">
@@ -557,16 +575,190 @@
         <span class="n">build_init_dict</span><span class="p">(</span><span class="n">blk</span><span class="p">,</span> <span class="n">init_vars</span><span class="p">,</span> <span class="n">init_event</span><span class="p">)</span></div>
 
 
+
+<div class="viewcode-block" id="apply_sampled_procedural_initializers">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic.apply_sampled_procedural_initializers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_sampled_procedural_initializers</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+        <span class="n">init_event</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use sampled procedural expressions as their startup mode values.</span>
+
+<span class="sd">    Generated ``select(...)`` and sampled-value blocks keep their outputs in</span>
+<span class="sd">    ``mode_dict`` because runtime updates occur outside the Newton residual.</span>
+<span class="sd">    Their placeholder mode defaults must not choose the branch used by</span>
+<span class="sd">    ``inc(...)``. At startup, the declared sampled source is the authoritative</span>
+<span class="sd">    value and participates in the same dependency graph as every other</span>
+<span class="sd">    explicit initialization equation.</span>
+
+<span class="sd">    :param mdl: Symbolic block whose procedural entries are inspected.</span>
+<span class="sd">    :param init_event: Runtime initialization equations updated in place.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">event_var_by_uid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">event_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">event_var</span><span class="p">)</span> <span class="k">for</span> <span class="n">event_var</span> <span class="ow">in</span> <span class="n">init_event</span>
+    <span class="p">)</span>
+    <span class="n">procedural_entry</span><span class="p">:</span> <span class="nb">object</span>
+
+    <span class="k">for</span> <span class="n">procedural_entry</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">procedural_logic</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">procedural_entry</span><span class="p">,</span> <span class="n">SampledValueLogic</span><span class="p">):</span>
+            <span class="n">output_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">procedural_entry</span><span class="o">.</span><span class="n">output_var_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">candidate_var</span><span class="p">:</span> <span class="n">Var</span>
+                <span class="k">for</span> <span class="n">candidate_var</span> <span class="ow">in</span> <span class="n">init_event</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">candidate_var</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">procedural_entry</span><span class="o">.</span><span class="n">output_var_name</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">output_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">output_var</span> <span class="o">=</span> <span class="n">candidate_var</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">output_var</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output_var</span> <span class="o">=</span> <span class="n">event_var_by_uid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">procedural_entry</span><span class="o">.</span><span class="n">output_var_uid</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">output_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">source_expression</span><span class="p">:</span> <span class="n">Expr</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">procedural_entry</span><span class="o">.</span><span class="n">source_expr</span><span class="p">,</span> <span class="n">Comparison</span><span class="p">):</span>
+                    <span class="n">source_expression</span> <span class="o">=</span> <span class="n">procedural_entry</span><span class="o">.</span><span class="n">source_expr</span><span class="o">.</span><span class="n">to_expression</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">source_expression</span> <span class="o">=</span> <span class="n">procedural_entry</span><span class="o">.</span><span class="n">source_expr</span>
+                <span class="n">init_event</span><span class="p">[</span><span class="n">output_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_expression</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">child_block</span><span class="p">:</span> <span class="n">Block</span>
+    <span class="k">for</span> <span class="n">child_block</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">apply_sampled_procedural_initializers</span><span class="p">(</span>
+            <span class="n">mdl</span><span class="o">=</span><span class="n">child_block</span><span class="p">,</span>
+            <span class="n">init_event</span><span class="o">=</span><span class="n">init_event</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="collect_direct_algebraic_initializers">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic.collect_direct_algebraic_initializers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_direct_algebraic_initializers</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+        <span class="n">direct_initializers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect explicit ``variable - expression`` algebraic assignments.</span>
+
+<span class="sd">    PowerFactory ``inc(...)`` expressions can depend on an intermediate</span>
+<span class="sd">    algebraic assignment. Those intermediates must be evaluated before the</span>
+<span class="sd">    initialization expression instead of retaining the generic work-vector</span>
+<span class="sd">    seed.</span>
+
+<span class="sd">    :param mdl: Symbolic block whose algebraic equations are inspected.</span>
+<span class="sd">    :param direct_initializers: Direct assignments collected recursively.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">algebraic_var_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">state_var_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">all_blocks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Block</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">()</span>
+    <span class="n">nested_block</span><span class="p">:</span> <span class="n">Block</span>
+    <span class="k">for</span> <span class="n">nested_block</span> <span class="ow">in</span> <span class="n">all_blocks</span><span class="p">:</span>
+        <span class="n">nested_state_var</span><span class="p">:</span> <span class="n">Var</span>
+        <span class="k">for</span> <span class="n">nested_state_var</span> <span class="ow">in</span> <span class="n">nested_block</span><span class="o">.</span><span class="n">state_vars</span><span class="p">:</span>
+            <span class="n">state_var_uids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nested_state_var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">nested_block</span> <span class="ow">in</span> <span class="n">all_blocks</span><span class="p">:</span>
+        <span class="n">nested_algebraic_var</span><span class="p">:</span> <span class="n">Var</span>
+        <span class="n">nested_algebraic_lists</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">nested_block</span><span class="o">.</span><span class="n">algebraic_vars</span><span class="p">,</span>
+            <span class="n">nested_block</span><span class="o">.</span><span class="n">reformulated_vars</span><span class="p">,</span>
+            <span class="n">nested_block</span><span class="o">.</span><span class="n">in_vars</span><span class="p">,</span>
+            <span class="n">nested_block</span><span class="o">.</span><span class="n">out_vars</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">nested_algebraic_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">nested_algebraic_list</span> <span class="ow">in</span> <span class="n">nested_algebraic_lists</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">nested_algebraic_var</span> <span class="ow">in</span> <span class="n">nested_algebraic_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">nested_algebraic_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">state_var_uids</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">algebraic_var_uids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nested_algebraic_var</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+    <span class="n">algebraic_eq</span><span class="p">:</span> <span class="n">Expr</span>
+
+    <span class="c1"># Only accept the declarative residual shape produced for a direct</span>
+    <span class="c1"># assignment. General implicit equations remain owned by the DAE solver.</span>
+    <span class="k">for</span> <span class="n">algebraic_eq</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">algebraic_eq</span><span class="p">,</span> <span class="n">BinOp</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">algebraic_eq</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algebraic_eq</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">algebraic_eq</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">algebraic_var_uids</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">algebraic_eq</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">contains_var</span><span class="p">(</span><span class="n">algebraic_eq</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">direct_initializers</span><span class="p">[</span><span class="n">algebraic_eq</span><span class="o">.</span><span class="n">left</span><span class="p">]</span> <span class="o">=</span> <span class="n">algebraic_eq</span><span class="o">.</span><span class="n">right</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">child_block</span><span class="p">:</span> <span class="n">Block</span>
+    <span class="k">for</span> <span class="n">child_block</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">collect_direct_algebraic_initializers</span><span class="p">(</span>
+            <span class="n">mdl</span><span class="o">=</span><span class="n">child_block</span><span class="p">,</span>
+            <span class="n">direct_initializers</span><span class="o">=</span><span class="n">direct_initializers</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_direct_algebraic_init_dependencies">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic.add_direct_algebraic_init_dependencies">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_direct_algebraic_init_dependencies</span><span class="p">(</span>
+        <span class="n">init_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]],</span>
+        <span class="n">direct_initializers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">],</span>
+        <span class="n">preserved_var_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add direct algebraic assignments required by initialization equations.</span>
+
+<span class="sd">    :param init_vars: Unified explicit initialization equations, updated in place.</span>
+<span class="sd">    :param direct_initializers: Available direct algebraic assignments.</span>
+<span class="sd">    :param preserved_var_uids: Variables already seeded by an external operating point.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dependency_added</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Re-scan a fixed snapshot on each pass because a newly added direct</span>
+    <span class="c1"># assignment can itself expose another required intermediate.</span>
+    <span class="k">while</span> <span class="n">dependency_added</span><span class="p">:</span>
+        <span class="n">dependency_added</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">current_equations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">init_vars</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">current_eq</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">current_eq</span> <span class="ow">in</span> <span class="n">current_equations</span><span class="p">:</span>
+            <span class="n">dependency_var</span><span class="p">:</span> <span class="n">Var</span>
+            <span class="k">for</span> <span class="n">dependency_var</span> <span class="ow">in</span> <span class="n">get_expression_vars</span><span class="p">(</span><span class="n">current_eq</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">dependency_var</span> <span class="ow">in</span> <span class="n">init_vars</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dependency_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">preserved_var_uids</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">direct_eq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="n">direct_initializers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dependency_var</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">direct_eq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">pass</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">init_vars</span><span class="p">[</span><span class="n">dependency_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">direct_eq</span>
+                            <span class="n">dependency_added</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
 <div class="viewcode-block" id="build_explicit_init_graph">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic.build_explicit_init_graph">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_explicit_init_graph</span><span class="p">(</span>
         <span class="n">mdl</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+        <span class="n">preserved_var_uids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build the unified dependency graph used by the explicit initializer.</span>
 
 <span class="sd">    :param mdl: Symbolic block containing event, init, and diff-init equations.</span>
 <span class="sd">    :type mdl: Block</span>
+<span class="sd">    :param preserved_var_uids: Optional externally seeded variables that direct</span>
+<span class="sd">        algebraic assignments must consume without replacing.</span>
 <span class="sd">    :return: Unified equation dictionary, dependency map, and topological order.</span>
 <span class="sd">    :rtype: Tuple[Dict[Var, Union[Expr, Const]], Dict[Var, List[Var]], List[Var]]</span>
 <span class="sd">    :raises RuntimeError: If a cross-variable cycle is detected.</span>
@@ -575,12 +767,45 @@
 
     <span class="n">init_vars</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="n">init_event</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">preserved_var_uids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">preserved_uids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">preserved_uids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">preserved_var_uids</span><span class="p">)</span>
     <span class="n">build_init_dict</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="n">init_vars</span><span class="p">,</span> <span class="n">init_event</span><span class="p">)</span>
+    <span class="n">apply_sampled_procedural_initializers</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+        <span class="n">init_event</span><span class="o">=</span><span class="n">init_event</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># Event parameters own their single initialization expression directly.</span>
     <span class="c1"># Normalization above migrates the former Const(None) + init_eqs pattern.</span>
     <span class="k">for</span> <span class="n">ev_var</span><span class="p">,</span> <span class="n">ev_eq</span> <span class="ow">in</span> <span class="n">init_event</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">init_vars</span><span class="p">[</span><span class="n">ev_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">ev_eq</span>
+
+    <span class="c1"># Resolve only direct algebraic assignments reached from the complete</span>
+    <span class="c1"># initialization graph, including procedural startup expressions. This</span>
+    <span class="c1"># preserves DAE ownership of general implicit algebraics while ensuring</span>
+    <span class="c1"># ``inc(...)`` observes the same selected branch used at the first sample.</span>
+    <span class="n">direct_initializers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">collect_direct_algebraic_initializers</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+        <span class="n">direct_initializers</span><span class="o">=</span><span class="n">direct_initializers</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">direct_var</span><span class="p">:</span> <span class="n">Var</span>
+    <span class="n">direct_eq</span><span class="p">:</span> <span class="n">Expr</span>
+    <span class="k">for</span> <span class="n">direct_var</span><span class="p">,</span> <span class="n">direct_eq</span> <span class="ow">in</span> <span class="n">direct_initializers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">direct_var</span> <span class="ow">in</span> <span class="n">init_vars</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">direct_var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">preserved_uids</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">init_vars</span><span class="p">[</span><span class="n">direct_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">direct_eq</span>
+    <span class="n">add_direct_algebraic_init_dependencies</span><span class="p">(</span>
+        <span class="n">init_vars</span><span class="o">=</span><span class="n">init_vars</span><span class="p">,</span>
+        <span class="n">direct_initializers</span><span class="o">=</span><span class="n">direct_initializers</span><span class="p">,</span>
+        <span class="n">preserved_var_uids</span><span class="o">=</span><span class="n">preserved_uids</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="n">graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Var</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
     <span class="n">in_degree</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -794,6 +1019,63 @@
 
 
 
+<div class="viewcode-block" id="build_explicit_external_uid_values">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic.build_explicit_external_uid_values">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_explicit_external_uid_values</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+        <span class="n">external_name_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve external symbolic inputs to their exact equation UIDs.</span>
+
+<span class="sd">    Imported expressions may own external variables that are intentionally not</span>
+<span class="sd">    part of the DAE state, derivative, or parameter vectors. The RMS wrapper</span>
+<span class="sd">    declares their semantic names and values, while this boundary converts that</span>
+<span class="sd">    declaration into the UID mapping consumed by the generic initializer.</span>
+
+<span class="sd">    :param mdl: Symbolic block whose initialization graph consumes external inputs.</span>
+<span class="sd">    :param external_name_values: External values keyed by declared symbolic name.</span>
+<span class="sd">    :return: External values keyed by the exact variable UIDs used by the block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">external_uid_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">runtime_block</span><span class="p">:</span> <span class="n">Block</span>
+    <span class="k">for</span> <span class="n">runtime_block</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">():</span>
+        <span class="n">equation_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">runtime_block</span><span class="o">.</span><span class="n">algebraic_eqs</span><span class="p">),</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">runtime_block</span><span class="o">.</span><span class="n">state_eqs</span><span class="p">),</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">runtime_block</span><span class="o">.</span><span class="n">differential_eqs</span><span class="p">),</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">runtime_block</span><span class="o">.</span><span class="n">init_eqs</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">runtime_block</span><span class="o">.</span><span class="n">diff_init_eqs</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">runtime_block</span><span class="o">.</span><span class="n">event_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">runtime_block</span><span class="o">.</span><span class="n">mode_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">runtime_block</span><span class="o">.</span><span class="n">boolean_guards</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+        <span class="p">])</span>
+        <span class="n">equation_group</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]]</span>
+        <span class="n">equation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span>
+        <span class="n">equation_var</span><span class="p">:</span> <span class="n">Var</span>
+        <span class="k">for</span> <span class="n">equation_group</span> <span class="ow">in</span> <span class="n">equation_groups</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">equation</span> <span class="ow">in</span> <span class="n">equation_group</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">equation_var</span> <span class="ow">in</span> <span class="n">find_vars_order</span><span class="p">(</span><span class="n">equation</span><span class="p">):</span>
+                    <span class="n">external_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">external_name_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">equation_var</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="kc">None</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">external_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">external_uid_values</span><span class="p">[</span><span class="n">equation_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">external_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">external_uid_values</span></div>
+
+
+
 <div class="viewcode-block" id="init_explicit_common">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic.init_explicit_common">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">init_explicit_common</span><span class="p">(</span>
@@ -810,8 +1092,9 @@
         <span class="n">uid2idx_diff</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">uid2idx_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">uid2idx_event_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-        <span class="n">params_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">params_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Const</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">compile_single_equation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SymbolicVectorSingleEquationCompiler</span><span class="p">,</span> <span class="n">RmsSingleEquationCompiler</span><span class="p">],</span>
+        <span class="n">external_uid_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">complex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -842,10 +1125,11 @@
 <span class="sd">    :type uid2idx_params: Dict[int, int]</span>
 <span class="sd">    :param uid2idx_event_params: Event parameter index map.</span>
 <span class="sd">    :type uid2idx_event_params: Dict[int, int]</span>
-<span class="sd">    :param params_array: Constant parameter vector.</span>
-<span class="sd">    :type params_array: np.ndarray</span>
+<span class="sd">    :param params_array: Constant parameter vector in symbolic storage or numeric form.</span>
+<span class="sd">    :type params_array: List[Const] | np.ndarray</span>
 <span class="sd">    :param compile_single_equation: Backend-specific single-equation compiler wrapper.</span>
 <span class="sd">    :type compile_single_equation: Union[SymbolicVectorSingleEquationCompiler, RmsSingleEquationCompiler]</span>
+<span class="sd">    :param external_uid_values: Explicit values for variables owned outside the symbolic block.</span>
 <span class="sd">    :param verbose: Print initialization progress.</span>
 <span class="sd">    :type verbose: bool</span>
 <span class="sd">    :return: Updated algebraic or state and differential guesses.</span>
@@ -857,6 +1141,24 @@
     <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sys_vars</span><span class="p">))</span>
     <span class="n">dx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sys_diff_vars</span><span class="p">))</span>
     <span class="n">event_params_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">variable_parameters</span><span class="p">))</span>
+
+    <span class="c1"># RMS problem assembly retains Const wrappers so symbolic ownership is not</span>
+    <span class="c1"># lost before compilation. Explicit evaluation consumes only concrete</span>
+    <span class="c1"># scalars, therefore materialize a fixed-size numeric view at this boundary.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params_array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">numeric_params_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">params_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">numeric_params_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">parameter_index</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">parameter_value</span><span class="p">:</span> <span class="n">Const</span>
+        <span class="k">for</span> <span class="n">parameter_index</span><span class="p">,</span> <span class="n">parameter_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params_array</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">parameter_value</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parameter_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">constant_parameters</span><span class="p">[</span><span class="n">parameter_index</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Constant parameter &#39;</span><span class="si">{</span><span class="n">parameter_name</span><span class="si">}</span><span class="s2">&#39; has no explicit initialization value&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">numeric_params_array</span><span class="p">[</span><span class="n">parameter_index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameter_value</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="c1"># Seed the working vectors with the guesses already assembled before the</span>
     <span class="c1"># explicit stage. The problem relies on those PF-driven values and on previously</span>
@@ -870,7 +1172,10 @@
             <span class="n">dx</span><span class="p">[</span><span class="n">uid2idx_diff</span><span class="p">[</span><span class="n">uid</span><span class="p">]]</span> <span class="o">=</span> <span class="n">val</span>
 
 
-    <span class="n">dic_total</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">,</span> <span class="n">topo_order</span><span class="p">,</span> <span class="n">init_event</span> <span class="o">=</span> <span class="n">build_explicit_init_graph</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+    <span class="n">dic_total</span><span class="p">,</span> <span class="n">dependencies</span><span class="p">,</span> <span class="n">topo_order</span><span class="p">,</span> <span class="n">init_event</span> <span class="o">=</span> <span class="n">build_explicit_init_graph</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+        <span class="n">preserved_var_uids</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">init_guess</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+    <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">topo_order</span><span class="p">:</span>
         <span class="n">eq</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Expr</span><span class="p">,</span> <span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="n">dic_total</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
@@ -880,7 +1185,7 @@
                 <span class="n">eq</span><span class="o">=</span><span class="n">eq</span><span class="p">,</span>
                 <span class="n">event_params_array</span><span class="o">=</span><span class="n">event_params_array</span><span class="p">,</span>
                 <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-                <span class="n">params_array</span><span class="o">=</span><span class="n">params_array</span><span class="p">,</span>
+                <span class="n">params_array</span><span class="o">=</span><span class="n">numeric_params_array</span><span class="p">,</span>
                 <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span>
                 <span class="n">uid2idx_event_params</span><span class="o">=</span><span class="n">uid2idx_event_params</span><span class="p">,</span>
                 <span class="n">uid2idx_vars</span><span class="o">=</span><span class="n">uid2idx_vars</span><span class="p">,</span>
@@ -888,6 +1193,7 @@
                 <span class="n">uid2idx_diff</span><span class="o">=</span><span class="n">uid2idx_diff</span><span class="p">,</span>
                 <span class="n">init_guess</span><span class="o">=</span><span class="n">init_guess</span><span class="p">,</span>
                 <span class="n">diff_init_guess</span><span class="o">=</span><span class="n">diff_init_guess</span><span class="p">,</span>
+                <span class="n">external_uid_values</span><span class="o">=</span><span class="n">external_uid_values</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">event_params_array</span><span class="p">[</span><span class="n">uid2idx_event_params</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">]]</span> <span class="o">=</span> <span class="n">result</span>
             <span class="n">store_resolved_event_parameter</span><span class="p">(</span>
@@ -907,7 +1213,7 @@
                     <span class="n">eq</span><span class="o">=</span><span class="n">eq</span><span class="p">,</span>
                     <span class="n">event_params_array</span><span class="o">=</span><span class="n">event_params_array</span><span class="p">,</span>
                     <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-                    <span class="n">params_array</span><span class="o">=</span><span class="n">params_array</span><span class="p">,</span>
+                    <span class="n">params_array</span><span class="o">=</span><span class="n">numeric_params_array</span><span class="p">,</span>
                     <span class="n">dx</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span>
                     <span class="n">uid2idx_event_params</span><span class="o">=</span><span class="n">uid2idx_event_params</span><span class="p">,</span>
                     <span class="n">uid2idx_vars</span><span class="o">=</span><span class="n">uid2idx_vars</span><span class="p">,</span>
@@ -915,6 +1221,7 @@
                     <span class="n">uid2idx_diff</span><span class="o">=</span><span class="n">uid2idx_diff</span><span class="p">,</span>
                     <span class="n">init_guess</span><span class="o">=</span><span class="n">init_guess</span><span class="p">,</span>
                     <span class="n">diff_init_guess</span><span class="o">=</span><span class="n">diff_init_guess</span><span class="p">,</span>
+                    <span class="n">external_uid_values</span><span class="o">=</span><span class="n">external_uid_values</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="n">uid2idx_vars</span><span class="p">:</span>
@@ -940,7 +1247,7 @@
                         <span class="n">target_idx</span><span class="o">=</span><span class="n">target_idx</span><span class="p">,</span>
                         <span class="n">target_array</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
                         <span class="n">event_params_array</span><span class="o">=</span><span class="n">event_params_array</span><span class="p">,</span>
-                        <span class="n">params_array</span><span class="o">=</span><span class="n">params_array</span><span class="p">,</span>
+                        <span class="n">params_array</span><span class="o">=</span><span class="n">numeric_params_array</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="n">x</span><span class="p">[</span><span class="n">target_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
                     <span class="n">init_guess</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
@@ -953,7 +1260,7 @@
                         <span class="n">target_idx</span><span class="o">=</span><span class="n">target_idx</span><span class="p">,</span>
                         <span class="n">target_array</span><span class="o">=</span><span class="n">dx</span><span class="p">,</span>
                         <span class="n">event_params_array</span><span class="o">=</span><span class="n">event_params_array</span><span class="p">,</span>
-                        <span class="n">params_array</span><span class="o">=</span><span class="n">params_array</span><span class="p">,</span>
+                        <span class="n">params_array</span><span class="o">=</span><span class="n">numeric_params_array</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="n">dx</span><span class="p">[</span><span class="n">target_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
                     <span class="n">diff_init_guess</span><span class="p">[</span><span class="n">var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>

@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 from typing import Any, Dict, List
 
+from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block, normalize_dynamic_connection_intents
 from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConnectionIntent,
@@ -88,6 +89,123 @@ def test_connection_intent_normalization_keeps_only_current_state() -> None:
     assert len(root_block.connection_intents) == 2
     assert root_block.connection_intents[0] is replacement_intent
     assert root_block.connection_intents[0].is_suppressed() is True
+
+
+def test_connection_intent_normalization_prunes_deleted_internal_block() -> None:
+    """Verify deleting an internal block also removes its unreachable intents.
+
+    :return: None.
+    """
+    root_block: Block = _build_block_with_connection_intents(var_factory=VarFactory())
+
+    # Both intent records target the only child. Once that child is removed,
+    # neither an active connection nor a suppression tombstone is restorable.
+    root_block.children = list()
+    normalize_dynamic_connection_intents(block=root_block)
+
+    assert root_block.connection_intents == list()
+
+
+def test_connection_intent_normalization_rebinds_recreated_semantic_port() -> None:
+    """Verify a regenerated port with one unambiguous reference inherits the intent.
+
+    :return: None.
+    """
+    var_factory: VarFactory = VarFactory()
+    root_block: Block = _build_block_with_connection_intents(var_factory=var_factory)
+    replacement_input: Var = var_factory.add_var(
+        name="replacement_v_A",
+        reference=VarPowerFlowReferenceType.v_A,
+    )
+
+    # Generated interfaces can assign a new stable UID while preserving their
+    # semantic reference. Normalization must migrate rather than delete intent.
+    root_block.children[0].in_vars = list([replacement_input])
+    normalize_dynamic_connection_intents(block=root_block)
+
+    assert len(root_block.connection_intents) == 2
+    assert root_block.connection_intents[0].get_internal_variable_uid() == replacement_input.non_mutable_uid
+
+
+def test_block_saver_prunes_unreachable_connection_intents() -> None:
+    """Verify canonical persistence excludes historical missing targets.
+
+    :return: None.
+    """
+    source_factory: VarFactory = VarFactory()
+    source_block: Block = _build_block_with_connection_intents(var_factory=source_factory)
+    stale_block_uid: int = -1
+    stale_intent: DynamicConnectionIntent = DynamicConnectionIntent(
+        origin=DynamicConnectionIntentOrigin.USER,
+        root_reference=VarPowerFlowReferenceType.v_A,
+        direction=DynamicConnectionIntentDirection.INPUT,
+        internal_block_uid=stale_block_uid,
+        internal_variable_uid=source_block.children[0].in_vars[0].non_mutable_uid,
+        suppressed=True,
+    )
+    source_block.connection_intents.append(stale_intent)
+    saver: BlockSaver = BlockSaver(var_factory=source_factory)
+
+    saved_root: Dict[str, Any] = saver.save_block(blk=source_block, main=True)
+    persisted_intents: List[Dict[str, object]] = saved_root["connection_intents"]
+
+    assert len(source_block.connection_intents) == 2
+    assert len(persisted_intents) == 2
+    persisted_intent: Dict[str, object]
+    for persisted_intent in persisted_intents:
+        assert persisted_intent["internal_block_uid"] != stale_block_uid
+
+
+def test_block_parser_silences_only_legacy_suppressed_tombstones() -> None:
+    """Verify old suppression history is quiet while active bad data still warns.
+
+    :return: None.
+    """
+    source_factory: VarFactory = VarFactory()
+    source_block: Block = _build_block_with_connection_intents(var_factory=source_factory)
+    saver: BlockSaver = BlockSaver(var_factory=source_factory)
+    saver.save_block(blk=source_block, main=True)
+    saved_blocks: Dict[int, Dict[str, Any]] = copy.deepcopy(saver.get_blocks())
+    saved_root: Dict[str, Any] = saved_blocks[source_block.uid]
+    stale_block_uid: int = -1
+    stale_variable_uid: int = source_block.children[0].in_vars[0].non_mutable_uid
+
+    # The first entry reproduces the harmless files produced by the former
+    # editor. The second proves that active missing data remains diagnosable.
+    saved_root["connection_intents"] = list([
+        dict({
+            "origin": DynamicConnectionIntentOrigin.USER.value,
+            "root_ref": VarPowerFlowReferenceType.v_A.value,
+            "direction": DynamicConnectionIntentDirection.INPUT.value,
+            "internal_block_uid": stale_block_uid,
+            "internal_variable_uid": stale_variable_uid,
+            "suppressed": True,
+        }),
+        dict({
+            "origin": DynamicConnectionIntentOrigin.USER.value,
+            "root_ref": VarPowerFlowReferenceType.v_A.value,
+            "direction": DynamicConnectionIntentDirection.INPUT.value,
+            "internal_block_uid": stale_block_uid,
+            "internal_variable_uid": stale_variable_uid,
+            "suppressed": False,
+        }),
+    ])
+    parsed_factory: VarFactory = VarFactory()
+    logger: Logger = Logger()
+    parser: BlockParser = BlockParser(var_factory=parsed_factory, logger=logger)
+    parser.parse_references(saver.get_shared_references_to_save())
+    parser.parse_consts(saver.get_const_to_save())
+    parser.parse_vars(saver.get_vars_to_save())
+    parser.parse_diff_vars(saver.get_diff_vars_to_save())
+
+    parsed_blocks: List[Block] = parser.parse_blocks(
+        blocks_data=saved_blocks,
+        main_block_uids=saver.main_block_uids,
+    )
+
+    assert parsed_blocks[0].connection_intents == list()
+    assert len(logger) == 1
+    assert logger.entries[0].msg == "Invalid dynamic connection intent ignored while parsing persisted data"
 
 
 def test_block_saver_round_trip_preserves_typed_connection_intents() -> None:

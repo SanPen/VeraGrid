@@ -27,6 +27,10 @@ __VeraGridServer_VERSION__ = read_module_constant(
     os.path.join(SRC_ROOT, 'VeraGridServer', '__version__.py'),
     '__VeraGridServer_VERSION__',
 )
+__VeraGridMcp_VERSION__ = read_module_constant(
+    os.path.join(SRC_ROOT, 'VeraGridMcp', '__version__.py'),
+    '__VeraGridMcp_VERSION__',
+)
 
 
 def update_gui_to_make_sure():
@@ -113,6 +117,10 @@ def check_versions() -> bool:
         print(__VeraGridEngine_VERSION__, 'and', __VeraGridServer_VERSION__, "are different :(")
         return False
 
+    if __VeraGridEngine_VERSION__ != __VeraGridMcp_VERSION__:  # all published packages' versions must match
+        print(__VeraGridEngine_VERSION__, 'and', __VeraGridMcp_VERSION__, "are different :(")
+        return False
+
     return True
 
 
@@ -122,12 +130,14 @@ if __name__ == "__main__":
         'from trunk',
         'import trunk',
         'from tests',
-        'import tests'
+        'import tests',
+        'plt.plot()',  # This produces crashes
     ]
 
     search_text_in_python_files(directory="VeraGrid", search_terms=forbidden_text)
     search_text_in_python_files(directory="VeraGridEngine", search_terms=forbidden_text)
     search_text_in_python_files(directory="VeraGridServer", search_terms=forbidden_text)
+    search_text_in_python_files(directory="VeraGridMcp", search_terms=forbidden_text)
 
     update_gui_to_make_sure()
 
@@ -139,7 +149,7 @@ if __name__ == "__main__":
             suffixes=['.qm'],
         )
 
-        # Keep the publish path aligned with the wheel builder so both artifacts ship the same assets.
+        # Keep the publishing path aligned with the wheel builder so both artifacts ship the same assets.
         veragrid_extra_files.append(os.path.join("data", "cables.csv"))
         veragrid_extra_files.append(os.path.join("data", "VeraGrid.ico"))
         veragrid_extra_files.append(os.path.join("data", "VeraGrid.svg"))
@@ -180,66 +190,88 @@ if __name__ == "__main__":
             'Programming Language :: Python :: 3.10',
         ]
 
-        _requires_pyhon = '>=3.8'
+        _requires_pyhon = '>=3.10'
 
         _provides_extra = 'gch5'
 
         _license_ = 'MPL2'
 
-        publish(pkg_name='VeraGridEngine',
-                setup_path=os.path.join('VeraGridEngine', 'setup.py'),
-                version=__VeraGridEngine_VERSION__,
-                summary=_summary,
-                home_page=_home_page,
-                author=_author,
-                email=_author_email,
-                license_=_license_,
-                keywords=_keywords,
-                classifiers_list=_classifiers_list,
-                requires_pyhon=_requires_pyhon,
-                description_content_type=_description_content_type,
-                provides_extra=_provides_extra,
-                long_description=_long_description,
-                ext_filter=['.py', '.csv', '.txt'],
-                exeption_paths=('__pycache__')
-                )
+        publish(
+            pkg_name='VeraGridEngine',
+            setup_path=os.path.join('VeraGridEngine', 'setup.py'),
+            version=__VeraGridEngine_VERSION__,
+            summary=_summary,
+            home_page=_home_page,
+            author=_author,
+            email=_author_email,
+            license_=_license_,
+            keywords=_keywords,
+            classifiers_list=_classifiers_list,
+            requires_pyhon=_requires_pyhon,
+            description_content_type=_description_content_type,
+            provides_extra=_provides_extra,
+            long_description=_long_description,
+            ext_filter=['.py', '.csv', '.txt'],
+            exeption_paths=('__pycache__')
+        )
 
-        publish(pkg_name='VeraGrid',
-                setup_path=os.path.join('VeraGrid', 'setup.py'),
-                version=__VeraGrid_VERSION__,
-                summary=_summary,
-                home_page=_home_page,
-                author=_author,
-                email=_author_email,
-                license_=_license_,
-                keywords=_keywords,
-                classifiers_list=_classifiers_list,
-                requires_pyhon=_requires_pyhon,
-                description_content_type=_description_content_type,
-                provides_extra=_provides_extra,
-                long_description=_long_description,
-                ext_filter=['.py', '.csv', '.txt'],
-                exeption_paths=('__pycache__', 'icons', 'svg'),
-                extra_files=veragrid_extra_files
-                )
+        publish(
+            pkg_name='VeraGrid',
+            setup_path=os.path.join('VeraGrid', 'setup.py'),
+            version=__VeraGrid_VERSION__,
+            summary=_summary,
+            home_page=_home_page,
+            author=_author,
+            email=_author_email,
+            license_=_license_,
+            keywords=_keywords,
+            classifiers_list=_classifiers_list,
+            requires_pyhon=_requires_pyhon,
+            description_content_type=_description_content_type,
+            provides_extra=_provides_extra,
+            long_description=_long_description,
+            ext_filter=['.py', '.csv', '.txt'],
+            exeption_paths=('__pycache__', 'icons', 'svg'),
+            extra_files=veragrid_extra_files
+        )
 
-        publish(pkg_name='VeraGridServer',
-                setup_path=os.path.join('VeraGridServer', 'setup.py'),
-                version=__VeraGridServer_VERSION__,
-                summary=_summary,
-                home_page=_home_page,
-                author=_author,
-                email=_author_email,
-                license_=_license_,
-                keywords=_keywords,
-                classifiers_list=_classifiers_list,
-                requires_pyhon=_requires_pyhon,
-                description_content_type=_description_content_type,
-                provides_extra=_provides_extra,
-                long_description=_long_description,
-                ext_filter=['.py', '.csv', '.txt', '.ico'],
-                exeption_paths=('__pycache__')
-                )
+        publish(
+            pkg_name='VeraGridServer',
+            setup_path=os.path.join('VeraGridServer', 'setup.py'),
+            version=__VeraGridServer_VERSION__,
+            summary=_summary,
+            home_page=_home_page,
+            author=_author,
+            email=_author_email,
+            license_=_license_,
+            keywords=_keywords,
+            classifiers_list=_classifiers_list,
+            requires_pyhon=_requires_pyhon,
+            description_content_type=_description_content_type,
+            provides_extra=_provides_extra,
+            long_description=_long_description,
+            ext_filter=['.py', '.csv', '.txt', '.ico'],
+            exeption_paths=('__pycache__')
+        )
+
+        publish(
+            pkg_name='VeraGridMcp',
+            setup_path=os.path.join('VeraGridMcp', 'setup.py'),
+            version=__VeraGridMcp_VERSION__,
+            summary=_summary,
+            home_page=_home_page,
+            author=_author,
+            email=_author_email,
+            license_=_license_,
+            keywords=_keywords,
+            classifiers_list=_classifiers_list,
+            requires_pyhon=_requires_pyhon,
+            description_content_type=_description_content_type,
+            provides_extra=_provides_extra,
+            long_description=_long_description,
+            ext_filter=['.py', '.txt', '.md'],
+            exeption_paths=('__pycache__')
+        )
 
     else:
         print("Failed because of versions incompatibility")

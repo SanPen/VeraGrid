@@ -735,22 +735,367 @@ def convert_dgs_to_sequence_line(typlne: TypLne) -> dev.SequenceLineType:
     :param typlne: typlne parameter.
     :return: Function result.
     """
+    resistance: float = 0.0 if typlne.rline is None else float(typlne.rline)
+    reactance: float = 0.0 if typlne.xline is None else float(typlne.xline)
+    susceptance: float = 0.0 if typlne.bline is None else float(typlne.bline)
+    capacitance_uf: float = 0.0 if typlne.cline is None else float(typlne.cline)
+    nominal_voltage: float = 0.0 if typlne.uline is None else float(typlne.uline)
+    rated_current: float = 0.0 if typlne.sline is None else float(typlne.sline)
     elm = dev.SequenceLineType(
         name=typlne.loc_name,
-        R=typlne.rline,
-        X=typlne.xline,
-        B=typlne.bline,
-        CnF=typlne.cline * 1000,
+        R=resistance,
+        X=reactance,
+        B=susceptance,
+        CnF=capacitance_uf * 1000.0,
         R0=typlne.rline0,
         X0=typlne.xline0,
         B0=typlne.bline0,
         CnF0=typlne.cline0 * 1000,
-        Vnom=typlne.uline,
-        Imax=typlne.sline,
-        use_conductance=typlne.cline != 0.0
+        Vnom=nominal_voltage,
+        Imax=rated_current,
+        use_conductance=capacitance_uf != 0.0,
     )
 
     return elm
+
+
+def _get_dgs_line_installation_type(
+        typlne: TypLne,
+) -> PowerFactoryLineInstallationType:
+    """Resolve cable or overhead evidence without guessing a source default.
+
+    Older PowerFactory DGS files declare ``aohl_`` as ``cab`` or ``ohl``.
+    Current files declare ``cohl_`` as 0 or 1. When both are present they must
+    agree; an absent, invalid, or contradictory declaration remains explicit
+    uncertainty and cannot authorize creation of a physical cable asset.
+
+    :param typlne: Parsed PowerFactory line type.
+    :return: Resolved installation classification.
+    """
+    legacy_declared: bool = typlne.aohl_declared
+    legacy_valid: bool = not legacy_declared
+    legacy_type: PowerFactoryLineInstallationType = (
+        PowerFactoryLineInstallationType.Unknown
+    )
+    if legacy_declared:
+        if typlne.aohl_ is None:
+            legacy_valid = False
+        else:
+            legacy_code: str = str(typlne.aohl_).strip().lower()
+            if legacy_code == 'cab':
+                legacy_type = PowerFactoryLineInstallationType.Cable
+                legacy_valid = True
+            else:
+                if legacy_code == 'ohl':
+                    legacy_type = PowerFactoryLineInstallationType.Overhead
+                    legacy_valid = True
+                else:
+                    legacy_valid = False
+    else:
+        pass
+
+    current_declared: bool = typlne.cohl_declared
+    current_valid: bool = not current_declared
+    current_type: PowerFactoryLineInstallationType = (
+        PowerFactoryLineInstallationType.Unknown
+    )
+    if current_declared:
+        if typlne.cohl_ is None:
+            current_valid = False
+        else:
+            current_code: int = int(typlne.cohl_)
+            if current_code == 0:
+                current_type = PowerFactoryLineInstallationType.Cable
+                current_valid = True
+            else:
+                if current_code == 1:
+                    current_type = PowerFactoryLineInstallationType.Overhead
+                    current_valid = True
+                else:
+                    current_valid = False
+    else:
+        pass
+
+    # A malformed declared field is source ambiguity even if the other field
+    # happens to look usable. Silently ignoring it could hide an edited file.
+    has_invalid_declaration: bool = not legacy_valid or not current_valid
+    if has_invalid_declaration:
+        result = PowerFactoryLineInstallationType.Unknown
+    else:
+        if legacy_declared and current_declared:
+            if legacy_type == current_type:
+                result = legacy_type
+            else:
+                result = PowerFactoryLineInstallationType.Conflict
+        else:
+            if legacy_declared:
+                result = legacy_type
+            else:
+                if current_declared:
+                    result = current_type
+                else:
+                    result = PowerFactoryLineInstallationType.Unknown
+    return result
+
+
+def convert_dgs_to_dc_cable_type(typlne: TypLne,
+                                 logger: Logger) -> dev.DcCableType | None:
+    """
+    Convert one physically complete PowerFactory DC cable declaration.
+
+    Reactance is converted to frequency-neutral inductance. PowerFactory can
+    export capacitance directly or as susceptance at the nominal frequency;
+    direct capacitance is canonical when both representations are available.
+    A type with missing or zero energy data is not materialized because those
+    parser values do not prove that the physical cable has zero stored energy.
+
+    :param typlne: PowerFactory line type explicitly marked as a DC cable.
+    :param logger: Import logger receiving the resistive-fallback warning.
+    :return: Physical DC cable type, or ``None`` when evidence is incomplete.
+    """
+    installation_type: PowerFactoryLineInstallationType = (
+        _get_dgs_line_installation_type(typlne=typlne)
+    )
+    is_dc_system_type: bool = int(typlne.systp) == 1
+
+    # The electrical system code and the physical installation code answer
+    # different questions. Both must support a DC cable before creating the
+    # reusable asset that will later be assigned to DcLine.
+    if not is_dc_system_type:
+        logger.add_warning(
+            msg='Line type is not declared as DC; not creating DcCableType',
+            device=typlne.loc_name,
+            device_class='TypLne',
+            device_property='systp',
+        )
+        return None
+    else:
+        pass
+
+    if installation_type == PowerFactoryLineInstallationType.Cable:
+        pass
+    else:
+        if installation_type == PowerFactoryLineInstallationType.Overhead:
+            logger.add_info(
+                msg='DC line type is explicitly overhead; keeping resistive DcLine without a cable template',
+                device=typlne.loc_name,
+                device_class='TypLne',
+                device_property='aohl_/cohl_',
+            )
+        else:
+            if installation_type == PowerFactoryLineInstallationType.Conflict:
+                logger.add_warning(
+                    msg='DGS line installation fields disagree; not creating DcCableType',
+                    device=typlne.loc_name,
+                    device_class='TypLne',
+                    device_property='aohl_/cohl_',
+                )
+            else:
+                logger.add_warning(
+                    msg='DGS line type does not explicitly identify a cable; not creating DcCableType',
+                    device=typlne.loc_name,
+                    device_class='TypLne',
+                    device_property='aohl_/cohl_',
+                )
+        return None
+
+    rated_current_source: float | None
+    if typlne.sline is not None:
+        rated_current_source = float(typlne.sline)
+    else:
+        if typlne.InomAir is not None:
+            rated_current_source = float(typlne.InomAir)
+        else:
+            rated_current_source = None
+
+    has_required_fields: bool = (
+        typlne.uline is not None
+        and rated_current_source is not None
+        and typlne.rline is not None
+        and typlne.xline is not None
+        and (typlne.cline is not None or typlne.bline is not None)
+        and typlne.frnom is not None
+    )
+    if has_required_fields:
+        nominal_voltage: float = float(typlne.uline)
+        rated_current: float = float(rated_current_source)
+        resistance_ohm_per_km: float = float(typlne.rline)
+        reactance_ohm_per_km: float = float(typlne.xline)
+        frequency_hz: float = float(typlne.frnom)
+
+        # The frequency is needed to recover physical inductance and to
+        # interpret susceptance when direct capacitance was not exported.
+        angular_frequency: float = 2.0 * math.pi * frequency_hz
+        if typlne.cline is not None:
+            capacitance_uf_per_km: float = float(typlne.cline)
+
+            # Both fields describe the same cable quantity. Keep the physical
+            # capacitance and report externally edited or incoherent DGS data.
+            if typlne.bline is not None:
+                susceptance_us_per_km: float = float(typlne.bline)
+                expected_susceptance_us_per_km: float = (
+                    angular_frequency * capacitance_uf_per_km
+                )
+                has_comparable_capacitance_fields: bool = (
+                    math.isfinite(capacitance_uf_per_km)
+                    and math.isfinite(susceptance_us_per_km)
+                    and math.isfinite(expected_susceptance_us_per_km)
+                )
+                if has_comparable_capacitance_fields:
+                    capacitance_fields_match: bool = math.isclose(
+                        susceptance_us_per_km,
+                        expected_susceptance_us_per_km,
+                        rel_tol=1.0e-6,
+                        abs_tol=1.0e-9,
+                    )
+                    if capacitance_fields_match:
+                        pass
+                    else:
+                        logger.add_warning(
+                            msg='DC cable capacitance and susceptance are inconsistent; using capacitance',
+                            device=typlne.loc_name,
+                            device_class='TypLne',
+                            value=susceptance_us_per_km,
+                            expected_value=expected_susceptance_us_per_km,
+                            device_property='bline',
+                        )
+                else:
+                    pass
+            else:
+                susceptance_us_per_km = 0.0
+        else:
+            # DGS export definitions may omit cline. In that case bline still
+            # carries the same capacitance at the declared nominal frequency.
+            susceptance_us_per_km = float(typlne.bline)
+            if math.isfinite(angular_frequency) and angular_frequency > 0.0:
+                capacitance_uf_per_km = (
+                    susceptance_us_per_km / angular_frequency
+                )
+            else:
+                capacitance_uf_per_km = 0.0
+
+        has_valid_values: bool = (
+            math.isfinite(nominal_voltage)
+            and nominal_voltage > 0.0
+            and math.isfinite(rated_current)
+            and rated_current >= 0.0
+            and math.isfinite(resistance_ohm_per_km)
+            and resistance_ohm_per_km >= 0.0
+            and math.isfinite(reactance_ohm_per_km)
+            and reactance_ohm_per_km > 0.0
+            and math.isfinite(capacitance_uf_per_km)
+            and capacitance_uf_per_km > 0.0
+            and math.isfinite(frequency_hz)
+            and frequency_hz > 0.0
+        )
+    else:
+        nominal_voltage = 0.0
+        rated_current = 0.0
+        resistance_ohm_per_km = 0.0
+        reactance_ohm_per_km = 0.0
+        susceptance_us_per_km = 0.0
+        capacitance_uf_per_km = 0.0
+        frequency_hz = 0.0
+        angular_frequency = 0.0
+        has_valid_values = False
+
+    if has_required_fields and has_valid_values:
+        inductance_h_per_km: float = reactance_ohm_per_km / angular_frequency
+        capacitance_f_per_km: float = capacitance_uf_per_km * 1.0e-6
+        return dev.DcCableType(
+            name=typlne.loc_name,
+            Vnom=nominal_voltage,
+            Imax=rated_current,
+            R=resistance_ohm_per_km,
+            L=inductance_h_per_km,
+            C=capacitance_f_per_km,
+        )
+    else:
+        logger.add_warning(
+            msg='DC cable type lacks complete physical L/C evidence; using resistive DcLine fallback',
+            device=typlne.loc_name,
+            device_class='TypLne',
+            value='X, C or B, and frequency must be present and positive',
+        )
+        return None
+
+
+def _get_dc_resistance_pu(source_type: TypLne,
+                          length: float,
+                          line_voltage: float,
+                          base_mva: float) -> float | None:
+    """
+    Convert the resistive part of one source DC cable type to per unit.
+
+    This helper deliberately consumes only the independently known resistance.
+    It does not use missing inductance or capacitance as a reason to discard a
+    usable stationary DC branch.
+
+    :param source_type: Parsed PowerFactory line type.
+    :param length: Installed cable length in kilometres.
+    :param line_voltage: Connected DC bus voltage base in kV.
+    :param base_mva: VeraGrid system power base in MVA.
+    :return: Total resistance in p.u., or ``None`` when it cannot be derived.
+    """
+    has_required_values: bool = (
+        source_type.rline is not None
+        and math.isfinite(float(source_type.rline))
+        and float(source_type.rline) >= 0.0
+        and math.isfinite(length)
+        and length > 0.0
+        and math.isfinite(line_voltage)
+        and line_voltage > 0.0
+        and math.isfinite(base_mva)
+        and base_mva > 0.0
+    )
+    if has_required_values:
+        impedance_base: float = line_voltage * line_voltage / base_mva
+        return float(source_type.rline) * length / impedance_base
+    else:
+        return None
+
+
+def _get_dc_sections_resistance_pu(
+        sections: List[ElmLnesec],
+        source_line_type_dict: Dict[str, TypLne],
+        line_voltage: float,
+        base_mva: float,
+) -> float | None:
+    """
+    Sum the independently known resistance of a sectioned DC cable.
+
+    :param sections: Ordered or unordered PowerFactory line sections.
+    :param source_line_type_dict: Parsed line types keyed by source pointer.
+    :param line_voltage: Connected DC bus voltage base in kV.
+    :param base_mva: VeraGrid system power base in MVA.
+    :return: Total resistance in p.u., or ``None`` if any section is incomplete.
+    """
+    total_resistance_pu: float = 0.0
+    complete_resistance: bool = True
+    section: ElmLnesec
+    for section in sections:
+        source_type: TypLne | None = _resolve_pointer_dict_value(
+            key=section.typ_id,
+            mapping=source_line_type_dict,
+        )
+        if source_type is not None:
+            section_resistance_pu: float | None = _get_dc_resistance_pu(
+                source_type=source_type,
+                length=float(section.dline),
+                line_voltage=line_voltage,
+                base_mva=base_mva,
+            )
+            if section_resistance_pu is not None:
+                total_resistance_pu += section_resistance_pu
+            else:
+                complete_resistance = False
+        else:
+            complete_resistance = False
+
+    if complete_resistance:
+        return total_resistance_pu
+    else:
+        return None
 
 
 def _bundle_offsets(n_sub: int, spacing_m: float) -> List[Tuple[float, float]]:
@@ -2748,6 +3093,8 @@ def convert_dgs_to_line(
         buses: List[dev.Bus],
         stacubic_dict: Dict[str, List[int]],
         sequence_templates_dict: Dict[str, dev.SequenceLineType],
+        dc_cable_type_dict: Dict[str, dev.DcCableType],
+        source_line_type_dict: Dict[str, TypLne],
         overhead_line_type_dict: Dict[str, dev.OverheadLineType],
         line_type_by_line_id: Dict[str, str],
         line_sections_by_line_id: Dict[str, List[ElmLnesec]],
@@ -2760,7 +3107,7 @@ def convert_dgs_to_line(
         phase_map: PhaseMap,
         parallel_index: int = 0,
         parallel_count: int = 1
-) -> dev.Line:
+) -> dev.Line | dev.DcLine:
     """
     Convert dgs to line.
 
@@ -2768,6 +3115,8 @@ def convert_dgs_to_line(
     :param buses: buses parameter.
     :param stacubic_dict: stacubic_dict parameter.
     :param sequence_templates_dict: sequence_templates_dict parameter.
+    :param dc_cable_type_dict: Complete physical DC cable templates by source pointer.
+    :param source_line_type_dict: Parsed line types used for resistive fallback.
     :param overhead_line_type_dict: overhead_line_type_dict parameter.
     :param line_type_by_line_id: line_type_by_line_id parameter.
     :param line_sections_by_line_id: line_sections_by_line_id parameter.
@@ -2809,27 +3158,20 @@ def convert_dgs_to_line(
     line_name = _get_parallel_device_name(line_name, parallel_index, parallel_count)
     line_idtag = _get_parallel_device_idtag(_ref_id(lne.ID), parallel_index, parallel_count)
 
-    line = dev.Line(
-        bus_from=bus_from,
-        bus_to=bus_to,
-        name=line_name,
-        idtag=line_idtag,
-        active=not lne.outserv,
-        length=lne.dline
-    )
-
     line_key = _ref_id(lne.ID)
     if line_key is None or line_key == "":
         line_key = str(lne.ID)
     else:
         pass
     owned_sections = line_sections_by_line_id.get(line_key, list())
+    line_length: float = float(lne.dline)
     if len(owned_sections) > 0:
-        sections_length = 0.0
+        sections_length: float = 0.0
+        section: ElmLnesec
         for section in owned_sections:
             sections_length += float(section.dline)
         if sections_length > 0.0:
-            line.length = sections_length
+            line_length = sections_length
         else:
             pass
     else:
@@ -2852,6 +3194,100 @@ def convert_dgs_to_line(
             lid = _ref_id(lne.ID)
             if lid is not None and lid != "":
                 typ_id = line_type_by_line_id.get(lid, None)
+
+    is_dc_cable: bool = bus_from.is_dc and bus_to.is_dc
+    if is_dc_cable:
+        dc_line: dev.DcLine = dev.DcLine(
+            bus_from=bus_from,
+            bus_to=bus_to,
+            name=line_name,
+            idtag=line_idtag,
+            active=not lne.outserv,
+            length=line_length,
+        )
+        cable_type: dev.DcCableType | None = None
+        if len(owned_sections) > 0:
+            first_section: ElmLnesec = owned_sections[0]
+            first_type: dev.DcCableType | None = _resolve_pointer_dict_value(
+                key=first_section.typ_id,
+                mapping=dc_cable_type_dict,
+            )
+            same_type: bool = first_type is not None
+            section: ElmLnesec
+            for section in owned_sections:
+                section_type: dev.DcCableType | None = _resolve_pointer_dict_value(
+                    key=section.typ_id,
+                    mapping=dc_cable_type_dict,
+                )
+                if section_type is first_type:
+                    pass
+                else:
+                    same_type = False
+            if same_type:
+                cable_type = first_type
+            else:
+                # One DcLine can own one reusable cable type. Mixed or
+                # incomplete source sections therefore retain only resistance
+                # instead of fabricating an equivalent catalogue asset.
+                cable_type = None
+        else:
+            cable_type = _resolve_pointer_dict_value(
+                key=typ_id,
+                mapping=dc_cable_type_dict,
+            )
+
+        if cable_type is not None:
+            dc_line.apply_template(
+                obj=cable_type,
+                Sbase=baseMVA,
+                logger=logger,
+            )
+        else:
+            line_voltage: float = dc_line.get_max_bus_nominal_voltage()
+            resistance_pu: float | None
+            if len(owned_sections) > 0:
+                resistance_pu = _get_dc_sections_resistance_pu(
+                    sections=owned_sections,
+                    source_line_type_dict=source_line_type_dict,
+                    line_voltage=line_voltage,
+                    base_mva=baseMVA,
+                )
+            else:
+                source_type: TypLne | None = _resolve_pointer_dict_value(
+                    key=typ_id,
+                    mapping=source_line_type_dict,
+                )
+                if source_type is not None:
+                    resistance_pu = _get_dc_resistance_pu(
+                        source_type=source_type,
+                        length=line_length,
+                        line_voltage=line_voltage,
+                        base_mva=baseMVA,
+                    )
+                else:
+                    resistance_pu = None
+
+            if resistance_pu is not None:
+                dc_line.R = resistance_pu
+            else:
+                logger.add_warning(
+                    msg='DC line resistance could not be derived from its source type',
+                    device=dc_line.name,
+                    device_class='ElmLne',
+                )
+
+        return dc_line
+    else:
+        pass
+
+    line = dev.Line(
+        bus_from=bus_from,
+        bus_to=bus_to,
+        name=line_name,
+        idtag=line_idtag,
+        active=not lne.outserv,
+        length=line_length,
+    )
 
     # Tower-derived template (ElmTow -> TypTow). This is used only when typ_id is missing.
     tower_template: dev.OverheadLineType | None = None
@@ -2892,8 +3328,6 @@ def convert_dgs_to_line(
         ohl_template = tower_template
 
     applied_template = False
-    dynamic_parameters_complete: bool = False
-    is_dc_cable: bool = line.bus_from.is_dc and line.bus_to.is_dc
     if len(owned_sections) > 0:
         section_r = 0.0
         section_x = 0.0
@@ -2981,10 +3415,8 @@ def convert_dgs_to_line(
             else:
                 pass
             applied_template = True
-            dynamic_parameters_complete = section_templates_complete
         else:
             applied_template = False
-            dynamic_parameters_complete = False
     elif seq_template is not None:
         # Preserve the declarative series values on the canonical Line for every simulation domain.
         line.apply_template(
@@ -2995,18 +3427,13 @@ def convert_dgs_to_line(
             decimals_rounding=16,
         )
         applied_template = True
-        dynamic_parameters_complete = line.template is seq_template
     elif ohl_template is not None:
         # OverheadLineType uses a 1-based circuit index. Default to circuit 1 here.
         line.set_circuit_idx(val=1, obj=ohl_template)
         line.apply_template(obj=ohl_template, Sbase=baseMVA, freq=freq, logger=logger)
         applied_template = True
-        dynamic_parameters_complete = (
-            line.template is ohl_template
-            and ohl_template.has_sequence_data()
-        )
     else:
-        dynamic_parameters_complete = False
+        pass
 
     if applied_template:
         line.rate = float(line.rate) * float(lne.fline)
@@ -3028,8 +3455,7 @@ def convert_dgs_to_line(
 
     # Alex review required: retain precise AC link data while preserving its historical topology reduction.
     is_ac_topological_link: bool = (
-        not is_dc_cable
-        and np.round(float(line.R), decimals=6) == 0.0
+        np.round(float(line.R), decimals=6) == 0.0
         and np.round(float(line.X), decimals=6) == 0.0
     )
     if is_ac_topological_link:
@@ -6631,21 +7057,54 @@ def _build_typswitch_dict(dgs_grid: DgsCircuit) -> Dict[str, TypSwitch]:
     return typ_switch_dict
 
 
-def _build_typlne_templates(dgs_grid: DgsCircuit,
-                            grid: dev.MultiCircuit) -> Dict[str, dev.SequenceLineType]:
+def _build_typlne_templates(
+        dgs_grid: DgsCircuit,
+        grid: dev.MultiCircuit,
+        logger: Logger,
+) -> Tuple[Dict[str, dev.SequenceLineType], Dict[str, dev.DcCableType], Dict[str, TypLne]]:
     """
     Build typlne templates.
 
     :param dgs_grid: dgs_grid parameter.
     :param grid: grid parameter.
-    :return: Function result.
+    :param logger: Import logger receiving incomplete DC cable warnings.
+    :return: AC templates, complete DC cable templates, and parsed source types.
     """
     typlne_dict: Dict[str, dev.SequenceLineType] = dict()
+    dc_cable_type_dict: Dict[str, dev.DcCableType] = dict()
+    source_line_type_dict: Dict[str, TypLne] = dict()
     for typlne in dgs_grid.typlnes:
-        seq_lne = convert_dgs_to_sequence_line(typlne=typlne)
-        grid.add_sequence_line(obj=seq_lne)
-        typlne_dict[typlne.ID] = seq_lne
-    return typlne_dict
+        source_line_type_dict[typlne.ID] = typlne
+        source_type_id: str | None = _ref_id(typlne.ID)
+        if source_type_id is not None:
+            source_line_type_dict[source_type_id] = typlne
+        else:
+            pass
+        if int(typlne.systp) == 1:
+            dc_cable_type: dev.DcCableType | None = convert_dgs_to_dc_cable_type(
+                typlne=typlne,
+                logger=logger,
+            )
+            if dc_cable_type is not None:
+                grid.add_dc_cable_type(obj=dc_cable_type)
+                dc_cable_type_dict[typlne.ID] = dc_cable_type
+                normalized_type_id: str | None = _ref_id(typlne.ID)
+                if normalized_type_id is not None:
+                    dc_cable_type_dict[normalized_type_id] = dc_cable_type
+                else:
+                    pass
+            else:
+                pass
+        else:
+            seq_lne: dev.SequenceLineType = convert_dgs_to_sequence_line(typlne=typlne)
+            grid.add_sequence_line(obj=seq_lne)
+            typlne_dict[typlne.ID] = seq_lne
+            normalized_type_id = _ref_id(typlne.ID)
+            if normalized_type_id is not None:
+                typlne_dict[normalized_type_id] = seq_lne
+            else:
+                pass
+    return typlne_dict, dc_cable_type_dict, source_line_type_dict
 
 
 def _build_typcon_catalogues(dgs_grid: DgsCircuit,
@@ -6996,6 +7455,8 @@ def _add_elmlne_lines(dgs_grid: DgsCircuit,
                       grid: dev.MultiCircuit,
                       stacubic_dict: Dict[str, List[int]],
                       typlne_dict: Dict[str, dev.SequenceLineType],
+                      dc_cable_type_dict: Dict[str, dev.DcCableType],
+                      source_line_type_dict: Dict[str, TypLne],
                       overhead_line_type_dict: Dict[str, dev.OverheadLineType],
                       line_type_by_line_id: Dict[str, str],
                       line_sections_by_line_id: Dict[str, List[ElmLnesec]],
@@ -7014,6 +7475,8 @@ def _add_elmlne_lines(dgs_grid: DgsCircuit,
     :param grid: grid parameter.
     :param stacubic_dict: stacubic_dict parameter.
     :param typlne_dict: typlne_dict parameter.
+    :param dc_cable_type_dict: Complete physical DC cable types by source pointer.
+    :param source_line_type_dict: Parsed line types for resistive fallback.
     :param overhead_line_type_dict: overhead_line_type_dict parameter.
     :param line_type_by_line_id: line_type_by_line_id parameter.
     :param line_sections_by_line_id: line_sections_by_line_id parameter.
@@ -7061,11 +7524,13 @@ def _add_elmlne_lines(dgs_grid: DgsCircuit,
 
         parallel_count = _get_parallel_device_count(count=int(elmlne.nlnum))
         for parallel_index in range(parallel_count):
-            line = convert_dgs_to_line(
+            line: dev.Line | dev.DcLine = convert_dgs_to_line(
                 lne=elmlne,
                 buses=grid.buses,
                 stacubic_dict=stacubic_dict,
                 sequence_templates_dict=typlne_dict,
+                dc_cable_type_dict=dc_cable_type_dict,
+                source_line_type_dict=source_line_type_dict,
                 overhead_line_type_dict=overhead_line_type_dict,
                 line_type_by_line_id=line_type_by_line_id,
                 line_sections_by_line_id=line_sections_by_line_id,
@@ -7084,14 +7549,24 @@ def _add_elmlne_lines(dgs_grid: DgsCircuit,
                 branch_group = branch_group_by_id.get(fold_id)
                 if branch_group is not None:
                     line.group = branch_group
-            grid.add_line(obj=line, logger=logger)
+            if isinstance(line, dev.DcLine):
+                grid.add_dc_line(obj=line)
+            else:
+                grid.add_line(obj=line, logger=logger)
 
             lid_raw = elmlne.ID
             lid = _ref_id(lid_raw)
-            if lid is not None:
-                line_by_dgs_id.setdefault(lid, list()).append(line)
-            if lid_raw is not None and lid_raw != "":
-                line_by_dgs_id.setdefault(lid_raw, list()).append(line)
+            if isinstance(line, dev.Line):
+                if lid is not None:
+                    line_by_dgs_id.setdefault(lid, list()).append(line)
+                else:
+                    pass
+                if lid_raw is not None and lid_raw != "":
+                    line_by_dgs_id.setdefault(lid_raw, list()).append(line)
+                else:
+                    pass
+            else:
+                pass
     return line_by_dgs_id
 
 
@@ -7342,7 +7817,14 @@ def dgs_to_circuit(path: str,
             device_class="ElmLodlv/ElmLodlvp",
         )
 
-    typlne_dict: Dict[str, dev.SequenceLineType] = _build_typlne_templates(dgs_grid=dgs_grid, grid=grid)
+    typlne_dict: Dict[str, dev.SequenceLineType]
+    dc_cable_type_dict: Dict[str, dev.DcCableType]
+    source_line_type_dict: Dict[str, TypLne]
+    typlne_dict, dc_cable_type_dict, source_line_type_dict = _build_typlne_templates(
+        dgs_grid=dgs_grid,
+        grid=grid,
+        logger=logger,
+    )
     typcon_raw_dict, wire_type_dict = _build_typcon_catalogues(dgs_grid=dgs_grid, grid=grid)
     overhead_line_type_dict: Dict[str, dev.OverheadLineType] = _add_typtow_templates(
         dgs_grid=dgs_grid,
@@ -7385,6 +7867,8 @@ def dgs_to_circuit(path: str,
         grid=grid,
         stacubic_dict=stacubic_dict,
         typlne_dict=typlne_dict,
+        dc_cable_type_dict=dc_cable_type_dict,
+        source_line_type_dict=source_line_type_dict,
         overhead_line_type_dict=overhead_line_type_dict,
         line_type_by_line_id=line_type_by_line_id,
         line_sections_by_line_id=line_sections_by_line_id,

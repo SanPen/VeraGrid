@@ -8,10 +8,11 @@ import json
 import os.path
 import sys
 import webbrowser
-from typing import List, Union
+from typing import Dict, List, Union
 
 import numpy as np
 import pandas as pd
+import shiboken6
 
 # GUI imports
 from PySide6 import QtGui, QtWidgets, QtCore
@@ -19,6 +20,7 @@ from PySide6 import QtGui, QtWidgets, QtCore
 from VeraGrid.Gui.scenario_tree_model import ScenarioTreeModel
 # Engine imports
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.multiverse import MultiVerse
 import VeraGridEngine.Simulations as sim
 from VeraGridEngine.enumerations import EngineType, DeviceType, SimulationTypes, DynamicSimulationMode
@@ -40,17 +42,22 @@ from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg, error_
 from VeraGrid.Gui.FileDialogues.LoadCatalogue.catalogue_dialogue import CatalogueGUI
 from VeraGrid.Gui.Main.MainWindow import Ui_mainWindow, QMainWindow
 from VeraGrid.Session.session import SimulationSession, GcThread
+from VeraGrid.Session.server_driver import RemoteJobDriver
 from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_dialogue import SigmaAnalysisGUI
 from VeraGrid.Gui.SyncDialogue.sync_dialogue import SyncDialogueWindow
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
-from VeraGrid.Session.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.Events.dynamic_events_page import DynamicEventsPage
+from VeraGrid.Gui.DynamicModelEditor.Workspace.Tabs.dynamic_editor_tab import DynamicEditorTab
+from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
+from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
 from VeraGrid.Gui.Diagrams.generic_graphics import is_dark_mode
 from VeraGrid.Gui.python_console import PythonConsole
 from VeraGrid.Gui.python_script_editor import ScriptingPythonEditor
 from VeraGrid.Gui.toast_widget import ToastManager
 from VeraGrid.Gui.AiAgent.ai_chat_dialogue import AiChatDialogue, AiBackendState
-from VeraGrid.Gui.AiAgent.ai_backend import ProviderType
+from VeraGrid.AI import ProviderType
+from VeraGrid.AI.mcp_client import VeraGridMcpClient
+from VeraGrid.AI.ollama import OllamaProcessManager
 from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, is_dialog_available
 from VeraGrid.Gui.i18n import (
     ActionShortcutState,
@@ -176,8 +183,12 @@ class BaseMainGui(QMainWindow):
         self.ui.progress_frame.setVisible(self.lock_ui)
 
         self.stuff_running_now: List[SimulationTypes] = list()
+        self._locked_window_enabled_states: Dict[QtWidgets.QWidget, bool] = dict()
+        self._locked_menu_action_enabled_states: Dict[QtGui.QAction, bool] = dict()
 
         self.session: SimulationSession = SimulationSession(name='GUI session')
+        self.server_driver: QtCore.QThread | None = None
+        self._remote_jobs: Dict[str, QtCore.QThread] = dict()
 
         self.dynamic_editor_workspace_session: DynamicEditorWorkspaceSession = DynamicEditorWorkspaceSession()
 
@@ -189,6 +200,7 @@ class BaseMainGui(QMainWindow):
 
         # toast manager
         self.toast_manager = ToastManager(parent=self, position_top=False)
+        self._open_plot_dialogs: List[QtWidgets.QDialog] = list()
 
         # threads ------------------------------------------------------------------------------------------------------
         self.painter = None
@@ -273,6 +285,16 @@ class BaseMainGui(QMainWindow):
         self.about_msg_window: Union[AboutDialogueGuiGUI, None] = None
         self.rms_model_Editor_window: Union[DynamicBlockEditorGUI, None] = None
         self.ai_chat_dialogue: AiChatDialogue | None = None
+        self.ai_mcp_client: VeraGridMcpClient = VeraGridMcpClient(self.ai_mcp_config_file_path())
+        self.ai_ollama_manager: OllamaProcessManager = OllamaProcessManager()
+        self.rosetta_gui: QtWidgets.QWidget | None = None
+        self.cgmes_dialogue: QtWidgets.QWidget | None = None
+        self.psse_export_dialogue: QtWidgets.QWidget | None = None
+        self.dgs_export_dialogue: QtWidgets.QWidget | None = None
+        self.matpower_export_dialogue: QtWidgets.QWidget | None = None
+        self.ucte_export_dialogue: QtWidgets.QWidget | None = None
+        self.object_column_filter_dialog: QtWidgets.QWidget | None = None
+        self.plugin_windows_list: List[QtWidgets.QWidget] = list()
         self.ai_backend_state: AiBackendState = self.build_default_ai_backend_state()
         self.ai_restore_visible: bool = False
         self.translation_controller: ApplicationTranslator | None = None
@@ -309,6 +331,7 @@ class BaseMainGui(QMainWindow):
         self.ui.actionLaunch_data_analysis_tool.triggered.connect(self.display_grid_analysis)
         self.ui.actionShow_dynamic_models_editor.triggered.connect(self.display_dynamic_models_editor)
         self.ui.actionOnline_documentation.triggered.connect(self.show_online_docs)
+        self.ui.actionCommunity_chat.triggered.connect(self.show_online_chat)
         self.ui.actionReport_a_bug.triggered.connect(self.report_a_bug)
 
         self.ui.actionFix_generators_active_based_on_the_power.triggered.connect(
@@ -376,20 +399,214 @@ class BaseMainGui(QMainWindow):
 
     def LOCK(self, val: bool = True) -> None:
         """
-        Lock the interface to prevent new simulation launches
-        :param val:
-        :return:
+        Lock the interface while a worker owns the grid state.
+
+        :param val: Whether the main interface must reject user interaction.
+        :returns: None.
         """
         self.lock_ui = val
+
+        # Keep the progress controls available while the main editing and run
+        # launch surfaces are disabled. Workers receive the live MultiCircuit,
+        # so diagram/model edits must not race against a running calculation.
         self.ui.progress_frame.setVisible(self.lock_ui)
-        QtGui.QGuiApplication.processEvents()
+        self.ui.progress_frame.setEnabled(True)
+        self.ui.cancelButton.setEnabled(self.lock_ui)
+        self.ui.mainTabWidget.setEnabled(not self.lock_ui)
+        if self.lock_ui:
+            self.set_menu_bar_actions_locked(locked=True)
+            self.ui.menuBar.setEnabled(False)
+        else:
+            self.ui.menuBar.setEnabled(True)
+            self.set_menu_bar_actions_locked(locked=False)
+        self.ui.toolBar.setEnabled(not self.lock_ui)
+        self.set_open_child_windows_locked(locked=self.lock_ui)
 
     def UNLOCK(self) -> None:
         """
-        Unlock the interface
+        Unlock the interface when no worker is still active.
+
+        :returns: None.
         """
         if not self.any_thread_running():
             self.LOCK(False)
+        else:
+            pass
+
+    def append_lock_managed_window(self,
+                                   windows: List[QtWidgets.QWidget],
+                                   window: QtWidgets.QWidget | None) -> None:
+        """
+        Append one live window to the lock propagation list.
+
+        :param windows: Mutable list of child windows managed by the main GUI lock.
+        :param window: Candidate child window.
+        :returns: None.
+        """
+        if window is None:
+            pass
+        elif window is self:
+            pass
+        elif isinstance(window, QtWidgets.QMenu):
+            pass
+        elif not shiboken6.isValid(window):
+            pass
+        elif window in windows:
+            pass
+        else:
+            windows.append(window)
+
+    def is_qt_child_window(self, window: QtWidgets.QWidget) -> bool:
+        """
+        Check whether a top-level widget belongs to this main window through Qt parenting.
+
+        :param window: Candidate top-level widget.
+        :returns: True if the widget has this main GUI in its parent chain.
+        """
+        is_child_window: bool = False
+        parent_widget: QtWidgets.QWidget | None = window.parentWidget()
+
+        while parent_widget is not None and not is_child_window:
+            if parent_widget is self:
+                is_child_window = True
+            else:
+                parent_widget = parent_widget.parentWidget()
+
+        return is_child_window
+
+    def get_open_lock_managed_windows(self) -> List[QtWidgets.QWidget]:
+        """
+        Collect currently open windows that must follow the main GUI lock state.
+
+        :returns: Live child windows controlled by the main GUI lock.
+        """
+        windows: List[QtWidgets.QWidget] = list()
+        app: QtWidgets.QApplication | None = QtWidgets.QApplication.instance()
+
+        self.append_lock_managed_window(windows=windows, window=self.file_sync_window)
+        self.append_lock_managed_window(windows=windows, window=self.sigma_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.catalogue_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.analysis_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.about_msg_window)
+        self.append_lock_managed_window(windows=windows, window=self.rms_model_Editor_window)
+        self.append_lock_managed_window(windows=windows, window=self.ai_chat_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.rosetta_gui)
+        self.append_lock_managed_window(windows=windows, window=self.cgmes_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.psse_export_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.dgs_export_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.matpower_export_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.ucte_export_dialogue)
+        self.append_lock_managed_window(windows=windows, window=self.object_column_filter_dialog)
+
+        plot_dialog: QtWidgets.QDialog
+        for plot_dialog in self._open_plot_dialogs:
+            self.append_lock_managed_window(windows=windows, window=plot_dialog)
+
+        plugin_window: QtWidgets.QWidget
+        for plugin_window in self.plugin_windows_list:
+            self.append_lock_managed_window(windows=windows, window=plugin_window)
+
+        workspace: DynamicEditorWorkspaceWindow
+        for workspace in self.dynamic_editor_workspace_session.get_open_workspaces():
+            self.append_lock_managed_window(windows=windows, window=workspace)
+
+        if app is None:
+            pass
+        else:
+            top_level_widget: QtWidgets.QWidget
+            for top_level_widget in app.topLevelWidgets():
+                if self.is_qt_child_window(window=top_level_widget):
+                    self.append_lock_managed_window(windows=windows, window=top_level_widget)
+                else:
+                    pass
+
+        return windows
+
+    def set_open_child_windows_locked(self, locked: bool) -> None:
+        """
+        Apply the main GUI lock state to every open child window.
+
+        :param locked: Whether child windows must reject user interaction.
+        :returns: None.
+        """
+        window: QtWidgets.QWidget
+        if locked:
+            for window in self.get_open_lock_managed_windows():
+                if window in self._locked_window_enabled_states:
+                    pass
+                else:
+                    self._locked_window_enabled_states[window] = window.isEnabled()
+                window.setEnabled(False)
+        else:
+            state_items: List[tuple[QtWidgets.QWidget, bool]] = list(self._locked_window_enabled_states.items())
+            window_state: tuple[QtWidgets.QWidget, bool]
+            for window_state in state_items:
+                window = window_state[0]
+                was_enabled: bool = window_state[1]
+                if shiboken6.isValid(window):
+                    window.setEnabled(was_enabled)
+                else:
+                    pass
+            self._locked_window_enabled_states.clear()
+
+    def set_menu_bar_actions_locked(self, locked: bool) -> None:
+        """
+        Apply the main GUI lock state to the menu-bar root actions.
+
+        :param locked: Whether menu-bar root actions must reject user interaction.
+        :returns: None.
+        """
+        menu_action: QtGui.QAction
+        menu: QtWidgets.QMenu | None
+        if locked:
+            for menu_action in self.ui.menuBar.actions():
+                menu = menu_action.menu()
+                if menu_action in self._locked_menu_action_enabled_states:
+                    pass
+                else:
+                    self._locked_menu_action_enabled_states[menu_action] = menu_action.isEnabled()
+                if menu is None:
+                    pass
+                else:
+                    menu.setEnabled(False)
+                menu_action.setEnabled(False)
+        else:
+            state_items: List[tuple[QtGui.QAction, bool]] = list(self._locked_menu_action_enabled_states.items())
+            action_state: tuple[QtGui.QAction, bool]
+            for action_state in state_items:
+                menu_action = action_state[0]
+                was_enabled: bool = action_state[1]
+                menu = menu_action.menu()
+                if menu is None:
+                    pass
+                else:
+                    menu.setEnabled(was_enabled)
+                menu_action.setEnabled(was_enabled)
+            self._locked_menu_action_enabled_states.clear()
+
+    def close_open_child_windows(self, delete_windows: bool = False) -> bool:
+        """
+        Close every open child window managed by the main GUI.
+
+        :param delete_windows: Delete windows that were successfully closed.
+        :returns: True when every managed child window accepted the close.
+        """
+        all_closed: bool = True
+        windows: List[QtWidgets.QWidget] = self.get_open_lock_managed_windows()
+        window: QtWidgets.QWidget
+
+        for window in windows:
+            if is_dialog_available(dialog=window):
+                closed: bool = window.close()
+                if closed:
+                    if delete_windows:
+                        delete_dialog_safely(dialog=window)
+                else:
+                    all_closed = False
+            else:
+                pass
+
+        return all_closed
 
     @property
     def multiverse(self) -> MultiVerse:
@@ -457,7 +674,9 @@ class BaseMainGui(QMainWindow):
         :param show_tree: Whether the workspace should show its device tree.
         :return: Newly created workspace window.
         """
-        workspace = DynamicEditorWorkspaceWindow(session=self.dynamic_editor_workspace_session)
+        workspace: DynamicEditorWorkspaceWindow = DynamicEditorWorkspaceWindow(
+            session=self.dynamic_editor_workspace_session,
+        )
         workspace.set_tree_visible(show_tree)
         workspace.show()
         workspace.raise_()
@@ -466,12 +685,12 @@ class BaseMainGui(QMainWindow):
 
     def open_dynamic_editor(
             self,
-            api_object,
-            circuit,
+            api_object: ALL_DEV_TYPES,
+            circuit: MultiCircuit,
             preferred_mode: DynamicSimulationMode | None = None,
             target_workspace: DynamicEditorWorkspaceWindow | None = None,
             show_tree: bool = False,
-    ) -> DynamicBlockEditorGUI | None:
+    ) -> DynamicEditorTab | None:
         """
         Open one dynamic editor in this main GUI workspace session.
 
@@ -482,7 +701,11 @@ class BaseMainGui(QMainWindow):
         :param show_tree: Whether the destination workspace should show its tree panel.
         :return: Open editor page or ``None`` when no dynamic editor exists.
         """
-        workspace = target_workspace if target_workspace is not None else self.dynamic_editor_workspace_session.get_last_active_workspace()
+        workspace: DynamicEditorWorkspaceWindow | None = (
+            target_workspace
+            if target_workspace is not None
+            else self.dynamic_editor_workspace_session.get_last_active_workspace()
+        )
         if workspace is None:
             workspace = self.create_dynamic_editor_workspace(show_tree=show_tree)
         else:
@@ -498,6 +721,42 @@ class BaseMainGui(QMainWindow):
             target_workspace=workspace,
         )
 
+    def open_dynamic_events(
+            self,
+            api_object: ALL_DEV_TYPES,
+            circuit: MultiCircuit,
+            mode: DynamicSimulationMode,
+            target_workspace: DynamicEditorWorkspaceWindow | None = None,
+            show_tree: bool = False,
+    ) -> DynamicEventsPage | None:
+        """Open a device event page in the shared dynamic workspace.
+
+        :param api_object: Device whose events will be edited.
+        :param circuit: Circuit that owns the device and event assets.
+        :param mode: RMS or EMT event family requested by the caller.
+        :param target_workspace: Preferred destination workspace.
+        :param show_tree: Whether the destination workspace must expose its device tree.
+        :return: Open events page, or ``None`` when the device is unsupported.
+        """
+        workspace: DynamicEditorWorkspaceWindow | None = target_workspace
+        if workspace is None:
+            workspace = self.dynamic_editor_workspace_session.get_last_active_workspace()
+        else:
+            pass
+        if workspace is None:
+            workspace = self.create_dynamic_editor_workspace(show_tree=show_tree)
+        else:
+            workspace.set_tree_visible(visible=show_tree)
+            workspace.show()
+            workspace.raise_()
+            workspace.activateWindow()
+        return workspace.open_dynamic_events_for(
+            api_object=api_object,
+            circuit=circuit,
+            mode=mode,
+            target_workspace=workspace,
+        )
+
     def get_simulation_threads(self) -> List[GcThread]:
         """
         Get all threads that has to do with simulation
@@ -508,50 +767,62 @@ class BaseMainGui(QMainWindow):
 
         return all_threads
 
-    def get_process_threads(self) -> List[GcThread]:
+    def get_process_threads(self) -> List[QtCore.QThread | None]:
         """
         Get all threads that has to do with processing
         :return: list of process threads
         """
-        all_threads = [self.open_file_thread_object,
-                       self.save_file_thread_object,
-                       self.painter,
-                       self.delete_and_reduce_driver,
-                       self.export_all_thread_object,
-                       self.find_node_groups_driver,
-                       self.file_sync_thread,
-                       ]
+        all_threads: List[QtCore.QThread | None] = [self.open_file_thread_object,
+                                                    self.save_file_thread_object,
+                                                    self.painter,
+                                                    self.delete_and_reduce_driver,
+                                                    self.export_all_thread_object,
+                                                    self.find_node_groups_driver,
+                                                    self.file_sync_thread,
+                                                    self.server_driver,
+                                                    ]
+        all_threads += list(self._remote_jobs.values())
         return all_threads
 
-    def get_all_threads(self) -> List[GcThread]:
+    def get_all_threads(self) -> List[QtCore.QThread | None]:
         """
         Get all threads
         :return: list of all threads
         """
-        all_threads = self.get_simulation_threads() + self.get_process_threads()
+        all_threads: List[QtCore.QThread | None] = self.get_simulation_threads() + self.get_process_threads()
         return all_threads
 
-    def stop_all_threads(self) -> None:
+    def stop_all_threads(self) -> bool:
         """
         Request all known GUI worker threads to stop without killing Python threads.
 
-        :return: None.
+        :return: ``True`` when every known worker has stopped.
         """
+        all_stopped: bool = True
         thread: GcThread | QtCore.QThread | None
         for thread in self.get_all_threads():
             if thread is not None:
                 if isinstance(thread, GcThread):
+                    thread.cancel()
+                elif isinstance(thread, RemoteJobDriver):
                     thread.cancel()
                 else:
                     pass
 
                 if thread.isRunning():
                     thread.quit()
-                    thread.wait(5000)
+                    stopped: bool = thread.wait(5000)
                 else:
-                    thread.wait(5000)
+                    stopped = thread.wait(5000)
+
+                if stopped:
+                    pass
+                else:
+                    all_stopped = False
             else:
                 pass
+
+        return all_stopped
 
     def any_thread_running(self) -> bool:
         """
@@ -757,38 +1028,14 @@ class BaseMainGui(QMainWindow):
         """
         return os.path.join(get_create_veragrid_folder(), "ai_config.json")
 
-    def find_first_gguf_file(self, directory_path: str) -> str:
+    @staticmethod
+    def ai_mcp_config_file_path() -> str:
         """
-        Find the first GGUF file in a directory in lexicographic order.
+        Return the AI MCP registration file path.
 
-        :param directory_path: Directory to inspect.
-        :returns: GGUF file name or an empty string.
+        :returns: AI MCP registration file path.
         """
-        expanded_directory_path: str = os.path.expanduser(directory_path)
-        entry_names: list[str]
-        sorted_entry_names: list[str]
-        index: int = 0
-
-        if os.path.isdir(expanded_directory_path):
-            try:
-                entry_names = os.listdir(expanded_directory_path)
-            except OSError:
-                return ""
-
-            sorted_entry_names = sorted(entry_names)
-
-            # Prefer a stable first GGUF file so the local backend opens ready to use.
-            while index < len(sorted_entry_names):
-                entry_name: str = sorted_entry_names[index]
-                if entry_name.lower().endswith(".gguf"):
-                    return entry_name
-                else:
-                    pass
-                index += 1
-
-            return ""
-        else:
-            return ""
+        return os.path.join(get_create_veragrid_folder(), "ai_mcp_config.json")
 
     def build_default_ai_backend_state(self) -> AiBackendState:
         """
@@ -796,42 +1043,10 @@ class BaseMainGui(QMainWindow):
 
         :returns: Default backend state.
         """
-        candidate_paths: list[str] = list()
-        home_models_path: str = os.path.expanduser("~/models")
-        home_downloads_path: str = os.path.expanduser("~/Downloads")
-        project_directory_path: str = os.path.expanduser(self.project_directory)
-        model_name: str = ""
-        model_path: str = ""
-        candidate_index: int = 0
-
-        candidate_paths.append(home_models_path)
-        candidate_paths.append(home_downloads_path)
-
-        if len(project_directory_path) > 0:
-            candidate_paths.append(project_directory_path)
-            candidate_paths.append(os.path.join(project_directory_path, "models"))
-        else:
-            pass
-
-        # Probe a few likely model directories so the floating AI window starts close to a usable local setup.
-        while candidate_index < len(candidate_paths):
-            candidate_path: str = candidate_paths[candidate_index]
-            model_name = self.find_first_gguf_file(candidate_path)
-            if len(model_name) > 0:
-                model_path = candidate_path
-                candidate_index = len(candidate_paths)
-            else:
-                candidate_index += 1
-
-        if len(model_path) == 0:
-            model_path = home_models_path
-        else:
-            pass
-
         return AiBackendState(
-            provider_tpe=ProviderType.LOCAL_LLAMA_CPP,
-            model_name=model_name,
-            base_url=model_path,
+            provider_tpe=ProviderType.OLLAMA,
+            model_name="",
+            base_url="http://localhost:11434/v1",
             api_key=None,
             timeout_s=60.0,
             context_window_tokens=4096,
@@ -883,8 +1098,8 @@ class BaseMainGui(QMainWindow):
         :param data: Persisted AI configuration dictionary.
         :returns: Nothing.
         """
-        provider_value: object = data.get("provider_tpe", ProviderType.LOCAL_LLAMA_CPP.value)
-        provider_tpe: ProviderType = ProviderType.LOCAL_LLAMA_CPP
+        provider_value: object = data.get("provider_tpe", ProviderType.OLLAMA.value)
+        provider_tpe: ProviderType = ProviderType.OLLAMA
         api_key_obj: object = data.get("api_key", "")
         timeout_obj: object = data.get("timeout_s", 60.0)
         context_window_tokens_obj: object = data.get("context_window_tokens", 4096)
@@ -897,6 +1112,8 @@ class BaseMainGui(QMainWindow):
         grounding_char_budget_obj: object = data.get("grounding_char_budget", 1800)
         provider_items: list[ProviderType] = list(ProviderType)
         enum_index: int = 0
+        default_state: AiBackendState = self.build_default_ai_backend_state()
+        base_url: str = str(data.get("base_url", default_state.base_url))
 
         while enum_index < len(provider_items):
             enum_item: ProviderType = provider_items[enum_index]
@@ -906,10 +1123,23 @@ class BaseMainGui(QMainWindow):
             else:
                 enum_index += 1
 
+        if provider_value == "local_llama_cpp":
+            provider_tpe = ProviderType.OLLAMA
+        else:
+            pass
+
+        if provider_tpe == ProviderType.OLLAMA:
+            if base_url.startswith("http://") or base_url.startswith("https://"):
+                pass
+            else:
+                base_url = default_state.base_url
+        else:
+            pass
+
         self.ai_backend_state = AiBackendState(
             provider_tpe=provider_tpe,
             model_name=str(data.get("model_name", "")),
-            base_url=str(data.get("base_url", self.build_default_ai_backend_state().base_url)),
+            base_url=base_url,
             api_key=str(api_key_obj) if isinstance(api_key_obj, str) and len(api_key_obj) > 0 else None,
             timeout_s=float(timeout_obj) if isinstance(timeout_obj, (int, float)) else 60.0,
             context_window_tokens=(
@@ -984,6 +1214,8 @@ class BaseMainGui(QMainWindow):
 
         self.ai_restore_visible = False
 
+        self.start_ai_services_from_config()
+
     def ensure_ai_dialogue(self) -> None:
         """
         Create the floating AI dialogue lazily and bind it to the live main window.
@@ -991,7 +1223,7 @@ class BaseMainGui(QMainWindow):
         :returns: Nothing.
         """
         if self.ai_chat_dialogue is None:
-            self.ai_chat_dialogue = AiChatDialogue(parent=self, app=self)
+            self.ai_chat_dialogue = AiChatDialogue(parent=self, app=self, mcp_client=self.ai_mcp_client)
             self.ai_chat_dialogue.set_embedded_mode(False)
             self.ai_chat_dialogue.apply_backend_state(self.ai_backend_state)
             self.ai_chat_dialogue.dialogue_visibility_changed.connect(
@@ -1038,17 +1270,25 @@ class BaseMainGui(QMainWindow):
         """
         self.sync_ai_dialogue_action_state(visible)
 
-    def shutdown_ai_dialogue_if_available(self) -> None:
+    def shutdown_ai_dialogue_if_available(self) -> bool:
         """
         Stop the AI worker thread when the dialogue exists.
 
-        :returns: Nothing.
+        :returns: ``True`` when the AI dialogue has no live worker.
         """
         if self.ai_chat_dialogue is None:
-            pass
+            self.ai_mcp_client.stop_server()
+            self.ai_ollama_manager.stop()
+            return True
         else:
             self.ai_chat_dialogue.prepare_for_shutdown()
-            self.ai_chat_dialogue.shutdown_turn_thread()
+            stopped: bool = self.ai_chat_dialogue.shutdown_turn_thread()
+            if stopped:
+                self.ai_mcp_client.stop_server()
+                self.ai_ollama_manager.stop()
+            else:
+                pass
+            return stopped
 
     def set_ai_dialogue_visible(self, visible: bool) -> None:
         """
@@ -1058,6 +1298,7 @@ class BaseMainGui(QMainWindow):
         :returns: Nothing.
         """
         self.ensure_ai_dialogue()
+        self.start_ai_services_from_config()
 
         if self.ai_chat_dialogue is None:
             pass
@@ -1068,8 +1309,9 @@ class BaseMainGui(QMainWindow):
                 self.ai_chat_dialogue.activateWindow()
                 self.refresh_ai_context_if_available()
                 self.ai_backend_state = self.ai_chat_dialogue.get_backend_state()
+                self.start_ai_services_from_config()
                 if (
-                        self.ai_backend_state.provider_tpe == ProviderType.LOCAL_LLAMA_CPP
+                        self.ai_backend_state.provider_tpe == ProviderType.OLLAMA
                         and len(self.ai_backend_state.base_url.strip()) == 0
                 ):
                     default_state: AiBackendState = self.build_default_ai_backend_state()
@@ -1078,14 +1320,9 @@ class BaseMainGui(QMainWindow):
                 else:
                     pass
 
-                if self.ai_backend_state.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-                    self.ai_chat_dialogue.refresh_available_models()
+                if self.ai_backend_state.provider_tpe == ProviderType.OLLAMA:
+                    self.ai_chat_dialogue.run_ollama_startup_check()
                     self.ai_backend_state = self.ai_chat_dialogue.get_backend_state()
-                else:
-                    pass
-
-                if len(self.ai_backend_state.model_name.strip()) == 0:
-                    self.show_info_toast("Configure a local GGUF model path for the AI window", duration=3500)
                 else:
                     pass
 
@@ -1093,6 +1330,22 @@ class BaseMainGui(QMainWindow):
             else:
                 self.ai_chat_dialogue.hide()
                 self.sync_ai_dialogue_action_state(False)
+
+    def start_ai_services_from_config(self) -> None:
+        """
+        Start inexpensive AI services required by the current AI configuration.
+
+        :returns: Nothing.
+        """
+        if self.ai_backend_state.provider_tpe == ProviderType.OLLAMA:
+            self.ai_ollama_manager.start_if_configured(
+                enabled=True,
+                base_url=self.ai_backend_state.base_url,
+            )
+        else:
+            pass
+
+        self.ai_mcp_client.start_server()
 
     def open_ai_chat_dialogue(self) -> None:
         """
@@ -1108,6 +1361,13 @@ class BaseMainGui(QMainWindow):
         Open the online documentation in a web browser
         """
         webbrowser.open('https://veragrid.readthedocs.io/en/latest/', new=2)
+
+    @staticmethod
+    def show_online_chat():
+        """
+        Open the online chat in a web browser
+        """
+        webbrowser.open('https://matrix.to/#/#veragrid:matrix.org', new=2)
 
     @staticmethod
     def report_a_bug():
@@ -1208,13 +1468,15 @@ class BaseMainGui(QMainWindow):
         self.analysis_dialogue.resize(int(1.61 * 600.0), 600)
         self.analysis_dialogue.show()
 
-    def display_dynamic_models_editor(self):
+    def display_dynamic_models_editor(self) -> None:
         """
         Display the dynamic models editor workspace with the tree panel visible.
 
         :return: None.
         """
-        workspace = self.dynamic_editor_workspace_session.get_last_active_workspace()
+        workspace: DynamicEditorWorkspaceWindow | None = (
+            self.dynamic_editor_workspace_session.get_last_active_workspace()
+        )
         if workspace is None:
             workspace = self.create_dynamic_editor_workspace(show_tree=True)
         else:

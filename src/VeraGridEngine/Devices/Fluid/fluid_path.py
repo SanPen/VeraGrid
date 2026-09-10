@@ -13,6 +13,7 @@ from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.types import CONNECTION_TYPE
+    from VeraGridEngine.Devices.Substation.substation import Substation
 
 
 class FluidPath(PhysicalDevice):
@@ -156,6 +157,44 @@ class FluidPath(PhysicalDevice):
 
         ok = bus_from is not None and bus_to is not None
         return bus_from, bus_to, ok
+
+    def get_substation_from(self) -> Union[Substation, None]:
+        """
+        Try to get the substation at the source side.
+
+        :return: Source electrical bus substation, or ``None``.
+        """
+        substation: Union[Substation, None] = None
+
+        # Fluid paths are connected through fluid nodes, which carry the electrical bus.
+        if self.source is not None:
+            if self.source.bus is not None:
+                substation = self.source.bus.substation
+            else:
+                substation = None
+        else:
+            substation = None
+
+        return substation
+
+    def get_substation_to(self) -> Union[Substation, None]:
+        """
+        Try to get the substation at the target side.
+
+        :return: Target electrical bus substation, or ``None``.
+        """
+        substation: Union[Substation, None] = None
+
+        # Fluid paths are connected through fluid nodes, which carry the electrical bus.
+        if self.target is not None:
+            if self.target.bus is not None:
+                substation = self.target.bus.substation
+            else:
+                substation = None
+        else:
+            substation = None
+
+        return substation
 
     # Scalar property accessors coerce assignments to the declared schema types.
 

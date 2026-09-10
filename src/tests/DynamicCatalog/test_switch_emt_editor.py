@@ -4,12 +4,11 @@ import sys
 
 from PySide6 import QtWidgets
 
-import VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor as dynamic_block_editor_module
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.enumerations import BlockType, DynamicSimulationMode, DeviceType
+from VeraGridEngine.enumerations import DynamicSimulationMode, DeviceType
 
 class _ApiStub:
     __slots__ = ("name", "rms_template", "emt_template", "device_type")

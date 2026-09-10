@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vdc / P control &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Vdc / P control &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,14 +15,14 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Current limiter" href="vsc_current_limiter.html" />
-    <link rel="prev" title="Stabilizer" href="stabilizer.html" /> 
+    <link rel="prev" title="RMS Voltage Source" href="voltage_source.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -167,20 +167,20 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">Kp_vdc</span> <span class="pre">=</span> <span class="pre">0.20</span></code>, <code class="docutils literal notranslate"><span class="pre">Ki_vdc</span> <span class="pre">=</span> <span class="pre">1.0</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Pdc</span></code></p></td>
-<td><p>Internal electrical <code class="docutils literal notranslate"><span class="pre">P</span></code></p></td>
+<td><p>DC-terminal <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">P_ref</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">P_ref</span> <span class="pre">-</span> <span class="pre">P</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P_ref</span> <span class="pre">-</span> <span class="pre">Pf_vsc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Kp_pol</span> <span class="pre">=</span> <span class="pre">0.02</span></code>, <code class="docutils literal notranslate"><span class="pre">Ki_pol</span> <span class="pre">=</span> <span class="pre">0.10</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Pac</span></code></p></td>
-<td><p>Internal electrical <code class="docutils literal notranslate"><span class="pre">P</span></code></p></td>
+<td><p>AC-terminal <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">P_ref</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">P_ref</span> <span class="pre">-</span> <span class="pre">P</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">P_ref</span> <span class="pre">+</span> <span class="pre">Pt_vsc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Kp_pol</span> <span class="pre">=</span> <span class="pre">0.02</span></code>, <code class="docutils literal notranslate"><span class="pre">Ki_pol</span> <span class="pre">=</span> <span class="pre">0.10</span></code></p></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Implementation scope:</strong> <code class="docutils literal notranslate"><span class="pre">Pdc</span></code> and <code class="docutils literal notranslate"><span class="pre">Pac</span></code> currently use the same internal electrical power signal and the same PI law in the complete converter. The <code class="docutils literal notranslate"><span class="pre">Pdc</span></code> option does not introduce an independent DC-terminal-power measurement. Do not connect <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code> merely because the selected option is named <code class="docutils literal notranslate"><span class="pre">Pdc</span></code>; doing so differs from the supplied complete model. Internal <code class="docutils literal notranslate"><span class="pre">P</span></code> has the opposite sign to <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Pdc</span></code> measures power entering the converter at the DC terminal. <code class="docutils literal notranslate"><span class="pre">Pac</span></code> measures power entering at the AC terminal; therefore a positive DC-to-AC transfer target corresponds to <code class="docutils literal notranslate"><span class="pre">P_ref</span> <span class="pre">=</span> <span class="pre">-Pt_vsc</span></code>. The different error expressions preserve the same positive transfer-reference convention.</p>
 </section>
 <section id="interface">
 <h2>Interface<a class="headerlink" href="#interface" title="Link to this heading"></a></h2>
@@ -195,7 +195,7 @@
 <tbody>
 <tr class="row-even"><td><p>Input</p></td>
 <td><p>1</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Vdc_state</span></code> or <code class="docutils literal notranslate"><span class="pre">P</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vdc_state</span></code>, <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code> or <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code></p></td>
 <td><p>Selected feedback, pu</p></td>
 </tr>
 <tr class="row-odd"><td><p>Input</p></td>
@@ -216,8 +216,8 @@
 <h2>Equations and parameters<a class="headerlink" href="#equations-and-parameters" title="Link to this heading"></a></h2>
 <div class="math">
 <p><img src="../../../_images/math/66fd75dd230fec92fa870401044265dee6172ab2.svg" alt="\dot{\xi}=e,\qquad i_{q,ref}=K_p e+K_i\xi."/></p>
-</div><p>The gains and reference listed above belong to <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>. The reference is initialized from the connected feedback at the power-flow operating point; it is not an arbitrary fixed default and it does not continuously track the feedback after initialization. A dynamic event can subsequently change it.</p>
-<p>For example, changing <code class="docutils literal notranslate"><span class="pre">Vdc_ref</span></code> perturbs DC-voltage regulation, while changing <code class="docutils literal notranslate"><span class="pre">P_ref</span></code> perturbs the internal active-power target. These are dynamic-model references, distinct from the static VSC’s power-flow control configuration.</p>
+</div><p>The gains and reference listed above belong to <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>. At the power-flow operating point the reference initializes to <code class="docutils literal notranslate"><span class="pre">Vdc_state</span></code> in <code class="docutils literal notranslate"><span class="pre">Vm_dc</span></code> mode, <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code> in <code class="docutils literal notranslate"><span class="pre">Pdc</span></code> mode, and <code class="docutils literal notranslate"><span class="pre">-Pt_vsc</span></code> in <code class="docutils literal notranslate"><span class="pre">Pac</span></code> mode. It does not continuously track the feedback after initialization. A dynamic event can subsequently change it.</p>
+<p>For example, changing <code class="docutils literal notranslate"><span class="pre">Vdc_ref</span></code> perturbs DC-voltage regulation, while changing <code class="docutils literal notranslate"><span class="pre">P_ref</span></code> perturbs the selected terminal-power target. These are dynamic-model references, distinct from the static VSC’s power-flow control configuration.</p>
 </section>
 <section id="initialization-and-connections">
 <h2>Initialization and connections<a class="headerlink" href="#initialization-and-connections" title="Link to this heading"></a></h2>
@@ -233,7 +233,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="stabilizer.html" class="btn btn-neutral float-left" title="Stabilizer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="voltage_source.html" class="btn btn-neutral float-left" title="RMS Voltage Source" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="vsc_current_limiter.html" class="btn btn-neutral float-right" title="Current limiter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

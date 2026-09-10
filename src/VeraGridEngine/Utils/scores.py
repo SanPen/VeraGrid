@@ -138,8 +138,13 @@ class TechnoEconomicScores:
 
     def arr(self) -> Vec:
         """
-        Return multidimensional metrics for the optimization
-        :return: array of 2 values
+        Return multidimensional metrics for the optimization.
+
+        CAPEX and OPEX are reported as two separate entries, matching the objective formulation
+        documented in `investment_optimization.md`, so that the search sees the investment cost and
+        the operational cost as two independent magnitudes.
+
+        :return: array of 6 values: losses, overload, voltage module, voltage angle, CAPEX and OPEX
         """
-        return np.array([self.losses_score, self.overload_score, self.voltage_module_score, self.voltage_angle_score,
-                         self.financial_score, self.tech_score])
+        return np.array([self.losses_score, self.overload_score, self.voltage_module_score,
+                         self.voltage_angle_score, self.capex_score, self.opex_score])

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -536,20 +536,37 @@
             <span class="n">inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">outputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an empty generic block with deterministic interface initialization.</span>
 
-<span class="sd">    :param var_factory:</span>
-<span class="sd">    :param inputs:</span>
-<span class="sd">    :param outputs:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param var_factory: Factory that owns every new symbolic identity.</span>
+<span class="sd">    :param inputs: Number of incoming signal variables to create.</span>
+<span class="sd">    :param outputs: Number of outgoing signal variables to create.</span>
+<span class="sd">    :return: Generic block whose outputs start from zero until edited.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">blk</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+    <span class="n">input_variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">input_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">input_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+        <span class="n">input_variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;input</span><span class="si">{</span><span class="n">input_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+
+    <span class="n">output_variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">output_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">output_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">outputs</span><span class="p">):</span>
+        <span class="n">output_variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;output</span><span class="si">{</span><span class="n">output_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+
+    <span class="n">initial_equations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">sym</span><span class="o">.</span><span class="n">Var</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">output_variable</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">Var</span>
+    <span class="k">for</span> <span class="n">output_variable</span> <span class="ow">in</span> <span class="n">output_variables</span><span class="p">:</span>
+        <span class="c1"># Generic outputs are block-owned signals even before the user writes</span>
+        <span class="c1"># their runtime equations. Give each one a deterministic initialization</span>
+        <span class="c1"># that remains editable from Block Properties.</span>
+        <span class="n">initial_equations</span><span class="p">[</span><span class="n">output_variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">Const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">blk</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span>
-        <span class="n">in_vars</span><span class="o">=</span><span class="p">[</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;input</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">inputs</span><span class="p">)],</span>
-        <span class="n">out_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;output</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">outputs</span><span class="p">)]</span>
-        <span class="p">)</span>
-
-
+        <span class="n">in_vars</span><span class="o">=</span><span class="n">input_variables</span><span class="p">,</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="n">output_variables</span><span class="p">,</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="n">initial_equations</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">blk</span></div>
 
 

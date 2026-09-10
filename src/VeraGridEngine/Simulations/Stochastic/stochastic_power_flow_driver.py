@@ -218,10 +218,10 @@ class StochasticPowerFlowDriver(DriverTemplate):
 
         self.toc()
 
-    def cancel(self):
+    def cancel(self) -> None:
         """
         Cancel the simulation
-        :return:
+
+        :return: None
         """
         self.__cancel__ = True
-        self.report_done("Cancelled!")

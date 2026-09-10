@@ -1726,10 +1726,31 @@ class WaveformPoint:
         return f"WaveformPoint({self.time}, {self.value})"
 
 
+def dispose_optional_matplotlib_canvas(canvas: Any, figure: Any) -> None:
+    """
+    Release an optional Matplotlib canvas before Qt deletes its widget.
+
+    :param canvas: Optional FigureCanvas instance.
+    :param figure: Optional Matplotlib figure.
+    :return: None.
+    """
+    if canvas is None:
+        pass
+    else:
+        canvas._draw_pending = False
+        canvas.close()
+
+    if figure is None:
+        pass
+    else:
+        figure.clear()
+
+
 class SequenceEditorDialog(QtWidgets.QDialog):
     def __init__(self, parent, sequence_type: WaveformSequenceType | V_I_CurveSequenceType | X_Y_SequenceType ):
         super().__init__(parent)
         self.sequence_type = sequence_type
+        self._plot_disposed: bool = False
         self.setWindowTitle(self.tr("Sequence editor"))
         self.setMinimumSize(600, 500)
 
@@ -1763,6 +1784,9 @@ class SequenceEditorDialog(QtWidgets.QDialog):
         self.table.setSelectionBehavior(QtWidgets.QTableWidget.SelectionBehavior.SelectRows)
         layout.addWidget(self.table)
 
+        self.figure = None
+        self.canvas = None
+        self.ax = None
         try:
             from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
             from matplotlib.figure import Figure
@@ -1771,8 +1795,7 @@ class SequenceEditorDialog(QtWidgets.QDialog):
             self.ax = self.figure.add_subplot(111)
             layout.addWidget(self.canvas)
         except Exception:
-            self.canvas = None
-            self.ax = None
+            pass
 
         button_box = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel
@@ -1780,6 +1803,34 @@ class SequenceEditorDialog(QtWidgets.QDialog):
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
         layout.addWidget(button_box)
+
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Release Matplotlib resources before closing.
+
+        :param event: Qt close event.
+        :return: None.
+        """
+        if self._plot_disposed:
+            pass
+        else:
+            self._plot_disposed = True
+            dispose_optional_matplotlib_canvas(canvas=self.canvas, figure=self.figure)
+        QtWidgets.QDialog.closeEvent(self, event)
+
+    def done(self, result: int) -> None:
+        """
+        Release Matplotlib resources before accepting or rejecting the dialog.
+
+        :param result: Qt dialog result code.
+        :return: None.
+        """
+        if self._plot_disposed:
+            pass
+        else:
+            self._plot_disposed = True
+            dispose_optional_matplotlib_canvas(canvas=self.canvas, figure=self.figure)
+        QtWidgets.QDialog.done(self, result)
 
     def add_point(self):
         row = self.table.rowCount()
@@ -1949,6 +2000,7 @@ class LookupMatrixEditorDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self._plot_disposed: bool = False
         self.setWindowTitle(self.tr("Lookup matrix editor"))
         self.setMinimumSize(750, 650)
 
@@ -2022,6 +2074,9 @@ class LookupMatrixEditorDialog(QtWidgets.QDialog):
         main_layout.addWidget(matrix_group)
 
         # ── Matplotlib plot (optional) ──────────────────────────────────
+        self.figure = None
+        self.canvas = None
+        self.ax = None
         try:
             from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
             from matplotlib.figure import Figure
@@ -2030,8 +2085,7 @@ class LookupMatrixEditorDialog(QtWidgets.QDialog):
             self.ax = self.figure.add_subplot(111)
             main_layout.addWidget(self.canvas)
         except Exception:
-            self.canvas = None
-            self.ax = None
+            pass
 
         # ── Dialog buttons ──────────────────────────────────────────────
         button_box = QtWidgets.QDialogButtonBox(
@@ -2040,6 +2094,34 @@ class LookupMatrixEditorDialog(QtWidgets.QDialog):
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
         main_layout.addWidget(button_box)
+
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Release Matplotlib resources before closing.
+
+        :param event: Qt close event.
+        :return: None.
+        """
+        if self._plot_disposed:
+            pass
+        else:
+            self._plot_disposed = True
+            dispose_optional_matplotlib_canvas(canvas=self.canvas, figure=self.figure)
+        QtWidgets.QDialog.closeEvent(self, event)
+
+    def done(self, result: int) -> None:
+        """
+        Release Matplotlib resources before accepting or rejecting the dialog.
+
+        :param result: Qt dialog result code.
+        :return: None.
+        """
+        if self._plot_disposed:
+            pass
+        else:
+            self._plot_disposed = True
+            dispose_optional_matplotlib_canvas(canvas=self.canvas, figure=self.figure)
+        QtWidgets.QDialog.done(self, result)
 
     # ── X table helpers ─────────────────────────────────────────────────
 

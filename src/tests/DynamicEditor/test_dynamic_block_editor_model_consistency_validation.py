@@ -9,14 +9,14 @@ import sys
 import pytest
 from PySide6 import QtWidgets
 
-import VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor as dynamic_block_editor_module
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_graphics import ProtectedConnectionBlockItem
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_validation import ValidationSection
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_validation import add_validation_port_detail
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_validation import format_validation_block_label
-import VeraGridEngine.Templates.Emt as emt_templates
+import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor as dynamic_block_editor_module
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_graphics import MeasurementsItem, PortItem, ProtectedConnectionBlockItem
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_validation import ValidationRow, ValidationSection
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_validation import add_validation_port_detail
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_validation import format_validation_block_label
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagramNode
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
@@ -331,6 +331,7 @@ def _connect_root_interface_ref(editor: DynamicBlockEditorGUI, reference: VarPow
     protected_item: ProtectedConnectionBlockItem
     reference_var: Var | None = None
     connection_stub: object = object()
+    measurement_port: PortItem
 
     for scene_item in editor.scene.items():
         if isinstance(scene_item, ProtectedConnectionBlockItem):
@@ -359,43 +360,72 @@ def _connect_root_interface_ref(editor: DynamicBlockEditorGUI, reference: VarPow
                     pass
             else:
                 pass
+        elif isinstance(scene_item, MeasurementsItem):
+            for measurement_port in scene_item.inputs + scene_item.outputs:
+                if (measurement_port.base_var is not None
+                        and measurement_port.base_var.ref == reference):
+                    measurement_port.connections = list([connection_stub])
+                else:
+                    pass
         else:
             pass
 
 
-def _find_protected_item_by_name(editor: DynamicBlockEditorGUI, item_name: str):
+def _find_protected_item_by_name(
+        editor: DynamicBlockEditorGUI,
+        item_name: str,
+) -> ProtectedConnectionBlockItem | MeasurementsItem:
     """
-    Return one protected connection block item by its visible editor name.
+    Return one root-interface item by its validation-visible name.
 
     :param editor: Editor instance.
     :param item_name: Visible connection-block name.
-    :return: Matching protected connection block item.
+    :return: Matching protected or grouped measurement item.
     """
     scene_item: object
+    node_data: BlockDiagramNode | None
+    node_name: str | None
 
     for scene_item in editor.scene.items():
-        if isinstance(scene_item, ProtectedConnectionBlockItem):
+        if isinstance(scene_item, (ProtectedConnectionBlockItem, MeasurementsItem)):
+            if scene_item.subsys is not None:
+                node_data = editor.diagram.node_data.get(scene_item.subsys.uid, None)
+                if node_data is not None:
+                    node_name = node_data.name
+                else:
+                    node_name = None
+            else:
+                node_name = None
+
             if scene_item.name == item_name:
+                return scene_item
+            elif scene_item.subsys is not None and scene_item.subsys.name == item_name:
+                return scene_item
+            elif node_name == item_name:
                 return scene_item
             else:
                 pass
         else:
             pass
 
-    raise AssertionError(f"Protected connection block '{item_name}' not found")
+    raise AssertionError(f"Root-interface block '{item_name}' not found")
 
 
-def _find_protected_item_by_ref(editor: DynamicBlockEditorGUI, reference: VarPowerFlowReferenceType):
+def _find_protected_item_by_ref(
+        editor: DynamicBlockEditorGUI,
+        reference: VarPowerFlowReferenceType,
+) -> ProtectedConnectionBlockItem | MeasurementsItem:
     """
-    Return one protected connection block item by its semantic interface reference.
+    Return one root-interface item containing the requested reference.
 
     :param editor: Editor instance.
     :param reference: Interface reference to match.
-    :return: Matching protected connection block item.
+    :return: Matching protected or grouped measurement item.
     """
     scene_item: object
     protected_item: ProtectedConnectionBlockItem
     reference_var: Var | None
+    measurement_port: PortItem
 
     for scene_item in editor.scene.items():
         if isinstance(scene_item, ProtectedConnectionBlockItem):
@@ -414,10 +444,17 @@ def _find_protected_item_by_ref(editor: DynamicBlockEditorGUI, reference: VarPow
                 return protected_item
             else:
                 pass
+        elif isinstance(scene_item, MeasurementsItem):
+            for measurement_port in scene_item.inputs + scene_item.outputs:
+                if (measurement_port.base_var is not None
+                        and measurement_port.base_var.ref == reference):
+                    return scene_item
+                else:
+                    pass
         else:
             pass
 
-    raise AssertionError(f"Protected connection block with ref '{reference}' not found")
+    raise AssertionError(f"Root-interface block with ref '{reference}' not found")
 
 
 def test_validation_sections_skip_phase_consistency_for_pure_dc_injection() -> None:
@@ -631,9 +668,29 @@ def test_show_issues_highlights_reported_protected_emt_connector_port() -> None:
     row_labels: list[str] = _get_section_row_labels(port_section)
     assert len(row_labels) > 0
 
-    protected_item = _find_protected_item_by_name(editor, row_labels[0])
-    highlighted_ports = [port for port in protected_item.inputs + protected_item.outputs if port._validation_highlighted]
-    assert len(highlighted_ports) == 1
+    reported_row: ValidationRow = port_section.get_rows()[0]
+    reported_port_names: set[str] = reported_row.get_highlight_port_names()
+    reported_port_refs: set[VarPowerFlowReferenceType] = reported_row.get_highlight_port_refs()
+    matching_highlighted_ports: list[PortItem] = list()
+    scene_item: object
+    interface_port: PortItem
+    interface_var: Var | None
+
+    for scene_item in editor.scene.items():
+        if isinstance(scene_item, (ProtectedConnectionBlockItem, MeasurementsItem)):
+            for interface_port in scene_item.inputs + scene_item.outputs:
+                interface_var = interface_port.base_var
+                if (interface_port._validation_highlighted
+                        and interface_var is not None
+                        and (interface_var.name in reported_port_names
+                             or interface_var.ref in reported_port_refs)):
+                    matching_highlighted_ports.append(interface_port)
+                else:
+                    pass
+        else:
+            pass
+
+    assert len(matching_highlighted_ports) == 1
     editor.close()
 
 

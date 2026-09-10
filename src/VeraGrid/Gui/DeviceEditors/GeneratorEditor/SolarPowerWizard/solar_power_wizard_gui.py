@@ -16,10 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QDoubleSpinBox, QFrame,
-    QGridLayout, QHeaderView, QLabel, QPushButton,
-    QSizePolicy, QSpacerItem, QSplitter, QTableView,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QDoubleSpinBox,
+    QFrame, QGridLayout, QHeaderView, QLabel,
+    QPushButton, QSizePolicy, QSpacerItem, QSplitter,
+    QTableView, QVBoxLayout, QWidget)
 from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_MainWindow(object):
@@ -45,27 +45,17 @@ class Ui_MainWindow(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.splitter = QSplitter(MainWindow)
         self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Horizontal)
+        self.splitter.setOrientation(Qt.Orientation.Horizontal)
         self.frame = QFrame(self.splitter)
         self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.NoFrame)
-        self.frame.setFrameShadow(QFrame.Raised)
+        self.frame.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_2 = QGridLayout(self.frame)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.label_3 = QLabel(self.frame)
-        self.label_3.setObjectName(u"label_3")
+        self.label_4 = QLabel(self.frame)
+        self.label_4.setObjectName(u"label_4")
 
-        self.gridLayout_2.addWidget(self.label_3, 2, 0, 1, 2)
-
-        self.label_2 = QLabel(self.frame)
-        self.label_2.setObjectName(u"label_2")
-
-        self.gridLayout_2.addWidget(self.label_2, 3, 0, 1, 1)
-
-        self.label_5 = QLabel(self.frame)
-        self.label_5.setObjectName(u"label_5")
-
-        self.gridLayout_2.addWidget(self.label_5, 7, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.label_4, 4, 0, 1, 1)
 
         self.latitudeSpinBox = QDoubleSpinBox(self.frame)
         self.latitudeSpinBox.setObjectName(u"latitudeSpinBox")
@@ -73,11 +63,12 @@ class Ui_MainWindow(object):
         self.latitudeSpinBox.setMinimum(-90.000000000000000)
         self.latitudeSpinBox.setMaximum(90.000000000000000)
 
-        self.gridLayout_2.addWidget(self.latitudeSpinBox, 6, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.latitudeSpinBox, 4, 1, 1, 1)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.label_5 = QLabel(self.frame)
+        self.label_5.setObjectName(u"label_5")
 
-        self.gridLayout_2.addItem(self.verticalSpacer, 9, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.label_5, 5, 0, 1, 1)
 
         self.longitudeSpinBox = QDoubleSpinBox(self.frame)
         self.longitudeSpinBox.setObjectName(u"longitudeSpinBox")
@@ -85,68 +76,92 @@ class Ui_MainWindow(object):
         self.longitudeSpinBox.setMinimum(-180.000000000000000)
         self.longitudeSpinBox.setMaximum(180.000000000000000)
 
-        self.gridLayout_2.addWidget(self.longitudeSpinBox, 7, 1, 1, 2)
-
-        self.powerSpinBox = QDoubleSpinBox(self.frame)
-        self.powerSpinBox.setObjectName(u"powerSpinBox")
-        self.powerSpinBox.setMinimum(0.000001000000000)
-        self.powerSpinBox.setMaximum(99999.000000000000000)
-
-        self.gridLayout_2.addWidget(self.powerSpinBox, 8, 1, 1, 2)
-
-        self.label_4 = QLabel(self.frame)
-        self.label_4.setObjectName(u"label_4")
-
-        self.gridLayout_2.addWidget(self.label_4, 6, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.longitudeSpinBox, 5, 1, 1, 1)
 
         self.label = QLabel(self.frame)
         self.label.setObjectName(u"label")
 
-        self.gridLayout_2.addWidget(self.label, 8, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.label, 6, 0, 1, 1)
 
-        self.label_bus = QLabel(self.frame)
-        self.label_bus.setObjectName(u"label_bus")
+        self.powerSpinBox = QDoubleSpinBox(self.frame)
+        self.powerSpinBox.setObjectName(u"powerSpinBox")
+        self.powerSpinBox.setMinimum(0.000000000000000)
+        self.powerSpinBox.setMaximum(99999.000000000000000)
 
-        self.gridLayout_2.addWidget(self.label_bus, 5, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.powerSpinBox, 6, 1, 1, 1)
 
-        self.label_gen = QLabel(self.frame)
-        self.label_gen.setObjectName(u"label_gen")
+        self.localTimeCheckBox = QCheckBox(self.frame)
+        self.localTimeCheckBox.setObjectName(u"localTimeCheckBox")
 
-        self.gridLayout_2.addWidget(self.label_gen, 4, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.localTimeCheckBox, 7, 0, 1, 2)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout_2.addItem(self.verticalSpacer, 9, 0, 1, 1)
+
+        self.label_2 = QLabel(self.frame)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setWordWrap(True)
+
+        self.gridLayout_2.addWidget(self.label_2, 3, 0, 1, 2)
 
         self.generateButton = QPushButton(self.frame)
         self.generateButton.setObjectName(u"generateButton")
+        icon3 = QIcon()
+        icon3.addFile(u":/Icons/icons/calculator.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.generateButton.setIcon(icon3)
 
-        self.gridLayout_2.addWidget(self.generateButton, 10, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.generateButton, 8, 0, 1, 2)
+
+        self.label_bus = QLabel(self.frame)
+        self.label_bus.setObjectName(u"label_bus")
+        self.label_bus.setWordWrap(True)
+
+        self.gridLayout_2.addWidget(self.label_bus, 2, 0, 1, 2)
+
+        self.label_gen = QLabel(self.frame)
+        self.label_gen.setObjectName(u"label_gen")
+        self.label_gen.setWordWrap(True)
+
+        self.gridLayout_2.addWidget(self.label_gen, 1, 0, 1, 2)
+
+        self.label_3 = QLabel(self.frame)
+        self.label_3.setObjectName(u"label_3")
+        self.label_3.setWordWrap(True)
+
+        self.gridLayout_2.addWidget(self.label_3, 0, 0, 1, 2)
 
         self.splitter.addWidget(self.frame)
         self.frame_4 = QFrame(self.splitter)
         self.frame_4.setObjectName(u"frame_4")
-        self.frame_4.setFrameShape(QFrame.NoFrame)
-        self.frame_4.setFrameShadow(QFrame.Raised)
+        self.frame_4.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout = QGridLayout(self.frame_4)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.plotButton = QPushButton(self.frame_4)
-        self.plotButton.setObjectName(u"plotButton")
-        icon3 = QIcon()
-        icon3.addFile(u":/Icons/icons/plot.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.plotButton.setIcon(icon3)
-
-        self.gridLayout.addWidget(self.plotButton, 1, 0, 1, 2)
-
-        self.horizontalSpacer_2 = QSpacerItem(394, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_2, 1, 2, 1, 1)
-
         self.acceptButton = QPushButton(self.frame_4)
         self.acceptButton.setObjectName(u"acceptButton")
+        icon4 = QIcon()
+        icon4.addFile(u":/Icons/icons/accept.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.acceptButton.setIcon(icon4)
 
-        self.gridLayout.addWidget(self.acceptButton, 1, 3, 1, 1)
+        self.gridLayout.addWidget(self.acceptButton, 1, 5, 1, 1)
 
         self.resultsTableView = QTableView(self.frame_4)
         self.resultsTableView.setObjectName(u"resultsTableView")
 
-        self.gridLayout.addWidget(self.resultsTableView, 0, 0, 1, 4)
+        self.gridLayout.addWidget(self.resultsTableView, 0, 0, 1, 6)
+
+        self.horizontalSpacer_2 = QSpacerItem(394, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.gridLayout.addItem(self.horizontalSpacer_2, 1, 4, 1, 1)
+
+        self.plotButton = QPushButton(self.frame_4)
+        self.plotButton.setObjectName(u"plotButton")
+        icon5 = QIcon()
+        icon5.addFile(u":/Icons/icons/plot.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.plotButton.setIcon(icon5)
+
+        self.gridLayout.addWidget(self.plotButton, 1, 0, 1, 4)
 
         self.splitter.addWidget(self.frame_4)
 
@@ -162,21 +177,31 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Solar power wizard", None))
         self.actionCopy_to_clipboard.setText(QCoreApplication.translate("MainWindow", u"Copy to clipboard", None))
         self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Site data", None))
-        self.label_2.setText("")
-        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Longitude", None))
-        self.latitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
-        self.longitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
-        self.powerSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" MW", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Latitude", None))
+        self.latitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Longitude", None))
+        self.longitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Power", None))
+        self.powerSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" MW", None))
+#if QT_CONFIG(tooltip)
+        self.localTimeCheckBox.setToolTip(QCoreApplication.translate("MainWindow", u"Shift PVGIS UTC timestamps by longitude so the generated power matches the circuit timestamps as local solar time.", None))
+#endif // QT_CONFIG(tooltip)
+        self.localTimeCheckBox.setText(QCoreApplication.translate("MainWindow", u"Use local solar time", None))
+        self.label_2.setText("")
+#if QT_CONFIG(tooltip)
+        self.generateButton.setToolTip(QCoreApplication.translate("MainWindow", u"Generate time series", None))
+#endif // QT_CONFIG(tooltip)
+        self.generateButton.setText("")
         self.label_bus.setText(QCoreApplication.translate("MainWindow", u"Bus", None))
         self.label_gen.setText(QCoreApplication.translate("MainWindow", u"Generator", None))
-        self.generateButton.setText(QCoreApplication.translate("MainWindow", u"Generate", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Site data", None))
+#if QT_CONFIG(tooltip)
+        self.acceptButton.setToolTip(QCoreApplication.translate("MainWindow", u"Apply and accept", None))
+#endif // QT_CONFIG(tooltip)
+        self.acceptButton.setText("")
 #if QT_CONFIG(tooltip)
         self.plotButton.setToolTip(QCoreApplication.translate("MainWindow", u"Plot data", None))
 #endif // QT_CONFIG(tooltip)
         self.plotButton.setText("")
-        self.acceptButton.setText(QCoreApplication.translate("MainWindow", u"Accept", None))
     # retranslateUi
 

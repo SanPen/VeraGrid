@@ -144,8 +144,7 @@ class ReliabilityStudyDriver(DriverTemplate):
             self.run_grid_reliability()
 
         self.toc()
-        self.report_text("Done!")
-        self.done_signal.emit()
+        self.report_done()
 
     def run_adequacy_reliability(self):
         """

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Symbolic.symbolic &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Utils.Symbolic.symbolic &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -827,6 +828,18 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref</span>
+
+    <span class="nd">@ref</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the typed physical-network reference of this variable.</span>
+
+<span class="sd">        :param val: Physical-network reference to assign.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ref</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Symbolic variable cannot accept reference </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_diff1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1767,7 +1780,23 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">sqrt_diff</span><span class="p">(</span><span class="n">u</span><span class="p">:</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">du</span><span class="p">:</span> <span class="n">Expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">du</span> <span class="o">/</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Differentiate a square root with a finite boundary convention.</span>
+
+<span class="sd">    The analytical derivative is retained for strictly positive arguments.</span>
+<span class="sd">    At zero, where the derivative is not finite, the symbolic runtime uses a</span>
+<span class="sd">    zero slope. This is the deterministic boundary convention required by</span>
+<span class="sd">    limited expressions such as ``sqrt(max(x, 0))``.</span>
+
+<span class="sd">    :param u: Square-root argument.</span>
+<span class="sd">    :param du: Derivative of the argument.</span>
+<span class="sd">    :return: Symbolic derivative that remains finite at zero.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">protected_derivative</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">safe_divide</span><span class="p">(</span>
+        <span class="n">numerator</span><span class="o">=</span><span class="n">du</span><span class="p">,</span>
+        <span class="n">denominator</span><span class="o">=</span><span class="n">Const</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">u</span><span class="p">),</span>
+        <span class="n">zero_denominator_value</span><span class="o">=</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">protected_derivative</span> <span class="o">*</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="asin">
@@ -1945,6 +1974,48 @@
 
 
 
+<div class="viewcode-block" id="safe_divide">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic.safe_divide">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">safe_divide</span><span class="p">(</span>
+        <span class="n">numerator</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">NUMBER</span><span class="p">,</span>
+        <span class="n">denominator</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">NUMBER</span><span class="p">,</span>
+        <span class="n">zero_denominator_value</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">NUMBER</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a division that remains defined for an exact zero denominator.</span>
+
+<span class="sd">    Non-zero denominators retain ordinary division. The caller must state the</span>
+<span class="sd">    value that replaces an exact zero denominator so the complete numerical</span>
+<span class="sd">    rule remains visible at every equation site.</span>
+
+<span class="sd">    :param numerator: Dividend expression.</span>
+<span class="sd">    :param denominator: Divisor expression.</span>
+<span class="sd">    :param zero_denominator_value: Explicit replacement for an exact zero.</span>
+<span class="sd">    :return: Symbolic division with an explicit zero-denominator branch.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">numerator_expression</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">_to_expr</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span>
+    <span class="n">denominator_expression</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">_to_expr</span><span class="p">(</span><span class="n">denominator</span><span class="p">)</span>
+    <span class="n">zero_denominator_expression</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">_to_expr</span><span class="p">(</span><span class="n">zero_denominator_value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">zero_denominator_expression</span><span class="p">,</span> <span class="n">Const</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">zero_denominator_expression</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;zero_denominator_value must be non-zero&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">denominator_is_nonzero</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">heaviside</span><span class="p">(</span><span class="n">denominator_expression</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">heaviside</span><span class="p">(</span><span class="o">-</span><span class="n">denominator_expression</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">effective_denominator</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">denominator_is_nonzero</span> <span class="o">*</span> <span class="n">denominator_expression</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">Const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">denominator_is_nonzero</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">zero_denominator_expression</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">numerator_expression</span> <span class="o">/</span> <span class="n">effective_denominator</span></div>
+
+
+
 <div class="viewcode-block" id="hard_sat">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.symbolic.hard_sat">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hard_sat</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">x_min</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">NUMBER</span><span class="p">,</span> <span class="n">x_max</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">|</span> <span class="n">NUMBER</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Expr</span><span class="p">:</span>
@@ -2093,7 +2164,6 @@
             <span class="k">return</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">+</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">dy</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">+</span> <span class="n">heaviside</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">dy</span>
-
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown binary function &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
     <span class="c1"># --- simplification ------------------------------------------------------</span>
@@ -2195,6 +2265,13 @@
                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
                 <span class="s2">&quot;non_mutable_uid&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+                <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;network_conn&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">network_conn</span><span class="p">,</span>
+                <span class="s2">&quot;shared_reference&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="kc">None</span>
+                    <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">shared_ref</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">shared_ref</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">shared_ref</span><span class="o">.</span><span class="n">uid</span><span class="p">}</span>
+                <span class="p">),</span>
                 <span class="s2">&quot;base_var&quot;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span>
             <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2203,6 +2280,13 @@
                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
                 <span class="s2">&quot;non_mutable_uid&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+                <span class="s2">&quot;reference&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">ref</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;network_conn&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">network_conn</span><span class="p">,</span>
+                <span class="s2">&quot;shared_reference&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="kc">None</span>
+                    <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">shared_ref</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">shared_ref</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">expr</span><span class="o">.</span><span class="n">shared_ref</span><span class="o">.</span><span class="n">uid</span><span class="p">}</span>
+                <span class="p">),</span>
                 <span class="s2">&quot;base_var&quot;</span><span class="p">:</span> <span class="n">_expr_to_dict</span><span class="p">(</span><span class="n">expr</span><span class="o">.</span><span class="n">base_var</span><span class="p">),</span>
             <span class="p">}</span>
 
@@ -2281,8 +2365,57 @@
             <span class="c1"># time that value was also the physical variable identity.</span>
             <span class="n">non_mutable_uid</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">]</span>
 
+        <span class="c1"># Preserve the optional physical-network meaning of every variable.</span>
+        <span class="c1"># Missing fields keep legacy dictionaries readable.</span>
+        <span class="n">reference_name_data</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reference&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reference_name_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reference</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference_name_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">reference_name_data</span> <span class="ow">in</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">__members__</span>
+        <span class="p">):</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">__members__</span><span class="p">[</span><span class="n">reference_name_data</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown power-flow variable reference &#39;</span><span class="si">{</span><span class="n">reference_name_data</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">network_conn_data</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;network_conn&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">network_conn_data</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">network_conn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">network_conn_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Variable network_conn must be a boolean&quot;</span><span class="p">)</span>
+
+        <span class="n">shared_reference_data</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shared_reference&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shared_reference_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shared_reference</span><span class="p">:</span> <span class="n">SharedVarReferenceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared_reference_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">shared_reference_name</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">shared_reference_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">shared_reference_uid</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">shared_reference_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared_reference_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared_reference_uid</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shared_reference_uid</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">shared_reference</span> <span class="o">=</span> <span class="n">SharedVarReferenceType</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">shared_reference_name</span><span class="p">,</span>
+                    <span class="n">uid</span><span class="o">=</span><span class="n">shared_reference_uid</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Variable shared_reference must contain a string name and integer uid&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Variable shared_reference must be a dictionary or None&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;base_var&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">non_mutable_uid</span><span class="p">)</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span>
+                <span class="n">network_conn</span><span class="o">=</span><span class="n">network_conn</span><span class="p">,</span>
+                <span class="n">shared_reference</span><span class="o">=</span><span class="n">shared_reference</span><span class="p">,</span>
+                <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">non_mutable_uid</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># reconstruct base_var</span>
             <span class="n">base_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;base_var&quot;</span><span class="p">]</span>
@@ -2291,6 +2424,9 @@
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;base_var must be a Var&quot;</span><span class="p">)</span>
 
             <span class="n">obj</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                      <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span>
+                      <span class="n">network_conn</span><span class="o">=</span><span class="n">network_conn</span><span class="p">,</span>
+                      <span class="n">shared_reference</span><span class="o">=</span><span class="n">shared_reference</span><span class="p">,</span>
                       <span class="n">non_mutable_uid</span><span class="o">=</span><span class="n">non_mutable_uid</span><span class="p">,</span>
                       <span class="n">base_var</span><span class="o">=</span><span class="n">base_var</span><span class="p">)</span>
 
@@ -2997,6 +3133,7 @@
     <span class="s2">&quot;heaviside&quot;</span><span class="p">,</span>
     <span class="s2">&quot;rand&quot;</span><span class="p">,</span>
     <span class="s2">&quot;atan2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;safe_divide&quot;</span><span class="p">,</span>
     <span class="s2">&quot;piecewise&quot;</span><span class="p">,</span>
     <span class="s2">&quot;symbolic_to_string&quot;</span><span class="p">,</span>
     <span class="s2">&quot;string_to_symbolic&quot;</span><span class="p">,</span>

@@ -1224,7 +1224,7 @@ class  PseudoTransient:
                 axs_state_eq[i].set_ylabel("Eq value")
                 axs_state_eq[i].legend(loc="best", fontsize="x-small", ncol=2, frameon=False)
             axs_state_eq[-1].set_xlabel("Step index")
-        plt.show()
+        plt.show(block=False)
 
     def _report_failure_svd_diagnostics(self, x: Vec, xn: Vec, dx: Vec, dtau: float, context: str) -> None:
         if not self.verbose:

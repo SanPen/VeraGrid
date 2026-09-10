@@ -303,13 +303,13 @@ class TopologyReduction(DriverTemplate):
 
         self.toc()
 
-    def cancel(self):
+    def cancel(self) -> None:
         """
         Cancel the simulation
-        :return:
+
+        :return: None
         """
         self.__cancel__ = True
-        self.report_done("Cancelled!")
 
 
 class DeleteAndReduce(DriverTemplate):
@@ -361,13 +361,13 @@ class DeleteAndReduce(DriverTemplate):
         self._is_running = False
         self.toc()
 
-    def cancel(self):
+    def cancel(self) -> None:
         """
         Cancel the simulation
-        :return:
+
+        :return: None
         """
         self.__cancel__ = True
-        self.report_done()
 
     def start(self):
         self.run()

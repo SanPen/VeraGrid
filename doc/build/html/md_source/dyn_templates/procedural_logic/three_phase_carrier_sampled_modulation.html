@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Three-phase carrier sampled modulation &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Three-phase carrier sampled modulation &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -170,6 +170,10 @@
 <section id="runtime-behavior">
 <h2>Runtime behavior<a class="headerlink" href="#runtime-behavior" title="Link to this heading"></a></h2>
 <p>Samples are updated only at carrier boundaries and remain constant between them. The logic requests those boundaries from the solver. Place it before a PWM entry that consumes the sampled modes during the same accepted update.</p>
+</section>
+<section id="library-block">
+<h2>Library block<a class="headerlink" href="#library-block" title="Link to this heading"></a></h2>
+<p>The standalone block exposes three modulation inputs and three sampled outputs. <code class="docutils literal notranslate"><span class="pre">switching_frequency</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">2π·1000</span></code> radians per second and <code class="docutils literal notranslate"><span class="pre">carrier_phase</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">0.0</span></code>.</p>
 </section>
 </section>
 

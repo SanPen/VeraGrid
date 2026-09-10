@@ -555,19 +555,74 @@ li.checked::マーカー { content: &quot;\2612&quot;; }&lt;/style&gt;&lt;/head&
 <context>
     <name>BlockEditorWindow</name>
     <message>
-        <location filename="../DynamicModelEditor/block_editor.ui" line="14"/>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="14"/>
         <source>BlockEditorWindow</source>
         <translation>BlockEditorWindow</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/block_editor.ui" line="116"/>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="116"/>
         <source>Library</source>
         <translation>図書館</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/block_editor.ui" line="155"/>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="155"/>
         <source>Search basic blocks</source>
         <translation>基本ブロックを検索する</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="208"/>
+        <source>toolBar</source>
+        <translation>toolBar</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="237"/>
+        <source>CheckModel</source>
+        <translation>CheckModel</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="240"/>
+        <source>Inspect model</source>
+        <translation>モデルの検査</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="252"/>
+        <source>Center</source>
+        <translation>中心</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="264"/>
+        <source>Zoom in</source>
+        <translation>ズームイン</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="276"/>
+        <source>Zoom out</source>
+        <translation>ズームアウト</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="291"/>
+        <source>Delete all</source>
+        <translation>すべて削除</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="294"/>
+        <source>Delete all blocks to start from scratch.</source>
+        <translation>すべてのブロックを削除して最初から始めます。</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="306"/>
+        <source>Validate</source>
+        <translation>検証する</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="318"/>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/block_editor.ui" line="321"/>
+        <source>Ctrl+S</source>
+        <translation>Ctrl+S</translation>
     </message>
     <message>
         <source>Variables</source>
@@ -606,22 +661,60 @@ li.checked::マーカー { content: &quot;\2612&quot;; }&lt;/style&gt;&lt;/head&
     </message>
 </context>
 <context>
+    <name>BlockPropertyTreeModel</name>
+    <message>
+        <source>Missing PF mapping</source>
+        <translation>PFマッピングが不足しています</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名前</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>出力</translation>
+    </message>
+    <message>
+        <source>Power-flow reference; variable mappings are used for initialization.</source>
+        <translation>電力潮流参照；変数マッピングは初期化に使用されます。</translation>
+    </message>
+    <message>
+        <source>Template issue: static parameters require api_obj_mapping. An independently editable parameter should be in event_dict. This refactor does not migrate templates automatically.</source>
+        <translation>テンプレートの問題：静的パラメータはapi_obj_mappingが必要です。独立して編集可能なパラメータはevent_dictに含まれている必要があります。このリファクタリングではテンプレートは自動的に移行されません。</translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation>種類</translation>
+    </message>
+    <message>
+        <source>Value / PF reference</source>
+        <translation>値 / PF参照</translation>
+    </message>
+</context>
+<context>
+    <name>BlockPropertyValueDelegate</name>
+    <message>
+        <source>None</source>
+        <translation>なし</translation>
+    </message>
+</context>
+<context>
     <name>BlockSymbolFilterProxyModel</name>
     <message>
         <source>Initializes a variable through VarPowerFlowReferenceType and block.external_mapping.</source>
-        <translation>VarPowerFlowReferenceType および block.external_mapping を介して変数を初期化します。</translation>
+        <translation type="vanished">VarPowerFlowReferenceType および block.external_mapping を介して変数を初期化します。</translation>
     </message>
     <message>
         <source>Maps a static parameter through ParamPowerFlowReferenceType to block.api_obj_mapping. Dynamic parameters are not editable here.</source>
-        <translation>ParamPowerFlowReferenceType を介して静的パラメータを block.api_obj_mapping にマッピングします。動的パラメータはここで編集できません。</translation>
+        <translation type="vanished">ParamPowerFlowReferenceType を介して静的パラメータを block.api_obj_mapping にマッピングします。動的パラメータはここで編集できません。</translation>
     </message>
     <message>
         <source>Power-flow derived initialization</source>
-        <translation>電力潮流から導出された初期化</translation>
+        <translation type="vanished">電力潮流から導出された初期化</translation>
     </message>
     <message>
         <source>Static parameter mapping</source>
-        <translation>静的パラメータマッピング</translation>
+        <translation type="vanished">静的パラメータマッピング</translation>
     </message>
 </context>
 <context>
@@ -851,6 +944,13 @@ li.checked::マーカー { content: &quot;\2612&quot;; }&lt;/style&gt;&lt;/head&
     <message>
         <source>Select the CGMES options</source>
         <translation>CGMESオプションを選択</translation>
+    </message>
+</context>
+<context>
+    <name>CompiledArraysMain</name>
+    <message>
+        <source>Array plot</source>
+        <translation>配列プロット</translation>
     </message>
 </context>
 <context>
@@ -1810,6 +1910,22 @@ Are you sure?</source>
         <source>Paste column</source>
         <translation>列を貼り付け</translation>
     </message>
+    <message>
+        <source>Index column width</source>
+        <translation>インデックス列の幅</translation>
+    </message>
+    <message>
+        <source>Set index width</source>
+        <translation>インデックス幅の設定</translation>
+    </message>
+    <message>
+        <source>Width in pixels</source>
+        <translation>ピクセル単位の幅</translation>
+    </message>
+    <message>
+        <source>Object histogram</source>
+        <translation>オブジェクトヒストグラム</translation>
+    </message>
 </context>
 <context>
     <name>DcLineDeviceEditor</name>
@@ -2074,19 +2190,19 @@ Are you sure?</source>
     </message>
     <message>
         <source>No EMT Events Group</source>
-        <translation>EMTイベントグループがありません</translation>
+        <translation type="vanished">EMTイベントグループがありません</translation>
     </message>
     <message>
         <source>No EMT Events Group found, please create one before adding an event.</source>
-        <translation>EMTイベントグループが見つかりません。イベントを追加する前に作成してください。</translation>
+        <translation type="vanished">EMTイベントグループが見つかりません。イベントを追加する前に作成してください。</translation>
     </message>
     <message>
         <source>No RMS Events Group</source>
-        <translation>RMSイベントグループがありません</translation>
+        <translation type="vanished">RMSイベントグループがありません</translation>
     </message>
     <message>
         <source>No RMS Events Group found, please create one before adding an event.</source>
-        <translation>RMSイベントグループが見つかりません。イベントを追加する前に作成してください。</translation>
+        <translation type="vanished">RMSイベントグループが見つかりません。イベントを追加する前に作成してください。</translation>
     </message>
     <message>
         <source>No buses were found associated with the substation {substation_name}</source>
@@ -2683,7 +2799,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Change Block Name</source>
-        <translation>ブロック名の変更</translation>
+        <translation type="vanished">ブロック名の変更</translation>
     </message>
     <message>
         <source>Change Variable Name</source>
@@ -2723,11 +2839,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>There are unapplied changes. Do you want to close without applying them?</source>
-        <translation type="vanished">未適用に変更があります。適用せずに閉じますか？</translation>
+        <translation>未適用に変更があります。適用せずに閉じますか？</translation>
     </message>
     <message>
         <source>Unsaved changes</source>
-        <translation type="vanished">未保存の変更</translation>
+        <translation>未保存の変更</translation>
     </message>
     <message>
         <source>You are going to delete the complete model and start from scratch. Are you sure?</source>
@@ -2737,12 +2853,12 @@ Are you sure?</source>
 <context>
     <name>DynamicBlockPropertiesDialog</name>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="14"/>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="14"/>
         <source>Block properties</source>
         <translation>ブロックプロパティ</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="67"/>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="70"/>
         <source>Apply changes</source>
         <translation>変更を適用</translation>
     </message>
@@ -2764,7 +2880,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Advanced runtime logic</source>
-        <translation>高度な実行時ロジック</translation>
+        <translation type="vanished">高度な実行時ロジック</translation>
     </message>
     <message>
         <source>Apply structural settings separately from DAE-code or symbol-interface changes.</source>
@@ -2792,7 +2908,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Catalogue type</source>
-        <translation>カタログタイプ</translation>
+        <translation type="vanished">カタログタイプ</translation>
     </message>
     <message>
         <source>Changes applied to the editor working copy.</source>
@@ -2816,11 +2932,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>DAE code is valid.</source>
-        <translation>DAEコードは有効です。</translation>
+        <translation type="vanished">DAEコードは有効です。</translation>
     </message>
     <message>
         <source>DAE model</source>
-        <translation>DAEモデル</translation>
+        <translation type="vanished">DAEモデル</translation>
     </message>
     <message>
         <source>DAE validation failed at line {line}: {message}</source>
@@ -2860,7 +2976,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Generated structure</source>
-        <translation>生成された構造</translation>
+        <translation type="vanished">生成された構造</translation>
     </message>
     <message>
         <source>Initial numeric value</source>
@@ -2868,7 +2984,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Inputs</source>
-        <translation>入力</translation>
+        <translation type="vanished">入力</translation>
     </message>
     <message>
         <source>Invalid DAE code.</source>
@@ -2884,7 +3000,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Name</source>
-        <translation>名前</translation>
+        <translation type="vanished">名前</translation>
     </message>
     <message>
         <source>New symbol name</source>
@@ -2912,7 +3028,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Online documentation</source>
-        <translation>オンラインドキュメント</translation>
+        <translation type="vanished">オンラインドキュメント</translation>
     </message>
     <message>
         <source>Opens the documentation for the original predefined library block. If this block has been modified in the editor, its current equations, symbols, parameters, or runtime logic may differ from the online documentation.</source>
@@ -2924,7 +3040,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Outputs</source>
-        <translation>出力</translation>
+        <translation type="vanished">出力</translation>
     </message>
     <message>
         <source>Owner block</source>
@@ -2940,7 +3056,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Parameters</source>
-        <translation>パラメータ</translation>
+        <translation type="vanished">パラメータ</translation>
     </message>
     <message>
         <source>Power-flow variable</source>
@@ -2960,11 +3076,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Rename...</source>
-        <translation>名前変更...</translation>
+        <translation type="vanished">名前変更...</translation>
     </message>
     <message>
         <source>Runtime logic</source>
-        <translation>実行時ロジック</translation>
+        <translation type="vanished">実行時ロジック</translation>
     </message>
     <message>
         <source>Save dynamic equations PDF</source>
@@ -2976,11 +3092,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Search parameters...</source>
-        <translation>パラメータを検索...</translation>
+        <translation type="vanished">パラメータを検索...</translation>
     </message>
     <message>
         <source>Search variables...</source>
-        <translation>変数を検索...</translation>
+        <translation type="vanished">変数を検索...</translation>
     </message>
     <message>
         <source>Select a valid owner block.</source>
@@ -3008,7 +3124,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Special settings</source>
-        <translation>特別な設定</translation>
+        <translation type="vanished">特別な設定</translation>
     </message>
     <message>
         <source>Static device mapping</source>
@@ -3040,7 +3156,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Validate all code</source>
-        <translation>すべてのコードを検証</translation>
+        <translation type="vanished">すべてのコードを検証</translation>
     </message>
     <message>
         <source>Variable renamed to &apos;{name}&apos;.</source>
@@ -3048,11 +3164,105 @@ Are you sure?</source>
     </message>
     <message>
         <source>Variables</source>
-        <translation>変数</translation>
+        <translation type="vanished">変数</translation>
     </message>
     <message>
         <source>{active} / {count}</source>
         <translation>{active} / {count}</translation>
+    </message>
+    <message>
+        <source>+ Add procedural logic</source>
+        <translation>+ 手続きロジックの追加</translation>
+    </message>
+    <message>
+        <source>Add one procedural behavior to the active equation owner&apos;s Python code.</source>
+        <translation>アクティブな方程式所有者のPythonコードに手続き的な動作を追加します。</translation>
+    </message>
+    <message>
+        <source>DAE editor</source>
+        <translation>DAEエディタ</translation>
+    </message>
+    <message>
+        <source>Documentation</source>
+        <translation>ドキュメント</translation>
+    </message>
+    <message>
+        <source>Model code is valid.</source>
+        <translation>モデルコードは有効です。</translation>
+    </message>
+    <message>
+        <source>Model is valid. Warning: {message}</source>
+        <translation>モデルは有効です。警告: {message}</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>名前変更</translation>
+    </message>
+    <message>
+        <source>Retained mode</source>
+        <translation>保持モード</translation>
+    </message>
+    <message>
+        <source>Search properties...</source>
+        <translation>プロパティを検索...</translation>
+    </message>
+    <message>
+        <source>Select a valid procedural logic type.</source>
+        <translation>有効な手続きロジックタイプを選択してください。</translation>
+    </message>
+    <message>
+        <source>Show or hide Python code and LaTeX rendering tool</source>
+        <translation>PythonコードとLaTeXレンダリングツールの表示/非表示</translation>
+    </message>
+    <message>
+        <source>Special configuration</source>
+        <translation>特別な設定</translation>
+    </message>
+    <message>
+        <source>The retained mode owner has no Python-code buffer.</source>
+        <translation>保持モードの所有者にPythonコードバッファがありません。</translation>
+    </message>
+    <message>
+        <source>The selected owner has no Python-code buffer.</source>
+        <translation>選択された所有者にPythonコードバッファがありません。</translation>
+    </message>
+    <message>
+        <source>Validate model</source>
+        <translation>モデルを検証</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicBlockPropertiesDockWidget</name>
+    <message>
+        <source>Block Properties contains changes that have not been applied. Discard those changes and close the editor?</source>
+        <translation>ブロックプロパティには適用されていない変更が含まれています。これらの変更を破棄してエディタを閉じますか？</translation>
+    </message>
+    <message>
+        <source>Unsaved Block Properties changes</source>
+        <translation>未保存のブロックプロパティの変更</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicDeviceTreeWidget</name>
+    <message>
+        <source>EMT editor</source>
+        <translation>EMTエディタ</translation>
+    </message>
+    <message>
+        <source>EMT events</source>
+        <translation>EMTイベント</translation>
+    </message>
+    <message>
+        <source>RMS editor</source>
+        <translation>RMSエディタ</translation>
+    </message>
+    <message>
+        <source>RMS events</source>
+        <translation>RMSイベント</translation>
+    </message>
+    <message>
+        <source>Type to search the device</source>
+        <translation>入力してデバイスを検索します</translation>
     </message>
 </context>
 <context>
@@ -3113,64 +3323,95 @@ Are you sure?</source>
     </message>
 </context>
 <context>
+    <name>DynamicEditorWorkspaceSession</name>
+    <message>
+        <source>Invalid dynamic events</source>
+        <translation>無効な動的イベント</translation>
+    </message>
+    <message>
+        <source>Save the changes before closing the last events tab?</source>
+        <translation>最後のイベントタブを閉じる前に変更を保存しますか？</translation>
+    </message>
+    <message>
+        <source>The dynamic events contain unsaved changes.</source>
+        <translation>動的イベントに未保存の変更があります。</translation>
+    </message>
+    <message>
+        <source>Unsaved dynamic events</source>
+        <translation>未保存の動的イベント</translation>
+    </message>
+</context>
+<context>
     <name>DynamicEditorWorkspaceWindow</name>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="14"/>
+        <location filename="../DynamicModelEditor/Workspace/dynamic_editor_workspace.ui" line="14"/>
         <source>Dynamic Editor Workspace</source>
         <translation>動的エディターのワークスペース</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="79"/>
+        <location filename="../DynamicModelEditor/Workspace/dynamic_editor_workspace.ui" line="79"/>
         <source>Type to search the device</source>
         <translation>入力してデバイスを検索します</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="126"/>
+        <location filename="../DynamicModelEditor/Workspace/dynamic_editor_workspace.ui" line="126"/>
         <source>toolBar</source>
         <translation>toolBar</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="157"/>
+        <location filename="../DynamicModelEditor/Workspace/dynamic_editor_workspace.ui" line="168"/>
+        <source>RMS Editor</source>
+        <translation>RMS エディター</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Workspace/dynamic_editor_workspace.ui" line="180"/>
+        <source>EMT Editor</source>
+        <translation>EMT 編集者</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Workspace/dynamic_editor_workspace.ui" line="192"/>
+        <source>RMS Events</source>
+        <translation>RMSイベント</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Workspace/dynamic_editor_workspace.ui" line="204"/>
+        <source>EMT Events</source>
+        <translation>EMTイベント</translation>
+    </message>
+    <message>
         <source>CheckModel</source>
-        <translation>CheckModel</translation>
+        <translation type="vanished">CheckModel</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="160"/>
         <source>Inspect model</source>
-        <translation>モデルの検査</translation>
+        <translation type="vanished">モデルの検査</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="172"/>
         <source>Center</source>
-        <translation>中心</translation>
+        <translation type="vanished">中心</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="184"/>
         <source>Zoom in</source>
-        <translation>ズームイン</translation>
+        <translation type="vanished">ズームイン</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="196"/>
         <source>Zoom out</source>
-        <translation>ズームアウト</translation>
+        <translation type="vanished">ズームアウト</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="211"/>
         <source>Delete all</source>
-        <translation>すべて削除</translation>
+        <translation type="vanished">すべて削除</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="214"/>
         <source>Delete all blocks to start from scratch.</source>
-        <translation>すべてのブロックを削除して最初から始めます。</translation>
+        <translation type="vanished">すべてのブロックを削除して最初から始めます。</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="226"/>
         <source>Validate</source>
-        <translation>検証する</translation>
+        <translation type="vanished">検証する</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="238"/>
+        <location filename="../DynamicModelEditor/Workspace/dynamic_editor_workspace.ui" line="156"/>
         <source>view tree</source>
         <translation>ビューツリー</translation>
     </message>
@@ -3180,103 +3421,97 @@ Are you sure?</source>
     </message>
     <message>
         <source>Open EMT editor</source>
-        <translation>EMT エディターを開く</translation>
+        <translation type="vanished">EMT エディターを開く</translation>
     </message>
     <message>
         <source>Open RMS editor</source>
-        <translation>RMS エディターを開く</translation>
+        <translation type="vanished">RMS エディターを開く</translation>
     </message>
 </context>
 <context>
     <name>DynamicEventDialogue</name>
     <message>
-        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="14"/>
         <source>Dynamic Event Editor</source>
-        <translation>動的イベントエディタ</translation>
+        <translation type="vanished">動的イベントエディタ</translation>
     </message>
     <message>
-        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="20"/>
         <source>&lt;b&gt;Target device:&lt;/b&gt;</source>
-        <translation>&lt;b&gt;対象デバイス:&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;対象デバイス:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="58"/>
         <source>➕ New Event Group</source>
-        <translation>➕ 新しいイベントグループ</translation>
+        <translation type="vanished">➕ 新しいイベントグループ</translation>
     </message>
     <message>
-        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="69"/>
         <source>➕ Add New Event</source>
-        <translation>➕ 新しいイベントを追加</translation>
+        <translation type="vanished">➕ 新しいイベントを追加</translation>
     </message>
     <message>
-        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="76"/>
         <source>❌ Remove Selected Rows</source>
-        <translation>❌ 選択した行を削除</translation>
+        <translation type="vanished">❌ 選択した行を削除</translation>
     </message>
     <message>
-        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="85"/>
         <source>Switch Sequence Wizard</source>
-        <translation>シーケンスウィザードの切り替え</translation>
+        <translation type="vanished">シーケンスウィザードの切り替え</translation>
     </message>
 </context>
 <context>
     <name>DynamicEventEditor</name>
     <message>
         <source>&lt;b&gt;Target device:&lt;/b&gt;</source>
-        <translation>&lt;b&gt;対象デバイス:&lt;/b&gt;</translation>
+        <translation type="vanished">&lt;b&gt;対象デバイス:&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Align Step</source>
-        <translation>ステップを整列</translation>
+        <translation type="vanished">ステップを整列</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>キャンセル</translation>
+        <translation type="vanished">キャンセル</translation>
     </message>
     <message>
         <source>Dynamic Event Editor</source>
-        <translation>動的イベントエディタ</translation>
+        <translation type="vanished">動的イベントエディタ</translation>
     </message>
     <message>
         <source>EMT Event Editor</source>
-        <translation>EMTイベントエディタ</translation>
+        <translation type="vanished">EMTイベントエディタ</translation>
     </message>
     <message>
         <source>EMT group Created</source>
-        <translation>EMTグループが作成されました</translation>
+        <translation type="vanished">EMTグループが作成されました</translation>
     </message>
     <message>
         <source>End Time</source>
-        <translation>終了時間</translation>
+        <translation type="vanished">終了時間</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation>グループ</translation>
+        <translation type="vanished">グループ</translation>
     </message>
     <message>
         <source>Group: {group_name}</source>
-        <translation>グループ: {group_name}</translation>
+        <translation type="vanished">グループ: {group_name}</translation>
     </message>
     <message>
         <source>Invalid Input</source>
-        <translation>無効な入力</translation>
+        <translation type="vanished">無効な入力</translation>
     </message>
     <message>
         <source>Missing fields</source>
-        <translation>必須フィールドが不足しています</translation>
+        <translation type="vanished">必須フィールドが不足しています</translation>
     </message>
     <message>
         <source>New Value</source>
-        <translation>新しい値</translation>
+        <translation type="vanished">新しい値</translation>
     </message>
     <message>
         <source>New group name</source>
-        <translation>新しいグループ名</translation>
+        <translation type="vanished">新しいグループ名</translation>
     </message>
     <message>
         <source>New row {row_number}</source>
-        <translation>新しい行 {row_number}</translation>
+        <translation type="vanished">新しい行 {row_number}</translation>
     </message>
     <message>
         <source>No EMT Events Group</source>
@@ -3284,11 +3519,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>No EMT Events Group found, please create one before adding an event.</source>
-        <translation>EMTイベントグループが見つかりません。イベントを追加する前に作成してください。</translation>
+        <translation type="vanished">EMTイベントグループが見つかりません。イベントを追加する前に作成してください。</translation>
     </message>
     <message>
         <source>No Events</source>
-        <translation>イベントがありません</translation>
+        <translation type="vanished">イベントがありません</translation>
     </message>
     <message>
         <source>No RMS Events Group</source>
@@ -3296,95 +3531,95 @@ Are you sure?</source>
     </message>
     <message>
         <source>No RMS Events Group found, please create one before adding an event.</source>
-        <translation>RMSイベントグループが見つかりません。イベントを追加する前に作成してください。</translation>
+        <translation type="vanished">RMSイベントグループが見つかりません。イベントを追加する前に作成してください。</translation>
     </message>
     <message>
         <source>No Rows Selected</source>
-        <translation>行が選択されていません</translation>
+        <translation type="vanished">行が選択されていません</translation>
     </message>
     <message>
         <source>No switch EMT mode parameter is available in this device.</source>
-        <translation>このデバイスには、スイッチのEMTモードパラメータがありません。</translation>
+        <translation type="vanished">このデバイスには、スイッチのEMTモードパラメータがありません。</translation>
     </message>
     <message>
         <source>Overlapping Events</source>
-        <translation>重複するイベント</translation>
+        <translation type="vanished">重複するイベント</translation>
     </message>
     <message>
         <source>Parameter</source>
-        <translation>パラメータ</translation>
+        <translation type="vanished">パラメータ</translation>
     </message>
     <message>
         <source>Please add at least one event before confirming.</source>
-        <translation>確認する前に、少なくとも1つのイベントを追加してください。</translation>
+        <translation type="vanished">確認する前に、少なくとも1つのイベントを追加してください。</translation>
     </message>
     <message>
         <source>Please check at least one row to remove.</source>
-        <translation>削除するには、少なくとも1行を選択してください。</translation>
+        <translation type="vanished">削除するには、少なくとも1行を選択してください。</translation>
     </message>
     <message>
         <source>RMS Event Editor</source>
-        <translation>RMSイベントエディタ</translation>
+        <translation type="vanished">RMSイベントエディタ</translation>
     </message>
     <message>
         <source>RMS group Created</source>
-        <translation>RMSグループが作成されました</translation>
+        <translation type="vanished">RMSグループが作成されました</translation>
     </message>
     <message>
         <source>Ramp</source>
-        <translation>ランプ</translation>
+        <translation type="vanished">ランプ</translation>
     </message>
     <message>
         <source>Row {row_number}: {message}</source>
-        <translation>行 {row_number}: {message}</translation>
+        <translation type="vanished">行 {row_number}: {message}</translation>
     </message>
     <message>
         <source>Some events are overlapped and cannot be applied.</source>
-        <translation>一部のイベントが重複しているため、適用できません。</translation>
+        <translation type="vanished">一部のイベントが重複しているため、適用できません。</translation>
     </message>
     <message>
         <source>Step</source>
-        <translation>ステップ</translation>
+        <translation type="vanished">ステップ</translation>
     </message>
     <message>
         <source>Switch Sequence</source>
-        <translation>スイッチシーケンス</translation>
+        <translation type="vanished">スイッチシーケンス</translation>
     </message>
     <message>
         <source>Switch Sequence Wizard</source>
-        <translation>シーケンスウィザードの切り替え</translation>
+        <translation type="vanished">シーケンスウィザードの切り替え</translation>
     </message>
     <message>
         <source>Target device:</source>
-        <translation>対象デバイス:</translation>
+        <translation type="vanished">対象デバイス:</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>時間</translation>
+        <translation type="vanished">時間</translation>
     </message>
     <message>
         <source>Transition</source>
-        <translation>遷移</translation>
+        <translation type="vanished">遷移</translation>
     </message>
     <message>
         <source>group has invalid type</source>
-        <translation>グループのタイプが無効です</translation>
+        <translation type="vanished">グループのタイプが無効です</translation>
     </message>
     <message>
         <source>parameter must be Var</source>
-        <translation>パラメータはVarである必要があります</translation>
+        <translation type="vanished">パラメータはVarである必要があります</translation>
     </message>
     <message>
         <source>transition_type must be DynamicEventTransitionType</source>
-        <translation>transition_typeはDynamicEventTransitionTypeである必要があります</translation>
+        <translation type="vanished">transition_typeはDynamicEventTransitionTypeである必要があります</translation>
     </message>
     <message>
         <source>{origin}: {transition}, parameter={parameter}, time={time:.4f} s, end_time={end_time:.4f} s, value={value:.6f}</source>
-        <translation>{origin}: {transition}, パラメータ={parameter}, 時間={time:.4f} s, 終了時間={end_time:.4f} s, 値={value:.6f}</translation>
+        <translation type="vanished">{origin}: {transition}, パラメータ={parameter}, 時間={time:.4f} s, 終了時間={end_time:.4f} s, 値={value:.6f}</translation>
     </message>
     <message>
         <source>{origin}: {transition}, parameter={parameter}, time={time:.4f} s, value={value:.6f}</source>
-        <translation>{origin}: {transition}, パラメータ={parameter}, 時間={time:.4f} s, 値={value:.6f}</translation>
+        <translation type="vanished">{origin}: {transition}, パラメータ={parameter}, 時間={time:.4f} s, 値={value:.6f}</translation>
     </message>
     <message>
         <source>{prefix}: {group_name}</source>
@@ -3392,19 +3627,54 @@ Are you sure?</source>
     </message>
     <message>
         <source>✅ Add Events</source>
-        <translation>✅ イベントを追加</translation>
+        <translation type="vanished">✅ イベントを追加</translation>
     </message>
     <message>
         <source>❌ Remove Selected Rows</source>
-        <translation>❌ 選択した行を削除</translation>
+        <translation type="vanished">❌ 選択した行を削除</translation>
     </message>
     <message>
         <source>➕ Add New Event</source>
-        <translation>➕ 新しいイベントを追加</translation>
+        <translation type="vanished">➕ 新しいイベントを追加</translation>
     </message>
     <message>
         <source>➕ New Event Group</source>
-        <translation>➕ 新しいイベントグループ</translation>
+        <translation type="vanished">➕ 新しいイベントグループ</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicEventsDraftSession</name>
+    <message>
+        <source>An event and its events group use different simulation modes.</source>
+        <translation>イベントとそのイベントグループが異なるシミュレーションモードを使用しています。</translation>
+    </message>
+    <message>
+        <source>An event has no target device.</source>
+        <translation>イベントにターゲットデバイスがありません。</translation>
+    </message>
+    <message>
+        <source>An event in device &apos;{device}&apos; has no valid events group.</source>
+        <translation>デバイス &apos;{device}&apos; のイベントに有効なイベントグループがありません。</translation>
+    </message>
+    <message>
+        <source>An event in device &apos;{device}&apos; has no valid parameter.</source>
+        <translation>デバイス &apos;{device}&apos; のイベントに有効なパラメータがありません。</translation>
+    </message>
+    <message>
+        <source>An events group has an empty name.</source>
+        <translation>イベントグループに空の名前があります。</translation>
+    </message>
+    <message>
+        <source>Events for parameter &apos;{parameter}&apos; overlap in group &apos;{group}&apos; and device &apos;{device}&apos;.</source>
+        <translation>パラメータ &apos;{parameter}&apos; のイベントがグループ &apos;{group}&apos; およびデバイス &apos;{device}&apos; で重複しています。</translation>
+    </message>
+    <message>
+        <source>The events group name &apos;{name}&apos; is duplicated.</source>
+        <translation>イベントグループ名 &apos;{name}&apos; が重複しています。</translation>
+    </message>
+    <message>
+        <source>The ramp event for parameter &apos;{parameter}&apos; has an invalid end time.</source>
+        <translation>パラメータ &apos;{parameter}&apos; のランプイベントの終了時刻が無効です。</translation>
     </message>
 </context>
 <context>
@@ -3432,6 +3702,155 @@ Are you sure?</source>
     <message>
         <source>The name cannot be empty.</source>
         <translation>名前は空にできません。</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicEventsItemDelegate</name>
+    <message>
+        <source>Ramp</source>
+        <translation>ランプ</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>ステップ</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicEventsPage</name>
+    <message>
+        <source>Add an event to the selected event group</source>
+        <translation>選択されたイベントグループにイベントを追加</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to remove group &apos;{group}&apos;? This will remove {events} events from {devices} devices.</source>
+        <translation>グループ「{group}」を削除しますか？これにより、{devices}のデバイスから{events}個のイベントが削除されます。</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to remove the event for &apos;{parameter}&apos; at {time:.4f} s?</source>
+        <translation>「{parameter}」の{time:.4f} sのイベントを削除しますか？</translation>
+    </message>
+    <message>
+        <source>Create an EMT switch opening and reclosing event sequence</source>
+        <translation>EMT開閉および再閉路イベントシーケンスを作成</translation>
+    </message>
+    <message>
+        <source>Create an event group for this simulation mode</source>
+        <translation>このシミュレーションモードのイベントグループを作成</translation>
+    </message>
+    <message>
+        <source>Empty dynamic model</source>
+        <translation>動的モデルを空にする</translation>
+    </message>
+    <message>
+        <source>Events cannot be added because this dynamic model has no event parameters.</source>
+        <translation>この動的モデルにはイベントパラメータがないため、イベントを追加できません。</translation>
+    </message>
+    <message>
+        <source>Events saved</source>
+        <translation>イベントを保存しました</translation>
+    </message>
+    <message>
+        <source>Invalid dynamic events</source>
+        <translation>無効な動的イベント</translation>
+    </message>
+    <message>
+        <source>Invalid event group</source>
+        <translation>無効なイベントグループ</translation>
+    </message>
+    <message>
+        <source>Invalid parameter</source>
+        <translation>無効なパラメータ</translation>
+    </message>
+    <message>
+        <source>No events can be added because the dynamic model has no event parameters.</source>
+        <translation>動的モデルにイベントパラメータがないため、イベントを追加できません。</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>取り除く</translation>
+    </message>
+    <message>
+        <source>Remove event</source>
+        <translation>イベントを削除</translation>
+    </message>
+    <message>
+        <source>Remove events group</source>
+        <translation>イベントグループを削除</translation>
+    </message>
+    <message>
+        <source>Remove the selected event or event group</source>
+        <translation>選択したイベントまたはイベントグループを削除</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>名前変更</translation>
+    </message>
+    <message>
+        <source>Save events</source>
+        <translation>イベントを保存</translation>
+    </message>
+    <message>
+        <source>Select the event group where you want to add the event.</source>
+        <translation>イベントを追加したいイベントグループを選択してください。</translation>
+    </message>
+    <message>
+        <source>Select the event or event group you want to remove.</source>
+        <translation>削除したいイベントまたはイベントグループを選択してください。</translation>
+    </message>
+    <message>
+        <source>Switch Sequence Wizard</source>
+        <translation>シーケンスウィザードの切り替え</translation>
+    </message>
+    <message>
+        <source>The event group name must be non-empty and unique in this simulation mode.</source>
+        <translation>イベントグループ名は、このシミュレーションモードで空ではなく、一意である必要があります。</translation>
+    </message>
+    <message>
+        <source>This dynamic model is empty. New events cannot be added until the model is built.</source>
+        <translation>この動的モデルは空です。モデルが構築されるまで、新しいイベントを追加することはできません。</translation>
+    </message>
+    <message>
+        <source>➕ New Event Group</source>
+        <translation>➕ 新しいイベントグループ</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicEventsTreeModel</name>
+    <message>
+        <source>Align Step</source>
+        <translation>ステップを整列</translation>
+    </message>
+    <message>
+        <source>End Time</source>
+        <translation>終了時間</translation>
+    </message>
+    <message>
+        <source>Invalid / Ungrouped Events</source>
+        <translation>無効な / グループ化されていないイベント</translation>
+    </message>
+    <message>
+        <source>Invalid parameter</source>
+        <translation>無効なパラメータ</translation>
+    </message>
+    <message>
+        <source>New Value</source>
+        <translation>新しい値</translation>
+    </message>
+    <message>
+        <source>Parameter</source>
+        <translation>パラメータ</translation>
+    </message>
+    <message>
+        <source>These persisted events do not reference a valid events group and can only be removed.</source>
+        <translation>これらの永続イベントは有効なイベントグループを参照していないため、削除のみが可能です。</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation>時間</translation>
+    </message>
+    <message>
+        <source>Transition</source>
+        <translation>遷移</translation>
     </message>
 </context>
 <context>
@@ -3481,11 +3900,11 @@ Are you sure?</source>
     <name>EquationLatexModel</name>
     <message>
         <source>Equation</source>
-        <translation>方程式</translation>
+        <translation type="vanished">方程式</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>種類</translation>
+        <translation type="vanished">種類</translation>
     </message>
 </context>
 <context>
@@ -3866,6 +4285,10 @@ IMPORTANT: This will take into account every movement of substation and line loc
     <message>
         <source>create substation diagram</source>
         <translation>変電所スキーム図を作成</translation>
+    </message>
+    <message>
+        <source>{device_name} profiles plot</source>
+        <translation>{device_name}プロファイルプロット</translation>
     </message>
 </context>
 <context>
@@ -4298,6 +4721,14 @@ Cancel and retry?</source>
     <message>
         <source>The file was loaded but the current project was kept because closing a dynamic editor was cancelled.</source>
         <translation>ファイルは読み込まれましたが、動的エディタを閉じる操作がキャンセルされたため、現在のプロジェクトが保持されました。</translation>
+    </message>
+    <message>
+        <source>Some operations are still stopping. Try again after they finish.</source>
+        <translation>いくつかの操作がまだ停止中です。完了後に再試行してください。</translation>
+    </message>
+    <message>
+        <source>The current save is still finishing. Please retry when it is done.</source>
+        <translation>現在の保存がまだ完了していません。完了後に再試行してください。</translation>
     </message>
 </context>
 <context>
@@ -6293,6 +6724,13 @@ Cancel it and close the window?</source>
     </message>
 </context>
 <context>
+    <name>PopupResizeGrip</name>
+    <message>
+        <source>Resize</source>
+        <translation>サイズ変更</translation>
+    </message>
+</context>
+<context>
     <name>ProceduralGridWindow</name>
     <message>
         <source>Procedural grid expansion</source>
@@ -6346,6 +6784,10 @@ Consider loading a valid source of data.</source>
     <message>
         <source>Value error loading CSV file</source>
         <translation>CSVファイルの読み込み中に値エラーが発生しました</translation>
+    </message>
+    <message>
+        <source>Profile plot</source>
+        <translation>プロファイルプロット</translation>
     </message>
 </context>
 <context>
@@ -6654,12 +7096,27 @@ Are you ok with potentially waiting a lot?</source>
         <source>{file_name} is not valid :(</source>
         <translation>{file_name} は無効です :(</translation>
     </message>
+    <message>
+        <source>Results plot</source>
+        <translation>結果プロット</translation>
+    </message>
 </context>
 <context>
     <name>ResultsModel</name>
     <message>
         <source>Plotting error</source>
         <translation>プロットエラー</translation>
+    </message>
+</context>
+<context>
+    <name>RetainedModeDraftTableModel</name>
+    <message>
+        <source>Retained mode</source>
+        <translation>保持モード</translation>
+    </message>
+    <message>
+        <source>Select one retained mode.</source>
+        <translation>保持モードを一つ選択してください。</translation>
     </message>
 </context>
 <context>
@@ -6799,99 +7256,99 @@ Are you ok with potentially waiting a lot?</source>
     <name>RuntimeLogicEditorWidget</name>
     <message>
         <source>Add entry</source>
-        <translation>エントリを追加</translation>
+        <translation type="vanished">エントリを追加</translation>
     </message>
     <message>
         <source>Add retained mode</source>
-        <translation>保持モードを追加</translation>
+        <translation type="vanished">保持モードを追加</translation>
     </message>
     <message>
         <source>Configuration</source>
-        <translation>設定</translation>
+        <translation type="vanished">設定</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>消去</translation>
+        <translation type="vanished">消去</translation>
     </message>
     <message>
         <source>Delete retained mode</source>
-        <translation>保持モードを削除</translation>
+        <translation type="vanished">保持モードを削除</translation>
     </message>
     <message>
         <source>Documentation</source>
-        <translation>ドキュメント</translation>
+        <translation type="vanished">ドキュメント</translation>
     </message>
     <message>
         <source>Enter a procedural entry name.</source>
-        <translation>手続き型エントリ名を入力してください。</translation>
+        <translation type="vanished">手続き型エントリ名を入力してください。</translation>
     </message>
     <message>
         <source>Enter a valid retained-mode symbol name.</source>
-        <translation>有効な保持モードシンボル名を入力してください。</translation>
+        <translation type="vanished">有効な保持モードシンボル名を入力してください。</translation>
     </message>
     <message>
         <source>Enter an initial value or expression.</source>
-        <translation>初期値または式を入力してください。</translation>
+        <translation type="vanished">初期値または式を入力してください。</translation>
     </message>
     <message>
         <source>Entry name</source>
-        <translation>エントリ名</translation>
+        <translation type="vanished">エントリ名</translation>
     </message>
     <message>
         <source>Initial value or expression</source>
-        <translation>初期値または式</translation>
+        <translation type="vanished">初期値または式</translation>
     </message>
     <message>
         <source>Mode symbol name</source>
-        <translation>モードシンボル名</translation>
+        <translation type="vanished">モードシンボル名</translation>
     </message>
     <message>
         <source>Move down</source>
-        <translation>下へ移動</translation>
+        <translation type="vanished">下へ移動</translation>
     </message>
     <message>
         <source>Move up</source>
-        <translation>上へ移動</translation>
+        <translation type="vanished">上へ移動</translation>
     </message>
     <message>
         <source>Owner</source>
-        <translation>所有者</translation>
+        <translation type="vanished">所有者</translation>
     </message>
     <message>
         <source>Procedural entries</source>
-        <translation>手続き型エントリ</translation>
+        <translation type="vanished">手続き型エントリ</translation>
     </message>
     <message>
         <source>Retained modes</source>
-        <translation>保持モード</translation>
+        <translation type="vanished">保持モード</translation>
     </message>
     <message>
         <source>Runtime logic is valid.</source>
-        <translation>実行時ロジックは有効です。</translation>
+        <translation type="vanished">実行時ロジックは有効です。</translation>
     </message>
     <message>
         <source>Select a valid owner and procedural type.</source>
-        <translation>有効な所有者と手続き型タイプを選択してください。</translation>
+        <translation type="vanished">有効な所有者と手続き型タイプを選択してください。</translation>
     </message>
     <message>
         <source>Select a valid owner block.</source>
-        <translation>有効な所有ブロックを選択してください。</translation>
+        <translation type="vanished">有効な所有ブロックを選択してください。</translation>
     </message>
     <message>
         <source>Select one procedural entry to delete.</source>
-        <translation>削除する手続き型エントリを1つ選択してください。</translation>
+        <translation type="vanished">削除する手続き型エントリを1つ選択してください。</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>種類</translation>
+        <translation type="vanished">種類</translation>
     </message>
     <message>
         <source>Valid runtime logic. Warnings: </source>
-        <translation>実行時ロジックは有効です。警告:</translation>
+        <translation type="vanished">実行時ロジックは有効です。警告:</translation>
     </message>
     <message>
         <source>Validate runtime logic</source>
-        <translation>実行時ロジックを検証</translation>
+        <translation type="vanished">実行時ロジックを検証</translation>
     </message>
 </context>
 <context>
@@ -7003,6 +7460,10 @@ This will remove the direct child scenarios after their changes are applied.</so
     <message>
         <source>Set Current Scenario</source>
         <translation>現在のシナリオとして設定</translation>
+    </message>
+    <message>
+        <source>Wait until the running operations finish before changing scenario.</source>
+        <translation>シナリオを変更する前に、実行中の操作が完了するまで待ってください。</translation>
     </message>
 </context>
 <context>
@@ -7159,275 +7620,279 @@ Did you change the number of devices? If so, re-run the simulation.</source>
         <source>{bus_name} was not found in the graphics manager</source>
         <translation>グラフィックスマネージャー内に{bus_name}が見つかりませんでした</translation>
     </message>
+    <message>
+        <source>{device_name} profiles plot</source>
+        <translation>{device_name}プロファイルプロット</translation>
+    </message>
 </context>
 <context>
     <name>ScriptingMain</name>
     <message>
         <source>VeraGrid internal commands.
 </source>
-        <translation>VeraGrid 内部コマンド。</translation>
+        <translation type="vanished">VeraGrid 内部コマンド。</translation>
     </message>
     <message>
         <source>If a command is unavailable is because the study has not been executed yet.</source>
-        <translation>コマンドが使用できない場合は、スタディがまだ実行されていないためです。</translation>
+        <translation type="vanished">コマンドが使用できない場合は、スタディがまだ実行されていないためです。</translation>
     </message>
     <message>
         <source>
 
 clc():	clear the console.</source>
-        <translation>clc(): コンソールをクリアします。</translation>
+        <translation type="vanished">clc(): コンソールをクリアします。</translation>
     </message>
     <message>
         <source>
 
 App functions:</source>
-        <translation>アプリの機能:</translation>
+        <translation type="vanished">アプリの機能:</translation>
     </message>
     <message>
         <source>	app.new_project(): Clear all.</source>
-        <translation>app.new_project(): すべてクリアします。</translation>
+        <translation type="vanished">app.new_project(): すべてクリアします。</translation>
     </message>
     <message>
         <source>	app.open_file(): Prompt to load VeraGrid compatible file</source>
-        <translation>app.open_file(): VeraGrid 互換ファイルのロードを求めるプロンプト</translation>
+        <translation type="vanished">app.open_file(): VeraGrid 互換ファイルのロードを求めるプロンプト</translation>
     </message>
     <message>
         <source>	app.save_file(): Prompt to save VeraGrid file</source>
-        <translation>app.save_file(): VeraGrid ファイルの保存を求めるプロンプト</translation>
+        <translation type="vanished">app.save_file(): VeraGrid ファイルの保存を求めるプロンプト</translation>
     </message>
     <message>
         <source>	app.export_diagram(): Prompt to export the diagram in png.</source>
-        <translation>app.export_diagram(): 図を png でエクスポートするかどうかを確認するプロンプトが表示されます。</translation>
+        <translation type="vanished">app.export_diagram(): 図を png でエクスポートするかどうかを確認するプロンプトが表示されます。</translation>
     </message>
     <message>
         <source>	app.create_schematic_from_api(): Create the schematic from the circuit information.</source>
-        <translation>app.create_schematic_from_api(): 回路情報から回路図を作成します。</translation>
+        <translation type="vanished">app.create_schematic_from_api(): 回路情報から回路図を作成します。</translation>
     </message>
     <message>
         <source>	app.adjust_all_node_width(): Adjust the width of all the nodes according to their name.</source>
-        <translation>app.adjust_all_node_width(): 名前に従ってすべてのノードの幅を調整します。</translation>
+        <translation type="vanished">app.adjust_all_node_width(): 名前に従ってすべてのノードの幅を調整します。</translation>
     </message>
     <message>
         <source>	app.numerical_circuit: get compilation of the assets.</source>
-        <translation>app.numerical_circuit: アセットのコンパイルを取得します。</translation>
+        <translation type="vanished">app.numerical_circuit: アセットのコンパイルを取得します。</translation>
     </message>
     <message>
         <source>	app.islands: get compilation of the assets split into the topological islands.</source>
-        <translation>app.islands: トポロジーアイランドに分割されたアセットのコンパイルを取得します。</translation>
+        <translation type="vanished">app.islands: トポロジーアイランドに分割されたアセットのコンパイルを取得します。</translation>
     </message>
     <message>
         <source>
 
 Circuit functions:</source>
-        <translation>回路機能:</translation>
+        <translation type="vanished">回路機能:</translation>
     </message>
     <message>
         <source>	app.circuit.plot_graph(): Plot a graph in a Matplotlib window. Call plt.show() after.</source>
-        <translation>app.circuit.plot_graph(): Matplotlib ウィンドウにグラフをプロットします。その後、plt.show() に電話してください。</translation>
+        <translation type="vanished">app.circuit.plot_graph(): Matplotlib ウィンドウにグラフをプロットします。その後、plt.show() に電話してください。</translation>
     </message>
     <message>
         <source>
 
 Power flow results:</source>
-        <translation>電力の流れの結果:</translation>
+        <translation type="vanished">電力の流れの結果:</translation>
     </message>
     <message>
         <source>	app.session.power_flow.voltage:	 the nodal voltages in per unit</source>
-        <translation>app.session.power_flow.voltage: 単位あたりのノード電圧</translation>
+        <translation type="vanished">app.session.power_flow.voltage: 単位あたりのノード電圧</translation>
     </message>
     <message>
         <source>	app.session.power_flow.current:	 the branch currents in per unit</source>
-        <translation>app.session.power_flow.current: ユニットあたりの分岐電流</translation>
+        <translation type="vanished">app.session.power_flow.current: ユニットあたりの分岐電流</translation>
     </message>
     <message>
         <source>	app.session.power_flow.loading:	 the branch loading in %</source>
-        <translation>app.session.power_flow.loading: ブランチのロード率 (%)</translation>
+        <translation type="vanished">app.session.power_flow.loading: ブランチのロード率 (%)</translation>
     </message>
     <message>
         <source>	app.session.power_flow.losses:	 the branch losses in per unit</source>
-        <translation>app.session.power_flow.losses: ユニットあたりの分岐損失</translation>
+        <translation type="vanished">app.session.power_flow.losses: ユニットあたりの分岐損失</translation>
     </message>
     <message>
         <source>	app.session.power_flow.power:	 the nodal power Injections in per unit</source>
-        <translation>app.session.power_flow.power: ユニットあたりのノード電力注入</translation>
+        <translation type="vanished">app.session.power_flow.power: ユニットあたりのノード電力注入</translation>
     </message>
     <message>
         <source>	app.session.power_flow.Sf:	 the branch power Injections in per unit at the &quot;from&quot; side</source>
-        <translation>app.session.power_flow.Sf: 「送信元」側のユニットごとのブランチ電力注入</translation>
+        <translation type="vanished">app.session.power_flow.Sf: 「送信元」側のユニットごとのブランチ電力注入</translation>
     </message>
     <message>
         <source>	app.session.power_flow.St:	 the branch power Injections in per unit at the &quot;to&quot; side</source>
-        <translation>app.session.power_flow.St: 「to」側のユニットごとのブランチ電力注入</translation>
+        <translation type="vanished">app.session.power_flow.St: 「to」側のユニットごとのブランチ電力注入</translation>
     </message>
     <message>
         <source>
 
 Short circuit results:</source>
-        <translation>短絡の結果:</translation>
+        <translation type="vanished">短絡の結果:</translation>
     </message>
     <message>
         <source>	app.session.short_circuit.voltage:	 the nodal voltages in per unit</source>
-        <translation>app.session.short_circuit.voltage: ユニットごとのノード電圧</translation>
+        <translation type="vanished">app.session.short_circuit.voltage: ユニットごとのノード電圧</translation>
     </message>
     <message>
         <source>	app.session.short_circuit.current:	 the branch currents in per unit</source>
-        <translation>app.session.short_circuit.current: ユニットごとの分岐電流</translation>
+        <translation type="vanished">app.session.short_circuit.current: ユニットごとの分岐電流</translation>
     </message>
     <message>
         <source>	app.session.short_circuit.loading:	 the branch loading in %</source>
-        <translation>app.session.short_circuit.loading: ブランチのロード (%)</translation>
+        <translation type="vanished">app.session.short_circuit.loading: ブランチのロード (%)</translation>
     </message>
     <message>
         <source>	app.session.short_circuit.losses:	 the branch losses in per unit</source>
-        <translation>app.session.short_circuit.losses: ユニットあたりの分岐損失</translation>
+        <translation type="vanished">app.session.short_circuit.losses: ユニットあたりの分岐損失</translation>
     </message>
     <message>
         <source>	app.session.short_circuit.power:	 the nodal power Injections in per unit</source>
-        <translation>app.session.short_circuit.power: ユニットあたりのノード電力注入</translation>
+        <translation type="vanished">app.session.short_circuit.power: ユニットあたりのノード電力注入</translation>
     </message>
     <message>
         <source>	app.session.short_circuit.power_from:	 the branch power Injections in per unit at the &quot;from&quot; side</source>
-        <translation>app.session.short_circuit.power_from: 「from」側のユニットごとのブランチ電力注入</translation>
+        <translation type="vanished">app.session.short_circuit.power_from: 「from」側のユニットごとのブランチ電力注入</translation>
     </message>
     <message>
         <source>	app.session.short_circuit.power_to:	 the branch power Injections in per unit at the &quot;to&quot; side</source>
-        <translation>app.session.short_circuit.power_to: 「to」側のユニットごとのブランチ電力注入</translation>
+        <translation type="vanished">app.session.short_circuit.power_to: 「to」側のユニットごとのブランチ電力注入</translation>
     </message>
     <message>
         <source>	app.session.short_circuit.short_circuit_power:	 Short circuit power in MVA of the grid nodes</source>
-        <translation>app.session.short_circuit.short_circuit_power: グリッド ノードの MVA の短絡電力</translation>
+        <translation type="vanished">app.session.short_circuit.short_circuit_power: グリッド ノードの MVA の短絡電力</translation>
     </message>
     <message>
         <source>
 
 Optimal power flow results:</source>
-        <translation>最適な電力の流れの結果:</translation>
+        <translation type="vanished">最適な電力の流れの結果:</translation>
     </message>
     <message>
         <source>	app.session.optimal_power_flow.voltage:	 the nodal voltages angles in rad</source>
-        <translation>app.session.optimal_power_flow.voltage: ノード電圧の角度 (rad)</translation>
+        <translation type="vanished">app.session.optimal_power_flow.voltage: ノード電圧の角度 (rad)</translation>
     </message>
     <message>
         <source>	app.session.optimal_power_flow.load_shedding:	 the branch loading in %</source>
-        <translation>app.session.optimal_power_flow.load_shedding: ブランチのロード率 (%)</translation>
+        <translation type="vanished">app.session.optimal_power_flow.load_shedding: ブランチのロード率 (%)</translation>
     </message>
     <message>
         <source>	app.session.optimal_power_flow.losses:	 the branch losses in per unit</source>
-        <translation>app.session.optimal_power_flow.losses: ユニットあたりの分岐損失</translation>
+        <translation type="vanished">app.session.optimal_power_flow.losses: ユニットあたりの分岐損失</translation>
     </message>
     <message>
         <source>	app.session.optimal_power_flow.Sbus:	 the nodal power Injections in MW</source>
-        <translation>app.session.optimal_power_flow.Sbus: MW のノード電力注入</translation>
+        <translation type="vanished">app.session.optimal_power_flow.Sbus: MW のノード電力注入</translation>
     </message>
     <message>
         <source>	app.session.optimal_power_flow.Sf:	 the branch power Sf</source>
-        <translation>app.session.optimal_power_flow.Sf: ブランチ電力 Sf</translation>
+        <translation type="vanished">app.session.optimal_power_flow.Sf: ブランチ電力 Sf</translation>
     </message>
     <message>
         <source>
 
 Time series power flow results:</source>
-        <translation>時系列の電力潮流結果:</translation>
+        <translation type="vanished">時系列の電力潮流結果:</translation>
     </message>
     <message>
         <source>	app.session.power_flow_ts.time:	 Profiles time index (pandas DateTimeIndex object)</source>
-        <translation>app.session.power_flow_ts.time: プロファイル時間インデックス (パンダ DateTimeIndex オブジェクト)</translation>
+        <translation type="vanished">app.session.power_flow_ts.time: プロファイル時間インデックス (パンダ DateTimeIndex オブジェクト)</translation>
     </message>
     <message>
         <source>	app.session.power_flow_ts.load_profiles:	 Load profiles matrix (row: time, col: node)</source>
-        <translation>app.session.power_flow_ts.load_profiles: 負荷プロファイル行列 (行: 時間、列: ノード)</translation>
+        <translation type="vanished">app.session.power_flow_ts.load_profiles: 負荷プロファイル行列 (行: 時間、列: ノード)</translation>
     </message>
     <message>
         <source>	app.session.power_flow_ts.gen_profiles:	 Generation profiles matrix (row: time, col: node)</source>
-        <translation>app.session.power_flow_ts.gen_profiles: 生成プロファイル マトリックス (行: 時間、列: ノード)</translation>
+        <translation type="vanished">app.session.power_flow_ts.gen_profiles: 生成プロファイル マトリックス (行: 時間、列: ノード)</translation>
     </message>
     <message>
         <source>	app.session.power_flow_ts.voltages:	 nodal voltages results matrix (row: time, col: node)</source>
-        <translation>app.session.power_flow_ts.voltages: ノード電圧結果行列 (行: 時間、列: ノード)</translation>
+        <translation type="vanished">app.session.power_flow_ts.voltages: ノード電圧結果行列 (行: 時間、列: ノード)</translation>
     </message>
     <message>
         <source>	app.session.power_flow_ts.currents:	 Branches currents results matrix (row: time, col: branch)</source>
-        <translation>app.session.power_flow_ts.currents: 分岐電流結果行列 (行: 時間、列: 分岐)</translation>
+        <translation type="vanished">app.session.power_flow_ts.currents: 分岐電流結果行列 (行: 時間、列: 分岐)</translation>
     </message>
     <message>
         <source>	app.session.power_flow_ts.loadings:	 Branches loadings results matrix (row: time, col: branch)</source>
-        <translation>app.session.power_flow_ts.loadings: ブランチ負荷結果マトリックス (行: 時間、列: ブランチ)</translation>
+        <translation type="vanished">app.session.power_flow_ts.loadings: ブランチ負荷結果マトリックス (行: 時間、列: ブランチ)</translation>
     </message>
     <message>
         <source>	app.session.power_flow_ts.losses:	 Branches losses results matrix (row: time, col: branch)</source>
-        <translation>app.session.power_flow_ts.losses: ブランチ損失結果マトリックス (行: 時間、列: ブランチ)</translation>
+        <translation type="vanished">app.session.power_flow_ts.losses: ブランチ損失結果マトリックス (行: 時間、列: ブランチ)</translation>
     </message>
     <message>
         <source>
 
 Voltage stability power flow results:</source>
-        <translation>電圧安定性電力潮流の結果:</translation>
+        <translation type="vanished">電圧安定性電力潮流の結果:</translation>
     </message>
     <message>
         <source>	app.session.continuation_power_flow.voltage:	 Voltage values for every power multiplication factor.</source>
-        <translation>app.session.continuation_power_flow.voltage: すべての電力乗算係数の電圧値。</translation>
+        <translation type="vanished">app.session.continuation_power_flow.voltage: すべての電力乗算係数の電圧値。</translation>
     </message>
     <message>
         <source>	app.session.continuation_power_flow.lambda:	 Value of power multiplication factor applied</source>
-        <translation>app.session.continuation_power_flow.lambda: 適用されるべき乗算係数の値</translation>
+        <translation type="vanished">app.session.continuation_power_flow.lambda: 適用されるべき乗算係数の値</translation>
     </message>
     <message>
         <source>	app.session.continuation_power_flow.Sf:	 Power values for every power multiplication factor.</source>
-        <translation>app.session.continuation_power_flow.Sf: すべての電力乗算係数の電力値。</translation>
+        <translation type="vanished">app.session.continuation_power_flow.Sf: すべての電力乗算係数の電力値。</translation>
     </message>
     <message>
         <source>
 
 Monte Carlo power flow results:</source>
-        <translation>モンテカルロ電力潮流の結果:</translation>
+        <translation type="vanished">モンテカルロ電力潮流の結果:</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.V_avg:	 nodal voltage average result.</source>
-        <translation>app.session.stochastic_power_flow.V_avg: ノード電圧の平均結果。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.V_avg: ノード電圧の平均結果。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.I_avg:	 branch current average result.</source>
-        <translation>app.session.stochastic_power_flow.I_avg: ブランチ電流の平均結果。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.I_avg: ブランチ電流の平均結果。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.Loading_avg:	 branch loading average result.</source>
-        <translation>app.session.stochastic_power_flow.Loading_avg: ブランチ負荷平均結果。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.Loading_avg: ブランチ負荷平均結果。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.Losses_avg:	 branch losses average result.</source>
-        <translation>app.session.stochastic_power_flow.Losses_avg: 分岐損失の平均結果。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.Losses_avg: 分岐損失の平均結果。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.V_std:	 nodal voltage standard deviation result.</source>
-        <translation>app.session.stochastic_power_flow.V_std: ノード電圧の標準偏差の結果。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.V_std: ノード電圧の標準偏差の結果。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.I_std:	 branch current standard deviation result.</source>
-        <translation>app.session.stochastic_power_flow.I_std: 分岐電流の標準偏差の結果。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.I_std: 分岐電流の標準偏差の結果。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.Loading_std:	 branch loading standard deviation result.</source>
-        <translation>app.session.stochastic_power_flow.Loading_std: ブランチ ロードの標準偏差の結果。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.Loading_std: ブランチ ロードの標準偏差の結果。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.Losses_std:	 branch losses standard deviation result.</source>
-        <translation>app.session.stochastic_power_flow.Losses_std: 分岐損失の標準偏差の結果。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.Losses_std: 分岐損失の標準偏差の結果。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.V_avg_series:	 nodal voltage average series.</source>
-        <translation>app.session.stochastic_power_flow.V_avg_series: ノード電圧平均シリーズ。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.V_avg_series: ノード電圧平均シリーズ。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.V_std_series:	 branch current standard deviation series.</source>
-        <translation>app.session.stochastic_power_flow.V_std_series: 分岐電流標準偏差系列。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.V_std_series: 分岐電流標準偏差系列。</translation>
     </message>
     <message>
         <source>	app.session.stochastic_power_flow.error_series:	 Monte Carlo error series (the convergence value).</source>
-        <translation>app.session.stochastic_power_flow.error_series: モンテカルロ誤差系列 (収束値)。</translation>
+        <translation type="vanished">app.session.stochastic_power_flow.error_series: モンテカルロ誤差系列 (収束値)。</translation>
     </message>
     <message>
         <source>The same for app.latin_hypercube_sampling</source>
-        <translation>app.latin_hypercube_sampling についても同様です</translation>
+        <translation type="vanished">app.latin_hypercube_sampling についても同様です</translation>
     </message>
     <message>
         <source> does not exist :/</source>
@@ -8495,6 +8960,101 @@ Modify the number of clusters in the ML settings.</source>
         <translation>{1}のタイムステップに対して{0}のクラスターを見つけることができません。
 ML設定でクラスター数を変更してください。</translation>
     </message>
+    <message>
+        <source>An EMT simulation cannot run without an EMT Events Group. Go to Events -&gt; Add EMT event and add a group, even if it contains no events.</source>
+        <translation>EMTイベントグループなしではEMTシミュレーションを実行できません。イベント -&gt; EMTイベントを追加し、イベントが含まれていなくてもグループを追加してください。</translation>
+    </message>
+    <message>
+        <source>An RMS simulation cannot run without an RMS Events Group. Go to Events -&gt; Add RMS event and add a group, even if it contains no events.</source>
+        <translation>RMSイベントグループなしではRMSシミュレーションを実行できません。イベント -&gt; RMSイベントを追加し、イベントが含まれていなくてもグループを追加してください。</translation>
+    </message>
+    <message>
+        <source>Fluid nodes are ignored for nonlinear OPF</source>
+        <translation>非線形OPFでは流体ノードは無視されます</translation>
+    </message>
+    <message>
+        <source>Fluid nodes are ignored for this simulation</source>
+        <translation>このシミュレーションでは流体ノードは無視されます</translation>
+    </message>
+    <message>
+        <source>Investments evaluation failed. Check the logs for details.</source>
+        <translation>設備投資評価に失敗しました。詳細はログを確認してください。</translation>
+    </message>
+    <message>
+        <source>Investments evaluation finished without results.</source>
+        <translation>設備投資評価は結果なしで完了しました。</translation>
+    </message>
+    <message>
+        <source>Nodal capacity failed to start</source>
+        <translation>ノード容量の開始に失敗しました</translation>
+    </message>
+    <message>
+        <source>Nodal capacity logs</source>
+        <translation>ノード容量ログ</translation>
+    </message>
+    <message>
+        <source>Nodal capacity time series failed to start</source>
+        <translation>ノード容量時系列の開始に失敗しました</translation>
+    </message>
+    <message>
+        <source>Nodal capacity time series logs</source>
+        <translation>ノード容量時系列ログ</translation>
+    </message>
+    <message>
+        <source>OPF time series failed to start</source>
+        <translation>OPF時系列の開始に失敗しました</translation>
+    </message>
+    <message>
+        <source>OPF time series logs</source>
+        <translation>OPF時系列ログ</translation>
+    </message>
+    <message>
+        <source>Optimal power flow failed to start</source>
+        <translation>最適潮流の開始に失敗しました</translation>
+    </message>
+    <message>
+        <source>Optimal power flow logs</source>
+        <translation>最適潮流ログ</translation>
+    </message>
+    <message>
+        <source>Running OPF time series with only one time step in range</source>
+        <translation>範囲内に時間ステップが1つのみのOPF時系列を実行中</translation>
+    </message>
+    <message>
+        <source>Something went wrong, there are no OPF results.</source>
+        <translation>何らかのエラーが発生しました。OPFの結果がありません。</translation>
+    </message>
+    <message>
+        <source>Something went wrong, there are no OPF time series results.</source>
+        <translation>何らかのエラーが発生しました。OPF時系列の結果がありません。</translation>
+    </message>
+    <message>
+        <source>Something went wrong, there are no nodal capacity results.</source>
+        <translation>何らかのエラーが発生しました。ノード容量の結果がありません。</translation>
+    </message>
+    <message>
+        <source>Something went wrong, there are no nodal capacity time series results.</source>
+        <translation>何らかのエラーが発生しました。ノード容量時系列の結果がありません。</translation>
+    </message>
+    <message>
+        <source>Voltage stability failed to start</source>
+        <translation>電圧安定度の開始に失敗しました</translation>
+    </message>
+    <message>
+        <source>Voltage stability logs</source>
+        <translation>電圧安定度ログ</translation>
+    </message>
+    <message>
+        <source>Wait until the running simulations finish before clearing results.</source>
+        <translation>結果をクリアする前に、実行中のシミュレーションが完了するまで待ってください。</translation>
+    </message>
+</context>
+<context>
+    <name>SolarPvWizard</name>
+    <message>
+        <source>Solar power profile</source>
+        <translation>太陽光発電プロファイル</translation>
+    </message>
 </context>
 <context>
     <name>SubstationDesigner</name>
@@ -8805,6 +9365,10 @@ You need to load or create a grid!</source>
     <message>
         <source>There is no profile displayed, please display one</source>
         <translation>プロフィールが表示されていません。プロフィールを表示してください</translation>
+    </message>
+    <message>
+        <source>Profiles plot</source>
+        <translation>プロファイルプロット</translation>
     </message>
 </context>
 <context>
@@ -9256,6 +9820,10 @@ You need to load or create a grid!</source>
     <message>
         <source>Removed {count} __pycache__ folders</source>
         <translation>{count}個の__pycache__フォルダを削除しました</translation>
+    </message>
+    <message>
+        <source>Some operations are still stopping. Close again after they finish.</source>
+        <translation>いくつかの操作がまだ停止中です。完了後に再度閉じてください。</translation>
     </message>
 </context>
 <context>
@@ -11472,6 +12040,17 @@ You need to load or create a grid!</source>
         <source>DC cable type</source>
         <translation>DCケーブルの種類</translation>
     </message>
+    <message>
+        <source>Fluid value</source>
+        <translation>流体値</translation>
+    </message>
+</context>
+<context>
+    <name>VerticalHeaderWidthResizer</name>
+    <message>
+        <source>Resize index column</source>
+        <translation>インデックス列のサイズ変更</translation>
+    </message>
 </context>
 <context>
     <name>VoltageLevelConversionWizard</name>
@@ -11627,6 +12206,14 @@ You need to load or create a grid!</source>
         <translation>選択された風力タービンを作成できませんでした：
 {error_text}</translation>
     </message>
+    <message>
+        <source>Wind power profile</source>
+        <translation>風力発電プロファイル</translation>
+    </message>
+    <message>
+        <source>Wind turbine design curves</source>
+        <translation>風力タービン設計曲線</translation>
+    </message>
 </context>
 <context>
     <name>mainWindow</name>
@@ -11637,7 +12224,7 @@ You need to load or create a grid!</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="86"/>
-        <location filename="../Main/MainWindow.ui" line="11121"/>
+        <location filename="../Main/MainWindow.ui" line="11122"/>
         <source>Model</source>
         <translation>モデル</translation>
     </message>
@@ -12141,7 +12728,7 @@ You need to load or create a grid!</source>
     <message>
         <location filename="../Main/MainWindow.ui" line="2387"/>
         <location filename="../Main/MainWindow.ui" line="2452"/>
-        <location filename="../Main/MainWindow.ui" line="12907"/>
+        <location filename="../Main/MainWindow.ui" line="12908"/>
         <source>Results</source>
         <translation>結果</translation>
     </message>
@@ -12226,6 +12813,31 @@ You need to load or create a grid!</source>
         <location filename="../Main/MainWindow.ui" line="2906"/>
         <source>Open the RMS pre-simulation dynamic plot editor</source>
         <translation>RMS プレシミュレーション動的プロット エディターを開きます。</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="12734"/>
+        <source>Add RMS event</source>
+        <translation>RMSイベントの追加</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="12737"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add RMS event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the Dynamic events editor preferring RMS events&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMSイベントの追加&lt;/span&gt;&lt;/p&gt;&lt;p&gt;RMSイベントを優先する動的イベントエディタを開きます&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="13068"/>
+        <source>Add EMT event</source>
+        <translation>EMTイベントの追加</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="13071"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add EMT event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the Dynamic events editor preferring EMT events&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMTイベントの追加&lt;/span&gt;&lt;/p&gt;&lt;p&gt;EMTイベントを優先する動的イベントエディタを開きます&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="13143"/>
+        <source>Community chat</source>
+        <translation>コミュニティチャット</translation>
     </message>
     <message>
         <source>RMS plots</source>
@@ -12733,7 +13345,7 @@ You need to load or create a grid!</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="5003"/>
-        <location filename="../Main/MainWindow.ui" line="11434"/>
+        <location filename="../Main/MainWindow.ui" line="11435"/>
         <source>Continuation power flow</source>
         <translation>継続電力の流れ</translation>
     </message>
@@ -12764,7 +13376,7 @@ You need to load or create a grid!</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="5272"/>
-        <location filename="../Main/MainWindow.ui" line="12763"/>
+        <location filename="../Main/MainWindow.ui" line="12764"/>
         <source>State estimation</source>
         <translation>状態推定</translation>
     </message>
@@ -13115,8 +13727,8 @@ You need to load or create a grid!</source>
     <message>
         <location filename="../Main/MainWindow.ui" line="6457"/>
         <location filename="../Main/MainWindow.ui" line="7529"/>
-        <location filename="../Main/MainWindow.ui" line="12898"/>
-        <location filename="../Main/MainWindow.ui" line="12925"/>
+        <location filename="../Main/MainWindow.ui" line="12899"/>
+        <location filename="../Main/MainWindow.ui" line="12926"/>
         <source>Contingencies</source>
         <translation>不測の事態</translation>
     </message>
@@ -13586,7 +14198,7 @@ You need to load or create a grid!</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="9243"/>
-        <location filename="../Main/MainWindow.ui" line="12238"/>
+        <location filename="../Main/MainWindow.ui" line="12239"/>
         <source>Clustering</source>
         <translation>クラスタリング</translation>
     </message>
@@ -13683,7 +14295,7 @@ You need to load or create a grid!</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="9891"/>
-        <location filename="../Main/MainWindow.ui" line="11419"/>
+        <location filename="../Main/MainWindow.ui" line="11420"/>
         <source>Stochastic power flow</source>
         <translation>確率的パワーフロー</translation>
     </message>
@@ -13729,7 +14341,7 @@ You need to load or create a grid!</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="10206"/>
-        <location filename="../Main/MainWindow.ui" line="12655"/>
+        <location filename="../Main/MainWindow.ui" line="12656"/>
         <source>Grid reduction</source>
         <translation>グリッド削減</translation>
     </message>
@@ -13870,113 +14482,113 @@ You need to load or create a grid!</source>
         <translation>ヘルプ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11061"/>
+        <location filename="../Main/MainWindow.ui" line="11062"/>
         <source>Actions</source>
         <translation>アクション</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11074"/>
+        <location filename="../Main/MainWindow.ui" line="11075"/>
         <source>Simulations</source>
         <translation>シミュレーション</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11150"/>
+        <location filename="../Main/MainWindow.ui" line="11151"/>
         <source>Diagram</source>
         <translation>ダイアグラム</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11154"/>
+        <location filename="../Main/MainWindow.ui" line="11155"/>
         <source>Branches drawing style</source>
         <translation>枝の描画スタイル</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11194"/>
+        <location filename="../Main/MainWindow.ui" line="11195"/>
         <source>plugins</source>
         <translation>プラグイン</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11199"/>
+        <location filename="../Main/MainWindow.ui" line="11200"/>
         <source>Events</source>
         <translation>イベント</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11220"/>
+        <location filename="../Main/MainWindow.ui" line="11221"/>
         <source>toolBar</source>
         <translation>toolBar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11287"/>
+        <location filename="../Main/MainWindow.ui" line="11288"/>
         <source>Open file</source>
         <translation>ファイルを開く</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11293"/>
+        <location filename="../Main/MainWindow.ui" line="11294"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11302"/>
+        <location filename="../Main/MainWindow.ui" line="11303"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11308"/>
-        <location filename="../Main/MainWindow.ui" line="13124"/>
+        <location filename="../Main/MainWindow.ui" line="11309"/>
+        <location filename="../Main/MainWindow.ui" line="13125"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11317"/>
+        <location filename="../Main/MainWindow.ui" line="11318"/>
         <source>Take picture</source>
         <translation>写真を撮る</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11329"/>
+        <location filename="../Main/MainWindow.ui" line="11330"/>
         <source>New project</source>
         <translation>新しいプロジェクト</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11335"/>
+        <location filename="../Main/MainWindow.ui" line="11336"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11344"/>
+        <location filename="../Main/MainWindow.ui" line="11345"/>
         <source>Power Flow</source>
         <translation>パワーフロー</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11347"/>
+        <location filename="../Main/MainWindow.ui" line="11348"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;パワーフロー&lt;/span&gt;&lt;/p&gt;&lt;p&gt;電力潮流解析を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11353"/>
+        <location filename="../Main/MainWindow.ui" line="11354"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11365"/>
+        <location filename="../Main/MainWindow.ui" line="11366"/>
         <source>Power flow time series</source>
         <translation>電力潮流時系列</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11368"/>
+        <location filename="../Main/MainWindow.ui" line="11369"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the power flow study with time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;パワーフロー&lt;/span&gt;&lt;/p&gt;&lt;p&gt;時系列データを使用して電力潮流解析を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11374"/>
+        <location filename="../Main/MainWindow.ui" line="11375"/>
         <source>Ctrl+F5</source>
         <translation>Ctrl+F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11383"/>
+        <location filename="../Main/MainWindow.ui" line="11384"/>
         <source>Expand</source>
         <translation>拡大する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11386"/>
+        <location filename="../Main/MainWindow.ui" line="11387"/>
         <source>Expand distances</source>
         <translation>距離を拡大する</translation>
     </message>
@@ -13985,12 +14597,12 @@ You need to load or create a grid!</source>
         <translation type="vanished">Ctrl+Alt++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11401"/>
+        <location filename="../Main/MainWindow.ui" line="11402"/>
         <source>Shrink</source>
         <translation>縮む</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11404"/>
+        <location filename="../Main/MainWindow.ui" line="11405"/>
         <source>Shrink distances</source>
         <translation>距離の縮小</translation>
     </message>
@@ -13999,282 +14611,282 @@ You need to load or create a grid!</source>
         <translation type="vanished">Ctrl+Alt+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11392"/>
+        <location filename="../Main/MainWindow.ui" line="11393"/>
         <source>Ctrl+Shift++</source>
         <translation>Ctrl+Shift++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11410"/>
+        <location filename="../Main/MainWindow.ui" line="11411"/>
         <source>Ctrl+Shift+-</source>
         <translation>Ctrl+Shift+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11422"/>
+        <location filename="../Main/MainWindow.ui" line="11423"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Stochastic power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a stochastic power flow over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;確率的パワーフロー&lt;/span&gt;&lt;/p&gt;&lt;p&gt;時系列データに対して確率的パワーフローを実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11437"/>
+        <location filename="../Main/MainWindow.ui" line="11438"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Continuation power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a continuation power flow over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;継続電力の流れ&lt;/span&gt;&lt;/p&gt;&lt;p&gt;スナップショット データに対して継続電力フローを実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11449"/>
+        <location filename="../Main/MainWindow.ui" line="11450"/>
         <source>About</source>
         <translation>について</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11461"/>
+        <location filename="../Main/MainWindow.ui" line="11462"/>
         <source>center view</source>
         <translation>中央ビュー</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11464"/>
+        <location filename="../Main/MainWindow.ui" line="11465"/>
         <source>Center view</source>
         <translation>中央ビュー</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11470"/>
+        <location filename="../Main/MainWindow.ui" line="11471"/>
         <source>Ctrl+E</source>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11479"/>
+        <location filename="../Main/MainWindow.ui" line="11480"/>
         <source>Short Circuit</source>
         <translation>短絡</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11482"/>
+        <location filename="../Main/MainWindow.ui" line="11483"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Short Circuit&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a short circuit study over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;短絡&lt;/span&gt;&lt;/p&gt;&lt;p&gt;スナップショット データに対して短絡調査を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11494"/>
+        <location filename="../Main/MainWindow.ui" line="11495"/>
         <source>Automatic grid layout</source>
         <translation>自動グリッドレイアウト</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11497"/>
+        <location filename="../Main/MainWindow.ui" line="11498"/>
         <source>Automatic layout the of the grid</source>
         <translation>グリッドの自動レイアウト</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11512"/>
+        <location filename="../Main/MainWindow.ui" line="11513"/>
         <source>Blackout cascade</source>
         <translation>停電カスケード</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11515"/>
+        <location filename="../Main/MainWindow.ui" line="11516"/>
         <source>Run a simulation or step by step blackout cascade</source>
         <translation>シミュレーションまたは段階的なブラックアウト カスケードを実行する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11527"/>
+        <location filename="../Main/MainWindow.ui" line="11528"/>
         <source>Optimal power flow</source>
         <translation>最適なパワーフロー</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11530"/>
+        <location filename="../Main/MainWindow.ui" line="11531"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;最適なパワーフロー&lt;/span&gt;&lt;/p&gt;&lt;p&gt;これにより最適なパワーフローが実行されます&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11536"/>
+        <location filename="../Main/MainWindow.ui" line="11537"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11545"/>
+        <location filename="../Main/MainWindow.ui" line="11546"/>
         <source>Optimal power flow time series</source>
         <translation>最適な電力潮流時系列</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11548"/>
+        <location filename="../Main/MainWindow.ui" line="11549"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;最適なパワーフロー&lt;/span&gt;&lt;/p&gt;&lt;p&gt;これにより、時系列データに最適な電力の流れが実行されます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11554"/>
+        <location filename="../Main/MainWindow.ui" line="11555"/>
         <source>Ctrl+F6</source>
         <translation>Ctrl+F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11563"/>
+        <location filename="../Main/MainWindow.ui" line="11564"/>
         <source>Detect transformers</source>
         <translation>変圧器の検出</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11566"/>
+        <location filename="../Main/MainWindow.ui" line="11567"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detect transformers.&lt;/p&gt;&lt;p&gt;Use the nodes nominal voltage to determine which branches should be a transformer.&lt;/p&gt;&lt;p&gt;If a branch joins two nodes with different voltage levels, the branch should be a transformer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;変圧器を検出します。&lt;/p&gt;&lt;p&gt;ノードの公称電圧を使用して、どの分岐を変圧器にするかを決定します。&lt;/p&gt;&lt;p&gt;電圧レベルが異なる 2 つのノードを分岐が接続する場合、その分岐は変圧器である必要があります。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11578"/>
+        <location filename="../Main/MainWindow.ui" line="11579"/>
         <source>Auto rate branches</source>
         <translation>自動レートブランチ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11581"/>
+        <location filename="../Main/MainWindow.ui" line="11582"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatic rating of the branches.&lt;/p&gt;&lt;p&gt;Use the branches calculated power to establish a rate, if the branch rate is unknown. A factor is available in the settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ブランチの自動評価。&lt;/p&gt;&lt;p&gt;分岐レートが不明な場合は、分岐で計算されたパワーを使用してレートを確立します。設定で係数を使用できます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11596"/>
+        <location filename="../Main/MainWindow.ui" line="11597"/>
         <source>Storage location suggestion</source>
         <translation>保管場所の提案</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11599"/>
+        <location filename="../Main/MainWindow.ui" line="11600"/>
         <source>Suggest places where storage devices are useful</source>
         <translation>ストレージデバイスが役立つ場所を提案する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11611"/>
+        <location filename="../Main/MainWindow.ui" line="11612"/>
         <source>Launch data analysis tool</source>
         <translation>データ分析ツールを起動する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11614"/>
+        <location filename="../Main/MainWindow.ui" line="11615"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Data analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the data analysis tool that finds and tries to repair common grid modelling issues&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;データ分析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;一般的なグリッド モデリングの問題を検出して修復を試みるデータ分析ツールを起動します。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11620"/>
+        <location filename="../Main/MainWindow.ui" line="11621"/>
         <source>F12</source>
         <translation>F12</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11629"/>
+        <location filename="../Main/MainWindow.ui" line="11630"/>
         <source>Online documentation</source>
         <translation>オンラインドキュメント</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11635"/>
+        <location filename="../Main/MainWindow.ui" line="11636"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11644"/>
+        <location filename="../Main/MainWindow.ui" line="11645"/>
         <source>Save as</source>
         <translation>名前を付けて保存</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11656"/>
+        <location filename="../Main/MainWindow.ui" line="11657"/>
         <source>Delete selected</source>
         <translation>選択したものを削除</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11659"/>
+        <location filename="../Main/MainWindow.ui" line="11660"/>
         <source>Delete selected objects from the diagrams and optionally from the database</source>
         <translation>選択したオブジェクトをダイアグラムから削除し、必要に応じてデータベースからも削除します。</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11665"/>
+        <location filename="../Main/MainWindow.ui" line="11666"/>
         <source>Del</source>
         <translation>デル</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11674"/>
+        <location filename="../Main/MainWindow.ui" line="11675"/>
         <source>Linear analysis</source>
         <translation>線形解析</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11677"/>
+        <location filename="../Main/MainWindow.ui" line="11678"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform linear analysis with distribution factors (PTDF, LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;線形解析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;分布係数を使用した線形解析の実行 (PTDF、LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11683"/>
+        <location filename="../Main/MainWindow.ui" line="11684"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11692"/>
+        <location filename="../Main/MainWindow.ui" line="11693"/>
         <source>Reset console</source>
         <translation>コンソールをリセットする</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11707"/>
+        <location filename="../Main/MainWindow.ui" line="11708"/>
         <source>Set OPF results to power flow (non destructive)</source>
         <translation>OPF の結果をパワー フローに設定します (非破壊的)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11710"/>
+        <location filename="../Main/MainWindow.ui" line="11711"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Set the OPF results into the power flow or time series simulations (non destructive)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;OPF データをコピー&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OPF の結果を電力潮流または時系列シミュレーションに設定します (非破壊)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11722"/>
+        <location filename="../Main/MainWindow.ui" line="11723"/>
         <source>Correct buses location</source>
         <translation>正しいバスの位置</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11725"/>
+        <location filename="../Main/MainWindow.ui" line="11726"/>
         <source>Set selected buses location closer to their neighbours</source>
         <translation>選択したバスの位置を隣接するバスの近くに設定します</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11737"/>
+        <location filename="../Main/MainWindow.ui" line="11738"/>
         <source>Copy OPF generation to database (destructive)</source>
         <translation>OPF 世代をデータベースにコピー (破壊的)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11740"/>
+        <location filename="../Main/MainWindow.ui" line="11741"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Destructive copy of the OPF generation results to the input profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;OPF データをコピー&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OPF 生成結果の入力プロファイルへの破壊コピー&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11752"/>
+        <location filename="../Main/MainWindow.ui" line="11753"/>
         <source>Linear analysis time series power flow</source>
         <translation>線形解析時系列電力潮流</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11755"/>
+        <location filename="../Main/MainWindow.ui" line="11756"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF based time series power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;線形解析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF ベースの時系列電力潮流&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11761"/>
+        <location filename="../Main/MainWindow.ui" line="11762"/>
         <source>Ctrl+F7</source>
         <translation>Ctrl+F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11770"/>
+        <location filename="../Main/MainWindow.ui" line="11771"/>
         <source>Import circuit</source>
         <translation>インポート回路</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11773"/>
+        <location filename="../Main/MainWindow.ui" line="11774"/>
         <source>Add circuit to the current circuit</source>
         <translation>現在の回路に回路を追加</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11779"/>
+        <location filename="../Main/MainWindow.ui" line="11780"/>
         <source>Ctrl+N, Ctrl+O</source>
         <translation>Ctrl+N、Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11791"/>
+        <location filename="../Main/MainWindow.ui" line="11792"/>
         <source>Sync</source>
         <translation>同期</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11794"/>
+        <location filename="../Main/MainWindow.ui" line="11795"/>
         <source>Sync with the file for colaborative editing of the grid</source>
         <translation>ファイルと同期してグリッドを共同編集します</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11803"/>
+        <location filename="../Main/MainWindow.ui" line="11804"/>
         <source>Draw schematic</source>
         <translation>回路図を描く</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11812"/>
+        <location filename="../Main/MainWindow.ui" line="11813"/>
         <source>Sigma analysis</source>
         <translation>シグマ解析</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11815"/>
+        <location filename="../Main/MainWindow.ui" line="11816"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sigma analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform HELM-Sigma analysis over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;シグマ解析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;スナップショット データに対して HELM-Sigma 分析を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -14283,72 +14895,72 @@ You need to load or create a grid!</source>
         <translation type="vanished">「現在実行中のもの」をクリアします</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11842"/>
+        <location filename="../Main/MainWindow.ui" line="11843"/>
         <source>Add default catalogue</source>
         <translation>デフォルトのカタログを追加する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11857"/>
+        <location filename="../Main/MainWindow.ui" line="11858"/>
         <source>Find node groups</source>
         <translation>ノードグループの検索</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11860"/>
+        <location filename="../Main/MainWindow.ui" line="11861"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Finds the electrically related nodes by using their electrical distance and the DBSCAN clustering method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;電気的距離と DBSCAN クラスタリング手法を使用して、電気的に関連するノードを見つけます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11872"/>
+        <location filename="../Main/MainWindow.ui" line="11873"/>
         <source>Grid Generator</source>
         <translation>グリッドジェネレータ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11878"/>
+        <location filename="../Main/MainWindow.ui" line="11879"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11887"/>
+        <location filename="../Main/MainWindow.ui" line="11888"/>
         <source>Node load</source>
         <translation>ノード負荷</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11896"/>
+        <location filename="../Main/MainWindow.ui" line="11897"/>
         <source>Generator generation</source>
         <translation>ジェネレータの生成</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11905"/>
+        <location filename="../Main/MainWindow.ui" line="11906"/>
         <source>Contingency analysis time series</source>
         <translation>不測の事態分析の時系列</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11908"/>
+        <location filename="../Main/MainWindow.ui" line="11909"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Per form a contingency analysis with the selected method over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;不測の事態の分析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;時系列データに対して選択した方法で偶発事象分析を実行します。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11914"/>
+        <location filename="../Main/MainWindow.ui" line="11915"/>
         <source>Ctrl+F8</source>
         <translation>Ctrl+F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11923"/>
+        <location filename="../Main/MainWindow.ui" line="11924"/>
         <source>Branch rates</source>
         <translation>支店料金</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11932"/>
+        <location filename="../Main/MainWindow.ui" line="11933"/>
         <source>Set selected buses&apos; Area</source>
         <translation>選択したバスのエリアを設定する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11944"/>
+        <location filename="../Main/MainWindow.ui" line="11945"/>
         <source>Set selected buses&apos; Zone</source>
         <translation>選択したバスのゾーンを設定する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11956"/>
+        <location filename="../Main/MainWindow.ui" line="11957"/>
         <source>Set seleted buses&apos; Country</source>
         <translation>選択したバスの国を設定します</translation>
     </message>
@@ -14357,653 +14969,649 @@ You need to load or create a grid!</source>
         <translation type="vanished">バス座標をインポートする</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11827"/>
-        <location filename="../Main/MainWindow.ui" line="11830"/>
+        <location filename="../Main/MainWindow.ui" line="11828"/>
+        <location filename="../Main/MainWindow.ui" line="11831"/>
         <source>Stop &quot;stuff running right now&quot;</source>
         <translation>&quot;現在実行中の処理&quot;を停止</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11968"/>
+        <location filename="../Main/MainWindow.ui" line="11969"/>
         <source>Coordinates</source>
         <translation>座標</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11980"/>
+        <location filename="../Main/MainWindow.ui" line="11981"/>
         <source>Available Transfer Capacity</source>
         <translation>利用可能な転送容量</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11983"/>
+        <location filename="../Main/MainWindow.ui" line="11984"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;正味転送容量&lt;/span&gt;&lt;/p&gt;&lt;p&gt;スナップショット データの線形ネット転送容量評価を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11995"/>
+        <location filename="../Main/MainWindow.ui" line="11996"/>
         <source>Available Transfer Capacity Time Series</source>
         <translation>利用可能な転送容量の時系列</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11998"/>
+        <location filename="../Main/MainWindow.ui" line="11999"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;正味転送容量&lt;/span&gt;&lt;/p&gt;&lt;p&gt;時系列データの線形正味転送容量評価を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12010"/>
+        <location filename="../Main/MainWindow.ui" line="12011"/>
         <source>Contingency analysis</source>
         <translation>不測の事態の分析</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12013"/>
+        <location filename="../Main/MainWindow.ui" line="12014"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a contingency analysis with the selected method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;不測の事態の分析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;選択した方法で偶発事象分析を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12019"/>
+        <location filename="../Main/MainWindow.ui" line="12020"/>
         <source>F8</source>
         <translation>F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12028"/>
+        <location filename="../Main/MainWindow.ui" line="12029"/>
         <source>Optimal net transfer capacity</source>
         <translation>最適な正味転送容量</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12031"/>
+        <location filename="../Main/MainWindow.ui" line="12032"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an optimal net transfer capacity optimization&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;最適なネット転送容量&lt;/span&gt;&lt;/p&gt;&lt;p&gt;最適なネット転送容量の最適化を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12043"/>
+        <location filename="../Main/MainWindow.ui" line="12044"/>
         <source>Set schematic (x,y) from (lat,lon)</source>
         <translation>(lat,lon) から回路図 (x,y) を設定します</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12055"/>
+        <location filename="../Main/MainWindow.ui" line="12056"/>
         <source>Inputs analysis</source>
         <translation>入力分析</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12058"/>
+        <location filename="../Main/MainWindow.ui" line="12059"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inputs analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an analysis of the inputs for both the snapshot and time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;入力分析&lt;/span&gt;&lt;/p&gt;&lt;p&gt;スナップショットと時系列データの両方の入力の分析を実行します。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12064"/>
+        <location filename="../Main/MainWindow.ui" line="12065"/>
         <source>F11</source>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12073"/>
+        <location filename="../Main/MainWindow.ui" line="12074"/>
         <source>Fuse devices</source>
         <translation>ヒューズ装置</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12076"/>
+        <location filename="../Main/MainWindow.ui" line="12077"/>
         <source>Fuse devices into a single device of each category per node</source>
         <translation>デバイスをノードごとに各カテゴリの単一のデバイスに融合する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12088"/>
-        <location filename="../Main/MainWindow.ui" line="12091"/>
+        <location filename="../Main/MainWindow.ui" line="12089"/>
+        <location filename="../Main/MainWindow.ui" line="12092"/>
         <source>Delete inconsistencies</source>
         <translation>不一致を削除する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12103"/>
+        <location filename="../Main/MainWindow.ui" line="12104"/>
         <source>Optimal NTC time series</source>
         <translation>最適な NTC 時系列</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12106"/>
+        <location filename="../Main/MainWindow.ui" line="12107"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a net transfer capacity optimization over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;正味転送容量&lt;/span&gt;&lt;/p&gt;&lt;p&gt;時系列データに対して正味転送容量の最適化を実行します。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12118"/>
+        <location filename="../Main/MainWindow.ui" line="12119"/>
         <source>re-index time</source>
         <translation>再インデックス時間</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12130"/>
+        <location filename="../Main/MainWindow.ui" line="12131"/>
         <source>Fix generators active based on the power</source>
         <translation>電力に基づいてアクティブな発電機を修正する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12142"/>
-        <location filename="../Main/MainWindow.ui" line="12145"/>
+        <location filename="../Main/MainWindow.ui" line="12143"/>
+        <location filename="../Main/MainWindow.ui" line="12146"/>
         <source>Fix loads active based on the power</source>
         <translation>電力に基づいてアクティブな負荷を修正します</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12157"/>
+        <location filename="../Main/MainWindow.ui" line="12158"/>
         <source>Initialize contingencies</source>
         <translation>不測の事態を初期化する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12160"/>
+        <location filename="../Main/MainWindow.ui" line="12161"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingencies wizard&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the contingencies wizard to automatically set up the contingency objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;緊急事態ウィザード&lt;/span&gt;&lt;/p&gt;&lt;p&gt;緊急時ウィザードを起動して、緊急時オブジェクトを自動的に設定します。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12172"/>
+        <location filename="../Main/MainWindow.ui" line="12173"/>
         <source>Add selected as new contingency</source>
         <translation>選択したものを新しい緊急事態として追加</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12175"/>
+        <location filename="../Main/MainWindow.ui" line="12176"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add contingency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new contingency from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;緊急事態を追加する&lt;/span&gt;&lt;/p&gt;&lt;p&gt;回路図の選択から新しい緊急事態を作成します&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12181"/>
+        <location filename="../Main/MainWindow.ui" line="12182"/>
         <source>Ctrl+A, Ctrl+C</source>
         <translation>Ctrl+A、Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12190"/>
+        <location filename="../Main/MainWindow.ui" line="12191"/>
         <source>Add selected as new investment</source>
         <translation>選択したものを新しい投資として追加</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12193"/>
+        <location filename="../Main/MainWindow.ui" line="12194"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create new investment with the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;投資&lt;/span&gt;&lt;/p&gt;&lt;p&gt;回路図を選択して新しい投資を作成する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12199"/>
+        <location filename="../Main/MainWindow.ui" line="12200"/>
         <source>Ctrl+A, Ctrl+I</source>
         <translation>Ctrl+A、Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12208"/>
+        <location filename="../Main/MainWindow.ui" line="12209"/>
         <source>Zoom in</source>
         <translation>ズームイン</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12214"/>
+        <location filename="../Main/MainWindow.ui" line="12215"/>
         <source>Ctrl++</source>
         <translation>Ctrl++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12223"/>
+        <location filename="../Main/MainWindow.ui" line="12224"/>
         <source>Zoom out</source>
         <translation>ズームアウト</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12229"/>
+        <location filename="../Main/MainWindow.ui" line="12230"/>
         <source>Ctrl+-</source>
         <translation>Ctrl+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12241"/>
+        <location filename="../Main/MainWindow.ui" line="12242"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a clustering study of the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;クラスタリング&lt;/span&gt;&lt;/p&gt;&lt;p&gt;時系列データのクラスタリング調査を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12259"/>
+        <location filename="../Main/MainWindow.ui" line="12260"/>
         <source>Use clustering</source>
         <translation>クラスタリングを使用する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12262"/>
+        <location filename="../Main/MainWindow.ui" line="12263"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If active, the available clustering results are used in all the simulations that handle time series data non-destructivelly&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;クラスタリング&lt;/span&gt;&lt;/p&gt;&lt;p&gt;アクティブな場合、利用可能なクラスタリング結果は、時系列データを非破壊的に処理するすべてのシミュレーションで使用されます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12274"/>
+        <location filename="../Main/MainWindow.ui" line="12275"/>
         <source>Investments evaluation</source>
         <translation>投資評価</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12277"/>
+        <location filename="../Main/MainWindow.ui" line="12278"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform the investments evaluation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;投資&lt;/span&gt;&lt;/p&gt;&lt;p&gt;投資評価を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12283"/>
+        <location filename="../Main/MainWindow.ui" line="12284"/>
         <source>Ctrl+I, Ctrl+E</source>
         <translation>Ctrl+I、Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12292"/>
+        <location filename="../Main/MainWindow.ui" line="12293"/>
         <source>New schematic from selection</source>
         <translation>選択したものからの新しい回路図</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12304"/>
+        <location filename="../Main/MainWindow.ui" line="12305"/>
         <source>New schematic</source>
         <translation>新しい回路図</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12316"/>
+        <location filename="../Main/MainWindow.ui" line="12317"/>
         <source>New map</source>
         <translation>新しい地図</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12328"/>
+        <location filename="../Main/MainWindow.ui" line="12329"/>
         <source>Remove selected diagram</source>
         <translation>選択した図を削除する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12337"/>
+        <location filename="../Main/MainWindow.ui" line="12338"/>
         <source>Report a bug or feature</source>
         <translation>バグまたは機能を報告する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12349"/>
+        <location filename="../Main/MainWindow.ui" line="12350"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12361"/>
+        <location filename="../Main/MainWindow.ui" line="12362"/>
         <source>Process topology</source>
         <translation>プロセストポロジ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12373"/>
+        <location filename="../Main/MainWindow.ui" line="12374"/>
         <source>Edit simulation time limits</source>
         <translation>シミュレーション時間制限を編集する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12376"/>
+        <location filename="../Main/MainWindow.ui" line="12377"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Edit simulation time limits&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;時系列&lt;/span&gt;&lt;/p&gt;&lt;p&gt;シミュレーション時間制限を編集する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12391"/>
+        <location filename="../Main/MainWindow.ui" line="12392"/>
         <source>activate time series</source>
         <translation>時系列をアクティブにする</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12394"/>
+        <location filename="../Main/MainWindow.ui" line="12395"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;When activated, the simulations run their time series version&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;時系列モード&lt;/span&gt;&lt;/p&gt;&lt;p&gt;アクティブ化すると、シミュレーションは時系列バージョンを実行します&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12400"/>
+        <location filename="../Main/MainWindow.ui" line="12401"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12409"/>
+        <location filename="../Main/MainWindow.ui" line="12410"/>
         <source>Clean database</source>
         <translation>クリーンなデータベース</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12415"/>
+        <location filename="../Main/MainWindow.ui" line="12416"/>
         <source>Ctrl+C, Ctrl+D</source>
         <translation>Ctrl+C、Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12424"/>
+        <location filename="../Main/MainWindow.ui" line="12425"/>
         <source>Scale</source>
         <translation>規模</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12427"/>
+        <location filename="../Main/MainWindow.ui" line="12428"/>
         <source>Scale the system load and or generation</source>
         <translation>システムの負荷や生成をスケーリングする</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12439"/>
+        <location filename="../Main/MainWindow.ui" line="12440"/>
         <source>Disable all results tags</source>
         <translation>すべての結果タグを無効にする</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12451"/>
+        <location filename="../Main/MainWindow.ui" line="12452"/>
         <source>Enable all results tags</source>
         <translation>すべての結果タグを有効にする</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12463"/>
+        <location filename="../Main/MainWindow.ui" line="12464"/>
         <source>Detect substations</source>
         <translation>変電所の検出</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12475"/>
+        <location filename="../Main/MainWindow.ui" line="12476"/>
         <source>Optimal hosting capacity</source>
         <translation>最適なホスティング容量</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12478"/>
+        <location filename="../Main/MainWindow.ui" line="12479"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nodal hosting capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the nodal hosting capacity calculation using the selected optimization method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;ノードのホスティング容量&lt;/span&gt;&lt;/p&gt;&lt;p&gt;選択した最適化方法を使用してノード ホスティング キャパシティの計算を実行します&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12493"/>
+        <location filename="../Main/MainWindow.ui" line="12494"/>
         <source>Enable server mode</source>
         <translation>サーバーモードを有効にする</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12505"/>
+        <location filename="../Main/MainWindow.ui" line="12506"/>
         <source>Record video</source>
         <translation>ビデオを録画する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12508"/>
+        <location filename="../Main/MainWindow.ui" line="12509"/>
         <source>Record video of the schematic</source>
         <translation>回路図のビデオを録画する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12520"/>
+        <location filename="../Main/MainWindow.ui" line="12521"/>
         <source>Save  differential</source>
         <translation>差分を保存</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12532"/>
+        <location filename="../Main/MainWindow.ui" line="12533"/>
         <source>Consolidate coordinates</source>
         <translation>座標を統合する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12544"/>
+        <location filename="../Main/MainWindow.ui" line="12545"/>
         <source>Add selected as new remedial action</source>
         <translation>選択したものを新しい修復アクションとして追加</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12547"/>
+        <location filename="../Main/MainWindow.ui" line="12548"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add remedial action&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new remedial action from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;是正措置を追加する&lt;/span&gt;&lt;/p&gt;&lt;p&gt;回路図の選択から新しい修復アクションを作成します&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12553"/>
+        <location filename="../Main/MainWindow.ui" line="12554"/>
         <source>Ctrl+A, Ctrl+R</source>
         <translation>Ctrl+A、Ctrl+R</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12562"/>
+        <location filename="../Main/MainWindow.ui" line="12563"/>
         <source>Detect facilities</source>
         <translation>施設の検出</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12571"/>
+        <location filename="../Main/MainWindow.ui" line="12572"/>
         <source>Rotate</source>
         <translation>回転</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12583"/>
+        <location filename="../Main/MainWindow.ui" line="12584"/>
         <source>Reset diagram coordinates to database values</source>
         <translation>図の座標をデータベースの値にリセットします</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12595"/>
+        <location filename="../Main/MainWindow.ui" line="12596"/>
         <source>Reliability analysis</source>
         <translation>信頼性解析</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12598"/>
+        <location filename="../Main/MainWindow.ui" line="12599"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Reliability study&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the reliability calculation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;信頼性の調査&lt;/span&gt;&lt;/p&gt;&lt;p&gt;信頼性計算を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12613"/>
+        <location filename="../Main/MainWindow.ui" line="12614"/>
         <source>Color buses by...</source>
         <translation>カラーバスによる...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12625"/>
+        <location filename="../Main/MainWindow.ui" line="12626"/>
         <source>Color substations by...</source>
         <translation>変電所をカラー化する...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12640"/>
+        <location filename="../Main/MainWindow.ui" line="12641"/>
         <source>Select buses by...</source>
         <translation>バスを選択してください...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12667"/>
+        <location filename="../Main/MainWindow.ui" line="12668"/>
         <source>Substation wizard</source>
         <translation>変電所ウィザード</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12670"/>
+        <location filename="../Main/MainWindow.ui" line="12671"/>
         <source>Add substation with a wizard form</source>
         <translation>ウィザードフォームで変電所を追加する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12673"/>
+        <location filename="../Main/MainWindow.ui" line="12674"/>
         <source>Ctrl+A, Ctrl+S</source>
         <translation>Ctrl+A、Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12685"/>
+        <location filename="../Main/MainWindow.ui" line="12686"/>
         <source>Dynamic RMS Simulation</source>
         <translation>動的RMSシミュレーション</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12688"/>
+        <location filename="../Main/MainWindow.ui" line="12689"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic RMS simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS シミュレーション&lt;/span&gt;&lt;/p&gt;&lt;p&gt;動的 RMS シミュレーションを実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12700"/>
+        <location filename="../Main/MainWindow.ui" line="12701"/>
         <source>Prepare RMS dynamic plots</source>
         <translation>RMS 動的プロットを準備する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12703"/>
+        <location filename="../Main/MainWindow.ui" line="12704"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare RMS dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the RMS dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS 動的プロットを準備する&lt;/span&gt;&lt;/p&gt;&lt;p&gt;シミュレーションを実行する前に、RMS 動的プロット エディターを開きます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12715"/>
-        <location filename="../Main/MainWindow.ui" line="12718"/>
+        <location filename="../Main/MainWindow.ui" line="12716"/>
+        <location filename="../Main/MainWindow.ui" line="12719"/>
         <source>Small-Signal RMS Simulation</source>
         <translation>小信号 RMS シミュレーション</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12721"/>
+        <location filename="../Main/MainWindow.ui" line="12722"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an RMS Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;小信号シミュレーション (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;RMS 小信号安定性解析シミュレーションを実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12733"/>
         <source>Add rms event to selected</source>
-        <translation>選択したイベントに rms イベントを追加</translation>
+        <translation type="vanished">選択したイベントに rms イベントを追加</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12736"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add RMS event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new RMS event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMSイベントを追加&lt;/span&gt;&lt;/p&gt;&lt;p&gt;回路図選択に新しい RMS イベントを作成します&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMSイベントを追加&lt;/span&gt;&lt;/p&gt;&lt;p&gt;回路図選択に新しい RMS イベントを作成します&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12751"/>
+        <location filename="../Main/MainWindow.ui" line="12752"/>
         <source>Clear highlights</source>
         <translation>クリアなハイライト</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12766"/>
+        <location filename="../Main/MainWindow.ui" line="12767"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;State estimation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a state estimation analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;状態推定&lt;/span&gt;&lt;/p&gt;&lt;p&gt;状態推定分析を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12778"/>
+        <location filename="../Main/MainWindow.ui" line="12779"/>
         <source>Add short circuit events</source>
         <translation>短絡イベントを追加する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12790"/>
+        <location filename="../Main/MainWindow.ui" line="12791"/>
         <source>PSS/e Raw / Rawx</source>
         <translation>PSS/e 生/生x</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12799"/>
+        <location filename="../Main/MainWindow.ui" line="12800"/>
         <source>Power Factory DGS</source>
         <translation>パワーファクトリー DGS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12808"/>
+        <location filename="../Main/MainWindow.ui" line="12809"/>
         <source>Matpower</source>
         <translation>マットパワー</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12817"/>
+        <location filename="../Main/MainWindow.ui" line="12818"/>
         <source>UCTE</source>
         <translation>UCTE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12826"/>
+        <location filename="../Main/MainWindow.ui" line="12827"/>
         <source>CGMES</source>
         <translation>CGMES</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12835"/>
+        <location filename="../Main/MainWindow.ui" line="12836"/>
         <source>Power Grid Models</source>
         <translation>電力網モデル</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12844"/>
+        <location filename="../Main/MainWindow.ui" line="12845"/>
         <source>CIM</source>
         <translation>CIM</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12853"/>
+        <location filename="../Main/MainWindow.ui" line="12854"/>
         <source>H5</source>
         <translation>H5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12862"/>
+        <location filename="../Main/MainWindow.ui" line="12863"/>
         <source>JSON</source>
         <translation>JSON</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12871"/>
+        <location filename="../Main/MainWindow.ui" line="12872"/>
         <source>Microsoft Excel</source>
         <translation>マイクロソフトエクセル</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12880"/>
+        <location filename="../Main/MainWindow.ui" line="12881"/>
         <source>SQLite</source>
         <translation>SQLite</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12889"/>
+        <location filename="../Main/MainWindow.ui" line="12890"/>
         <source>Profiles</source>
         <translation>プロフィール</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12916"/>
-        <location filename="../Main/MainWindow.ui" line="12934"/>
+        <location filename="../Main/MainWindow.ui" line="12917"/>
+        <location filename="../Main/MainWindow.ui" line="12935"/>
         <source>Catalogue</source>
         <translation>カタログ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12943"/>
+        <location filename="../Main/MainWindow.ui" line="12944"/>
         <source>Clean Room</source>
         <translation>クリーンルーム</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12946"/>
+        <location filename="../Main/MainWindow.ui" line="12947"/>
         <source>Cleam room utility to produce an machine learning statistical representation of the static time series</source>
         <translation>静的時系列の機械学習統計表現を生成するクリーンルームユーティリティ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12958"/>
+        <location filename="../Main/MainWindow.ui" line="12959"/>
         <source>Procedural grid expansion</source>
         <translation>手続き型グリッド拡張</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12967"/>
+        <location filename="../Main/MainWindow.ui" line="12968"/>
         <source>Catalogue element optimization</source>
         <translation>カタログ要素の最適化</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12976"/>
+        <location filename="../Main/MainWindow.ui" line="12977"/>
         <source>Dynamic EMT Simulation</source>
         <translation>動的EMTシミュレーション</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12979"/>
+        <location filename="../Main/MainWindow.ui" line="12980"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic EMT simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT シミュレーション&lt;/span&gt;&lt;/p&gt;&lt;p&gt;動的 EMT シミュレーションを実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12991"/>
+        <location filename="../Main/MainWindow.ui" line="12992"/>
         <source>Prepare EMT dynamic plots</source>
         <translation>EMT 動的プロットを準備する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12994"/>
+        <location filename="../Main/MainWindow.ui" line="12995"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare EMT dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the EMT dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT 動的プロットを準備する&lt;/span&gt;&lt;/p&gt;&lt;p&gt;シミュレーションを実行する前に、EMT 動的プロット エディターを開きます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13006"/>
-        <location filename="../Main/MainWindow.ui" line="13009"/>
+        <location filename="../Main/MainWindow.ui" line="13007"/>
+        <location filename="../Main/MainWindow.ui" line="13010"/>
         <source>Small-Signal EMT Simulation</source>
         <translation>小信号 EMT シミュレーション</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13012"/>
+        <location filename="../Main/MainWindow.ui" line="13013"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an EMT Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;小信号シミュレーション (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;EMT 小信号安定性解析シミュレーションを実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13020"/>
+        <location filename="../Main/MainWindow.ui" line="13021"/>
         <source>Reticular</source>
         <translation>網状</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13025"/>
+        <location filename="../Main/MainWindow.ui" line="13026"/>
         <source>Straight</source>
         <translation>真っ直ぐ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13034"/>
+        <location filename="../Main/MainWindow.ui" line="13035"/>
         <source>ai_chat</source>
         <translation>ai_チャット</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13037"/>
+        <location filename="../Main/MainWindow.ui" line="13038"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Show the VeraGrid AI chat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI&lt;/span&gt;&lt;/p&gt;&lt;p&gt;VeraGrid AI チャットを表示する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13049"/>
+        <location filename="../Main/MainWindow.ui" line="13050"/>
         <source>Power Flow 3-phase</source>
         <translation>パワーフロー三相</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13052"/>
+        <location filename="../Main/MainWindow.ui" line="13053"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow 3-phase&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an unbalanced 3-phase power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;パワーフロー三相&lt;/span&gt;&lt;/p&gt;&lt;p&gt;不平衡三相潮流解析を実行する&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13067"/>
         <source>Add emt event to selected</source>
-        <translation>選択したイベントにemtイベントを追加</translation>
+        <translation type="vanished">選択したイベントにemtイベントを追加</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13070"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add EMT event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new EMT event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMTイベントを追加&lt;/span&gt;&lt;/p&gt;&lt;p&gt;回路図選択に新しい EMT イベントを作成します&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMTイベントを追加&lt;/span&gt;&lt;/p&gt;&lt;p&gt;回路図選択に新しい EMT イベントを作成します&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13079"/>
+        <location filename="../Main/MainWindow.ui" line="13080"/>
         <source>Set model (x,y) based on (lat, lon)</source>
         <translation>(緯度、経度) に基づいてモデル (x、y) を設定します</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13088"/>
+        <location filename="../Main/MainWindow.ui" line="13089"/>
         <source>Restore investments</source>
         <translation>投資を回復する</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13100"/>
+        <location filename="../Main/MainWindow.ui" line="13101"/>
         <source>Veragrid Scenario</source>
         <translation>ベラグリッドのシナリオ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13109"/>
+        <location filename="../Main/MainWindow.ui" line="13110"/>
         <source>Show dynamic models editor</source>
         <translation>動的モデルエディターを表示</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13121"/>
+        <location filename="../Main/MainWindow.ui" line="13122"/>
         <source>Repair diagram</source>
         <translation>修理図</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13133"/>
+        <location filename="../Main/MainWindow.ui" line="13134"/>
         <source>Clear cache</source>
         <translation>キャッシュをクリア</translation>
     </message>

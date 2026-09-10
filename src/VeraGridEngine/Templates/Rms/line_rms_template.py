@@ -108,10 +108,10 @@ def get_dc_line_rms_template(
 
     :param vfactory: Symbolic variable factory shared by the circuit.
     :param name: Human-readable RMS template name.
-    :param use_dynamic_inductance: Use the imported nonzero series inductance
-        and represent current as a differential state. When ``False``, retain
-        the exact purely resistive algebraic branch law.
-    :return: DC-line RMS template selected from the physical branch data.
+    :param use_dynamic_inductance: Use a model-owned series inductance event
+        parameter and represent current as a differential state. When
+        ``False``, retain the exact purely resistive algebraic branch law.
+    :return: DC-line RMS template for the requested branch topology.
     """
     templ: RmsModelTemplate = RmsModelTemplate()
     templ.tpe = DeviceType.DCLineDevice
@@ -122,8 +122,8 @@ def get_dc_line_rms_template(
     inputs: List[Var] = [Vdcf, Vdct]
 
     If_dc: Var = vfactory.add_var("If_dc")
-    Pf: Var = vfactory.add_var("Pf")
-    Pt: Var = vfactory.add_var("Pt")
+    Pf: Var = vfactory.add_var("Pf", reference=VarPowerFlowReferenceType.Pf)
+    Pt: Var = vfactory.add_var("Pt", reference=VarPowerFlowReferenceType.Pt)
     r: Var = vfactory.add_var("r")
     u: Var = vfactory.add_var("u")
 
@@ -133,12 +133,15 @@ def get_dc_line_rms_template(
     block.event_dict[u] = vfactory.add_const(1.0)
 
     if use_dynamic_inductance:
-        # A cable with exported series inductance stores magnetic energy, so
-        # its current is a genuine state. This explicit ODE form is the normal
-        # RMS contract and avoids embedding a differential variable in an
+        # The model-owned series inductance stores magnetic energy, so its
+        # current is a genuine state. This explicit ODE form is the normal RMS
+        # contract and avoids embedding a differential variable in an
         # algebraic row, which produces a badly scaled mixed DAE near events.
         l: Var = vfactory.add_var("l")
-        block.parameters[l] = vfactory.add_const(0.05)
+        # Inductance belongs to the RMS model rather than to the static DC-line
+        # device. Register it as a runtime parameter so it keeps this model's
+        # default and can be targeted explicitly by RMS events.
+        block.event_dict[l] = vfactory.add_const(0.05)
         block.state_vars = list([If_dc])
         block.state_eqs = list([
             (u * (Vdcf - Vdct) - r * If_dc) / l,
@@ -175,7 +178,9 @@ def get_dc_line_rms_template(
         Pt: -u * Vdct * If_dc,
     }
     block.in_vars = inputs
-    block.out_vars = list([If_dc, Pf, Pt])
+    # The branch current is an internal state. Only terminal powers form the
+    # visible output interface consumed by the network connection layer.
+    block.out_vars = list([Pf, Pt])
     block.name = name
 
     # The DC implementation is stored as one child block, matching the AC line
@@ -201,18 +206,8 @@ def get_dc_line_rms_template(
         ParamPowerFlowReferenceType.r: r,
     }
 
-    if use_dynamic_inductance:
-        # The variable exists only in the RL topology selected above. Excluding
-        # this key from the resistive topology makes a zero-inductance model
-        # structurally explicit and prevents accidental division by zero.
-        templ.block.api_obj_mapping[
-            ParamPowerFlowReferenceType.dc_line_l_pu_seconds
-        ] = l
-    else:
-        pass
-
     templ.block.in_vars = inputs
-    templ.block.out_vars = list([If_dc, Pf, Pt])
+    templ.block.out_vars = list([Pf, Pt])
     templ.block.dynamic_model_contract.rms_conduction_status_var_uid = u.uid
     block.dynamic_model_contract.rms_conduction_status_var_uid = u.uid
 

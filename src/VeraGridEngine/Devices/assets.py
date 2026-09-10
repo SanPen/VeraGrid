@@ -1,6 +1,6 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.  
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
@@ -119,6 +119,7 @@ class Assets:
         '_overhead_line_types',
         '_wire_types',
         '_underground_cable_types',
+        '_dc_cable_types',
         '_sequence_line_types',
         '_transformer_types',
         '_branch_groups',
@@ -269,6 +270,9 @@ class Assets:
 
         # underground cable lines
         self._underground_cable_types: List[dev.UndergroundLineType] = list()
+
+        # DC cable physical catalogue types
+        self._dc_cable_types: List[dev.DcCableType] = list()
 
         # sequence modelled lines
         self._sequence_line_types: List[dev.SequenceLineType] = list()
@@ -461,6 +465,7 @@ class Assets:
                 dev.Wire(),
                 dev.OverheadLineType(),
                 dev.UndergroundLineType(),
+                dev.DcCableType(),
                 dev.SequenceLineType(),
                 dev.TransformerType(),
             ],
@@ -1482,13 +1487,20 @@ class Assets:
         Delete N-winding transformer
         :param obj: TransformerNW instance
         """
-        for winding in list(obj.windings):
-            self.delete_winding(winding)
-        self.delete_bus(obj.bus0, delete_associated=True)
         try:
             self._transformers_nw.remove(obj)
         except ValueError:
             pass
+
+        winding_list: list[dev.Winding] = list(obj.windings)
+        for winding in winding_list:
+            self.delete_winding(winding)
+
+        winding_count_to_clear: int = len(obj.windings)
+        for winding_index in range(winding_count_to_clear):
+            obj.delete_winding(0)
+
+        self.delete_bus(obj.bus0, delete_associated=True)
 
         elms_to_del = list()
         for lst in [self._rms_events, self._emt_events]:
@@ -1498,6 +1510,52 @@ class Assets:
 
         for elm in elms_to_del:
             self.delete_element(elm)
+
+    def delete_associated_multi_winding_transformers(self, buses_to_remove: Set[dev.Bus]) -> None:
+        """
+        Delete multi-winding transformers connected to any bus being removed.
+
+        :param buses_to_remove: Buses requested for deletion.
+        :type buses_to_remove: Set[dev.Bus]
+        :return: None
+        :rtype: None
+        """
+        transformers3w_to_delete: List[dev.Transformer3W] = list()
+        transformers_nw_to_delete: List[dev.TransformerNW] = list()
+
+        # Transformer windings are stored as branch devices, but the transformer parent also has to disappear.
+        for transformer3w in self._transformers3w:
+            if (transformer3w.bus0 in buses_to_remove
+                    or transformer3w.bus1 in buses_to_remove
+                    or transformer3w.bus2 in buses_to_remove
+                    or transformer3w.bus3 in buses_to_remove):
+                transformers3w_to_delete.append(transformer3w)
+            else:
+                pass
+
+        # N-winding transformers need the same parent cleanup for their internal and terminal buses.
+        for transformer_nw in self._transformers_nw:
+            delete_transformer: bool = transformer_nw.bus0 in buses_to_remove
+
+            if delete_transformer:
+                pass
+            else:
+                for bus in transformer_nw.buses:
+                    if bus in buses_to_remove:
+                        delete_transformer = True
+                    else:
+                        pass
+
+            if delete_transformer:
+                transformers_nw_to_delete.append(transformer_nw)
+            else:
+                pass
+
+        for transformer3w in transformers3w_to_delete:
+            self.delete_transformer3w(obj=transformer3w)
+
+        for transformer_nw in transformers_nw_to_delete:
+            self.delete_transformer_nw(obj=transformer_nw)
 
     # ------------------------------------------------------------------------------------------------------------------
     # Windings
@@ -1759,6 +1817,12 @@ class Assets:
         :param delete_associated: Delete the associated branches and injections
         """
 
+        # Multi-winding transformer parents must be deleted before their winding branches are removed.
+        if delete_associated:
+            self.delete_associated_multi_winding_transformers(buses_to_remove={obj})
+        else:
+            pass
+
         # delete associated Branches in reverse order
         for branch_list in self.get_branch_lists(add_vsc=True, add_hvdc=True, add_switch=True):
             for i in range(len(branch_list) - 1, -1, -1):
@@ -1817,7 +1881,7 @@ class Assets:
         # Remove branches directly from lists in one pass
         # This is more efficient than calling delete_branch for each
         for branch_list in self.get_branch_lists(add_vsc=True, add_hvdc=True, add_switch=True):
-            # Use list comprehension to not consider branches to delete 
+            # Use list comprehension to not consider branches to delete
             # This is faster than the multiple remove() calls we had before
             branch_list[:] = [b for b in branch_list if b not in branches_to_delete_set]
 
@@ -1871,6 +1935,12 @@ class Assets:
         """
         buses_to_remove = set(lst)
         injections_to_delete = list()
+
+        # Multi-winding transformer parents must be deleted before their winding branches are removed.
+        if delete_associated:
+            self.delete_associated_multi_winding_transformers(buses_to_remove=buses_to_remove)
+        else:
+            pass
 
         # We delete the associated branches by knowing the buses to remove
         self.delete_branches_with_sets(buses_to_remove, delete_associated)
@@ -1933,7 +2003,7 @@ class Assets:
     def get_bus_devices(self, bus: dev.Bus) -> Tuple[List[BRANCH_TYPES], List[INJECTION_DEVICE_TYPES]]:
         """
         Get the list of associated branches and the list of associated injections
-        :param bus: 
+        :param bus:
         :return: associated_branches, associated_injections
         """
         associated_branches = list()
@@ -3589,6 +3659,10 @@ class Assets:
             if elm.template == obj:
                 elm.template = None
 
+        for elm in self._dc_lines:
+            if elm.template == obj:
+                elm.template = None
+
     def delete_overhead_line(self, obj: dev.OverheadLineType):
         """
         Delete tower from the collection
@@ -3680,6 +3754,55 @@ class Assets:
 
         try:
             self._underground_cable_types.remove(obj)
+        except ValueError:
+            pass
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # DC cable type
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @property
+    def dc_cable_types(self) -> List[dev.DcCableType]:
+        """
+        Get the DC cable catalogue.
+
+        :return: Canonical DC cable type list.
+        """
+        return self._dc_cable_types
+
+    @dc_cable_types.setter
+    def dc_cable_types(self, value: List[dev.DcCableType]) -> None:
+        """
+        Replace the DC cable catalogue.
+
+        :param value: Canonical DC cable type list.
+        :return: None.
+        """
+        self._dc_cable_types = value
+
+    def add_dc_cable_type(self, obj: dev.DcCableType) -> None:
+        """
+        Add one DC cable type to the catalogue.
+
+        :param obj: DC cable type to register.
+        :return: None.
+        """
+        if isinstance(obj, dev.DcCableType):
+            obj.set_var_factory(self._var_factory)
+            self._dc_cable_types.append(obj)
+        else:
+            print('The template is not a DC cable type!')
+
+    def delete_dc_cable_type(self, obj: dev.DcCableType) -> None:
+        """
+        Delete one DC cable type and clear dependent line references.
+
+        :param obj: DC cable type to remove.
+        :return: None.
+        """
+        self.delete_line_template_dependency(obj=obj)
+        try:
+            self._dc_cable_types.remove(obj)
         except ValueError:
             pass
 
@@ -7463,6 +7586,9 @@ class Assets:
         elif device_type == DeviceType.UnderGroundLineDevice:
             return self._underground_cable_types
 
+        elif device_type == DeviceType.DcCableTypeDevice:
+            return self._dc_cable_types
+
         elif device_type == DeviceType.SequenceLineDevice:
             return self._sequence_line_types
 
@@ -7771,6 +7897,11 @@ class Assets:
                 d.set_var_factory(self._var_factory)
             self._underground_cable_types = devices
 
+        elif device_type == DeviceType.DcCableTypeDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
+            self._dc_cable_types = devices
+
         elif device_type == DeviceType.SequenceLineDevice:
             for d in devices:
                 d.set_var_factory(self._var_factory)
@@ -8022,6 +8153,9 @@ class Assets:
         elif obj.device_type == DeviceType.UnderGroundLineDevice:
             self.add_underground_line(obj=obj)
 
+        elif obj.device_type == DeviceType.DcCableTypeDevice:
+            self.add_dc_cable_type(obj=obj)
+
         elif obj.device_type == DeviceType.SequenceLineDevice:
             self.add_sequence_line(obj=obj)
 
@@ -8258,6 +8392,9 @@ class Assets:
 
         elif obj.device_type == DeviceType.UnderGroundLineDevice:
             self.delete_underground_line(obj)
+
+        elif obj.device_type == DeviceType.DcCableTypeDevice:
+            self.delete_dc_cable_type(obj)
 
         elif obj.device_type == DeviceType.SequenceLineDevice:
             self.delete_sequence_line(obj)
@@ -8983,6 +9120,13 @@ class Assets:
                 DeviceType.ModellingAuthority: self.modelling_authorities,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(DeviceType.LineDevice),
                 DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(DeviceType.LineDevice),
+            }
+
+        elif elm_type == DeviceType.DcCableTypeDevice:
+            elm = dev.DcCableType()
+            dictionary_of_lists = {
+                DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(DeviceType.DCLineDevice),
+                DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(DeviceType.DCLineDevice),
             }
 
         elif elm_type == DeviceType.TransformerTypeDevice:

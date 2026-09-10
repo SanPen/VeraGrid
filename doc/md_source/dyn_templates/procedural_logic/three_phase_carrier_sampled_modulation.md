@@ -23,3 +23,7 @@ Samples three modulation references at carrier half-period boundaries and retain
 ## Runtime behavior
 
 Samples are updated only at carrier boundaries and remain constant between them. The logic requests those boundaries from the solver. Place it before a PWM entry that consumes the sampled modes during the same accepted update.
+
+## Library block
+
+The standalone block exposes three modulation inputs and three sampled outputs. `switching_frequency` defaults to `2π·1000` radians per second and `carrier_phase` defaults to `0.0`.

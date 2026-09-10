@@ -32,7 +32,8 @@ from VeraGridEngine.Utils.procedural_logic_contract import (
 from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConnectionIntent,
                                                                      DynamicConnectionIntentDirection,
                                                                      dynamic_connection_intent_from_dict,
-                                                                     dynamic_connection_intent_to_dict)
+                                                                     dynamic_connection_intent_to_dict,
+                                                                     is_legacy_suppressed_connection_intent_tombstone)
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 
 
@@ -777,6 +778,9 @@ class BlockSaver:
         :param main: is it the main block?
         :return: Dictionary representing the block
         """
+        # Deleted internal blocks cannot be restored by replaying an intent, so
+        # remove those historical records at the canonical persistence boundary.
+        normalize_dynamic_connection_intents(block=blk)
         normalize_event_parameter_initialization(block=blk)
         # Persistence must reject an incoherent runtime contract before any
         # partial block data is registered in the canonical serializer.
@@ -1822,6 +1826,13 @@ class BlockParser:
                 )
                 if parsed_intent is not None:
                     block.connection_intents.append(parsed_intent)
+                elif is_legacy_suppressed_connection_intent_tombstone(
+                        data=persisted_intent,
+                        root_block=block):
+                    # Older editors persisted harmless suppressed history after
+                    # replacing a block. Accept it as a migration tombstone and
+                    # omit it from the reconstructed current model.
+                    pass
                 else:
                     self._add_warning(msg="Invalid dynamic connection intent ignored while parsing persisted data",
                                       block_name=block_name,

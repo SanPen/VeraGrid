@@ -11,16 +11,16 @@ Select `control1` in **Block properties → General options → Generated struct
 | `control1` | First input | Reference parameter | Error | Default gains |
 | --- | --- | --- | --- | --- |
 | `Vm_dc` (default) | `Vdc_state` from the capacitor | `Vdc_ref` | `Vdc_state - Vdc_ref` | `Kp_vdc = 0.20`, `Ki_vdc = 1.0` |
-| `Pdc` | Internal electrical `P` | `P_ref` | `P_ref - P` | `Kp_pol = 0.02`, `Ki_pol = 0.10` |
-| `Pac` | Internal electrical `P` | `P_ref` | `P_ref - P` | `Kp_pol = 0.02`, `Ki_pol = 0.10` |
+| `Pdc` | DC-terminal `Pf_vsc` | `P_ref` | `P_ref - Pf_vsc` | `Kp_pol = 0.02`, `Ki_pol = 0.10` |
+| `Pac` | AC-terminal `Pt_vsc` | `P_ref` | `P_ref + Pt_vsc` | `Kp_pol = 0.02`, `Ki_pol = 0.10` |
 
-**Implementation scope:** `Pdc` and `Pac` currently use the same internal electrical power signal and the same PI law in the complete converter. The `Pdc` option does not introduce an independent DC-terminal-power measurement. Do not connect `Pf_vsc` merely because the selected option is named `Pdc`; doing so differs from the supplied complete model. Internal `P` has the opposite sign to `Pt_vsc`.
+`Pdc` measures power entering the converter at the DC terminal. `Pac` measures power entering at the AC terminal; therefore a positive DC-to-AC transfer target corresponds to `P_ref = -Pt_vsc`. The different error expressions preserve the same positive transfer-reference convention.
 
 ## Interface
 
 | Direction | Position | Signal | Meaning |
 | --- | --- | --- | --- |
-| Input | 1 | `Vdc_state` or `P` | Selected feedback, pu |
+| Input | 1 | `Vdc_state`, `Pf_vsc` or `Pt_vsc` | Selected feedback, pu |
 | Input | 2 | `i_q` | Actual q-axis current, used to initialize the PI output |
 | Output | 1 | `i_q_ref` | Unrestricted q-axis current reference, pu |
 
@@ -32,9 +32,9 @@ $$
 \dot{\xi}=e,\qquad i_{q,ref}=K_p e+K_i\xi.
 $$
 
-The gains and reference listed above belong to `event_dict`. The reference is initialized from the connected feedback at the power-flow operating point; it is not an arbitrary fixed default and it does not continuously track the feedback after initialization. A dynamic event can subsequently change it.
+The gains and reference listed above belong to `event_dict`. At the power-flow operating point the reference initializes to `Vdc_state` in `Vm_dc` mode, `Pf_vsc` in `Pdc` mode, and `-Pt_vsc` in `Pac` mode. It does not continuously track the feedback after initialization. A dynamic event can subsequently change it.
 
-For example, changing `Vdc_ref` perturbs DC-voltage regulation, while changing `P_ref` perturbs the internal active-power target. These are dynamic-model references, distinct from the static VSC's power-flow control configuration.
+For example, changing `Vdc_ref` perturbs DC-voltage regulation, while changing `P_ref` perturbs the selected terminal-power target. These are dynamic-model references, distinct from the static VSC's power-flow control configuration.
 
 ## Initialization and connections
 

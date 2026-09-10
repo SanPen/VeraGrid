@@ -4,15 +4,15 @@ import sys
 
 from PySide6 import QtWidgets
 
-import VeraGrid.Gui.DynamicModelEditor.dynamic_editor_graphics as graph
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import DynamicEditorTab
-from VeraGrid.Session.dynamic_editor_entries import (
+import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_graphics as graph
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.Workspace.Tabs.dynamic_editor_tab import DynamicEditorTab
+from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_entries import (
     DynamicEditorEntry,
     build_dynamic_editor_entry,
     get_templates_for_entry,
 )
-from VeraGrid.Session.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
+from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
@@ -114,16 +114,20 @@ def _select_template(entry: DynamicEditorEntry,
 
 def _find_root_wrapper(editor: DynamicBlockEditorGUI,
                        reference: VarPowerFlowReferenceType,
-                       block_type: BlockType) -> graph.ProtectedConnectionBlockItem:
-    """Resolve one root-interface wrapper by its semantic network reference.
+                       block_type: BlockType) -> graph.PortItem:
+    """Resolve one exact root-interface port by its semantic network reference.
 
     :param editor: Active root Dynamic Editor.
     :param reference: Required network reference.
     :param block_type: Input or output connection direction.
-    :return: Matching protected root-interface item.
+    :return: Matching protected or grouped root-interface port.
     :raises AssertionError: If the GUI did not materialize the required port.
     """
     scene_item: object
+    interface_ports: list[graph.PortItem]
+    interface_port: graph.PortItem
+    mapped_var: Var | None = editor.main_block.external_mapping.get(reference, None)
+
     for scene_item in editor.scene.items():
         if isinstance(scene_item, graph.ProtectedConnectionBlockItem) and scene_item.subsys is not None:
             semantic_reference: VarPowerFlowReferenceType | None = editor._get_semantic_root_interface_reference(
@@ -131,13 +135,41 @@ def _find_root_wrapper(editor: DynamicBlockEditorGUI,
                 block_type=block_type,
             )
             if semantic_reference == reference:
-                return scene_item
+                if block_type == BlockType.INPUT_CONN:
+                    interface_ports = scene_item.outputs
+                elif block_type == BlockType.OUTPUT_CONN:
+                    interface_ports = scene_item.inputs
+                else:
+                    interface_ports = list()
+
+                if len(interface_ports) == 1:
+                    return interface_ports[0]
+                else:
+                    pass
             else:
                 pass
+        elif isinstance(scene_item, graph.MeasurementsItem):
+            if block_type == BlockType.INPUT_CONN:
+                interface_ports = scene_item.outputs
+            elif block_type == BlockType.OUTPUT_CONN:
+                interface_ports = scene_item.inputs
+            else:
+                interface_ports = list()
+
+            for interface_port in interface_ports:
+                if interface_port.base_var is None:
+                    pass
+                elif (mapped_var is not None
+                      and interface_port.base_var.non_mutable_uid == mapped_var.non_mutable_uid):
+                    return interface_port
+                elif mapped_var is None and interface_port.base_var.ref == reference:
+                    return interface_port
+                else:
+                    pass
         else:
             pass
 
-    raise AssertionError(f"The Dynamic Editor did not create the root wrapper for {reference.name}.")
+    raise AssertionError(f"The Dynamic Editor did not create the root port for {reference.name}.")
 
 
 def _find_template_port(item: graph.GenericBlockItem,
@@ -238,19 +270,26 @@ def build_dynamic_model_with_editor(application: QtWidgets.QApplication,
         template_block
     )
 
+    # A fresh root editor initially lays out only its interface wrappers. Once
+    # the catalog block exists, reproduce the current GUI workflow by placing
+    # those wrappers around the definitive content before routing any wires.
+    layout_updated: bool = editor._layout_root_interface_items_around_content()
+    assert layout_updated is True
+    application.processEvents()
+
     expected_connection_count: int = len(template_block.in_vars) + len(template_block.out_vars)
     variable: Var
 
     # Reproduce the user wiring every network input from the device boundary.
     for variable in template_block.in_vars:
         if isinstance(variable.ref, VarPowerFlowReferenceType):
-            input_wrapper: graph.ProtectedConnectionBlockItem = _find_root_wrapper(
+            input_wrapper_port: graph.PortItem = _find_root_wrapper(
                 editor=editor,
                 reference=variable.ref,
                 block_type=BlockType.INPUT_CONN,
             )
             editor.scene.connect_ports(
-                input_wrapper.outputs[0],
+                input_wrapper_port,
                 _find_template_port(item=template_item, reference=variable.ref, is_input=True),
             )
         else:
@@ -260,14 +299,14 @@ def build_dynamic_model_with_editor(application: QtWidgets.QApplication,
     # Reproduce the user wiring every model output back to the device boundary.
     for variable in template_block.out_vars:
         if isinstance(variable.ref, VarPowerFlowReferenceType):
-            output_wrapper: graph.ProtectedConnectionBlockItem = _find_root_wrapper(
+            output_wrapper_port: graph.PortItem = _find_root_wrapper(
                 editor=editor,
                 reference=variable.ref,
                 block_type=BlockType.OUTPUT_CONN,
             )
             editor.scene.connect_ports(
                 _find_template_port(item=template_item, reference=variable.ref, is_input=False),
-                output_wrapper.inputs[0],
+                output_wrapper_port,
             )
         else:
             _dispose_page(page=page, application=application)
@@ -275,6 +314,10 @@ def build_dynamic_model_with_editor(application: QtWidgets.QApplication,
 
     assert page.has_unapplied_changes
     assert len(editor.diagram.con_data) == expected_connection_count
+    assert all(
+        connection_record.routing_payload is not None
+        for connection_record in editor.diagram.con_data.values()
+    )
     editor.apply_changes()
     application.processEvents()
     assert page.has_unapplied_changes is False

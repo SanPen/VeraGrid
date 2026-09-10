@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Valve state &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Valve state &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -170,6 +170,10 @@
 <section id="runtime-behavior">
 <h2>Runtime behavior<a class="headerlink" href="#runtime-behavior" title="Link to this heading"></a></h2>
 <p>The state machine applies valve-specific turn-on, turn-off and reverse-path rules at accepted boundaries. Deadbands prevent numerical chatter near zero. All references are mandatory and must identify symbols compiled into the same dynamic system.</p>
+</section>
+<section id="library-block">
+<h2>Library block<a class="headerlink" href="#library-block" title="Link to this heading"></a></h2>
+<p>The standalone block has <code class="docutils literal notranslate"><span class="pre">valve_voltage</span></code> and <code class="docutils literal notranslate"><span class="pre">valve_current</span></code> inputs and a retained <code class="docutils literal notranslate"><span class="pre">state</span></code> output. Valve type, gate command, antiparallel enable and numerical deadbands are editable runtime parameters.</p>
 </section>
 </section>
 

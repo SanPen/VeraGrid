@@ -236,7 +236,8 @@ def get_toot_pint_seed_population(obj_func: Callable,
                                   pop_size: int,
                                   report_text: Callable | None = None,
                                   logger: Logger | None = None,
-                                  record_results: bool = False) -> tuple[IntMat, Mat]:
+                                  record_results: bool = False,
+                                  cancel_checker: Callable[[], bool] | None = None) -> tuple[IntMat, Mat]:
     """
     Build an optional NSGA3 warm-start population from the direct PINT and TOOT evaluations.
 
@@ -265,6 +266,8 @@ def get_toot_pint_seed_population(obj_func: Callable,
     :type logger: Logger | None
     :param record_results: Record the evaluated seed points in the results object.
     :type record_results: bool
+    :param cancel_checker: Optional cancellation check.
+    :type cancel_checker: Callable[[], bool] | None
     :return: Seed decision vectors and aligned objective vectors.
     :rtype: tuple[IntMat, Mat]
     """
@@ -272,6 +275,11 @@ def get_toot_pint_seed_population(obj_func: Callable,
         pass
     else:
         return np.zeros((0, n_var), dtype=int), np.zeros((0, n_obj), dtype=float)
+
+    if cancel_checker is not None and cancel_checker():
+        return np.zeros((0, n_var), dtype=int), np.zeros((0, n_obj), dtype=float)
+    else:
+        pass
 
     reference_combination: IntVec = get_reference_combination(lb=lb)
     target_combination: IntVec = get_target_combination(n_var=n_var, lb=lb, ub=ub)
@@ -291,61 +299,66 @@ def get_toot_pint_seed_population(obj_func: Callable,
     pint_objectives: Mat = np.zeros((n_var, n_obj), dtype=float)
     toot_combinations: IntMat = np.zeros((n_var, n_var), dtype=int)
     toot_objectives: Mat = np.zeros((n_var, n_obj), dtype=float)
+    evaluated_projects: int = 0
 
     for idx in range(n_var):
-        if report_text is None:
-            pass
+        if cancel_checker is not None and cancel_checker():
+            break
         else:
-            report_text(f"Evaluating project {idx} with PINT/TOOT warm-start logic...")
+            if report_text is None:
+                pass
+            else:
+                report_text(f"Evaluating project {idx} with PINT/TOOT warm-start logic...")
 
-        activation_value: int = get_candidate_activation_value(ub=ub, idx=idx)
-        pint_combination: IntVec = reference_combination.copy()
-        pint_combination[idx] = activation_value
-        pint_combinations[idx, :] = pint_combination
+            activation_value: int = get_candidate_activation_value(ub=ub, idx=idx)
+            pint_combination: IntVec = reference_combination.copy()
+            pint_combination[idx] = activation_value
+            pint_combinations[idx, :] = pint_combination
 
-        # PINT gives the single-project "project in" combinations used for the hybrid warm-start.
-        pint_objective_vector: Vec = obj_func(x=pint_combination.copy(), record_results=record_results)
-        pint_objectives[idx, :] = pint_objective_vector
-        pint_delta: Vec = baseline_objectives - pint_objective_vector
+            # PINT gives the single-project "project in" combinations used for the hybrid warm-start.
+            pint_objective_vector: Vec = obj_func(x=pint_combination.copy(), record_results=record_results)
+            pint_objectives[idx, :] = pint_objective_vector
+            pint_delta: Vec = baseline_objectives - pint_objective_vector
 
-        toot_combination: IntVec = target_combination.copy()
-        toot_combination[idx] = reference_combination[idx]
-        toot_combinations[idx, :] = toot_combination
+            toot_combination: IntVec = target_combination.copy()
+            toot_combination[idx] = reference_combination[idx]
+            toot_combinations[idx, :] = toot_combination
 
-        # TOOT gives complementary "take one out" combinations that broaden the first NSGA3 generation.
-        toot_objective_vector: Vec = obj_func(x=toot_combination.copy(), record_results=record_results)
-        toot_objectives[idx, :] = toot_objective_vector
-        toot_delta: Vec = toot_objective_vector - target_objectives
+            # TOOT gives complementary "take one out" combinations that broaden the first NSGA3 generation.
+            toot_objective_vector: Vec = obj_func(x=toot_combination.copy(), record_results=record_results)
+            toot_objectives[idx, :] = toot_objective_vector
+            toot_delta: Vec = toot_objective_vector - target_objectives
 
-        if capex_idx > -1:
-            pint_capex: float = float(pint_objective_vector[capex_idx] - baseline_objectives[capex_idx])
-            toot_capex: float = float(target_objectives[capex_idx] - toot_objective_vector[capex_idx])
-            project_capex[idx] = pint_capex
-        else:
-            pint_capex = 0.0
-            toot_capex = 0.0
-            project_capex[idx] = 0.0
+            if capex_idx > -1:
+                pint_capex: float = float(pint_objective_vector[capex_idx] - baseline_objectives[capex_idx])
+                toot_capex: float = float(target_objectives[capex_idx] - toot_objective_vector[capex_idx])
+                project_capex[idx] = pint_capex
+            else:
+                pint_capex = 0.0
+                toot_capex = 0.0
+                project_capex[idx] = 0.0
 
-        pint_score: float = get_normalized_cba_score(delta_objectives=pint_delta,
-                                                     capex_delta=pint_capex,
-                                                     capex_idx=capex_idx,
-                                                     scale=objective_scale)
-        toot_score: float = get_normalized_cba_score(delta_objectives=toot_delta,
-                                                     capex_delta=toot_capex,
-                                                     capex_idx=capex_idx,
-                                                     scale=objective_scale)
-        project_scores[idx] = 0.5 * (pint_score + toot_score)
+            pint_score: float = get_normalized_cba_score(delta_objectives=pint_delta,
+                                                         capex_delta=pint_capex,
+                                                         capex_idx=capex_idx,
+                                                         scale=objective_scale)
+            toot_score: float = get_normalized_cba_score(delta_objectives=toot_delta,
+                                                         capex_delta=toot_capex,
+                                                         capex_idx=capex_idx,
+                                                         scale=objective_scale)
+            project_scores[idx] = 0.5 * (pint_score + toot_score)
+            evaluated_projects += 1
 
-        if logger is None:
-            pass
-        else:
-            logger.add_info(msg="PINT/TOOT NSGA3 warm-start score",
-                            device=str(variable_names[idx]),
-                            value=f"{project_scores[idx]:.6f}",
-                            expected_value=f"PINT {pint_score:.6f} / TOOT {toot_score:.6f}")
+            if logger is None:
+                pass
+            else:
+                logger.add_info(msg="PINT/TOOT NSGA3 warm-start score",
+                                device=str(variable_names[idx]),
+                                value=f"{project_scores[idx]:.6f}",
+                                expected_value=f"PINT {pint_score:.6f} / TOOT {toot_score:.6f}")
 
-    sorted_indices: IntVec = get_sorted_project_indices(scores=project_scores,
-                                                        capex_values=project_capex)
+    sorted_indices: IntVec = get_sorted_project_indices(scores=project_scores[:evaluated_projects],
+                                                        capex_values=project_capex[:evaluated_projects])
     candidate_population: IntMat = np.zeros((2 * n_var + 2, n_var), dtype=int)
     candidate_objectives: Mat = np.zeros((2 * n_var + 2, n_obj), dtype=float)
     candidate_count: int = 0
@@ -410,7 +423,8 @@ def TOOT_PINT_CBA(obj_func: Callable,
                   objective_names: StrVec,
                   variable_names: StrVec,
                   report_text: Callable | None = None,
-                  logger: Logger | None = None) -> IntVec:
+                  logger: Logger | None = None,
+                  cancel_checker: Callable[[], bool] | None = None) -> IntVec:
     """
     Run a CBA-like independent project ranking based on PINT and TOOT evaluations.
 
@@ -435,11 +449,18 @@ def TOOT_PINT_CBA(obj_func: Callable,
     :type report_text: Callable | None
     :param logger: Optional logger.
     :type logger: Logger | None
+    :param cancel_checker: Optional cancellation check.
+    :type cancel_checker: Callable[[], bool] | None
     :return: Best-ranked combination according to the CBA sequence.
     :rtype: IntVec
     """
     reference_combination: IntVec = get_reference_combination(lb=lb)
     target_combination: IntVec = get_target_combination(n_var=n_var, lb=lb, ub=ub)
+
+    if cancel_checker is not None and cancel_checker():
+        return reference_combination
+    else:
+        pass
 
     # The reference case is the baseline used in the PINT logic.
     baseline_objectives: Vec = obj_func(x=reference_combination.copy(), record_results=True)
@@ -458,76 +479,84 @@ def TOOT_PINT_CBA(obj_func: Callable,
     project_scores: Vec = np.zeros(n_var, dtype=float)
     project_capex: Vec = np.zeros(n_var, dtype=float)
     st: float = timeit.default_timer()
+    evaluated_projects: int = 0
 
     for idx in range(n_var):
-        if report_text is None:
-            pass
+        if cancel_checker is not None and cancel_checker():
+            break
         else:
-            report_text(f"Evaluating project {idx} with PINT/TOOT logic...")
+            if report_text is None:
+                pass
+            else:
+                report_text(f"Evaluating project {idx} with PINT/TOOT logic...")
 
-        activation_value: int = get_candidate_activation_value(ub=ub, idx=idx)
-        pint_combination: IntVec = reference_combination.copy()
-        pint_combination[idx] = activation_value
+            activation_value: int = get_candidate_activation_value(ub=ub, idx=idx)
+            pint_combination: IntVec = reference_combination.copy()
+            pint_combination[idx] = activation_value
 
-        # PINT adds one project to the reference grid.
-        pint_objectives: Vec = obj_func(x=pint_combination, record_results=True)
-        pint_delta: Vec = baseline_objectives - pint_objectives
+            # PINT adds one project to the reference grid.
+            pint_objectives: Vec = obj_func(x=pint_combination, record_results=True)
+            pint_delta: Vec = baseline_objectives - pint_objectives
 
-        # TOOT removes one project from the target grid to estimate its marginal contribution there.
-        toot_combination: IntVec = target_combination.copy()
-        toot_combination[idx] = reference_combination[idx]
-        toot_objectives: Vec = obj_func(x=toot_combination, record_results=False)
-        toot_delta: Vec = toot_objectives - target_objectives
+            # TOOT removes one project from the target grid to estimate its marginal contribution there.
+            toot_combination: IntVec = target_combination.copy()
+            toot_combination[idx] = reference_combination[idx]
+            toot_objectives: Vec = obj_func(x=toot_combination, record_results=False)
+            toot_delta: Vec = toot_objectives - target_objectives
 
-        if capex_idx > -1:
-            pint_capex: float = float(pint_objectives[capex_idx] - baseline_objectives[capex_idx])
-            toot_capex: float = float(target_objectives[capex_idx] - toot_objectives[capex_idx])
-            project_capex[idx] = pint_capex
-        else:
-            pint_capex = 0.0
-            toot_capex = 0.0
-            project_capex[idx] = 0.0
+            if capex_idx > -1:
+                pint_capex: float = float(pint_objectives[capex_idx] - baseline_objectives[capex_idx])
+                toot_capex: float = float(target_objectives[capex_idx] - toot_objectives[capex_idx])
+                project_capex[idx] = pint_capex
+            else:
+                pint_capex = 0.0
+                toot_capex = 0.0
+                project_capex[idx] = 0.0
 
-        pint_score: float = get_normalized_cba_score(delta_objectives=pint_delta,
-                                                     capex_delta=pint_capex,
-                                                     capex_idx=capex_idx,
-                                                     scale=objective_scale)
+            pint_score: float = get_normalized_cba_score(delta_objectives=pint_delta,
+                                                         capex_delta=pint_capex,
+                                                         capex_idx=capex_idx,
+                                                         scale=objective_scale)
 
-        toot_score: float = get_normalized_cba_score(delta_objectives=toot_delta,
-                                                     capex_delta=toot_capex,
-                                                     capex_idx=capex_idx,
-                                                     scale=objective_scale)
+            toot_score: float = get_normalized_cba_score(delta_objectives=toot_delta,
+                                                         capex_delta=toot_capex,
+                                                         capex_idx=capex_idx,
+                                                         scale=objective_scale)
 
-        project_scores[idx] = 0.5 * (pint_score + toot_score)
+            project_scores[idx] = 0.5 * (pint_score + toot_score)
+            evaluated_projects += 1
 
-        if logger is None:
-            pass
-        else:
-            logger.add_info(msg="Independent CBA project score",
-                            device=str(variable_names[idx]),
-                            value=f"{project_scores[idx]:.6f}",
-                            expected_value=f"PINT {pint_score:.6f} / TOOT {toot_score:.6f}")
+            if logger is None:
+                pass
+            else:
+                logger.add_info(msg="Independent CBA project score",
+                                device=str(variable_names[idx]),
+                                value=f"{project_scores[idx]:.6f}",
+                                expected_value=f"PINT {pint_score:.6f} / TOOT {toot_score:.6f}")
 
-    sorted_indices: IntVec = get_sorted_project_indices(scores=project_scores,
-                                                        capex_values=project_capex)
+    sorted_indices: IntVec = get_sorted_project_indices(scores=project_scores[:evaluated_projects],
+                                                        capex_values=project_capex[:evaluated_projects])
 
     cumulative_combination: IntVec = reference_combination.copy()
 
     # The first ranked project has already been evaluated as a PINT case above, so only new cumulative
     # combinations are added from the second project onwards.
     for position, project_idx in enumerate(sorted_indices):
-        activation_value: int = get_candidate_activation_value(ub=ub, idx=int(project_idx))
-        cumulative_combination[int(project_idx)] = activation_value
-
-        if position > 0:
-            if report_text is None:
-                pass
-            else:
-                report_text(f"Evaluating cumulative combination ranked up to project {project_idx}...")
-
-            obj_func(x=cumulative_combination.copy(), record_results=True)
+        if cancel_checker is not None and cancel_checker():
+            break
         else:
-            pass
+            activation_value: int = get_candidate_activation_value(ub=ub, idx=int(project_idx))
+            cumulative_combination[int(project_idx)] = activation_value
+
+            if position > 0:
+                if report_text is None:
+                    pass
+                else:
+                    report_text(f"Evaluating cumulative combination ranked up to project {project_idx}...")
+
+                obj_func(x=cumulative_combination.copy(), record_results=True)
+            else:
+                pass
 
     et: float = timeit.default_timer()
 

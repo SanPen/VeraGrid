@@ -26,7 +26,8 @@ from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConn
                                                                      DynamicConnectionIntentDirection,
                                                                      DynamicConnectionIntentOrigin,
                                                                      dynamic_connection_intent_from_dict,
-                                                                     dynamic_connection_intent_to_dict)
+                                                                     dynamic_connection_intent_to_dict,
+                                                                     reconcile_dynamic_connection_intent_target)
 from VeraGridEngine.Utils.Symbolic.variable_alignment_engine import align_variables
 from VeraGridEngine.Utils.procedural_logic_contract import (
     ProceduralLogicCodecContract,
@@ -1832,7 +1833,11 @@ def collect_rms_physical_measurement_points(
 
 def normalize_dynamic_connection_intents(block: "Block") -> None:
     """
-    Keep one current typed state for each connection-intent identity.
+    Keep one current reachable typed state for each connection-intent identity.
+
+    A missing root-interface phase is not considered unreachable because it can
+    return after a topology change. An internal block or port outside the owned
+    block tree cannot return semantically and its obsolete intent is removed.
 
     :param block: Block whose intents must be normalized.
     :return: None.
@@ -1844,7 +1849,8 @@ def normalize_dynamic_connection_intents(block: "Block") -> None:
     matching_index: int | None
 
     for entry in block.connection_intents:
-        if isinstance(entry, DynamicConnectionIntent):
+        if (isinstance(entry, DynamicConnectionIntent)
+                and reconcile_dynamic_connection_intent_target(intent=entry, root_block=block)):
             matching_index = None
             for existing_index, existing_entry in enumerate(normalized_entries):
                 if existing_entry.has_same_identity(entry):
@@ -2712,6 +2718,10 @@ class Block:
         Get dictionary representation of this block
         :return: Dictionary
         """
+        # Canonical persistence excludes historical intents whose internal
+        # block or port has already been removed from this block hierarchy.
+        normalize_dynamic_connection_intents(block=self)
+
         # Persistence is the stable boundary where a fully built in-memory
         # model must become one coherent declarative contract.
         validate_dynamic_model_contract(self)

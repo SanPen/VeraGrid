@@ -1,13 +1,15 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.  
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
 import pandas as pd
-from typing import Union, Tuple
+from typing import Dict, Union, Tuple
 from matplotlib import pyplot as plt
 import numpy as np
+from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.bus import Bus
+from VeraGridEngine.Devices.Branches.dc_cable_type import DcCableType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, PrpCat, ParamPowerFlowReferenceType
@@ -62,8 +64,8 @@ class DcLine(BranchParent):
         GCProp(
             prop_name='template',
             units='',
-            tpe=DeviceType.AnyLineTemplateDevice,
-            definition='',
+            tpe=DeviceType.DcCableTypeDevice,
+            definition='Physical DC cable type applied to this line.',
             editable=False,
             cat=[PrpCat.TP],
         ),
@@ -97,7 +99,7 @@ class DcLine(BranchParent):
                  temp_base=20,
                  temp_oper=20,
                  alpha=0.00330,
-                 template=None,
+                 template: DcCableType | None = None,
                  contingency_factor=1.0,
                  protection_rating_factor: float = 1.4,
                  contingency_enabled=True,
@@ -177,7 +179,7 @@ class DcLine(BranchParent):
         self.R = float(r) if r is not None else 0.0001
 
         # type template
-        self.template = template
+        self.template: DcCableType | None = template
 
         # Line locations
         self._locations: LineLocations = LineLocations()
@@ -264,45 +266,164 @@ class DcLine(BranchParent):
 
         self.R *= b
 
-    def get_weight(self):
+    def get_weight(self) -> float:
         """
 
         :return:
         """
         return self.R
 
-    def copy(self, bus_dict=None):
+    def apply_template(self,
+                       obj: DcCableType,
+                       Sbase: float,
+                       logger: Logger | None = None) -> None:
         """
-        Returns a copy of the dc line
-        @return: A new  with the same content as this
+        Apply one physical DC cable type to this line atomically.
+
+        The resistance copied to ``DcLine`` is the static per-unit value used
+        by network compilation. Inductance and capacitance remain canonical in
+        ``DcCableType`` and are converted on demand by the dynamic consumers.
+        The branch rating is intentionally preserved until the public DC pole
+        voltage convention is defined.
+
+        :param obj: DC cable type to apply.
+        :param Sbase: System power base in MVA.
+        :param logger: Optional logger receiving validation failures.
+        :return: None.
+        """
+        if logger is None:
+            calculation_logger: Logger = Logger()
+        else:
+            calculation_logger = logger
+
+        line_voltage: float = self.get_max_bus_nominal_voltage()
+        valid_type: bool = isinstance(obj, DcCableType)
+        valid_bases: bool = Sbase > 0.0 and line_voltage > 0.0 and self.length > 0.0
+        valid_parameters: bool = (
+            valid_type
+            and obj.Vnom > 0.0
+            and obj.Imax >= 0.0
+            and obj.R >= 0.0
+            and obj.L >= 0.0
+            and obj.C >= 0.0
+        )
+
+        if valid_type and valid_bases and valid_parameters:
+            resistance_pu: float
+            inductance_pu_seconds: float
+            capacitance_pu_seconds: float
+            resistance_pu, inductance_pu_seconds, capacitance_pu_seconds = obj.get_values(
+                Sbase=Sbase,
+                length=self.length,
+                line_Vnom=line_voltage,
+            )
+
+            # All validation and conversion finishes before the branch changes,
+            # so a failed application cannot leave a mixed old/new state.
+            self.R = resistance_pu
+            self.template = obj
+            self.rms_template = obj.rms_template
+            self.emt_template = obj.emt_template
+        else:
+            calculation_logger.add_error(
+                msg='DC cable template could not be applied',
+                device=self.name,
+            )
+
+    def get_applied_dynamic_values_pu_seconds(self,
+                                              Sbase: float) -> Tuple[float, float] | None:
+        """
+        Convert the associated physical cable data for dynamic consumers.
+
+        This method returns ``None`` when the line has no physical cable
+        evidence. It does not apply a simulation fallback or write a log.
+
+        :param Sbase: System power base in MVA.
+        :return: Total series inductance and shunt capacitance in p.u. seconds,
+                 or ``None`` when no physical cable type is associated.
+        """
+        if self.template is not None:
+            line_voltage: float = self.get_max_bus_nominal_voltage()
+            resistance_pu: float
+            inductance_pu_seconds: float
+            capacitance_pu_seconds: float
+            resistance_pu, inductance_pu_seconds, capacitance_pu_seconds = self.template.get_values(
+                Sbase=Sbase,
+                length=self.length,
+                line_Vnom=line_voltage,
+            )
+            return inductance_pu_seconds, capacitance_pu_seconds
+        else:
+            return None
+
+    def get_dynamic_values_pu_seconds(self,
+                                      Sbase: float,
+                                      logger: Logger) -> Tuple[float, float]:
+        """
+        Get the physical cable coefficients required by a dynamic simulation.
+
+        A line without a physical cable template remains usable as a purely
+        resistive branch. The missing optional dynamics are reported instead
+        of stopping the simulation.
+
+        :param Sbase: System power base in MVA.
+        :param logger: Simulation logger receiving the resistive-fallback warning.
+        :return: Total series inductance and shunt capacitance in p.u. seconds.
+        """
+        physical_values: Tuple[float, float] | None = self.get_applied_dynamic_values_pu_seconds(
+            Sbase=Sbase,
+        )
+        if physical_values is not None:
+            return physical_values
+        else:
+            # No physical L/C default exists for a DC cable. Returning zero
+            # selects the existing resistive simulation reduction without
+            # creating a fictitious physical DcCableType.
+            logger.add_warning(
+                msg='DC line has no cable template; using the resistive fallback',
+                device=self.name,
+                value='L=0, C=0',
+            )
+            return 0.0, 0.0
+
+    def copy(self,
+             bus_dict: Dict[Bus, Bus] | None = None) -> 'DcLine':
+        """
+        Copy the DC line and keep its physical span.
+
+        :param bus_dict: Optional mapping from source buses to copied buses.
+        :return: New DC line with the same electrical data and cable template.
         """
 
         if bus_dict is None:
-            f = self.bus_from
-            t = self.bus_to
+            bus_from: Bus | None = self.bus_from
+            bus_to: Bus | None = self.bus_to
         else:
-            f = bus_dict[self.bus_from]
-            t = bus_dict[self.bus_to]
+            bus_from = bus_dict[self.bus_from]
+            bus_to = bus_dict[self.bus_to]
 
-        b = DcLine(bus_from=f,
-                   bus_to=t,
-                   name=self.name,
-                   r=self.R,
-                   rate=self.rate,
-                   active=self.active,
-                   mttf=self.mttf,
-                   mttr=self.mttr,
-                   temp_base=self.temp_base,
-                   temp_oper=self.temp_oper,
-                   alpha=self.alpha,
-                   template=self.template)
+        copied_line: DcLine = DcLine(
+            bus_from=bus_from,
+            bus_to=bus_to,
+            name=self.name,
+            r=self.R,
+            rate=self.rate,
+            active=self.active,
+            mttf=self.mttf,
+            mttr=self.mttr,
+            length=self.length,
+            temp_base=self.temp_base,
+            temp_oper=self.temp_oper,
+            alpha=self.alpha,
+            template=self.template,
+        )
 
-        b.measurements = self.measurements
+        copied_line.measurements = self.measurements
 
-        b.active_prof = self.active_prof
-        b.rate_prof = self.rate_prof
+        copied_line.active_prof = self.active_prof
+        copied_line.rate_prof = self.rate_prof
 
-        return b
+        return copied_line
 
     # def get_save_data(self):
     #     """
@@ -362,7 +483,7 @@ class DcLine(BranchParent):
             fig.suptitle(self.name, fontsize=20)
 
         if show_fig:
-            plt.show()
+            plt.show(block=False)
 
     def get_coordinates(self):
         """

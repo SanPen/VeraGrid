@@ -602,13 +602,17 @@ class ModelsProcessThread(QtCore.QThread):
 
         :return: None
         """
-        self.gui_instance.process(
-            main_grid=self.main_grid,
-            logger=self.logger,
-            items=self.items,
-            use_secondary_key=self.use_secondary_key,
-            progress_func=self.progress_signal.emit
-        )
+        try:
+            self.gui_instance.process(
+                main_grid=self.main_grid,
+                logger=self.logger,
+                items=self.items,
+                use_secondary_key=self.use_secondary_key,
+                progress_func=self.progress_signal.emit
+            )
+        except Exception as e:
+            self.logger.add_error(msg=str(e))
+
         self.done_signal.emit()
 
     def cancel(self) -> None:
@@ -825,7 +829,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
                 use_secondary_key=use_secondary_key
             )
             self.process_thread.progress_signal.connect(self.ui.progressBar.setValue)
-            self.process_thread.done_signal.connect(self.on_process_done)
+            self.process_thread.finished.connect(self.on_process_done)
             self.process_thread.start()
 
     def on_process_done(self) -> None:

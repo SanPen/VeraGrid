@@ -61,7 +61,6 @@ for package in packages:
         packages2.append(package)
 
 package_data = {
-    package_name('Gui.AiAgent.knowledge'): ['*.md'],
     package_name('Gui.translations'): ['*.qm'],
     package_name('data'): [
         'cables.csv',

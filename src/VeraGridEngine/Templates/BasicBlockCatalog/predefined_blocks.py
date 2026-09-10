@@ -382,19 +382,36 @@ def generic(var_factory: VarFactory,
             inputs: int,
             outputs: int,
             ) -> Block:
-    """
+    """Build an empty generic block with deterministic interface initialization.
 
-    :param var_factory:
-    :param inputs:
-    :param outputs:
-    :return:
+    :param var_factory: Factory that owns every new symbolic identity.
+    :param inputs: Number of incoming signal variables to create.
+    :param outputs: Number of outgoing signal variables to create.
+    :return: Generic block whose outputs start from zero until edited.
     """
-    blk = Block(
+    input_variables: list[sym.Var] = list()
+    input_index: int
+    for input_index in range(inputs):
+        input_variables.append(var_factory.add_var(f"input{input_index}"))
+
+    output_variables: list[sym.Var] = list()
+    output_index: int
+    for output_index in range(outputs):
+        output_variables.append(var_factory.add_var(f"output{output_index}"))
+
+    initial_equations: dict[sym.Var, sym.Const] = dict()
+    output_variable: sym.Var
+    for output_variable in output_variables:
+        # Generic outputs are block-owned signals even before the user writes
+        # their runtime equations. Give each one a deterministic initialization
+        # that remains editable from Block Properties.
+        initial_equations[output_variable] = sym.Const(0.0)
+
+    blk: Block = Block(
         name="generic",
-        in_vars=[var_factory.add_var(f"input{i}") for i in range(inputs)],
-        out_vars = [var_factory.add_var(f"output{i}") for i in range(outputs)]
-        )
-
-
+        in_vars=input_variables,
+        out_vars=output_variables,
+        init_eqs=initial_equations,
+    )
     return blk
 

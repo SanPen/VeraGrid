@@ -12,6 +12,98 @@ from VeraGrid.Gui.Icons import icons_rc
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 
 
+def get_popup_top_left_inside_rect(global_position: QtCore.QPoint,
+                                   popup_size: QtCore.QSize,
+                                   available_geometry: QtCore.QRect) -> QtCore.QPoint:
+    """
+    Clamp one popup top-left point so the full popup remains inside one screen rectangle.
+
+    :param global_position: Requested global popup top-left position.
+    :param popup_size: Popup size that must fit inside the screen.
+    :param available_geometry: Screen available geometry.
+    :return: Clamped global popup top-left position.
+    """
+    max_x: int = max(available_geometry.left(),
+                     available_geometry.left() + available_geometry.width() - popup_size.width())
+    max_y: int = max(available_geometry.top(),
+                     available_geometry.top() + available_geometry.height() - popup_size.height())
+    x_pos: int = global_position.x()
+    y_pos: int = global_position.y()
+
+    # Shift left when the popup would cross the right screen edge.
+    if x_pos > max_x:
+        x_pos = max_x
+    else:
+        pass
+
+    # Shift right when the requested point is outside the left screen edge.
+    if x_pos < available_geometry.left():
+        x_pos = available_geometry.left()
+    else:
+        pass
+
+    # Shift up when the popup would cross the bottom screen edge.
+    if y_pos > max_y:
+        y_pos = max_y
+    else:
+        pass
+
+    # Shift down when the requested point is outside the top screen edge.
+    if y_pos < available_geometry.top():
+        y_pos = available_geometry.top()
+    else:
+        pass
+
+    return QtCore.QPoint(x_pos, y_pos)
+
+
+def get_popup_available_geometry(global_position: QtCore.QPoint,
+                                 widget: QtWidgets.QWidget) -> QtCore.QRect:
+    """
+    Return the available screen geometry matching one popup position.
+
+    :param global_position: Requested global popup position.
+    :param widget: Popup widget used to find a fallback screen.
+    :return: Available screen rectangle.
+    """
+    screen: QtGui.QScreen | None = QtGui.QGuiApplication.screenAt(global_position)
+
+    if screen is None:
+        window_handle: QtGui.QWindow | None = widget.windowHandle()
+        if window_handle is not None:
+            screen = window_handle.screen()
+        else:
+            pass
+    else:
+        pass
+
+    if screen is None:
+        screen = QtGui.QGuiApplication.primaryScreen()
+    else:
+        pass
+
+    if screen is not None:
+        geometry: QtCore.QRect = screen.availableGeometry()
+    else:
+        geometry = QtCore.QRect(global_position, widget.size())
+
+    return geometry
+
+
+def get_popup_size_inside_rect(popup_size: QtCore.QSize,
+                               available_geometry: QtCore.QRect) -> QtCore.QSize:
+    """
+    Limit one popup size to the available screen rectangle.
+
+    :param popup_size: Requested popup size.
+    :param available_geometry: Screen available geometry.
+    :return: Popup size that can fit inside the screen.
+    """
+    width: int = min(popup_size.width(), available_geometry.width())
+    height: int = min(popup_size.height(), available_geometry.height())
+    return QtCore.QSize(width, height)
+
+
 def make_icon_button(icon_path: str, tooltip: str, parent: QtWidgets.QWidget) -> QtWidgets.QToolButton:
     """
     Create one compact icon-only popup button.
@@ -28,6 +120,142 @@ def make_icon_button(icon_path: str, tooltip: str, parent: QtWidgets.QWidget) ->
     button.setIconSize(QtCore.QSize(18, 18))
     button.setFixedSize(26, 26)
     return button
+
+
+class PopupResizeGrip(QtWidgets.QWidget):
+    """
+    Visible bottom-right grip that resizes its top-level popup directly.
+    """
+
+    __slots__ = (
+        "_resize_from_top",
+        "_resize_start_global_pos",
+        "_resize_start_local_pos",
+        "_resize_start_position",
+        "_resize_start_size",
+        "_resizing",
+    )
+
+    def __init__(self, parent: QtWidgets.QWidget) -> None:
+        """
+        Constructor.
+
+        :param parent: Parent popup.
+        :return: None.
+        """
+        QtWidgets.QWidget.__init__(self, parent)
+
+        self._resize_from_top: bool = False
+        self._resize_start_global_pos: QtCore.QPoint = QtCore.QPoint()
+        self._resize_start_local_pos: QtCore.QPoint = QtCore.QPoint()
+        self._resize_start_position: QtCore.QPoint = QtCore.QPoint()
+        self._resize_start_size: QtCore.QSize = QtCore.QSize()
+        self._resizing: bool = False
+
+        self.setFixedSize(18, 18)
+        self.setCursor(QtCore.Qt.CursorShape.SizeFDiagCursor)
+        self.setToolTip(self.tr("Resize"))
+
+    def set_resize_from_top(self, value: bool) -> None:
+        """
+        Select whether vertical resizing is anchored from the top edge.
+
+        :param value: True to resize upward from the top edge.
+        :return: None.
+        """
+        self._resize_from_top = value
+        if value:
+            self.setCursor(QtCore.Qt.CursorShape.SizeBDiagCursor)
+        else:
+            self.setCursor(QtCore.Qt.CursorShape.SizeFDiagCursor)
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Start resizing the parent popup.
+
+        :param event: Mouse press event.
+        :return: None.
+        """
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+            self._resizing = True
+            self._resize_start_global_pos = event.globalPosition().toPoint()
+            self._resize_start_local_pos = event.position().toPoint()
+            self._resize_start_position = self.window().pos()
+            self._resize_start_size = self.window().size()
+            self.grabMouse()
+            event.accept()
+        else:
+            QtWidgets.QWidget.mousePressEvent(self, event)
+
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Resize the parent popup while dragging.
+
+        :param event: Mouse move event.
+        :return: None.
+        """
+        if self._resizing:
+            delta: QtCore.QPoint = event.globalPosition().toPoint() - self._resize_start_global_pos
+            if delta.x() == 0 and delta.y() == 0:
+                delta = event.position().toPoint() - self._resize_start_local_pos
+            else:
+                pass
+            popup: QtWidgets.QWidget = self.window()
+            requested_height: int
+            requested_width: int = self._resize_start_size.width() + delta.x()
+            if self._resize_from_top:
+                requested_height = self._resize_start_size.height() - delta.y()
+            else:
+                requested_height = self._resize_start_size.height() + delta.y()
+
+            requested_size: QtCore.QSize = QtCore.QSize(
+                requested_width,
+                requested_height,
+            )
+            minimum_size: QtCore.QSize = popup.minimumSize().expandedTo(popup.minimumSizeHint())
+            bounded_size: QtCore.QSize = requested_size.expandedTo(minimum_size).boundedTo(popup.maximumSize())
+
+            if self._resize_from_top:
+                y_position: int = self._resize_start_position.y() + self._resize_start_size.height() - bounded_size.height()
+                popup.move(self._resize_start_position.x(), y_position)
+            else:
+                pass
+
+            popup.resize(bounded_size)
+            event.accept()
+        else:
+            QtWidgets.QWidget.mouseMoveEvent(self, event)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Finish resizing the parent popup.
+
+        :param event: Mouse release event.
+        :return: None.
+        """
+        if self._resizing:
+            self._resizing = False
+            self.releaseMouse()
+            event.accept()
+        else:
+            QtWidgets.QWidget.mouseReleaseEvent(self, event)
+
+    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+        """
+        Paint the diagonal resize mark.
+
+        :param event: Paint event.
+        :return: None.
+        """
+        del event
+        painter: QtGui.QPainter = QtGui.QPainter(self)
+        pen: QtGui.QPen = QtGui.QPen(QtGui.QColor(120, 120, 120))
+        pen.setWidth(1)
+        painter.setPen(pen)
+
+        offset: int
+        for offset in (4, 8, 12):
+            painter.drawLine(self.width() - offset, self.height() - 2, self.width() - 2, self.height() - offset)
 
 
 def set_clear_action_visibility(action: QtGui.QAction, text: str) -> None:
@@ -83,6 +311,7 @@ class ObjectColumnFilterDialog(QtWidgets.QDialog):
         "_source_column",
         "_table_view",
         "_values",
+        "resize_grip",
         "search_line_edit",
         "values_list_widget",
     )
@@ -108,7 +337,7 @@ class ObjectColumnFilterDialog(QtWidgets.QDialog):
         self._values: List[str] = proxy_model.get_column_filter_values(source_column=source_column)
 
         self.setWindowFlags(QtCore.Qt.WindowType.Popup)
-        self.setMinimumWidth(360)
+        self.setMinimumSize(360, 280)
 
         layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
@@ -180,6 +409,13 @@ class ObjectColumnFilterDialog(QtWidgets.QDialog):
         self.values_list_widget.setMinimumHeight(220)
         layout.addWidget(self.values_list_widget)
 
+        grip_layout: QtWidgets.QHBoxLayout = QtWidgets.QHBoxLayout()
+        grip_layout.setContentsMargins(0, 0, 0, 0)
+        grip_layout.addStretch(1)
+        self.resize_grip: PopupResizeGrip = PopupResizeGrip(parent=self)
+        grip_layout.addWidget(self.resize_grip)
+        layout.addLayout(grip_layout)
+
         self.fill_values()
 
     def show_at(self, global_position: QtCore.QPoint) -> None:
@@ -189,8 +425,48 @@ class ObjectColumnFilterDialog(QtWidgets.QDialog):
         :param global_position: Global screen position.
         :return: None.
         """
-        self.move(global_position)
+        available_geometry: QtCore.QRect = get_popup_available_geometry(global_position=global_position, widget=self)
+        popup_size: QtCore.QSize = get_popup_size_inside_rect(
+            popup_size=self.sizeHint().expandedTo(self.minimumSize()),
+            available_geometry=available_geometry,
+        )
+        self.setMaximumSize(available_geometry.size())
+        self.resize(popup_size)
+        self.move(get_popup_top_left_inside_rect(
+            global_position=global_position,
+            popup_size=self.size(),
+            available_geometry=available_geometry,
+        ))
         self.show()
+
+    def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
+        """
+        Keep the popup inside the screen after the user resizes it.
+
+        :param event: Resize event.
+        :return: None.
+        """
+        QtWidgets.QDialog.resizeEvent(self, event)
+        available_geometry: QtCore.QRect = get_popup_available_geometry(global_position=self.pos(), widget=self)
+        bounded_size: QtCore.QSize = get_popup_size_inside_rect(
+            popup_size=self.size(),
+            available_geometry=available_geometry,
+        )
+
+        if bounded_size != self.size():
+            self.resize(bounded_size)
+        else:
+            pass
+
+        bounded_position: QtCore.QPoint = get_popup_top_left_inside_rect(
+            global_position=self.pos(),
+            popup_size=bounded_size,
+            available_geometry=available_geometry,
+        )
+        if bounded_position != self.pos():
+            self.move(bounded_position)
+        else:
+            pass
 
     def fill_values(self) -> None:
         """

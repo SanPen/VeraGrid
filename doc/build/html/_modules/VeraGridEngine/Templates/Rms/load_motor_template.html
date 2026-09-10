@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Rms.load_motor_template &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Templates.Rms.load_motor_template &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -114,31 +115,20 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Builds an RMS model template for an induction motor load.</span>
-<span class="sd">    </span>
-<span class="sd">    Implements a detailed induction motor model with transient and subtransient dynamics.</span>
-<span class="sd">    The model includes:</span>
-<span class="sd">    - Electrical dynamics: Transient and subtransient voltage equations (Ed&#39;, Eq&#39;, Ed&#39;&#39;, Eq&#39;&#39;)</span>
-<span class="sd">    - Mechanical dynamics: Rotor speed (omega/slip) with inertia and load torque</span>
-<span class="sd">    - Algebraic equations: Currents, voltages, and power calculations in dq-reference frame</span>
-<span class="sd">    </span>
-<span class="sd">    The motor is represented by its equivalent circuit parameters including stator resistance,</span>
-<span class="sd">    leakage inductances, and magnetizing inductance. The model captures motor behavior during</span>
-<span class="sd">    voltage disturbances, including stall and recovery characteristics.</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        name (str): Name of the motor load model</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        RmsModelTemplate: Configured RMS model template for induction motor simulation</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-
 <div class="viewcode-block" id="MotorLoadBuild">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.load_motor_template.MotorLoadBuild">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">MotorLoadBuild</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">MotorLoadBuild</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Motor load RMS template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a detailed induction-motor RMS load model.</span>
+
+<span class="sd">    The model represents transient and subtransient electrical dynamics,</span>
+<span class="sd">    rotor-speed mechanics, and dq-frame current, voltage, and power equations.</span>
+
+<span class="sd">    :param vfactory: Factory that owns the model&#39;s symbolic variables.</span>
+<span class="sd">    :param name: Name assigned to the generated RMS model template.</span>
+<span class="sd">    :return: Configured induction-motor load RMS model template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span>
     <span class="n">pi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
     <span class="c1"># Inputs:</span>
@@ -283,6 +273,7 @@
     <span class="p">}</span>
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">res_block</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Load RMS induction-motor model&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 </pre></div>

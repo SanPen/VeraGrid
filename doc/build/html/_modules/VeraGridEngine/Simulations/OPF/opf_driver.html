@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.OPF.opf_driver &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.OPF.opf_driver &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -301,6 +302,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">fluid_node_p2x_flow</span> <span class="o">=</span> <span class="n">opf_vars</span><span class="o">.</span><span class="n">fluid_node_vars</span><span class="o">.</span><span class="n">p2x_flow</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">fluid_node_current_level</span> <span class="o">=</span> <span class="n">opf_vars</span><span class="o">.</span><span class="n">fluid_node_vars</span><span class="o">.</span><span class="n">current_level</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">fluid_node_fluid_value</span> <span class="o">=</span> <span class="n">opf_vars</span><span class="o">.</span><span class="n">fluid_node_vars</span><span class="o">.</span><span class="n">fluid_value</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">fluid_node_spillage</span> <span class="o">=</span> <span class="n">opf_vars</span><span class="o">.</span><span class="n">fluid_node_vars</span><span class="o">.</span><span class="n">spillage</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">fluid_node_flow_in</span> <span class="o">=</span> <span class="n">opf_vars</span><span class="o">.</span><span class="n">fluid_node_vars</span><span class="o">.</span><span class="n">flow_in</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">fluid_node_flow_out</span> <span class="o">=</span> <span class="n">opf_vars</span><span class="o">.</span><span class="n">fluid_node_vars</span><span class="o">.</span><span class="n">flow_out</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
@@ -408,6 +410,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span></div>
 
 
+<div class="viewcode-block" id="OptimalPowerFlowDriver.run_gslv_opf">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_driver.OptimalPowerFlowDriver.run_gslv_opf">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_gslv_opf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pg.OptimalPowerFlowResults&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run one snapshot OPF with the configured GSLV backend.</span>
+
+<span class="sd">        :return: Native GSLV optimal-power-flow results for the current grid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">gslv_opf</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+                        <span class="n">opf_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
+                        <span class="n">time_series</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">time_indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="OptimalPowerFlowDriver.run">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.OPF.html#VeraGridEngine.Simulations.OPF.opf_driver.OptimalPowerFlowDriver.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -417,6 +433,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s2">&quot;Compiling and configuring...&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">==</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">GSLV</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">GSLV_AVAILABLE</span><span class="p">:</span>
@@ -441,11 +458,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s1">&#39;Running Non-Linear OPF with GSLV...&#39;</span><span class="p">)</span>
 
-            <span class="n">gslv_res</span> <span class="o">=</span> <span class="n">gslv_opf</span><span class="p">(</span><span class="n">circuit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
-                                <span class="n">opf_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span>
-                                <span class="n">time_series</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                <span class="n">time_indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="n">gslv_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_gslv_opf</span><span class="p">()</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="n">gslv_res</span><span class="o">.</span><span class="n">voltage</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sbus</span> <span class="o">=</span> <span class="n">gslv_res</span><span class="o">.</span><span class="n">Sbus</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>

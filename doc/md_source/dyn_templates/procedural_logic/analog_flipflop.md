@@ -23,3 +23,7 @@ Implements a set/reset latch that captures and retains an analog input value.
 ## Runtime behavior
 
 The input is sampled when the latch is initialized or transitions into the set state. It is not continuously tracked while held. Order matters if the input expression reads modes written earlier in the same update.
+
+## Library block
+
+The standalone block exposes inputs `u`, `set`, and `reset` and output `y`. Its internal retained value starts at `0.0`.

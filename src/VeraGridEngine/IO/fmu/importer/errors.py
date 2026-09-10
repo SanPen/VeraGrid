@@ -7,7 +7,7 @@ from __future__ import annotations
 
 
 class FmuImportError(RuntimeError):
-    """Base exception for the experimental FMU import package.
+    """Base exception for the FMU import package.
 
     :return: None.
     """

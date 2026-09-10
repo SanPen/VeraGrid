@@ -23,3 +23,7 @@ Generates three retained gate signals by comparing phase modulation references w
 ## Runtime behavior
 
 The logic clips modulation references to the carrier range, schedules within-half-cycle switching instants and requests exact event boundaries. A near-zero switching frequency freezes the carrier on a very long interval. All three gate modes are written by this single entry.
+
+## Library block
+
+The standalone block exposes three modulation inputs and three gate outputs. `switching_frequency` defaults to `2π·1000` radians per second and `carrier_phase` defaults to `0.0`.

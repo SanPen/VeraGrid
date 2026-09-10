@@ -19,3 +19,7 @@ Represents one imported physical switch command with an explicit target FID, gua
 ## Runtime behavior
 
 At accepted simulation boundaries, the logic detects a guarded rising edge and schedules one command at the edge time plus the evaluated delay. When that boundary is reached, it writes the commanded position to the retained mode and marks the event as fired.
+
+## Library block
+
+The standalone block has `guard` and `trigger` inputs, a `closed` status output, and an editable `delay` parameter. The target device and switch identifiers are intentionally empty after insertion and must be completed in Python code before applying the model.

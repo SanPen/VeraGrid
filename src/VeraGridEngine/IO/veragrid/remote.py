@@ -215,13 +215,15 @@ def gather_model_as_jsons_for_communication(circuit: MultiCircuit,
 
 
 def send_json_data(json_data: Dict[str, Union[str, Dict[str, Dict[str, str]]]],
-                         endpoint_url: str,
-                         certificate: str) -> Any:
+                   endpoint_url: str,
+                   certificate: str,
+                   timeout: float = 30.0) -> Any:
     """
     Send a file along with instructions about the file
     :param json_data: Json with te model
     :param endpoint_url: Web socket URL to connect to
     :param certificate: SSL certificate path
+    :param timeout: Request timeout in seconds
     :return service response
     """
 
@@ -230,7 +232,8 @@ def send_json_data(json_data: Dict[str, Union[str, Dict[str, Dict[str, str]]]],
             url=endpoint_url,
             json=json_data,
             stream=True,
-            verify=certificate
+            verify=certificate,
+            timeout=timeout,
         )
 
         # return server response

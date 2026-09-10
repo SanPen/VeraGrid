@@ -46,8 +46,8 @@ class JobsModel(QtCore.QAbstractTableModel):
         :param data:
         :return:
         """
-        self.jobs.clear()
         self.beginResetModel()
+        self.jobs.clear()
         for job_data in data:
             job = RemoteJob(data=job_data)
             self.jobs.append(job)
@@ -144,11 +144,13 @@ class ServerDriver(QThread):
     progress_text = Signal(str)
     done_signal = Signal()
     connected_signal = Signal()
+    status_signal = Signal(str)
+    jobs_data_signal = Signal(object)
     sync_event = Signal()
     items_processed_event = Signal()
 
     def __init__(self, url: str, port: int, pwd: str, sleep_time: int = 2, status_func: Callable[[str], None] = None,
-                 secure: bool = False):
+                 secure: bool = False, request_timeout_s: float = 30.0):
         """
         Constructor
         :param url: Server URL
@@ -156,6 +158,7 @@ class ServerDriver(QThread):
         :param pwd: Server password
         :param sleep_time: Sleep time (s)
         :param status_func: a text function pointer
+        :param request_timeout_s: Request timeout in seconds
         """
         QThread.__init__(self)
 
@@ -163,6 +166,7 @@ class ServerDriver(QThread):
         self.port = port
         self.pwd = pwd
         self.sleep_time = sleep_time
+        self.request_timeout_s = request_timeout_s
         self.status_func: Callable[[str], None] = status_func
         self.secure = secure
         self.__running__ = False
@@ -180,7 +184,8 @@ class ServerDriver(QThread):
 
     def set_values(self, url: str, port: int, pwd: str, sleep_time: int = 2,
                    secure: bool = False,
-                   status_func: Callable[[str], None] = None):
+                   status_func: Callable[[str], None] = None,
+                   request_timeout_s: float = 30.0) -> None:
         """
         Set the values
         :param url: Server URL
@@ -189,11 +194,13 @@ class ServerDriver(QThread):
         :param sleep_time: Sleep time (s)
         :param secure: Use https?
         :param status_func: a text function pointer
+        :param request_timeout_s: Request timeout in seconds
         """
         self.url = url
         self.port = port
         self.pwd = pwd
         self.sleep_time = sleep_time
+        self.request_timeout_s = request_timeout_s
         self.secure = secure
         self.status_func: Callable[[str], None] = status_func
         self.__running__ = False
@@ -206,8 +213,7 @@ class ServerDriver(QThread):
         :param txt:
         :return:
         """
-        if self.status_func is not None:
-            self.status_func(txt)
+        self.status_signal.emit(txt)
 
     def base_url(self):
         """
@@ -459,7 +465,7 @@ class ServerDriver(QThread):
             # Check if the request was successful
             if response.status_code == 200:
                 # Parse the response body
-                self.data_model.parse_data(data=response.json())
+                self.jobs_data_signal.emit(response.json())
                 return True
             else:
                 # Print error message
@@ -487,7 +493,8 @@ class ServerDriver(QThread):
             response = asyncio.get_event_loop().run_until_complete(
                 send_json_data(json_data=model_data,
                                endpoint_url=websocket_url,
-                               certificate=self._certificate_path)
+                               certificate=self._certificate_path,
+                               timeout=self.request_timeout_s)
             )
 
             return response
@@ -660,6 +667,7 @@ class RemoteJobDriver(QThread):
     progress_signal = Signal(float)
     progress_text = Signal(str)
     done_signal = Signal(str)
+    result_driver_signal = Signal(object)
     sync_event = Signal()
     items_processed_event = Signal()
 
@@ -668,13 +676,14 @@ class RemoteJobDriver(QThread):
                  instruction: RemoteInstruction,
                  base_url: str,
                  certificate_path: str,
-                 register_driver_func) -> None:
+                 request_timeout_s: float) -> None:
         """
 
         :param grid:
         :param instruction:
         :param base_url:
         :param certificate_path:
+        :param request_timeout_s: Request timeout in seconds.
         """
         QThread.__init__(self)
 
@@ -684,36 +693,59 @@ class RemoteJobDriver(QThread):
         self.instruction = instruction
         self.base_url = base_url
         self.certificate_path = certificate_path
-
-        self.register_driver_func = register_driver_func
+        self.request_timeout_s = request_timeout_s
 
         self.logger = Logger()
+        self.__cancel__ = False
 
-    def run(self):
+    def is_cancel(self) -> bool:
         """
+        Check whether cancellation was requested.
 
-        :return:
+        :return: ``True`` when the remote job must stop publishing results.
+        """
+        return self.__cancel__
+
+    def cancel(self) -> None:
+        """
+        Request remote-job cancellation.
+
+        :return: None
+        """
+        self.__cancel__ = True
+
+    def run(self) -> None:
+        """
+        Upload the job and publish results unless cancellation was requested.
+
+        :return: None
         """
         websocket_url = f"{self.base_url}/upload_job"
 
         model_data = gather_model_as_jsons_for_communication(circuit=self.grid, instruction=self.instruction)
 
-        try:
-            response, ok = send_json_data(json_data=model_data,
-                                          endpoint_url=websocket_url,
-                                          certificate=self.certificate_path)
-
-            if not ok:
-                response_text = response
-                self.logger.add_error("Response error", value=response_text)
-                response = None
-
-        except requests.exceptions.ConnectionError as e:
-            warn(str(e))
+        if self.is_cancel():
             response = None
-            self.logger.add_error("Remote end closed connection without response")
+        else:
+            try:
+                response, ok = send_json_data(json_data=model_data,
+                                              endpoint_url=websocket_url,
+                                              certificate=self.certificate_path,
+                                              timeout=self.request_timeout_s)
 
-        if response is not None:
+                if not ok:
+                    response_text = response
+                    self.logger.add_error("Response error", value=response_text)
+                    response = None
+                else:
+                    pass
+
+            except requests.exceptions.RequestException as e:
+                warn(str(e))
+                response = None
+                self.logger.add_error("Remote end closed connection without response")
+
+        if response is not None and not self.is_cancel():
 
             success = response.get("success", False)
 
@@ -727,8 +759,12 @@ class RemoteJobDriver(QThread):
 
                 if driver is not None:
                     driver.results.parse_data(data=results_data)
-                    self.register_driver_func(driver=driver)
+                    self.result_driver_signal.emit(driver)
+                else:
+                    pass
             else:
                 self.logger.add_error(msg=response.get("msg", "No message"))
+        else:
+            pass
 
         self.done_signal.emit(self.idtag)

@@ -20,6 +20,7 @@ from VeraGridEngine.Devices.Parents.editable_device import GCProp
 from VeraGrid.Gui.gui_functions import ComboModel, get_list_model, get_checked_indices, get_chck_list_model
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.object_model import ObjectsModel
+from VeraGrid.Gui.object_column_filter_dialog import PopupResizeGrip
 from VeraGridEngine.enumerations import (FaultType, MethodShortCircuit, PhasesShortCircuit, FileType, CGMESVersions,
                                          DeviceType)
 
@@ -230,93 +231,6 @@ class MTreeExpandHook(QtCore.QObject):
         return super(MTreeExpandHook, self).eventFilter(self.tree, event)
 
 
-class DeviceSelectorResizeGrip(QtWidgets.QFrame):
-    """
-    Right-corner drag handle for the device selector popup.
-    """
-
-    def __init__(self, target: QtWidgets.QWidget, parent: QtWidgets.QWidget) -> None:
-        """
-        Constructor.
-
-        :param target: Widget resized by the grip.
-        :param parent: Parent widget.
-        """
-        QtWidgets.QFrame.__init__(self, parent=parent)
-
-        self.target: QtWidgets.QWidget = target
-        self.drag_position: QtCore.QPoint | None = None
-        self.start_size: QtCore.QSize = QtCore.QSize()
-        self.start_position: QtCore.QPoint = QtCore.QPoint()
-        self.resize_from_top: bool = False
-
-        # The grip is intentionally small and only acts as a resize handle.
-        self.setFixedSize(16, 16)
-        self.setCursor(QtCore.Qt.CursorShape.SizeFDiagCursor)
-
-    def set_resize_from_top(self, value: bool) -> None:
-        """
-        Select whether vertical resizing is anchored from the top edge.
-
-        :param value: True to resize upward from the top edge.
-        :return: None.
-        """
-        self.resize_from_top = value
-
-    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
-        """
-        Start a resize drag.
-
-        :param event: Mouse press event.
-        :return: None.
-        """
-        if event.button() == QtCore.Qt.MouseButton.LeftButton:
-            # Store the initial pointer and size so the move delta can resize the popup.
-            self.drag_position = event.globalPosition().toPoint()
-            self.start_size = self.target.size()
-            self.start_position = self.target.pos()
-            event.accept()
-        else:
-            super().mousePressEvent(event)
-
-    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
-        """
-        Resize the target during a drag.
-
-        :param event: Mouse move event.
-        :return: None.
-        """
-        if self.drag_position is not None:
-            # Resizing directly avoids relying on native window grips for Qt popup editors.
-            delta: QtCore.QPoint = event.globalPosition().toPoint() - self.drag_position
-            minimum_size: QtCore.QSize = self.target.minimumSizeHint()
-            width: int = max(minimum_size.width(), self.start_size.width() + delta.x())
-            if self.resize_from_top:
-                height: int = max(minimum_size.height(), self.start_size.height() - delta.y())
-                y_position: int = self.start_position.y() + self.start_size.height() - height
-                self.target.move(self.start_position.x(), y_position)
-            else:
-                height = max(minimum_size.height(), self.start_size.height() + delta.y())
-
-            self.target.resize(width, height)
-            event.accept()
-        else:
-            super().mouseMoveEvent(event)
-
-    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
-        """
-        Finish a resize drag.
-
-        :param event: Mouse release event.
-        :return: None.
-        """
-        if event.button() == QtCore.Qt.MouseButton.LeftButton:
-            self.drag_position = None
-            event.accept()
-        else:
-            super().mouseReleaseEvent(event)
-
-
 class LogsDialogue(CenteredDialog):
     """
     New profile dialogue window
@@ -468,7 +382,7 @@ class DeviceSelectorPanel(QtWidgets.QFrame):
             QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
             parent=self,
         )
-        self.size_grip: DeviceSelectorResizeGrip = DeviceSelectorResizeGrip(target=self, parent=self)
+        self.size_grip: PopupResizeGrip = PopupResizeGrip(parent=self)
 
         self.main_layout.addWidget(self.search_box)
         self.main_layout.addWidget(self.tree_view)

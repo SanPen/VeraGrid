@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.BasicBlockCatalog.module_regeneration &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Templates.BasicBlockCatalog.module_regeneration &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -404,7 +404,9 @@
 
         <span class="k">for</span> <span class="n">var_obj</span> <span class="ow">in</span> <span class="n">sorted_vars</span><span class="p">:</span>
             <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier_map</span><span class="p">[</span><span class="n">var_obj</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
-            <span class="n">raw_var_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_runtime_free_var_name</span><span class="p">(</span><span class="n">var_obj</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="c1"># The generated symbolic name is source code in the equation editor,</span>
+            <span class="c1"># so catalogue display punctuation cannot be preserved in this part.</span>
+            <span class="n">raw_var_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_safe_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_build_runtime_free_var_name</span><span class="p">(</span><span class="n">var_obj</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">differential_group</span><span class="p">:</span>
                 <span class="n">base_identifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier_map</span><span class="p">[</span><span class="n">var_obj</span><span class="o">.</span><span class="n">base_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>

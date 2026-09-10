@@ -20,7 +20,7 @@ ax = plt.gca()
 # ax.yaxis.set_major_formatter(LogFormatter(base=10.0))  # Format the ticks in log format
 plt.grid(True)
 plt.savefig('n_buses_vs_error.png')  # Save to disk
-plt.show()
+plt.show(block=False)
 
 # Plot 4: Time vs Iterations (line plot)
 
@@ -38,4 +38,4 @@ plt.yscale('log')
 # ax.yaxis.set_major_formatter(LogFormatter(base=10.0))  # Format the ticks in log format
 plt.grid(True)
 plt.savefig('n_buses_vs_time.png')  # Save to disk
-plt.show()
+plt.show(block=False)

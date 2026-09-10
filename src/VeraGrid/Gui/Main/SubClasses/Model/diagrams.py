@@ -10,6 +10,7 @@ from typing import List, Tuple, Union, Callable, Iterable
 
 import networkx as nx
 import numpy as np
+import shiboken6
 from PySide6 import QtGui, QtWidgets, QtCore
 from matplotlib import pyplot as plt
 from pandas.plotting import register_matplotlib_converters
@@ -17,6 +18,7 @@ from pandas.plotting import register_matplotlib_converters
 import VeraGridEngine.Devices.Diagrams.palettes as palettes
 from VeraGridEngine import ContingencyOperationTypes, MapDiagram
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.IO.file_system import tiles_path
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
@@ -26,7 +28,7 @@ from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_ts_results_3ph import Po
 from VeraGridEngine.Simulations.StateEstimation.state_estimation_results import StateEstimationResults
 from VeraGridEngine.Utils.progress_bar import print_progress_bar
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import (SimulationTypes, Colormaps, DeviceType, DynamicEventTransitionType,
+from VeraGridEngine.enumerations import (SimulationTypes, Colormaps, DeviceType,
                                          MethodShortCircuit, SchematicAutoRouteStyle, DynamicSimulationMode)
 from VeraGridEngine.Devices.Diagrams.schematic_diagram import SchematicDiagram
 
@@ -48,11 +50,6 @@ from VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays import CompiledArraysMai
 from VeraGrid.Gui.Main.object_select_window import ObjectSelectWindow, ListSelectWindow
 from VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb import CartoDbTiles
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
-from VeraGrid.Gui.DynamicEventsDialog.dynamic_events_editor import DynamicEventEditor
-from VeraGrid.Gui.DynamicEventsDialog.dynamic_events_editor_support import (
-    DynamicEventsGroupsDialog,
-    collect_block_runtime_event_parameters,
-)
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
 from VeraGrid.Gui.ShortCircuitEditor.short_circuit_selector import ShortCircuitSelector
 from VeraGrid.Gui.general_dialogues import (CheckListDialogue, StartEndSelectionDialogue,
@@ -379,31 +376,43 @@ class DiagramsMain(CompiledArraysMain):
         self.ui.diagramsListView.setContextMenuPolicy(QtGui.Qt.ContextMenuPolicy.CustomContextMenu)
         self.ui.diagramsListView.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection)
 
-    def shutdown_tile_sources(self) -> None:
+    def shutdown_tile_sources(self) -> bool:
         """
         Stop the map tile provider workers owned by the diagrams layer.
 
-        :return: Nothing.
+        :return: ``True`` when every tile worker has stopped.
         """
+        all_stopped: bool = True
         diagram_widget: SchematicWidget | GridMapWidget
         for diagram_widget in self.diagram_widgets_list:
             if isinstance(diagram_widget, GridMapWidget):
-                diagram_widget.map.tile_src.shutdown()
+                stopped: bool = diagram_widget.map.tile_src.shutdown()
+                if stopped:
+                    pass
+                else:
+                    all_stopped = False
             else:
                 pass
 
         tile_source: CartoDbTiles
         for tile_source in self.tile_sources:
-            tile_source.shutdown()
+            stopped = tile_source.shutdown()
+            if stopped:
+                pass
+            else:
+                all_stopped = False
 
-    def stop_all_threads(self) -> None:
+        return all_stopped
+
+    def stop_all_threads(self) -> bool:
         """
         Stop GUI worker threads, including the tile workers owned by diagrams.
 
-        :return: Nothing.
+        :return: ``True`` when every known worker has stopped.
         """
-        self.shutdown_tile_sources()
-        CompiledArraysMain.stop_all_threads(self)
+        tile_sources_stopped: bool = self.shutdown_tile_sources()
+        threads_stopped: bool = CompiledArraysMain.stop_all_threads(self)
+        return tile_sources_stopped and threads_stopped
 
     def get_current_objects_model_view(self) -> ObjectModelFilterProxy | None:
         """
@@ -2359,7 +2368,12 @@ class DiagramsMain(CompiledArraysMain):
             idx = indices[0].row()
             return self._ensure_diagram_widget_at_index(index=idx)
         else:
-            return None
+            current_index: QtCore.QModelIndex = self.ui.diagramsListView.currentIndex()
+            if current_index.isValid():
+                idx = current_index.row()
+                return self._ensure_diagram_widget_at_index(index=idx)
+            else:
+                return None
 
     def create_blank_schematic_diagram(self, name: str = "") -> SchematicWidget:
         """
@@ -3347,149 +3361,50 @@ class DiagramsMain(CompiledArraysMain):
                 info_msg(self.tr("Select some elements in the schematic first"), self.tr("Add selected to investment"))
 
     def add_rms_event_to_selected(self) -> None:
+        """Open the general dynamic-events workspace preferring RMS events.
+
+        :return: None.
         """
-        Add RMS event to a selected device
-        """
-        mode = DynamicSimulationMode.RMS
-        if self.circuit.valid_for_simulation():
-
-            # get the selected device to apply event to
-            target_devices = self.get_selected_devices()
-
-            if len(target_devices) == 1:
-
-                target_device = target_devices[0]
-                # launch rms event editor dialogue
-
-                events_groups = self.circuit.rms_events_groups
-                if len(events_groups) == 0:
-
-                    QtWidgets.QMessageBox.information(
-                        self,
-                        self.tr("No RMS Events Group"),
-                        self.tr("No RMS Events Group found, please create one before adding an event.")
-                    )
-
-                    dialog = DynamicEventsGroupsDialog(mode=mode,
-                                                       parent=self)
-                    if dialog.exec():
-                        name = dialog.get_name()
-                        # build group
-                        if name:
-                            self.circuit.add_rms_events_group(dev.RmsEventsGroup(idtag=None,
-                                                                                 name=name))
-
-
-                else:
-                    pass
-                # after creating a new events group or not, open eitherway the Events dialogue
-                rms_event_parameters, mode_parameter_uids = collect_block_runtime_event_parameters(target_device.rms_model)
-                rms_events_dialog = DynamicEventEditor(circuit=self.circuit,
-                                                       parameters_list=rms_event_parameters,
-                                                       target_device_name=target_device.type_name + ": " + target_device.name,
-                                                       mode=mode,
-                                                       mode_parameter_uids=mode_parameter_uids)
-
-                if rms_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-
-                    events_data = rms_events_dialog.get_data()
-                    events_list = list()
-                    for i, event in enumerate(events_data["parameters"]):
-                        transition_type = events_data["transition_types"][i]
-                        end_time = events_data["end_times"][i]
-
-                        if transition_type == DynamicEventTransitionType.Ramp and end_time is None:
-                            end_time = float(events_data["target_times"][i])
-                        else:
-                            pass
-
-                        events_list.append(dev.RmsEvent(device=target_device,
-                                                         parameter=events_data["parameters"][i],
-                                                         time=float(events_data["target_times"][i]),
-                                                         end_time=None if end_time is None else float(end_time),
-                                                         value=float(events_data["values"][i]),
-                                                         group=events_data["groups"][i],
-                                                         transition_type=transition_type))
-
-                    for event in events_list:
-                        self.circuit.add_rms_event(event)
-
-            else:
-                print("Selected devices: ", target_devices)
-                self.show_warning_toast(f"Select one and only one device to add event to")
+        self._open_dynamic_events_editor(DynamicSimulationMode.RMS)
 
     def add_emt_event_to_selected(self) -> None:
+        """Open the general dynamic-events workspace preferring EMT events.
+
+        :return: None.
         """
-        Add EMT event to a selected device
+        self._open_dynamic_events_editor(DynamicSimulationMode.EMT)
+
+    def _open_dynamic_events_editor(self, mode: DynamicSimulationMode) -> None:
+        """Open the requested events content in the unified dynamic workspace.
+
+        Exactly one selected device opens directly in an RMS or EMT events tab.
+        Zero or multiple selections expose the same workspace device tree so
+        the user can select one of its four model and events actions.
+
+        :param mode: RMS or EMT family preferred by the triggering action.
+        :return: None.
         """
-        mode = DynamicSimulationMode.EMT
-        if self.circuit.valid_for_simulation():
+        if not self.circuit.valid_for_simulation():
+            return
+        else:
+            selected_devices: List[ALL_DEV_TYPES] = self.get_selected_devices()
+        if len(selected_devices) == 1 and isinstance(selected_devices[0], EditableDevice):
+            initial_device: EditableDevice | None = selected_devices[0]
+        else:
+            initial_device = None
 
-            # get the selected device to apply event to
-            target_devices = self.get_selected_devices()
-
-            if len(target_devices) == 1:
-
-                target_device = target_devices[0]
-                # launch emt event editor dialogue
-
-                events_groups = self.circuit.emt_events_groups
-                if len(events_groups) == 0:
-
-                    QtWidgets.QMessageBox.information(
-                        self,
-                        self.tr("No EMT Events Group"),
-                        self.tr("No EMT Events Group found, please create one before adding an event.")
-                    )
-
-                    dialog = DynamicEventsGroupsDialog(parent=self,
-                                                       mode=mode)
-                    if dialog.exec():
-                        name = dialog.get_name()
-                        # build group
-                        if name:
-                            self.circuit.add_emt_events_group(dev.EmtEventsGroup(idtag=None,
-                                                                                 name=name))
-
-
-                else:
-                    pass
-
-                # after creating a new events group or not, open eitherway the Events dialogue
-                emt_event_parameters, mode_parameter_uids = collect_block_runtime_event_parameters(target_device.emt_model)
-                emt_events_dialog = DynamicEventEditor(circuit=self.circuit,
-                                                       parameters_list=emt_event_parameters,
-                                                       target_device_name=target_device.type_name + ": " + target_device.name,
-                                                       mode=mode,
-                                                       mode_parameter_uids=mode_parameter_uids)
-
-                if emt_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-
-                    events_data = emt_events_dialog.get_data()
-                    events_list = list()
-                    for i, event in enumerate(events_data["parameters"]):
-                        transition_type = events_data["transition_types"][i]
-                        end_time = events_data["end_times"][i]
-
-                        if transition_type == DynamicEventTransitionType.Ramp and end_time is None:
-                            end_time = float(events_data["target_times"][i])
-                        else:
-                            pass
-
-                        events_list.append(dev.EmtEvent(device=target_device,
-                                                        parameter=events_data["parameters"][i],
-                                                        time=float(events_data["target_times"][i]),
-                                                        end_time=None if end_time is None else float(end_time),
-                                                        value=float(events_data["values"][i]),
-                                                        group=events_data["groups"][i],
-                                                        force_step_alignment=bool(events_data["force_step_alignment"][i]),
-                                                        transition_type=transition_type))
-
-                    for event in events_list:
-                        self.circuit.add_emt_event(event)
-
-            else:
-                self.show_warning_toast(f"Select one and only one device to add event to")
+        if initial_device is not None:
+            self.open_dynamic_events(
+                api_object=initial_device,
+                circuit=self.circuit,
+                mode=mode,
+                show_tree=False,
+            )
+        else:
+            # Without one unambiguous diagram target, expose the unified device
+            # tree. Its four context actions let the user choose both model or
+            # events content and the RMS or EMT family.
+            self.display_dynamic_models_editor()
 
     def add_short_circuit_events(self):
         """
@@ -3806,7 +3721,7 @@ class DiagramsMain(CompiledArraysMain):
             elif isinstance(diagram, GridMapWidget):
                 pass
 
-    def delete_from_all_diagrams(self, elements: List[ALL_DEV_TYPES]):
+    def delete_from_all_diagrams(self, elements: List[ALL_DEV_TYPES]) -> None:
         """
         Delete elements from all editors
         :param elements: list of devices to delete_with_dialogue from the graphics editors
@@ -3818,6 +3733,54 @@ class DiagramsMain(CompiledArraysMain):
 
             elif isinstance(diagram_widget, GridMapWidget):
                 pass
+
+    def remove_dead_graphics_from_all_diagrams(self) -> None:
+        """
+        Remove diagram graphics whose API object no longer exists in the active circuit.
+
+        :return: None.
+        """
+        for diagram_widget in self.diagram_widgets_list:
+            if isinstance(diagram_widget, (SchematicWidget, GridMapWidget)):
+                self.remove_dead_graphics_from_diagram(diagram_widget=diagram_widget)
+            else:
+                pass
+
+    def remove_dead_graphics_from_diagram(self, diagram_widget: SchematicWidget | GridMapWidget) -> None:
+        """
+        Remove stale graphics from one diagram after an in-place database mutation.
+
+        :param diagram_widget: Diagram to synchronize with the active circuit.
+        :return: None.
+        """
+        for device_tpe, graphics_dict in list(diagram_widget.graphics_manager.graphic_dict.items()):
+            try:
+                live_elements: List[ALL_DEV_TYPES] = list(self.circuit.get_elements_by_type(device_type=device_tpe))
+            except Exception:
+                live_idtags: set[str] | None = None
+            else:
+                live_idtags = {element.idtag for element in live_elements}
+
+            if live_idtags is None:
+                stale_idtags: List[str] = list()
+            else:
+                stale_idtags = [idtag for idtag in list(graphics_dict.keys()) if idtag not in live_idtags]
+
+            for idtag in stale_idtags:
+                graphic_object: object | None = graphics_dict.get(idtag, None)
+
+                if graphic_object is None:
+                    del graphics_dict[idtag]
+                elif shiboken6.isValid(graphic_object):
+                    del graphics_dict[idtag]
+                    try:
+                        diagram_widget._remove_from_scene(graphic_object=graphic_object)
+                    except Exception:
+                        pass
+                    else:
+                        pass
+                else:
+                    del graphics_dict[idtag]
 
     def search_diagram(self):
         """
@@ -4111,12 +4074,12 @@ class DiagramsMain(CompiledArraysMain):
         # used when seeding the diagram.
         all_elements_dict, _ = self.circuit.get_all_elements_dict()
         self.circuit.set_investments_status(investments_list=self._investments_all,
-                                            status=False,
+                                            apply_investment=False,
                                             all_elements_dict=all_elements_dict)
 
         # apply the selected combination on top of the now-deactivated state
         self.circuit.set_investments_status(investments_list=inv_list,
-                                            status=True,
+                                            apply_investment=True,
                                             all_elements_dict=all_elements_dict)
 
         # Refresh active/inactive pen styles on every open schematic so toggled

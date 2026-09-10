@@ -39,6 +39,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
     EmtBoundaryUpdateProtocol,
     EmtProblemTemplate,
     get_solver_forced_event_time,
+    resolve_solver_boundary_step,
     resolve_solver_boundary_updater,
 )
 from VeraGridEngine.Simulations.driver_template import DummySignal
@@ -3085,9 +3086,13 @@ class StructuralCompiledSolver:
                 _fill_full_parameter_buffer(runtime_params, self._static_parameter_buffer, full_params)
 
                 if active_boundary_updater is None:
-                    pass
+                    state_event_retry_time: float | None = None
                 else:
-                    active_boundary_updater.update(float(t_curr), x_prev, full_params)
+                    state_event_retry_time = active_boundary_updater.update(
+                        float(t_curr),
+                        x_prev,
+                        full_params,
+                    )
 
                 if self._n_event_parameters > 0:
                     runtime_params[:] = full_params[:self._n_event_parameters]
@@ -3126,9 +3131,12 @@ class StructuralCompiledSolver:
                 else:
                     pass
 
-                substep_converged: bool = False
+                substep_converged: bool = state_event_retry_time is not None
                 newton_index: int = 0
-                while newton_index < self._newton_max_iter:
+                while (
+                    state_event_retry_time is None
+                    and newton_index < self._newton_max_iter
+                ):
                     ctx: NewtonSolveContext | None = None
                     # Residual assembly is fully in-place and reuses the grouped work buffers.
                     self._residual_assembler.evaluate(
@@ -3267,34 +3275,49 @@ class StructuralCompiledSolver:
                     if step_index == 0 and is_first_local_step:
                         well_initialized = False
 
-                # Differential history is updated according to the selected integration rule.
-                self._last_macro_newton_iterations = int(newton_index)
-
-                if self._method == DynamicIntegrationMethod.DaeTrapezoidal:
-                    dx_prev[:self._n_state] = (
-                        (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
-                        - dx_prev[:self._n_state]
+                if state_event_retry_time is None:
+                    state_event_retry_time = resolve_solver_boundary_step(
+                        boundary_updater=active_boundary_updater,
+                        accepted=substep_converged,
+                        params=full_params,
                     )
-                elif self._method == DynamicIntegrationMethod.DaeBDF2:
-                    x_prev2[:] = x_prev
-                    dx_prev[:self._n_state] = (
-                        1.5 * x_iter[:self._n_state]
-                        - 2.0 * x_prev[:self._n_state]
-                        + 0.5 * x_prev2[:self._n_state]
-                    ) / h_eff
                 else:
-                    dx_prev[:self._n_state] = (
-                        x_iter[:self._n_state] - x_prev[:self._n_state]
-                    ) / h_eff
-
-                if self._method == DynamicIntegrationMethod.DaeBDF2:
                     pass
-                else:
-                    x_prev2[:] = x_prev
 
-                x_prev[:] = x_iter
-                t_local_prev = t_curr
-                is_first_local_step = False
+                if state_event_retry_time is not None:
+                    # Do not advance differential history beyond a newly found
+                    # event; the next loop targets its global earliest time.
+                    x_iter[:] = x_prev
+                else:
+                    # Differential history is updated only for an accepted
+                    # continuous interval or its post-event re-solve.
+                    self._last_macro_newton_iterations = int(newton_index)
+
+                    if self._method == DynamicIntegrationMethod.DaeTrapezoidal:
+                        dx_prev[:self._n_state] = (
+                            (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
+                            - dx_prev[:self._n_state]
+                        )
+                    elif self._method == DynamicIntegrationMethod.DaeBDF2:
+                        x_prev2[:] = x_prev
+                        dx_prev[:self._n_state] = (
+                            1.5 * x_iter[:self._n_state]
+                            - 2.0 * x_prev[:self._n_state]
+                            + 0.5 * x_prev2[:self._n_state]
+                        ) / h_eff
+                    else:
+                        dx_prev[:self._n_state] = (
+                            x_iter[:self._n_state] - x_prev[:self._n_state]
+                        ) / h_eff
+
+                    if self._method == DynamicIntegrationMethod.DaeBDF2:
+                        pass
+                    else:
+                        x_prev2[:] = x_prev
+
+                    x_prev[:] = x_iter
+                    t_local_prev = t_curr
+                    is_first_local_step = False
 
 
             y[step_index + 1, :] = x_prev

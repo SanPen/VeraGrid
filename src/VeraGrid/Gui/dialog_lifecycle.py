@@ -33,17 +33,43 @@ def delete_dialog_safely(dialog: object) -> None:
     """
     if isinstance(dialog, QtWidgets.QWidget):
         if shiboken6.isValid(dialog):
-            dialog.deleteLater()
-            app: QtWidgets.QApplication | None = QtWidgets.QApplication.instance()
-            if app is not None:
+            delete_child_widgets_safely(widget=dialog)
+            try:
+                dialog.deleteLater()
                 QtCore.QCoreApplication.sendPostedEvents(dialog, QtCore.QEvent.Type.DeferredDelete)
-                app.processEvents()
+            except Exception:
+                pass
             else:
                 pass
         else:
             pass
     else:
         pass
+
+
+def delete_child_widgets_safely(widget: QtWidgets.QWidget) -> None:
+    """
+    Schedule every child widget owned by a Qt widget for deferred deletion.
+
+    :param widget: Parent widget whose owned children must be released.
+    :return: None.
+    """
+    children: list[QtWidgets.QWidget] = widget.findChildren(QtWidgets.QWidget)
+    child: QtWidgets.QWidget
+
+    for child in children:
+        if shiboken6.isValid(child):
+            child.close()
+            try:
+                child.deleteLater()
+            except Exception:
+                pass
+            else:
+                pass
+        else:
+            pass
+
+    QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.Type.DeferredDelete)
 
 
 def exec_dialog_safely(dialog: QtWidgets.QDialog) -> int:

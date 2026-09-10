@@ -15,6 +15,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
     EmtBoundaryUpdateProtocol,
     EmtProblemTemplate,
     get_solver_forced_event_time,
+    resolve_solver_boundary_step,
     resolve_solver_boundary_updater,
 )
 from VeraGridEngine.Utils.emt_boundary_update_wrapper import BoundaryUpdateWrapper
@@ -1128,9 +1129,13 @@ class JitSymbolicSolver:
                     pass
 
                 if active_boundary_updater is None:
-                    pass
+                    state_event_retry_time: float | None = None
                 else:
-                    active_boundary_updater.update(t_curr, x_prev, full_params)
+                    state_event_retry_time = active_boundary_updater.update(
+                        t_curr,
+                        x_prev,
+                        full_params,
+                    )
                     ev_params[:] = full_params[:len(ev_params)]
 
                 x_iter[:] = x_prev
@@ -1153,9 +1158,14 @@ class JitSymbolicSolver:
                 else:
                     pass
 
-                substep_converged: bool = False
+                substep_converged: bool = state_event_retry_time is not None
                 substep_numerical_failure: bool = False
-                for k in range(self.newton_max_iter):
+                newton_iteration_count: int
+                if state_event_retry_time is None:
+                    newton_iteration_count = self.newton_max_iter
+                else:
+                    newton_iteration_count = 0
+                for k in range(newton_iteration_count):
                     total_newton_iterations += 1
                     ctx = NewtonSolveContext(
                         t=float(t_curr),
@@ -1344,46 +1354,58 @@ class JitSymbolicSolver:
                     if i == 0 and is_first_local_step:
                         well_initialized = False
 
-                if substep_numerical_failure:
-                    # Preserve the last accepted solution when Newton breaks down
-                    # numerically so the EMT driver can report a failed substep
-                    # instead of crashing the whole simulation.
+                if state_event_retry_time is None:
+                    state_event_retry_time = resolve_solver_boundary_step(
+                        boundary_updater=active_boundary_updater,
+                        accepted=substep_converged,
+                        params=full_params,
+                    )
+                else:
+                    pass
+
+                if state_event_retry_time is not None:
                     x_iter[:] = x_prev
                 else:
-                    pass
-
-                if substep_numerical_failure:
-                    pass
-                else:
-                    if method == DynamicIntegrationMethod.DaeTrapezoidal:
-                        dx_prev[:n_states] = (
-                                (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states])
-                                - dx_prev[:n_states]
-                        )
-                    elif method == DynamicIntegrationMethod.DaeBackEuler:
-                        dx_prev[:n_states] = (
-                                (x_iter[:n_states] - x_prev[:n_states]) / h_eff
-                        )
-                    elif method == DynamicIntegrationMethod.DaeBDF2:
-                        x_prev2[:] = x_prev
-                        dx_prev[:n_states] = (
-                                                     1.5 * x_iter[:n_states]
-                                                     - 2.0 * x_prev[:n_states]
-                                                     + 0.5 * x_prev2[:n_states]
-                                             ) / h_eff
+                    if substep_numerical_failure:
+                        # Preserve the last accepted solution when Newton breaks down
+                        # numerically so the EMT driver can report a failed substep
+                        # instead of crashing the whole simulation.
+                        x_iter[:] = x_prev
                     else:
-                        dx_prev[:n_states] = (
-                                (x_iter[:n_states] - x_prev[:n_states]) / h_eff
-                        )
+                        pass
 
-                if method != DynamicIntegrationMethod.DaeBDF2 and not substep_numerical_failure:
-                    x_prev2[:] = x_prev
-                else:
-                    pass
+                    if substep_numerical_failure:
+                        pass
+                    else:
+                        if method == DynamicIntegrationMethod.DaeTrapezoidal:
+                            dx_prev[:n_states] = (
+                                    (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states])
+                                    - dx_prev[:n_states]
+                            )
+                        elif method == DynamicIntegrationMethod.DaeBackEuler:
+                            dx_prev[:n_states] = (
+                                    (x_iter[:n_states] - x_prev[:n_states]) / h_eff
+                            )
+                        elif method == DynamicIntegrationMethod.DaeBDF2:
+                            x_prev2[:] = x_prev
+                            dx_prev[:n_states] = (
+                                                         1.5 * x_iter[:n_states]
+                                                         - 2.0 * x_prev[:n_states]
+                                                         + 0.5 * x_prev2[:n_states]
+                                                 ) / h_eff
+                        else:
+                            dx_prev[:n_states] = (
+                                    (x_iter[:n_states] - x_prev[:n_states]) / h_eff
+                            )
 
-                x_prev[:] = x_iter
-                t_local_prev = t_curr
-                is_first_local_step = False
+                    if method != DynamicIntegrationMethod.DaeBDF2 and not substep_numerical_failure:
+                        x_prev2[:] = x_prev
+                    else:
+                        pass
+
+                    x_prev[:] = x_iter
+                    t_local_prev = t_curr
+                    is_first_local_step = False
 
 
 

@@ -381,7 +381,6 @@ class NodalCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
                                          options=vc_options,
                                          inputs=vc_inputs,
                                          pf_options=pf_options)
-        vc.run()
 
         self.report_progress(0.0)
         for it, t in enumerate(t_indices):
@@ -398,25 +397,17 @@ class NodalCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             res = vc.run_at(t_idx=t)
 
             # set the results
-            Sbase = self.grid.Sbase
-            self.results.voltage[it, :] = res.voltages[-1, :]
-            self.results.Sbus[it, :] = res.Sbus[-1, :] * Sbase
-            # self.results.bus_shadow_prices[it, :] = res.lam_p
-            # self.results.load_shedding = npa_res.load_shedding[0, :]
-            # self.results.battery_power = npa_res.battery_p[0, :]
-            # self.results.battery_energy = npa_res.battery_energy[0, :]
-            # self.results.generator_power[it, :] = res.Pg * Sbase
-            # self.results.generator_cost[it, :] = res.Pcost
-
-            self.results.Sf[it, :] = res.Sf[-1, :] * Sbase
-            self.results.St[it, :] = res.St[-1, :] * Sbase
-            # self.results.overloads[it, :] = (res.sl_sf - res.sl_st) * Sbase
-            self.results.loading[it, :] = res.loading[-1, :]
-            # self.results.phase_shift[it, :] = res.tap_phase
-
-            # self.results.hvdc_Pf[it, :] = res.hvdc_Pf
-            # self.results.hvdc_loading[it, :] = res.hvdc_loading
-            self.results.converged[it] = res.converged[-1]
+            if len(res.voltages) > 0:
+                Sbase = self.grid.Sbase
+                self.results.voltage[it, :] = res.voltages[-1, :]
+                self.results.Sbus[it, :] = res.Sbus[-1, :] * Sbase
+                self.results.Sf[it, :] = res.Sf[-1, :] * Sbase
+                self.results.St[it, :] = res.St[-1, :] * Sbase
+                self.results.loading[it, :] = res.loading[-1, :]
+                self.results.converged[it] = res.converged[-1]
+            else:
+                self.logger.add_error(msg="Continuation power flow results are empty", device=str(t))
+                self.results.converged[it] = False
 
             if self.is_cancel():
                 return self.results

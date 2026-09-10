@@ -2,27 +2,25 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Dict, List
 
 from PySide6 import QtWidgets
 
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_properties import (
+from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties import (
     DynamicBlockPropertiesDialog,
     build_block_symbol_namespace,
 )
-from VeraGrid.Gui.DynamicModelEditor.dynamic_procedural_logic import (
-    ProceduralFieldDraft,
+from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties import (
     ProceduralLogicDraft,
     RuntimeLogicDraftCollection,
     RuntimeLogicValidationResult,
+    build_runtime_logic_code,
+    build_runtime_logic_drafts_from_code,
     build_runtime_logic_entry,
     procedural_expression_to_text,
-    get_default_procedural_fields,
 )
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
-from VeraGridEngine.enumerations import ProceduralLogicType
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import (
     CmpOp,
@@ -35,6 +33,8 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (
 )
 from VeraGridEngine.Utils.procedural_logic import (
     AnalogFlipFlopLogic,
+    ConditionalDiagnosticLogic,
+    DelayedSwitchEventLogic,
     DelayedThresholdLatchLogic,
     FixedSampleLogic,
     FlipFlopLogic,
@@ -91,7 +91,7 @@ def build_complete_runtime_logic_block() -> tuple[Block, Dict[str, Expr]]:
     mode_names: List[str] = list([
         "fixed_mode", "sample_mode", "saturation_mode", "delay_mode",
         "average_mode", "gradient_mode", "flip_mode", "analog_mode",
-        "relay_mode", "latch_mode", "handover_mode", "valve_mode",
+        "relay_mode", "latch_mode", "handover_mode", "valve_mode", "switch_mode",
         "gate_a", "gate_b", "gate_c", "sample_a", "sample_b", "sample_c",
     ])
     modes: List[Var] = list()
@@ -129,6 +129,24 @@ def build_complete_runtime_logic_block() -> tuple[Block, Dict[str, Expr]]:
         AnalogFlipFlopLogic("analog_mode", x, x > Const(1.0), x < Const(0.0), "analog"),
         PickupDropoffLogic("relay_mode", x > Const(1.0), Const(0.1), Const(0.2), "relay"),
         ResetOnRisingEdgeLogic("x", y > Const(0.0), Const(0.0), "reset"),
+        ConditionalDiagnosticLogic(
+            condition_expr=x > Const(3.0),
+            message="x exceeded its diagnostic threshold",
+            initialization_only=False,
+            name="diagnostic",
+        ),
+        DelayedSwitchEventLogic(
+            output_var_name="switch_mode",
+            guard_expr=Const(1.0),
+            trigger_expr=x > Const(4.0),
+            delay_expr=Const(0.01),
+            target_device_idtag="device-id",
+            target_switch_idtag="switch-id",
+            target_terminal_index=0,
+            initial_closed=False,
+            command_closed=True,
+            name="delayed switch",
+        ),
         DelayedThresholdLatchLogic("x", "latch_mode", 1.0, 0.1, 0.2, "latch"),
         StartupHandoverLogic("handover_mode", "enable_time", "handover"),
         ValveStateLogic(
@@ -158,27 +176,6 @@ def build_complete_runtime_logic_block() -> tuple[Block, Dict[str, Expr]]:
     for mode_variable in modes:
         namespace[mode_variable.name] = mode_variable
     return block, namespace
-
-
-# def test_every_procedural_type_has_typed_fields_and_documentation() -> None:
-#     """Every concrete enum must be constructible and documented in Markdown."""
-#     repository_root: Path = Path(__file__).resolve().parents[3]
-#     documentation_root: Path = repository_root / "doc" / "md_source" / "dyn_templates" / "procedural_logic"
-#     concrete_count: int = 0
-#     logic_tpe: ProceduralLogicType
-#     for logic_tpe in ProceduralLogicType:
-#         if logic_tpe == ProceduralLogicType.Base:
-#             pass
-#         else:
-#             concrete_count += 1
-#             assert len(get_default_procedural_fields(logic_tpe)) > 0
-#             documentation_path: Path = documentation_root / f"{logic_tpe.value}.md"
-#             assert documentation_path.is_file(), logic_tpe.value
-#             documentation: str = documentation_path.read_text(encoding="utf-8")
-#             assert "## Purpose" in documentation
-#             assert "## Runtime behavior" in documentation
-#     assert concrete_count == 15
-#     assert (documentation_root / "dynamic_model_library_index.md").is_file()
 
 
 def test_comparisons_are_serialized_with_python_parser_tokens() -> None:
@@ -212,8 +209,30 @@ def test_every_existing_procedural_type_roundtrips_through_typed_drafts() -> Non
     entry: ProceduralLogicDraft
     for entry in drafts.get_entries():
         rebuilt.append(build_runtime_logic_entry(entry, namespace))
-    assert len(rebuilt) == 15
+    assert len(rebuilt) == 17
     assert [entry.logic_tpe for entry in rebuilt] == [entry.logic_tpe for entry in block.procedural_logic]
+
+
+def test_every_procedural_type_roundtrips_through_model_code() -> None:
+    """Python code must preserve every concrete Engine procedural entry type.
+
+    :return: None.
+    """
+    block: Block
+    namespace: Dict[str, Expr]
+    block, namespace = build_complete_runtime_logic_block()
+    source: str = "\n".join(build_runtime_logic_code(block))
+
+    drafts: RuntimeLogicDraftCollection = build_runtime_logic_drafts_from_code(
+        root=block,
+        owner_code=list(((block, source),)),
+    )
+    validation: RuntimeLogicValidationResult = drafts.validate(namespace)
+
+    assert validation.get_errors() == list()
+    assert [entry.get_logic_tpe() for entry in drafts.get_entries()] == [
+        entry.logic_tpe for entry in block.procedural_logic
+    ]
 
 
 def test_every_catalogue_runtime_entry_opens_as_a_valid_typed_draft() -> None:
@@ -256,24 +275,25 @@ def test_safe_parser_accepts_every_exported_rounding_function() -> None:
 
 
 def test_new_mode_and_writer_are_applied_as_one_transaction() -> None:
-    """A newly added mode must become authoritative before its writer is built."""
+    """Python code must create a mode before materializing its writer."""
     var_factory: VarFactory = VarFactory()
     source: Var = var_factory.add_var("source")
     block: Block = Block(name="runtime_root", algebraic_vars=list([source]), algebraic_eqs=list([source]))
     namespace: Dict[str, Expr] = dict({source.name: source})
-    drafts: RuntimeLogicDraftCollection = RuntimeLogicDraftCollection(block)
-    drafts.add_mode(block, "held", "source + 1")
-    entry: ProceduralLogicDraft = drafts.add_entry(
-        block,
-        ProceduralLogicType.SampledValue,
-        "sample source",
+    code: str = (
+        "retained_modes = {held: source + 1}\n"
+        "procedural_logic = [\n"
+        "    sampled_value(\n"
+        "        output=held,\n"
+        "        source=source * 2,\n"
+        "        name='sample source',\n"
+        "    ),\n"
+        "]"
     )
-    output_field: ProceduralFieldDraft | None = entry.get_field("output_var_name")
-    source_field: ProceduralFieldDraft | None = entry.get_field("source_expr")
-    assert output_field is not None
-    assert source_field is not None
-    output_field.set_value("held")
-    source_field.set_value("source * 2")
+    drafts: RuntimeLogicDraftCollection = build_runtime_logic_drafts_from_code(
+        root=block,
+        owner_code=list(((block, code),)),
+    )
 
     validation: RuntimeLogicValidationResult = drafts.validate(namespace)
     assert validation.get_errors() == list()
@@ -297,21 +317,17 @@ def test_runtime_validation_rejects_duplicate_writers_and_unknown_references() -
         mode_dict=dict({held: Const(0.0)}),
     )
     namespace: Dict[str, Expr] = dict({source.name: source, held.name: held})
-    drafts: RuntimeLogicDraftCollection = RuntimeLogicDraftCollection(block)
-    first: ProceduralLogicDraft = drafts.add_entry(block, ProceduralLogicType.SampledValue, "first")
-    second: ProceduralLogicDraft = drafts.add_entry(block, ProceduralLogicType.SampledValue, "second")
-    first_output: ProceduralFieldDraft | None = first.get_field("output_var_name")
-    first_source: ProceduralFieldDraft | None = first.get_field("source_expr")
-    second_output: ProceduralFieldDraft | None = second.get_field("output_var_name")
-    second_source: ProceduralFieldDraft | None = second.get_field("source_expr")
-    assert first_output is not None
-    assert first_source is not None
-    assert second_output is not None
-    assert second_source is not None
-    first_output.set_value("held")
-    first_source.set_value("missing_symbol")
-    second_output.set_value("held")
-    second_source.set_value("source")
+    code: str = (
+        "retained_modes = {held: 0.0}\n"
+        "procedural_logic = [\n"
+        "    sampled_value(output=held, source=missing_symbol, name='first'),\n"
+        "    sampled_value(output=held, source=source, name='second'),\n"
+        "]"
+    )
+    drafts: RuntimeLogicDraftCollection = build_runtime_logic_drafts_from_code(
+        root=block,
+        owner_code=list(((block, code),)),
+    )
 
     validation: RuntimeLogicValidationResult = drafts.validate(namespace)
     errors: List[str] = validation.get_errors()
@@ -321,7 +337,7 @@ def test_runtime_validation_rejects_duplicate_writers_and_unknown_references() -
 
 
 def test_mode_initialization_rejects_boolean_comparisons() -> None:
-    """Retained modes require numeric initialization expressions."""
+    """Retained modes accept symbolic values but reject boolean comparisons."""
     source: Var = Var("source")
     block: Block = Block(name="runtime_root", algebraic_vars=list([source]), algebraic_eqs=list([source]))
     namespace: Dict[str, Expr] = dict({source.name: source})
@@ -333,8 +349,8 @@ def test_mode_initialization_rejects_boolean_comparisons() -> None:
     assert any("not a comparison" in error for error in validation.get_errors())
 
 
-def test_mode_deletion_is_blocked_while_dae_equations_read_it() -> None:
-    """Immediate deletion must preserve modes still consumed by existing DAE equations."""
+def test_mode_deletion_is_staged_before_python_code_validation() -> None:
+    """Mode declarations can be removed before their DAE references are edited."""
     held: Var = Var("held")
     output: Var = Var("output")
     block: Block = Block(
@@ -349,8 +365,9 @@ def test_mode_deletion_is_blocked_while_dae_equations_read_it() -> None:
     message: str
     removed, message = drafts.remove_mode(0)
 
-    assert not removed
-    assert "DAE: runtime_root" in message
+    assert removed
+    assert message == ""
+    assert drafts.get_active_modes() == list()
 
 
 def test_dialogue_applies_dae_code_and_runtime_logic_together() -> None:
@@ -368,26 +385,22 @@ def test_dialogue_applies_dae_code_and_runtime_logic_together() -> None:
         "GENERIC",
         var_factory,
     )
-    drafts: RuntimeLogicDraftCollection = dialogue._runtime_logic_editor._drafts
-    drafts.add_mode(block, "held", "source + 1")
-    entry: ProceduralLogicDraft = drafts.add_entry(
-        block,
-        ProceduralLogicType.SampledValue,
-        "sample source",
-    )
-    output_field: ProceduralFieldDraft | None = entry.get_field("output_var_name")
-    source_field: ProceduralFieldDraft | None = entry.get_field("source_expr")
-    assert output_field is not None
-    assert source_field is not None
-    output_field.set_value("held")
-    source_field.set_value("source * 2")
-    dialogue._runtime_logic_editor.changed.emit()
     dialogue._dae_editor.setPlainText(
         "state_vars = []\n"
+        "algebraic_vars = [source]\n"
+        "diff_vars = []\n"
         "state_eqs = {}\n"
         "algebraic_eqs = [0 = source - held]\n"
         "init_eqs = {}\n"
-        "diff_init_eqs = {}"
+        "diff_init_eqs = {}\n"
+        "retained_modes = {held: source + 1}\n"
+        "procedural_logic = [\n"
+        "    sampled_value(\n"
+        "        output=held,\n"
+        "        source=source * 2,\n"
+        "        name='sample source',\n"
+        "    ),\n"
+        "]"
     )
 
     dialogue.apply_changes()

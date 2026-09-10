@@ -14,6 +14,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
     EmtProblemTemplate,
     get_solver_forced_event_time,
     is_problem_owned_boundary_updater,
+    resolve_solver_boundary_step,
     resolve_solver_boundary_updater,
 )
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
@@ -206,7 +207,20 @@ def greedy_color_columns(col_rows: List[List[int]], n_rows: int) -> Tuple[np.nda
     return colors, int(max_color + 1)
 
 class BoundaryUpdaterInterface:
-    def update(self, t: float, x_prev: Vec, full_params: Vec) -> None:
+    def update(
+        self,
+        t: float,
+        x_prev: Vec,
+        full_params: Vec,
+    ) -> float | None:
+        """Update boundary values and optionally request a shortened retry.
+
+        :param t: Candidate endpoint time.
+        :param x_prev: Accepted EMT state vector.
+        :param full_params: Parameter vector updated in place.
+        :return: Earlier retry target or ``None``.
+        """
+
         raise NotImplementedError
 
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
@@ -1013,9 +1027,15 @@ class JitAdSolver:
                 fill_full_parameter_buffer(runtime_params, static_vals, full_params)
 
                 if active_boundary_updater is not None:
-                    active_boundary_updater.update(t_curr, x_prev, full_params)
+                    state_event_retry_time: float | None = (
+                        active_boundary_updater.update(
+                            t_curr,
+                            x_prev,
+                            full_params,
+                        )
+                    )
                 else:
-                    pass
+                    state_event_retry_time = None
 
                 ev_params[:] = full_params[:n_event_params]
 
@@ -1033,8 +1053,13 @@ class JitAdSolver:
                 else:
                     pass
 
-                substep_converged: bool = False
-                for k in range(self.newton_max_iter):
+                substep_converged: bool = state_event_retry_time is not None
+                newton_iteration_count: int
+                if state_event_retry_time is None:
+                    newton_iteration_count = self.newton_max_iter
+                else:
+                    newton_iteration_count = 0
+                for k in range(newton_iteration_count):
                     total_newton_iterations += 1
                     ctx = NewtonSolveContext(
                         t=float(t_curr),
@@ -1117,25 +1142,37 @@ class JitAdSolver:
                     if i == 0 and is_first_local_step:
                         well_initialized = False
 
-                if method == DynamicIntegrationMethod.DaeTrapezoidal:
-                    dx_prev[:n_states] = (
-                            (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states]) - dx_prev[:n_states]
+                if state_event_retry_time is None:
+                    state_event_retry_time = resolve_solver_boundary_step(
+                        boundary_updater=active_boundary_updater,
+                        accepted=substep_converged,
+                        params=full_params,
                     )
-                elif method == DynamicIntegrationMethod.DaeBDF2:
-                    x_prev2 = x_prev.copy()
-                else:
-                    dx_prev[:n_states] = (
-                            (x_iter[:n_states] - x_prev[:n_states]) / h_eff
-                    )
-
-                if method != DynamicIntegrationMethod.DaeBDF2:
-                    x_prev2 = x_prev.copy()
                 else:
                     pass
 
-                x_prev[:] = x_iter
-                t_local_prev = t_curr
-                is_first_local_step = False
+                if state_event_retry_time is not None:
+                    x_iter[:] = x_prev
+                else:
+                    if method == DynamicIntegrationMethod.DaeTrapezoidal:
+                        dx_prev[:n_states] = (
+                                (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states]) - dx_prev[:n_states]
+                        )
+                    elif method == DynamicIntegrationMethod.DaeBDF2:
+                        x_prev2 = x_prev.copy()
+                    else:
+                        dx_prev[:n_states] = (
+                                (x_iter[:n_states] - x_prev[:n_states]) / h_eff
+                        )
+
+                    if method != DynamicIntegrationMethod.DaeBDF2:
+                        x_prev2 = x_prev.copy()
+                    else:
+                        pass
+
+                    x_prev[:] = x_iter
+                    t_local_prev = t_curr
+                    is_first_local_step = False
 
 
             self.y[i + 1, :] = x_prev

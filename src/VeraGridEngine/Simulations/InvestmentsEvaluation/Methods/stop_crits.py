@@ -3,7 +3,9 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import math
+from typing import Callable
 import numpy as np
+from pymoo.core.termination import Termination
 from scipy import stats
 
 
@@ -25,6 +27,41 @@ class StopCriterion:
         the iterative method should stop.
         """
         raise NotImplementedError()
+
+
+class VeraGridCancelTermination(Termination):
+    """
+    pymoo termination criterion backed by VeraGrid's driver cancel flag.
+    """
+
+    __slots__ = ("_cancel_checker",)
+
+    def __init__(self, cancel_checker: Callable[[], bool] | None) -> None:
+        """
+        Constructor.
+
+        :param cancel_checker: Function returning True when the owner driver was cancelled.
+        :return: None.
+        """
+        Termination.__init__(self)
+        self._cancel_checker: Callable[[], bool] | None = cancel_checker
+
+    def _update(self, algorithm) -> float:
+        """
+        Ask pymoo to stop once VeraGrid cancellation has been requested.
+
+        :param algorithm: Active pymoo algorithm.
+        :return: 1.0 when cancelled, otherwise 0.0.
+        """
+        if self._cancel_checker is None:
+            progress: float = 0.0
+        else:
+            if self._cancel_checker():
+                progress = 1.0
+            else:
+                progress = 0.0
+
+        return progress
 
 
 # This is a toy criterion and should only be used in tests. Otherwise, prefer

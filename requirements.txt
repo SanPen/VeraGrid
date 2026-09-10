@@ -1,4 +1,4 @@
-numpy>=2.2.0,<=2.3
+numpy>=2.2.0
 autograd>=1.7.0
 scipy>=1.10.0
 networkx>=3.6.1
@@ -13,7 +13,7 @@ scikit-learn>=1.5.0
 geopy>=2.4.1
 h5py>=3.12
 numba>=0.61
-PySide6>=6.8.0
+PySide6>=6.10.0
 pyproj>=3.7.2
 pyarrow>=23.0.1
 fastparquet>=2024
@@ -36,5 +36,8 @@ Pygments>=2.20.0
 opencv-python>=4.10.0.84
 packaging>=25.0
 brotli>=1.2.0
-fmpy>=0.3.22
-psycopg>=3.3.4
+fmpy>=0.3.26
+psycopg[binary]>=3.3
+clang-tool-chain>=1.5.9
+llvmlite
+mcp>=2.2.0,<3

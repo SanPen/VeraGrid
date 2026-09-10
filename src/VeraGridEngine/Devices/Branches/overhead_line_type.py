@@ -379,7 +379,10 @@ def calc_z_ii(R_int, is_tube, r_outer, r_inner, y_i, f, rho, err_tol=1e-6, use_d
         X_int = 1000 * omega * calc_L_int(is_tube, r_outer, r_inner)
 
         # Calculate geometrical reactance (in Ohm/km) - Equation 4.15 EMTP
-        X_geo = 1000 * omega * mu_0 / 2 / np.pi * np.log(2 * y_i / r_outer)
+        if r_outer > 0.0:
+            X_geo = 1000.0 * omega * mu_0 / 2 / np.pi * np.log(2 * y_i / r_outer)
+        else:
+            X_geo = 0.0
 
         # Calculate Carson's correction factors (in Ohm/km)
         Rp, Xp = carsons(True, y_i, 0, 0, f, rho, err_tol)

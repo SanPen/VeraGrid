@@ -308,7 +308,7 @@ class RmsResults(ResultsTemplate):
 
         plt.plot(self.time_array, y, label=var.name)
         plt.legend()
-        plt.show()
+        plt.show(block=False)
 
     def get_vars_data(self, var_list: List[Var], group_idx: int = 0) -> Mat:
         """

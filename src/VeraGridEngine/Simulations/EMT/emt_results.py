@@ -373,14 +373,14 @@ class EmtResults(ResultsTemplate):
             y: np.ndarray = self.values[:, idx, group_idx]
             plt.plot(self.time_array, y, label=var.name)
             plt.legend()
-            plt.show()
+            plt.show(block=False)
         else:
             if var.uid in self.uid2idx_diff:
                 idx = self.uid2idx_diff[var.uid]
                 y = self.diff_values[:, idx, group_idx]
                 plt.plot(self.time_array, y, label=var.name)
                 plt.legend()
-                plt.show()
+                plt.show(block=False)
             else:
                 pass
 

@@ -7,7 +7,9 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
+from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import (
     DeviceType,
@@ -18,22 +20,20 @@ from VeraGridEngine.enumerations import (
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
 
-from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig
+from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig, FmuRefBinding
 from VeraGridEngine.IO.fmu.importer.device_config import (
     build_me_record_from_device_arguments,
     build_record_from_device_arguments,
     dump_fmu_cs_device_config,
     dump_fmu_me_device_config,
 )
-from VeraGridEngine.IO.fmu.importer.experimental_cs import (
+from VeraGridEngine.IO.fmu.importer.co_simulation import (
     FmuCsDomain,
-    FmuRefBinding,
     build_emt_fmu_cs_injection_template,
     build_rms_fmu_cs_injection_template,
 )
-from VeraGridEngine.IO.fmu.importer.experimental_me import (
+from VeraGridEngine.IO.fmu.importer.model_exchange import (
     FmuMeDomain,
-    FmuMeIntegrationMethod,
     build_emt_fmu_me_injection_template,
     build_rms_fmu_me_injection_template,
 )
@@ -42,6 +42,9 @@ from VeraGridEngine.IO.fmu.importer.model_description import (
     FmuModelDescription,
     FmuVariableDescription,
     read_fmu_model_description,
+)
+from VeraGridEngine.IO.fmu.importer.runtime_worker_host import (
+    FmiThreeWorkerHostLimits,
 )
 
 
@@ -613,13 +616,16 @@ def _to_interface_mode(mode: FmuTemplateMode) -> FmuInterfaceMode:
             raise ValueError(f"Unsupported FMU template mode {mode}")
 
 
-def configure_fmu_template(template: FmuTemplate,
-                           var_factory: VarFactory,
-                           fmu_path: str | Path,
-                           device_tpe: DeviceType,
-                           domain: FmuTemplateDomain,
-                           mode: FmuTemplateMode,
-                           template_name: str | None = None) -> FmuTemplate:
+def configure_fmu_template(
+    template: FmuTemplate,
+    var_factory: VarFactory,
+    fmu_path: str | Path,
+    device_tpe: DeviceType,
+    domain: FmuTemplateDomain,
+    mode: FmuTemplateMode,
+    template_name: str | None = None,
+    worker_limits: FmiThreeWorkerHostLimits | None = None,
+) -> FmuTemplate:
     """
     Populate one reusable ``FmuTemplate`` from an FMU archive.
 
@@ -634,21 +640,32 @@ def configure_fmu_template(template: FmuTemplate,
     :param domain: Simulation domain where the template will be used.
     :param mode: FMI interface mode required by the template.
     :param template_name: Optional explicit template name.
+    :param worker_limits: Explicit FMI 3 worker supervision policy. FMI 2
+        callers may leave it unset.
     :return: Configured template instance.
     """
 
     normalized_path: Path = Path(fmu_path).expanduser().resolve()
-    metadata = read_fmu_model_description(normalized_path)
-    template_config = FmuImportConfig(
+    metadata: FmuModelDescription = read_fmu_model_description(normalized_path)
+    template_config: FmuImportConfig = FmuImportConfig(
         fmu_path=normalized_path,
         preferred_mode=_to_interface_mode(mode),
     )
-    input_bindings = _build_auto_input_bindings(metadata)
-    output_bindings = _build_auto_output_bindings(metadata)
-    output_defaults = _build_output_defaults(metadata, output_bindings)
+    # Reject unsupported FMI versions before creating or storing a template.
+    template_config.resolve_execution_mode(metadata)
+    input_bindings: tuple[FmuRefBinding, ...] = _build_auto_input_bindings(
+        metadata
+    )
+    output_bindings: tuple[FmuRefBinding, ...] = _build_auto_output_bindings(
+        metadata
+    )
+    output_defaults: dict[VarPowerFlowReferenceType, float] = (
+        _build_output_defaults(metadata, output_bindings)
+    )
 
+    resolved_name: str
     if template_name is None:
-        resolved_name: str = metadata.model_name
+        resolved_name = metadata.model_name
     else:
         resolved_name = str(template_name).strip()
         if len(resolved_name) == 0:
@@ -656,6 +673,8 @@ def configure_fmu_template(template: FmuTemplate,
         else:
             pass
 
+    shell_template: RmsModelTemplate | EmtModelTemplate
+    serialized_config: str
     if domain == FmuTemplateDomain.RMS:
         if mode == FmuTemplateMode.CO_SIMULATION:
             shell_template = build_rms_fmu_cs_injection_template(
@@ -666,6 +685,7 @@ def configure_fmu_template(template: FmuTemplate,
                 name=resolved_name,
                 device_tpe=device_tpe,
                 output_defaults=output_defaults,
+                worker_limits=worker_limits,
             )
             _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
             serialized_config = dump_fmu_cs_device_config(
@@ -676,6 +696,7 @@ def configure_fmu_template(template: FmuTemplate,
                     output_bindings=output_bindings,
                     output_defaults=output_defaults,
                     block=shell_template.block,
+                    worker_limits=worker_limits,
                 )
             )
         else:
@@ -688,7 +709,7 @@ def configure_fmu_template(template: FmuTemplate,
                     name=resolved_name,
                     device_tpe=device_tpe,
                     output_defaults=output_defaults,
-                    integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
+                    worker_limits=worker_limits,
                 )
                 _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                 serialized_config = dump_fmu_me_device_config(
@@ -698,8 +719,8 @@ def configure_fmu_template(template: FmuTemplate,
                         input_bindings=input_bindings,
                         output_bindings=output_bindings,
                         output_defaults=output_defaults,
-                        integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER.value,
                         block=shell_template.block,
+                        worker_limits=worker_limits,
                     )
                 )
             else:
@@ -715,6 +736,7 @@ def configure_fmu_template(template: FmuTemplate,
                     name=resolved_name,
                     device_tpe=device_tpe,
                     output_defaults=output_defaults,
+                    worker_limits=worker_limits,
                 )
                 _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                 serialized_config = dump_fmu_cs_device_config(
@@ -725,6 +747,7 @@ def configure_fmu_template(template: FmuTemplate,
                         output_bindings=output_bindings,
                         output_defaults=output_defaults,
                         block=shell_template.block,
+                        worker_limits=worker_limits,
                     )
                 )
             else:
@@ -737,7 +760,7 @@ def configure_fmu_template(template: FmuTemplate,
                         name=resolved_name,
                         device_tpe=device_tpe,
                         output_defaults=output_defaults,
-                        integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
+                        worker_limits=worker_limits,
                     )
                     _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                     serialized_config = dump_fmu_me_device_config(
@@ -747,8 +770,8 @@ def configure_fmu_template(template: FmuTemplate,
                             input_bindings=input_bindings,
                             output_bindings=output_bindings,
                             output_defaults=output_defaults,
-                            integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER.value,
                             block=shell_template.block,
+                            worker_limits=worker_limits,
                         )
                     )
                 else:

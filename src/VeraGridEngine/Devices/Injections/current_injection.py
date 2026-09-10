@@ -420,7 +420,7 @@ class CurrentInjection(InjectionParent):
             fig.suptitle(self.name, fontsize=20)
 
             if show_fig:
-                plt.show()
+                plt.show(block=False)
 
     # Scalar property accessors coerce assignments to the declared schema types.
 

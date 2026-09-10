@@ -8,6 +8,12 @@ The order shown in the editor is the execution order inside each owning block. I
 
 A retained mode is a runtime parameter with an initialization expression. Its value survives between accepted steps. Most procedural entries write one or more modes; DAE equations can read them like any other symbolic parameter.
 
+## Using procedural blocks from the Library
+
+The Dynamic Model Editor exposes every concrete procedural type under **Procedural logic** in both RMS and EMT mode. Drag a leaf onto the canvas, or double-click it to insert it at the center of the visible canvas. Double-click the resulting block to edit its complete declaration in **Block Properties → Python code**.
+
+Signal-processing blocks expose retained results through ordinary algebraic output ports. Event and switching blocks preserve their real interfaces: flip-flops have separate set/reset inputs, three-phase carrier blocks have three inputs and three outputs, and a conditional diagnostic has no artificial signal output. A delayed switch event requires the target device and switch identifiers to be completed in Python code before the model can be applied.
+
 ## Available types
 
 ```{toctree}
@@ -32,4 +38,4 @@ three_phase_carrier_pwm
 three_phase_carrier_sampled_modulation
 ```
 
-Use **Validate runtime logic** before applying. Validation checks names, references, expressions, missing modes, duplicate writers and order-dependent reads.
+Use **Validate model** before applying. Validation checks names, references, expressions, missing modes, duplicate writers and order-dependent reads.

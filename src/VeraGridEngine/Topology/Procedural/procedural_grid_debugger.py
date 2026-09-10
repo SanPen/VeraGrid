@@ -104,7 +104,7 @@ class ProceduralGridDebugger:
         plt.grid(True, linestyle="--", alpha=0.5)
         plt.axis("equal")
         plt.tight_layout()
-        plt.show()
+        plt.show(block=False)
 
     def snapshot_grid_element_names(self, grid: dev.MultiCircuit) -> set[str]:
         """

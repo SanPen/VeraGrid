@@ -151,7 +151,6 @@ class RosetaExplorerGUI(QMainWindow):
         """
         self.lock_ui = val
         self.ui.progress_frame.setVisible(self.lock_ui)
-        QtGui.QGuiApplication.processEvents()
 
     def UNLOCK(self) -> None:
         """

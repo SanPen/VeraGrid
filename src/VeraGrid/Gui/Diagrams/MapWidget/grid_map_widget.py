@@ -28,6 +28,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGra
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGrid.Gui.SubstationDesigner.substation_designer import SubstationDesigner
 from VeraGrid.Gui.general_dialogues import InputNumberDialogue
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 from VeraGridEngine.Devices.Diagrams.map_location import MapLocation
 from VeraGridEngine.Devices.Substation import Bus
 from VeraGridEngine.Devices.Branches.line import Line, accept_line_connection
@@ -1994,7 +1995,10 @@ class GridMapWidget(BaseDiagramWidget):
                 fig.suptitle(api_object.name, fontsize=20)
 
                 # plot the profiles
-                plt.show()
+                show_matplotlib_figure(figure=fig,
+                                       parent=self.gui,
+                                       open_dialogs=self.gui._open_plot_dialogs,
+                                       title=self.tr("{device_name} profiles plot").format(device_name=api_object.name))
         else:
             self.gui.show_error_toast("There are no time series, so nothing to plot :/")
 

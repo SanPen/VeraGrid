@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Qac / Vac control &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Qac / Vac control &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,13 +15,13 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="VSC terminal power equations" href="vsc_terminal_power.html" />
+    <link rel="next" title="d-axis current PI controller" href="vsc_vd_hat.html" />
     <link rel="prev" title="PLL explicit PI" href="vsc_pll.html" /> 
 </head>
 
@@ -161,9 +161,9 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Qac</span></code> (default)</p></td>
-<td><p>Internal electrical <code class="docutils literal notranslate"><span class="pre">Q</span></code></p></td>
+<td><p>AC-terminal <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Q_ref</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Q_ref</span> <span class="pre">-</span> <span class="pre">Q</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Q_ref</span> <span class="pre">+</span> <span class="pre">Qt_vsc</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Kp_pol</span> <span class="pre">=</span> <span class="pre">0.02</span></code>, <code class="docutils literal notranslate"><span class="pre">Ki_pol</span> <span class="pre">=</span> <span class="pre">0.10</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code></p></td>
@@ -175,7 +175,7 @@
 </tbody>
 </table>
 <p>In <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code> mode the supplied implementation regulates the q-axis voltage <code class="docutils literal notranslate"><span class="pre">vq</span></code>, not a separately measured voltage magnitude. At PLL equilibrium <code class="docutils literal notranslate"><span class="pre">vq</span> <span class="pre">=</span> <span class="pre">Vm</span></code>; during angle transients, <code class="docutils literal notranslate"><span class="pre">vq</span> <span class="pre">=</span> <span class="pre">Vm</span> <span class="pre">cos(Va</span> <span class="pre">-</span> <span class="pre">theta)</span></code>. Use the PLL’s <code class="docutils literal notranslate"><span class="pre">vq</span></code> output to reproduce the complete converter.</p>
-<p>In <code class="docutils literal notranslate"><span class="pre">Qac</span></code> mode, use the internal <code class="docutils literal notranslate"><span class="pre">Q</span></code>, not <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code>: their signs are opposite.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">Qac</span></code> mode, positive <code class="docutils literal notranslate"><span class="pre">Q_ref</span></code> follows the converter-to-grid convention, while <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code> is positive from the AC bus into the converter. Therefore the initialized reference is <code class="docutils literal notranslate"><span class="pre">Q_ref0</span> <span class="pre">=</span> <span class="pre">-Qt_vsc0</span></code>.</p>
 </section>
 <section id="interface-and-equations">
 <h2>Interface and equations<a class="headerlink" href="#interface-and-equations" title="Link to this heading"></a></h2>
@@ -190,7 +190,7 @@
 <tbody>
 <tr class="row-even"><td><p>Input</p></td>
 <td><p>1</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Q</span></code> or <code class="docutils literal notranslate"><span class="pre">vq</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code> or <code class="docutils literal notranslate"><span class="pre">vq</span></code></p></td>
 <td><p>Selected reactive-power/voltage feedback, pu</p></td>
 </tr>
 <tr class="row-odd"><td><p>Input</p></td>
@@ -207,7 +207,7 @@
 </table>
 <div class="math">
 <p><img src="../../../_images/math/b3bb55e22ad7935f9253220140eb17f8d05fbea2.svg" alt="\dot{\xi}=e,\qquad i_{d,ref}=K_p e+K_i\xi."/></p>
-</div><p>Gains and reference are dynamic parameters in this block’s <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>. The default reference expression captures the initial feedback. It remains the initialized reference until changed, for example by a dynamic event. It is not a live connection that makes the error identically zero.</p>
+</div><p>Gains and reference are dynamic parameters in this block’s <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>. The default reference expression captures <code class="docutils literal notranslate"><span class="pre">-Qt_vsc</span></code> in <code class="docutils literal notranslate"><span class="pre">Qac</span></code> mode and <code class="docutils literal notranslate"><span class="pre">vq</span></code> in <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code> mode. It remains the initialized reference until changed, for example by a dynamic event. It is not a live connection that makes the error identically zero.</p>
 </section>
 <section id="initialization-and-connections">
 <h2>Initialization and connections<a class="headerlink" href="#initialization-and-connections" title="Link to this heading"></a></h2>
@@ -216,7 +216,7 @@
 <p><img src="../../../_images/math/c51dde5f1a6b0a56945549c3a4ed580122d272b4.svg" alt="i_{d,ref0}=i_{d0},\qquad
 \xi_0=\frac{i_{d0}-K_p e_0}{K_i}."/></p>
 </div><p>Connect input 2 to the electrical block’s <code class="docutils literal notranslate"><span class="pre">i_d</span></code> output and send <code class="docutils literal notranslate"><span class="pre">i_d_ref</span></code> to input 1 of the <a class="reference internal" href="vsc_current_limiter.html"><span class="std std-doc">current limiter</span></a>. This outer PI has no internal output saturation or anti-windup feedback; current-reference limiting is performed by the separate limiter.</p>
-<p>When switching <code class="docutils literal notranslate"><span class="pre">Qac</span></code> to <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code>, reconnect input 1 from electrical <code class="docutils literal notranslate"><span class="pre">Q</span></code> to PLL <code class="docutils literal notranslate"><span class="pre">vq</span></code>, and review the new gains/reference. The complete converter’s <code class="docutils literal notranslate"><span class="pre">control2</span></code> option selects this wiring automatically; a manually assembled set of components requires the corresponding manual connection.</p>
+<p>When switching <code class="docutils literal notranslate"><span class="pre">Qac</span></code> to <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code>, reconnect input 1 from electrical <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code> to PLL <code class="docutils literal notranslate"><span class="pre">vq</span></code>, and review the new gains/reference. The complete converter’s <code class="docutils literal notranslate"><span class="pre">control2</span></code> option selects this wiring automatically; a manually assembled set of components requires the corresponding manual connection.</p>
 </section>
 </section>
 
@@ -225,7 +225,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="vsc_pll.html" class="btn btn-neutral float-left" title="PLL explicit PI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="vsc_terminal_power.html" class="btn btn-neutral float-right" title="VSC terminal power equations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="vsc_vd_hat.html" class="btn btn-neutral float-right" title="d-axis current PI controller" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

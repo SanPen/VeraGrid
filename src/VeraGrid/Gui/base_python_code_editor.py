@@ -51,11 +51,13 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
             self,
             parent: QtWidgets.QWidget | None = None,
             show_line_numbers: bool = True,
+            dark_theme: bool = False,
     ) -> None:
         """Create the shared source editor behavior.
 
         :param parent: Optional owning Qt widget.
         :param show_line_numbers: Whether the editor reserves and paints a gutter.
+        :param dark_theme: Whether the editor must start with its dark palette.
         :return: None.
         """
         super().__init__(parent)
@@ -77,7 +79,10 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         self.setTabStopDistance(float(self.fontMetrics().horizontalAdvance(self._tab_text)))
         self.setLineWrapMode(QtWidgets.QPlainTextEdit.LineWrapMode.NoWrap)
         self.setTabChangesFocus(False)
-        BasePythonCodeEditor.set_light_mode(self)
+        # Apply the requested palette before the widget becomes visible. Code
+        # editors embedded in dark pages must not briefly force a white surface
+        # while their owning controller propagates the application theme.
+        BasePythonCodeEditor.apply_editor_theme(self, dark_theme=dark_theme)
 
         # Keep the gutter synchronized with document growth and scrolling only
         # for editors that actually display line numbers.

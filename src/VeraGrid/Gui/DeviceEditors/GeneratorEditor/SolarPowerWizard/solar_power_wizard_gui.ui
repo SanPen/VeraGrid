@@ -14,7 +14,7 @@
    <string>Solar power wizard</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="../../../Icons/icons.qrc">
     <normaloff>:/Icons/icons/solar_power.png</normaloff>:/Icons/icons/solar_power.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -33,38 +33,24 @@
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QFrame" name="frame">
       <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
+       <enum>QFrame::Shape::NoFrame</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Shadow::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="2" column="0" colspan="2">
-        <widget class="QLabel" name="label_3">
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Site data</string>
+          <string>Latitude</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Longitude</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1" colspan="2">
+       <item row="4" column="1">
         <widget class="QDoubleSpinBox" name="latitudeSpinBox">
          <property name="suffix">
           <string> deg</string>
@@ -80,20 +66,14 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Longitude</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
-       <item row="7" column="1" colspan="2">
+       <item row="5" column="1">
         <widget class="QDoubleSpinBox" name="longitudeSpinBox">
          <property name="suffix">
           <string> deg</string>
@@ -109,51 +89,100 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1" colspan="2">
-        <widget class="QDoubleSpinBox" name="powerSpinBox">
-         <property name="suffix">
-          <string> MW</string>
-         </property>
-         <property name="minimum">
-          <double>0.000001000000000</double>
-         </property>
-         <property name="maximum">
-          <double>99999.000000000000000</double>
-         </property>
-        </widget>
-       </item>
        <item row="6" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Latitude</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
           <string>Power</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="3">
+       <item row="6" column="1">
+        <widget class="QDoubleSpinBox" name="powerSpinBox">
+         <property name="suffix">
+          <string> MW</string>
+         </property>
+         <property name="minimum">
+          <double>0.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>99999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QCheckBox" name="localTimeCheckBox">
+         <property name="toolTip">
+          <string>Shift PVGIS UTC timestamps by longitude so the generated power matches the circuit timestamps as local solar time.</string>
+         </property>
+         <property name="text">
+          <string>Use local solar time</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QPushButton" name="generateButton">
+         <property name="toolTip">
+          <string>Generate time series</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../Icons/icons.qrc">
+           <normaloff>:/Icons/icons/calculator.png</normaloff>:/Icons/icons/calculator.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
         <widget class="QLabel" name="label_bus">
          <property name="text">
           <string>Bus</string>
          </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
-       <item row="4" column="0" colspan="3">
+       <item row="1" column="0" colspan="2">
         <widget class="QLabel" name="label_gen">
          <property name="text">
           <string>Generator</string>
          </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
-       <item row="10" column="2">
-        <widget class="QPushButton" name="generateButton">
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Generate</string>
+          <string>Site data</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -161,30 +190,33 @@
      </widget>
      <widget class="QFrame" name="frame_4">
       <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
+       <enum>QFrame::Shape::NoFrame</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Shadow::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0" colspan="2">
-        <widget class="QPushButton" name="plotButton">
+       <item row="1" column="5">
+        <widget class="QPushButton" name="acceptButton">
          <property name="toolTip">
-          <string>Plot data</string>
+          <string>Apply and accept</string>
          </property>
          <property name="text">
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/Icons/icons/plot.png</normaloff>:/Icons/icons/plot.png</iconset>
+          <iconset resource="../../../Icons/icons.qrc">
+           <normaloff>:/Icons/icons/accept.png</normaloff>:/Icons/icons/accept.png</iconset>
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
+       <item row="0" column="0" colspan="6">
+        <widget class="QTableView" name="resultsTableView"/>
+       </item>
+       <item row="1" column="4">
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -194,15 +226,19 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="3">
-        <widget class="QPushButton" name="acceptButton">
+       <item row="1" column="0" colspan="4">
+        <widget class="QPushButton" name="plotButton">
+         <property name="toolTip">
+          <string>Plot data</string>
+         </property>
          <property name="text">
-          <string>Accept</string>
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../../../Icons/icons.qrc">
+           <normaloff>:/Icons/icons/plot.png</normaloff>:/Icons/icons/plot.png</iconset>
          </property>
         </widget>
-       </item>
-       <item row="0" column="0" colspan="4">
-        <widget class="QTableView" name="resultsTableView"/>
        </item>
       </layout>
      </widget>
@@ -211,7 +247,7 @@
   </layout>
   <action name="actionCopy_to_clipboard">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../Icons/icons.qrc">
      <normaloff>:/Icons/icons/copy.png</normaloff>:/Icons/icons/copy.png</iconset>
    </property>
    <property name="text">
@@ -220,7 +256,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../Icons/icons.qrc">
      <normaloff>:/Icons/icons/import_profiles.png</normaloff>:/Icons/icons/import_profiles.png</iconset>
    </property>
    <property name="text">
@@ -229,7 +265,7 @@
   </action>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../../../Icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

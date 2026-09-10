@@ -31,18 +31,22 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Simulations.driver_template import DummySignal
-from VeraGridEngine.IO.fmu.importer.experimental_cs import (
+from VeraGridEngine.IO.fmu.importer.co_simulation import (
     advance_rms_fmu_cs_devices,
     close_rms_fmu_cs_devices,
     initialize_rms_fmu_cs_devices,
     register_rms_fmu_cs_device,
 )
-from VeraGridEngine.IO.fmu.importer.experimental_me import (
+from VeraGridEngine.IO.fmu.importer.model_exchange import (
     advance_rms_fmu_me_devices,
     close_rms_fmu_me_devices,
+    get_next_rms_fmu_me_event_time,
     initialize_rms_fmu_me_devices,
+    _prepare_rms_fmu_me_state_event_retry,
     register_rms_fmu_me_device,
+    resolve_rms_fmu_me_devices,
 )
+from VeraGridEngine.IO.fmu.importer.runtime_profile import FmuMeEvaluationBudget
 
 
 def _tic():
@@ -100,10 +104,10 @@ def setIi(Ii: ObjVec, Ii_used: BoolVec, k: int, val: object):
 class RmsProblemPhasor(RmsProblemTemplate):
     """
     Phasor-based DAE (Differential-Algebraic Equation) class.
-    
+
     This class uses phasor representation (Vr, Vi) for voltages instead of polar coordinates (Vm, Va).
     The phasor representation makes current equations linear and is more suitable for certain analysis.
-    
+
     Responsibilities:
         - Store state and algebraic variables (x, y) using phasor representation
         - Store Jacobian matrices
@@ -156,6 +160,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
         self._fmu_cs_initialized: bool = False
         self._fmu_me_adapters: List[object] = list()
         self._fmu_me_initialized: bool = False
+        self._fmu_me_evaluation_budget: FmuMeEvaluationBudget | None = None
 
         # --------------------------------------------------------------------------------------------------------------
         # Initialize the RMS problem
@@ -316,23 +321,23 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 # I = (P - jQ) / (Vr - jVi) = (P*Vr + Q*Vi) / |V|^2 + j*(P*Vi - Q*Vr) / |V|^2
                 f_idx = bus_dict[elm.bus_from]
                 t_idx = bus_dict[elm.bus_to]
-                
+
                 Vf = self.power_flow_results.voltage[f_idx]
                 Vt = self.power_flow_results.voltage[t_idx]
-                
+
                 Sf = self.Sf[branch_num]
                 St = self.St[branch_num]
-                
+
                 # From end current
                 Vf_mag_sq = np.abs(Vf)**2
                 Irf = (Sf.real * Vf.real + Sf.imag * Vf.imag) / Vf_mag_sq
                 Iif = (Sf.real * Vf.imag - Sf.imag * Vf.real) / Vf_mag_sq
-                
+
                 # To end current
                 Vt_mag_sq = np.abs(Vt)**2
                 Irt = (St.real * Vt.real + St.imag * Vt.imag) / Vt_mag_sq
                 Iit = (St.real * Vt.imag - St.imag * Vt.real) / Vt_mag_sq
-                
+
                 # add init values from powerflow to initial guess
                 self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Irf, Irf)
                 self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Iif, Iif)
@@ -811,7 +816,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
         self._alias_names_dict[self._delta.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
         self._uid2idx_event_params[self._delta.uid] = self._n_event_params
         self._n_event_params += 1
-        
+
         ##################### To be removed when order is preserved in the first part #############################
         self._state_algeb_vars = list(self.sys_vars.values())
 
@@ -1082,8 +1087,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
         return pd.DataFrame(data=vars_names, columns=["key", "var_name", "value"])
 
     def get_E_matrix(self, x:Vec, dx:Vec):
-        #We first find all diff_vars 
-        xdot = list() 
+        #We first find all diff_vars
+        xdot = list()
         # for var in self._state_vars:
         #     if var.diff_var is None:
         #         diff_var = self.grid.var_factory.add_diff_var(name = '', base_var=var)
@@ -1114,8 +1119,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
         n_vars = self._n_vars
         E_value = sp.lil_matrix((n_vars, n_vars), dtype=np.float64)
         E_partial = E_call(x, dx, vp, cp, h=0).tocsc()
-    
-        
+
+
         # Map each d(eq)/d(diff_var_j) column to the column of the diff_var base
         # variable in the global [state_vars + algebraic_vars] ordering.
         for j, dvar in enumerate(xdot):
@@ -1123,12 +1128,12 @@ class RmsProblemPhasor(RmsProblemTemplate):
             col_idx = self._uid2idx_vars.get(base_var.uid, None)
             if col_idx is not None:
                 E_value[:, col_idx] += E_partial[:, j]
-            else:    
+            else:
                 pass
         E_value[:n_states, :n_states] -= sp.eye(n_states, dtype=E_value.dtype, format="lil")
 
         return E_value.tocsc()
-    
+
     def get_static_state_matrix(self, x:Vec, dx:Vec):
         nx = self.get_states_number()
 
@@ -1235,9 +1240,23 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 x[i] = val
         return x
 
-    def get_next_forced_event_time(self, t_prev: float, t_target: float):
-        """Phasor RMS currently has no forced sub-step events."""
-        return None
+    def get_next_forced_event_time(
+        self,
+        t_prev: float,
+        t_target: float,
+    ) -> float | None:
+        """Return the earliest imported FMI ME time event in one interval.
+
+        :param t_prev: Previous accepted RMS time.
+        :param t_target: Candidate RMS target time.
+        :return: Earliest FMI event in ``(t_prev, t_target]`` or ``None``.
+        """
+
+        return get_next_rms_fmu_me_event_time(
+            problem=self,
+            t_prev=t_prev,
+            t_target=t_target,
+        )
 
     def update_variable_params(self,
                                t: float,
@@ -1315,6 +1334,36 @@ class RmsProblemPhasor(RmsProblemTemplate):
         """
         if len(self._fmu_me_adapters) > 0:
             advance_rms_fmu_me_devices(problem=self, time_value=t, x_snapshot=x_snapshot, step_size=h)
+
+    def resolve_fmu_me_devices(self, accepted: bool) -> float | None:
+        """Resolve all prepared FMI ME candidates after one RMS step.
+
+        :param accepted: Whether the RMS numerical step converged.
+        :return: Earlier state-event retry time, or ``None``.
+        """
+
+        if len(self._fmu_me_adapters) > 0:
+            return resolve_rms_fmu_me_devices(
+                problem=self,
+                accepted=accepted,
+            )
+        else:
+            return None
+
+    def prepare_fmu_me_state_event_retry(self) -> float | None:
+        """Localize an ME state event before any CS device advances.
+
+        :return: Global shortened target time, or ``None``.
+        """
+
+        if len(self._fmu_me_adapters) > 0:
+            return _prepare_rms_fmu_me_state_event_retry(
+                problem=self,
+                state_event_time_tolerance=self.options.fmi_state_event_time_tolerance,
+                state_event_max_iterations=self.options.fmi_state_event_max_iterations,
+            )
+        else:
+            return None
 
     def close_fmu_me_devices(self) -> None:
         """

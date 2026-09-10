@@ -498,6 +498,40 @@
 |Ii3                     |float                   |MVAr |False    |         |Reactive power of the current component at V=1.0 p.u.                           |True       |       |
 
 
+### DcCableType
+
+|          name          |    class_type     | unit |mandatory|max_chars|                                  descriptions                                  |has_profile|comment|
+|------------------------|-------------------|------|---------|---------|--------------------------------------------------------------------------------|-----------|-------|
+|idtag                   |str                |      |False    |         |Unique ID                                                                       |False      |       |
+|name                    |str                |      |False    |         |Name of the device.                                                             |False      |       |
+|code                    |str                |      |False    |         |Secondary ID                                                                    |False      |       |
+|rdfid                   |str                |      |False    |         |RDF ID for further compatibility                                                |False      |       |
+|action                  |enum ActionType    |      |False    |         |Object action to perform. Only used for model merging.                          |False      |       |
+|selected_to_merge       |bool               |      |False    |         |Whether this object should be applied during diff merge.                        |False      |       |
+|comment                 |str                |      |False    |         |User comment                                                                    |False      |       |
+|diff_changes            |MergeInformation   |      |False    |         |                                                                                |False      |       |
+|modelling_authority     |Modelling Authority|      |False    |         |Modelling authority of this asset                                               |False      |       |
+|commissioned_date       |int                |      |False    |         |Commissioned date of the asset                                                  |False      |       |
+|decommissioned_date     |int                |      |False    |         |Decommissioned date of the asset                                                |False      |       |
+|build_status            |enum BuildStatus   |      |False    |         |Device build status. Used in expansion planning.                                |False      |       |
+|owners                  |AssociationsList   |p.u.  |False    |         |Owners associations to injections                                               |False      |       |
+|rms_model               |DaeBlock           |      |False    |         |RMS dynamic model                                                               |False      |       |
+|emt_model               |DaeBlock           |      |False    |         |EMT dynamic model                                                               |False      |       |
+|rms_template            |RMS template       |      |False    |         |Native RMS template used. Assigning it clears rms_fmu_template.                 |False      |       |
+|emt_template            |EMT template       |      |False    |         |Native EMT template used. Assigning it clears emt_fmu_template.                 |False      |       |
+|rms_fmu_template        |FMU template       |      |False    |         |RMS FMU template used only by RMS simulations. Assigning it clears rms_template.|False      |       |
+|emt_fmu_template        |FMU template       |      |False    |         |EMT FMU template used only by EMT simulations. Assigning it clears emt_template.|False      |       |
+|rms_fmu_import_config   |str                |      |False    |         |Serialized FMU Co-Simulation RMS configuration                                  |False      |       |
+|emt_fmu_import_config   |str                |      |False    |         |Serialized FMU Co-Simulation EMT configuration                                  |False      |       |
+|rms_fmu_me_import_config|str                |      |False    |         |Serialized FMU Model Exchange RMS configuration                                 |False      |       |
+|emt_fmu_me_import_config|str                |      |False    |         |Serialized FMU Model Exchange EMT configuration                                 |False      |       |
+|Vnom                    |float              |kV    |False    |         |Rated DC voltage of the cable.                                                  |False      |       |
+|Imax                    |float              |kA    |False    |         |Continuous current rating of the represented DC cable path.                     |False      |       |
+|R                       |float              |Ohm/km|False    |         |Series resistance per kilometre.                                                |False      |       |
+|L                       |float              |H/km  |False    |         |Series inductance per kilometre.                                                |False      |       |
+|C                       |float              |F/km  |False    |         |Equivalent shunt capacitance per kilometre of the represented DC cable path.    |False      |       |
+
+
 ### DcLine
 
 |          name          |    class_type     |unit |mandatory|max_chars|                                                                                                              descriptions                                                                                                               |has_profile|comment|
@@ -550,7 +584,7 @@
 |length                  |float              |km   |False    |         |Length of the line (not used for calculation)                                                                                                                                                                                            |False      |       |
 |r_fault                 |float              |p.u. |False    |         |Resistance of the mid-line fault.Used in short circuit studies.                                                                                                                                                                          |False      |       |
 |fault_pos               |float              |p.u. |False    |         |Per-unit positioning of the fault:0 would be at the "from" side,1 would be at the "to" side,therefore 0.5 is at the middle.                                                                                                              |False      |       |
-|template                |Any line template  |     |False    |         |                                                                                                                                                                                                                                         |False      |       |
+|template                |DC cable type      |     |False    |         |Physical DC cable type applied to this line.                                                                                                                                                                                             |False      |       |
 |locations               |Line locations     |     |False    |         |                                                                                                                                                                                                                                         |False      |       |
 
 

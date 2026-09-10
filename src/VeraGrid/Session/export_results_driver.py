@@ -47,17 +47,24 @@ class ExportAllThread(QThread):
         run the file save procedure
         """
 
-        # try:
-        export_drivers(drivers_list=self.drivers_list,
-                       file_name=self.file_name,
-                       text_func=self.progress_text.emit,
-                       progress_func=self.progress_signal.emit,
-                       logger=self.logger)
-
-        self.valid = True
+        try:
+            export_drivers(drivers_list=self.drivers_list,
+                           file_name=self.file_name,
+                           text_func=self.progress_text.emit,
+                           progress_func=self.progress_signal.emit,
+                           logger=self.logger)
+            self.valid = True
+        except Exception as e:
+            self.valid = False
+            self.error_msg = str(e)
+            self.logger.add_error(msg=self.error_msg)
+            self.progress_text.emit('Error exporting')
 
         # post events
-        self.progress_text.emit('Done!')
+        if self.valid:
+            self.progress_text.emit('Done!')
+        else:
+            pass
 
         self.done_signal.emit()
 

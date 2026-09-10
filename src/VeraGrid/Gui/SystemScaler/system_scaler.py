@@ -6,6 +6,7 @@ import sys
 from typing import Sequence, Union
 import numpy as np
 import pandas as pd
+import shiboken6
 from PySide6.QtWidgets import QApplication
 from PySide6 import QtCore, QtWidgets
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
@@ -933,7 +934,10 @@ class SystemScaler(QtWidgets.QDialog):
         plot_axis = self.plot_figure.add_subplot(111)
         plot_axis.text(0.5, 0.5, self.tr("Press plot to preview scaling"), ha="center", va="center")
         plot_axis.set_axis_off()
-        self.plot_canvas.draw()
+        if self.is_plot_canvas_valid():
+            self.plot_canvas.draw()
+        else:
+            pass
 
         self.groups = [DeviceType.AreaDevice,
                        DeviceType.ZoneDevice,
@@ -972,6 +976,15 @@ class SystemScaler(QtWidgets.QDialog):
         self.ui.removeButton.clicked.connect(self.remove_checkpoint)
         self._plot_disposed: bool = False
 
+    def is_plot_canvas_valid(self) -> bool:
+        """
+        Check whether the scaling preview canvas still owns a valid Qt object.
+
+        :return: True if the plot canvas can still be used.
+        """
+        result: bool = shiboken6.isValid(self.plot_canvas)
+        return result
+
     def done(self, result: int) -> None:
         """
         Release Matplotlib resources before the modal dialog closes.
@@ -983,12 +996,30 @@ class SystemScaler(QtWidgets.QDialog):
             pass
         else:
             self._plot_disposed = True
+            canvas_is_valid: bool = self.is_plot_canvas_valid()
+            toolbar_is_valid: bool = shiboken6.isValid(self.plot_toolbar)
+
+            if canvas_is_valid:
+                self.plot_canvas._draw_pending = False
+            else:
+                pass
+
             self.plot_figure.clear()
             plt.close(self.plot_figure)
-            self.plot_toolbar.setParent(None)
-            self.plot_toolbar.deleteLater()
-            self.plot_canvas.setParent(None)
-            self.plot_canvas.deleteLater()
+
+            if toolbar_is_valid:
+                self.plot_toolbar.close()
+                self.plot_toolbar.setParent(None)
+                self.plot_toolbar.deleteLater()
+            else:
+                pass
+
+            if canvas_is_valid:
+                self.plot_canvas.close()
+                self.plot_canvas.setParent(None)
+                self.plot_canvas.deleteLater()
+            else:
+                pass
         QtWidgets.QDialog.done(self, result)
 
     def set_checkpoints_delegates(self) -> None:
@@ -1545,7 +1576,10 @@ class SystemScaler(QtWidgets.QDialog):
 
             self.plot_figure.autofmt_xdate()
             self.plot_figure.tight_layout()
-            self.plot_canvas.draw()
+            if self.is_plot_canvas_valid():
+                self.plot_canvas.draw()
+            else:
+                pass
         else:
             QtWidgets.QMessageBox.warning(self,
                                           self.tr("System scaling"),

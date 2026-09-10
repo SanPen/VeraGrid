@@ -23,3 +23,7 @@ Creates a binary relay with independent activation and deactivation delays.
 ## Runtime behavior
 
 The logic schedules exact pending relay boundaries when possible. If the condition reverses before a delay completes, the pending transition is cancelled. Delay expressions are evaluated at runtime and should remain non-negative.
+
+## Library block
+
+The standalone block has input `condition`, output `y`, and editable `pickup_delay` and `dropoff_delay` parameters initialized to `0.0` seconds.

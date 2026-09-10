@@ -306,7 +306,7 @@ def test_dgs_tower_coupling_logs_non_empty_message_for_blank_value_error() -> No
     _apply_elmtow_tower_coupling(
         dgs_grid=dgs_grid,
         line_by_dgs_id={"line-1": [FakeLine()]},
-        overhead_line_type_dict={"tower-1": object()},
+        overhead_line_type_dict={"tower-1": SimpleNamespace(n_circuits=1)},
         baseMVA=100.0,
         frequency=50.0,
         logger=logger,

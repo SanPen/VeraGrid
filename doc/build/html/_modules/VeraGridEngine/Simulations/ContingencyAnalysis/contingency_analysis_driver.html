@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_driver &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_driver &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -113,6 +114,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.Simulations.contingencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">gslv_contingencies_snapshot</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Events.contingency_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContingencyGroup</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">EngineType</span><span class="p">,</span> <span class="n">ContingencyMethod</span><span class="p">,</span> <span class="n">SimulationTypes</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContingencyAnalysisResults</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverTemplate</span>
@@ -140,6 +142,8 @@
         <span class="s2">&quot;options&quot;</span><span class="p">,</span>
         <span class="s2">&quot;opf_results&quot;</span><span class="p">,</span>
         <span class="s2">&quot;linear_multiple_contingencies&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;contingency_groups_used&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;con_names_used&quot;</span>
     <span class="p">)</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Contingency Analysis&#39;</span>
@@ -161,7 +165,9 @@
         <span class="n">DriverTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 
         <span class="c1"># Options to use</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">:</span> <span class="n">ContingencyAnalysisOptions</span> <span class="o">=</span> <span class="n">options</span> <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ContingencyAnalysisOptions</span><span class="p">(</span>
+            <span class="n">contingency_groups</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">contingency_groups</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">opf_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">OptimalPowerFlowResults</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">opf_results</span>
 
@@ -182,15 +188,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">linear_multiple_contingencies</span><span class="p">:</span> <span class="n">LinearMultiContingencies</span> <span class="o">=</span> <span class="n">linear_multiple_contingencies</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">contingency_groups_used</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContingencyGroup</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups</span><span class="p">()</span>
+                                                           <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">contingency_groups</span> <span class="ow">is</span> <span class="kc">None</span>
+                                                           <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">contingency_groups</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">con_names_used</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">contingency_group</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">contingency_group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contingency_groups_used</span><span class="p">])</span>
+
         <span class="c1"># N-K results</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">ContingencyAnalysisResults</span><span class="p">(</span>
-            <span class="n">ncon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups_number</span><span class="p">(),</span>
+            <span class="n">ncon</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contingency_groups_used</span><span class="p">),</span>
             <span class="n">nbus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">(),</span>
             <span class="n">nbr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_branch_number</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="n">bus_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_names</span><span class="p">(),</span>
             <span class="n">branch_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_branch_names</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="n">bus_types</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
-            <span class="n">con_names</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_group_names</span><span class="p">())</span>
+            <span class="n">con_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">con_names_used</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="ContingencyAnalysisDriver.get_steps">
@@ -207,16 +219,22 @@
 
 <div class="viewcode-block" id="ContingencyAnalysisDriver.run_at">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.html#VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_driver.ContingencyAnalysisDriver.run_at">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">t_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContingencyAnalysisResults</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">t_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">show_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContingencyAnalysisResults</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the contingency at a time point</span>
 <span class="sd">        :param t_idx: index for any time series index, None for the snapshot</span>
 <span class="sd">        :param t_prob: probability of te time</span>
+<span class="sd">        :param show_progress: Show the progress</span>
 <span class="sd">        :return: ContingencyAnalysisResults</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">==</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">PGM</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">PGM_AVAILABLE</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s1">&#39;Tried to use PGM, but failed back to VeraGrid&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sbus</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">==</span> <span class="n">EngineType</span><span class="o">.</span><span class="n">VeraGrid</span><span class="p">:</span>
 
@@ -241,7 +259,8 @@
                     <span class="n">is_cancel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_cancel</span><span class="p">,</span>
                     <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
                     <span class="n">t_prob</span><span class="o">=</span><span class="n">t_prob</span><span class="p">,</span>
-                    <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+                    <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                    <span class="n">report_progress</span><span class="o">=</span><span class="n">show_progress</span>
                 <span class="p">)</span>
 
             <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">contingency_method</span> <span class="o">==</span> <span class="n">ContingencyMethod</span><span class="o">.</span><span class="n">Linear</span>
@@ -288,7 +307,8 @@
                     <span class="n">is_cancel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_cancel</span><span class="p">,</span>
                     <span class="n">t</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
                     <span class="n">t_prob</span><span class="o">=</span><span class="n">t_prob</span><span class="p">,</span>
-                    <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+                    <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
+                    <span class="n">report_progress</span><span class="o">=</span><span class="n">show_progress</span>
                 <span class="p">)</span>
 
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">contingency_method</span> <span class="o">==</span> <span class="n">ContingencyMethod</span><span class="o">.</span><span class="n">HELM</span><span class="p">:</span>
@@ -324,13 +344,13 @@
                                                   <span class="n">opf_results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">opf_results</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">ContingencyAnalysisResults</span><span class="p">(</span>
-                <span class="n">ncon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups_number</span><span class="p">(),</span>
+                <span class="n">ncon</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contingency_groups_used</span><span class="p">),</span>
                 <span class="n">nbus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">(),</span>
                 <span class="n">nbr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_branch_number</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
                 <span class="n">bus_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_names</span><span class="p">(),</span>
                 <span class="n">branch_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_branch_names</span><span class="p">(</span><span class="n">add_hvdc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_vsc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_switch</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
                 <span class="n">bus_types</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_bus_number</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
-                <span class="n">con_names</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_group_names</span><span class="p">())</span>
+                <span class="n">con_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">con_names_used</span>
             <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Sf</span> <span class="o">=</span> <span class="n">con_res</span><span class="o">.</span><span class="n">Sf</span>
@@ -375,7 +395,9 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tic</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run_at</span><span class="p">(</span><span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s2">&quot;Compiling and configuring...&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_at</span><span class="p">(</span><span class="n">t_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">toc</span><span class="p">()</span></div>
 </div>
 

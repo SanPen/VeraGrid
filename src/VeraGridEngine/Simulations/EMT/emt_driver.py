@@ -17,7 +17,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDa
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonDiagnosticsConfig
-from VeraGridEngine.IO.fmu.importer.emt_boundary import build_emt_boundary_updater
+from VeraGridEngine.IO.fmu.importer.emt_boundary import CompositeEmtBoundaryUpdater, build_emt_boundary_updater
 from VeraGridEngine.basic_structures import Vec, StrVec
 
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
@@ -246,10 +246,18 @@ class EmtSimulationDriver(DriverTemplate):
                     cancel_checker=self.is_cancel,
                 )
 
-                boundary_updater = build_emt_boundary_updater(problem)
-                # t, y, dy = solver.simulate(boundary_updater=boundary_updater)
-                #uncomment when convergence and well initialized is reported
-                t, y, dy, well_initialized, converged = solver.simulate(boundary_updater=boundary_updater)
+                boundary_updater: EmtProblemDae | CompositeEmtBoundaryUpdater = build_emt_boundary_updater(problem)
+                try:
+                    # The solver uses the FMU-aware wrapper when native adapters
+                    # are present and the original problem otherwise.
+                    t, y, dy, well_initialized, converged = solver.simulate(boundary_updater=boundary_updater)
+                finally:
+                    # The driver creates this wrapper, so it also owns releasing
+                    # every native runtime on success, failure, or cancellation.
+                    if isinstance(boundary_updater, CompositeEmtBoundaryUpdater):
+                        boundary_updater.close()
+                    else:
+                        pass
 
                 if self.is_cancel():
                     self.report_text("Cancelled!")

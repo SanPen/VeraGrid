@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dynamic physical network contracts &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Dynamic physical network contracts &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -313,6 +313,30 @@ terminal. Voltage and PLL measurements must target a bus. Current and power
 meters must resolve an exact device terminal, including the special retained
 series-branch resolution used when PowerFactory omits a native valve row. An
 ambiguous topology produces no fallback binding.</p>
+</section>
+<section id="dc-cable-template-ownership">
+<h2>DC cable template ownership<a class="headerlink" href="#dc-cable-template-ownership" title="Link to this heading"></a></h2>
+<p>Cable construction data does not belong to generic <code class="docutils literal notranslate"><span class="pre">Line</span></code>, because a line is
+not necessarily a cable. A <code class="docutils literal notranslate"><span class="pre">DcCableType</span></code> is associated with <code class="docutils literal notranslate"><span class="pre">DcLine</span></code>, never
+with <code class="docutils literal notranslate"><span class="pre">Line</span></code>, and owns the physical resistance, inductance, and capacitance per
+unit length together with its ratings. <code class="docutils literal notranslate"><span class="pre">DcLine</span></code> owns the installed length and
+the applied template reference.</p>
+<p>A source line type becomes a <code class="docutils literal notranslate"><span class="pre">DcCableType</span></code> only when the source explicitly
+classifies that construction as a cable. Declaring only that the system is DC
+does not establish cable construction. A missing or contradictory installation
+classification must not be replaced by a parser initializer or inferred from
+the type name, resistance, reactance, capacitance, rating, or voltage.</p>
+<p>An importer may derive physical inductance and capacitance from source
+reactance, susceptance, and their positive reference frequency. Neither
+resistance, length, rating, nor nominal voltage can reconstruct missing cable
+geometry. The importer therefore creates and applies a <code class="docutils literal notranslate"><span class="pre">DcCableType</span></code> only when
+the required source values are complete; it does not persist invented zeros or
+a runtime fallback as physical asset data.</p>
+<p>When no complete DC cable template is available, the <code class="docutils literal notranslate"><span class="pre">DcLine</span></code> remains without
+one. RMS must look for its established model default, report the missing value
+and chosen fallback through <code class="docutils literal notranslate"><span class="pre">Logger</span></code>, and continue. A resistive reduction may
+omit cable energy states, but it must not claim that the physical inductance or
+capacitance is known to be zero.</p>
 </section>
 <section id="dgs-vsc-ownership">
 <h2>DGS VSC ownership<a class="headerlink" href="#dgs-vsc-ownership" title="Link to this heading"></a></h2>

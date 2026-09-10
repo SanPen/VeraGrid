@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Symbolic.symbolic_io &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Utils.Symbolic.symbolic_io &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -136,7 +136,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.dynamic_connection_intent</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DynamicConnectionIntent</span><span class="p">,</span>
                                                                      <span class="n">DynamicConnectionIntentDirection</span><span class="p">,</span>
                                                                      <span class="n">dynamic_connection_intent_from_dict</span><span class="p">,</span>
-                                                                     <span class="n">dynamic_connection_intent_to_dict</span><span class="p">)</span>
+                                                                     <span class="n">dynamic_connection_intent_to_dict</span><span class="p">,</span>
+                                                                     <span class="n">is_legacy_suppressed_connection_intent_tombstone</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span>
 
 
@@ -933,6 +934,9 @@
 <span class="sd">        :param main: is it the main block?</span>
 <span class="sd">        :return: Dictionary representing the block</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Deleted internal blocks cannot be restored by replaying an intent, so</span>
+        <span class="c1"># remove those historical records at the canonical persistence boundary.</span>
+        <span class="n">normalize_dynamic_connection_intents</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">blk</span><span class="p">)</span>
         <span class="n">normalize_event_parameter_initialization</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">blk</span><span class="p">)</span>
         <span class="c1"># Persistence must reject an incoherent runtime contract before any</span>
         <span class="c1"># partial block data is registered in the canonical serializer.</span>
@@ -2003,6 +2007,13 @@
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">parsed_intent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">block</span><span class="o">.</span><span class="n">connection_intents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parsed_intent</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">is_legacy_suppressed_connection_intent_tombstone</span><span class="p">(</span>
+                        <span class="n">data</span><span class="o">=</span><span class="n">persisted_intent</span><span class="p">,</span>
+                        <span class="n">root_block</span><span class="o">=</span><span class="n">block</span><span class="p">):</span>
+                    <span class="c1"># Older editors persisted harmless suppressed history after</span>
+                    <span class="c1"># replacing a block. Accept it as a migration tombstone and</span>
+                    <span class="c1"># omit it from the reconstructed current model.</span>
+                    <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Invalid dynamic connection intent ignored while parsing persisted data&quot;</span><span class="p">,</span>
                                       <span class="n">block_name</span><span class="o">=</span><span class="n">block_name</span><span class="p">,</span>

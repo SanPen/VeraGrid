@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🏦 Investment optimization &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>🏦 Investment optimization &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -538,15 +538,70 @@ performed by the active problem.</p>
 <li><p>what objective vector is returned and shown in the results.</p></li>
 </ul>
 <p>The engine currently exposes the following investment problem types.</p>
+<p>All final problems inherit from <code class="docutils literal notranslate"><span class="pre">BlackBoxProblemTemplate</span></code>. The template is not used directly as a final
+problem; it defines the shared interface and maps each decision-variable index to the investments in the
+corresponding investment group.</p>
+<p>For every final problem, <code class="docutils literal notranslate"><span class="pre">n_vars()</span></code> is the number of grid investment groups and <code class="docutils literal notranslate"><span class="pre">get_vars_names()</span></code> returns
+the investment-group names.</p>
 <section id="powerflowinvestmentproblem">
 <h3><code class="docutils literal notranslate"><span class="pre">PowerFlowInvestmentProblem</span></code><a class="headerlink" href="#powerflowinvestmentproblem" title="Link to this heading"></a></h3>
 <p>This is the snapshot power-flow problem.</p>
+<p>Decision vector <code class="docutils literal notranslate"><span class="pre">x</span></code>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value of <code class="docutils literal notranslate"><span class="pre">x[i]</span></code></p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is inactive.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is active for the snapshot evaluation.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Evaluation:</p>
 <ul class="simple">
-<li><p>Decision variables are binary.</p></li>
-<li><p>Each investment group is either inactive or active.</p></li>
-<li><p>The evaluation runs a standard power flow.</p></li>
-<li><p>The objectives are technical and economic scores derived from losses, overloads, voltage penalties and CAPEX/OPEX-style terms.</p></li>
+<li><p>The evaluation enables the selected investments, runs <code class="docutils literal notranslate"><span class="pre">PowerFlowDriver</span></code>, builds a <code class="docutils literal notranslate"><span class="pre">TechnoEconomicScores</span></code>
+object and restores the original investment status.</p></li>
 </ul>
+<p>Returned objective vector:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Index</p></th>
+<th class="head"><p>Metric</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">losses</span> <span class="pre">score</span></code></p></td>
+<td><p>Sum of the real branch losses from the power-flow results.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">overload</span> <span class="pre">score</span></code></p></td>
+<td><p>Sum of branch loading above 100%, weighted by each branch <code class="docutils literal notranslate"><span class="pre">Cost</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">voltage</span> <span class="pre">module_score</span></code></p></td>
+<td><p>Sum of voltage-magnitude limit violations, weighted by each bus <code class="docutils literal notranslate"><span class="pre">Vm_cost</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">voltage</span> <span class="pre">angle</span> <span class="pre">score</span></code></p></td>
+<td><p>Sum of voltage-angle limit violations, weighted by each bus <code class="docutils literal notranslate"><span class="pre">angle_cost</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CAPEX</span></code></p></td>
+<td><p>Sum of the CAPEX of all the selected investments.</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OPEX</span></code></p></td>
+<td><p>Sum of the OPEX of all the selected investments. Currently set to <code class="docutils literal notranslate"><span class="pre">0.0</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
 <p>This problem is appropriate for:</p>
 <ul class="simple">
 <li><p>single-state studies,</p></li>
@@ -557,12 +612,70 @@ performed by the active problem.</p>
 <section id="timeseriespowerflowinvestmentproblem">
 <h3><code class="docutils literal notranslate"><span class="pre">TimeSeriesPowerFlowInvestmentProblem</span></code><a class="headerlink" href="#timeseriespowerflowinvestmentproblem" title="Link to this heading"></a></h3>
 <p>This is the time-series version of the power-flow problem.</p>
+<p>Decision vector <code class="docutils literal notranslate"><span class="pre">x</span></code>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value of <code class="docutils literal notranslate"><span class="pre">x[i]</span></code></p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is not built.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is active from the first selected year onward.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2..N</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is active from the second through <code class="docutils literal notranslate"><span class="pre">N</span></code>th selected year onward.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of represented years in <code class="docutils literal notranslate"><span class="pre">time_indices</span></code>. The problem clips candidate values to the
+valid range before evaluating them.</p>
+<p>Evaluation:</p>
 <ul class="simple">
-<li><p>Decision variables are binary.</p></li>
-<li><p>Each investment group is either inactive or active for the full study horizon.</p></li>
-<li><p>The evaluation runs a time-series power flow.</p></li>
-<li><p>The objective vector contains the time-series technical and economic performance indicators defined by the problem.</p></li>
+<li><p>The evaluation applies the entry-year vector to the active profiles of the selected investment devices.</p></li>
+<li><p>The evaluation runs <code class="docutils literal notranslate"><span class="pre">PowerFlowTimeSeriesDriver</span></code> over the requested <code class="docutils literal notranslate"><span class="pre">time_indices</span></code> and restores the
+original device states.</p></li>
 </ul>
+<p>The returned metrics are the same six metrics used by <code class="docutils literal notranslate"><span class="pre">PowerFlowInvestmentProblem</span></code>,
+but aggregated over the time-series result arrays.</p>
+<p>Returned objective vector:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Index</p></th>
+<th class="head"><p>Metric</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">losses</span> <span class="pre">score</span></code></p></td>
+<td><p>Sum of the real losses over the time series.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">overload</span> <span class="pre">score</span></code></p></td>
+<td><p>Sum of time-step branch loading above 100%, weighted by branch <code class="docutils literal notranslate"><span class="pre">Cost</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">voltage</span> <span class="pre">module_score</span></code></p></td>
+<td><p>Sum of time-step voltage-magnitude limit violations, weighted by bus <code class="docutils literal notranslate"><span class="pre">Vm_cost</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">voltage</span> <span class="pre">angle</span> <span class="pre">score</span></code></p></td>
+<td><p>Sum of time-step voltage-angle limit violations, weighted by bus <code class="docutils literal notranslate"><span class="pre">angle_cost</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CAPEX</span></code></p></td>
+<td><p>Sum of the CAPEX of all the selected investments.</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OPEX</span></code></p></td>
+<td><p>Sum of the OPEX of all the selected investments. Currently set to <code class="docutils literal notranslate"><span class="pre">0.0</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
 <p>This problem is appropriate for:</p>
 <ul class="simple">
 <li><p>operational studies over multiple hours,</p></li>
@@ -573,20 +686,93 @@ performed by the active problem.</p>
 <section id="adequacyinvestmentproblem">
 <h3><code class="docutils literal notranslate"><span class="pre">AdequacyInvestmentProblem</span></code><a class="headerlink" href="#adequacyinvestmentproblem" title="Link to this heading"></a></h3>
 <p>This is the adequacy-oriented problem.</p>
+<p>Decision vector <code class="docutils literal notranslate"><span class="pre">x</span></code>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value of <code class="docutils literal notranslate"><span class="pre">x[i]</span></code></p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is not built.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is active from the first represented year onward.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2..N</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is active from the second through <code class="docutils literal notranslate"><span class="pre">N</span></code>th represented year onward.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of represented years in the grid time profile. The problem clips candidate values
+to the valid range before evaluating them.</p>
+<p>Evaluation:</p>
 <ul class="simple">
-<li><p>Decision variables are integer year-of-entry values.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> means “not invested”.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1..N</span></code> means “project enters service in year <code class="docutils literal notranslate"><span class="pre">N</span></code> of the selected horizon”.</p></li>
-<li><p>The evaluation runs either Monte Carlo adequacy or the simple dispatch path, depending on configuration.</p></li>
+<li><p>The evaluation applies the entry-year vector to generator and battery active profiles.</p></li>
+<li><p>The evaluation runs either Monte Carlo reliability simulation or <code class="docutils literal notranslate"><span class="pre">greedy_dispatch2</span></code>, depending on
+<code class="docutils literal notranslate"><span class="pre">use_monte_carlo</span></code>.</p></li>
 </ul>
-<p>The objective vector depends on configuration, but it is built around adequacy quantities such as:</p>
-<ul class="simple">
-<li><p>LOLE,</p></li>
-<li><p>CAPEX,</p></li>
-<li><p>unitary electricity cost,</p></li>
-<li><p>curtailment,</p></li>
-<li><p>optional firm-capacity penalty.</p></li>
-</ul>
+<p>Returned objective vector when <code class="docutils literal notranslate"><span class="pre">use_firm_capacity_penalty</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Index</p></th>
+<th class="head"><p>Metric</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LOLE</span></code></p></td>
+<td><p>Expected or deterministic load not served over the evaluated horizon.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CAPEX</span></code></p></td>
+<td><p>Sum of the CAPEX of all selected investment groups.</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Unitary</span> <span class="pre">electricity</span> <span class="pre">cost</span></code></p></td>
+<td><p>Total dispatch cost divided by total load.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Curtailment</span></code></p></td>
+<td><p>Non-dispatchable generation curtailment after battery operation.</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Firm</span> <span class="pre">capacity</span> <span class="pre">penalty</span></code></p></td>
+<td><p>Penalty applied when selected firm capacity share is below <code class="docutils literal notranslate"><span class="pre">minimum_firm_share</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Returned objective vector when <code class="docutils literal notranslate"><span class="pre">use_firm_capacity_penalty</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Index</p></th>
+<th class="head"><p>Metric</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LOLE</span></code></p></td>
+<td><p>Expected or deterministic load not served over the evaluated horizon.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CAPEX</span></code></p></td>
+<td><p>Sum of the CAPEX of all selected investment groups.</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Unitary</span> <span class="pre">electricity</span> <span class="pre">cost</span></code></p></td>
+<td><p>Total dispatch cost divided by total load.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Curtailment</span></code></p></td>
+<td><p>Non-dispatchable generation curtailment after battery operation.</p></td>
+</tr>
+</tbody>
+</table>
+<p>When Monte Carlo mode is enabled, LOLE, total cost and curtailment are averaged over the reliability
+simulations. When Monte Carlo mode is disabled, they come from <code class="docutils literal notranslate"><span class="pre">greedy_dispatch2</span></code>.</p>
 <p>This problem is appropriate for:</p>
 <ul class="simple">
 <li><p>generation adequacy studies,</p></li>
@@ -597,21 +783,70 @@ performed by the active problem.</p>
 <section id="timeserieslinearoptimalpowerflowinvestmentproblem">
 <h3><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinearOptimalPowerFlowInvestmentProblem</span></code><a class="headerlink" href="#timeserieslinearoptimalpowerflowinvestmentproblem" title="Link to this heading"></a></h3>
 <p>This is the time-series linear OPF investment problem introduced for nodal-price and dispatch economics studies.</p>
+<p>Decision vector <code class="docutils literal notranslate"><span class="pre">x</span></code>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value of <code class="docutils literal notranslate"><span class="pre">x[i]</span></code></p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is not built.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is active from the first selected year onward.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2..N</span></code></p></td>
+<td><p>Investment group <code class="docutils literal notranslate"><span class="pre">i</span></code> is active from the second through <code class="docutils literal notranslate"><span class="pre">N</span></code>th selected year onward.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of represented years in <code class="docutils literal notranslate"><span class="pre">time_indices</span></code>. The problem clips candidate values to the
+valid range before evaluating them.</p>
+<p>Evaluation:</p>
 <ul class="simple">
-<li><p>Decision variables are integer year-of-entry values, following the adequacy-style encoding.</p></li>
 <li><p>External <code class="docutils literal notranslate"><span class="pre">OptimalPowerFlowOptions</span></code> are provided by the caller, but the problem forces the linear OPF formulation.</p></li>
 <li><p>Candidate assets are forced off in the baseline state and then activated from the chosen entry year onward.</p></li>
-<li><p>Each evaluation runs a time-series linear OPF.</p></li>
+<li><p>Each evaluation runs <code class="docutils literal notranslate"><span class="pre">OptimalPowerFlowTimeSeriesDriver</span></code> with <code class="docutils literal notranslate"><span class="pre">SolverType.LINEAR_OPF</span></code>.</p></li>
 </ul>
-<p>The objective vector currently contains:</p>
-<ul class="simple">
-<li><p>average nodal price,</p></li>
-<li><p>CAPEX,</p></li>
-<li><p>OPEX,</p></li>
-<li><p>load shedding,</p></li>
-<li><p>generation shedding,</p></li>
-<li><p>fuel usage.</p></li>
-</ul>
+<p>Returned objective vector:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Index</p></th>
+<th class="head"><p>Metric</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Average</span> <span class="pre">nodal</span> <span class="pre">price</span></code></p></td>
+<td><p>Load-weighted average of the mean bus shadow price per time step. If load shedding occurs, prices are capped with the maximum inferred shedding price.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CAPEX</span></code></p></td>
+<td><p>Sum of the CAPEX of all selected investment groups.</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OPEX</span></code></p></td>
+<td><p>Sum of <code class="docutils literal notranslate"><span class="pre">system_total_energy_cost</span></code> over the OPF time series.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Load</span> <span class="pre">shedding</span></code></p></td>
+<td><p>Sum of <code class="docutils literal notranslate"><span class="pre">load_shedding</span></code> over all time steps and loads.</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Generation</span> <span class="pre">shedding</span></code></p></td>
+<td><p>Sum of <code class="docutils literal notranslate"><span class="pre">generator_shedding</span></code> over all time steps and generators.</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Fuel</span> <span class="pre">usage</span></code></p></td>
+<td><p>Sum of <code class="docutils literal notranslate"><span class="pre">system_fuel</span></code> over the OPF time series.</p></td>
+</tr>
+</tbody>
+</table>
+<p>If the OPF does not converge for every time step, or if the evaluation raises an exception, the problem
+returns a six-entry penalty vector filled with <code class="docutils literal notranslate"><span class="pre">1e12</span></code>.</p>
 <p>This problem is appropriate for:</p>
 <ul class="simple">
 <li><p>market- or dispatch-oriented transmission and generation candidate studies,</p></li>

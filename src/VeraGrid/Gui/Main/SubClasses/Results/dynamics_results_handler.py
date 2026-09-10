@@ -8,12 +8,11 @@ from typing import Dict, List, Sequence, Set, Optional, Protocol, Union
 import numpy as np
 import pandas as pd
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
-from VeraGrid.Gui.DynamicEventsDialog.dynamic_events_editor_support import create_dynamic_events_group_with_dialog
+from VeraGrid.Gui.DynamicModelEditor.Events.dynamic_events_support import create_dynamic_events_group_with_dialog
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Events.dynamic_plot import DynamicPlot
 from VeraGridEngine.Devices.Events.dynamic_plot_entry import DynamicPlotEntry
@@ -1525,46 +1524,6 @@ def _build_relative_time_axis(time_array: np.ndarray | pd.DatetimeIndex) -> np.n
                 pass
 
     return relative_time_axis
-
-
-class _OpenPlotDialogCloser(QtCore.QObject):
-    """
-    Qt slot wrapper that removes one closed dialog from the retained list.
-
-    :param open_plot_dialogs: Mutable list of retained modeless plot dialogs.
-    :param dialog: Dialog instance whose close event must release the reference.
-    :return: None.
-    """
-
-    __slots__ = ("_open_plot_dialogs", "_dialog")
-
-    def __init__(self,
-                 open_plot_dialogs: List[QtWidgets.QDialog],
-                 dialog: QtWidgets.QDialog) -> None:
-        """
-        Build one explicit close-handler object.
-
-        :param open_plot_dialogs: Mutable list of retained modeless plot dialogs.
-        :param dialog: Dialog instance whose close event must release the reference.
-        :return: None.
-        """
-        QtCore.QObject.__init__(self, dialog)
-        self._open_plot_dialogs: List[QtWidgets.QDialog] = open_plot_dialogs
-        self._dialog: QtWidgets.QDialog = dialog
-
-    def on_dialog_finished(self, result: int) -> None:
-        """
-        Remove the dialog from the retained list after it closes.
-
-        :param result: Qt finished result code.
-        :return: None.
-        """
-        del result
-
-        if self._dialog in self._open_plot_dialogs:
-            self._open_plot_dialogs.remove(self._dialog)
-        else:
-            pass
 
 
 def collect_dynamic_model_plot_variables(model: Block,
@@ -5071,25 +5030,10 @@ class DynamicsResultsHandler:
         :param title: Window title.
         :return: Nothing.
         """
-        dialog: QtWidgets.QDialog = QtWidgets.QDialog(self.dialog_parent)
-        dialog.setWindowTitle(title)
-        dialog.setWindowFlag(QtCore.Qt.WindowType.Window, True)
-        dialog.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
-
-        canvas: FigureCanvas = FigureCanvas(figure)
-        toolbar: NavigationToolbar = NavigationToolbar(canvas, dialog)
-
-        layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(dialog)
-        layout.addWidget(toolbar)
-        layout.addWidget(canvas)
-        dialog.resize(900, 600)
-
-        self._open_plot_dialogs.append(dialog)
-        dialog_closer: _OpenPlotDialogCloser = _OpenPlotDialogCloser(self._open_plot_dialogs, dialog)
-
-        # Drop our reference once the window is closed so the dialog can be freed
-        dialog.finished.connect(dialog_closer.on_dialog_finished)
-        dialog.show()
+        show_matplotlib_figure(figure=figure,
+                               parent=self.dialog_parent,
+                               open_dialogs=self._open_plot_dialogs,
+                               title=title)
 
     def plot_series(self, series: DynamicResultSeries) -> None:
         """

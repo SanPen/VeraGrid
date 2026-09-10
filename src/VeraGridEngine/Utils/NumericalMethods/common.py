@@ -103,7 +103,7 @@ class ConvexMethodResult:
         plt.xlabel("Iterations")
         plt.ylabel("Error")
         plt.yscale('log')
-        plt.show()
+        plt.show(block=False)
 
     def print_info(self):
         """

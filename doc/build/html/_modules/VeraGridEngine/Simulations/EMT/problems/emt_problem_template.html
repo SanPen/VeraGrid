@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.EMT.problems.emt_problem_template &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Simulations.EMT.problems.emt_problem_template &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -365,9 +365,9 @@
 
 <div class="viewcode-block" id="EmtBoundaryUpdateProtocol.update">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.problems.html#VeraGridEngine.Simulations.EMT.problems.emt_problem_template.EmtBoundaryUpdateProtocol.update">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the full parameter vector in place.</span>
+<span class="sd">        Update the full parameter vector and return a shortened retry target.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
@@ -377,6 +377,18 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_next_forced_event_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_prev</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t_target</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the next exact-alignment event time inside ``(t_prev, t_target]``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="EmtBoundaryUpdateProtocol.resolve_step">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.problems.html#VeraGridEngine.Simulations.EMT.problems.emt_problem_template.EmtBoundaryUpdateProtocol.resolve_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accepted</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve a prepared external boundary step after Newton.</span>
+
+<span class="sd">        :param accepted: Whether the EMT numerical step converged.</span>
+<span class="sd">        :param params: Full runtime-parameter vector.</span>
+<span class="sd">        :return: Earlier state-event retry time, or ``None``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 </div>
@@ -399,6 +411,23 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
 
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_implements_step_resolution_api</span><span class="p">(</span><span class="n">boundary_updater</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether one boundary updater implements ``resolve_step``.</span>
+
+<span class="sd">    :param boundary_updater: Boundary updater instance.</span>
+<span class="sd">    :return: ``True`` when transactional step resolution is implemented.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">updater_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">boundary_updater</span><span class="p">)</span>
+    <span class="n">base_type</span><span class="p">:</span> <span class="nb">type</span>
+    <span class="k">for</span> <span class="n">base_type</span> <span class="ow">in</span> <span class="n">updater_type</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;resolve_step&quot;</span> <span class="ow">in</span> <span class="n">base_type</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
     <span class="k">return</span> <span class="kc">False</span>
 
 
@@ -462,6 +491,38 @@
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">next_time</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="resolve_solver_boundary_step">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.EMT.problems.html#VeraGridEngine.Simulations.EMT.problems.emt_problem_template.resolve_solver_boundary_step">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_solver_boundary_step</span><span class="p">(</span>
+        <span class="n">boundary_updater</span><span class="p">:</span> <span class="n">EmtBoundaryUpdateProtocol</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">accepted</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve a prepared external boundary step when the updater supports it.</span>
+
+<span class="sd">    Legacy and native boundary updaters without transactional FMU ME state do</span>
+<span class="sd">    not need a resolution callback.</span>
+
+<span class="sd">    :param boundary_updater: Effective boundary updater used by the solver.</span>
+<span class="sd">    :param accepted: Whether the EMT Newton step converged.</span>
+<span class="sd">    :param params: Full runtime-parameter vector receiving resolved outputs.</span>
+<span class="sd">    :return: Earlier state-event retry time, or ``None``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">boundary_updater</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">retry_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_implements_step_resolution_api</span><span class="p">(</span><span class="n">boundary_updater</span><span class="p">):</span>
+            <span class="n">retry_time</span> <span class="o">=</span> <span class="n">boundary_updater</span><span class="o">.</span><span class="n">resolve_step</span><span class="p">(</span>
+                <span class="n">accepted</span><span class="o">=</span><span class="n">accepted</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">retry_time</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">retry_time</span></div>
 
 
 

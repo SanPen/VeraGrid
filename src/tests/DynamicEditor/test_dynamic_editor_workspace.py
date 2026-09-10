@@ -1,17 +1,21 @@
 from __future__ import annotations
 
+import copy
 import gc
 import sys
 
 from PySide6 import QtCore, QtGui, QtWidgets
 import shiboken6
 
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import DynamicEditorTab
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
-from VeraGrid.Session.dynamic_editor_entries import DynamicEditorEntry
-from VeraGrid.Session.dynamic_editor_entries import build_dynamic_editor_entry
-from VeraGrid.Session.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
+from VeraGrid.Gui.DynamicModelEditor.Workspace.Tabs.dynamic_editor_tab import DynamicEditorTab
+from VeraGrid.Gui.DynamicModelEditor.Events.dynamic_events_models import DynamicEventDraft
+from VeraGrid.Gui.DynamicModelEditor.Events.dynamic_events_page import DynamicEventsPage
+from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
+from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_entries import DynamicEditorEntry
+from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_entries import build_dynamic_editor_entry
+from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
 from VeraGridEngine.enumerations import DynamicSimulationMode
+from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
 
 import VeraGridEngine.api as gce
 
@@ -317,5 +321,178 @@ def test_repeated_workspace_teardown_destroys_dynamic_editor_qt_objects() -> Non
         assert not shiboken6.isValid(view)
         assert not shiboken6.isValid(editor)
         assert not shiboken6.isValid(page)
+
+    _reset_dynamic_editor_workspaces()
+
+
+def test_workspace_hosts_model_and_events_tabs_with_contextual_toolbar() -> None:
+    """Keep every workspace action visible for model and events pages.
+
+    :return: None.
+    """
+    _get_app()
+    _reset_dynamic_editor_workspaces()
+    circuit: gce.MultiCircuit
+    load: gce.Load
+    entry: DynamicEditorEntry
+    circuit, load, entry = _build_load_entry()
+    workspace: DynamicEditorWorkspaceWindow = _build_workspace()
+
+    model_page: DynamicEditorTab | None = workspace.open_dynamic_editor_for(
+        api_object=load,
+        circuit=circuit,
+        preferred_mode=DynamicSimulationMode.RMS,
+    )
+    events_page: DynamicEventsPage | None = workspace.open_dynamic_events_for(
+        api_object=load,
+        circuit=circuit,
+        mode=DynamicSimulationMode.RMS,
+        target_workspace=workspace,
+    )
+
+    assert model_page is not None
+    assert events_page is not None
+    assert entry.session_key(DynamicSimulationMode.RMS) in workspace.session._session_pages
+    assert events_page in workspace.session._event_pages
+    assert workspace.editor_tabs.count() == 2
+    assert workspace.editor_tabs.tabText(workspace.index_of_page(model_page)).endswith("[RMS model]")
+    assert workspace.editor_tabs.tabText(workspace.index_of_page(events_page)).endswith("[RMS events]")
+
+    toolbar_actions: tuple[QtGui.QAction, ...] = (
+        workspace.ui.actionview_tree,
+        workspace.ui.actionRMS_Editor,
+        workspace.ui.actionRMS_Events,
+        workspace.ui.actionEMT_Editor,
+        workspace.ui.actionEMT_Events,
+    )
+    workspace.editor_tabs.setCurrentWidget(model_page)
+    assert all(action.isVisible() for action in toolbar_actions)
+    workspace.editor_tabs.setCurrentWidget(events_page)
+    assert all(action.isVisible() for action in toolbar_actions)
+
+    _reset_dynamic_editor_workspaces()
+
+
+def test_saved_model_regeneration_removes_events_for_missing_parameters() -> None:
+    """Rebind events by UID and remove those absent from the newly saved model.
+
+    :return: None.
+    """
+    _get_app()
+    _reset_dynamic_editor_workspaces()
+    circuit: gce.MultiCircuit
+    load: gce.Load
+    _entry: DynamicEditorEntry
+    circuit, load, _entry = _build_load_entry()
+    parameter: Var = circuit.var_factory.add_var("workspace_event_parameter")
+    event_values: dict[Var, Const] = dict()
+    event_values[parameter] = Const(0.0)
+    load.rms_model.event_dict = event_values
+    group: gce.RmsEventsGroup = gce.RmsEventsGroup(name="Workspace RMS group")
+    circuit.add_rms_events_group(group)
+    event: gce.RmsEvent = gce.RmsEvent(
+        device=load,
+        parameter=parameter,
+        time=1.0,
+        value=2.0,
+        group=group,
+    )
+    circuit.add_rms_event(event)
+    workspace: DynamicEditorWorkspaceWindow = _build_workspace()
+    model_page: DynamicEditorTab | None = workspace.open_dynamic_editor_for(
+        api_object=load,
+        circuit=circuit,
+        preferred_mode=DynamicSimulationMode.RMS,
+    )
+    events_page: DynamicEventsPage | None = workspace.open_dynamic_events_for(
+        api_object=load,
+        circuit=circuit,
+        mode=DynamicSimulationMode.RMS,
+        target_workspace=workspace,
+    )
+    assert model_page is not None
+    assert events_page is not None
+    assert len(events_page.session.get_events_for_device(load, DynamicSimulationMode.RMS)) == 1
+
+    workspace.editor_tabs.setCurrentWidget(model_page)
+    load.rms_model.event_dict = dict()
+
+    # The event draft remains untouched until the user returns to its tab.
+    assert len(events_page.session.get_events_for_device(load, DynamicSimulationMode.RMS)) == 1
+    assert not events_page.session.has_unapplied_changes
+    workspace.editor_tabs.setCurrentWidget(events_page)
+
+    assert len(events_page.session.get_events_for_device(load, DynamicSimulationMode.RMS)) == 0
+    assert events_page.session.has_unapplied_changes
+    events_page.session.commit()
+    assert len(circuit.rms_events) == 0
+
+    _reset_dynamic_editor_workspaces()
+
+
+def test_saved_model_regeneration_rebinds_events_with_matching_parameter_uid() -> None:
+    """Keep an event by UID while replacing its detached parameter reference.
+
+    :return: None.
+    """
+    _get_app()
+    _reset_dynamic_editor_workspaces()
+    circuit: gce.MultiCircuit
+    load: gce.Load
+    _entry: DynamicEditorEntry
+    circuit, load, _entry = _build_load_entry()
+    original_parameter: Var = circuit.var_factory.add_var("workspace_rebound_parameter")
+    original_values: dict[Var, Const] = dict()
+    original_values[original_parameter] = Const(0.0)
+    load.rms_model.event_dict = original_values
+    group: gce.RmsEventsGroup = gce.RmsEventsGroup(name="Workspace RMS group")
+    circuit.add_rms_events_group(group)
+    event: gce.RmsEvent = gce.RmsEvent(
+        device=load,
+        parameter=original_parameter,
+        time=1.0,
+        value=2.0,
+        group=group,
+    )
+    circuit.add_rms_event(event)
+    workspace: DynamicEditorWorkspaceWindow = _build_workspace()
+    model_page: DynamicEditorTab | None = workspace.open_dynamic_editor_for(
+        api_object=load,
+        circuit=circuit,
+        preferred_mode=DynamicSimulationMode.RMS,
+    )
+    events_page: DynamicEventsPage | None = workspace.open_dynamic_events_for(
+        api_object=load,
+        circuit=circuit,
+        mode=DynamicSimulationMode.RMS,
+        target_workspace=workspace,
+    )
+    assert model_page is not None
+    assert events_page is not None
+
+    replacement_parameter: Var = copy.deepcopy(original_parameter)
+    replacement_values: dict[Var, Const] = dict()
+    replacement_values[replacement_parameter] = Const(0.0)
+    workspace.editor_tabs.setCurrentWidget(model_page)
+    load.rms_model.event_dict = replacement_values
+
+    # Matching references are rebound only when the events tab is activated.
+    initial_drafts: list[DynamicEventDraft] = events_page.session.get_events_for_device(
+        load,
+        DynamicSimulationMode.RMS,
+    )
+    assert initial_drafts[0].parameter is original_parameter
+    assert not events_page.session.has_unapplied_changes
+    workspace.editor_tabs.setCurrentWidget(events_page)
+    drafts: list[DynamicEventDraft] = events_page.session.get_events_for_device(
+        load,
+        DynamicSimulationMode.RMS,
+    )
+
+    assert len(drafts) == 1
+    assert drafts[0].parameter is replacement_parameter
+    assert events_page.session.has_unapplied_changes
+    events_page.session.commit()
+    assert event.parameter is replacement_parameter
 
     _reset_dynamic_editor_workspaces()

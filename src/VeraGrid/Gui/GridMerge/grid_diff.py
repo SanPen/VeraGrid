@@ -368,7 +368,7 @@ class GridDiffDialogue(QtWidgets.QDialog):
                 # make connections
                 self.open_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
                 self.open_file_thread_object.progress_text.connect(self.ui.progressLabel.setText)
-                self.open_file_thread_object.done_signal.connect(self.post_open_base_grid)
+                self.open_file_thread_object.finished.connect(self.post_open_base_grid)
 
                 # thread start
                 self.ui.progressFrame.setVisible(True)
@@ -502,7 +502,7 @@ class GridDiffDialogue(QtWidgets.QDialog):
                 # make connections
                 self.save_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
                 self.save_file_thread_object.progress_text.connect(self.ui.progressLabel.setText)
-                self.save_file_thread_object.done_signal.connect(self.post_save_diff)
+                self.save_file_thread_object.finished.connect(self.post_save_diff)
 
                 # thread start
                 self.ui.progressFrame.setVisible(True)

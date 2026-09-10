@@ -461,7 +461,7 @@ def MVRSM_minimize(obj_func, x0, lb, ub, num_int, max_evals, rand_evals=0, obj_t
     plt.scatter(best_x, best_y, facecolor="none", edgecolor="red")
     plt.xlabel("Investment cost (M€)")
     plt.ylabel("Technical cost (M€)")
-    plt.show()
+    plt.show(block=False)
 
     return best_x, inv_scale(best_y, y0, scale_threshold), model
 

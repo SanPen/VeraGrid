@@ -859,7 +859,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
                 sc3 = ax3.scatter(va_rad, vm, c=vm, norm=color_norm)
                 fig.suptitle(result_type.value)
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
 
             return ResultsTable(data=data,
                                 index=self.bus_names,

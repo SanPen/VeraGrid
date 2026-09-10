@@ -36,6 +36,26 @@ def test_roseta_context_menu_handler_executes_menu() -> None:
     assert "context_menu.exec(" in match.group(1)
 
 
+def test_database_context_menu_is_parented_to_database_table() -> None:
+    """
+    The database table context menu must belong to the table that opens it.
+
+    :return: Nothing.
+    """
+    gui_root: Path = Path(__file__).resolve().parents[2] / "VeraGrid" / "Gui"
+    data_base_file: Path = gui_root / "Main" / "SubClasses" / "Model" / "data_base.py"
+    text: str = data_base_file.read_text(encoding="utf-8")
+    match: re.Match[str] | None = re.search(
+        r"def show_objects_context_menu\(self, pos: QtCore\.QPoint\):(.*?)def add_substation_with_wizard",
+        text,
+        re.S,
+    )
+
+    assert match is not None
+    assert "QMenu(parent=self.ui.dataStructureTableView)" in match.group(1)
+    assert "QMenu(parent=self.ui.diagramsListView)" not in match.group(1)
+
+
 def test_context_menu_sources_use_explicit_translation_calls() -> None:
     """
     Runtime menus should not hide raw string literals behind helper wrappers.

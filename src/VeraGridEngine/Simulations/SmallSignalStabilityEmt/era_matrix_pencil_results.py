@@ -589,7 +589,7 @@ class EraMatrixPencilResults(ResultsTemplate):
                 axis.set_title('ERA Matrix Pencil S-Domain Plot in Hz')
                 axis.grid(True, alpha=0.25)
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
             else:
                 pass
 

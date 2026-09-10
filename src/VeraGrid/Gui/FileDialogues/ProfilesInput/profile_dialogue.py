@@ -13,13 +13,6 @@ from difflib import SequenceMatcher
 import numpy as np
 import pandas as pd
 from PySide6 import QtWidgets, QtCore
-import matplotlib
-
-if os.environ.get("QT_QPA_PLATFORM", "") == "offscreen":
-    matplotlib.use("Agg")
-else:
-    matplotlib.use("QtAgg")
-
 from matplotlib import pyplot as plt
 
 from VeraGrid.Gui.general_dialogues import LogsDialogue
@@ -27,6 +20,7 @@ from VeraGrid.Gui.gui_functions import ComboModel, get_list_model
 from VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_data_gui import Ui_Dialog
 from VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog import ExcelDialog
 from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, exec_dialog_safely
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 from VeraGrid.Gui.messages import error_msg, info_msg
 from VeraGrid.Gui.toast_widget import ToastManager
 from VeraGridEngine import DeviceType
@@ -405,6 +399,7 @@ class ProfileInputGUI(QtWidgets.QDialog):
         self.ui.setupUi(self)
 
         self.toast_manager = ToastManager(parent=self, position_top=False)
+        self._open_plot_dialogs: List[QtWidgets.QDialog] = list()
 
         self.project_directory: str | None = None
 
@@ -724,11 +719,13 @@ class ProfileInputGUI(QtWidgets.QDialog):
                 idx = self.ui.sources_list.selectedIndexes()[0].row()
                 col_name = self.original_data_frame.columns[idx]
                 try:
-                    plt.ion()
                     self.fig = plt.figure(figsize=(8, 6))
                     ax = self.fig.add_subplot(111)
                     self.original_data_frame[col_name].plot(ax=ax)
-                    plt.show()
+                    show_matplotlib_figure(figure=self.fig,
+                                           parent=self,
+                                           open_dialogs=self._open_plot_dialogs,
+                                           title=self.tr("Profile plot"))
                 except TypeError as e:
                     self.toast_manager.show_error_toast(str(e))
             else:

@@ -22,3 +22,7 @@ Clamps an input expression between two evaluated limits and writes the result to
 ## Runtime behavior
 
 All three expressions are evaluated at each accepted update. If the bounds are reversed, the implementation normalizes their order before clamping. The operation is procedural and therefore does not add an algebraic residual.
+
+## Library block
+
+The standalone block has input `u`, output `y`, and editable `minimum` and `maximum` parameters with defaults `-1.0` and `1.0`.

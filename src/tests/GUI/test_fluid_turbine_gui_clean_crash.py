@@ -29,6 +29,7 @@ from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import SimulationTypes
+from tests.GUI.conftest import ModalDialogAutoCloser
 
 
 TESTS_ROOT: Path = Path(__file__).resolve().parents[1]
@@ -170,14 +171,20 @@ def run_fluid_turbine_gui_flow(working_file_name: str, message_queue: Any) -> No
     gui: VeraGridMainGUI = VeraGridMainGUI()
     gui.show()
     app.processEvents()
+    modal_closer: ModalDialogAutoCloser = ModalDialogAutoCloser(app=app, protected_widget=gui, parent=gui)
+    modal_closer.start()
 
     try:
+        message_queue.put("opening file")
         gui.open_file_now(filenames=working_file_name)
+        message_queue.put("waiting for file open")
         wait_for_file_open(gui=gui, app=app, timeout_s=60.0)
+        message_queue.put("file opened")
 
         fluid_node, fluid_node_graphic = find_first_fluid_node_graphic(gui=gui)
         del fluid_node
 
+        message_queue.put("adding turbine")
         turbine_graphic: FluidTurbineGraphicItem = fluid_node_graphic.add_turbine()
         assert isinstance(turbine_graphic, FluidTurbineGraphicItem)
 
@@ -189,16 +196,21 @@ def run_fluid_turbine_gui_flow(working_file_name: str, message_queue: Any) -> No
         diagram_widget.set_editor_model(api_object=turbine)
         app.processEvents()
 
+        message_queue.put("saving file")
         gui.save_file_now(filename=working_file_name)
+        message_queue.put("waiting for file save")
         wait_for_file_save(gui=gui, app=app, timeout_s=60.0)
+        message_queue.put("file saved")
 
         reopened_circuit: MultiCircuit = FileOpen(file_name=working_file_name).open()
         assert len(reopened_circuit.turbines) == len(gui.circuit.turbines)
         assert reopened_circuit.turbines[-1].max_flow_rate == 20.0
         assert reopened_circuit.turbines[-1].efficiency == 10.0
 
+        message_queue.put("running OPF")
         gui.ui.actionOPF.trigger()
         wait_for_simulation(gui=gui, app=app, simulation_type=SimulationTypes.OPF_run, timeout_s=180.0)
+        message_queue.put("OPF finished")
 
         opf_driver: Any
         opf_results: Any
@@ -209,6 +221,7 @@ def run_fluid_turbine_gui_flow(working_file_name: str, message_queue: Any) -> No
         message_queue.put(traceback.format_exc())
         raise
     finally:
+        modal_closer.stop()
         gui.hide()
         gui.stop_all_threads()
         delete_dialog_safely(dialog=gui)
@@ -236,21 +249,22 @@ def test_gui_added_turbine_with_high_efficiency_saves_and_runs_opf(tmp_path: Pat
     process.start()
     process.join(300.0)
 
+    message: str = ""
+    try:
+        while True:
+            queued_message: Any = message_queue.get_nowait()
+            if isinstance(queued_message, str):
+                message = queued_message
+            else:
+                message = repr(queued_message)
+    except queue.Empty:
+        pass
+
     if process.is_alive():
         process.terminate()
         process.join(10.0)
-        raise AssertionError("Fluid turbine GUI subprocess timed out")
+        raise AssertionError(f"Fluid turbine GUI subprocess timed out: {message}")
     else:
-        pass
-
-    message: str = ""
-    try:
-        queued_message: Any = message_queue.get_nowait()
-        if isinstance(queued_message, str):
-            message = queued_message
-        else:
-            message = repr(queued_message)
-    except queue.Empty:
         pass
 
     assert process.exitcode == 0, message

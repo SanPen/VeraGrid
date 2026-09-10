@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.NTC.ntc_opf &mdash; VeraGrid 6.5.6 documentation</title>
+  <title>VeraGridEngine.Simulations.NTC.ntc_opf &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -1220,6 +1221,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">inter_space_branches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>  <span class="c1"># index, sense</span>
 
+        <span class="c1"># per-hour worst N-1: group index in the grid list, or -1 when N-1 is not worse than N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">worst_contingency_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">nt</span><span class="p">,</span> <span class="n">n_elm</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">worst_contingency_flow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nt</span><span class="p">,</span> <span class="n">n_elm</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">worst_contingency_loading</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nt</span><span class="p">,</span> <span class="n">n_elm</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha_n1_worst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nt</span><span class="p">,</span> <span class="n">n_elm</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
 <div class="viewcode-block" id="BranchNtcVars.get_values">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_opf.BranchNtcVars.get_values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">LpModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BranchNtcVars&quot;</span><span class="p">:</span>
@@ -1237,6 +1244,10 @@
         <span class="n">data</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
         <span class="n">data</span><span class="o">.</span><span class="n">inter_space_branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inter_space_branches</span>
         <span class="n">data</span><span class="o">.</span><span class="n">monitor_logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor_logic</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">worst_contingency_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">worst_contingency_idx</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">worst_contingency_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">worst_contingency_flow</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">worst_contingency_loading</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">worst_contingency_loading</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">alpha_n1_worst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_n1_worst</span>
 
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nt</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_elm</span><span class="p">):</span>
@@ -2640,6 +2651,121 @@
 
 
 
+<div class="viewcode-block" id="fill_worst_contingency_per_branch">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_opf.fill_worst_contingency_per_branch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fill_worst_contingency_per_branch</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
+                                      <span class="n">multi_contingencies</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LinearMultiContingencies</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                                      <span class="n">f0_mw</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                      <span class="n">hvdc0_mw</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                      <span class="n">vsc0_mw</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                      <span class="n">inj0_mw</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                      <span class="n">contingency_rates_mw</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                      <span class="n">alpha</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                      <span class="n">worst_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
+                                      <span class="n">worst_flow</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                      <span class="n">worst_loading</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                                      <span class="n">alpha_n1_worst</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For every branch, keep the contingency group that maximises post-contingency loading.</span>
+
+<span class="sd">    The N-state loading is the starting point. A group is recorded only when its N-1</span>
+<span class="sd">    loading is strictly worse, so an unaffected line keeps index -1 and N-1 flow = N flow.</span>
+
+<span class="sd">    :param grid: circuit that owns the contingency groups</span>
+<span class="sd">    :param multi_contingencies: formulated multi-contingencies, or None when N-1 is off</span>
+<span class="sd">    :param f0_mw: solved N-state branch flows (MW)</span>
+<span class="sd">    :param hvdc0_mw: solved N-state HVDC flows (MW)</span>
+<span class="sd">    :param vsc0_mw: solved N-state VSC flows (MW)</span>
+<span class="sd">    :param inj0_mw: solved N-state bus injections (MW)</span>
+<span class="sd">    :param contingency_rates_mw: branch contingency ratings (MW)</span>
+<span class="sd">    :param alpha: N-state exchange sensitivity of every branch</span>
+<span class="sd">    :param worst_idx: output, group index per branch, filled in place</span>
+<span class="sd">    :param worst_flow: output, N-1 flow (MW) of the worst group, filled in place</span>
+<span class="sd">    :param worst_loading: output, |N-1 flow| / contingency rate, filled in place</span>
+<span class="sd">    :param alpha_n1_worst: output, exchange sensitivity under the worst group, filled in place</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># numeric copies so LP extracts still enter the sparse matvecs as float</span>
+    <span class="n">f0</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f0_mw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">hvdc0</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hvdc0_mw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">vsc0</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vsc0_mw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">inj0</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">inj0_mw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">contingency_rates_mw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">alpha_n</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># N-state is the baseline so no group is assigned until some outage raises the loading</span>
+    <span class="n">worst_idx</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">worst_flow</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">f0</span>
+    <span class="n">worst_loading</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">f0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rates</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">)</span>
+    <span class="n">alpha_n1_worst</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">multi_contingencies</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n_used</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">multi_contingencies</span><span class="o">.</span><span class="n">multi_contingencies</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_used</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># map each formulated group onto the full grid group index used by the report</span>
+            <span class="n">all_groups</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_contingency_groups</span><span class="p">()</span>
+            <span class="n">id_to_i</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">i_g</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="k">for</span> <span class="n">i_g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_groups</span><span class="p">)):</span>
+                <span class="n">id_to_i</span><span class="p">[</span><span class="n">all_groups</span><span class="p">[</span><span class="n">i_g</span><span class="p">]</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">i_g</span>
+
+            <span class="n">used_groups</span> <span class="o">=</span> <span class="n">multi_contingencies</span><span class="o">.</span><span class="n">contingency_groups_used</span>
+            <span class="n">c</span><span class="p">:</span> <span class="nb">int</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_used</span><span class="p">):</span>
+                <span class="n">contingency</span><span class="p">:</span> <span class="n">LinearMultiContingency</span> <span class="o">=</span> <span class="n">multi_contingencies</span><span class="o">.</span><span class="n">multi_contingencies</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+
+                <span class="n">mapped_i</span> <span class="o">=</span> <span class="n">id_to_i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">used_groups</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">mapped_i</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">result_idx_c</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result_idx_c</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mapped_i</span><span class="p">)</span>
+
+                <span class="c1"># the same linear N-1 combination as the lazy screening, evaluated in MW</span>
+                <span class="n">fc</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">f0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency</span><span class="o">.</span><span class="n">branch_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fc</span> <span class="o">=</span> <span class="n">fc</span> <span class="o">+</span> <span class="n">contingency</span><span class="o">.</span><span class="n">mlodf_factors</span> <span class="o">@</span> <span class="n">f0</span><span class="p">[</span><span class="n">contingency</span><span class="o">.</span><span class="n">branch_indices</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># this group outages no AC branch</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency</span><span class="o">.</span><span class="n">hvdc_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">hvdc0</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fc</span> <span class="o">=</span> <span class="n">fc</span> <span class="o">+</span> <span class="n">contingency</span><span class="o">.</span><span class="n">hvdc_odf</span> <span class="o">@</span> <span class="n">hvdc0</span><span class="p">[</span><span class="n">contingency</span><span class="o">.</span><span class="n">hvdc_indices</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># this group outages no HVDC</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency</span><span class="o">.</span><span class="n">vsc_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">vsc0</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fc</span> <span class="o">=</span> <span class="n">fc</span> <span class="o">+</span> <span class="n">contingency</span><span class="o">.</span><span class="n">vsc_odf</span> <span class="o">@</span> <span class="n">vsc0</span><span class="p">[</span><span class="n">contingency</span><span class="o">.</span><span class="n">vsc_indices</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># this group outages no VSC</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency</span><span class="o">.</span><span class="n">bus_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">inj0</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fc</span> <span class="o">=</span> <span class="n">fc</span> <span class="o">+</span> <span class="n">contingency</span><span class="o">.</span><span class="n">compensated_ptdf_factors</span> <span class="o">@</span> <span class="p">(</span>
+                            <span class="n">contingency</span><span class="o">.</span><span class="n">injections_factor</span> <span class="o">*</span> <span class="n">inj0</span><span class="p">[</span><span class="n">contingency</span><span class="o">.</span><span class="n">bus_indices</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># this group outages no injection</span>
+
+                <span class="c1"># N-1 exchange sensitivity of the monitored flow with alpha plus the LODF redistribution</span>
+                <span class="n">alpha_c</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">alpha_n</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency</span><span class="o">.</span><span class="n">branch_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">alpha_c</span> <span class="o">=</span> <span class="n">alpha_c</span> <span class="o">+</span> <span class="n">contingency</span><span class="o">.</span><span class="n">mlodf_factors</span> <span class="o">@</span> <span class="n">alpha_n</span><span class="p">[</span><span class="n">contingency</span><span class="o">.</span><span class="n">branch_indices</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># converter only outages do not shift the AC alpha through MLODF</span>
+
+                <span class="n">loading_c</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rates</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">)</span>
+                <span class="n">better</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">=</span> <span class="n">loading_c</span> <span class="o">&gt;</span> <span class="n">worst_loading</span>
+                <span class="n">worst_loading</span><span class="p">[</span><span class="n">better</span><span class="p">]</span> <span class="o">=</span> <span class="n">loading_c</span><span class="p">[</span><span class="n">better</span><span class="p">]</span>
+                <span class="n">worst_flow</span><span class="p">[</span><span class="n">better</span><span class="p">]</span> <span class="o">=</span> <span class="n">fc</span><span class="p">[</span><span class="n">better</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">result_idx_c</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">worst_idx</span><span class="p">[</span><span class="n">better</span><span class="p">]</span> <span class="o">=</span> <span class="n">result_idx_c</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># unmapped group so we keep the previous index</span>
+                <span class="n">alpha_n1_worst</span><span class="p">[</span><span class="n">better</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_c</span><span class="p">[</span><span class="n">better</span><span class="p">]</span></div>
+
+
+
 <div class="viewcode-block" id="add_linear_branches_contingencies_formulation">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_opf.add_linear_branches_contingencies_formulation">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_linear_branches_contingencies_formulation</span><span class="p">(</span><span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -3981,6 +4107,22 @@
 
     <span class="c1"># gather the values of the variables</span>
     <span class="n">vars_v</span> <span class="o">=</span> <span class="n">mip_vars</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">lp_model</span><span class="p">)</span>
+
+    <span class="c1"># one numeric N-1 pass on the final operating point</span>
+    <span class="n">fill_worst_contingency_per_branch</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">multi_contingencies</span><span class="o">=</span><span class="n">lazy_mctg</span><span class="p">,</span>
+        <span class="n">f0_mw</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vars_v</span><span class="o">.</span><span class="n">branch_vars</span><span class="o">.</span><span class="n">flows</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">hvdc0_mw</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vars_v</span><span class="o">.</span><span class="n">hvdc_vars</span><span class="o">.</span><span class="n">flows</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">vsc0_mw</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vars_v</span><span class="o">.</span><span class="n">vsc_vars</span><span class="o">.</span><span class="n">flows</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">inj0_mw</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vars_v</span><span class="o">.</span><span class="n">bus_vars</span><span class="o">.</span><span class="n">Pinj</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">contingency_rates_mw</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vars_v</span><span class="o">.</span><span class="n">branch_vars</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">vars_v</span><span class="o">.</span><span class="n">branch_vars</span><span class="o">.</span><span class="n">alpha</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">worst_idx</span><span class="o">=</span><span class="n">vars_v</span><span class="o">.</span><span class="n">branch_vars</span><span class="o">.</span><span class="n">worst_contingency_idx</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span>
+        <span class="n">worst_flow</span><span class="o">=</span><span class="n">vars_v</span><span class="o">.</span><span class="n">branch_vars</span><span class="o">.</span><span class="n">worst_contingency_flow</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span>
+        <span class="n">worst_loading</span><span class="o">=</span><span class="n">vars_v</span><span class="o">.</span><span class="n">branch_vars</span><span class="o">.</span><span class="n">worst_contingency_loading</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span>
+        <span class="n">alpha_n1_worst</span><span class="o">=</span><span class="n">vars_v</span><span class="o">.</span><span class="n">branch_vars</span><span class="o">.</span><span class="n">alpha_n1_worst</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:],</span>
+    <span class="p">)</span>
 
     <span class="c1"># fill the power shift</span>
     <span class="n">vars_v</span><span class="o">.</span><span class="n">power_shift</span> <span class="o">=</span> <span class="n">vars_v</span><span class="o">.</span><span class="n">bus_vars</span><span class="o">.</span><span class="n">delta_p</span><span class="p">[:,</span> <span class="n">bus_a1_idx</span><span class="p">]</span>

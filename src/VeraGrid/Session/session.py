@@ -82,7 +82,6 @@ class GcThread(QThread):
     """
     progress_signal = Signal(float)
     progress_text = Signal(str)
-    done_signal = Signal()
 
     def __init__(self, driver: DriverTemplate):
         QThread.__init__(self)
@@ -91,7 +90,6 @@ class GcThread(QThread):
         self.driver: DriverTemplate = driver
         self.driver.progress_signal = self.progress_signal
         self.driver.progress_text = self.progress_text
-        self.driver.done_signal = self.done_signal
         self.tpe = driver.tpe
 
         self.results = None
@@ -144,7 +142,6 @@ class GcThread(QThread):
                 self.progress_text.emit('Failed!')
             else:
                 self.progress_text.emit('Done!')
-        self.done_signal.emit()
 
     def has_failed(self) -> bool:
         """
@@ -230,7 +227,7 @@ class SimulationSession:
             driver: DRIVER_OBJECTS,
             post_func: Union[None, Callable] = None,
             prog_func: Union[None, Callable] = None,
-            text_func: Union[None, Callable] = None):
+            text_func: Union[None, Callable] = None) -> None:
         """
         Register driver
         :param driver: driver to register (must have a tpe variable in it)
@@ -240,22 +237,52 @@ class SimulationSession:
         """
 
         # create a process
-        thr = GcThread(driver)
-        thr.progress_signal.connect(prog_func)
-        thr.progress_text.connect(text_func)
-        thr.done_signal.connect(post_func)
+        thr: GcThread = GcThread(driver)
+        if prog_func is not None:
+            thr.progress_signal.connect(prog_func)
+        else:
+            pass
 
-        # check and kill
-        if driver.tpe in self.drivers.keys():
-            del self.drivers[driver.tpe]
-            existing_thread: GcThread | None = self.threads.get(driver.tpe, None)
+        if text_func is not None:
+            thr.progress_text.connect(text_func)
+        else:
+            pass
 
+        if post_func is not None:
+            thr.finished.connect(post_func)
+        else:
+            pass
+
+        previous_driver: DRIVER_OBJECTS | None = self.drivers.get(driver.tpe, None)
+        previous_thread: GcThread | None = self.threads.get(driver.tpe, None)
+        restore_previous_state: bool = False
+
+        # check previous state without killing live Python/native work
+        if previous_driver is not None:
             # Loaded sessions or reset flows can leave a stored driver without a
             # matching live thread entry. Re-runs must tolerate that state and
             # only stop a thread when one is actually registered.
-            if existing_thread is not None:
-                if existing_thread.isRunning():
-                    existing_thread.terminate()
+            if previous_thread is not None:
+                if previous_thread.isRunning():
+                    if text_func is not None:
+                        text_func("A simulation of this type is still finishing. Try again after it stops.")
+                    else:
+                        pass
+                    return
+                else:
+                    restore_previous_state = True
+                del self.threads[driver.tpe]
+            else:
+                restore_previous_state = True
+            del self.drivers[driver.tpe]
+        else:
+            if previous_thread is not None:
+                if previous_thread.isRunning():
+                    if text_func is not None:
+                        text_func("A simulation of this type is still finishing. Try again after it stops.")
+                    else:
+                        pass
+                    return
                 else:
                     pass
                 del self.threads[driver.tpe]
@@ -267,7 +294,33 @@ class SimulationSession:
         self.threads[driver.tpe] = thr
 
         # run!
-        thr.start()
+        try:
+            thr.start()
+        except Exception:
+            if self.drivers.get(driver.tpe, None) is driver:
+                del self.drivers[driver.tpe]
+            else:
+                pass
+
+            if self.threads.get(driver.tpe, None) is thr:
+                del self.threads[driver.tpe]
+            else:
+                pass
+
+            if restore_previous_state:
+                if previous_driver is not None:
+                    self.drivers[driver.tpe] = previous_driver
+                else:
+                    pass
+
+                if previous_thread is not None:
+                    self.threads[driver.tpe] = previous_thread
+                else:
+                    pass
+            else:
+                pass
+
+            raise
 
     def register_driver(self, driver: DRIVER_OBJECTS):
         """

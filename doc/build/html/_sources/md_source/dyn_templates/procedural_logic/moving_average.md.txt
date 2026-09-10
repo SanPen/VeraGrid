@@ -23,3 +23,7 @@ Computes a discrete average of accepted source samples over a delayed time windo
 ## Runtime behavior
 
 If the window is non-positive, the logic returns the latest historical value at the delayed time. Otherwise it averages samples inside the window. This is an accepted-step average, not a continuous integral.
+
+## Library block
+
+The standalone block has input `u`, output `y`, and editable `delay` and `window` parameters initialized to `0.0` and `0.01` seconds.

@@ -302,14 +302,39 @@ The search method is only one half of the setup. The other half is the problem d
 
 The engine currently exposes the following investment problem types.
 
+All final problems inherit from `BlackBoxProblemTemplate`. The template is not used directly as a final
+problem; it defines the shared interface and maps each decision-variable index to the investments in the
+corresponding investment group.
+
+For every final problem, `n_vars()` is the number of grid investment groups and `get_vars_names()` returns
+the investment-group names.
+
 ### `PowerFlowInvestmentProblem`
 
 This is the snapshot power-flow problem.
 
-- Decision variables are binary.
-- Each investment group is either inactive or active.
-- The evaluation runs a standard power flow.
-- The objectives are technical and economic scores derived from losses, overloads, voltage penalties and CAPEX/OPEX-style terms.
+Decision vector `x`:
+
+| Value of `x[i]`  | Meaning                                                     |
+|------------------|-------------------------------------------------------------|
+| `0`              | Investment group `i` is inactive.                           |
+| `1`              | Investment group `i` is active for the snapshot evaluation. |
+
+Evaluation:
+
+- The evaluation enables the selected investments, runs `PowerFlowDriver`, builds a `TechnoEconomicScores`
+  object and restores the original investment status.
+
+Returned objective vector:
+
+| Index  | Metric                 | Meaning                                                                    |
+|--------|------------------------|----------------------------------------------------------------------------|
+| 0      | `losses score`         | Sum of the real branch losses from the power-flow results.                 |
+| 1      | `overload score`       | Sum of branch loading above 100%, weighted by each branch `Cost`.          |
+| 2      | `voltage module_score` | Sum of voltage-magnitude limit violations, weighted by each bus `Vm_cost`. |
+| 3      | `voltage angle score`  | Sum of voltage-angle limit violations, weighted by each bus `angle_cost`.  |
+| 4      | `CAPEX`                | Sum of the CAPEX of all the selected investments.                          |
+| 5      | `OPEX`                 | Sum of the OPEX of all the selected investments. Currently set to `0.0`.   |
 
 This problem is appropriate for:
 
@@ -321,10 +346,36 @@ This problem is appropriate for:
 
 This is the time-series version of the power-flow problem.
 
-- Decision variables are binary.
-- Each investment group is either inactive or active for the full study horizon.
-- The evaluation runs a time-series power flow.
-- The objective vector contains the time-series technical and economic performance indicators defined by the problem.
+Decision vector `x`:
+
+| Value of `x[i]` | Meaning |
+|-----------------|---------|
+| `0` | Investment group `i` is not built. |
+| `1` | Investment group `i` is active from the first selected year onward. |
+| `2..N` | Investment group `i` is active from the second through `N`th selected year onward. |
+
+Here, `N` is the number of represented years in `time_indices`. The problem clips candidate values to the
+valid range before evaluating them.
+
+Evaluation:
+
+- The evaluation applies the entry-year vector to the active profiles of the selected investment devices.
+- The evaluation runs `PowerFlowTimeSeriesDriver` over the requested `time_indices` and restores the
+  original device states.
+
+The returned metrics are the same six metrics used by `PowerFlowInvestmentProblem`,
+but aggregated over the time-series result arrays.
+
+Returned objective vector:
+
+| Index  | Metric                 | Meaning                                                                         |
+|--------|------------------------|---------------------------------------------------------------------------------|
+| 0      | `losses score`         | Sum of the real losses over the time series.                                    |
+| 1      | `overload score`       | Sum of time-step branch loading above 100%, weighted by branch `Cost`.          |
+| 2      | `voltage module_score` | Sum of time-step voltage-magnitude limit violations, weighted by bus `Vm_cost`. |
+| 3      | `voltage angle score`  | Sum of time-step voltage-angle limit violations, weighted by bus `angle_cost`.  |
+| 4      | `CAPEX`                | Sum of the CAPEX of all the selected investments.                               |
+| 5      | `OPEX`                 | Sum of the OPEX of all the selected investments. Currently set to `0.0`.        |
 
 This problem is appropriate for:
 
@@ -336,18 +387,44 @@ This problem is appropriate for:
 
 This is the adequacy-oriented problem.
 
-- Decision variables are integer year-of-entry values.
-- `0` means “not invested”.
-- `1..N` means “project enters service in year `N` of the selected horizon”.
-- The evaluation runs either Monte Carlo adequacy or the simple dispatch path, depending on configuration.
+Decision vector `x`:
 
-The objective vector depends on configuration, but it is built around adequacy quantities such as:
+| Value of `x[i]`     | Meaning                                                                               |
+|---------------------|---------------------------------------------------------------------------------------|
+| `0`                 | Investment group `i` is not built.                                                    |
+| `1`                 | Investment group `i` is active from the first represented year onward.                |
+| `2..N`              | Investment group `i` is active from the second through `N`th represented year onward. |
 
-- LOLE,
-- CAPEX,
-- unitary electricity cost,
-- curtailment,
-- optional firm-capacity penalty.
+Here, `N` is the number of represented years in the grid time profile. The problem clips candidate values
+to the valid range before evaluating them.
+
+Evaluation:
+
+- The evaluation applies the entry-year vector to generator and battery active profiles.
+- The evaluation runs either Monte Carlo reliability simulation or `greedy_dispatch2`, depending on
+  `use_monte_carlo`.
+
+Returned objective vector when `use_firm_capacity_penalty` is `True`:
+
+| Index  | Metric                     | Meaning                                                                          |
+|--------|----------------------------|----------------------------------------------------------------------------------|
+| 0      | `LOLE`                     | Expected or deterministic load not served over the evaluated horizon.            |
+| 1      | `CAPEX`                    | Sum of the CAPEX of all selected investment groups.                              |
+| 2      | `Unitary electricity cost` | Total dispatch cost divided by total load.                                       |
+| 3      | `Curtailment`              | Non-dispatchable generation curtailment after battery operation.                 |
+| 4      | `Firm capacity penalty`    | Penalty applied when selected firm capacity share is below `minimum_firm_share`. |
+
+Returned objective vector when `use_firm_capacity_penalty` is `False`:
+
+| Index  | Metric                     | Meaning                                                               |
+|--------|----------------------------|-----------------------------------------------------------------------|
+| 0      | `LOLE`                     | Expected or deterministic load not served over the evaluated horizon. |
+| 1      | `CAPEX`                    | Sum of the CAPEX of all selected investment groups.                   |
+| 2      | `Unitary electricity cost` | Total dispatch cost divided by total load.                            |
+| 3      | `Curtailment`              | Non-dispatchable generation curtailment after battery operation.      |
+
+When Monte Carlo mode is enabled, LOLE, total cost and curtailment are averaged over the reliability
+simulations. When Monte Carlo mode is disabled, they come from `greedy_dispatch2`.
 
 This problem is appropriate for:
 
@@ -359,19 +436,36 @@ This problem is appropriate for:
 
 This is the time-series linear OPF investment problem introduced for nodal-price and dispatch economics studies.
 
-- Decision variables are integer year-of-entry values, following the adequacy-style encoding.
+Decision vector `x`:
+
+| Value of `x[i]`  | Meaning                                                                            |
+|------------------|------------------------------------------------------------------------------------|
+| `0`              | Investment group `i` is not built.                                                 |
+| `1`              | Investment group `i` is active from the first selected year onward.                |
+| `2..N`           | Investment group `i` is active from the second through `N`th selected year onward. |
+
+Here, `N` is the number of represented years in `time_indices`. The problem clips candidate values to the
+valid range before evaluating them.
+
+Evaluation:
+
 - External `OptimalPowerFlowOptions` are provided by the caller, but the problem forces the linear OPF formulation.
 - Candidate assets are forced off in the baseline state and then activated from the chosen entry year onward.
-- Each evaluation runs a time-series linear OPF.
+- Each evaluation runs `OptimalPowerFlowTimeSeriesDriver` with `SolverType.LINEAR_OPF`.
 
-The objective vector currently contains:
+Returned objective vector:
 
-- average nodal price,
-- CAPEX,
-- OPEX,
-- load shedding,
-- generation shedding,
-- fuel usage.
+| Index  | Metric                | Meaning                                                                                                                                                |
+|--------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0      | `Average nodal price` | Load-weighted average of the mean bus shadow price per time step. If load shedding occurs, prices are capped with the maximum inferred shedding price. |
+| 1      | `CAPEX`               | Sum of the CAPEX of all selected investment groups.                                                                                                    |
+| 2      | `OPEX`                | Sum of `system_total_energy_cost` over the OPF time series.                                                                                            |
+| 3      | `Load shedding`       | Sum of `load_shedding` over all time steps and loads.                                                                                                  |
+| 4      | `Generation shedding` | Sum of `generator_shedding` over all time steps and generators.                                                                                        |
+| 5      | `Fuel usage`          | Sum of `system_fuel` over the OPF time series.                                                                                                         |
+
+If the OPF does not converge for every time step, or if the evaluation raises an exception, the problem
+returns a six-entry penalty vector filled with `1e12`.
 
 This problem is appropriate for:
 

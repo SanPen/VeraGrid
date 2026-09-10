@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Rms.dc_voltage_source &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Templates.Rms.dc_voltage_source &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -114,7 +115,8 @@
 
 <div class="viewcode-block" id="DCVoltageSource">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCVoltageSource">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">DCVoltageSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCVoltageSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">Var</span><span class="p">,</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DC voltage source RMS template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Builds an RMS model template for a DC voltage source with capacitive filtering.</span>
 <span class="sd">    </span>
@@ -132,14 +134,13 @@
 <span class="sd">        - Algebraic: Vpv = Vpv0 (source voltage)</span>
 <span class="sd">        - Differential: C*dVdc/dt + Idc = (Vpv - Vdc)/Rpv (capacitor dynamics)</span>
 <span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        Vdc: DC voltage variable (pu)</span>
-<span class="sd">        name (str): Name of the DC voltage source model</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        RmsModelTemplate: Configured RMS model template for DC voltage source simulation</span>
+<span class="sd">    :param vfactory: Factory that owns the symbolic variables in the model.</span>
+<span class="sd">    :param Vdc: DC-link voltage state variable in per unit.</span>
+<span class="sd">    :param name: Name assigned to the generated RMS model template.</span>
+<span class="sd">    :return: Configured DC voltage-source RMS model template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="c1"># Vars:</span>
     <span class="n">Idc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc&#39;</span><span class="p">)</span>
@@ -178,13 +179,15 @@
         <span class="p">},</span>
     <span class="p">)</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;DC voltage source RMS model with DC-link capacitance&#39;</span>
 
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
 <div class="viewcode-block" id="DCCurrentSource">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCCurrentSource">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">DCCurrentSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCCurrentSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">Var</span><span class="p">,</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DC current source RMS template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Builds an RMS model template for a DC current source with capacitive filtering.</span>
 
@@ -202,14 +205,13 @@
 <span class="sd">        - Algebraic: Vpv = Vpv0 (source voltage)</span>
 <span class="sd">        - Differential: C*dVdc/dt + Idc = (Vpv - Vdc)/Rpv (capacitor dynamics)</span>
 <span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        Vdc: DC voltage variable (pu)</span>
-<span class="sd">        name (str): Name of the DC voltage source model</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        RmsModelTemplate: Configured RMS model template for DC voltage source simulation</span>
+<span class="sd">    :param vfactory: Factory that owns the symbolic variables in the model.</span>
+<span class="sd">    :param Vdc: DC-link voltage state variable in per unit.</span>
+<span class="sd">    :param name: Name assigned to the generated RMS model template.</span>
+<span class="sd">    :return: Configured DC current-source RMS model template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="c1"># Vars:</span>
     <span class="n">Idc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc&#39;</span><span class="p">)</span>
@@ -250,6 +252,7 @@
         <span class="p">},</span>
     <span class="p">)</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;DC current source RMS model with DC-link capacitance&#39;</span>
 
     <span class="k">return</span> <span class="n">templ</span></div>
 
@@ -257,7 +260,8 @@
 
 <div class="viewcode-block" id="DCPowerLimitedSource">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCPowerLimitedSource">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">DCPowerLimitedSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCPowerLimitedSource</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">Var</span><span class="p">,</span>
+                         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DC power-limited source RMS template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    RMS DC source driven by a power reference with saturation.</span>
 
@@ -272,8 +276,14 @@
 <span class="sd">        C * dVdc/dt + Idc - Idc_src = 0</span>
 
 <span class="sd">    where Pdc = Idc * Vdc is the converter-side DC power variable.</span>
+
+<span class="sd">    :param vfactory: Factory that owns the symbolic variables in the model.</span>
+<span class="sd">    :param Vdc: DC-link voltage state variable in per unit.</span>
+<span class="sd">    :param name: Name assigned to the generated RMS model template.</span>
+<span class="sd">    :return: Configured power-limited DC-source RMS model template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="n">Idc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc&#39;</span><span class="p">)</span>
     <span class="n">Idc_src</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc_src&#39;</span><span class="p">)</span>
@@ -316,13 +326,15 @@
     <span class="p">)</span>
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;DC power-limited source RMS model&#39;</span>
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
 
 <div class="viewcode-block" id="DCPVSourceAveraged">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCPVSourceAveraged">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">DCPVSourceAveraged</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCPVSourceAveraged</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">Var</span><span class="p">,</span>
+                       <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Averaged PV DC source RMS template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Averaged PV source with MPPT-like voltage reference and DC-link capacitor.</span>
 
@@ -331,8 +343,14 @@
 <span class="sd">    - MPPT voltage reference set to estimated Vmp</span>
 <span class="sd">    - Averaged boost relation to inject DC current into the link</span>
 <span class="sd">    - DC-link capacitor dynamics: Cdc * dVdc/dt + Idc - Idc_src = 0</span>
+
+<span class="sd">    :param vfactory: Factory that owns the symbolic variables in the model.</span>
+<span class="sd">    :param Vdc: DC-link voltage state variable in per unit.</span>
+<span class="sd">    :param name: Name assigned to the generated RMS model template.</span>
+<span class="sd">    :return: Configured averaged photovoltaic DC-source RMS model template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="c1"># Variables</span>
     <span class="n">Idc</span> <span class="o">=</span> <span class="n">vfactory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s1">&#39;Idc&#39;</span><span class="p">)</span>
@@ -407,13 +425,15 @@
         <span class="p">},</span>
     <span class="p">)</span>
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Averaged photovoltaic DC source RMS model&#39;</span>
 
     <span class="k">return</span> <span class="n">templ</span></div>
 
 
 <div class="viewcode-block" id="DCSimpleSourceAveraged">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.dc_voltage_source.DCSimpleSourceAveraged">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">DCSimpleSourceAveraged</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DCSimpleSourceAveraged</span><span class="p">(</span><span class="n">vfactory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span> <span class="n">Vdc</span><span class="p">:</span> <span class="n">sym</span><span class="o">.</span><span class="n">Var</span><span class="p">,</span>
+                           <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Simple averaged DC source RMS template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Simplified averaged DC source with a DC-link capacitor.</span>
 
@@ -435,8 +455,14 @@
 <span class="sd">    - Idc_src &gt; 0 injects current into the DC link.</span>
 <span class="sd">    - Idc_conv &gt; 0 means the converter extracts power from the DC link.</span>
 <span class="sd">    - Pdc &gt; 0 means active power is delivered from DC side to AC side.</span>
+
+<span class="sd">    :param vfactory: Factory that owns the symbolic variables in the model.</span>
+<span class="sd">    :param Vdc: DC-link voltage state variable in per unit.</span>
+<span class="sd">    :param name: Name assigned to the generated RMS model template.</span>
+<span class="sd">    :return: Configured simplified averaged DC-source RMS model template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">()</span>
+    <span class="n">templ</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="c1"># -------------------------------------------------------------------------</span>
     <span class="c1"># Variables</span>
@@ -513,6 +539,7 @@
     <span class="p">)</span>
 
     <span class="n">templ</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">dc_block</span>
+    <span class="n">templ</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Simple averaged DC source RMS model&#39;</span>
 
     <span class="k">return</span> <span class="n">templ</span></div>
 

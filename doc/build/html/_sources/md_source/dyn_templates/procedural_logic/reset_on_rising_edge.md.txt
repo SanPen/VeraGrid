@@ -22,3 +22,7 @@ Detects a false-to-true transition and assigns a symbolic value to an explicitly
 ## Runtime behavior
 
 The first update establishes the previous condition and does not create a synthetic edge. Later rising edges mutate the target once. This type writes a target directly rather than producing a retained output mode, so use it only where an imperative reset is required.
+
+## Library block
+
+The standalone block owns an internal mutable retained target exposed as output `y`. Inputs `condition` and `value` determine when and to what value that target is reset. In custom Python code, `target` may instead reference an existing state or runtime parameter.

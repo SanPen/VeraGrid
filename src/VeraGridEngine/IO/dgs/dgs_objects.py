@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import csv
-from enum import IntEnum
+from enum import Enum, IntEnum
 from typing import Dict, List
 
 
@@ -19,6 +19,21 @@ class PowerFactoryVscType(IntEnum):
     TwoLevel = 0
     HalfBridgeMmc = 1
     FullBridgeMmc = 2
+
+
+class PowerFactoryLineInstallationType(Enum):
+    """Classify the physical installation declared by a DGS line type.
+
+    PowerFactory has used both the legacy ``aohl_`` text field and the newer
+    ``cohl_`` integer field for the same cable-versus-overhead distinction.
+    ``Unknown`` and ``Conflict`` preserve source uncertainty instead of
+    replacing it with a parser default.
+    """
+
+    Unknown = 'unknown'
+    Cable = 'cable'
+    Overhead = 'overhead'
+    Conflict = 'conflict'
 
 
 def _split_dgs_line(line: str) -> List[str]:
@@ -3088,12 +3103,18 @@ class TypLne(DGSElement):
         DgsProperty('ID', 'a:40', 'Unique identifier for DGS file', py_name='ID'),
         DgsProperty('loc_name', 'a:40', 'Name', py_name='loc_name'),
         DgsProperty('fold_id', 'p', 'In Folder', py_name='fold_id'),
-        DgsProperty('uline', 'r', 'Rated Voltage in kV', py_name='uline'),
-        DgsProperty('sline', 'r', 'Rated Apparent Power in MVA', py_name='sline'),
-        DgsProperty('aohl_', 'a:3', 'Installation Type: OHL:CAB', py_name='aohl_'),
-        DgsProperty('rline', 'r', 'Positive-Sequence Resistance in Ohm/km', py_name='rline'),
-        DgsProperty('xline', 'r', 'Positive-Sequence Reactance in Ohm/km', py_name='xline'),
-        DgsProperty('cline', 'r', 'Positive-Sequence Capacitance in uF/km', py_name='cline'),
+        DgsProperty('uline', 'r', 'Rated Voltage in kV', py_name='uline', optional=True),
+        DgsProperty('sline', 'r', 'Rated Apparent Power in MVA', py_name='sline', optional=True),
+        DgsProperty(
+            'aohl_',
+            'a:3',
+            'Installation Type: OHL:CAB',
+            py_name='aohl_',
+            optional=True,
+        ),
+        DgsProperty('rline', 'r', 'Positive-Sequence Resistance in Ohm/km', py_name='rline', optional=True),
+        DgsProperty('xline', 'r', 'Positive-Sequence Reactance in Ohm/km', py_name='xline', optional=True),
+        DgsProperty('cline', 'r', 'Positive-Sequence Capacitance in uF/km', py_name='cline', optional=True),
         DgsProperty('rline0', 'r', 'Zero-Sequence Resistance in Ohm/km', py_name='rline0'),
         DgsProperty('xline0', 'r', 'Zero-Sequence Reactance in Ohm/km', py_name='xline0'),
         DgsProperty('cline0', 'r', 'Zero-Sequence Capacitance in uF/km', py_name='cline0'),
@@ -3103,13 +3124,19 @@ class TypLne(DGSElement):
         DgsProperty('nlnph', 'i', 'Phases:1:2:3', py_name='nlnph'),
         DgsProperty('nneutral', 'i', 'Number of Neutral Conductors', py_name='nneutral'),
         DgsProperty('for_name', 'a:50', 'Foreign Key', py_name='for_name'),
-        DgsProperty('InomAir', 'r', 'Continuous Current Rating in Air in kA', py_name='InomAir'),
-        DgsProperty('cohl_', 'i', 'Conductor Arrangement Code', py_name='cohl_'),
+        DgsProperty('InomAir', 'r', 'Continuous Current Rating in Air in kA', py_name='InomAir', optional=True),
+        DgsProperty(
+            'cohl_',
+            'i',
+            'Conductor Arrangement Code',
+            py_name='cohl_',
+            optional=True,
+        ),
         DgsProperty('tmax', 'r', 'Maximum Conductor Temperature in degC', py_name='tmax'),
         DgsProperty('systp', 'i', 'System Type Code', py_name='systp'),
-        DgsProperty('frnom', 'r', 'Nominal Frequency in Hz', py_name='frnom'),
+        DgsProperty('frnom', 'r', 'Nominal Frequency in Hz', py_name='frnom', optional=True),
         DgsProperty('mlei', 'a:2', 'Line Model Type Code', py_name='mlei'),
-        DgsProperty('bline', 'r', 'Positive-Sequence Susceptance in uS/km', py_name='bline'),
+        DgsProperty('bline', 'r', 'Positive-Sequence Susceptance in uS/km', py_name='bline', optional=True),
         DgsProperty('bline0', 'r', 'Zero-Sequence Susceptance in uS/km', py_name='bline0'),
     ]
 
@@ -3117,12 +3144,13 @@ class TypLne(DGSElement):
         self.ID: str = ""
         self.loc_name: str = ""
         self.fold_id: str = ""
-        self.uline: float = 0.0
-        self.sline: float = 0.0
-        self.aohl_: str = "cab"  # allowed values are "cab" and "ohl"
-        self.rline: float = 0.0
-        self.xline: float = 0.0
-        self.cline: float = 0.0
+        self.uline: float | None = None
+        self.sline: float | None = None
+        self.aohl_: str | None = "cab"  # allowed values are "cab" and "ohl"
+        self.aohl_declared: bool = False
+        self.rline: float | None = None
+        self.xline: float | None = None
+        self.cline: float | None = None
         self.rline0: float = 0.0
         self.xline0: float = 0.0
         self.cline0: float = 0.0
@@ -3132,14 +3160,48 @@ class TypLne(DGSElement):
         self.nlnph: int = 3
         self.nneutral: int = 0
         self.for_name: str = ""
-        self.InomAir: float = 0.0
-        self.cohl_: int = 0
+        self.InomAir: float | None = None
+        self.cohl_: int | None = 0
+        self.cohl_declared: bool = False
         self.tmax: float = 80.0
         self.systp: int = 0
-        self.frnom: float = 0.0
+        self.frnom: float | None = None
         self.mlei: str = ""
-        self.bline: float = 0.0
+        self.bline: float | None = None
         self.bline0: float = 0.0
+
+    @classmethod
+    def parse_line(cls, line: str, header_map: dict[str, int]) -> TypLne:
+        """Parse a line type and retain which installation fields existed.
+
+        The normal property values keep their historical constructor defaults
+        for export compatibility. Separate flags retain import evidence so a
+        missing ``aohl_`` or ``cohl_`` column cannot look like an explicit
+        cable declaration.
+
+        :param line: Raw DGS line-type record.
+        :param header_map: DGS property names mapped to column positions.
+        :return: Parsed line type with installation evidence flags.
+        """
+        obj: TypLne = super().parse_line(line=line, header_map=header_map)
+        parts: List[str] = _split_dgs_line(line=line)
+
+        # A header only describes the schema. The row must carry a concrete
+        # value before it can count as installation evidence for this type.
+        aohl_index: int | None = header_map.get('aohl_', None)
+        if aohl_index is not None and -1 < aohl_index < len(parts):
+            aohl_text: str = parts[aohl_index].strip()
+            obj.aohl_declared = aohl_text != '' and aohl_text != '*'
+        else:
+            obj.aohl_declared = False
+
+        cohl_index: int | None = header_map.get('cohl_', None)
+        if cohl_index is not None and -1 < cohl_index < len(parts):
+            cohl_text: str = parts[cohl_index].strip()
+            obj.cohl_declared = cohl_text != '' and cohl_text != '*'
+        else:
+            obj.cohl_declared = False
+        return obj
 
 
 class TypLod(DGSElement):

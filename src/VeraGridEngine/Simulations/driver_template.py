@@ -73,7 +73,6 @@ class DriverTemplate:
     __slots__ = (
         "progress_signal",
         "progress_text",
-        "done_signal",
         "grid",
         "results",
         "engine",
@@ -97,7 +96,6 @@ class DriverTemplate:
         """
         self.progress_signal = DummySignal()
         self.progress_text = DummySignal(str)
-        self.done_signal = DummySignal()
 
         self.grid: MultiCircuit = grid
 
@@ -158,7 +156,6 @@ class DriverTemplate:
         """
         self.progress_signal = other.progress_signal
         self.progress_text = other.progress_text
-        self.done_signal = other.done_signal
 
     def report_progress(self, val: float):
         """
@@ -182,7 +179,6 @@ class DriverTemplate:
         """
         self.report_progress(val)
         self.report_text(txt)
-        self.done_signal.emit()
 
     def report_text(self, val: str):
         """
@@ -196,7 +192,6 @@ class DriverTemplate:
         Cancel the simulation
         """
         self.__cancel__ = True
-        self.report_done("Cancelled!")
 
     def is_cancel(self) -> bool:
         """

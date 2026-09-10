@@ -18,7 +18,7 @@ from VeraGrid.Gui.gui_functions import (BoolCheckboxDelegate, IntDelegate, Combo
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 from VeraGridEngine.Devices import Bus, ContingencyGroup
-from VeraGridEngine.Devices.Parents.editable_device import GCProp, GCPROP_TYPES
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp, GCPROP_TYPES
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType, PrpCat
@@ -553,6 +553,47 @@ class ObjectsModel(WrappableTableModel):
         else:
             # there is a mismatch because the element was deleted without refreshing this table model
             return ""
+
+    def get_value_at_index(self, index: QtCore.QModelIndex) -> Any | None:
+        """
+        Return the raw property value behind a model index.
+
+        :param index: Source model index.
+        :return: Raw property value or ``None`` when the index is invalid.
+        """
+        if index.isValid():
+            # Translate the visual table coordinates to the object/property coordinates.
+            if self.transposed:
+                obj_idx: int = index.column()
+                attr_idx: int = index.row()
+            else:
+                obj_idx = index.row()
+                attr_idx = index.column()
+
+            # Read only valid object/property pairs because stale GUI indexes can survive table refreshes.
+            if 0 <= obj_idx < len(self.objects) and 0 <= attr_idx < len(self.property_list):
+                prop: GCProp = self.property_list[attr_idx]
+                value: Any = self.objects[obj_idx].get_value(prop=prop, t_idx=self.time_index_)
+                return value
+            else:
+                return None
+        else:
+            return None
+
+    def get_hosted_device_at_index(self, index: QtCore.QModelIndex) -> EditableDevice | None:
+        """
+        Return the device referenced by a table cell.
+
+        :param index: Source model index.
+        :return: Hosted editable device or ``None`` when the cell stores a scalar value.
+        """
+        value: Any | None = self.get_value_at_index(index=index)
+
+        # Device-reference cells store the API object directly even if display data shows only its name.
+        if isinstance(value, EditableDevice):
+            return value
+        else:
+            return None
 
     @staticmethod
     def _format_date_display(value) -> str:

@@ -218,7 +218,7 @@ class IpsSolution:
         plt.xlabel("Iterations")
         plt.ylabel("Error")
         plt.yscale('log')
-        plt.show()
+        plt.show(block=False)
 
 
 def interior_point_solver(x0: Vec,

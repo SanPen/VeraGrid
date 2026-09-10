@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Explicit-state RMS converter blocks &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Explicit-state RMS converter blocks &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -153,7 +153,7 @@
 <li><p><a class="reference internal" href="vsc_pll.html"><span class="std std-doc">PLL</span></a> and <a class="reference internal" href="vsc_electrical.html"><span class="std std-doc">converter electrical equations</span></a>.</p></li>
 <li><p><a class="reference internal" href="vsc_active_control.html"><span class="std std-doc">Vdc / P control</span></a> and <a class="reference internal" href="vsc_reactive_control.html"><span class="std std-doc">Qac / Vac control</span></a>.</p></li>
 <li><p><a class="reference internal" href="vsc_current_limiter.html"><span class="std std-doc">Current limiter</span></a>, <a class="reference internal" href="vsc_vd_hat.html"><span class="std std-doc">d-axis current PI controller</span></a> and <a class="reference internal" href="vsc_vq_hat.html"><span class="std std-doc">q-axis current PI controller</span></a>.</p></li>
-<li><p><a class="reference internal" href="vsc_dc_link.html"><span class="std std-doc">DC-link capacitor</span></a> and <a class="reference internal" href="vsc_terminal_power.html"><span class="std std-doc">terminal power equations</span></a>.</p></li>
+<li><p><a class="reference internal" href="vsc_dc_link.html"><span class="std std-doc">DC-link capacitor</span></a>, which also owns the DC-terminal power and voltage constraint.</p></li>
 <li><p><a class="reference internal" href="dc_line.html"><span class="std std-doc">DC line</span></a>.</p></li>
 </ul>
 </section>
@@ -162,7 +162,7 @@
 <ul class="simple">
 <li><p>Voltage, current and power signals use the model’s per-unit bases; phase angles use radians and simulation time uses seconds. <code class="docutils literal notranslate"><span class="pre">omega</span></code> is per-unit frequency, not rad/s.</p></li>
 <li><p>The PLL aligns the <strong>q axis</strong> with the AC voltage: at initialization, <code class="docutils literal notranslate"><span class="pre">vd</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">vq</span> <span class="pre">=</span> <span class="pre">Vm</span></code>. Consequently, <code class="docutils literal notranslate"><span class="pre">i_q</span></code> controls active power and <code class="docutils literal notranslate"><span class="pre">i_d</span></code> controls reactive power at that operating point.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">P</span></code> and <code class="docutils literal notranslate"><span class="pre">Q</span></code> are internal converter powers. Terminal powers use the branch convention: positive into the VSC at each terminal. Thus <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span> <span class="pre">=</span> <span class="pre">-P</span></code> and <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span> <span class="pre">=</span> <span class="pre">-Q</span></code>.</p></li>
+<li><p>Terminal powers use the branch convention: <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code>, <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code> and <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code> are positive into the VSC. The electrical equations expose <code class="docutils literal notranslate"><span class="pre">Pt_vsc/Qt_vsc</span></code> directly; they do not create a second internal <code class="docutils literal notranslate"><span class="pre">P/Q</span></code> pair.</p></li>
 <li><p>Display labels can propagate through connections. Port order and the actual variable connection, not the displayed name alone, define the model.</p></li>
 </ul>
 </section>
@@ -175,7 +175,7 @@
 <p><img src="../../../_images/math/aba4cd05e467a879d926e2152611b37eb408451e.svg" alt="\dot{\xi}=e,\qquad y=K_p e+K_i\xi,\qquad
 \xi_0=\frac{y_0-K_p e_0}{K_i}."/></p>
 </div><p>The initial output bias <code class="docutils literal notranslate"><span class="pre">y_0</span></code> is essential even when the initial error is zero. Keep <code class="docutils literal notranslate"><span class="pre">Ki</span></code> nonzero for this initialization formula. Power-flow-seeded terminal variables are not assigned duplicate initialization equations.</p>
-<p>When assembling the converter from individual blocks, connect all physical and control signals, then apply/save the RMS model. The editor derives the electrical <code class="docutils literal notranslate"><span class="pre">P/Q</span></code> initialization and inner-PI output biases from the connected blocks. It also synchronizes the surviving child mappings to the device root. Merely placing blocks in the scene does not create these connections.</p>
+<p>When assembling the converter from individual blocks, connect all physical and control signals, then apply/save the RMS model. The editor derives the inner-PI output biases from the connected electrical block. It also synchronizes the surviving child mappings to the device root. Merely placing blocks in the scene does not create these connections.</p>
 <p>For the complete wiring sequence, see <a class="reference internal" href="hvdc_vsc_gfl.html"><span class="std std-doc">Complete GFL VSC HVDC</span></a>. The <a class="reference internal" href="2w_transformer.html"><span class="std std-doc">two-winding transformer</span></a> reference describes the external AC coupling branch; it is separate from the converter’s internal filter.</p>
 </section>
 </section>

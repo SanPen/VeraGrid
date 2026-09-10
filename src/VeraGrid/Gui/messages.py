@@ -106,4 +106,10 @@ def yes_no_question(text: str, title: str | None = None) -> bool:
         QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
         QtWidgets.QMessageBox.StandardButton.No
     )
-    return buttonReply == QtWidgets.QMessageBox.StandardButton.Yes.value
+    yes_button: QtWidgets.QMessageBox.StandardButton = QtWidgets.QMessageBox.StandardButton.Yes
+    if buttonReply == yes_button:
+        result: bool = True
+    else:
+        result = buttonReply == yes_button.value
+
+    return result

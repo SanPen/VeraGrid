@@ -607,7 +607,7 @@ class PowerFlowTimeSeriesResults3Ph(ResultsTemplate):
                 ax3.scatter(va_rad, vm_flat, c=vm_flat, norm=color_norm)
                 fig.suptitle(result_type.value)
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
             data: np.ndarray = np.concatenate((vm_a, vm_b, vm_c, va_a, va_b, va_c), axis=1)
             return _build_time_series_results_table(data, self.time_array, np.array(columns), DeviceType.NoDevice, result_type.value, "(p.u., deg)", "(p.u., deg)")
         elif result_type == ResultTypes.BranchActivePowerFromA:

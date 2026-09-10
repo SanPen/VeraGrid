@@ -21,6 +21,7 @@ from VeraGrid.Session.file_handler import FileSaveThread
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.enumerations import SimulationTypes
+from tests.GUI.conftest import ModalDialogAutoCloser
 
 TESTS_ROOT: Path = Path(__file__).resolve().parents[1]
 TOWER_EDIT_CRASH_FIXTURE: Path = (
@@ -457,6 +458,8 @@ def test_original_honduras_tower_edit_save_and_solve(qt_app: QtWidgets.QApplicat
     shutil.copyfile(src=TOWER_EDIT_CRASH_FIXTURE, dst=working_file)
 
     gui: VeraGridMainGUI = VeraGridMainGUI()
+    modal_closer: ModalDialogAutoCloser = ModalDialogAutoCloser(app=app, protected_widget=gui, parent=gui)
+    modal_closer.start()
 
     try:
         gui.open_file_now(filenames=str(working_file))
@@ -486,6 +489,7 @@ def test_original_honduras_tower_edit_save_and_solve(qt_app: QtWidgets.QApplicat
         gc.collect(2)
         app.processEvents()
     finally:
+        modal_closer.stop()
         close_gui_accepting_exit(gui=gui, app=app)
         gui.deleteLater()
         QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)

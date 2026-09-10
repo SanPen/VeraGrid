@@ -21,3 +21,7 @@ Evaluates a symbolic source at every accepted solver boundary and copies its num
 ## Runtime behavior
 
 The value is piecewise constant between accepted updates. Order matters when the source reads a mode written by another procedural entry in the same block.
+
+## Library block
+
+The standalone block has input `u` and output `y`. The internal sampled mode starts at `0.0` and is exposed through `y`.

@@ -947,7 +947,7 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
                 ax3.legend()
                 fig.suptitle(str(result_type.value))
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
 
             return ResultsTable(data=np.c_[generation, load],
                                 index=pd.to_datetime(self.time_array),

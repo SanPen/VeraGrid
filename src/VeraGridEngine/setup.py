@@ -88,6 +88,7 @@ dependencies = ["numpy>=2.2.0",
                 "geopy>=2.4.1",
                 "h5py>=3.12.0",
                 "numba>=0.61",  # to compile routines natively
+                "clang-tool-chain>=1.5.9",
                 "pyproj>=3.7.2",
                 "pulp>=3.3.0",
                 "pyarrow>=23.0.1",

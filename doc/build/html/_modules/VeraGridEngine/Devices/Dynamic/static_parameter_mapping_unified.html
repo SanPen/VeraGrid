@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -1318,6 +1318,14 @@
 <span class="sd">    :param raw_value: Static property value read from the device.</span>
 <span class="sd">    :return: Direct numerical value or ``None`` when explicit logic must handle it.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Optional physical properties use ``None`` to declare absent evidence.</span>
+    <span class="c1"># They must not become a synthetic zero or enter a numeric conversion; the</span>
+    <span class="c1"># device-specific fallback remains responsible for the reduced model.</span>
+    <span class="k">if</span> <span class="n">raw_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
     <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">g</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">b</span><span class="p">:</span>
         <span class="c1"># Branch-like devices may expose scalar g/b template keys whose meaning</span>
         <span class="c1"># depends on the target dynamic model contract. For RMS phasor line</span>
@@ -1718,6 +1726,7 @@
             <span class="k">elif</span> <span class="n">device_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">DCLineDevice</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">DcLine</span><span class="p">):</span>
                     <span class="n">assign_dc_line_static_api_mapping</span><span class="p">(</span>
+                        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
                         <span class="n">dc_line</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
                         <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
                         <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
@@ -3335,6 +3344,7 @@
 <div class="viewcode-block" id="assign_dc_line_static_api_mapping">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Dynamic.html#VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified.assign_dc_line_static_api_mapping">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">assign_dc_line_static_api_mapping</span><span class="p">(</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
         <span class="n">dc_line</span><span class="p">:</span> <span class="n">DcLine</span><span class="p">,</span>
         <span class="n">mdl</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
         <span class="n">problem_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Var</span><span class="p">,</span> <span class="n">Const</span><span class="p">],</span>
@@ -3344,6 +3354,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assign static DC-line parameters exposed by ``mdl.api_obj_mapping``.</span>
 
+<span class="sd">    :param grid: Circuit providing the system power base.</span>
 <span class="sd">    :param dc_line: DC line device.</span>
 <span class="sd">    :param mdl: DC line EMT block.</span>
 <span class="sd">    :param logger: Optional logger.</span>
@@ -3353,6 +3364,10 @@
     <span class="n">eps_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-12</span>
     <span class="n">resistance_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dc_line</span><span class="o">.</span><span class="n">R_corrected</span><span class="p">)</span>
     <span class="n">conductance_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">resistance_value</span><span class="p">),</span> <span class="n">eps_value</span><span class="p">)</span>
+    <span class="n">dynamic_values</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">dc_line</span><span class="o">.</span><span class="n">get_dynamic_values_pu_seconds</span><span class="p">(</span>
+        <span class="n">Sbase</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">Sbase</span><span class="p">),</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span> <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Logger</span><span class="p">(),</span>
+    <span class="p">)</span>
 
     <span class="n">assign_common_branch_static_api_mapping</span><span class="p">(</span>
         <span class="n">device</span><span class="o">=</span><span class="n">dc_line</span><span class="p">,</span>
@@ -3389,6 +3404,14 @@
         <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
         <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">dc_line_r_pu</span><span class="p">,</span>
         <span class="n">value</span><span class="o">=</span><span class="n">resistance_value</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
+        <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">assign_api_mapping_value_if_present</span><span class="p">(</span>
+        <span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+        <span class="n">key</span><span class="o">=</span><span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">dc_line_l_pu_seconds</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">dynamic_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
         <span class="n">device_name</span><span class="o">=</span><span class="n">device_name</span><span class="p">,</span>
         <span class="n">problem_mapping</span><span class="o">=</span><span class="n">problem_mapping</span><span class="p">,</span>

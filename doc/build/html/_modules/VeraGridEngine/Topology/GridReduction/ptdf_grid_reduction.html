@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -59,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +70,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -112,7 +110,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">Vec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.circuit_to_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_numerical_circuit_at</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Injections.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
@@ -127,6 +125,73 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.numerical_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalCircuit</span>
+
+
+<div class="viewcode-block" id="get_reduced_branch_flows">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.GridReduction.html#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_reduced_branch_flows">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_reduced_branch_flows</span><span class="p">(</span><span class="n">original_nc</span><span class="p">:</span> <span class="s2">&quot;NumericalCircuit&quot;</span><span class="p">,</span>
+                             <span class="n">reduced_nc</span><span class="p">:</span> <span class="s2">&quot;NumericalCircuit&quot;</span><span class="p">,</span>
+                             <span class="n">original_flows</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reorder original branch flows to match the reduced numerical circuit branch rows.</span>
+
+<span class="sd">    :param original_nc: Numerical circuit before removing buses.</span>
+<span class="sd">    :param reduced_nc: Numerical circuit after removing buses.</span>
+<span class="sd">    :param original_flows: Branch flows ordered as ``original_nc``.</span>
+<span class="sd">    :return: Branch flows ordered as ``reduced_nc``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">original_flow_by_idtag</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">reduced_flows</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">reduced_nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">original_nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">):</span>
+        <span class="n">original_branch_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">original_nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">original_flow_by_idtag</span><span class="p">[</span><span class="n">original_branch_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_flows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reduced_nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">):</span>
+        <span class="n">reduced_branch_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">reduced_nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">original_flow</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">original_flow_by_idtag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">reduced_branch_idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">original_flow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reduced_flows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_flow</span>
+
+    <span class="k">return</span> <span class="n">reduced_flows</span></div>
+
+
+
+<div class="viewcode-block" id="get_reduced_branch_flows_ts">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Topology.GridReduction.html#VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction.get_reduced_branch_flows_ts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_reduced_branch_flows_ts</span><span class="p">(</span><span class="n">original_nc</span><span class="p">:</span> <span class="s2">&quot;NumericalCircuit&quot;</span><span class="p">,</span>
+                                <span class="n">reduced_nc</span><span class="p">:</span> <span class="s2">&quot;NumericalCircuit&quot;</span><span class="p">,</span>
+                                <span class="n">original_flows_ts</span><span class="p">:</span> <span class="n">Mat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reorder original time-series branch flows to match reduced numerical circuit branch rows.</span>
+
+<span class="sd">    :param original_nc: Numerical circuit before removing buses.</span>
+<span class="sd">    :param reduced_nc: Numerical circuit after removing buses.</span>
+<span class="sd">    :param original_flows_ts: Time-series branch flows ordered as ``original_nc``.</span>
+<span class="sd">    :return: Time-series branch flows ordered as ``reduced_nc``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">original_index_by_idtag</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">reduced_flows_ts</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">original_flows_ts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reduced_nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">original_nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">):</span>
+        <span class="n">original_branch_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">original_nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">original_index_by_idtag</span><span class="p">[</span><span class="n">original_branch_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reduced_nc</span><span class="o">.</span><span class="n">nbr</span><span class="p">):</span>
+        <span class="n">reduced_branch_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">reduced_nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">original_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">original_index_by_idtag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">reduced_branch_idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">original_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reduced_flows_ts</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_flows_ts</span><span class="p">[:,</span> <span class="n">original_index</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">reduced_flows_ts</span></div>
+
 
 
 <div class="viewcode-block" id="get_Pgen">
@@ -626,14 +691,20 @@
     <span class="c1"># re-make the linear analysis</span>
     <span class="n">nc2</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
     <span class="n">lin2</span> <span class="o">=</span> <span class="n">LinearAnalysis</span><span class="p">(</span><span class="n">nc2</span><span class="p">)</span>
+    <span class="n">Flows0_reduced_order</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                         <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                         <span class="n">original_flows</span><span class="o">=</span><span class="n">Flows0</span><span class="p">)</span>
 
     <span class="c1"># reconstruct injections that should be to keep the flows the same</span>
-    <span class="n">Pbus3</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">lin2</span><span class="o">.</span><span class="n">PTDF</span><span class="p">,</span> <span class="n">Flows0</span><span class="p">[</span><span class="n">i_branches</span><span class="p">])</span>
+    <span class="n">Pbus3</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">lin2</span><span class="o">.</span><span class="n">PTDF</span><span class="p">,</span> <span class="n">Flows0_reduced_order</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">dPbus</span> <span class="o">=</span> <span class="n">Pbus2</span> <span class="o">-</span> <span class="n">Pbus3</span>
 
     <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
         <span class="n">lin_ts2</span> <span class="o">=</span> <span class="n">LinearAnalysisTs</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">compute_multi_contingencies</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">Pbus3_ts</span> <span class="o">=</span> <span class="n">lin_ts2</span><span class="o">.</span><span class="n">get_reverse_injections_ts</span><span class="p">(</span><span class="n">flows_ts</span><span class="o">=</span><span class="n">Flows0_ts</span><span class="p">[:,</span> <span class="n">i_branches</span><span class="p">])</span>
+        <span class="n">Flows0_ts_reduced_order</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows_ts</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                                   <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                                   <span class="n">original_flows_ts</span><span class="o">=</span><span class="n">Flows0_ts</span><span class="p">)</span>
+        <span class="n">Pbus3_ts</span> <span class="o">=</span> <span class="n">lin_ts2</span><span class="o">.</span><span class="n">get_reverse_injections_ts</span><span class="p">(</span><span class="n">flows_ts</span><span class="o">=</span><span class="n">Flows0_ts_reduced_order</span><span class="p">)</span>
         <span class="n">Pbus2_ts</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_Pbus_prof</span><span class="p">(</span><span class="n">apply_active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">dPbus_ts</span> <span class="o">=</span> <span class="n">Pbus2_ts</span> <span class="o">-</span> <span class="n">Pbus3_ts</span>
     <span class="k">else</span><span class="p">:</span>
@@ -654,7 +725,7 @@
     <span class="c1"># proof that the flows are actually the same</span>
     <span class="c1"># Pbus4 = grid.get_Pbus(apply_active=True)</span>
     <span class="c1"># Flows4 = lin2.PTDF @ Pbus4</span>
-    <span class="c1"># diff = Flows0[i_branches] - Flows4</span>
+    <span class="c1"># diff = Flows0_reduced_order - Flows4</span>
 
     <span class="k">return</span> <span class="n">grid</span><span class="p">,</span> <span class="n">logger</span></div>
 
@@ -675,7 +746,7 @@
     <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
 
     <span class="c1"># find the boundary set: buses from the internal set the join to the external set</span>
-    <span class="n">e_buses</span><span class="p">,</span> <span class="n">i_buses</span><span class="p">,</span> <span class="n">i_branches</span> <span class="o">=</span> <span class="n">get_reduction_sets</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">)</span>
+    <span class="n">e_buses</span><span class="p">,</span> <span class="n">i_buses</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_reduction_sets</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">e_buses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Nothing to reduce&quot;</span><span class="p">)</span>
@@ -768,7 +839,7 @@
     <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
 
     <span class="c1"># find the boundary set: buses from the internal set the join to the external set</span>
-    <span class="n">e_buses</span><span class="p">,</span> <span class="n">i_buses</span><span class="p">,</span> <span class="n">i_branches</span> <span class="o">=</span> <span class="n">get_reduction_sets</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">)</span>
+    <span class="n">e_buses</span><span class="p">,</span> <span class="n">i_buses</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_reduction_sets</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">reduction_bus_indices</span><span class="o">=</span><span class="n">reduction_bus_indices</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">e_buses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Nothing to reduce&quot;</span><span class="p">)</span>
@@ -998,13 +1069,28 @@
     <span class="c1"># re-make the linear analysis</span>
     <span class="n">nc2</span> <span class="o">=</span> <span class="n">compile_numerical_circuit_at</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
     <span class="n">lin2</span> <span class="o">=</span> <span class="n">LinearAnalysis</span><span class="p">(</span><span class="n">nc2</span><span class="p">,</span> <span class="n">distributed_slack</span><span class="o">=</span><span class="n">distribute_slack</span><span class="p">)</span>
+    <span class="n">Flow0_load_reduced_order</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                             <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                             <span class="n">original_flows</span><span class="o">=</span><span class="n">Flow0_load</span><span class="p">)</span>
+    <span class="n">Flow0_gen_reduced_order</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                            <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                            <span class="n">original_flows</span><span class="o">=</span><span class="n">Flow0_gen</span><span class="p">)</span>
+    <span class="n">Flow0_gen_srap_reduced_order</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                                 <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                                 <span class="n">original_flows</span><span class="o">=</span><span class="n">Flow0_gen_srap</span><span class="p">)</span>
+    <span class="n">Flow0_hvdc_reduced_order</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                             <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                             <span class="n">original_flows</span><span class="o">=</span><span class="n">Flow0_hvdc</span><span class="p">)</span>
 
     <span class="c1"># reconstruct injections that should be to keep the flows the same</span>
     <span class="c1"># We want to find dP such that: PTDF @ (Pbus2 + dP) = Flow0</span>
     <span class="c1"># So: PTDF @ dP = Flow0 - PTDF @ Pbus2</span>
 
     <span class="c1"># Target flows in the original grid (including HVDC contribution)</span>
-    <span class="n">Flow0_total</span> <span class="o">=</span> <span class="n">Flow0_load</span> <span class="o">+</span> <span class="n">Flow0_gen</span> <span class="o">+</span> <span class="n">Flow0_gen_srap</span> <span class="o">+</span> <span class="n">Flow0_hvdc</span>
+    <span class="n">Flow0_total_reduced_order</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="p">(</span><span class="n">Flow0_load_reduced_order</span>
+                                      <span class="o">+</span> <span class="n">Flow0_gen_reduced_order</span>
+                                      <span class="o">+</span> <span class="n">Flow0_gen_srap_reduced_order</span>
+                                      <span class="o">+</span> <span class="n">Flow0_hvdc_reduced_order</span><span class="p">)</span>
     
     <span class="c1"># Total injections and flows in the reduced grid</span>
     <span class="n">Pbus2_total</span> <span class="o">=</span> <span class="n">Pload2</span> <span class="o">+</span> <span class="n">Pgen2</span> <span class="o">+</span> <span class="n">Pgen_srap2</span>
@@ -1026,10 +1112,10 @@
     <span class="n">Flow2_gen_srap</span> <span class="o">=</span> <span class="n">lin2</span><span class="o">.</span><span class="n">get_flows</span><span class="p">(</span><span class="n">Pgen_srap2</span><span class="p">)</span>
    
     <span class="c1"># Residual flow to compensate</span>
-    <span class="n">residual_flow</span> <span class="o">=</span> <span class="n">Flow0_total</span><span class="p">[</span><span class="n">i_branches</span><span class="p">]</span> <span class="o">-</span> <span class="n">Flow2</span>
-    <span class="n">residual_flow_load</span> <span class="o">=</span> <span class="n">Flow0_load</span><span class="p">[</span><span class="n">i_branches</span><span class="p">]</span> <span class="o">-</span> <span class="n">Flow2_load</span>
-    <span class="n">residual_flow_gen</span> <span class="o">=</span> <span class="n">Flow0_gen</span><span class="p">[</span><span class="n">i_branches</span><span class="p">]</span> <span class="o">-</span> <span class="n">Flow2_gen</span>
-    <span class="n">residual_flow_gen_srap</span> <span class="o">=</span> <span class="n">Flow0_gen_srap</span><span class="p">[</span><span class="n">i_branches</span><span class="p">]</span> <span class="o">-</span> <span class="n">Flow2_gen_srap</span>
+    <span class="n">residual_flow</span> <span class="o">=</span> <span class="n">Flow0_total_reduced_order</span> <span class="o">-</span> <span class="n">Flow2</span>
+    <span class="n">residual_flow_load</span> <span class="o">=</span> <span class="n">Flow0_load_reduced_order</span> <span class="o">-</span> <span class="n">Flow2_load</span>
+    <span class="n">residual_flow_gen</span> <span class="o">=</span> <span class="n">Flow0_gen_reduced_order</span> <span class="o">-</span> <span class="n">Flow2_gen</span>
+    <span class="n">residual_flow_gen_srap</span> <span class="o">=</span> <span class="n">Flow0_gen_srap_reduced_order</span> <span class="o">-</span> <span class="n">Flow2_gen_srap</span>
     
     <span class="c1"># Solve for compensation across all remaining buses (minimum-norm solution).</span>
     <span class="n">dP</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">lin2</span><span class="o">.</span><span class="n">PTDF</span><span class="p">,</span> <span class="n">residual_flow</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1066,10 +1152,16 @@
         <span class="c1"># We use the same logic as for the static case but for each time step (vectorized)</span>
         <span class="c1"># The target flows on internal branches must be preserved</span>
 
-        <span class="c1"># Target flows (TS) on internal branches</span>
-        <span class="n">Flows0_load_ts_i</span> <span class="o">=</span> <span class="n">Flows0_load_ts</span><span class="p">[:,</span> <span class="n">i_branches</span><span class="p">]</span>
-        <span class="n">Flows0_gen_ts_i</span> <span class="o">=</span> <span class="n">Flows0_gen_ts</span><span class="p">[:,</span> <span class="n">i_branches</span><span class="p">]</span>
-        <span class="n">Flows0_gen_srap_ts_i</span> <span class="o">=</span> <span class="n">Flows0_gen_srap_ts</span><span class="p">[:,</span> <span class="n">i_branches</span><span class="p">]</span>
+        <span class="c1"># Target flows (TS) on reduced branch rows</span>
+        <span class="n">Flows0_load_ts_i</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows_ts</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                       <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                       <span class="n">original_flows_ts</span><span class="o">=</span><span class="n">Flows0_load_ts</span><span class="p">)</span>
+        <span class="n">Flows0_gen_ts_i</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows_ts</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                      <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                      <span class="n">original_flows_ts</span><span class="o">=</span><span class="n">Flows0_gen_ts</span><span class="p">)</span>
+        <span class="n">Flows0_gen_srap_ts_i</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows_ts</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                           <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                           <span class="n">original_flows_ts</span><span class="o">=</span><span class="n">Flows0_gen_srap_ts</span><span class="p">)</span>
 
         <span class="c1"># Get the equivalent injections that would produce these flows in the reduced grid</span>
         <span class="n">Pbus3_load_ts</span> <span class="o">=</span> <span class="n">lin_ts2</span><span class="o">.</span><span class="n">get_reverse_injections_ts</span><span class="p">(</span><span class="n">flows_ts</span><span class="o">=</span><span class="n">Flows0_load_ts_i</span><span class="p">)</span>
@@ -1085,9 +1177,12 @@
             <span class="n">Pdc_hvdc_ts2</span> <span class="o">=</span> <span class="n">get_hvdc_Pdc_ts</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
             <span class="n">Flows2_hvdc_ts</span> <span class="o">=</span> <span class="n">lin_ts2</span><span class="o">.</span><span class="n">get_hvdc_flows_ts</span><span class="p">(</span><span class="n">Pdc_hvdc_ts</span><span class="o">=</span><span class="n">Pdc_hvdc_ts2</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">Flows2_hvdc_ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">grid</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="n">i_branches</span><span class="p">)))</span>
+            <span class="n">Flows2_hvdc_ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">grid</span><span class="o">.</span><span class="n">get_time_number</span><span class="p">(),</span> <span class="n">nc2</span><span class="o">.</span><span class="n">nbr</span><span class="p">))</span>
 
-        <span class="n">residual_hvdc_ts</span> <span class="o">=</span> <span class="n">Flows0_hvdc_ts</span><span class="p">[:,</span> <span class="n">i_branches</span><span class="p">]</span> <span class="o">-</span> <span class="n">Flows2_hvdc_ts</span>
+        <span class="n">Flows0_hvdc_ts_i</span> <span class="o">=</span> <span class="n">get_reduced_branch_flows_ts</span><span class="p">(</span><span class="n">original_nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
+                                                       <span class="n">reduced_nc</span><span class="o">=</span><span class="n">nc2</span><span class="p">,</span>
+                                                       <span class="n">original_flows_ts</span><span class="o">=</span><span class="n">Flows0_hvdc_ts</span><span class="p">)</span>
+        <span class="n">residual_hvdc_ts</span> <span class="o">=</span> <span class="n">Flows0_hvdc_ts_i</span> <span class="o">-</span> <span class="n">Flows2_hvdc_ts</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual_hvdc_ts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">):</span>
             <span class="n">dP_hvdc_ts</span> <span class="o">=</span> <span class="n">lin_ts2</span><span class="o">.</span><span class="n">get_reverse_injections_ts</span><span class="p">(</span><span class="n">flows_ts</span><span class="o">=</span><span class="n">residual_hvdc_ts</span><span class="p">)</span>

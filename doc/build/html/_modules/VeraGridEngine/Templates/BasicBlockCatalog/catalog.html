@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.BasicBlockCatalog.catalog &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Templates.BasicBlockCatalog.catalog &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -109,6 +109,8 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">keyword</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
@@ -121,6 +123,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.BasicBlockCatalog.catalog_static_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_basic_block_catalog_branch_skeleton</span> <span class="k">as</span> <span class="n">build_static_basic_block_catalog_branch_skeleton</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.BasicBlockCatalog.catalog_static_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_basic_block_catalog_pending_template_reason</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.BasicBlockCatalog.catalog_static_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_basic_block_catalog_static_records</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Var</span>
 
 
 <div class="viewcode-block" id="BasicBlockTemplateDescriptor">
@@ -554,6 +558,176 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_python_symbol_name</span><span class="p">(</span><span class="n">raw_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert one catalogue variable name into a valid Python identifier.</span>
+
+<span class="sd">    Catalogue display names may contain spaces and mathematical punctuation,</span>
+<span class="sd">    while the equation editor exposes every symbolic variable as Python source.</span>
+<span class="sd">    This conversion deliberately affects only variable names and therefore does</span>
+<span class="sd">    not alter the human-facing template or block labels.</span>
+
+<span class="sd">    :param raw_name: Symbolic name emitted by a catalogue template builder.</span>
+<span class="sd">    :return: Identifier-safe symbolic name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Replace display punctuation with separators while retaining the readable</span>
+    <span class="c1"># portions of the source name used to identify generated internal symbols.</span>
+    <span class="n">safe_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^0-9a-zA-Z_]&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">raw_name</span><span class="p">)</span>
+    <span class="n">safe_name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;_+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">safe_name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">safe_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">safe_name</span> <span class="o">=</span> <span class="s2">&quot;symbol&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Python identifiers cannot begin with a number or equal a language keyword.</span>
+    <span class="k">if</span> <span class="n">safe_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="n">safe_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;symbol_</span><span class="si">{</span><span class="n">safe_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">keyword</span><span class="o">.</span><span class="n">iskeyword</span><span class="p">(</span><span class="n">safe_name</span><span class="p">):</span>
+        <span class="n">safe_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">safe_name</span><span class="si">}</span><span class="s2">_symbol&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">safe_name</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rename_new_catalogue_variables</span><span class="p">(</span>
+    <span class="n">variables_by_identity</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">],</span>
+    <span class="n">previous_identities</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">reserved_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">renamed_identities</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">procedural_name_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Expr</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Expr</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Give newly materialized catalogue variables unique Python-safe names.</span>
+
+<span class="sd">    :param variables_by_identity: Factory variables keyed by stable identity.</span>
+<span class="sd">    :param previous_identities: Identities that existed before materialization.</span>
+<span class="sd">    :param reserved_names: Names already owned by the surrounding model.</span>
+<span class="sd">    :param renamed_identities: New identities already handled through another</span>
+<span class="sd">        factory collection.</span>
+<span class="sd">    :param procedural_name_mapping: Old names mapped to their renamed symbolic variables.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">variable_identity</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">variable</span><span class="p">:</span> <span class="n">Var</span>
+
+    <span class="k">for</span> <span class="n">variable_identity</span><span class="p">,</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables_by_identity</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">variable_identity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">previous_identities</span>
+            <span class="ow">and</span> <span class="n">variable_identity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">renamed_identities</span>
+        <span class="p">):</span>
+            <span class="n">original_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">variable</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_build_python_symbol_name</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">candidate_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">base_name</span>
+            <span class="n">suffix</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+
+            <span class="c1"># Normalization can merge punctuation variants. Allocate a stable</span>
+            <span class="c1"># suffix so the editor namespace never loses one of those symbols.</span>
+            <span class="k">while</span> <span class="n">candidate_name</span> <span class="ow">in</span> <span class="n">reserved_names</span><span class="p">:</span>
+                <span class="n">candidate_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">suffix</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">variable</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span><span class="n">candidate_name</span><span class="p">)</span>
+            <span class="n">reserved_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">candidate_name</span><span class="p">)</span>
+            <span class="n">renamed_identities</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">variable_identity</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">original_name</span> <span class="o">!=</span> <span class="n">candidate_name</span><span class="p">:</span>
+                <span class="n">procedural_name_mapping</span><span class="p">[</span><span class="n">original_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">variable</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_remap_catalogue_procedural_logic</span><span class="p">(</span>
+    <span class="n">root_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">procedural_name_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Expr</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Expr</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Synchronize name-backed procedural references after symbol normalization.</span>
+
+<span class="sd">    Procedural entries retain some targets as strings for persisted legacy</span>
+<span class="sd">    compatibility. Their typed ``remap`` operation updates those strings while</span>
+<span class="sd">    preserving symbolic expression identities and the concrete logic type.</span>
+
+<span class="sd">    :param root_block: Complete materialized catalogue block tree.</span>
+<span class="sd">    :param procedural_name_mapping: Old symbol names mapped to renamed variables.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">procedural_name_mapping</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">owner</span><span class="p">:</span> <span class="n">Block</span>
+        <span class="k">for</span> <span class="n">owner</span> <span class="ow">in</span> <span class="n">root_block</span><span class="o">.</span><span class="n">get_all_blocks</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">owner</span><span class="o">.</span><span class="n">procedural_logic</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">owner</span><span class="o">.</span><span class="n">procedural_logic</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="n">entry</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="n">procedural_name_mapping</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">owner</span><span class="o">.</span><span class="n">procedural_logic</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_materialized_catalogue_symbol_names</span><span class="p">(</span>
+    <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">root_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">,</span>
+    <span class="n">previous_var_identities</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">previous_diff_var_identities</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize only the variables created by one catalogue materialization.</span>
+
+<span class="sd">    The factory can already contain symbols belonging to the surrounding model.</span>
+<span class="sd">    Those names remain untouched; they only reserve their namespace so newly</span>
+<span class="sd">    created catalogue variables cannot collide with them.</span>
+
+<span class="sd">    :param var_factory: Factory containing old and newly created variables.</span>
+<span class="sd">    :param root_block: Complete materialized catalogue block tree.</span>
+<span class="sd">    :param previous_var_identities: Regular-variable identities present before</span>
+<span class="sd">        loading.</span>
+<span class="sd">    :param previous_diff_var_identities: Differential-variable identities present</span>
+<span class="sd">        before loading.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">regular_variables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">get_vars_dict</span><span class="p">()</span>
+    <span class="n">differential_variables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">get_diff_var_dict</span><span class="p">()</span>
+    <span class="n">reserved_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">renamed_identities</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">procedural_name_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Expr</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Expr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">variable</span><span class="p">:</span> <span class="n">Var</span>
+
+    <span class="c1"># Existing symbols define the namespace that the new template must respect.</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">regular_variables</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">non_mutable_uid</span> <span class="ow">in</span> <span class="n">previous_var_identities</span><span class="p">:</span>
+            <span class="n">reserved_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">differential_variables</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="o">.</span><span class="n">non_mutable_uid</span> <span class="ow">in</span> <span class="n">previous_diff_var_identities</span><span class="p">:</span>
+            <span class="n">reserved_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">_rename_new_catalogue_variables</span><span class="p">(</span>
+        <span class="n">variables_by_identity</span><span class="o">=</span><span class="n">regular_variables</span><span class="p">,</span>
+        <span class="n">previous_identities</span><span class="o">=</span><span class="n">previous_var_identities</span><span class="p">,</span>
+        <span class="n">reserved_names</span><span class="o">=</span><span class="n">reserved_names</span><span class="p">,</span>
+        <span class="n">renamed_identities</span><span class="o">=</span><span class="n">renamed_identities</span><span class="p">,</span>
+        <span class="n">procedural_name_mapping</span><span class="o">=</span><span class="n">procedural_name_mapping</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_rename_new_catalogue_variables</span><span class="p">(</span>
+        <span class="n">variables_by_identity</span><span class="o">=</span><span class="n">differential_variables</span><span class="p">,</span>
+        <span class="n">previous_identities</span><span class="o">=</span><span class="n">previous_diff_var_identities</span><span class="p">,</span>
+        <span class="n">reserved_names</span><span class="o">=</span><span class="n">reserved_names</span><span class="p">,</span>
+        <span class="n">renamed_identities</span><span class="o">=</span><span class="n">renamed_identities</span><span class="p">,</span>
+        <span class="n">procedural_name_mapping</span><span class="o">=</span><span class="n">procedural_name_mapping</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_remap_catalogue_procedural_logic</span><span class="p">(</span>
+        <span class="n">root_block</span><span class="o">=</span><span class="n">root_block</span><span class="p">,</span>
+        <span class="n">procedural_name_mapping</span><span class="o">=</span><span class="n">procedural_name_mapping</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
 <div class="viewcode-block" id="load_basic_block_catalog_template">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.BasicBlockCatalog.html#VeraGridEngine.Templates.BasicBlockCatalog.catalog.load_basic_block_catalog_template">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_basic_block_catalog_template</span><span class="p">(</span>
@@ -569,8 +743,18 @@
 <span class="sd">    :param name: Optional explicit instance name.</span>
 <span class="sd">    :returns: Materialized EMT template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Snapshot the surrounding model so normalization is strictly limited to</span>
+    <span class="c1"># the variables allocated by this catalogue builder call.</span>
+    <span class="n">previous_var_identities</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_vars_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">previous_diff_var_identities</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">var_factory</span><span class="o">.</span><span class="n">get_diff_var_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">template_builder</span><span class="p">:</span> <span class="n">BasicBlockCatalogTemplateBuilder</span> <span class="o">=</span> <span class="n">_resolve_template_builder_from_descriptor</span><span class="p">(</span><span class="n">descriptor</span><span class="p">)</span>
     <span class="n">template</span><span class="p">:</span> <span class="n">EmtModelTemplate</span> <span class="o">=</span> <span class="n">template_builder</span><span class="p">(</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">_normalize_materialized_catalogue_symbol_names</span><span class="p">(</span>
+        <span class="n">var_factory</span><span class="o">=</span><span class="n">var_factory</span><span class="p">,</span>
+        <span class="n">root_block</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span>
+        <span class="n">previous_var_identities</span><span class="o">=</span><span class="n">previous_var_identities</span><span class="p">,</span>
+        <span class="n">previous_diff_var_identities</span><span class="o">=</span><span class="n">previous_diff_var_identities</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">template</span></div>
 
 </pre></div>

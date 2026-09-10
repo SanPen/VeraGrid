@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import List, Dict, Union
+from typing import Callable, List, Dict, Union
 from pymoo.core.mixed import MixedVariableGA
 from pymoo.algorithms.moo.nsga2 import RankAndCrowding
 # from pymoo.decomposition.asf import ASF
@@ -11,6 +11,9 @@ from pymoo.core.mixed import MixedVariableSampling
 from pymoo.optimize import minimize
 from pymoo.core.problem import ElementwiseProblem
 from pymoo.core.variable import Real, Integer, Choice, Binary
+from pymoo.core.termination import Termination
+from pymoo.termination.collection import TerminationCollection
+from pymoo.termination.max_eval import MaximumFunctionCallTermination
 
 from VeraGridEngine.Devices.Aggregation.investment import Investment
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -19,6 +22,7 @@ from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.types import BRANCH_TYPES, BRANCH_TEMPLATE_TYPES
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop_crits import VeraGridCancelTermination
 
 
 class MixedVariableProblem(ElementwiseProblem):
@@ -145,6 +149,7 @@ def NSGA_2(grid: MultiCircuit,
            n_obj: int = 2,
            max_evals: int = 30,
            pop_size: int = 1,
+           cancel_checker: Callable[[], bool] | None = None,
            # crossover_prob: float = 0.05,
            # mutation_probability=0.5,
            # eta: float = 3.0
@@ -155,6 +160,7 @@ def NSGA_2(grid: MultiCircuit,
     :param n_obj:
     :param max_evals:
     :param pop_size:
+    :param cancel_checker: Optional VeraGrid cancellation check.
     # :param crossover_prob:
     # :param mutation_probability:
     # :param eta:
@@ -162,15 +168,24 @@ def NSGA_2(grid: MultiCircuit,
     """
     problem = MixedVariableProblem(grid, obj_func, n_obj)
 
+    if cancel_checker is not None and cancel_checker():
+        return None, np.zeros((0, n_obj), dtype=float)
+    else:
+        pass
+
     algorithm = MixedVariableGA(pop_size=pop_size,
                                 sampling=MixedVariableSampling(),
                                 survival=RankAndCrowding(crowding_func="pcd"))
 
     # In terms of setting probability parameters, you have to look quite far deep into MixedVariableGA
+    termination: Termination = TerminationCollection(MaximumFunctionCallTermination(max_evals),
+                                                     VeraGridCancelTermination(cancel_checker=cancel_checker))
 
     res = minimize(problem=problem,
                    algorithm=algorithm,
-                   termination=('n_eval', max_evals),
+                   termination=termination,
+                   copy_algorithm=False,
+                   copy_termination=False,
                    seed=1,
                    verbose=True,
                    save_history=False)

@@ -7,12 +7,11 @@ import sys
 import chardet
 import subprocess
 import time
-import pkg_resources
 from importlib.metadata import version, distributions
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QClipboard
-from typing import List
+from typing import Iterator, List, Tuple
 import packaging.version as pkg
 from VeraGrid.Gui.AboutDialogue.about_gui import Ui_AboutDialog
 from VeraGrid.__version__ import __VeraGrid_VERSION__
@@ -25,49 +24,28 @@ from VeraGridEngine.Compilers.circuit_to_pgm import (PGM_AVAILABLE,
                                                      PGM_RECOMMENDED_VERSION,
                                                      PGM_VERSION)
 
-try:
+def get_packages() -> Iterator[Tuple[str, str, str, str, str]]:
+    """
+    Get system libraries info.
 
-    def get_packages():
-        """
-        Get system libraries info
-        :return:
-        """
-        for d in distributions():
-            name = d.metadata.get("Name", "")
-            versn = d.version
-            license_ = d.metadata.get("License", "")
+    :return: Iterator over package name, version, license, install path and dependencies.
+    """
+    for d in distributions():
+        name: str = d.metadata.get("Name", "")
+        versn: str = d.version
+        license_: str = d.metadata.get("License", "")
 
-            # Installation directory
-            try:
-                install_path = str(d.locate_file(""))
-            except Exception:
-                install_path = ""
+        # Installation directory is best-effort metadata for the About table.
+        try:
+            install_path: str = str(d.locate_file(""))
+        except Exception:
+            install_path = ""
 
-            # Dependencies
-            deps = d.metadata.get_all("Requires-Dist") or []
-            deps_text = ", ".join(deps)
+        # Dependencies are displayed as text only.
+        deps: List[str] = d.metadata.get_all("Requires-Dist") or list()
+        deps_text: str = ", ".join(deps)
 
-            yield name, versn, license_, install_path, deps_text
-
-except ImportError:
-
-    def get_packages():
-        """
-        Get system libraries info
-        :return:
-        """
-        for d in pkg_resources.working_set:
-            name = d.project_name
-            versn = d.version
-            license_ = getattr(d, "license", "")
-
-            install_path = d.location
-
-            # Dependencies (requires)
-            deps = d.requires()
-            deps_text = ", ".join(str(dep) for dep in deps)
-
-            yield name, versn, license_, install_path, deps_text
+        yield name, versn, license_, install_path, deps_text
 
 
 def make_item(text):
@@ -369,7 +347,7 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
             licensed=len(pypowsybl_installed_version) > 0,
         ))
 
-        self.ui.librariesTableWidget.setColumnCount(7)
+        self.ui.librariesTableWidget.setColumnCount(6)
         self.ui.librariesTableWidget.setRowCount(len(rows))
         self.ui.librariesTableWidget.setHorizontalHeaderLabels([
             self.tr("Name"),

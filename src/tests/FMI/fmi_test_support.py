@@ -1,0 +1,583 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+"""Independent FMI fixture builders used only by product integration tests."""
+from __future__ import annotations
+
+from pathlib import Path
+import uuid
+
+from VeraGridEngine.Devices.Branches.line import Line
+from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
+from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
+from VeraGridEngine.Devices.Injections.generator import Generator
+from VeraGridEngine.Devices.Injections.load import Load
+from VeraGridEngine.Devices.Substation.bus import Bus
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.IO.fmu.exporter.api import export_fmu
+from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
+from VeraGridEngine.IO.fmu.exporter.config import ExportConfig as CsExportConfig, detect_target_platform as detect_cs_target_platform
+from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
+from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig, detect_target_platform as detect_me_target_platform
+from VeraGridEngine.IO.fmu.importer.bindings import FmuRefBinding
+from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode
+from VeraGridEngine.IO.fmu.importer.runtime_worker_host import (
+    FmiThreeWorkerHostLimits,
+)
+from VeraGridEngine.IO.fmu.importer.user_api import (
+    FmuDeviceAttachmentRequest,
+    FmuDeviceDomain,
+    FmuReferenceValue,
+    attach_fmu_to_device,
+)
+from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver
+from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
+from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
+from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
+from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
+from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
+from VeraGridEngine.enumerations import (
+    BranchImpedanceMode,
+    DynamicIntegrationMethod,
+    EmtInitializationMethod,
+    EmtSolverTypes,
+    SolverType,
+    VarPowerFlowReferenceType,
+)
+
+
+def _build_test_rms_cs_source_block() -> Block:
+    """Build the self-contained source block used to export an example RMS CS FMU.
+
+    :return: Example RMS CS FMU block.
+    """
+
+    x: Var = Var("x")
+    dx: Var = Var("dx", base_var=x)
+    p_out: Var = Var("p_out")
+    q_out: Var = Var("q_out")
+    return Block(
+        state_vars=list((x,)),
+        state_eqs=list((Const(1.0),)),
+        algebraic_vars=list((p_out, q_out)),
+        algebraic_eqs=list((
+            p_out - (Const(-0.1) - Const(0.02) * x),
+            q_out - Const(-0.01),
+        )),
+        diff_vars=list((dx,)),
+        init_values=dict((
+            (x, Const(0.0)),
+            (p_out, Const(-0.1)),
+            (q_out, Const(-0.01)),
+        )),
+        init_eqs=dict((
+            (p_out, Const(-0.1)),
+            (q_out, Const(-0.01)),
+        )),
+        out_vars=list((p_out, q_out)),
+    )
+
+
+def _build_test_rms_me_source_block() -> Block:
+    """Build the self-contained source block used to export an example RMS ME FMU.
+
+    :return: Example RMS ME FMU block.
+    """
+
+    x: Var = Var("x")
+    dx: Var = Var("dx", base_var=x)
+    p_out: Var = Var("p_out")
+    q_out: Var = Var("q_out")
+    u: Var = Var("u")
+    return Block(
+        state_vars=list((x,)),
+        # The example begins at the coupled load operating point. The voltage
+        # input therefore produces no artificial derivative at u=1 and x=0.
+        state_eqs=list((u - Const(1.0) - x,)),
+        algebraic_vars=list((p_out, q_out)),
+        # Active power retains a small state response while both outputs start
+        # from the same nonzero values used by the static demonstration load.
+        algebraic_eqs=list((
+            p_out - (Const(-0.1) - Const(0.02) * x),
+            q_out - Const(-0.01),
+        )),
+        diff_vars=list((dx,)),
+        init_values=dict((
+            (x, Const(0.0)),
+            (p_out, Const(-0.1)),
+            (q_out, Const(-0.01)),
+        )),
+        init_eqs=dict((
+            (p_out, Const(-0.1)),
+            (q_out, Const(-0.01)),
+        )),
+        in_vars=list((u,)),
+        out_vars=list((p_out, q_out)),
+    )
+
+
+def _build_test_emt_cs_source_block() -> Block:
+    """Build the self-contained source block used to export an example EMT CS FMU.
+
+    :return: Example EMT CS FMU block.
+    """
+
+    x: Var = Var("x")
+    dx: Var = Var("dx", base_var=x)
+    i_a: Var = Var("i_a_out")
+    i_b: Var = Var("i_b_out")
+    i_c: Var = Var("i_c_out")
+    v_a: Var = Var("v_a_in")
+    v_b: Var = Var("v_b_in")
+    v_c: Var = Var("v_c_in")
+    return Block(
+        state_vars=list((x,)),
+        state_eqs=list((Const(1.0),)),
+        algebraic_vars=list((i_a, i_b, i_c)),
+        algebraic_eqs=list((
+            i_a - (Const(-0.01) * x),
+            i_b - (Const(0.005) * x),
+            i_c - (Const(0.005) * x),
+        )),
+        diff_vars=list((dx,)),
+        init_values=dict((
+            (x, Const(0.0)),
+            (i_a, Const(0.0)),
+            (i_b, Const(0.0)),
+            (i_c, Const(0.0)),
+        )),
+        init_eqs=dict((
+            (i_a, Const(0.0)),
+            (i_b, Const(0.0)),
+            (i_c, Const(0.0)),
+        )),
+        in_vars=list((v_a, v_b, v_c)),
+        out_vars=list((i_a, i_b, i_c)),
+    )
+
+
+def _build_test_emt_me_source_block() -> Block:
+    """Build the self-contained source block used to export an example EMT ME FMU.
+
+    :return: Example EMT ME FMU block.
+    """
+
+    x: Var = Var("x")
+    dx: Var = Var("dx", base_var=x)
+    i_a: Var = Var("i_a_out")
+    i_b: Var = Var("i_b_out")
+    i_c: Var = Var("i_c_out")
+    u: Var = Var("u")
+    v_b: Var = Var("v_b_in")
+    v_c: Var = Var("v_c_in")
+    return Block(
+        state_vars=list((x,)),
+        state_eqs=list((Const(1.0) + u,)),
+        algebraic_vars=list((i_a, i_b, i_c)),
+        algebraic_eqs=list((
+            i_a - x,
+            i_b - (Const(-0.5) * x),
+            i_c - (Const(-0.5) * x),
+        )),
+        diff_vars=list((dx,)),
+        init_values=dict((
+            (x, Const(0.0)),
+            (i_a, Const(0.0)),
+            (i_b, Const(0.0)),
+            (i_c, Const(0.0)),
+        )),
+        init_eqs=dict((
+            (i_a, Const(0.0)),
+            (i_b, Const(0.0)),
+            (i_c, Const(0.0)),
+        )),
+        in_vars=list((u, v_b, v_c)),
+        out_vars=list((i_a, i_b, i_c)),
+    )
+
+
+def export_test_rms_cs_fmu(output_dir: Path) -> Path:
+    """Export the self-contained RMS CS device FMU used by the example scripts.
+
+    :param output_dir: Output directory for the generated FMU.
+    :return: Generated FMU path.
+    """
+
+    unique_name: str = f"TestRmsCsDevice_{uuid.uuid4().hex[:8]}"
+    return export_fmu(
+        _build_test_rms_cs_source_block(),
+        CsExportConfig(
+            model_name=unique_name,
+            output_path=output_dir / f"{unique_name}.fmu",
+            target_platform=detect_cs_target_platform(),
+            compile_binary=True,
+            keep_build_dir=False,
+        ),
+    )
+
+
+def export_test_rms_me_fmu(output_dir: Path) -> Path:
+    """Export the self-contained RMS ME device FMU used by the example scripts.
+
+    :param output_dir: Output directory for the generated FMU.
+    :return: Generated FMU path.
+    """
+
+    unique_name: str = f"TestRmsMeDevice_{uuid.uuid4().hex[:8]}"
+    return export_fmu_me(
+        _build_test_rms_me_source_block(),
+        MeExportConfig(
+            model_name=unique_name,
+            output_path=output_dir / f"{unique_name}.fmu",
+            target_platform=detect_me_target_platform(),
+            compile_binary=True,
+            keep_build_dir=False,
+        ),
+    )
+
+
+def export_test_emt_cs_fmu(output_dir: Path) -> Path:
+    """Export the self-contained EMT CS device FMU used by the example scripts.
+
+    :param output_dir: Output directory for the generated FMU.
+    :return: Generated FMU path.
+    """
+
+    unique_name: str = f"TestEmtCsDevice_{uuid.uuid4().hex[:8]}"
+    return export_fmu(
+        _build_test_emt_cs_source_block(),
+        CsExportConfig(
+            model_name=unique_name,
+            output_path=output_dir / f"{unique_name}.fmu",
+            target_platform=detect_cs_target_platform(),
+            compile_binary=True,
+            keep_build_dir=False,
+        ),
+    )
+
+
+def export_test_emt_me_fmu(output_dir: Path) -> Path:
+    """Export the self-contained EMT ME device FMU used by the example scripts.
+
+    :param output_dir: Output directory for the generated FMU.
+    :return: Generated FMU path.
+    """
+
+    unique_name: str = f"TestEmtMeDevice_{uuid.uuid4().hex[:8]}"
+    return export_fmu_me(
+        _build_test_emt_me_source_block(),
+        MeExportConfig(
+            model_name=unique_name,
+            output_path=output_dir / f"{unique_name}.fmu",
+            target_platform=detect_me_target_platform(),
+            compile_binary=True,
+            keep_build_dir=False,
+        ),
+    )
+
+
+def build_test_power_flow_options() -> PowerFlowOptions:
+    """Build the power-flow options reused by the FMU import examples.
+
+    :return: Power-flow options.
+    """
+
+    return PowerFlowOptions(
+        solver_type=SolverType.NR,
+        retry_with_other_methods=False,
+        verbose=0,
+        initialize_with_existing_solution=True,
+        tolerance=1e-6,
+        max_iter=25,
+        control_q=False,
+        control_taps_modules=False,
+        control_taps_phase=False,
+        control_remote_voltage=False,
+        orthogonalize_controls=True,
+        apply_temperature_correction=False,
+        branch_impedance_tolerance_mode=BranchImpedanceMode.Specified,
+        distributed_slack=False,
+        ignore_single_node_islands=False,
+        trust_radius=1.0,
+        backtracking_parameter=0.05,
+        use_stored_guess=False,
+        initialize_angles=False,
+        generate_report=False,
+    )
+
+
+def build_test_rms_grid() -> tuple[MultiCircuit, Load]:
+    """Build the minimal RMS demo grid used by the RMS FMU import examples.
+
+    :return: Grid and imported device.
+    """
+
+    grid: MultiCircuit = MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus_slack: Bus = Bus(name="Bus0", Vnom=10.0, is_slack=True)
+    bus_load: Bus = Bus(name="Bus1", Vnom=10.0)
+    grid.add_bus(bus_slack)
+    grid.add_bus(bus_load)
+
+    # RMS buses need their symbolic shell before attaching dynamic devices.
+    initialize_bus_rms(bus_slack, vf=grid.var_factory)
+    initialize_bus_rms(bus_load, vf=grid.var_factory)
+
+    line: Line = Line(name="line_0_1", bus_from=bus_slack, bus_to=bus_load, r=0.03, x=0.07, b=0.03, rate=900.0)
+    generator: Generator = Generator(
+        name="Gen0",
+        P=10.0,
+        vset=1.0,
+        Snom=900.0,
+        x1=0.86138701,
+        r1=0.3,
+        freq=50.0,
+    )
+    load: Load = Load(name="ImportedLoad", P=10.0, Q=1.0)
+
+    grid.add_line(line)
+    grid.add_generator(bus=bus_slack, api_obj=generator)
+    grid.add_load(bus=bus_load, api_obj=load)
+    line.rms_template = get_line_rms_template(grid.var_factory)
+    generator.rms_template = get_complete_generator_template_rms(grid.var_factory)
+    grid.add_rms_events_group(RmsEventsGroup(name="default_rms_example_group"))
+    return grid, load
+
+
+def build_test_emt_grid() -> tuple[MultiCircuit, Load]:
+    """Build the minimal EMT demo grid used by the EMT FMU import examples.
+
+    :return: Grid and imported device.
+    """
+
+    grid: MultiCircuit = MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus: Bus = Bus(name="Bus0", Vnom=10.0, is_slack=True)
+    grid.add_bus(bus)
+
+    generator: Generator = Generator(name="Gen0", P=0.0, vset=1.0, Snom=900.0, x1=0.2, r1=0.01)
+    generator_template: EmtModelTemplate = (
+        get_generator_thevenin_rl_emt_template_with_ref(
+            vf=grid.var_factory,
+            name="emt_thevenin_source",
+        )
+    )
+    load: Load = Load(name="ImportedLoad", P=0.0, Q=0.0)
+
+    grid.add_generator(bus=bus, api_obj=generator)
+    grid.add_load(bus=bus, api_obj=load)
+
+    # Materialize the canonical ABC bus shell after the complete one-bus
+    # topology is known, matching the established EMT scripting lifecycle.
+    get_bus_emt_template(grid=grid, bus=bus)
+
+    # The public setter propagates the bus voltage identities into the source
+    # model before the real EMT problem compiles its equations.
+    set_emt_model(
+        device=generator,
+        model=generator_template.block,
+        var_factory=grid.var_factory,
+    )
+    return grid, load
+
+
+def execute_test_rms_fmu_case(
+        output_dir: Path,
+        mode: FmuInterfaceMode,
+        source_fmu_path: Path | None = None,
+        me_input_variable_name: str = "u",
+        active_power_output_name: str = "p_out",
+        reactive_power_output_name: str = "q_out",
+        worker_limits: FmiThreeWorkerHostLimits | None = None,
+        static_active_power_mw: float = 10.0,
+        static_reactive_power_mvar: float = 1.0,
+) -> tuple[RmsSimulationDriver, Load, Path]:
+    """Execute one RMS FMU integration case through the product API.
+
+    This test-only orchestration is intentionally independent from the benchmark
+    package under trunk so product tests cannot accidentally depend on examples.
+
+    :param output_dir: Isolated directory for the FMU and native staging files.
+    :param mode: FMI interface mode exercised by the integration test.
+    :param source_fmu_path: Optional prebuilt FMU used instead of local export.
+    :param me_input_variable_name: Model Exchange voltage-input variable name.
+    :param active_power_output_name: Active-power output variable name.
+    :param reactive_power_output_name: Reactive-power output variable name.
+    :param worker_limits: Explicit FMI 3 native-worker supervision policy.
+    :param static_active_power_mw: Load active power used by the initial power flow.
+    :param static_reactive_power_mvar: Load reactive power used by the initial power flow.
+    :return: Completed RMS driver, attached load, and generated FMU path.
+    """
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    input_bindings: tuple[FmuRefBinding, ...]
+    if mode == FmuInterfaceMode.CO_SIMULATION:
+        if source_fmu_path is None:
+            fmu_path: Path = export_test_rms_cs_fmu(output_dir)
+        else:
+            fmu_path = source_fmu_path.resolve()
+        input_bindings = tuple()
+    elif mode == FmuInterfaceMode.MODEL_EXCHANGE:
+        if source_fmu_path is None:
+            fmu_path = export_test_rms_me_fmu(output_dir)
+        else:
+            fmu_path = source_fmu_path.resolve()
+        input_bindings = (
+            FmuRefBinding(
+                VarPowerFlowReferenceType.Vm,
+                me_input_variable_name,
+            ),
+        )
+    else:
+        raise ValueError(f"Unsupported RMS FMI test mode: {mode.value}")
+
+    grid: MultiCircuit
+    load: Load
+    grid, load = build_test_rms_grid()
+    load.P = float(static_active_power_mw)
+    load.Q = float(static_reactive_power_mvar)
+    power_flow_driver: PowerFlowDriver = PowerFlowDriver(
+        grid=grid,
+        options=build_test_power_flow_options(),
+    )
+    power_flow_driver.run()
+    if power_flow_driver.results.converged:
+        pass
+    else:
+        raise RuntimeError("The RMS FMU integration test power flow did not converge")
+
+    if load.bus is None:
+        raise RuntimeError("The RMS FMU integration test load is not connected to a bus")
+    else:
+        bus_index: int = grid.buses.index(load.bus)
+    bus_power: complex = complex(
+        power_flow_driver.results.Sbus[bus_index] / grid.Sbase
+    )
+    request: FmuDeviceAttachmentRequest = FmuDeviceAttachmentRequest(
+        fmu_path=fmu_path,
+        domain=FmuDeviceDomain.RMS,
+        mode=mode,
+        input_bindings=input_bindings,
+        output_bindings=(
+            FmuRefBinding(
+                VarPowerFlowReferenceType.P,
+                active_power_output_name,
+            ),
+            FmuRefBinding(
+                VarPowerFlowReferenceType.Q,
+                reactive_power_output_name,
+            ),
+        ),
+        output_defaults=(
+            FmuReferenceValue(VarPowerFlowReferenceType.P, bus_power.real),
+            FmuReferenceValue(VarPowerFlowReferenceType.Q, bus_power.imag),
+        ),
+        extraction_root=output_dir,
+        worker_limits=worker_limits,
+    )
+    attach_fmu_to_device(load, grid, request)
+
+    rms_driver: RmsSimulationDriver = RmsSimulationDriver(
+        grid=grid,
+        options=RmsOptions(
+            time_step=1.0e-3,
+            simulation_time=5.0e-3,
+            tolerance=1.0e-6,
+            integration_method=DynamicIntegrationMethod.DaeBackEuler,
+            max_iter=50,
+        ),
+        pf_results=power_flow_driver.results,
+    )
+    rms_driver.run()
+    return rms_driver, load, fmu_path
+
+
+def execute_test_emt_fmu_case(
+        output_dir: Path,
+        mode: FmuInterfaceMode,
+        solver_tpe: EmtSolverTypes = EmtSolverTypes.Symbolic,
+) -> tuple[EmtSimulationDriver, Load, Path]:
+    """Execute one EMT FMU integration case through the product API.
+
+    :param output_dir: Isolated directory for the FMU and native staging files.
+    :param mode: FMI interface mode exercised by the integration test.
+    :param solver_tpe: EMT Jacobian backend exercised by the integration test.
+    :return: Completed EMT driver, attached load, and generated FMU path.
+    """
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    phase_a_input_name: str
+    if mode == FmuInterfaceMode.CO_SIMULATION:
+        fmu_path: Path = export_test_emt_cs_fmu(output_dir)
+        phase_a_input_name = "v_a_in"
+    elif mode == FmuInterfaceMode.MODEL_EXCHANGE:
+        fmu_path = export_test_emt_me_fmu(output_dir)
+        phase_a_input_name = "u"
+    else:
+        raise ValueError(f"Unsupported EMT FMI test mode: {mode.value}")
+
+    grid: MultiCircuit
+    load: Load
+    grid, load = build_test_emt_grid()
+    grid.add_emt_events_group(EmtEventsGroup(name="default_emt_test_group"))
+    power_flow_driver: PowerFlowDriver = PowerFlowDriver(
+        grid=grid,
+        options=build_test_power_flow_options(),
+    )
+    power_flow_driver.run()
+    if power_flow_driver.results.converged:
+        pass
+    else:
+        raise RuntimeError("The EMT FMU integration test power flow did not converge")
+
+    request: FmuDeviceAttachmentRequest = FmuDeviceAttachmentRequest(
+        fmu_path=fmu_path,
+        domain=FmuDeviceDomain.EMT,
+        mode=mode,
+        input_bindings=(
+            FmuRefBinding(VarPowerFlowReferenceType.v_A, phase_a_input_name),
+            FmuRefBinding(VarPowerFlowReferenceType.v_B, "v_b_in"),
+            FmuRefBinding(VarPowerFlowReferenceType.v_C, "v_c_in"),
+        ),
+        output_bindings=(
+            FmuRefBinding(VarPowerFlowReferenceType.i_A, "i_a_out"),
+            FmuRefBinding(VarPowerFlowReferenceType.i_B, "i_b_out"),
+            FmuRefBinding(VarPowerFlowReferenceType.i_C, "i_c_out"),
+        ),
+        output_defaults=(
+            FmuReferenceValue(VarPowerFlowReferenceType.i_A, 0.0),
+            FmuReferenceValue(VarPowerFlowReferenceType.i_B, 0.0),
+            FmuReferenceValue(VarPowerFlowReferenceType.i_C, 0.0),
+        ),
+        extraction_root=output_dir,
+    )
+    attach_fmu_to_device(load, grid, request)
+
+    if mode == FmuInterfaceMode.MODEL_EXCHANGE:
+        integration_method: DynamicIntegrationMethod = (
+            DynamicIntegrationMethod.DaeBackEuler
+        )
+    else:
+        integration_method = DynamicIntegrationMethod.DaeTrapezoidal
+    emt_driver: EmtSimulationDriver = EmtSimulationDriver(
+        grid=grid,
+        options=EmtOptions(
+            time_step=5.0e-6,
+            simulation_time=1.0e-3,
+            tolerance=1.0e-6,
+            solver_type=solver_tpe,
+            integration_method=integration_method,
+            initialization_method=EmtInitializationMethod.Auto,
+            verbose=0,
+        ),
+        pf_results=power_flow_driver.results,
+        pf_results_3ph=None,
+    )
+    emt_driver.run()
+    return emt_driver, load, fmu_path

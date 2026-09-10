@@ -22,3 +22,7 @@ Implements a retained binary set/reset latch.
 ## Runtime behavior
 
 At initialization, Set determines the initial state. During operation, Set-only activates and Reset-only clears. When both conditions have the same truth value, the previous state is retained. Use explicit, mutually understandable conditions to avoid ambiguous control intent.
+
+## Library block
+
+The standalone block exposes `set` and `reset` inputs and output `y`. Its internal latch mode starts at `0.0`.

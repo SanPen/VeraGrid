@@ -808,7 +808,7 @@ class Bus(DynamicBusDevice):
             ax_voltage.legend()
 
         if show_fig:
-            plt.show()
+            plt.show(block=False)
 
     def get_coordinates(self) -> Tuple[float, float]:
         """

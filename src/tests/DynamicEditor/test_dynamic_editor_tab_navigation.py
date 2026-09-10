@@ -1,6 +1,6 @@
 """Tests for transparent-container navigation in the Dynamic Editor."""
 
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import (
+from VeraGrid.Gui.DynamicModelEditor.Workspace.Tabs.dynamic_editor_tab import (
     block_has_direct_computational_content,
     resolve_navigation_content_block,
 )

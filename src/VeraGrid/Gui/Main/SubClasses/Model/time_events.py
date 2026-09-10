@@ -20,6 +20,7 @@ from VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue import ModelsInput
 from VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue import ProfileInputGUI, GeneratorsProfileOptionsDialogue
 from VeraGrid.Gui.profiles_model import ProfilesModel
 from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 
 
 class TimeEventsMain(DataBaseTableMain):
@@ -519,7 +520,10 @@ class TimeEventsMain(DataBaseTableMain):
 
                 try:
                     df.plot(ax=ax)
-                    plt.show()
+                    show_matplotlib_figure(figure=fig,
+                                           parent=self,
+                                           open_dialogs=self._open_plot_dialogs,
+                                           title=self.tr("Profiles plot"))
                 except TypeError as e:
                     self.show_error_toast(str(e))
 

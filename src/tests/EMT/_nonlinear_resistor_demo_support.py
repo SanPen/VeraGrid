@@ -466,7 +466,7 @@ def run_nonlinear_resistor_case(enable_plots: bool = True) -> NonlinearResistorE
     figure_vi.savefig(results.vi_png_path, dpi=200, bbox_inches="tight")
 
     if enable_plots:
-        plt.show()
+        plt.show(block=False)
     else:
         plt.close(figure_waveforms)
         plt.close(figure_vi)

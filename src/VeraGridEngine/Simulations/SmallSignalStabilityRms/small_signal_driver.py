@@ -317,7 +317,7 @@ def plot_stability(eigenvalues: Vec,
     plt.ylim([y_min, y_max])
 
     plt.tight_layout()
-    plt.show()
+    plt.show(block=False)
 
 
 def run_dense_small_signal_stability(problem: RmsProblemTemplate,

@@ -101,15 +101,15 @@ def ward_standard_reduction(grid: MultiCircuit,
 
     if ne == 0:
         logger.add_info(msg="Nothing to reduce")
-        return grid
+        return grid, logger
 
     if ni == 0:
         logger.add_info(msg="Nothing to keep (null grid as a result)")
-        return grid
+        return grid, logger
 
     if nb == 0:
         logger.add_info(msg="The reducible and non reducible sets are disjoint and cannot be reduced")
-        return grid
+        return grid, logger
 
     # Get the admittance matrix, contains the shunts at the diagonal
     adm = nc.get_admittance_matrices()

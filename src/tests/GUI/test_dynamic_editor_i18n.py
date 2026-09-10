@@ -1,6 +1,6 @@
 from PySide6 import QtCore
 
-from VeraGrid.Gui.DynamicModelEditor.detachable_editor_tabs_widget import (
+from VeraGrid.Gui.DynamicModelEditor.Workspace.detachable_editor_tabs_widget import (
     DynamicEditorAddButton,
     DynamicEditorPickerDialog,
 )

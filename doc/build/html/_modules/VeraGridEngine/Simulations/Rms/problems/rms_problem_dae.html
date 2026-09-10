@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.Rms.problems.rms_problem_dae &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Simulations.Rms.problems.rms_problem_dae &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -152,19 +152,23 @@
     <span class="n">get_bus_rms_algebraic_vars</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.procedural_logic</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_boundary_updater_from_block</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_cs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.co_simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">advance_rms_fmu_cs_devices</span><span class="p">,</span>
     <span class="n">align_rms_fmu_cs_device_output_parameters</span><span class="p">,</span>
     <span class="n">close_rms_fmu_cs_devices</span><span class="p">,</span>
     <span class="n">initialize_rms_fmu_cs_devices</span><span class="p">,</span>
     <span class="n">register_rms_fmu_cs_device</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_me</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.model_exchange</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">advance_rms_fmu_me_devices</span><span class="p">,</span>
     <span class="n">close_rms_fmu_me_devices</span><span class="p">,</span>
+    <span class="n">get_next_rms_fmu_me_event_time</span><span class="p">,</span>
     <span class="n">initialize_rms_fmu_me_devices</span><span class="p">,</span>
+    <span class="n">_prepare_rms_fmu_me_state_event_retry</span><span class="p">,</span>
     <span class="n">register_rms_fmu_me_device</span><span class="p">,</span>
+    <span class="n">resolve_rms_fmu_me_devices</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.runtime_profile</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuMeEvaluationBudget</span>
 
 <span class="c1"># Previous mapper:</span>
 <span class="c1"># from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_rms import (</span>
@@ -952,6 +956,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_cs_initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_evaluation_budget</span><span class="p">:</span> <span class="n">FmuMeEvaluationBudget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
         <span class="c1"># Initialize the RMS problem</span>
@@ -2120,11 +2125,26 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_procedural_logic_updater</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">t_proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_procedural_logic_updater</span><span class="o">.</span><span class="n">get_next_forced_event_time</span><span class="p">(</span><span class="n">t_prev</span><span class="p">,</span> <span class="n">t_target</span><span class="p">)</span>
 
+        <span class="n">t_fmu</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_next_rms_fmu_me_event_time</span><span class="p">(</span>
+            <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">t_prev</span><span class="o">=</span><span class="n">t_prev</span><span class="p">,</span>
+            <span class="n">t_target</span><span class="o">=</span><span class="n">t_target</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">native_event_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">t_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">t_proc</span>
-        <span class="k">if</span> <span class="n">t_proc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">t_mode</span>
-        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">t_mode</span><span class="p">,</span> <span class="n">t_proc</span><span class="p">)</span></div>
+            <span class="n">native_event_time</span> <span class="o">=</span> <span class="n">t_proc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t_proc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">native_event_time</span> <span class="o">=</span> <span class="n">t_mode</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">native_event_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">t_mode</span><span class="p">,</span> <span class="n">t_proc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">native_event_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">t_fmu</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t_fmu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">native_event_time</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">native_event_time</span><span class="p">,</span> <span class="n">t_fmu</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_procedural_logic_updater</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -3226,6 +3246,42 @@
             <span class="n">advance_rms_fmu_me_devices</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_value</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="o">=</span><span class="n">x_snapshot</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="RmsProblemDae.resolve_fmu_me_devices">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.Rms.problems.html#VeraGridEngine.Simulations.Rms.problems.rms_problem_dae.RmsProblemDae.resolve_fmu_me_devices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_fmu_me_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accepted</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve all prepared FMI ME candidates after one RMS step.</span>
+
+<span class="sd">        :param accepted: Whether the RMS numerical step converged.</span>
+<span class="sd">        :return: Earlier state-event retry time, or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">resolve_rms_fmu_me_devices</span><span class="p">(</span>
+                <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">accepted</span><span class="o">=</span><span class="n">accepted</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="RmsProblemDae.prepare_fmu_me_state_event_retry">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.Rms.problems.html#VeraGridEngine.Simulations.Rms.problems.rms_problem_dae.RmsProblemDae.prepare_fmu_me_state_event_retry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_fmu_me_state_event_retry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Localize an ME state event before any CS device advances.</span>
+
+<span class="sd">        :return: Global shortened target time, or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_prepare_rms_fmu_me_state_event_retry</span><span class="p">(</span>
+                <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">state_event_time_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">fmi_state_event_time_tolerance</span><span class="p">,</span>
+                <span class="n">state_event_max_iterations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">fmi_state_event_max_iterations</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="RmsProblemDae.close_fmu_me_devices">

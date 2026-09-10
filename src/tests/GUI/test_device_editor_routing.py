@@ -3,12 +3,14 @@ from __future__ import annotations
 from PySide6 import QtWidgets
 
 from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_device_editor import DcLineDeviceEditor
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditor
 from VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor import LineDeviceEditor
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.DeviceEditors.device_editor_factory import build_device_editor_dialog
 from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
 from VeraGridEngine.Devices.Branches.line import Line
+from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 
@@ -68,6 +70,28 @@ def test_branch_editor_factory_routes_line_and_dc_wrappers(qt_app: QtWidgets.QAp
     line_dialog.close()
     dc_line_dialog.close()
     hvdc_line_dialog.close()
+
+
+def test_device_editor_factory_routes_generator_wrapper(qt_app: QtWidgets.QApplication) -> None:
+    """
+    Check that hosted generator cells open the specialized generator editor.
+
+    :param qt_app: Qt application fixture.
+    :return: None.
+    """
+    _qt_app: QtWidgets.QApplication = qt_app
+    circuit: MultiCircuit
+    bus: Bus
+    unused_bus: Bus
+    circuit, bus, unused_bus = _build_branch_demo_circuit()
+    generator: Generator = Generator(name="Generator under test")
+    circuit.add_generator(bus=bus, api_obj=generator)
+
+    generator_dialog: QtWidgets.QDialog = build_device_editor_dialog(api_object=generator, circuit=circuit)
+
+    assert isinstance(generator_dialog, GeneratorEditor)
+
+    generator_dialog.close()
 
 
 def test_branch_editors_expose_admittance_and_locations_tabs(qt_app: QtWidgets.QApplication) -> None:

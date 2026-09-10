@@ -29,6 +29,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
     EmtBoundaryUpdateProtocol,
     EmtProblemTemplate,
     get_solver_forced_event_time,
+    resolve_solver_boundary_step,
     resolve_solver_boundary_updater,
 )
 from VeraGridEngine.Utils.emt_boundary_update_wrapper import BoundaryUpdateWrapper
@@ -1717,9 +1718,11 @@ class StructuralVectorizedSolver:
                 fill_full_parameter_buffer(runtime_params, static_params, full_params)
 
                 if boundary_updater is not None:
-                    boundary_updater.update(t_curr, x_prev, full_params)
+                    state_event_retry_time: float | None = (
+                        boundary_updater.update(t_curr, x_prev, full_params)
+                    )
                 else:
-                    pass
+                    state_event_retry_time = None
 
                 ev_params[:] = full_params[:len(ev_params)]
 
@@ -1753,8 +1756,13 @@ class StructuralVectorizedSolver:
                 else:
                     pass
 
-                substep_converged: bool = False
-                for k in range(self.newton_max_iter):
+                substep_converged: bool = state_event_retry_time is not None
+                newton_iteration_count: int
+                if state_event_retry_time is None:
+                    newton_iteration_count = self.newton_max_iter
+                else:
+                    newton_iteration_count = 0
+                for k in range(newton_iteration_count):
                     total_newton_iterations += 1
                     ctx: NewtonSolveContext | None = None
                     res_norm: float = evaluate_vectorized_residual(
@@ -1875,38 +1883,50 @@ class StructuralVectorizedSolver:
                     if i == 0 and is_first_local_step:
                         well_initialized = False
 
-                if method == DynamicIntegrationMethod.DaeTrapezoidal:
-                    if self._n_diff == 0:
-                        dx_prev[:self._n_state] = (
-                                (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
-                                - dx_prev[:self._n_state]
-                        )
-                    else:
-                        for diff_idx, base_idx in enumerate(self._diff_base_var_indices):
-                            if base_idx >= 0:
-                                dx_prev[diff_idx] = (2.0 / h_eff) * (x_iter[base_idx] - x_prev[base_idx]) - dx_prev[diff_idx]
-                            else:
-                                pass
-                elif method == DynamicIntegrationMethod.DaeBDF2:
-                    x_prev2[:] = x_prev
-                    dx_prev[:self._n_state] = (
-                                                      1.5 * x_iter[:self._n_state]
-                                                      - 2.0 * x_prev[:self._n_state]
-                                                      + 0.5 * x_prev2[:self._n_state]
-                                              ) / h_eff
-                else:
-                    dx_prev[:self._n_state] = (
-                                                      x_iter[:self._n_state] - x_prev[:self._n_state]
-                                              ) / h_eff
-
-                if method != DynamicIntegrationMethod.DaeBDF2:
-                    x_prev2[:] = x_prev
+                if state_event_retry_time is None:
+                    state_event_retry_time = resolve_solver_boundary_step(
+                        boundary_updater=boundary_updater,
+                        accepted=substep_converged,
+                        params=full_params,
+                    )
                 else:
                     pass
 
-                x_prev[:] = x_iter
-                t_local_prev = t_curr
-                is_first_local_step = False
+                if state_event_retry_time is not None:
+                    x_iter[:] = x_prev
+                else:
+                    if method == DynamicIntegrationMethod.DaeTrapezoidal:
+                        if self._n_diff == 0:
+                            dx_prev[:self._n_state] = (
+                                    (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
+                                    - dx_prev[:self._n_state]
+                            )
+                        else:
+                            for diff_idx, base_idx in enumerate(self._diff_base_var_indices):
+                                if base_idx >= 0:
+                                    dx_prev[diff_idx] = (2.0 / h_eff) * (x_iter[base_idx] - x_prev[base_idx]) - dx_prev[diff_idx]
+                                else:
+                                    pass
+                    elif method == DynamicIntegrationMethod.DaeBDF2:
+                        x_prev2[:] = x_prev
+                        dx_prev[:self._n_state] = (
+                                                          1.5 * x_iter[:self._n_state]
+                                                          - 2.0 * x_prev[:self._n_state]
+                                                          + 0.5 * x_prev2[:self._n_state]
+                                                  ) / h_eff
+                    else:
+                        dx_prev[:self._n_state] = (
+                                                          x_iter[:self._n_state] - x_prev[:self._n_state]
+                                                  ) / h_eff
+
+                    if method != DynamicIntegrationMethod.DaeBDF2:
+                        x_prev2[:] = x_prev
+                    else:
+                        pass
+
+                    x_prev[:] = x_iter
+                    t_local_prev = t_curr
+                    is_first_local_step = False
 
 
 

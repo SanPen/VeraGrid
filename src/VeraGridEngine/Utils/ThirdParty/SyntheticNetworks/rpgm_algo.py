@@ -499,7 +499,7 @@ def main():
     G = nx.Graph(g.edges)
     pos = {i: (g.lat[i], g.lon[i]) for i in range(g.added_nodes)}
     nx.draw(G, pos=pos, with_labels=True, node_color='lightblue')
-    plt.show()
+    plt.show(block=False)
     
 
 if __name__ == "__main__":

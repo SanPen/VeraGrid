@@ -125,6 +125,33 @@ meters must resolve an exact device terminal, including the special retained
 series-branch resolution used when PowerFactory omits a native valve row. An
 ambiguous topology produces no fallback binding.
 
+## DC cable template ownership
+
+Cable construction data does not belong to generic `Line`, because a line is
+not necessarily a cable. A `DcCableType` is associated with `DcLine`, never
+with `Line`, and owns the physical resistance, inductance, and capacitance per
+unit length together with its ratings. `DcLine` owns the installed length and
+the applied template reference.
+
+A source line type becomes a `DcCableType` only when the source explicitly
+classifies that construction as a cable. Declaring only that the system is DC
+does not establish cable construction. A missing or contradictory installation
+classification must not be replaced by a parser initializer or inferred from
+the type name, resistance, reactance, capacitance, rating, or voltage.
+
+An importer may derive physical inductance and capacitance from source
+reactance, susceptance, and their positive reference frequency. Neither
+resistance, length, rating, nor nominal voltage can reconstruct missing cable
+geometry. The importer therefore creates and applies a `DcCableType` only when
+the required source values are complete; it does not persist invented zeros or
+a runtime fallback as physical asset data.
+
+When no complete DC cable template is available, the `DcLine` remains without
+one. RMS must look for its established model default, report the missing value
+and chosen fallback through `Logger`, and continue. A resistive reduction may
+omit cable energy states, but it must not claim that the physical inductance or
+capacitance is known to be zero.
+
 ## DGS VSC ownership
 
 For an imported VSC, DC active power belongs to `FROM`/`Pf`; AC active and

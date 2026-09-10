@@ -9,10 +9,12 @@ from datetime import datetime, timedelta
 import pandas as pd
 import requests
 import pvlib
+from matplotlib.axes import Axes
 from matplotlib import pyplot as plt
 from PySide6 import QtCore, QtWidgets
 from VeraGrid.Gui.messages import error_msg
 from VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizard_gui import Ui_MainWindow
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 from VeraGrid.Gui.pandas_model import PandasModel
 
 
@@ -60,10 +62,53 @@ def parse_pv_time_array(time_array: Sequence[Union[str, datetime, pd.Timestamp]]
         return False, pd.DatetimeIndex(list()), message
 
 
+def get_longitude_time_offset(longitude: float) -> timedelta:
+    """
+    Get the local solar time offset from longitude.
+
+    :param longitude: Site longitude in degrees.
+    :type longitude: float
+    :return: Offset to add to UTC timestamps to obtain local solar time.
+    :rtype: timedelta
+    """
+    offset_hours: float = float(longitude) / 15.0
+
+    return timedelta(hours=offset_hours)
+
+
+def get_naive_pvgis_time_index(data_index: pd.DatetimeIndex,
+                               longitude: float,
+                               use_local_time: bool) -> pd.DatetimeIndex:
+    """
+    Convert the PVGIS returned index to the timestamp basis used for interpolation.
+
+    :param data_index: PVGIS returned data index.
+    :type data_index: pd.DatetimeIndex
+    :param longitude: Site longitude in degrees.
+    :type longitude: float
+    :param use_local_time: Interpret circuit timestamps as local solar time at the site.
+    :type use_local_time: bool
+    :return: Naive datetime index used for interpolation.
+    :rtype: pd.DatetimeIndex
+    """
+    if data_index.tz is None:
+        naive_index: pd.DatetimeIndex = data_index
+    else:
+        naive_index = data_index.tz_convert(None)
+
+    if use_local_time:
+        naive_index = naive_index + get_longitude_time_offset(longitude=longitude)
+    else:
+        pass
+
+    return naive_index
+
+
 def get_pv_lib_weather_df(time_array: Sequence[Union[str, datetime, pd.Timestamp]],
                           latitude: float,
                           longitude: float,
-                          peak_power: float) -> Tuple[bool, pd.DataFrame]:
+                          peak_power: float,
+                          use_local_time: bool = False) -> Tuple[bool, pd.DataFrame]:
     """
     Download and align PVGIS solar photovoltaic production for the requested time profile.
 
@@ -71,6 +116,7 @@ def get_pv_lib_weather_df(time_array: Sequence[Union[str, datetime, pd.Timestamp
     :param latitude: Site latitude in degrees.
     :param longitude: Site longitude in degrees.
     :param peak_power: Generator peak power in MW.
+    :param use_local_time: Interpret circuit timestamps as local solar time at the site.
     :return: Success flag and PVGIS data aligned to the requested time profile.
     """
     max_year_span: int = 10
@@ -112,6 +158,11 @@ def get_pv_lib_weather_df(time_array: Sequence[Union[str, datetime, pd.Timestamp
 
     if valid_latitude and valid_longitude and valid_peak_power and valid_time_span:
 
+        if use_local_time:
+            query_offset: timedelta = get_longitude_time_offset(longitude=longitude)
+        else:
+            query_offset = timedelta()
+
         base_year: int = 2010 + ((int(ts1.year) - 2010) % 4)
         s: datetime = datetime(year=base_year,
                                month=int(ts1.month),
@@ -119,14 +170,14 @@ def get_pv_lib_weather_df(time_array: Sequence[Union[str, datetime, pd.Timestamp
                                hour=int(ts1.hour),
                                minute=int(ts1.minute),
                                second=int(ts1.second),
-                               microsecond=int(ts1.microsecond))
+                               microsecond=int(ts1.microsecond)) - query_offset
         e: datetime = datetime(year=base_year + year_span,
                                month=int(ts2.month),
                                day=int(ts2.day),
                                hour=int(ts2.hour),
                                minute=int(ts2.minute),
                                second=int(ts2.second),
-                               microsecond=int(ts2.microsecond))
+                               microsecond=int(ts2.microsecond)) - query_offset
 
         mapped_timestamps: List[datetime] = list()
 
@@ -163,11 +214,10 @@ def get_pv_lib_weather_df(time_array: Sequence[Union[str, datetime, pd.Timestamp
 
             if 'P' in data.columns:
                 data_index: pd.DatetimeIndex = pd.DatetimeIndex(data.index)
-
-                if data_index.tz is None:
-                    normalized_data_index: pd.DatetimeIndex = data_index
-                else:
-                    normalized_data_index = data_index.tz_convert(None)
+                normalized_data_index: pd.DatetimeIndex = get_naive_pvgis_time_index(
+                    data_index=data_index,
+                    longitude=longitude,
+                    use_local_time=use_local_time)
 
                 data.index = normalized_data_index.asi8
                 data.sort_index(inplace=True)
@@ -256,12 +306,14 @@ class SolarPvWizard(QtWidgets.QDialog):
         self.ui.powerSpinBox.setValue(peak_power)
         self.ui.latitudeSpinBox.setValue(latitude)
         self.ui.longitudeSpinBox.setValue(longitude)
+        self.ui.localTimeCheckBox.setChecked(False)
 
         self.time_array = time_array
         self.P = np.zeros(len(time_array))
         self.temperature: Union[np.ndarray, None] = None
         self.wind_speed: Union[np.ndarray, None] = None
         self.irradiation: Union[np.ndarray, None] = None
+        self._open_plot_dialogs: List[QtWidgets.QDialog] = list()
 
         # accept button
         self.ui.acceptButton.clicked.connect(self.accept_click)
@@ -294,7 +346,8 @@ class SolarPvWizard(QtWidgets.QDialog):
         self.ok, self.df = get_pv_lib_weather_df(time_array=self.time_array,
                                                  latitude=self.ui.latitudeSpinBox.value(),
                                                  longitude=self.ui.longitudeSpinBox.value(),
-                                                 peak_power=self.ui.powerSpinBox.value())
+                                                 peak_power=self.ui.powerSpinBox.value(),
+                                                 use_local_time=self.ui.localTimeCheckBox.isChecked())
         if self.ok:
             self.P = self.df['P'].values / 1e6  # Power in MW
             self.temperature = get_weather_column(data=self.df, candidates=["T2m", "temp_air", "temperature"])
@@ -311,8 +364,11 @@ class SolarPvWizard(QtWidgets.QDialog):
     def plot(self) -> None:
 
         df: pd.DataFrame = pd.DataFrame(data=self.P, index=self.time_array, columns=['P (MW)'])
-        df.plot()
-        plt.show()
+        axis: Axes = df.plot()
+        show_matplotlib_figure(figure=axis.figure,
+                               parent=self,
+                               open_dialogs=self._open_plot_dialogs,
+                               title=self.tr("Solar power profile"))
 
     def accept_click(self) -> None:
         """

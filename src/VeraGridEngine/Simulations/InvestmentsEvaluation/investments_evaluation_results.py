@@ -382,8 +382,7 @@ class InvestmentsEvaluationResults(ResultsTemplate):
 
             fig.canvas.mpl_connect("motion_notify_event", hover)
             fig.canvas.mpl_connect('button_press_event', click_solution)
-            plt.show()
-            plt.show()
+            plt.show(block=False)
 
             return ResultsTable(data=np.c_[x_vals, y_vals],
                                 index=np.array(index),
@@ -413,7 +412,7 @@ class InvestmentsEvaluationResults(ResultsTemplate):
             ax3.set_ylabel('Objective')
             fig.suptitle(str(result_type.value))
             plt.grid()
-            plt.show()
+            plt.show(block=False)
 
             return ResultsTable(data=data,
                                 index=np.array(index),
@@ -453,7 +452,7 @@ class InvestmentsEvaluationResults(ResultsTemplate):
             ax.tick_params(axis='y', labelsize=11)
             ax.set_xlabel("Year", fontsize=12)
             fig.tight_layout()
-            plt.show()
+            plt.show(block=False)
 
             return ResultsTable(data=mat,
                                 index=self.x_names,

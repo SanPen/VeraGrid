@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -11,22 +12,48 @@ from VeraGridEngine.IO.fmu.exporter.config import ExportConfig as CsExportConfig
 from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
 from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
 from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig, detect_target_platform as detect_me_target_platform
-from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig
+from VeraGridEngine.IO.fmu.importer.bindings import (
+    FmiThreeFloat64ConfigurationValue,
+    FmiThreeUInt64ConfigurationValue,
+    FmuImportConfig,
+    FmuRefBinding,
+)
 from VeraGridEngine.IO.fmu.importer.device_api import (
     attach_emt_fmu_cs_device,
     attach_emt_fmu_me_device,
     attach_rms_fmu_cs_device,
     attach_rms_fmu_me_device,
 )
-from VeraGridEngine.IO.fmu.importer.experimental_cs import FmuRefBinding, register_emt_fmu_cs_device, register_rms_fmu_cs_device
-from VeraGridEngine.IO.fmu.importer.experimental_me import (
-    FmuMeIntegrationMethod,
+from VeraGridEngine.IO.fmu.importer.device_config import (
+    FmuCsDeviceConfigRecord,
+    FmuMeDeviceConfigRecord,
+    dump_fmu_cs_device_config,
+    dump_fmu_me_device_config,
+    load_fmu_cs_device_config,
+    load_fmu_me_device_config,
+    restore_fmu_cs_spec_from_record,
+)
+from VeraGridEngine.IO.fmu.importer.co_simulation import (
+    FmuCsDomain,
+    register_emt_fmu_cs_device,
+    register_rms_fmu_cs_device,
+)
+from VeraGridEngine.IO.fmu.importer.model_exchange import (
+    FmuMeDomain,
     register_emt_fmu_me_device,
     register_rms_fmu_me_device,
 )
+from VeraGridEngine.IO.fmu.importer.runtime_worker_host import (
+    FmiThreeWorkerHostLimits,
+)
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import (
+    DeviceType,
+    DynamicIntegrationMethod,
+    FmuInterfaceMode,
+    VarPowerFlowReferenceType,
+)
 
 
 def _tmp_root() -> Path:
@@ -74,6 +101,416 @@ class FakeProblem:
         self.uid2idx_event_params = {var.uid: index for index, var in enumerate(block.event_dict.keys())}
         self._fmu_cs_adapters = list()
         self._fmu_me_adapters = list()
+        self.options = SimpleNamespace(
+            integration_method=DynamicIntegrationMethod.DaeBackEuler,
+            fmi_me_newton_absolute_tolerance=1.0e-8,
+            fmi_me_newton_relative_tolerance=1.0e-8,
+            fmi_me_newton_max_iterations=20,
+            fmi_me_max_continuous_states=128,
+        )
+
+
+def test_fmi_three_configuration_declarations_validate_public_values() -> None:
+    """Reject invalid declarations and revalidate mutable data before dumping.
+
+    :return: None.
+    """
+
+    with pytest.raises(ValueError, match="flat index"):
+        FmuRefBinding(
+            reference=VarPowerFlowReferenceType.Vm,
+            fmu_variable_name="control_input",
+            flat_index=-1,
+        )
+    with pytest.raises(ValueError, match="variable name is empty"):
+        FmiThreeFloat64ConfigurationValue(variable_name=" ", values=(1.0,))
+    with pytest.raises(ValueError, match="must be numeric"):
+        FmiThreeFloat64ConfigurationValue(
+            variable_name="structural_gain",
+            values=(True,),
+        )
+    with pytest.raises(ValueError, match="must be finite"):
+        FmiThreeFloat64ConfigurationValue(
+            variable_name="structural_gain",
+            values=(float("inf"),),
+        )
+    with pytest.raises(ValueError, match="outside UInt64"):
+        FmiThreeUInt64ConfigurationValue(
+            variable_name="structural_size",
+            value=-1,
+        )
+
+    float64_configuration: FmiThreeFloat64ConfigurationValue = (
+        FmiThreeFloat64ConfigurationValue(
+            variable_name="structural_gain",
+            values=(1.0,),
+        )
+    )
+    record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=FmuCsDomain.RMS,
+        fmu_path="mutable-configuration.fmu",
+        preferred_mode=FmuInterfaceMode.CO_SIMULATION.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        configuration_float64_values=(float64_configuration,),
+    )
+    float64_configuration.values = (float("nan"),)
+    with pytest.raises(ValueError, match="must be finite"):
+        dump_fmu_cs_device_config(record)
+
+    duplicate_float64_configuration: FmiThreeFloat64ConfigurationValue = (
+        FmiThreeFloat64ConfigurationValue(
+            variable_name="shared_structural_value",
+            values=(1.0,),
+        )
+    )
+    with pytest.raises(
+        ValueError,
+        match="Duplicate FMI 3 Configuration Mode variable name",
+    ):
+        FmuCsDeviceConfigRecord(
+            domain=FmuCsDomain.RMS,
+            fmu_path="invalid-duplicate-provider.fmu",
+            preferred_mode=FmuInterfaceMode.CO_SIMULATION.value,
+            input_bindings=tuple(),
+            output_bindings=tuple(),
+            output_defaults=dict(),
+            output_param_names=dict(),
+            configuration_float64_values=(duplicate_float64_configuration,),
+            configuration_uint64_values=(
+                FmiThreeUInt64ConfigurationValue(
+                    variable_name="shared_structural_value",
+                    value=1,
+                ),
+            ),
+        )
+
+
+def test_fmi_three_v3_payload_rejects_malformed_values() -> None:
+    """Reject malformed primitive declarations at the version-three boundary.
+
+    :return: None.
+    """
+
+    record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=FmuCsDomain.RMS,
+        fmu_path="malformed-provider.fmu",
+        preferred_mode=FmuInterfaceMode.CO_SIMULATION.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+    )
+    payload: dict[str, object] = json.loads(dump_fmu_cs_device_config(record))
+    payload["configuration_float64_values"] = (
+        ("structural_gain", (True,)),
+    )
+    with pytest.raises(ValueError, match="Invalid FMI 3 Float64"):
+        load_fmu_cs_device_config(json.dumps(payload))
+
+    payload["configuration_float64_values"] = list()
+    payload["configuration_uint64_values"] = (
+        ("structural_size", True),
+    )
+    with pytest.raises(ValueError, match="Invalid FMI 3 UInt64"):
+        load_fmu_cs_device_config(json.dumps(payload))
+
+
+def test_fmi_three_worker_limits_roundtrip_in_cs_device_config() -> None:
+    """Preserve explicit FMI 3 worker limits through CS persistence versions.
+
+    :return: None.
+    """
+
+    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
+        maximum_frame_size=65536,
+        maximum_float64_values_per_request=128,
+        response_timeout_seconds=20.0,
+        graceful_join_timeout_seconds=6.0,
+        terminate_join_timeout_seconds=3.0,
+        kill_join_timeout_seconds=1.0,
+    )
+    float64_configuration: FmiThreeFloat64ConfigurationValue = (
+        FmiThreeFloat64ConfigurationValue(
+            variable_name="structural_gain",
+            values=(1.0, 2.0, 3.0, 4.0),
+        )
+    )
+    uint64_configuration: FmiThreeUInt64ConfigurationValue = (
+        FmiThreeUInt64ConfigurationValue(
+            variable_name="structural_size",
+            value=4,
+        )
+    )
+    record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=FmuCsDomain.RMS,
+        fmu_path="explicit-cs-worker-policy.fmu",
+        preferred_mode=FmuInterfaceMode.CO_SIMULATION.value,
+        input_bindings=(
+            FmuRefBinding(
+                reference=VarPowerFlowReferenceType.Vm,
+                fmu_variable_name="control_input",
+                flat_index=3,
+            ),
+        ),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        worker_limits=worker_limits,
+        configuration_float64_values=(float64_configuration,),
+        configuration_uint64_values=(uint64_configuration,),
+    )
+
+    serialized_record: str = dump_fmu_cs_device_config(record)
+    current_payload: dict[str, object] = json.loads(serialized_record)
+    assert current_payload["version"] == 3
+    loaded_record: FmuCsDeviceConfigRecord | None = load_fmu_cs_device_config(
+        serialized_record
+    )
+    if loaded_record is not None:
+        loaded_limits: FmiThreeWorkerHostLimits | None = loaded_record.worker_limits
+    else:
+        raise AssertionError("Serialized FMI CS device config did not reload")
+    if loaded_limits is not None:
+        assert loaded_limits.maximum_frame_size == 65536
+        assert loaded_limits.maximum_float64_values_per_request == 128
+        assert loaded_limits.response_timeout_seconds == 20.0
+        assert loaded_limits.graceful_join_timeout_seconds == 6.0
+        assert loaded_limits.terminate_join_timeout_seconds == 3.0
+        assert loaded_limits.kill_join_timeout_seconds == 1.0
+    else:
+        raise AssertionError("Serialized FMI 3 CS worker limits were not restored")
+    assert loaded_record.input_bindings[0].flat_index == 3
+    assert loaded_record.configuration_float64_values[0].values == (
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+    )
+    assert loaded_record.configuration_uint64_values[0].value == 4
+
+    # Version 2 records retain worker supervision but predate array providers.
+    current_payload["version"] = 2
+    del current_payload["configuration_float64_values"]
+    del current_payload["configuration_uint64_values"]
+    current_payload["input_bindings"] = list()
+    version_two_record: FmuCsDeviceConfigRecord | None = (
+        load_fmu_cs_device_config(json.dumps(current_payload))
+    )
+    if version_two_record is not None:
+        assert version_two_record.worker_limits is not None
+        assert version_two_record.configuration_float64_values == tuple()
+        assert version_two_record.configuration_uint64_values == tuple()
+    else:
+        raise AssertionError("Version 2 FMI CS device config did not reload")
+
+    # Version 1 CS records remain valid without inventing a supervision policy.
+    del current_payload["worker_limits"]
+    current_payload["version"] = 1
+    legacy_record: FmuCsDeviceConfigRecord | None = load_fmu_cs_device_config(
+        json.dumps(current_payload)
+    )
+    if legacy_record is not None:
+        assert legacy_record.worker_limits is None
+    else:
+        raise AssertionError("Version 1 FMI CS device config did not reload")
+
+
+def test_fmi_three_worker_limits_roundtrip_in_me_device_config() -> None:
+    """Preserve every explicit FMI 3 worker limit through ME persistence.
+
+    :return: None.
+    """
+
+    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
+        maximum_frame_size=131072,
+        maximum_float64_values_per_request=256,
+        response_timeout_seconds=30.0,
+        graceful_join_timeout_seconds=8.0,
+        terminate_join_timeout_seconds=4.0,
+        kill_join_timeout_seconds=2.0,
+    )
+    float64_configuration: FmiThreeFloat64ConfigurationValue = (
+        FmiThreeFloat64ConfigurationValue(
+            variable_name="matrix_gain",
+            values=(0.5, 1.5),
+        )
+    )
+    uint64_configuration: FmiThreeUInt64ConfigurationValue = (
+        FmiThreeUInt64ConfigurationValue(
+            variable_name="matrix_width",
+            value=2,
+        )
+    )
+    record: FmuMeDeviceConfigRecord = FmuMeDeviceConfigRecord(
+        domain=FmuMeDomain.RMS,
+        fmu_path="explicit-worker-policy.fmu",
+        preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE.value,
+        input_bindings=tuple(),
+        output_bindings=(
+            FmuRefBinding(
+                reference=VarPowerFlowReferenceType.P,
+                fmu_variable_name="observed_output",
+                flat_index=1,
+            ),
+        ),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        worker_limits=worker_limits,
+        maximum_event_iterations=17,
+        configuration_float64_values=(float64_configuration,),
+        configuration_uint64_values=(uint64_configuration,),
+    )
+
+    serialized_record: str = dump_fmu_me_device_config(record)
+    current_payload: dict[str, object] = json.loads(serialized_record)
+    assert current_payload["version"] == 4
+    loaded_record: FmuMeDeviceConfigRecord | None = load_fmu_me_device_config(
+        serialized_record
+    )
+    if loaded_record is not None:
+        loaded_limits: FmiThreeWorkerHostLimits | None = loaded_record.worker_limits
+    else:
+        raise AssertionError("Serialized FMI ME device config did not reload")
+    if loaded_limits is not None:
+        assert loaded_limits.maximum_frame_size == 131072
+        assert loaded_limits.maximum_float64_values_per_request == 256
+        assert loaded_limits.response_timeout_seconds == 30.0
+        assert loaded_limits.graceful_join_timeout_seconds == 8.0
+        assert loaded_limits.terminate_join_timeout_seconds == 4.0
+        assert loaded_limits.kill_join_timeout_seconds == 2.0
+    else:
+        raise AssertionError("Serialized FMI 3 worker limits were not restored")
+    assert loaded_record.output_bindings[0].flat_index == 1
+    assert loaded_record.configuration_float64_values[0].values == (0.5, 1.5)
+    assert loaded_record.configuration_uint64_values[0].value == 2
+    assert loaded_record.maximum_event_iterations == 17
+    # Native restoration is covered with a compiled ME array fixture in the
+    # user API suite; this persistence-only record deliberately names no file.
+
+    # Version 3 records predate the persisted Event Mode convergence bound.
+    current_payload["version"] = 3
+    del current_payload["maximum_event_iterations"]
+    version_three_record: FmuMeDeviceConfigRecord | None = (
+        load_fmu_me_device_config(json.dumps(current_payload))
+    )
+    if version_three_record is not None:
+        assert version_three_record.maximum_event_iterations == 32
+    else:
+        raise AssertionError("Version 3 FMI ME device config did not reload")
+
+    # Version 2 ME records retain worker supervision but no array declarations.
+    current_payload["version"] = 2
+    del current_payload["configuration_float64_values"]
+    del current_payload["configuration_uint64_values"]
+    current_payload["output_bindings"] = list()
+    version_two_record: FmuMeDeviceConfigRecord | None = (
+        load_fmu_me_device_config(json.dumps(current_payload))
+    )
+    if version_two_record is not None:
+        assert version_two_record.worker_limits is not None
+        assert version_two_record.configuration_float64_values == tuple()
+        assert version_two_record.configuration_uint64_values == tuple()
+        assert version_two_record.maximum_event_iterations == 32
+    else:
+        raise AssertionError("Version 2 FMI ME device config did not reload")
+
+    # Version 1 records predate worker isolation. They remain loadable but do
+    # not acquire invented policy values during migration.
+    del current_payload["worker_limits"]
+    current_payload["version"] = 1
+    legacy_record: FmuMeDeviceConfigRecord | None = load_fmu_me_device_config(
+        json.dumps(current_payload)
+    )
+    if legacy_record is not None:
+        assert legacy_record.worker_limits is None
+        assert legacy_record.maximum_event_iterations == 32
+    else:
+        raise AssertionError("Version 1 FMI ME device config did not reload")
+
+
+def test_fmi_three_v4_me_config_requires_strict_event_iteration_bound() -> None:
+    """Reject malformed v4 bounds and preserve only exact accepted integers."""
+
+    accepted_bound: int
+    for accepted_bound in (1, 1024):
+        accepted_record: FmuMeDeviceConfigRecord = FmuMeDeviceConfigRecord(
+            domain=FmuMeDomain.RMS,
+            fmu_path="strict-event-bound.fmu",
+            preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE.value,
+            input_bindings=tuple(),
+            output_bindings=tuple(),
+            output_defaults=dict(),
+            output_param_names=dict(),
+            maximum_event_iterations=accepted_bound,
+        )
+        accepted_payload: str = dump_fmu_me_device_config(accepted_record)
+        restored_record: FmuMeDeviceConfigRecord | None = (
+            load_fmu_me_device_config(accepted_payload)
+        )
+        if restored_record is not None:
+            assert restored_record.maximum_event_iterations == accepted_bound
+        else:
+            raise AssertionError("Accepted FMI ME event bound did not reload")
+
+    rejected_bound: object
+    for rejected_bound in (True, False, 0, 1025):
+        with pytest.raises(ValueError, match="between 1 and 1024"):
+            FmuMeDeviceConfigRecord(
+                domain=FmuMeDomain.RMS,
+                fmu_path="strict-event-bound.fmu",
+                preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE.value,
+                input_bindings=tuple(),
+                output_bindings=tuple(),
+                output_defaults=dict(),
+                output_param_names=dict(),
+                maximum_event_iterations=rejected_bound,
+            )
+
+    valid_record: FmuMeDeviceConfigRecord = FmuMeDeviceConfigRecord(
+        domain=FmuMeDomain.RMS,
+        fmu_path="strict-event-bound.fmu",
+        preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        maximum_event_iterations=32,
+    )
+    valid_payload: dict[str, object] = json.loads(
+        dump_fmu_me_device_config(valid_record)
+    )
+    malformed_bound: object
+    for malformed_bound in ("32", 32.0, None, True, False, 0, 1025):
+        malformed_payload: dict[str, object] = dict(valid_payload)
+        malformed_payload["maximum_event_iterations"] = malformed_bound
+        with pytest.raises(ValueError):
+            load_fmu_me_device_config(json.dumps(malformed_payload))
+
+    missing_payload: dict[str, object] = dict(valid_payload)
+    del missing_payload["maximum_event_iterations"]
+    with pytest.raises(ValueError, match="requires maximum Event Mode iterations"):
+        load_fmu_me_device_config(json.dumps(missing_payload))
+
+    legacy_version: int
+    for legacy_version in (1, 2, 3):
+        legacy_payload: dict[str, object] = dict(valid_payload)
+        legacy_payload["version"] = legacy_version
+        legacy_payload["maximum_event_iterations"] = 1025
+        if legacy_version in (1, 2):
+            del legacy_payload["configuration_float64_values"]
+            del legacy_payload["configuration_uint64_values"]
+        else:
+            pass
+        restored_legacy: FmuMeDeviceConfigRecord | None = (
+            load_fmu_me_device_config(json.dumps(legacy_payload))
+        )
+        if restored_legacy is not None:
+            assert restored_legacy.maximum_event_iterations == 32
+        else:
+            raise AssertionError("Legacy FMI ME event bound did not default")
 
 
 @pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
@@ -190,7 +627,6 @@ def test_rms_me_device_config_can_restore_runtime_spec() -> None:
             input_bindings=(FmuRefBinding(VarPowerFlowReferenceType.Vm, "u"),),
             output_bindings=(FmuRefBinding(VarPowerFlowReferenceType.P, "y"),),
             output_defaults={VarPowerFlowReferenceType.P: 0.0},
-            integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
             name="restore_rms_me_template",
         )
 
@@ -235,7 +671,6 @@ def test_emt_me_device_config_can_restore_runtime_spec() -> None:
             input_bindings=tuple(),
             output_bindings=(FmuRefBinding(reference=VarPowerFlowReferenceType.i_A, fmu_variable_name="y"),),
             output_defaults={VarPowerFlowReferenceType.i_A: 0.0},
-            integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
             name="restore_emt_me_template",
         )
 

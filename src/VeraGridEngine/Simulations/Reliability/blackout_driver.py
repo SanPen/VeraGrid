@@ -330,10 +330,10 @@ class CascadingDriver(DriverTemplate):
         """
         return self.results.get_table()
 
-    def cancel(self):
+    def cancel(self) -> None:
         """
         Cancel the simulation
-        :return:
+
+        :return: None
         """
         self.__cancel__ = True
-        self.report_done(txt="Cancelled", val=0.0)

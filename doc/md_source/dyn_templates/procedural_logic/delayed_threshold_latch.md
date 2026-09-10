@@ -24,3 +24,7 @@ Trips a retained mode after a monitored DAE variable stays beyond a fixed thresh
 ## Runtime behavior
 
 The latch requests event boundaries at the scheduled trip or reset times. It is suited to protection and fault-control logic where a threshold must persist before action.
+
+## Library block
+
+The standalone block has input `monitored` and output `y`. Threshold, delay and optional reset delay are explicit literals in Python code because this Engine primitive does not accept runtime expressions for those fields.

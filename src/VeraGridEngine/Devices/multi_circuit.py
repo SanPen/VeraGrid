@@ -1,6 +1,6 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.  
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
@@ -807,6 +807,7 @@ class MultiCircuit(Assets):
                 'overhead_line_types',
                 'wire_types',
                 'underground_cable_types',
+                'dc_cable_types',
                 'sequence_line_types',
                 'transformer_types',
                 'substations',
@@ -960,6 +961,10 @@ class MultiCircuit(Assets):
         for branch in self._lines:
             if branch.template is not None:
                 branch.apply_template(branch.template, self.Sbase, freq=self.fBase, logger=logger)
+
+        for branch in self._dc_lines:
+            if branch.template is not None:
+                branch.apply_template(branch.template, self.Sbase, logger=logger)
 
         for branch in self._transformers2w:
             if branch.template is not None:
@@ -2619,12 +2624,12 @@ class MultiCircuit(Assets):
 
     def set_investments_status(self,
                                investments_list: List[dev.Investment],
-                               status: bool,
+                               apply_investment: bool,
                                all_elements_dict: Union[None, dict[str, EditableDevice]] = None) -> None:
         """
         Set the active (and active profile) status of a list of investments' objects
         :param investments_list: list of investments
-        :param status: status to set in the internal structures
+        :param apply_investment: True to apply the investment status to the device, False to switch it
         :param all_elements_dict: Dictionary of all elements (idtag -> object), if None if is computed
         """
 
@@ -2636,10 +2641,13 @@ class MultiCircuit(Assets):
             device = all_elements_dict[device_idtag]
 
             if hasattr(device, 'active'):
-                device.active = status
+                # apply_investment says "you should apply the investment status to the device" or
+                # "you should apply the not(investment status) to the device".
+                device_status = inv.status if apply_investment else (not inv.status)
+                device.active = device_status
                 profile = device.get_profile('active')
                 if profile is not None:
-                    profile.fill(status)
+                    profile.fill(device_status)
 
     def merge_buses(self, bus1: dev.Bus, bus2: dev.Bus):
         """
@@ -3465,6 +3473,9 @@ class MultiCircuit(Assets):
 
         for tpe in data.underground_cable_types:
             self.add_underground_line(tpe)
+
+        for tpe in data.dc_cable_types:
+            self.add_dc_cable_type(tpe)
 
         for tpe in data.wire_types:
             self.add_wire(tpe)

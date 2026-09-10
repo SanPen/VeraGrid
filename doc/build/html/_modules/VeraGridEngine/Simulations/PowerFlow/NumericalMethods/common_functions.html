@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions &mdash; VeraGrid 6.4.4 documentation</title>
+  <title>VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
+      <script src="../../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -59,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,13 +70,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -1642,6 +1640,7 @@
         <span class="n">v_ctrl_val_gen</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">qv_droop_val_gen</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">Vm</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+        <span class="n">enforce_q_limits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1686,6 +1685,7 @@
 <span class="sd">    :param v_ctrl_val_gen: Integer code for voltage control.</span>
 <span class="sd">    :param qv_droop_val_gen: Integer code for QV droop control.</span>
 <span class="sd">    :param Vm: Solved bus voltage magnitudes.</span>
+<span class="sd">    :param enforce_q_limits: Clip voltage-controller Q reports to the declared capability limits.</span>
 <span class="sd">    :param atol: Numerical zero tolerance.</span>
 <span class="sd">    :return: Tuple with generator and battery reactive power vectors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1701,8 +1701,10 @@
     <span class="n">qfixed_per_bus</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">Qfixed_bus</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">qmin_control_per_bus</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">qmax_control_per_bus</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">qrange_control_per_bus</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">control_count_per_bus</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
     <span class="n">qshare_per_bus</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">qflat_extra_per_bus</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bus</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
     <span class="n">delta_v</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">q_droop_value</span><span class="p">:</span> <span class="nb">float</span>
@@ -1773,6 +1775,7 @@
         <span class="n">qmin_control_value</span> <span class="o">=</span> <span class="n">qmin_control_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span>
         <span class="n">qmax_control_value</span> <span class="o">=</span> <span class="n">qmax_control_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span>
         <span class="n">qrange_control_value</span> <span class="o">=</span> <span class="n">qmax_control_value</span> <span class="o">-</span> <span class="n">qmin_control_value</span>
+        <span class="n">qrange_control_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qrange_control_value</span>
         <span class="n">qcontrol_required_value</span> <span class="o">=</span> <span class="n">Qbus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">qfixed_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span>
         <span class="n">control_count_value</span> <span class="o">=</span> <span class="n">control_count_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span>
 
@@ -1781,25 +1784,32 @@
             <span class="c1"># NaN bus capability would otherwise leak into the sharing factor.</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">qrange_control_value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">qcontrol_required_value</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">qrange_control_value</span> <span class="o">&gt;</span> <span class="n">atol</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">qcontrol_required_value</span> <span class="o">&lt;</span> <span class="n">qmin_control_value</span><span class="p">:</span>
-                        <span class="n">qcontrol_limited_value</span> <span class="o">=</span> <span class="n">qmin_control_value</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">qcontrol_required_value</span> <span class="o">&gt;</span> <span class="n">qmax_control_value</span><span class="p">:</span>
-                            <span class="n">qcontrol_limited_value</span> <span class="o">=</span> <span class="n">qmax_control_value</span>
+                    <span class="k">if</span> <span class="n">enforce_q_limits</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">qcontrol_required_value</span> <span class="o">&lt;</span> <span class="n">qmin_control_value</span><span class="p">:</span>
+                            <span class="n">qcontrol_limited_value</span> <span class="o">=</span> <span class="n">qmin_control_value</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">qcontrol_limited_value</span> <span class="o">=</span> <span class="n">qcontrol_required_value</span>
+                            <span class="k">if</span> <span class="n">qcontrol_required_value</span> <span class="o">&gt;</span> <span class="n">qmax_control_value</span><span class="p">:</span>
+                                <span class="n">qcontrol_limited_value</span> <span class="o">=</span> <span class="n">qmax_control_value</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">qcontrol_limited_value</span> <span class="o">=</span> <span class="n">qcontrol_required_value</span>
 
-                    <span class="n">qshare_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">qcontrol_limited_value</span> <span class="o">-</span> <span class="n">qmin_control_value</span><span class="p">)</span> <span class="o">/</span> <span class="n">qrange_control_value</span>
+                        <span class="n">qshare_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">qcontrol_limited_value</span> <span class="o">-</span> <span class="n">qmin_control_value</span><span class="p">)</span> <span class="o">/</span> <span class="n">qrange_control_value</span>
 
-                    <span class="k">if</span> <span class="n">qshare_value</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
-                        <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">qshare_value</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
-                            <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+                        <span class="k">if</span> <span class="n">qshare_value</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                            <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qshare_value</span>
+                            <span class="k">if</span> <span class="n">qshare_value</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+                                <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qshare_value</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">qcontrol_required_value</span> <span class="o">-</span> <span class="n">qmin_control_value</span><span class="p">)</span> <span class="o">/</span> <span class="n">qrange_control_value</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">enforce_q_limits</span><span class="p">:</span>
+                        <span class="n">qflat_extra_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="n">qcontrol_required_value</span> <span class="o">-</span> <span class="n">qmin_control_value</span><span class="p">)</span> <span class="o">/</span> <span class="n">control_count_value</span>
+                        <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1816,7 +1826,10 @@
                 <span class="c1"># Reject non-finite limits before reconstructing the device Q</span>
                 <span class="c1"># because 0 * NaN still raises an invalid warning in NumPy.</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">qmin_gen_value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">qmax_gen_value</span><span class="p">):</span>
-                    <span class="n">q_gen</span><span class="p">[</span><span class="n">gen_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qmin_gen_value</span> <span class="o">+</span> <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">qrange_gen_value</span>
+                    <span class="k">if</span> <span class="n">qrange_control_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">atol</span><span class="p">:</span>
+                        <span class="n">q_gen</span><span class="p">[</span><span class="n">gen_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qmin_gen_value</span> <span class="o">+</span> <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">qrange_gen_value</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">q_gen</span><span class="p">[</span><span class="n">gen_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qmin_gen_value</span> <span class="o">+</span> <span class="n">qflat_extra_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">q_gen</span><span class="p">[</span><span class="n">gen_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="k">elif</span> <span class="n">control_mode_int_gen</span><span class="p">[</span><span class="n">gen_idx</span><span class="p">]</span> <span class="o">==</span> <span class="n">qv_droop_val_gen</span><span class="p">:</span>
@@ -1869,7 +1882,10 @@
                 <span class="c1"># Reject non-finite limits before reconstructing the device Q</span>
                 <span class="c1"># because 0 * NaN still raises an invalid warning in NumPy.</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">qmin_batt_value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">qmax_batt_value</span><span class="p">):</span>
-                    <span class="n">q_batt</span><span class="p">[</span><span class="n">batt_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qmin_batt_value</span> <span class="o">+</span> <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">qrange_batt_value</span>
+                    <span class="k">if</span> <span class="n">qrange_control_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">atol</span><span class="p">:</span>
+                        <span class="n">q_batt</span><span class="p">[</span><span class="n">batt_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qmin_batt_value</span> <span class="o">+</span> <span class="n">qshare_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">qrange_batt_value</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">q_batt</span><span class="p">[</span><span class="n">batt_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">qmin_batt_value</span> <span class="o">+</span> <span class="n">qflat_extra_per_bus</span><span class="p">[</span><span class="n">bus_idx</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">q_batt</span><span class="p">[</span><span class="n">batt_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="k">else</span><span class="p">:</span>

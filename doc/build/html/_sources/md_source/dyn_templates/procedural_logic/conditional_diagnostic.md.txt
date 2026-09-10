@@ -13,3 +13,7 @@ Preserves a source-model diagnostic as typed declarative data without producing 
 ## Runtime behavior
 
 The entry does not execute presentation or logging code. It retains the condition and message so an explicit runtime consumer can evaluate and present the diagnostic according to its own policy.
+
+## Library block
+
+The standalone declaration has one `condition` input and no artificial signal output. Edit its diagnostic message and initialization scope in Python code.

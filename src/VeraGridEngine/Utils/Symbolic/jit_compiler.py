@@ -2449,7 +2449,7 @@ class RMSCompiler(EquationCompiler):
 
     def compile_event_params_fn(self, eqs: List[Expr], alias_names_dict: Dict[int, str],
                                 EVENT_PARAMS_NAME: str, TIME_NAME: str,
-                                func_name: str = "event_params_fn") -> Callable[[Vec, float, Vec], Vec]:
+                                func_name: str = "event_params_fn") -> Callable[[Vec, float], Vec]:
         """
         Compiles event parameters equations into a fast, executable JIT function.
 
@@ -2494,7 +2494,7 @@ class RMSCompiler(EquationCompiler):
         return EventParameterFunctionWrapper(raw_fn=raw_fn, equation_count=len(eqs))
 
     def compile_derivative_fn(self, uid2idx_vars: Dict[int, int],
-                              func_name: str = "derivative_fn") -> Callable[[Vec, Vec, Vec, float, Vec], Vec]:
+                              func_name: str = "derivative_fn") -> Callable[[Vec, Vec, Vec, float], Vec]:
         """
         Compiles the derivative evaluation function for differential variables.
 
@@ -2659,7 +2659,7 @@ class RMSCompilerVec(EquationCompiler):
 
     def compile_event_params_fn(self, eqs: List[Expr], alias_names_dict: Dict[int, str],
                                 EVENT_PARAMS_NAME: str, TIME_NAME: str,
-                                func_name: str = "event_params_fn") -> Callable[[Vec, float, Vec], Vec]:
+                                func_name: str = "event_params_fn") -> Callable[[Vec, float], Vec]:
         """
         Compiles event parameters equations into a fast, executable JIT function.
 
@@ -2704,7 +2704,7 @@ class RMSCompilerVec(EquationCompiler):
         return EventParameterFunctionWrapper(raw_fn=raw_fn, equation_count=len(eqs))
 
     def compile_derivative_fn(self, uid2idx_vars: Dict[int, int],
-                              func_name: str = "derivative_fn") -> Callable[[Vec, Vec, Vec, float, Vec], Vec]:
+                              func_name: str = "derivative_fn") -> Callable[[Vec, Vec, Vec, float], Vec]:
         """
         Compiles the derivative evaluation function for differential variables.
 

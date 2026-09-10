@@ -114,7 +114,7 @@ class ContinuationPowerFlowDriver(DriverTemplate):
 
             self.report_text(f'Running voltage collapse at circuit island {is_idx + 1}...')
             adm = island.get_admittance_matrices()
-            idx = nc.get_simulation_indices()
+            idx = island.get_simulation_indices()
 
             if len(idx.vd) > 0 and len(idx.no_slack) > 0:
                 Qmax_bus, Qmin_bus = island.get_reactive_power_limits()
@@ -164,7 +164,12 @@ class ContinuationPowerFlowDriver(DriverTemplate):
         else:
             max_len = 0
 
-            # declare results
+        if max_len > 0:
+            pass
+        else:
+            self.logger.add_error("Continuation power flow results are empty")
+
+        # declare results
         self.results = ContinuationPowerFlowResults(nval=max_len,
                                                     nbus=nc.nbus,
                                                     nbr=nc.nbr,

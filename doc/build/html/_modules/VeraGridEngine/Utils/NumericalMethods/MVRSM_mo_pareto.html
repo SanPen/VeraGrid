@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto &mdash; VeraGrid 6.0.20 documentation</title>
+  <title>VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=f001e538"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,10 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -59,6 +60,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -67,10 +69,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -125,7 +127,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg.blas</span><span class="w"> </span><span class="kn">import</span> <span class="n">dger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.NumericalMethods.non_dominated_sorting</span><span class="w"> </span><span class="kn">import</span> <span class="n">non_dominated_sorting</span><span class="p">,</span> <span class="n">dominates</span>
@@ -627,7 +629,8 @@
                     <span class="n">max_evals</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                     <span class="n">n_objectives</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                     <span class="n">rand_evals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="n">args</span><span class="o">=</span><span class="p">()):</span>
+                    <span class="n">args</span><span class="o">=</span><span class="p">(),</span>
+                    <span class="n">cancel_checker</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    MVRSM algorithm for multiple objectives</span>
 <span class="sd">    x = [integer vars | float vars]</span>
@@ -640,9 +643,23 @@
 <span class="sd">    :param n_objectives: number of objectives expected</span>
 <span class="sd">    :param rand_evals: number of random initial evaluations</span>
 <span class="sd">    :param args: extra arguments to be passed to obj_func apart from x</span>
+<span class="sd">    :param cancel_checker: Optional cancellation check.</span>
 <span class="sd">    :return: pareto front y, pareto front x, all y not sorted</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>  <span class="c1"># number of decision variables</span>
+
+    <span class="k">if</span> <span class="n">max_evals</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">y_population_cancelled</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_objectives</span><span class="p">))</span>
+        <span class="n">x_population_cancelled</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">y_population_cancelled</span><span class="p">,</span> <span class="n">x_population_cancelled</span><span class="p">,</span> <span class="n">y_population_cancelled</span><span class="p">,</span> <span class="n">x_population_cancelled</span>
+    <span class="k">elif</span> <span class="n">cancel_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cancel_checker</span><span class="p">():</span>
+        <span class="n">y_population_cancelled</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_objectives</span><span class="p">))</span>
+        <span class="n">x_population_cancelled</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">y_population_cancelled</span><span class="p">,</span> <span class="n">x_population_cancelled</span><span class="p">,</span> <span class="n">y_population_cancelled</span><span class="p">,</span> <span class="n">x_population_cancelled</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">rand_evals</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">rand_evals</span><span class="p">,</span> <span class="n">max_evals</span><span class="p">)</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">SurrogateModel</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">n_objectives</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">num_int</span><span class="p">)</span>
     <span class="n">next_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>  <span class="c1"># candidate solution</span>
@@ -659,21 +676,38 @@
 
     <span class="c1"># if n_objectives &gt;= 2:  # should always be declared</span>
     <span class="n">Pareto_index</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of the iterations of which evaluated solutions are currently Pareto optimal</span>
+    <span class="n">actual_evals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="c1"># Start random iterations loop</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rand_evals</span><span class="p">):</span>
-        <span class="c1"># Evaluate random point</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">next_x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cancel_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cancel_checker</span><span class="p">():</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Evaluate random point</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">next_x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
-        <span class="c1"># Store evaluated point</span>
-        <span class="n">x_population</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="n">y_population</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="c1"># Store evaluated point</span>
+            <span class="n">x_population</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="n">y_population</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="n">actual_evals</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="c1"># Perform random search</span>
-        <span class="n">next_x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_int</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(),</span> <span class="n">num_int</span><span class="p">)</span>  <span class="c1"># integer variables</span>
-        <span class="n">next_x</span><span class="p">[</span><span class="n">num_int</span><span class="p">:</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">lb</span><span class="p">[</span><span class="n">num_int</span><span class="p">:</span><span class="n">d</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="n">num_int</span><span class="p">:</span><span class="n">d</span><span class="p">])</span>  <span class="c1"># continuous variables</span>
-        <span class="c1"># next_x[num_int:d] = np.random.beta(np.random.uniform(0, 5), np.random.uniform(0, 5), size=d-num_int)</span>
+            <span class="c1"># Perform random search</span>
+            <span class="n">next_x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_int</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(),</span> <span class="n">num_int</span><span class="p">)</span>  <span class="c1"># integer variables</span>
+            <span class="n">next_x</span><span class="p">[</span><span class="n">num_int</span><span class="p">:</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">lb</span><span class="p">[</span><span class="n">num_int</span><span class="p">:</span><span class="n">d</span><span class="p">],</span> <span class="n">ub</span><span class="p">[</span><span class="n">num_int</span><span class="p">:</span><span class="n">d</span><span class="p">])</span>  <span class="c1"># continuous variables</span>
+            <span class="c1"># next_x[num_int:d] = np.random.beta(np.random.uniform(0, 5), np.random.uniform(0, 5), size=d-num_int)</span>
+
+    <span class="k">if</span> <span class="n">actual_evals</span> <span class="o">&lt;</span> <span class="n">rand_evals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">actual_evals</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">y_sorted</span><span class="p">,</span> <span class="n">x_sorted</span><span class="p">,</span> <span class="n">sorting_indices</span> <span class="o">=</span> <span class="n">non_dominated_sorting</span><span class="p">(</span><span class="n">y_values</span><span class="o">=</span><span class="n">y_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                                                                        <span class="n">x_values</span><span class="o">=</span><span class="n">x_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_sorted</span> <span class="o">=</span> <span class="n">y_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">x_sorted</span> <span class="o">=</span> <span class="n">x_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="k">return</span> <span class="n">y_sorted</span><span class="p">,</span> <span class="n">x_sorted</span><span class="p">,</span> <span class="n">y_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:],</span> <span class="n">x_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
 
     <span class="c1"># Once random iterations finish, get y_max and y_min for each objective</span>
     <span class="n">normalization_factors</span> <span class="o">=</span> <span class="n">get_norm_factors</span><span class="p">(</span><span class="n">y_population</span><span class="p">[:</span><span class="n">rand_evals</span><span class="p">,</span> <span class="p">:])</span>
@@ -696,155 +730,166 @@
     <span class="c1"># and explore the search space.</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rand_evals</span><span class="p">,</span> <span class="n">max_evals</span><span class="p">):</span>
 
-        <span class="c1"># Evaluate the objective function</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">next_x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cancel_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cancel_checker</span><span class="p">():</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Evaluate the objective function</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">next_x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
-        <span class="c1"># Store the solution in the population at the position &quot;i&quot;</span>
-        <span class="n">y_population</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y</span>
-        <span class="n">x_population</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="c1"># Store the solution in the population at the position &quot;i&quot;</span>
+            <span class="n">y_population</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="n">x_population</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="n">actual_evals</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="c1"># Update the surrogate model</span>
-        <span class="n">y_normalized</span> <span class="o">=</span> <span class="n">normalize_md</span><span class="p">(</span><span class="n">y_no_normalized</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">norm_factors</span><span class="o">=</span><span class="n">normalization_factors</span><span class="p">)</span>
+            <span class="c1"># Update the surrogate model</span>
+            <span class="n">y_normalized</span> <span class="o">=</span> <span class="n">normalize_md</span><span class="p">(</span><span class="n">y_no_normalized</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">norm_factors</span><span class="o">=</span><span class="n">normalization_factors</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_normalized</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_normalized</span><span class="p">)</span>
         <span class="c1"># e_time = time.time()</span>
         <span class="c1"># print(f&quot;Time to update model: {e_time - st_time}&quot;)</span>
 
         <span class="c1"># Keep track of Pareto front</span>
         <span class="c1"># Note: Should actually do this for the random evaluations too</span>
         <span class="c1"># Note2: Can make this shorter by using the existing dominates function</span>
-        <span class="k">if</span> <span class="n">n_objectives</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">rand_evals</span><span class="p">:</span>
-                <span class="n">Pareto_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">y_is_dominated</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># whether y is dominated by any of the previous Pareto optimal solutions</span>
+            <span class="k">if</span> <span class="n">n_objectives</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">rand_evals</span><span class="p">:</span>
+                    <span class="n">Pareto_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">y_is_dominated</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># whether y is dominated by any of the previous Pareto optimal solutions</span>
 
-                <span class="c1"># Pareto optimal points that should be removed because they are not Pareto optimal anymore due to y</span>
-                <span class="n">pp_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="c1"># Pareto optimal points that should be removed because they are not Pareto optimal anymore due to y</span>
+                    <span class="n">pp_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
 
-                <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="n">Pareto_index</span><span class="p">:</span>
-                    <span class="n">y_dominates_pp</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="n">pp_dominates_y</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="n">TOL</span> <span class="o">=</span> <span class="mf">1e-8</span>  <span class="c1"># tolerance level for determining Pareto optimality</span>
-                    <span class="n">y_pp_scaled</span> <span class="o">=</span> <span class="n">normalize_md</span><span class="p">(</span><span class="n">y_population</span><span class="p">[</span><span class="n">pp</span><span class="p">,</span> <span class="p">:],</span> <span class="n">normalization_factors</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="n">Pareto_index</span><span class="p">:</span>
+                        <span class="n">y_dominates_pp</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">pp_dominates_y</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">TOL</span> <span class="o">=</span> <span class="mf">1e-8</span>  <span class="c1"># tolerance level for determining Pareto optimality</span>
+                        <span class="n">y_pp_scaled</span> <span class="o">=</span> <span class="n">normalize_md</span><span class="p">(</span><span class="n">y_population</span><span class="p">[</span><span class="n">pp</span><span class="p">,</span> <span class="p">:],</span> <span class="n">normalization_factors</span><span class="p">)</span>
 
-                    <span class="c1"># Check if y is exactly the same as pp, in which case it is not</span>
-                    <span class="c1"># useful to add it to the list of Pareto optimal solutions</span>
-                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">y_pp_scaled</span> <span class="o">==</span> <span class="n">y_normalized</span><span class="p">):</span>
-                        <span class="n">y_is_dominated</span> <span class="o">=</span> <span class="mi">1</span>
-                        <span class="k">break</span>
-                    <span class="k">for</span> <span class="n">obj_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_objectives</span><span class="p">):</span>
+                        <span class="c1"># Check if y is exactly the same as pp, in which case it is not</span>
+                        <span class="c1"># useful to add it to the list of Pareto optimal solutions</span>
+                        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">y_pp_scaled</span> <span class="o">==</span> <span class="n">y_normalized</span><span class="p">):</span>
+                            <span class="n">y_is_dominated</span> <span class="o">=</span> <span class="mi">1</span>
+                            <span class="k">break</span>
+                        <span class="k">for</span> <span class="n">obj_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_objectives</span><span class="p">):</span>
+                            <span class="c1"># Situation A: y is dominated by pp</span>
+                            <span class="n">diff</span> <span class="o">=</span> <span class="n">y_pp_scaled</span><span class="p">[</span><span class="n">obj_i</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_normalized</span><span class="p">[</span><span class="n">obj_i</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">TOL</span><span class="p">:</span>
+                                <span class="n">pp_dominates_y</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                            <span class="c1"># Situation B: pp dominated by y</span>
+                            <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">TOL</span><span class="p">:</span>
+                                <span class="n">y_dominates_pp</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="c1"># print(&#39;pp_dominates_y&#39;, pp_dominates_y)</span>
+                        <span class="c1"># print(&#39;y_dominates_pp&#39;, y_dominates_pp)</span>
                         <span class="c1"># Situation A: y is dominated by pp</span>
-                        <span class="n">diff</span> <span class="o">=</span> <span class="n">y_pp_scaled</span><span class="p">[</span><span class="n">obj_i</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_normalized</span><span class="p">[</span><span class="n">obj_i</span><span class="p">]</span>
-                        <span class="k">if</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">TOL</span><span class="p">:</span>
-                            <span class="n">pp_dominates_y</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">pp_dominates_y</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">y_dominates_pp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="c1"># keep list the same, and don&#39;t add y</span>
+                            <span class="c1"># y is dominated by pp so stop checking other pp</span>
+                            <span class="n">y_is_dominated</span> <span class="o">=</span> <span class="mi">1</span>
+                            <span class="c1"># print(&#39;A&#39;)</span>
+                            <span class="k">break</span>
 
                         <span class="c1"># Situation B: pp dominated by y</span>
-                        <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">TOL</span><span class="p">:</span>
-                            <span class="n">y_dominates_pp</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="c1"># print(&#39;pp_dominates_y&#39;, pp_dominates_y)</span>
-                    <span class="c1"># print(&#39;y_dominates_pp&#39;, y_dominates_pp)</span>
-                    <span class="c1"># Situation A: y is dominated by pp</span>
-                    <span class="k">if</span> <span class="n">pp_dominates_y</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">y_dominates_pp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="c1"># keep list the same, and don&#39;t add y</span>
-                        <span class="c1"># y is dominated by pp so stop checking other pp</span>
-                        <span class="n">y_is_dominated</span> <span class="o">=</span> <span class="mi">1</span>
-                        <span class="c1"># print(&#39;A&#39;)</span>
-                        <span class="k">break</span>
+                        <span class="k">if</span> <span class="n">y_dominates_pp</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">pp_dominates_y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">pp_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
+                            <span class="c1"># print(&#39;B&#39;)</span>
+                    <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="n">pp_to_remove</span><span class="p">:</span>
+                        <span class="n">Pareto_index</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
+                    <span class="c1"># Situation C: pp and y don&#39;t dominate each other, for every pp --&gt; y is then Pareto optimal</span>
+                    <span class="k">if</span> <span class="n">y_is_dominated</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">Pareto_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-                    <span class="c1"># Situation B: pp dominated by y</span>
-                    <span class="k">if</span> <span class="n">y_dominates_pp</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">pp_dominates_y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">pp_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
-                        <span class="c1"># print(&#39;B&#39;)</span>
-                <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="n">pp_to_remove</span><span class="p">:</span>
-                    <span class="n">Pareto_index</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
-                <span class="c1"># Situation C: pp and y don&#39;t dominate each other, for every pp --&gt; y is then Pareto optimal</span>
-                <span class="k">if</span> <span class="n">y_is_dominated</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">Pareto_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="c1"># Get scalarization weights</span>
+            <span class="n">rnd_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_objectives</span><span class="p">)</span>
+            <span class="c1"># rnd_weights = np.random.lognormal(0, 1, n_objectives)</span>
+            <span class="c1"># rnd_weights = np.full(n_objectives, 0.5)</span>
+            <span class="n">scalarization_weights</span> <span class="o">=</span> <span class="n">rnd_weights</span> <span class="o">/</span> <span class="n">rnd_weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-        <span class="c1"># Get scalarization weights</span>
-        <span class="n">rnd_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_objectives</span><span class="p">)</span>
-        <span class="c1"># rnd_weights = np.random.lognormal(0, 1, n_objectives)</span>
-        <span class="c1"># rnd_weights = np.full(n_objectives, 0.5)</span>
-        <span class="n">scalarization_weights</span> <span class="o">=</span> <span class="n">rnd_weights</span> <span class="o">/</span> <span class="n">rnd_weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="c1"># Pick a random Pareto optimal x to start optimization from</span>
+            <span class="k">if</span> <span class="n">n_objectives</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">rand_pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Pareto_index</span><span class="p">))</span>
+                <span class="n">best_x</span> <span class="o">=</span> <span class="n">x_population</span><span class="p">[</span><span class="n">Pareto_index</span><span class="p">[</span><span class="n">rand_pp</span><span class="p">],</span> <span class="p">:]</span>
+            <span class="c1"># if n_objectives == 1:</span>
+            <span class="c1">#     if y_normalized &lt; best_y:</span>
+            <span class="c1">#         best_x = np.copy(x)</span>
+            <span class="c1">#         best_y = y</span>
 
-        <span class="c1"># Pick a random Pareto optimal x to start optimization from</span>
-        <span class="k">if</span> <span class="n">n_objectives</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">rand_pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Pareto_index</span><span class="p">))</span>
-            <span class="n">best_x</span> <span class="o">=</span> <span class="n">x_population</span><span class="p">[</span><span class="n">Pareto_index</span><span class="p">[</span><span class="n">rand_pp</span><span class="p">],</span> <span class="p">:]</span>
-        <span class="c1"># if n_objectives == 1:</span>
-        <span class="c1">#     if y_normalized &lt; best_y:</span>
-        <span class="c1">#         best_x = np.copy(x)</span>
-        <span class="c1">#         best_y = y</span>
+            <span class="c1"># Minimize surrogate model</span>
+            <span class="k">if</span> <span class="n">n_objectives</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dominates</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">best_y</span><span class="p">):</span>
+                    <span class="n">best_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                    <span class="n">best_y</span> <span class="o">=</span> <span class="n">y_normalized</span>
+            <span class="c1"># st_time = time.time()</span>
+            <span class="n">next_x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="n">best_x</span><span class="p">,</span> <span class="n">scalarization_weights</span><span class="o">=</span><span class="n">scalarization_weights</span><span class="p">)</span>
+            <span class="c1"># e_time = time.time()</span>
+            <span class="c1"># print(f&quot;Time to find minimum: {e_time - st_time}&quot;)</span>
+            <span class="c1"># Round discrete variables to the nearest integer.</span>
+            <span class="n">next_x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_int</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">out</span><span class="o">=</span><span class="n">next_x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_int</span><span class="p">])</span>
 
-        <span class="c1"># Minimize surrogate model</span>
-        <span class="k">if</span> <span class="n">n_objectives</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">dominates</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">best_y</span><span class="p">):</span>
-                <span class="n">best_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-                <span class="n">best_y</span> <span class="o">=</span> <span class="n">y_normalized</span>
-        <span class="c1"># st_time = time.time()</span>
-        <span class="n">next_x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="n">best_x</span><span class="p">,</span> <span class="n">scalarization_weights</span><span class="o">=</span><span class="n">scalarization_weights</span><span class="p">)</span>
-        <span class="c1"># e_time = time.time()</span>
-        <span class="c1"># print(f&quot;Time to find minimum: {e_time - st_time}&quot;)</span>
-        <span class="c1"># Round discrete variables to the nearest integer.</span>
-        <span class="n">next_x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_int</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">out</span><span class="o">=</span><span class="n">next_x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">num_int</span><span class="p">])</span>
+            <span class="c1"># Just to be sure, clip the decision variables to the bounds.</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">next_x</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">next_x</span><span class="p">)</span>
 
-        <span class="c1"># Just to be sure, clip the decision variables to the bounds.</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">next_x</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">next_x</span><span class="p">)</span>
+            <span class="c1"># Perform exploration to prevent the algorithm from getting stuck in local minima</span>
+            <span class="c1"># of the surrogate model.</span>
 
-        <span class="c1"># Perform exploration to prevent the algorithm from getting stuck in local minima</span>
-        <span class="c1"># of the surrogate model.</span>
+            <span class="c1"># Skip exploration in the last iteration (to end at the exact minimum of the surrogate model).</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max_evals</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># Randomly perturb the discrete variables. Each x_i is shifted n units</span>
+                <span class="c1"># to the left (if dir is False) or to the right (if dir is True).</span>
+                <span class="c1"># The bounds of each variable are respected.</span>
 
-        <span class="c1"># Skip exploration in the last iteration (to end at the exact minimum of the surrogate model).</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max_evals</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="c1"># Randomly perturb the discrete variables. Each x_i is shifted n units</span>
-            <span class="c1"># to the left (if dir is False) or to the right (if dir is True).</span>
-            <span class="c1"># The bounds of each variable are respected.</span>
+                <span class="n">int_pert_prob</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span>  <span class="c1"># probability that x_i is permuted</span>
 
-            <span class="n">int_pert_prob</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span>  <span class="c1"># probability that x_i is permuted</span>
+                <span class="c1"># integer exploration</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_int</span><span class="p">):</span>
 
-            <span class="c1"># integer exploration</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_int</span><span class="p">):</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>  <span class="c1"># determines n</span>
+                    <span class="n">direction</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># whether to explore towards -∞ or +∞</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">next_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
 
-                <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>  <span class="c1"># determines n</span>
-                <span class="n">direction</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># whether to explore towards -∞ or +∞</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">next_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                    <span class="k">while</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">int_pert_prob</span><span class="p">:</span>
 
-                <span class="k">while</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">int_pert_prob</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                            <span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
 
-                    <span class="k">if</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
-                        <span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">elif</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="o">==</span> <span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                            <span class="n">value</span> <span class="o">-=</span> <span class="mi">1</span>
 
-                    <span class="k">elif</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="o">==</span> <span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
-                        <span class="n">value</span> <span class="o">-=</span> <span class="mi">1</span>
+                        <span class="k">elif</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                            <span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">direction</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
 
-                    <span class="k">elif</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
-                        <span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">direction</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+                        <span class="n">r</span> <span class="o">*=</span> <span class="mi">2</span>
 
-                    <span class="n">r</span> <span class="o">*=</span> <span class="mi">2</span>
+                    <span class="n">next_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-                <span class="n">next_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="c1"># Continuous exploration</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_int</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
 
-            <span class="c1"># Continuous exploration</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_int</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">next_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
 
-                <span class="n">value</span> <span class="o">=</span> <span class="n">next_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># re-sample while out of bounds.</span>
+                        <span class="c1"># Choose a variance that scales inversely with the number of decision variables.</span>
+                        <span class="c1"># Note that Var(aX) = a^2 Var(X) for any random variable.</span>
+                        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.1</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
-                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># re-sample while out of bounds.</span>
-                    <span class="c1"># Choose a variance that scales inversely with the number of decision variables.</span>
-                    <span class="c1"># Note that Var(aX) = a^2 Var(X) for any random variable.</span>
-                    <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.1</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">&lt;=</span> <span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                            <span class="n">next_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta</span>
+                            <span class="k">break</span>
 
-                    <span class="k">if</span> <span class="n">lb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">&lt;=</span> <span class="n">ub</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
-                        <span class="n">next_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta</span>
-                        <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
 
     <span class="c1"># apply non-dominated sorting</span>
-    <span class="n">y_sorted</span><span class="p">,</span> <span class="n">x_sorted</span><span class="p">,</span> <span class="n">sorting_indices</span> <span class="o">=</span> <span class="n">non_dominated_sorting</span><span class="p">(</span><span class="n">y_values</span><span class="o">=</span><span class="n">y_population</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-                                                                <span class="n">x_values</span><span class="o">=</span><span class="n">x_population</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">actual_evals</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">y_sorted</span><span class="p">,</span> <span class="n">x_sorted</span><span class="p">,</span> <span class="n">sorting_indices</span> <span class="o">=</span> <span class="n">non_dominated_sorting</span><span class="p">(</span><span class="n">y_values</span><span class="o">=</span><span class="n">y_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                                                                    <span class="n">x_values</span><span class="o">=</span><span class="n">x_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">y_sorted</span> <span class="o">=</span> <span class="n">y_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">x_sorted</span> <span class="o">=</span> <span class="n">x_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:]</span>
 
-    <span class="k">return</span> <span class="n">y_sorted</span><span class="p">,</span> <span class="n">x_sorted</span><span class="p">,</span> <span class="n">y_population</span><span class="p">,</span> <span class="n">x_population</span></div>
+    <span class="k">return</span> <span class="n">y_sorted</span><span class="p">,</span> <span class="n">x_sorted</span><span class="p">,</span> <span class="n">y_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:],</span> <span class="n">x_population</span><span class="p">[:</span><span class="n">actual_evals</span><span class="p">,</span> <span class="p">:]</span></div>
 
 </pre></div>
 

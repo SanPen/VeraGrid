@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Delayed switch event &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Delayed switch event &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -165,6 +165,10 @@
 <section id="runtime-behavior">
 <h2>Runtime behavior<a class="headerlink" href="#runtime-behavior" title="Link to this heading"></a></h2>
 <p>At accepted simulation boundaries, the logic detects a guarded rising edge and schedules one command at the edge time plus the evaluated delay. When that boundary is reached, it writes the commanded position to the retained mode and marks the event as fired.</p>
+</section>
+<section id="library-block">
+<h2>Library block<a class="headerlink" href="#library-block" title="Link to this heading"></a></h2>
+<p>The standalone block has <code class="docutils literal notranslate"><span class="pre">guard</span></code> and <code class="docutils literal notranslate"><span class="pre">trigger</span></code> inputs, a <code class="docutils literal notranslate"><span class="pre">closed</span></code> status output, and an editable <code class="docutils literal notranslate"><span class="pre">delay</span></code> parameter. The target device and switch identifiers are intentionally empty after insertion and must be completed in Python code before applying the model.</p>
 </section>
 </section>
 

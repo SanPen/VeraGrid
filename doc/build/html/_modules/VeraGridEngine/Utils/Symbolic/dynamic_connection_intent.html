@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Symbolic.dynamic_connection_intent &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Utils.Symbolic.dynamic_connection_intent &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -127,6 +127,14 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the stable symbolic variable identifier.</span>
 
 <span class="sd">        :return: Stable variable identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the semantic power-flow reference carried by the variable.</span>
+
+<span class="sd">        :return: Semantic variable reference or ``None`` when it has none.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
@@ -309,6 +317,17 @@
 <span class="sd">        :return: Internal variable UID.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_variable_uid</span></div>
+
+
+<div class="viewcode-block" id="DynamicConnectionIntent.set_internal_variable_uid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.DynamicConnectionIntent.set_internal_variable_uid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_internal_variable_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">internal_variable_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace an unavailable port identity with its semantic successor.</span>
+
+<span class="sd">        :param internal_variable_uid: Current non-mutable UID of the internal variable.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_internal_variable_uid</span> <span class="o">=</span> <span class="n">internal_variable_uid</span></div>
 
 
 <div class="viewcode-block" id="DynamicConnectionIntent.is_suppressed">
@@ -518,6 +537,129 @@
             <span class="k">return</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="reconcile_dynamic_connection_intent_target">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.reconcile_dynamic_connection_intent_target">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reconcile_dynamic_connection_intent_target</span><span class="p">(</span><span class="n">intent</span><span class="p">:</span> <span class="n">DynamicConnectionIntent</span><span class="p">,</span>
+                                               <span class="n">root_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve an intent against a current internal target when possible.</span>
+
+<span class="sd">    Root-interface availability is deliberately not part of this check. An</span>
+<span class="sd">    intent must survive a temporary topology change when its external phase is</span>
+<span class="sd">    unavailable, but it cannot be restored after its internal block or port has</span>
+<span class="sd">    been deleted.</span>
+
+<span class="sd">    :param intent: Runtime connection intent to inspect.</span>
+<span class="sd">    :param root_block: Root block that owns the intent collection.</span>
+<span class="sd">    :return: ``True`` when the internal block and direction-specific variable exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">internal_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_find_internal_block</span><span class="p">(</span>
+        <span class="n">root_block</span><span class="o">=</span><span class="n">root_block</span><span class="p">,</span>
+        <span class="n">internal_block_uid</span><span class="o">=</span><span class="n">intent</span><span class="o">.</span><span class="n">get_internal_block_uid</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ConnectionIntentVariable</span><span class="p">]</span>
+    <span class="n">candidate_var</span><span class="p">:</span> <span class="n">ConnectionIntentVariable</span>
+    <span class="n">matching_reference_var</span><span class="p">:</span> <span class="n">ConnectionIntentVariable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">matching_reference_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">internal_block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">intent</span><span class="o">.</span><span class="n">get_direction</span><span class="p">()</span> <span class="o">==</span> <span class="n">DynamicConnectionIntentDirection</span><span class="o">.</span><span class="n">INPUT</span><span class="p">:</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">internal_block</span><span class="o">.</span><span class="n">in_vars</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">internal_block</span><span class="o">.</span><span class="n">out_vars</span>
+
+    <span class="k">for</span> <span class="n">candidate_var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">candidate_var</span><span class="o">.</span><span class="n">non_mutable_uid</span> <span class="o">==</span> <span class="n">intent</span><span class="o">.</span><span class="n">get_internal_variable_uid</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Generated interfaces can recreate the same semantic port with a new</span>
+    <span class="c1"># variable UID. A unique direction-specific reference identifies that</span>
+    <span class="c1"># successor without relying on its former graphical position.</span>
+    <span class="k">for</span> <span class="n">candidate_var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">candidate_var</span><span class="o">.</span><span class="n">ref</span> <span class="o">==</span> <span class="n">intent</span><span class="o">.</span><span class="n">get_root_reference</span><span class="p">():</span>
+            <span class="n">matching_reference_var</span> <span class="o">=</span> <span class="n">candidate_var</span>
+            <span class="n">matching_reference_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">matching_reference_count</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">matching_reference_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">intent</span><span class="o">.</span><span class="n">set_internal_variable_uid</span><span class="p">(</span>
+            <span class="n">internal_variable_uid</span><span class="o">=</span><span class="n">matching_reference_var</span><span class="o">.</span><span class="n">non_mutable_uid</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="is_legacy_suppressed_connection_intent_tombstone">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.is_legacy_suppressed_connection_intent_tombstone">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_legacy_suppressed_connection_intent_tombstone</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span>
+                                                     <span class="n">root_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recognize a valid old suppression record whose internal target was deleted.</span>
+
+<span class="sd">    Earlier editors retained suppression records after replacing an internal</span>
+<span class="sd">    block. Those records are harmless history and should not generate an open</span>
+<span class="sd">    warning. Malformed records and active missing connections are intentionally</span>
+<span class="sd">    excluded so genuine persistence problems remain visible.</span>
+
+<span class="sd">    :param data: Persisted connection-intent fields.</span>
+<span class="sd">    :param root_block: Fully reconstructed root block used to resolve the target.</span>
+<span class="sd">    :return: ``True`` only for a well-formed suppressed record with a missing target.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="n">DynamicConnectionIntentOrigin</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_parse_origin</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;origin&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="n">DynamicConnectionIntentDirection</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_parse_direction</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">root_reference</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_parse_root_reference</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;root_ref&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">internal_block_uid_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;internal_block_uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">internal_variable_uid_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;internal_variable_uid&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">internal_port_index_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;internal_port_index&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">suppressed_value</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suppressed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">internal_block</span><span class="p">:</span> <span class="n">ConnectionIntentBlock</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">internal_variable_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">has_stable_variable_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">internal_variable_uid_value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">internal_variable_uid_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">has_legacy_port_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">internal_port_index_value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">internal_port_index_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># A tombstone must still be structurally valid. This keeps corrupted data</span>
+    <span class="c1"># visible to the parser&#39;s warning path instead of silently discarding it.</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">direction</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">root_reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">internal_block_uid_value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">internal_block_uid_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">suppressed_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">has_stable_variable_reference</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_legacy_port_reference</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">internal_block</span> <span class="o">=</span> <span class="n">_find_internal_block</span><span class="p">(</span>
+        <span class="n">root_block</span><span class="o">=</span><span class="n">root_block</span><span class="p">,</span>
+        <span class="n">internal_block_uid</span><span class="o">=</span><span class="n">internal_block_uid_value</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">internal_block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">internal_variable_uid</span> <span class="o">=</span> <span class="n">_resolve_internal_variable_uid</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">internal_block</span><span class="o">=</span><span class="n">internal_block</span><span class="p">,</span>
+            <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">internal_variable_uid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
 
 
 <div class="viewcode-block" id="dynamic_connection_intent_from_dict">

@@ -38,7 +38,7 @@ class CatalogueOptimizationProblem(BlackBoxProblemTemplate):
     """
     Multi-objective black-box problem that selects, for each user-pre-selected branch, a template
     from the grid's catalogue so as to minimise the six techno-economic scores
-    (losses, overload, voltage module, voltage angle, financial, technical).
+    (losses, overload, voltage module, voltage angle, CAPEX, OPEX).
 
     The decision vector `x` is integer-valued: `x[i]` is the index of the chosen template within the
     pool associated with branch `branches[i]`.
@@ -79,12 +79,12 @@ class CatalogueOptimizationProblem(BlackBoxProblemTemplate):
         else:
             pass
 
-        # Initialise the black-box base. We use indices (4, 5) for plotting (financial vs technical),
-        # mirroring the convention in `PowerFlowInvestmentProblem`.
+        # Initialise the black-box base. We use indices (4, 1) for plotting the CAPEX against the
+        # overload cost, mirroring the convention in `PowerFlowInvestmentProblem`.
         super().__init__(grid=grid,
                          x_dim=len(kept_branches),
                          plot_x_idx=4,
-                         plot_y_idx=5)
+                         plot_y_idx=1)
 
         # Replace the base logger with the one already populated by `build_catalogue_pool`
         # so the warnings emitted there reach the caller.
@@ -137,7 +137,7 @@ class CatalogueOptimizationProblem(BlackBoxProblemTemplate):
         """
         Number of objectives in `f`.
 
-        :return: 6 (losses, overload, voltage module, voltage angle, financial, technical).
+        :return: 6 (losses, overload, voltage module, voltage angle, CAPEX, OPEX).
         """
         return 6
 
@@ -160,8 +160,8 @@ class CatalogueOptimizationProblem(BlackBoxProblemTemplate):
             "overload score",
             "voltage module_score",
             "voltage angle score",
-            "financial score",
-            "Technical score",
+            "CAPEX",
+            "OPEX",
         ])
 
     def get_vars_names(self) -> StrVec:
@@ -281,7 +281,7 @@ class CatalogueOptimizationProblem(BlackBoxProblemTemplate):
             # Step 2: run the power flow against the mutated grid.
             scores: TechnoEconomicScores = self._evaluate_power_flow()
 
-            # Step 3: fill in the financial score; opex is not used at this stage.
+            # Step 3: fill in the financial scores; opex is not used at this stage.
             scores.capex_score = total_capex
             scores.opex_score = 0.0
 

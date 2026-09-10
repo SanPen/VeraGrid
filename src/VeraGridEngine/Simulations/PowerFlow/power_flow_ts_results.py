@@ -522,7 +522,7 @@ class PowerFlowTimeSeriesResults(ResultsTemplate):
                 ax3.scatter(va_flat, vm_flat, c=vm_flat, norm=color_norm)
                 fig.suptitle(result_type.value)
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
 
             return ResultsTable(data=data,
                                 index=pd.to_datetime(self.time_array),

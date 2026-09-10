@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Runtime procedural logic &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Runtime procedural logic &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -149,6 +149,11 @@
 <h2>Retained modes<a class="headerlink" href="#retained-modes" title="Link to this heading"></a></h2>
 <p>A retained mode is a runtime parameter with an initialization expression. Its value survives between accepted steps. Most procedural entries write one or more modes; DAE equations can read them like any other symbolic parameter.</p>
 </section>
+<section id="using-procedural-blocks-from-the-library">
+<h2>Using procedural blocks from the Library<a class="headerlink" href="#using-procedural-blocks-from-the-library" title="Link to this heading"></a></h2>
+<p>The Dynamic Model Editor exposes every concrete procedural type under <strong>Procedural logic</strong> in both RMS and EMT mode. Drag a leaf onto the canvas, or double-click it to insert it at the center of the visible canvas. Double-click the resulting block to edit its complete declaration in <strong>Block Properties → Python code</strong>.</p>
+<p>Signal-processing blocks expose retained results through ordinary algebraic output ports. Event and switching blocks preserve their real interfaces: flip-flops have separate set/reset inputs, three-phase carrier blocks have three inputs and three outputs, and a conditional diagnostic has no artificial signal output. A delayed switch event requires the target device and switch identifiers to be completed in Python code before the model can be applied.</p>
+</section>
 <section id="available-types">
 <h2>Available types<a class="headerlink" href="#available-types" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
@@ -172,7 +177,7 @@
 <li class="toctree-l1"><a class="reference internal" href="three_phase_carrier_sampled_modulation.html">Three-phase carrier sampled modulation</a></li>
 </ul>
 </div>
-<p>Use <strong>Validate runtime logic</strong> before applying. Validation checks names, references, expressions, missing modes, duplicate writers and order-dependent reads.</p>
+<p>Use <strong>Validate model</strong> before applying. Validation checks names, references, expressions, missing modes, duplicate writers and order-dependent reads.</p>
 </section>
 </section>
 

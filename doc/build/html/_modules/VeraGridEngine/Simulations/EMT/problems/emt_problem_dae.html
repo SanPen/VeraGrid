@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.EMT.problems.emt_problem_dae &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.EMT.problems.emt_problem_dae &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -130,7 +131,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Events.emt_events_group</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtEventsGroup</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Var</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">piecewise</span><span class="p">,</span> <span class="n">Const</span><span class="p">,</span> <span class="n">hard_sat</span><span class="p">,</span> <span class="n">heaviside</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">has_emt_internal_grounding_link</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">VarPowerFlowReferenceType</span><span class="p">,</span>
     <span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span>
@@ -166,6 +167,9 @@
     <span class="n">EmtBoundaryUpdateProtocol</span><span class="p">,</span>
     <span class="n">EmtProblemTemplate</span><span class="p">,</span>
     <span class="n">_collect_hierarchical_init_equations</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.problems.emt_terminal_current_assembly</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">assemble_emt_terminal_current_contributions</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># Previous mapper:</span>
 <span class="c1"># from VeraGridEngine.Devices.Dynamic.static_parameter_mapping import (</span>
@@ -674,33 +678,6 @@
     <span class="n">is_bergeron</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">block_name</span> <span class="o">==</span> <span class="n">EmtLineTypes</span><span class="o">.</span><span class="n">Bergeron</span> <span class="ow">or</span> <span class="n">block_name</span> <span class="o">==</span> <span class="n">EmtLineTypes</span><span class="o">.</span><span class="n">Bergeron</span><span class="o">.</span><span class="n">value</span>
     <span class="n">is_jmarti</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">block_name</span> <span class="o">==</span> <span class="n">EmtLineTypes</span><span class="o">.</span><span class="n">J_Marti</span> <span class="ow">or</span> <span class="n">block_name</span> <span class="o">==</span> <span class="n">EmtLineTypes</span><span class="o">.</span><span class="n">J_Marti</span><span class="o">.</span><span class="n">value</span>
     <span class="k">return</span> <span class="n">is_bergeron</span><span class="p">,</span> <span class="n">is_jmarti</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_has_internal_grounding_link</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return whether one EMT block hierarchy contains one internal grounding link.</span>
-
-<span class="sd">    :param block: Candidate EMT block.</span>
-<span class="sd">    :return: Boolean state.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">diagram_node</span><span class="p">:</span> <span class="n">Any</span>
-    <span class="n">nested_block</span><span class="p">:</span> <span class="n">Block</span>
-
-    <span class="k">for</span> <span class="n">diagram_node</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">diagram</span><span class="o">.</span><span class="n">node_data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">diagram_node</span><span class="o">.</span><span class="n">tpe</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;GROUNDING_LINK_EMT&quot;</span><span class="p">,</span> <span class="s2">&quot;GROUND_EMT&quot;</span><span class="p">}:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-    <span class="k">for</span> <span class="n">nested_block</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">nested_block</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_grounding_link&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">elif</span> <span class="n">_has_internal_grounding_link</span><span class="p">(</span><span class="n">nested_block</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">pass</span>
-
-    <span class="k">return</span> <span class="kc">False</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_grid_runtime_events</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
@@ -2215,16 +2192,20 @@
                  <span class="n">pf_results_3ph</span><span class="p">:</span> <span class="n">PowerFlowResults3Ph</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">pf_results</span><span class="p">:</span> <span class="n">PowerFlowResults</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">progress_signal</span><span class="p">:</span> <span class="n">DummySignal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">progress_text</span><span class="p">:</span> <span class="n">DummySignal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="n">progress_text</span><span class="p">:</span> <span class="n">DummySignal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the EMT Problem by parsing the grid and passing the</span>
 <span class="sd">        resulting mathematical block to the BaseProblem constructor.</span>
-<span class="sd">        :param grid:</span>
-<span class="sd">        :param options:</span>
-<span class="sd">        :param pf_results_3Ph:</span>
-<span class="sd">        :param pf_results:</span>
+<span class="sd">        :param grid: MultiCircuit</span>
+<span class="sd">        :param options: EmtOptions</span>
+<span class="sd">        :param pf_results_3Ph: PowerFlowResults3Ph</span>
+<span class="sd">        :param pf_results: PowerFlowResults3Ph</span>
+<span class="sd">        :param progress_signal: progress_signal</span>
+<span class="sd">        :param progress_text: progress_text</span>
+<span class="sd">        :param logger: Logger</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device_type_disposition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">DeviceType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_emt_device_type_disposition_table</span><span class="p">()</span>
@@ -2506,14 +2487,17 @@
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">detail_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nonfinite_entries</span><span class="p">[:</span><span class="mi">20</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span>
-                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;EMT initialization left non-finite state values.&quot;</span><span class="p">,</span>
-                <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;emt_problem&quot;</span><span class="p">,</span>
-                <span class="n">value</span><span class="o">=</span><span class="n">detail_text</span><span class="p">,</span>
-                <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;Finite x0/dx0 for every EMT variable and differential variable&quot;</span><span class="p">,</span>
-                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
-                <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;initialization_finiteness&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;EMT initialization left non-finite state values.&quot;</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;emt_problem&quot;</span><span class="p">,</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">detail_text</span><span class="p">,</span>
+                    <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;Finite x0/dx0 for every EMT variable and differential variable&quot;</span><span class="p">,</span>
+                    <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+                    <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;initialization_finiteness&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;EMT initialization produced non-finite values. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;First entries: </span><span class="si">{</span><span class="n">detail_text</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -2574,25 +2558,34 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;init guess = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;diff init guess = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">diff_init_guess</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;init guess = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;diff init guess = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">diff_init_guess</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;EMT initialization used </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">method_used</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;status=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;res0=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">initial_residual_inf</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;resf=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">final_residual_inf</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;newton=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">newton_iterations</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;ptc=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">pseudo_transient_steps</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;auto_dx0=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">automatic_dx0_count</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;EMT initialization used </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">method_used</span><span class="si">}</span><span class="s2"> | &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;status=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> | &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;res0=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">initial_residual_inf</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> | &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;resf=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">final_residual_inf</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> | &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;newton=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">newton_iterations</span><span class="si">}</span><span class="s2"> | &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;ptc=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">pseudo_transient_steps</span><span class="si">}</span><span class="s2"> | &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;auto_dx0=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">initialization_report</span><span class="o">.</span><span class="n">automatic_dx0_count</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;EMT electrical problem parsed in </span><span class="si">{</span><span class="n">t_done</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">s | &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;vars=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_vars</span><span class="si">}</span><span class="s2"> (state=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_state</span><span class="si">}</span><span class="s2">, alg=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_alg</span><span class="si">}</span><span class="s2">) | &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;eqs(state=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_eqs</span><span class="p">)</span><span class="si">}</span><span class="s2">, alg=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_algebraic_eqs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
                 <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;EMT electrical problem parsed in </span><span class="si">{</span><span class="n">t_done</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">s | &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;vars=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_vars</span><span class="si">}</span><span class="s2"> (state=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_state</span><span class="si">}</span><span class="s2">, alg=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_alg</span><span class="si">}</span><span class="s2">) | &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;eqs(state=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_eqs</span><span class="p">)</span><span class="si">}</span><span class="s2">, alg=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_algebraic_eqs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
-            <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
 
     <span class="c1"># ---------------------------------------------------------------------</span>
     <span class="c1"># init_eqs registration + explicit init execution</span>
@@ -2910,19 +2903,25 @@
                     <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_get_block_name</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
                     <span class="n">error_detail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                        <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;EMT explicit initialization failed for device init block.&quot;</span><span class="p">,</span>
-                        <span class="n">device</span><span class="o">=</span><span class="n">block_name</span><span class="p">,</span>
-                        <span class="n">value</span><span class="o">=</span><span class="n">error_detail</span><span class="p">,</span>
-                        <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;Successful explicit initialization&quot;</span><span class="p">,</span>
-                        <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
-                        <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;init_explicit&quot;</span>
-                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;EMT explicit initialization failed for device init block.&quot;</span><span class="p">,</span>
+                            <span class="n">device</span><span class="o">=</span><span class="n">block_name</span><span class="p">,</span>
+                            <span class="n">value</span><span class="o">=</span><span class="n">error_detail</span><span class="p">,</span>
+                            <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;Successful explicit initialization&quot;</span><span class="p">,</span>
+                            <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+                            <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;init_explicit&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
 
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;[EMT][init_explicit] failed for unified device block &#39;</span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">&#39;. Error: </span><span class="si">{</span><span class="n">error_detail</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_debug</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;[EMT][init_explicit] failed for unified device block &#39;</span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">&#39;. Error: </span><span class="si">{</span><span class="n">error_detail</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
                         <span class="nb">print</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;EMT explicit initialization failed for unified device block </span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">. &quot;</span>
                             <span class="sa">f</span><span class="s2">&quot;Error detail: </span><span class="si">{</span><span class="n">error_detail</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -4008,7 +4007,7 @@
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">pass</span>
 
-                    <span class="k">if</span> <span class="n">_has_internal_grounding_link</span><span class="p">(</span><span class="n">inj_emt_model</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">has_emt_internal_grounding_link</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="n">inj_emt_model</span><span class="p">):</span>
                         <span class="n">bus_phase_connections</span><span class="p">[(</span><span class="n">inj_bus</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_N</span><span class="p">)]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;internal_ground:</span><span class="si">{</span><span class="n">inj</span><span class="o">.</span><span class="n">idtag</span><span class="si">}</span><span class="s2">&quot;</span>
                         <span class="p">)</span>
@@ -4916,52 +4915,62 @@
 <span class="sd">        :param sbase: System base power.</span>
 <span class="sd">        :return: None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">side_bus_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">])</span>
-        <span class="n">side_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span><span class="p">,</span> <span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span><span class="p">])</span>
-        <span class="n">side_current_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">br_if_keys</span><span class="p">,</span> <span class="n">br_it_keys</span><span class="p">])</span>
-        <span class="n">side_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">emt_terminal_current_contributions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">assemble_emt_terminal_current_contributions</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+                <span class="n">current_balance</span><span class="o">=</span><span class="n">i_kcl</span><span class="p">,</span>
+                <span class="n">bus_from_index</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+                <span class="n">bus_to_index</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+                <span class="n">bus_from_is_dc</span><span class="o">=</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+                <span class="n">bus_to_is_dc</span><span class="o">=</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">side_bus_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="n">t</span><span class="p">])</span>
+            <span class="n">side_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">branch</span><span class="o">.</span><span class="n">bus_from</span><span class="p">,</span> <span class="n">branch</span><span class="o">.</span><span class="n">bus_to</span><span class="p">])</span>
+            <span class="n">side_current_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">br_if_keys</span><span class="p">,</span> <span class="n">br_it_keys</span><span class="p">])</span>
+            <span class="n">side_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="k">while</span> <span class="n">side_idx</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">side_bus_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">side_bus_indices</span><span class="p">[</span><span class="n">side_idx</span><span class="p">]</span>
-            <span class="n">side_bus</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">side_buses</span><span class="p">[</span><span class="n">side_idx</span><span class="p">]</span>
-            <span class="n">current_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="p">]</span> <span class="o">=</span> <span class="n">side_current_keys</span><span class="p">[</span><span class="n">side_idx</span><span class="p">]</span>
+            <span class="k">while</span> <span class="n">side_idx</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">side_bus_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">side_bus_indices</span><span class="p">[</span><span class="n">side_idx</span><span class="p">]</span>
+                <span class="n">side_bus</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">=</span> <span class="n">side_buses</span><span class="p">[</span><span class="n">side_idx</span><span class="p">]</span>
+                <span class="n">current_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="p">]</span> <span class="o">=</span> <span class="n">side_current_keys</span><span class="p">[</span><span class="n">side_idx</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">side_bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
-                <span class="n">external_mapping_dc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Var</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_get_external_mapping</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
-                <span class="n">dc_current_key</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">If_dc</span> <span class="k">if</span> <span class="n">side_idx</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">It_dc</span>
-                <span class="n">side_dc_expr</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">side_bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                    <span class="n">external_mapping_dc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_get_external_mapping</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span>
+                    <span class="n">dc_current_key</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">If_dc</span> <span class="k">if</span> <span class="n">side_idx</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">It_dc</span>
+                    <span class="n">side_dc_expr</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
-                <span class="k">if</span> <span class="n">external_mapping_dc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">side_dc_expr</span> <span class="o">=</span> <span class="n">external_mapping_dc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dc_current_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">side_dc_expr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">side_dc_expr</span> <span class="o">=</span> <span class="n">external_mapping_dc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">pass</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">pass</span>
-
-                <span class="k">if</span> <span class="n">side_dc_expr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">i_kcl</span><span class="p">[</span><span class="n">side_bus_idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i_kcl</span><span class="p">[</span><span class="n">side_bus_idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">side_dc_expr</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">pass</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">ph</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">while</span> <span class="n">ph</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
-                    <span class="n">side_expr</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span>
-
-                    <span class="k">if</span> <span class="n">is_vsc</span><span class="p">:</span>
-                        <span class="n">side_expr</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">inj_i_keys</span><span class="p">[</span><span class="n">ph</span><span class="p">])</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">side_expr</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">current_keys</span><span class="p">[</span><span class="n">ph</span><span class="p">])</span>
-
-                    <span class="k">if</span> <span class="n">side_expr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">i_kcl</span><span class="p">[</span><span class="n">side_bus_idx</span><span class="p">][</span><span class="n">ph</span><span class="p">]</span> <span class="o">=</span> <span class="n">i_kcl</span><span class="p">[</span><span class="n">side_bus_idx</span><span class="p">][</span><span class="n">ph</span><span class="p">]</span> <span class="o">-</span> <span class="n">side_expr</span>
+                    <span class="k">if</span> <span class="n">external_mapping_dc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">side_dc_expr</span> <span class="o">=</span> <span class="n">external_mapping_dc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dc_current_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">side_dc_expr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">side_dc_expr</span> <span class="o">=</span> <span class="n">external_mapping_dc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">pass</span>
 
-                    <span class="n">ph</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">side_dc_expr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">i_kcl</span><span class="p">[</span><span class="n">side_bus_idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i_kcl</span><span class="p">[</span><span class="n">side_bus_idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">side_dc_expr</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ph</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">while</span> <span class="n">ph</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="n">side_expr</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span>
 
-            <span class="n">side_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">is_vsc</span><span class="p">:</span>
+                            <span class="n">side_expr</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">inj_i_keys</span><span class="p">[</span><span class="n">ph</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">side_expr</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">current_keys</span><span class="p">[</span><span class="n">ph</span><span class="p">])</span>
+
+                        <span class="k">if</span> <span class="n">side_expr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">i_kcl</span><span class="p">[</span><span class="n">side_bus_idx</span><span class="p">][</span><span class="n">ph</span><span class="p">]</span> <span class="o">=</span> <span class="n">i_kcl</span><span class="p">[</span><span class="n">side_bus_idx</span><span class="p">][</span><span class="n">ph</span><span class="p">]</span> <span class="o">-</span> <span class="n">side_expr</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
+
+                        <span class="n">ph</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">side_idx</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_branch_terminal_voltages</span><span class="p">(</span>
             <span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
@@ -5132,16 +5141,25 @@
 
         <span class="n">b</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">injection</span><span class="o">.</span><span class="n">bus</span><span class="p">]</span>
 
-        <span class="c1"># accumulate injection currents</span>
-        <span class="k">if</span> <span class="n">injection</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
-            <span class="n">i_dc_expr</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">)</span>
-            <span class="n">_accumulate_kcl_current</span><span class="p">(</span><span class="n">i_kcl</span><span class="o">=</span><span class="n">i_kcl</span><span class="p">,</span> <span class="n">bus_index</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">phase_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">current_expression</span><span class="o">=</span><span class="n">i_dc_expr</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="c1"># The explicit terminal contract owns KCL when present. Legacy models</span>
+        <span class="c1"># retain their established reference-based behavior for compatibility.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">emt_terminal_current_contributions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">assemble_emt_terminal_current_contributions</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span>
+                <span class="n">current_balance</span><span class="o">=</span><span class="n">i_kcl</span><span class="p">,</span>
+                <span class="n">bus_index</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
+                <span class="n">bus_is_dc</span><span class="o">=</span><span class="n">injection</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ph</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">while</span> <span class="n">ph</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
-                <span class="n">i_expr</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">inj_i_keys</span><span class="p">[</span><span class="n">ph</span><span class="p">])</span>
-                <span class="n">_accumulate_kcl_current</span><span class="p">(</span><span class="n">i_kcl</span><span class="o">=</span><span class="n">i_kcl</span><span class="p">,</span> <span class="n">bus_index</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">phase_index</span><span class="o">=</span><span class="n">ph</span><span class="p">,</span> <span class="n">current_expression</span><span class="o">=</span><span class="n">i_expr</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-                <span class="n">ph</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">injection</span><span class="o">.</span><span class="n">bus</span><span class="o">.</span><span class="n">is_dc</span><span class="p">:</span>
+                <span class="n">i_dc_expr</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Idc</span><span class="p">)</span>
+                <span class="n">_accumulate_kcl_current</span><span class="p">(</span><span class="n">i_kcl</span><span class="o">=</span><span class="n">i_kcl</span><span class="p">,</span> <span class="n">bus_index</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">phase_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">current_expression</span><span class="o">=</span><span class="n">i_dc_expr</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ph</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="n">ph</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="n">i_expr</span><span class="p">:</span> <span class="n">Var</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="o">=</span><span class="n">mdl</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">inj_i_keys</span><span class="p">[</span><span class="n">ph</span><span class="p">])</span>
+                    <span class="n">_accumulate_kcl_current</span><span class="p">(</span><span class="n">i_kcl</span><span class="o">=</span><span class="n">i_kcl</span><span class="p">,</span> <span class="n">bus_index</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">phase_index</span><span class="o">=</span><span class="n">ph</span><span class="p">,</span> <span class="n">current_expression</span><span class="o">=</span><span class="n">i_expr</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+                    <span class="n">ph</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_injection_bus_voltages</span><span class="p">(</span>
             <span class="n">injection</span><span class="o">=</span><span class="n">injection</span><span class="p">,</span>
@@ -5614,10 +5632,13 @@
                         <span class="k">pass</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bus_kcl_eqs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span>
-                    <span class="s2">&quot;Bus has no phases (no voltage vars)&quot;</span><span class="p">,</span>
-                    <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">bus_idx</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span>
+                        <span class="s2">&quot;Bus has no phases (no voltage vars)&quot;</span><span class="p">,</span>
+                        <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">bus_idx</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">mdl</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="n">bus_kcl_eqs</span>
 
@@ -5714,39 +5735,73 @@
 <span class="sd">        :param emt_events_group: EMT events group to activate. ``None`` keeps all EMT events active.</span>
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Detect whether the requested group is already active. The special case</span>
+        <span class="c1"># with no explicitly selected group preserves the original behaviour where</span>
+        <span class="c1"># scheduled mode events determine whether the runtime layer is initialized.</span>
         <span class="n">same_group_requested</span><span class="p">:</span> <span class="nb">bool</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_events_group</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">same_group_requested</span> <span class="o">=</span> <span class="n">emt_events_group</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduled_mode_events</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="n">same_group_requested</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">emt_events_group</span> <span class="ow">is</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduled_mode_events</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="n">emt_events_group</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">same_group_requested</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">same_group_requested</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_events_group</span><span class="o">.</span><span class="n">idtag</span> <span class="o">==</span> <span class="n">emt_events_group</span><span class="o">.</span><span class="n">idtag</span>
+            <span class="n">same_group_requested</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_active_events_group</span><span class="o">.</span><span class="n">idtag</span> <span class="o">==</span> <span class="n">emt_events_group</span><span class="o">.</span><span class="n">idtag</span>
+            <span class="p">)</span>
 
+        <span class="c1"># Avoid rebuilding the runtime event expressions when the requested event</span>
+        <span class="c1"># group is already active.</span>
         <span class="k">if</span> <span class="n">same_group_requested</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
 
+        <span class="c1"># Start from the original runtime parameter equations. Continuous events</span>
+        <span class="c1"># will progressively replace the affected equations with time-dependent</span>
+        <span class="c1"># expressions, while discrete events are stored separately.</span>
         <span class="n">active_runtime_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_runtime_parameter_eqs0</span><span class="p">)</span>
         <span class="n">scheduled_mode_events</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="n">continuous_events</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">parameter</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span> <span class="nb">list</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_runtime_continuous_parameters</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_continuous_event_parameter_uids</span>
-        <span class="p">}</span>
+        <span class="n">continuous_events</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
+        <span class="c1"># Pre-register only those continuous runtime parameters that can actually</span>
+        <span class="c1"># receive continuous EMT events.</span>
+        <span class="n">runtime_parameter</span><span class="p">:</span> <span class="n">Any</span>
+
+        <span class="k">for</span> <span class="n">runtime_parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_runtime_continuous_parameters</span><span class="p">():</span>
+            <span class="n">runtime_parameter_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">runtime_parameter</span><span class="o">.</span><span class="n">uid</span>
+
+            <span class="k">if</span> <span class="n">runtime_parameter_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_continuous_event_parameter_uids</span><span class="p">:</span>
+                <span class="n">continuous_events</span><span class="p">[</span><span class="n">runtime_parameter_uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="c1"># Retrieve the events belonging to the requested group. A ``None`` group</span>
+        <span class="c1"># retains the original semantics implemented by the group resolver.</span>
         <span class="n">emt_events</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_emt_events_for_group</span><span class="p">(</span><span class="n">emt_events_group</span><span class="p">)</span>
 
+        <span class="c1"># Classify every valid event as either a scheduled discrete update or a</span>
+        <span class="c1"># continuous runtime expression modification.</span>
+        <span class="n">evt</span><span class="p">:</span> <span class="n">Any</span>
+
         <span class="k">for</span> <span class="n">evt</span> <span class="ow">in</span> <span class="n">emt_events</span><span class="p">:</span>
-            <span class="n">parameter_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_registered_event_parameter_uid</span><span class="p">(</span><span class="n">evt</span><span class="p">)</span>
+            <span class="n">parameter_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_registered_event_parameter_uid</span><span class="p">(</span>
+                <span class="n">evt</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">parameter_uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_targets_registered_parameter</span><span class="p">(</span><span class="n">evt</span><span class="p">,</span> <span class="n">parameter_uid</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">parameter_uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_event_parameter_uids</span><span class="p">:</span>
-                        <span class="n">event_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="n">scheduled_mode_events</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                            <span class="n">parameter_uid</span><span class="p">,</span>
-                            <span class="nb">list</span><span class="p">(),</span>
+                        <span class="c1"># Discrete mode parameters are updated only at their event</span>
+                        <span class="c1"># boundaries and therefore remain outside the continuous</span>
+                        <span class="c1"># piecewise expression construction.</span>
+                        <span class="n">event_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">scheduled_mode_events</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                                <span class="n">parameter_uid</span><span class="p">,</span>
+                                <span class="nb">list</span><span class="p">(),</span>
+                            <span class="p">)</span>
                         <span class="p">)</span>
 
                         <span class="n">force_step_alignment</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">evt</span><span class="o">.</span><span class="n">force_step_alignment</span><span class="p">)</span>
@@ -5760,16 +5815,30 @@
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">parameter_uid</span> <span class="ow">in</span> <span class="n">continuous_events</span><span class="p">:</span>
-                            <span class="n">transition_type</span><span class="p">:</span> <span class="n">DynamicEventTransitionType</span> <span class="o">=</span> <span class="n">evt</span><span class="o">.</span><span class="n">transition_type</span>
-                            <span class="n">end_time</span> <span class="o">=</span> <span class="n">evt</span><span class="o">.</span><span class="n">end_time</span>
+                            <span class="c1"># Continuous events are stored first and converted into</span>
+                            <span class="c1"># runtime expressions after all events have been</span>
+                            <span class="c1"># collected, so their chronological order can be</span>
+                            <span class="c1"># enforced deterministically.</span>
+                            <span class="n">transition_type</span><span class="p">:</span> <span class="n">DynamicEventTransitionType</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="n">evt</span><span class="o">.</span><span class="n">transition_type</span>
+                            <span class="p">)</span>
+                            <span class="n">end_time_raw_event</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">evt</span><span class="o">.</span><span class="n">end_time</span>
+                            <span class="n">normalized_end_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
+
+                            <span class="k">if</span> <span class="n">end_time_raw_event</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="n">normalized_end_time</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">normalized_end_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">end_time_raw_event</span><span class="p">)</span>
+
+                            <span class="n">continuous_event_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                                <span class="n">time</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">evt</span><span class="o">.</span><span class="n">time</span><span class="p">),</span>
+                                <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">evt</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                                <span class="n">end_time</span><span class="o">=</span><span class="n">normalized_end_time</span><span class="p">,</span>
+                                <span class="n">transition_type</span><span class="o">=</span><span class="n">transition_type</span><span class="p">,</span>
+                            <span class="p">)</span>
 
                             <span class="n">continuous_events</span><span class="p">[</span><span class="n">parameter_uid</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                                <span class="nb">dict</span><span class="p">({</span>
-                                    <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">evt</span><span class="o">.</span><span class="n">time</span><span class="p">),</span>
-                                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">evt</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
-                                    <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">end_time</span><span class="p">),</span>
-                                    <span class="s2">&quot;transition_type&quot;</span><span class="p">:</span> <span class="n">transition_type</span><span class="p">,</span>
-                                <span class="p">})</span>
+                                <span class="n">continuous_event_spec</span>
                             <span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">pass</span>
@@ -5778,63 +5847,130 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-        <span class="k">for</span> <span class="n">parameter_uid</span><span class="p">,</span> <span class="n">event_specs</span> <span class="ow">in</span> <span class="n">continuous_events</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Convert the collected continuous events into the runtime expressions used</span>
+        <span class="c1"># by the EMT solver. Each parameter is treated independently.</span>
+        <span class="n">continuous_parameter_uid</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">event_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+
+        <span class="k">for</span> <span class="n">continuous_parameter_uid</span><span class="p">,</span> <span class="n">event_specs</span> <span class="ow">in</span> <span class="n">continuous_events</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">event_specs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">runtime_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid2idx_event_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">parameter_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">runtime_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                        <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;EMT event targets one runtime parameter that is not registered in the active problem.&quot;</span><span class="p">,</span>
-                        <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
-                        <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;event_parameter_uid&quot;</span><span class="p">,</span>
-                        <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">parameter_uid</span><span class="p">),</span>
-                        <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;Registered EMT runtime parameter&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="k">continue</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">pass</span>
-                <span class="n">sorted_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">DynamicEventTransitionType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-                    <span class="n">event_specs</span><span class="p">,</span>
-                    <span class="n">key</span><span class="o">=</span><span class="n">_continuous_event_spec_time_sort_key</span><span class="p">,</span>
+                <span class="n">runtime_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid2idx_event_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">continuous_parameter_uid</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">active_expr</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">active_runtime_eqs</span><span class="p">[</span><span class="n">runtime_idx</span><span class="p">]</span>
-                <span class="n">event_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">DynamicEventTransitionType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
 
-                <span class="k">for</span> <span class="n">event_spec</span> <span class="ow">in</span> <span class="n">sorted_specs</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;transition_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">DynamicEventTransitionType</span><span class="o">.</span><span class="n">Ramp</span><span class="p">:</span>
-                        <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])</span>
-                        <span class="n">end_time_raw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">runtime_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Preserve the exact ordering semantics of the original</span>
+                    <span class="c1"># ``sorted(..., key=_continuous_event_spec_time_sort_key)``.</span>
+                    <span class="c1"># The helper is called explicitly rather than passed as a</span>
+                    <span class="c1"># function pointer. The original index provides stable ordering</span>
+                    <span class="c1"># when two events have identical sort keys.</span>
+                    <span class="n">indexed_event_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span>
+                        <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
-                        <span class="k">if</span> <span class="n">end_time_raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Ramp EMT events require an end_time&quot;</span><span class="p">)</span>
+                    <span class="n">event_spec_index</span><span class="p">:</span> <span class="nb">int</span>
+                    <span class="n">event_spec_to_sort</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+
+                    <span class="k">for</span> <span class="n">event_spec_index</span><span class="p">,</span> <span class="n">event_spec_to_sort</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">event_specs</span><span class="p">):</span>
+                        <span class="n">event_sort_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">_continuous_event_spec_time_sort_key</span><span class="p">(</span>
+                            <span class="n">event_spec_to_sort</span>
+                        <span class="p">)</span>
+
+                        <span class="n">indexed_event_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="p">(</span>
+                                <span class="n">event_sort_key</span><span class="p">,</span>
+                                <span class="n">event_spec_index</span><span class="p">,</span>
+                                <span class="n">event_spec_to_sort</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+
+                    <span class="n">indexed_event_specs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+                    <span class="c1"># Begin with the parameter&#39;s current runtime expression. Events</span>
+                    <span class="c1"># are then layered chronologically on top of that expression.</span>
+                    <span class="n">active_expr</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">active_runtime_eqs</span><span class="p">[</span><span class="n">runtime_idx</span><span class="p">]</span>
+                    <span class="n">indexed_event_spec</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+
+                    <span class="k">for</span> <span class="n">indexed_event_spec</span> <span class="ow">in</span> <span class="n">indexed_event_specs</span><span class="p">:</span>
+                        <span class="n">event_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">indexed_event_spec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">transition_type_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;transition_type&quot;</span><span class="p">]</span>
+
+                        <span class="k">if</span> <span class="p">(</span>
+                                <span class="n">transition_type_value</span>
+                                <span class="o">==</span> <span class="n">DynamicEventTransitionType</span><span class="o">.</span><span class="n">Ramp</span>
+                        <span class="p">):</span>
+                            <span class="c1"># A ramp replaces the runtime expression between its</span>
+                            <span class="c1"># start and end times and reaches the requested final</span>
+                            <span class="c1"># value at the end of the interval.</span>
+                            <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])</span>
+                            <span class="n">end_time_raw</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span>
+
+                            <span class="k">if</span> <span class="n">end_time_raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                    <span class="s2">&quot;Ramp EMT events require an end_time&quot;</span>
+                                <span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">pass</span>
+
+                            <span class="n">end_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">end_time_raw</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">end_time</span> <span class="o">&gt;</span> <span class="n">start_time</span><span class="p">:</span>
+                                <span class="k">pass</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                    <span class="s2">&quot;Ramp EMT events require end_time greater than time&quot;</span>
+                                <span class="p">)</span>
+
+                            <span class="n">active_expr</span> <span class="o">=</span> <span class="n">_build_ramp_runtime_expr</span><span class="p">(</span>
+                                <span class="n">time_var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_glob_time</span><span class="p">,</span>
+                                <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+                                <span class="n">end_time</span><span class="o">=</span><span class="n">end_time</span><span class="p">,</span>
+                                <span class="n">before_expr</span><span class="o">=</span><span class="n">active_expr</span><span class="p">,</span>
+                                <span class="n">final_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]),</span>
+                            <span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="k">pass</span>
+                            <span class="c1"># Non-ramp continuous events are represented as an</span>
+                            <span class="c1"># instantaneous piecewise parameter value change.</span>
+                            <span class="n">event_time_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                                <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]),),</span>
+                                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+                            <span class="p">)</span>
+                            <span class="n">event_new_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                                <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]),),</span>
+                                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+                            <span class="p">)</span>
 
-                        <span class="n">end_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">end_time_raw</span><span class="p">)</span>
+                            <span class="n">active_expr</span> <span class="o">=</span> <span class="n">piecewise</span><span class="p">(</span>
+                                <span class="n">time_var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_glob_time</span><span class="p">,</span>
+                                <span class="n">t_events</span><span class="o">=</span><span class="n">event_time_values</span><span class="p">,</span>
+                                <span class="n">new_values</span><span class="o">=</span><span class="n">event_new_values</span><span class="p">,</span>
+                                <span class="n">default_value</span><span class="o">=</span><span class="n">active_expr</span><span class="p">,</span>
+                            <span class="p">)</span>
 
-                        <span class="k">if</span> <span class="n">end_time</span> <span class="o">&gt;</span> <span class="n">start_time</span><span class="p">:</span>
-                            <span class="k">pass</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Ramp EMT events require end_time greater than time&quot;</span><span class="p">)</span>
-
-                        <span class="n">active_expr</span> <span class="o">=</span> <span class="n">_build_ramp_runtime_expr</span><span class="p">(</span>
-                            <span class="n">time_var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_glob_time</span><span class="p">,</span>
-                            <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
-                            <span class="n">end_time</span><span class="o">=</span><span class="n">end_time</span><span class="p">,</span>
-                            <span class="n">before_expr</span><span class="o">=</span><span class="n">active_expr</span><span class="p">,</span>
-                            <span class="n">final_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]),</span>
+                    <span class="c1"># Store the fully composed expression back in the same flat</span>
+                    <span class="c1"># runtime-vector position used by the solver.</span>
+                    <span class="n">active_runtime_eqs</span><span class="p">[</span><span class="n">runtime_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">active_expr</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># An event can only be applied when its parameter is present in</span>
+                    <span class="c1"># the finalized runtime parameter mapping.</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="p">(</span>
+                                <span class="s2">&quot;EMT event targets one runtime parameter that is &quot;</span>
+                                <span class="s2">&quot;not registered in the active problem.&quot;</span>
+                            <span class="p">),</span>
+                            <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+                            <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;event_parameter_uid&quot;</span><span class="p">,</span>
+                            <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">continuous_parameter_uid</span><span class="p">),</span>
+                            <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;Registered EMT runtime parameter&quot;</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">active_expr</span> <span class="o">=</span> <span class="n">piecewise</span><span class="p">(</span>
-                            <span class="n">time_var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_glob_time</span><span class="p">,</span>
-                            <span class="n">t_events</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-                            <span class="n">new_values</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">event_spec</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-                            <span class="n">default_value</span><span class="o">=</span><span class="n">active_expr</span><span class="p">,</span>
-                        <span class="p">)</span>
-
-                <span class="n">active_runtime_eqs</span><span class="p">[</span><span class="n">runtime_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">active_expr</span>
+                        <span class="k">pass</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
 
+        <span class="c1"># Commit the selected group and its newly constructed runtime event state.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_events_group</span> <span class="o">=</span> <span class="n">emt_events_group</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_all_eqs_source</span> <span class="o">=</span> <span class="n">active_runtime_eqs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduled_mode_events</span> <span class="o">=</span> <span class="n">scheduled_mode_events</span>
@@ -5843,49 +5979,58 @@
         <span class="c1"># updates; it does not change the parameter ordering. Reusing the existing</span>
         <span class="c1"># partition avoids rebuilding constant parameter buffers and repeated list</span>
         <span class="c1"># reconstruction during every event-group switch.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_continuous_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_mode_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-
+        <span class="c1">#</span>
         <span class="c1"># ``active_runtime_eqs`` is already expressed in the flat runtime-vector</span>
         <span class="c1"># order used by ``uid2idx_event_params`` and by the solver runtime buffer.</span>
         <span class="c1"># Re-splitting it through ``_runtime_all_parameters_source`` would switch</span>
         <span class="c1"># back to source-block order and scramble retained mode parameters such as</span>
         <span class="c1"># Bergeron history terms. The slices keep the continuous/mode partition</span>
         <span class="c1"># aligned with the finalized flat parameter layout.</span>
-        <span class="n">runtime_continuous_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">active_runtime_eqs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_runtime_continuous_slice</span><span class="p">])</span>
-        <span class="n">runtime_mode_eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">active_runtime_eqs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_runtime_mode_slice</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_continuous_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">active_runtime_eqs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_runtime_continuous_slice</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_mode_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">active_runtime_eqs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_runtime_mode_slice</span><span class="p">]</span>
+        <span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">equation</span> <span class="ow">in</span> <span class="n">runtime_continuous_eqs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_continuous_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span>
+        <span class="c1"># Rebuild the unified event-equation vector without concatenating lists,</span>
+        <span class="c1"># preserving the continuous-then-mode ordering expected by the solver.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_parameters_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_runtime_continuous_eqs</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">equation</span> <span class="ow">in</span> <span class="n">runtime_mode_eqs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_mode_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span>
+        <span class="n">runtime_mode_equation</span><span class="p">:</span> <span class="n">Any</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_event_parameters_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">runtime_mode_equation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_mode_eqs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_parameters_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">runtime_mode_equation</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">equation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_continuous_eqs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_parameters_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">equation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_runtime_mode_eqs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_parameters_eqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">equation</span><span class="p">)</span>
-
+        <span class="c1"># Reset the cursor because scheduled mode events must be consumed again</span>
+        <span class="c1"># according to the newly activated group.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode_event_cursor</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_mode_event_state</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variable_parameter_number</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># Event-group activation must preserve the already resolved runtime</span>
-            <span class="c1"># operating point from explicit/native initialization. Rebuilding the</span>
-            <span class="c1"># vector from equation defaults here would erase PF-seeded and</span>
-            <span class="c1"># explicit-init-resolved parameters (for example Thevenin internal</span>
-            <span class="c1"># runtime references) just before the first simulation step.</span>
+        <span class="c1"># Event-group activation must preserve the already resolved runtime</span>
+        <span class="c1"># operating point from explicit/native initialization. Rebuilding the</span>
+        <span class="c1"># vector from equation defaults here would erase PF-seeded and</span>
+        <span class="c1"># explicit-init-resolved parameters, for example Thevenin internal runtime</span>
+        <span class="c1"># references, immediately before the first simulation step.</span>
+        <span class="n">variable_parameter_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_variable_parameter_number</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">variable_parameter_number</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">preserved_runtime_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_params_values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_event_params_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_runtime_parameter_values</span><span class="p">(</span>
                 <span class="mf">0.0</span><span class="p">,</span>
                 <span class="n">seed_values</span><span class="o">=</span><span class="n">preserved_runtime_values</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_params_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">def_event_params_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_params_values</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_params_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">def_event_params_fn</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_event_params_values</span><span class="p">,</span>
+                <span class="mf">0.0</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_event_params_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_event_params_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+            <span class="p">)</span></div>
 
 
     <span class="c1"># ---------------------------------------------------------------------</span>
@@ -6245,14 +6390,17 @@
 
                 <span class="k">if</span> <span class="n">source_count_dc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">residual_dc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0e-9</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DC EMT injection residual could not be assigned.&quot;</span><span class="p">,</span>
-                            <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
-                            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bus_index=</span><span class="si">{</span><span class="n">bus_index</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">residual_dc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;At least one source-like DC injection&quot;</span><span class="p">,</span>
-                            <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
-                            <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;injection_seed_store_3ph&quot;</span><span class="p">,</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DC EMT injection residual could not be assigned.&quot;</span><span class="p">,</span>
+                                <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bus_index=</span><span class="si">{</span><span class="n">bus_index</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">residual_dc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;At least one source-like DC injection&quot;</span><span class="p">,</span>
+                                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+                                <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;injection_seed_store_3ph&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -6293,14 +6441,17 @@
 
                 <span class="k">if</span> <span class="n">source_count_ac</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual_ac</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">1.0e-9</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;AC EMT injection residual could not be assigned.&quot;</span><span class="p">,</span>
-                            <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
-                            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bus_index=</span><span class="si">{</span><span class="n">bus_index</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">residual_ac</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;At least one source-like AC injection&quot;</span><span class="p">,</span>
-                            <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
-                            <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;injection_seed_store_3ph&quot;</span><span class="p">,</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;AC EMT injection residual could not be assigned.&quot;</span><span class="p">,</span>
+                                <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bus_index=</span><span class="si">{</span><span class="n">bus_index</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">residual_ac</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;At least one source-like AC injection&quot;</span><span class="p">,</span>
+                                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+                                <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;injection_seed_store_3ph&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -6434,14 +6585,17 @@
 
                 <span class="k">if</span> <span class="n">source_count_dc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">residual_dc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0e-9</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Balanced DC EMT injection residual could not be assigned.&quot;</span><span class="p">,</span>
-                            <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
-                            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bus_index=</span><span class="si">{</span><span class="n">bus_index</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">residual_dc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;At least one source-like DC injection&quot;</span><span class="p">,</span>
-                            <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
-                            <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;injection_seed_store_balanced&quot;</span><span class="p">,</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Balanced DC EMT injection residual could not be assigned.&quot;</span><span class="p">,</span>
+                                <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bus_index=</span><span class="si">{</span><span class="n">bus_index</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">residual_dc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;At least one source-like DC injection&quot;</span><span class="p">,</span>
+                                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+                                <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;injection_seed_store_balanced&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -6482,14 +6636,17 @@
 
                 <span class="k">if</span> <span class="n">source_count_ac</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual_ac</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">1.0e-9</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Balanced AC EMT injection residual could not be assigned.&quot;</span><span class="p">,</span>
-                            <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
-                            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bus_index=</span><span class="si">{</span><span class="n">bus_index</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">residual_ac</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;At least one source-like AC injection&quot;</span><span class="p">,</span>
-                            <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
-                            <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;injection_seed_store_balanced&quot;</span><span class="p">,</span>
-                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Balanced AC EMT injection residual could not be assigned.&quot;</span><span class="p">,</span>
+                                <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
+                                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bus_index=</span><span class="si">{</span><span class="n">bus_index</span><span class="si">}</span><span class="s2">, residual=</span><span class="si">{</span><span class="n">residual_ac</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;At least one source-like AC injection&quot;</span><span class="p">,</span>
+                                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+                                <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;injection_seed_store_balanced&quot;</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -7192,72 +7349,281 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">a6_value</span> <span class="o">=</span> <span class="n">runtime_value</span>
 
-        <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">]:</span>
-            <span class="n">voltage_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;v_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
-            <span class="n">voltage_derivative_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;d_v_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
-            <span class="n">current_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">VarPowerFlowReferenceType</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;i_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
-            <span class="n">u_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;u_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">q_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;q_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">v2_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;V</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">2&quot;</span><span class="p">)</span>
-            <span class="n">vm_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Vm</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">ratio_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;r</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">p_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;P_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">q_load_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Q_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">d_u_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;d_u_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">d_q_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;d_q_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">p0_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_api_obj_mapping_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdl</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Pl0_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">q0_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_api_obj_mapping_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdl</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Ql0_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">phase_label</span><span class="p">:</span> <span class="nb">str</span>
 
-            <span class="k">if</span> <span class="n">voltage_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">voltage_derivative_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">current_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">u_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">q_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">v2_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">vm_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ratio_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">p_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">q_load_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">d_u_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">d_q_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">p0_var</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">q0_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">phase_label</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">):</span>
+
+            <span class="n">voltage_reference</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span>
+            <span class="n">voltage_derivative_reference</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span>
+            <span class="n">current_reference</span><span class="p">:</span> <span class="n">VarPowerFlowReferenceType</span>
+            <span class="n">p0_reference</span><span class="p">:</span> <span class="n">ParamPowerFlowReferenceType</span>
+            <span class="n">q0_reference</span><span class="p">:</span> <span class="n">ParamPowerFlowReferenceType</span>
+
+            <span class="c1"># Select explicitly the power-flow references associated with each phase.</span>
+            <span class="k">if</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">:</span>
+                <span class="n">voltage_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_A</span>
+                <span class="n">voltage_derivative_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_A</span>
+                <span class="n">current_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_A</span>
+                <span class="n">p0_reference</span> <span class="o">=</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pl0_A</span>
+                <span class="n">q0_reference</span> <span class="o">=</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ql0_A</span>
+            <span class="k">elif</span> <span class="n">phase_label</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span>
+                <span class="n">voltage_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_B</span>
+                <span class="n">voltage_derivative_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_B</span>
+                <span class="n">current_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_B</span>
+                <span class="n">p0_reference</span> <span class="o">=</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pl0_B</span>
+                <span class="n">q0_reference</span> <span class="o">=</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ql0_B</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">pass</span>
+                <span class="n">voltage_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">v_C</span>
+                <span class="n">voltage_derivative_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">d_v_C</span>
+                <span class="n">current_reference</span> <span class="o">=</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">i_C</span>
+                <span class="n">p0_reference</span> <span class="o">=</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pl0_C</span>
+                <span class="n">q0_reference</span> <span class="o">=</span> <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ql0_C</span>
 
-            <span class="n">v_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">voltage_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">d_v_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">voltage_derivative_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">p0_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p0_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">q0_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">q0_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="c1"># Retrieve the external variables mapped to the corresponding power-flow references.</span>
+            <span class="n">voltage_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="n">voltage_reference</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">voltage_derivative_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="n">voltage_derivative_reference</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">current_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_external_mapping_var_if_present</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="n">current_reference</span><span class="p">,</span>
+            <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">v_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">d_v_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">p0_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">q0_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">pass</span>
+            <span class="c1"># Retrieve the internal variables required by the initialization equations.</span>
+            <span class="n">u_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;u_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">q_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;q_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">v2_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;V</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">2&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">vm_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Vm</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ratio_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;r</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">p_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;P_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">q_load_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Q_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">d_u_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;d_u_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">d_q_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_find_internal_var_for_init</span><span class="p">(</span>
+                <span class="n">mdl</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;d_q_</span><span class="si">{</span><span class="n">phase_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
-            <span class="n">u_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v_value</span><span class="p">)</span>
-            <span class="n">q_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="n">d_v_value</span> <span class="o">/</span> <span class="n">omega_value</span><span class="p">)</span>
-            <span class="n">v2_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">u_value</span> <span class="o">*</span> <span class="n">u_value</span> <span class="o">+</span> <span class="n">q_value</span> <span class="o">*</span> <span class="n">q_value</span><span class="p">)</span>
-            <span class="n">vm_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">v2_value</span> <span class="o">+</span> <span class="n">eps_value</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
-            <span class="n">ratio_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">vm_value</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">v0_value</span><span class="p">,</span> <span class="mf">1.0e-12</span><span class="p">))</span>
-            <span class="n">p_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">p0_value</span> <span class="o">*</span> <span class="p">(</span><span class="n">a1_value</span> <span class="o">*</span> <span class="n">ratio_value</span> <span class="o">*</span> <span class="n">ratio_value</span> <span class="o">+</span> <span class="n">a2_value</span> <span class="o">*</span> <span class="n">ratio_value</span> <span class="o">+</span> <span class="n">a3_value</span><span class="p">)))</span>
-            <span class="n">q_load_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">q0_value</span> <span class="o">*</span> <span class="p">(</span><span class="n">a4_value</span> <span class="o">*</span> <span class="n">ratio_value</span> <span class="o">*</span> <span class="n">ratio_value</span> <span class="o">+</span> <span class="n">a5_value</span> <span class="o">*</span> <span class="n">ratio_value</span> <span class="o">+</span> <span class="n">a6_value</span><span class="p">)))</span>
-            <span class="n">i_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">u_value</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">p_value</span><span class="p">)</span> <span class="o">+</span> <span class="n">q_value</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">q_load_value</span><span class="p">))</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">v2_value</span> <span class="o">+</span> <span class="n">eps_value</span><span class="p">,</span> <span class="mf">1.0e-12</span><span class="p">)))</span>
-            <span class="n">d_u_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">d_v_value</span><span class="p">)</span>
-            <span class="n">d_q_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">omega_value</span> <span class="o">*</span> <span class="n">u_value</span><span class="p">)</span>
+            <span class="c1"># Retrieve the phase active and reactive power parameters from the API mapping.</span>
+            <span class="c1"># The two calls are intentionally kept separate to preserve the original behavior.</span>
+            <span class="n">p0_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_api_obj_mapping_local</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">mdl</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">p0_reference</span><span class="p">,</span>
+                <span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">q0_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Var</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_api_obj_mapping_local</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">mdl</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">q0_reference</span><span class="p">,</span>
+                <span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">target_var</span><span class="p">,</span> <span class="n">target_value</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="p">(</span><span class="n">u_var</span><span class="p">,</span> <span class="n">u_value</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">q_var</span><span class="p">,</span> <span class="n">q_value</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">v2_var</span><span class="p">,</span> <span class="n">v2_value</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">vm_var</span><span class="p">,</span> <span class="n">vm_value</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">ratio_var</span><span class="p">,</span> <span class="n">ratio_value</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">p_var</span><span class="p">,</span> <span class="n">p_value</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">q_load_var</span><span class="p">,</span> <span class="n">q_load_value</span><span class="p">),</span>
-                <span class="p">(</span><span class="n">current_var</span><span class="p">,</span> <span class="n">i_value</span><span class="p">),</span>
-            <span class="p">]:</span>
-                <span class="n">existing_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">existing_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">existing_value</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="p">[</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_value</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_temp_post_init_guess</span><span class="p">[</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_value</span><span class="p">)</span>
+            <span class="c1"># Only initialize the phase when every variable required by the model is available.</span>
+            <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">voltage_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">voltage_derivative_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">current_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">u_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">q_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">v2_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">vm_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">ratio_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">p_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">q_load_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">d_u_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">d_q_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">p0_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="ow">and</span> <span class="n">q0_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="c1"># Retrieve the network and power-flow values required to derive</span>
+                <span class="c1"># the initialization of the internal model variables.</span>
+                <span class="n">v_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">voltage_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">d_v_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">voltage_derivative_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">p0_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">p0_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">q0_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">q0_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Only evaluate the initialization equations when all required values exist.</span>
+                <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">v_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                        <span class="ow">and</span> <span class="n">d_v_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                        <span class="ow">and</span> <span class="n">p0_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                        <span class="ow">and</span> <span class="n">q0_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="p">):</span>
+                    <span class="c1"># Recover the internal orthogonal voltage components from the</span>
+                    <span class="c1"># instantaneous voltage and its derivative.</span>
+                    <span class="n">u_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v_value</span><span class="p">)</span>
+                    <span class="n">q_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="n">d_v_value</span> <span class="o">/</span> <span class="n">omega_value</span><span class="p">)</span>
+
+                    <span class="c1"># Compute squared voltage magnitude and regularized voltage magnitude.</span>
+                    <span class="n">v2_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="n">u_value</span> <span class="o">*</span> <span class="n">u_value</span>
+                        <span class="o">+</span> <span class="n">q_value</span> <span class="o">*</span> <span class="n">q_value</span>
+                    <span class="p">)</span>
+                    <span class="n">vm_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                            <span class="nb">max</span><span class="p">(</span>
+                                <span class="n">v2_value</span> <span class="o">+</span> <span class="n">eps_value</span><span class="p">,</span>
+                                <span class="mf">0.0</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Normalize the voltage magnitude with respect to the reference voltage.</span>
+                    <span class="n">ratio_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="n">vm_value</span>
+                        <span class="o">/</span> <span class="nb">max</span><span class="p">(</span>
+                            <span class="n">v0_value</span><span class="p">,</span>
+                            <span class="mf">1.0e-12</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Initialize active power using the voltage-dependent load characteristic.</span>
+                    <span class="n">p_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="o">-</span><span class="p">(</span>
+                                <span class="n">p0_value</span>
+                                <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">a1_value</span> <span class="o">*</span> <span class="n">ratio_value</span> <span class="o">*</span> <span class="n">ratio_value</span>
+                                        <span class="o">+</span> <span class="n">a2_value</span> <span class="o">*</span> <span class="n">ratio_value</span>
+                                        <span class="o">+</span> <span class="n">a3_value</span>
+                                <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Initialize reactive power using the voltage-dependent load characteristic.</span>
+                    <span class="n">q_load_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="o">-</span><span class="p">(</span>
+                                <span class="n">q0_value</span>
+                                <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">a4_value</span> <span class="o">*</span> <span class="n">ratio_value</span> <span class="o">*</span> <span class="n">ratio_value</span>
+                                        <span class="o">+</span> <span class="n">a5_value</span> <span class="o">*</span> <span class="n">ratio_value</span>
+                                        <span class="o">+</span> <span class="n">a6_value</span>
+                                <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Recover the phase current from the initialized voltage and load powers.</span>
+                    <span class="n">i_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="o">-</span><span class="p">(</span>
+                                <span class="mf">2.0</span>
+                                <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">u_value</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">p_value</span><span class="p">)</span>
+                                        <span class="o">+</span> <span class="n">q_value</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">q_load_value</span><span class="p">)</span>
+                                <span class="p">)</span>
+                                <span class="o">/</span> <span class="nb">max</span><span class="p">(</span>
+                            <span class="n">v2_value</span> <span class="o">+</span> <span class="n">eps_value</span><span class="p">,</span>
+                            <span class="mf">1.0e-12</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Initialize the derivatives associated with the orthogonal voltage states.</span>
+                    <span class="n">d_u_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">d_v_value</span><span class="p">)</span>
+                    <span class="n">d_q_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="n">omega_value</span> <span class="o">*</span> <span class="n">u_value</span>
+                    <span class="p">)</span>
+
+                    <span class="n">target_var</span><span class="p">:</span> <span class="n">Any</span>
+                    <span class="n">target_value</span><span class="p">:</span> <span class="nb">float</span>
+
+                    <span class="c1"># Initialize algebraic variables only when no finite value has already</span>
+                    <span class="c1"># been provided by a previous initialization stage.</span>
+                    <span class="k">for</span> <span class="n">target_var</span><span class="p">,</span> <span class="n">target_value</span> <span class="ow">in</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="n">u_var</span><span class="p">,</span> <span class="n">u_value</span><span class="p">),</span>
+                            <span class="p">(</span><span class="n">q_var</span><span class="p">,</span> <span class="n">q_value</span><span class="p">),</span>
+                            <span class="p">(</span><span class="n">v2_var</span><span class="p">,</span> <span class="n">v2_value</span><span class="p">),</span>
+                            <span class="p">(</span><span class="n">vm_var</span><span class="p">,</span> <span class="n">vm_value</span><span class="p">),</span>
+                            <span class="p">(</span><span class="n">ratio_var</span><span class="p">,</span> <span class="n">ratio_value</span><span class="p">),</span>
+                            <span class="p">(</span><span class="n">p_var</span><span class="p">,</span> <span class="n">p_value</span><span class="p">),</span>
+                            <span class="p">(</span><span class="n">q_load_var</span><span class="p">,</span> <span class="n">q_load_value</span><span class="p">),</span>
+                            <span class="p">(</span><span class="n">current_var</span><span class="p">,</span> <span class="n">i_value</span><span class="p">),</span>
+                    <span class="p">):</span>
+                        <span class="n">existing_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                            <span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                            <span class="kc">None</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                        <span class="k">if</span> <span class="p">(</span>
+                                <span class="n">existing_value</span> <span class="ow">is</span> <span class="kc">None</span>
+                                <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">existing_value</span><span class="p">)</span>
+                        <span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="p">[</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                                <span class="n">target_value</span>
+                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_temp_post_init_guess</span><span class="p">[</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                                <span class="n">target_value</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
+
+                    <span class="c1"># Initialize differential variables only when no finite derivative</span>
+                    <span class="c1"># initialization has already been provided.</span>
+                    <span class="k">for</span> <span class="n">target_var</span><span class="p">,</span> <span class="n">target_value</span> <span class="ow">in</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="n">d_u_var</span><span class="p">,</span> <span class="n">d_u_value</span><span class="p">),</span>
+                            <span class="p">(</span><span class="n">d_q_var</span><span class="p">,</span> <span class="n">d_q_value</span><span class="p">),</span>
+                    <span class="p">):</span>
+                        <span class="n">existing_diff_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff_init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                            <span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                            <span class="kc">None</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                        <span class="k">if</span> <span class="p">(</span>
+                                <span class="n">existing_diff_value</span> <span class="ow">is</span> <span class="kc">None</span>
+                                <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">existing_diff_value</span><span class="p">)</span>
+                        <span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">diff_init_guess</span><span class="p">[</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                                <span class="n">target_value</span>
+                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_temp_post_diff_init_guess</span><span class="p">[</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+                                <span class="n">target_value</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">pass</span>
-
-            <span class="k">for</span> <span class="n">target_var</span><span class="p">,</span> <span class="n">target_value</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">d_u_var</span><span class="p">,</span> <span class="n">d_u_value</span><span class="p">),</span> <span class="p">(</span><span class="n">d_q_var</span><span class="p">,</span> <span class="n">d_q_value</span><span class="p">)]:</span>
-                <span class="n">existing_diff_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff_init_guess</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">existing_diff_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">existing_diff_value</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">diff_init_guess</span><span class="p">[</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_value</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_temp_post_diff_init_guess</span><span class="p">[</span><span class="n">target_var</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_value</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_vsc_terminal_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                   <span class="n">f_bus_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -10381,14 +10747,17 @@
 <span class="sd">        :return: Stack of reduced transition matrices or None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">jac_evaluator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;No Jacobian evaluator was provided for Floquet Ak stack computation.&quot;</span><span class="p">,</span>
-                <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
-                <span class="n">value</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
-                <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;Callable Jacobian evaluator&quot;</span><span class="p">,</span>
-                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
-                <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;jac_evaluator&quot;</span>
-            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;No Jacobian evaluator was provided for Floquet Ak stack computation.&quot;</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;EmtProblemDae&quot;</span><span class="p">,</span>
+                    <span class="n">value</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+                    <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;Callable Jacobian evaluator&quot;</span><span class="p">,</span>
+                    <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;EMT&quot;</span><span class="p">,</span>
+                    <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;jac_evaluator&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>

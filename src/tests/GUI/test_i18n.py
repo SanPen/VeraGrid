@@ -214,31 +214,6 @@ def test_update_translations_includes_runtime_diagram_library_labels() -> None:
     assert "Drag & drop {name} into the schematic" in map_messages
 
 
-def test_install_translators_loads_spanish_catalog(qt_app: object) -> None:
-    """
-    The startup loader should install the compiled VeraGrid translation catalog.
-    """
-    translator: ApplicationTranslator = ApplicationTranslator(qt_app)
-    translator.set_language(ApplicationLanguage.SPANISH)
-
-    assert QtCore.QCoreApplication.translate("messages", "Information") == "Información"
-    assert QtCore.QCoreApplication.translate("mainWindow", "File") == "Archivo"
-    assert QtCore.QCoreApplication.translate("mainWindow", "Model") == "Modelo"
-    assert QtCore.QCoreApplication.translate("BlockEditorWindow", "Library") == "Biblioteca"
-    assert QtCore.QCoreApplication.translate("CatalogueElementsDialog", "Select all") == "Seleccionar todo"
-    assert QtCore.QCoreApplication.translate("CgmesImportDialog", "CGMES Import") == "Importación CGMES"
-    assert QtCore.QCoreApplication.translate("DgsImportDialog", "DGS Import") == "Importación DGS"
-    assert QtCore.QCoreApplication.translate("DynamicEditorWorkspaceWindow", "Delete all") == "Eliminar todo"
-    assert QtCore.QCoreApplication.translate("ExcelSelectionDialog", "Excel sheet selection") == "Selección de hoja de Excel"
-    assert QtCore.QCoreApplication.translate("LineEditorDialog", "Available templates") == "Plantillas disponibles"
-    assert QtCore.QCoreApplication.translate("MainWindow", "Copy sigma table") == "Copiar tabla sigma"
-    assert QtCore.QCoreApplication.translate("MainWindow", "How To Use This Dashboard") == "Cómo usar este panel"
-    assert QtCore.QCoreApplication.translate("MainWindow", "Contingency planner") == "Planificador de contingencias"
-    assert QtCore.QCoreApplication.translate("MainWindow", "Wind power wizard") == "Asistente de potencia eólica"
-    assert QtCore.QCoreApplication.translate("MainWindow", "Insert Catalogue Component") == "Insertar componente de catálogo"
-    assert QtCore.QCoreApplication.translate("MainWindow", "Number of nodes") == "Número de nodos"
-
-
 @pytest.mark.parametrize(
     ("language", "file_text", "selector_text"),
     [

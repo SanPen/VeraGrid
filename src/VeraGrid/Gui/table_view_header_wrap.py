@@ -9,6 +9,179 @@ from VeraGrid.Gui.results_model import ResultsModel
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 
 
+class VerticalHeaderWidthResizer(QtWidgets.QWidget):
+    """
+    Thin handle that lets a table vertical header width be resized from its right edge.
+    """
+
+    __slots__ = (
+        "_table_view",
+        "_handle_width",
+        "_minimum_width",
+        "_maximum_width",
+        "_resizing",
+        "_resize_start_global_x",
+        "_resize_start_local_x",
+        "_resize_start_width",
+    )
+
+    def __init__(self,
+                 table_view: QtWidgets.QTableView,
+                 minimum_width: int = 40,
+                 maximum_width: int = 2000,
+                 default_maximum_width: int = 500,
+                 handle_width: int = 8) -> None:
+        """
+        Constructor.
+
+        :param table_view: Table view whose vertical header width is resizable.
+        :param minimum_width: Minimum accepted header width.
+        :param maximum_width: Maximum accepted header width.
+        :param default_maximum_width: Maximum automatic header width before the user resizes it.
+        :param handle_width: Width of the resize handle at the header right edge.
+        :return: None.
+        """
+        QtWidgets.QWidget.__init__(self, table_view)
+
+        self._table_view: QtWidgets.QTableView | None = table_view
+        self._handle_width: int = handle_width
+        self._minimum_width: int = minimum_width
+        self._maximum_width: int = maximum_width
+        self._resizing: bool = False
+        self._resize_start_global_x: int = 0
+        self._resize_start_local_x: int = 0
+        self._resize_start_width: int = 0
+
+        self.setCursor(QtCore.Qt.CursorShape.SizeHorCursor)
+        self.setMouseTracking(True)
+        self.setToolTip(self.tr("Resize index column"))
+        self.setAutoFillBackground(False)
+        table_view.verticalHeader().setMinimumWidth(self._minimum_width)
+        table_view.verticalHeader().setMaximumWidth(default_maximum_width)
+        table_view.installEventFilter(self)
+        table_view.verticalHeader().installEventFilter(self)
+        table_view.horizontalHeader().installEventFilter(self)
+        table_view.viewport().installEventFilter(self)
+        table_view.destroyed.connect(self.clear_table_view)
+        self.reposition()
+        self.show()
+        self.raise_()
+
+    def clear_table_view(self) -> None:
+        """
+        Clear Qt object references when the table is destroyed.
+
+        :return: None.
+        """
+        self._table_view = None
+        self.hide()
+
+    def set_header_width(self, width: int) -> None:
+        """
+        Apply a fixed vertical header width to the table.
+
+        :param width: Requested width in pixels.
+        :return: None.
+        """
+        table_view: QtWidgets.QTableView | None = self._table_view
+        if table_view is not None:
+            fixed_width: int = max(self._minimum_width, min(self._maximum_width, width))
+            header: QtWidgets.QHeaderView = table_view.verticalHeader()
+
+            # Qt computes the row-header gutter from the vertical header widget width.
+            header.setMinimumWidth(self._minimum_width)
+            header.setMaximumWidth(self._maximum_width)
+            header.setFixedWidth(fixed_width)
+            table_view.updateGeometries()
+            header.update()
+            self.reposition()
+        else:
+            pass
+
+    def reposition(self) -> None:
+        """
+        Place the resize handle on the boundary between the index header and table body.
+
+        :return: None.
+        """
+        table_view: QtWidgets.QTableView | None = self._table_view
+        if table_view is not None:
+            header_width: int = table_view.verticalHeader().width()
+            x_pos: int = max(0, header_width - int(self._handle_width / 2))
+            self.setGeometry(x_pos, 0, self._handle_width, table_view.height())
+            self.raise_()
+        else:
+            pass
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Start a width resize drag.
+
+        :param event: Mouse press event.
+        :return: None.
+        """
+        table_view: QtWidgets.QTableView | None = self._table_view
+        if table_view is not None and event.button() == QtCore.Qt.MouseButton.LeftButton:
+            self._resizing = True
+            self._resize_start_global_x = event.globalPosition().toPoint().x()
+            self._resize_start_local_x = event.position().toPoint().x()
+            self._resize_start_width = table_view.verticalHeader().width()
+            self.grabMouse()
+            event.accept()
+        else:
+            QtWidgets.QWidget.mousePressEvent(self, event)
+
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Resize the index header while dragging.
+
+        :param event: Mouse move event.
+        :return: None.
+        """
+        if self._resizing:
+            delta_x: int = event.globalPosition().toPoint().x() - self._resize_start_global_x
+            if delta_x == 0:
+                delta_x = event.position().toPoint().x() - self._resize_start_local_x
+            else:
+                pass
+            self.set_header_width(width=self._resize_start_width + delta_x)
+            event.accept()
+        else:
+            QtWidgets.QWidget.mouseMoveEvent(self, event)
+
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+        """
+        Finish a width resize drag.
+
+        :param event: Mouse release event.
+        :return: None.
+        """
+        if self._resizing:
+            self._resizing = False
+            self.releaseMouse()
+            event.accept()
+        else:
+            QtWidgets.QWidget.mouseReleaseEvent(self, event)
+
+    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent) -> bool:
+        """
+        Intercept only vertical-header viewport mouse events needed for width resizing.
+
+        :param watched: Watched QObject.
+        :param event: Incoming event.
+        :return: True when the event was handled.
+        """
+        if self._table_view is not None:
+            if event.type() in (QtCore.QEvent.Type.Resize, QtCore.QEvent.Type.Show, QtCore.QEvent.Type.LayoutRequest):
+                self.reposition()
+            else:
+                pass
+        else:
+            pass
+
+        return QtWidgets.QWidget.eventFilter(self, watched, event)
+
+
 class HeaderViewWithWordWrap(QtWidgets.QHeaderView):
     """
     HeaderViewWithWordWrap

@@ -80,6 +80,7 @@ from VeraGridEngine.IO.dgs.dgs_objects import (
     ElmVscmono,
     PowerFactoryVscType,
     StaCubic,
+    TypLne,
 )
 from VeraGridEngine.IO.dgs.dynamic_models.dynamic_model_import import (
     DgsDynamicTemplateConversionResult,
@@ -280,6 +281,55 @@ def test_elmterm_bus_addition_rejects_empty_fid_atomically() -> None:
         )
 
     assert len(destination.buses) == 0
+
+
+@pytest.mark.parametrize(
+    ('line', 'header_map', 'expected_aohl', 'expected_aohl_declared',
+     'expected_cohl', 'expected_cohl_declared'),
+    (
+        ('type-1;1', {'ID': 0, 'systp': 1}, 'cab', False, 0, False),
+        ('type-1;cab', {'ID': 0, 'aohl_': 1}, 'cab', True, 0, False),
+        ('type-1;0', {'ID': 0, 'cohl_': 1}, 'cab', False, 0, True),
+        ('type-1;1', {'ID': 0, 'cohl_': 1}, 'cab', False, 1, True),
+        (
+            'type-1;cab;1',
+            {'ID': 0, 'aohl_': 1, 'cohl_': 2},
+            'cab',
+            True,
+            1,
+            True,
+        ),
+        ('type-1;;', {'ID': 0, 'aohl_': 1, 'cohl_': 2}, None, False, None, False),
+        ('type-1;wire;invalid', {'ID': 0, 'aohl_': 1, 'cohl_': 2}, 'wire', True, None, True),
+    ),
+)
+def test_typlne_parser_preserves_installation_evidence(
+        line: str,
+        header_map: dict[str, int],
+        expected_aohl: str | None,
+        expected_aohl_declared: bool,
+        expected_cohl: int | None,
+        expected_cohl_declared: bool,
+) -> None:
+    """Distinguish absent, empty, invalid, cable, overhead, and conflict rows.
+
+    :param line: Minimal DGS TypLne row.
+    :param header_map: Column positions declared by the DGS header.
+    :param expected_aohl: Parsed legacy installation value.
+    :param expected_aohl_declared: Whether the row declares the legacy field.
+    :param expected_cohl: Parsed current installation value.
+    :param expected_cohl_declared: Whether the row declares the current field.
+    :return: None.
+    """
+    source_type: TypLne = TypLne.parse_line(
+        line=line,
+        header_map=header_map,
+    )
+
+    assert source_type.aohl_ == expected_aohl
+    assert source_type.aohl_declared is expected_aohl_declared
+    assert source_type.cohl_ == expected_cohl
+    assert source_type.cohl_declared is expected_cohl_declared
 
 
 def test_elmterm_bus_addition_rejects_duplicate_fid_atomically() -> None:

@@ -11,6 +11,7 @@ from VeraGrid.Gui.pandas_model import PandasModel
 from VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model import CompiledArraysModule
 from VeraGrid.Gui.Main.SubClasses.Server.server import ServerMain
 import VeraGrid.Gui.gui_functions as gf
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 
 from VeraGridEngine.enumerations import BranchImpedanceMode
 
@@ -126,7 +127,10 @@ class CompiledArraysMain(ServerMain):
                 ax1.set_ylabel('Value')
 
         fig.tight_layout()
-        plt.show()
+        show_matplotlib_figure(figure=fig,
+                               parent=self,
+                               open_dialogs=self._open_plot_dialogs,
+                               title=self.tr("Array plot"))
 
     def recompile_circuits_for_display(self):
         """

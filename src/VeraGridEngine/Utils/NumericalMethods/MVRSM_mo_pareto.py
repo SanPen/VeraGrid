@@ -23,7 +23,7 @@
 import math
 import random
 import numpy as np
-from typing import List, Tuple
+from typing import Callable, List, Tuple
 from scipy.linalg.blas import dger
 from scipy.optimize import minimize
 from VeraGridEngine.Utils.NumericalMethods.non_dominated_sorting import non_dominated_sorting, dominates
@@ -460,7 +460,8 @@ def MVRSM_mo_pareto(obj_func,
                     max_evals: int,
                     n_objectives: int,
                     rand_evals: int = 0,
-                    args=()):
+                    args=(),
+                    cancel_checker: Callable[[], bool] | None = None):
     """
     MVRSM algorithm for multiple objectives
     x = [integer vars | float vars]
@@ -473,9 +474,23 @@ def MVRSM_mo_pareto(obj_func,
     :param n_objectives: number of objectives expected
     :param rand_evals: number of random initial evaluations
     :param args: extra arguments to be passed to obj_func apart from x
+    :param cancel_checker: Optional cancellation check.
     :return: pareto front y, pareto front x, all y not sorted
     """
     d = len(x0)  # number of decision variables
+
+    if max_evals <= 0:
+        y_population_cancelled: Mat = np.zeros((0, n_objectives))
+        x_population_cancelled: Mat = np.zeros((0, d))
+        return y_population_cancelled, x_population_cancelled, y_population_cancelled, x_population_cancelled
+    elif cancel_checker is not None and cancel_checker():
+        y_population_cancelled: Mat = np.zeros((0, n_objectives))
+        x_population_cancelled: Mat = np.zeros((0, d))
+        return y_population_cancelled, x_population_cancelled, y_population_cancelled, x_population_cancelled
+    else:
+        pass
+
+    rand_evals = min(rand_evals, max_evals)
 
     model = SurrogateModel.init(n_objectives, d, lb, ub, num_int)
     next_x = np.array(x0, dtype=float)  # candidate solution
@@ -492,21 +507,38 @@ def MVRSM_mo_pareto(obj_func,
 
     # if n_objectives >= 2:  # should always be declared
     Pareto_index = []  # List of the iterations of which evaluated solutions are currently Pareto optimal
+    actual_evals: int = 0
 
     # Start random iterations loop
     for i in range(rand_evals):
-        # Evaluate random point
-        x = next_x.astype(float, copy=False)
-        y = obj_func(x, *args)
+        if cancel_checker is not None and cancel_checker():
+            break
+        else:
+            # Evaluate random point
+            x = next_x.astype(float, copy=False)
+            y = obj_func(x, *args)
 
-        # Store evaluated point
-        x_population[i, :] = x
-        y_population[i, :] = y
+            # Store evaluated point
+            x_population[i, :] = x
+            y_population[i, :] = y
+            actual_evals += 1
 
-        # Perform random search
-        next_x[0:num_int] = np.random.binomial(1, np.random.rand(), num_int)  # integer variables
-        next_x[num_int:d] = np.random.uniform(lb[num_int:d], ub[num_int:d])  # continuous variables
-        # next_x[num_int:d] = np.random.beta(np.random.uniform(0, 5), np.random.uniform(0, 5), size=d-num_int)
+            # Perform random search
+            next_x[0:num_int] = np.random.binomial(1, np.random.rand(), num_int)  # integer variables
+            next_x[num_int:d] = np.random.uniform(lb[num_int:d], ub[num_int:d])  # continuous variables
+            # next_x[num_int:d] = np.random.beta(np.random.uniform(0, 5), np.random.uniform(0, 5), size=d-num_int)
+
+    if actual_evals < rand_evals:
+        if actual_evals > 0:
+            y_sorted, x_sorted, sorting_indices = non_dominated_sorting(y_values=y_population[:actual_evals, :].copy(),
+                                                                        x_values=x_population[:actual_evals, :])
+        else:
+            y_sorted = y_population[:actual_evals, :]
+            x_sorted = x_population[:actual_evals, :]
+
+        return y_sorted, x_sorted, y_population[:actual_evals, :], x_population[:actual_evals, :]
+    else:
+        pass
 
     # Once random iterations finish, get y_max and y_min for each objective
     normalization_factors = get_norm_factors(y_population[:rand_evals, :])
@@ -529,152 +561,163 @@ def MVRSM_mo_pareto(obj_func,
     # and explore the search space.
     for i in range(rand_evals, max_evals):
 
-        # Evaluate the objective function
-        x = next_x.astype(float, copy=False)
-        y = obj_func(x, *args)
+        if cancel_checker is not None and cancel_checker():
+            break
+        else:
+            # Evaluate the objective function
+            x = next_x.astype(float, copy=False)
+            y = obj_func(x, *args)
 
-        # Store the solution in the population at the position "i"
-        y_population[i, :] = y
-        x_population[i, :] = x
+            # Store the solution in the population at the position "i"
+            y_population[i, :] = y
+            x_population[i, :] = x
+            actual_evals += 1
 
-        # Update the surrogate model
-        y_normalized = normalize_md(y_no_normalized=y, norm_factors=normalization_factors)
+            # Update the surrogate model
+            y_normalized = normalize_md(y_no_normalized=y, norm_factors=normalization_factors)
 
-        model.update(x=x, y=y_normalized)
+            model.update(x=x, y=y_normalized)
         # e_time = time.time()
         # print(f"Time to update model: {e_time - st_time}")
 
         # Keep track of Pareto front
         # Note: Should actually do this for the random evaluations too
         # Note2: Can make this shorter by using the existing dominates function
-        if n_objectives >= 2:
-            if i == rand_evals:
-                Pareto_index.append(i)
-            else:
-                y_is_dominated = 0  # whether y is dominated by any of the previous Pareto optimal solutions
+            if n_objectives >= 2:
+                if i == rand_evals:
+                    Pareto_index.append(i)
+                else:
+                    y_is_dominated = 0  # whether y is dominated by any of the previous Pareto optimal solutions
 
-                # Pareto optimal points that should be removed because they are not Pareto optimal anymore due to y
-                pp_to_remove = []
+                    # Pareto optimal points that should be removed because they are not Pareto optimal anymore due to y
+                    pp_to_remove = []
 
-                for pp in Pareto_index:
-                    y_dominates_pp = 0
-                    pp_dominates_y = 0
-                    TOL = 1e-8  # tolerance level for determining Pareto optimality
-                    y_pp_scaled = normalize_md(y_population[pp, :], normalization_factors)
+                    for pp in Pareto_index:
+                        y_dominates_pp = 0
+                        pp_dominates_y = 0
+                        TOL = 1e-8  # tolerance level for determining Pareto optimality
+                        y_pp_scaled = normalize_md(y_population[pp, :], normalization_factors)
 
-                    # Check if y is exactly the same as pp, in which case it is not
-                    # useful to add it to the list of Pareto optimal solutions
-                    if np.all(y_pp_scaled == y_normalized):
-                        y_is_dominated = 1
-                        break
-                    for obj_i in range(n_objectives):
+                        # Check if y is exactly the same as pp, in which case it is not
+                        # useful to add it to the list of Pareto optimal solutions
+                        if np.all(y_pp_scaled == y_normalized):
+                            y_is_dominated = 1
+                            break
+                        for obj_i in range(n_objectives):
+                            # Situation A: y is dominated by pp
+                            diff = y_pp_scaled[obj_i] - y_normalized[obj_i]
+                            if diff < -TOL:
+                                pp_dominates_y += 1
+
+                            # Situation B: pp dominated by y
+                            if diff > TOL:
+                                y_dominates_pp += 1
+                        # print('pp_dominates_y', pp_dominates_y)
+                        # print('y_dominates_pp', y_dominates_pp)
                         # Situation A: y is dominated by pp
-                        diff = y_pp_scaled[obj_i] - y_normalized[obj_i]
-                        if diff < -TOL:
-                            pp_dominates_y += 1
+                        if pp_dominates_y >= 1 and y_dominates_pp == 0:
+                            # keep list the same, and don't add y
+                            # y is dominated by pp so stop checking other pp
+                            y_is_dominated = 1
+                            # print('A')
+                            break
 
                         # Situation B: pp dominated by y
-                        if diff > TOL:
-                            y_dominates_pp += 1
-                    # print('pp_dominates_y', pp_dominates_y)
-                    # print('y_dominates_pp', y_dominates_pp)
-                    # Situation A: y is dominated by pp
-                    if pp_dominates_y >= 1 and y_dominates_pp == 0:
-                        # keep list the same, and don't add y
-                        # y is dominated by pp so stop checking other pp
-                        y_is_dominated = 1
-                        # print('A')
-                        break
+                        if y_dominates_pp >= 1 and pp_dominates_y == 0:
+                            pp_to_remove.append(pp)
+                            # print('B')
+                    for pp in pp_to_remove:
+                        Pareto_index.remove(pp)
+                    # Situation C: pp and y don't dominate each other, for every pp --> y is then Pareto optimal
+                    if y_is_dominated == 0:
+                        Pareto_index.append(i)
 
-                    # Situation B: pp dominated by y
-                    if y_dominates_pp >= 1 and pp_dominates_y == 0:
-                        pp_to_remove.append(pp)
-                        # print('B')
-                for pp in pp_to_remove:
-                    Pareto_index.remove(pp)
-                # Situation C: pp and y don't dominate each other, for every pp --> y is then Pareto optimal
-                if y_is_dominated == 0:
-                    Pareto_index.append(i)
+            # Get scalarization weights
+            rnd_weights = np.random.rand(n_objectives)
+            # rnd_weights = np.random.lognormal(0, 1, n_objectives)
+            # rnd_weights = np.full(n_objectives, 0.5)
+            scalarization_weights = rnd_weights / rnd_weights.sum()
 
-        # Get scalarization weights
-        rnd_weights = np.random.rand(n_objectives)
-        # rnd_weights = np.random.lognormal(0, 1, n_objectives)
-        # rnd_weights = np.full(n_objectives, 0.5)
-        scalarization_weights = rnd_weights / rnd_weights.sum()
+            # Pick a random Pareto optimal x to start optimization from
+            if n_objectives >= 2:
+                rand_pp = np.random.randint(len(Pareto_index))
+                best_x = x_population[Pareto_index[rand_pp], :]
+            # if n_objectives == 1:
+            #     if y_normalized < best_y:
+            #         best_x = np.copy(x)
+            #         best_y = y
 
-        # Pick a random Pareto optimal x to start optimization from
-        if n_objectives >= 2:
-            rand_pp = np.random.randint(len(Pareto_index))
-            best_x = x_population[Pareto_index[rand_pp], :]
-        # if n_objectives == 1:
-        #     if y_normalized < best_y:
-        #         best_x = np.copy(x)
-        #         best_y = y
+            # Minimize surrogate model
+            if n_objectives == 1:
+                if dominates(y, best_y):
+                    best_x = np.copy(x)
+                    best_y = y_normalized
+            # st_time = time.time()
+            next_x = model.minimum(x0=best_x, scalarization_weights=scalarization_weights)
+            # e_time = time.time()
+            # print(f"Time to find minimum: {e_time - st_time}")
+            # Round discrete variables to the nearest integer.
+            next_x[0:num_int].round(out=next_x[0:num_int])
 
-        # Minimize surrogate model
-        if n_objectives == 1:
-            if dominates(y, best_y):
-                best_x = np.copy(x)
-                best_y = y_normalized
-        # st_time = time.time()
-        next_x = model.minimum(x0=best_x, scalarization_weights=scalarization_weights)
-        # e_time = time.time()
-        # print(f"Time to find minimum: {e_time - st_time}")
-        # Round discrete variables to the nearest integer.
-        next_x[0:num_int].round(out=next_x[0:num_int])
+            # Just to be sure, clip the decision variables to the bounds.
+            np.clip(next_x, lb, ub, out=next_x)
 
-        # Just to be sure, clip the decision variables to the bounds.
-        np.clip(next_x, lb, ub, out=next_x)
+            # Perform exploration to prevent the algorithm from getting stuck in local minima
+            # of the surrogate model.
 
-        # Perform exploration to prevent the algorithm from getting stuck in local minima
-        # of the surrogate model.
+            # Skip exploration in the last iteration (to end at the exact minimum of the surrogate model).
+            if i < max_evals - 2:
+                # Randomly perturb the discrete variables. Each x_i is shifted n units
+                # to the left (if dir is False) or to the right (if dir is True).
+                # The bounds of each variable are respected.
 
-        # Skip exploration in the last iteration (to end at the exact minimum of the surrogate model).
-        if i < max_evals - 2:
-            # Randomly perturb the discrete variables. Each x_i is shifted n units
-            # to the left (if dir is False) or to the right (if dir is True).
-            # The bounds of each variable are respected.
+                int_pert_prob = 1.0 / d  # probability that x_i is permuted
 
-            int_pert_prob = 1.0 / d  # probability that x_i is permuted
+                # integer exploration
+                for j in range(num_int):
 
-            # integer exploration
-            for j in range(num_int):
+                    r = random.random()  # determines n
+                    direction = random.getrandbits(1)  # whether to explore towards -∞ or +∞
+                    value = next_x[j]
 
-                r = random.random()  # determines n
-                direction = random.getrandbits(1)  # whether to explore towards -∞ or +∞
-                value = next_x[j]
+                    while r < int_pert_prob:
 
-                while r < int_pert_prob:
+                        if lb[j] == value < ub[j]:
+                            value += 1
 
-                    if lb[j] == value < ub[j]:
-                        value += 1
+                        elif lb[j] < value == ub[j]:
+                            value -= 1
 
-                    elif lb[j] < value == ub[j]:
-                        value -= 1
+                        elif lb[j] < value < ub[j]:
+                            value += 1 if direction else -1
 
-                    elif lb[j] < value < ub[j]:
-                        value += 1 if direction else -1
+                        r *= 2
 
-                    r *= 2
+                    next_x[j] = value
 
-                next_x[j] = value
+                # Continuous exploration
+                for j in range(num_int, d):
 
-            # Continuous exploration
-            for j in range(num_int, d):
+                    value = next_x[j]
 
-                value = next_x[j]
+                    while True:  # re-sample while out of bounds.
+                        # Choose a variance that scales inversely with the number of decision variables.
+                        # Note that Var(aX) = a^2 Var(X) for any random variable.
+                        delta = np.random.normal() * (ub[j] - lb[j]) * 0.1 / math.sqrt(d)
 
-                while True:  # re-sample while out of bounds.
-                    # Choose a variance that scales inversely with the number of decision variables.
-                    # Note that Var(aX) = a^2 Var(X) for any random variable.
-                    delta = np.random.normal() * (ub[j] - lb[j]) * 0.1 / math.sqrt(d)
+                        if lb[j] <= value + delta <= ub[j]:
+                            next_x[j] += delta
+                            break
 
-                    if lb[j] <= value + delta <= ub[j]:
-                        next_x[j] += delta
-                        break
+            else:
+                pass
 
     # apply non-dominated sorting
-    y_sorted, x_sorted, sorting_indices = non_dominated_sorting(y_values=y_population.copy(),
-                                                                x_values=x_population)
+    if actual_evals > 0:
+        y_sorted, x_sorted, sorting_indices = non_dominated_sorting(y_values=y_population[:actual_evals, :].copy(),
+                                                                    x_values=x_population[:actual_evals, :])
+    else:
+        y_sorted = y_population[:actual_evals, :]
+        x_sorted = x_population[:actual_evals, :]
 
-    return y_sorted, x_sorted, y_population, x_population
+    return y_sorted, x_sorted, y_population[:actual_evals, :], x_population[:actual_evals, :]

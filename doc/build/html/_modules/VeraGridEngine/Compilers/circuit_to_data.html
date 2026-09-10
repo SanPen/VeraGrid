@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Compilers.circuit_to_data &mdash; VeraGrid 6.5.6 documentation</title>
+  <title>VeraGridEngine.Compilers.circuit_to_data &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=1095f081"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -113,6 +114,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Fluid.fluid_injection_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">FluidInjectionTemplate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Aggregation.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">Area</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">BusMode</span><span class="p">,</span> <span class="n">BranchImpedanceMode</span><span class="p">,</span> <span class="n">ExternalGridMode</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">,</span>
                                          <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">HvdcControlType</span><span class="p">,</span> <span class="n">ConverterControlType</span><span class="p">,</span>
@@ -181,6 +183,7 @@
                             <span class="n">bus_voltage_used</span><span class="p">:</span> <span class="n">BoolVec</span><span class="p">,</span>
                             <span class="n">bus_data</span><span class="p">:</span> <span class="n">BusData</span><span class="p">,</span>
                             <span class="n">candidate_Vm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                            <span class="n">use_stored_guess</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
                             <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set the bus control voltage</span>
@@ -191,6 +194,7 @@
 <span class="sd">    :param bus_voltage_used: Array of flags indicating if a bus voltage has been modified before</span>
 <span class="sd">    :param bus_data: BusData</span>
 <span class="sd">    :param candidate_Vm: Voltage set point that you want to set</span>
+<span class="sd">    :param use_stored_guess: Use the stored seed values?</span>
 <span class="sd">    :param logger: Logger</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>  <span class="c1"># if it is not Slack</span>
@@ -205,23 +209,18 @@
             <span class="c1"># bus_data.bus_types[i] = BusMode.PV_tpe.value  # set as PV</span>
             <span class="n">bus_data</span><span class="o">.</span><span class="n">set_bus_mode</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">PV_tpe</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">bus_voltage_used</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">remote_control</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
-            <span class="c1"># initialize the remote bus voltage to the control value but preserve angle while updating magnitude</span>
-            <span class="n">existing_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
-            <span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">rect</span><span class="p">(</span><span class="n">candidate_Vm</span><span class="p">,</span> <span class="n">existing_angle</span><span class="p">)</span>
-            <span class="n">bus_voltage_used</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># initialize the local bus voltage to the control value but preserve angle while updating magnitude</span>
-            <span class="n">existing_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rect</span><span class="p">(</span><span class="n">candidate_Vm</span><span class="p">,</span> <span class="n">existing_angle</span><span class="p">)</span>
-            <span class="n">bus_voltage_used</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">controlled_bus_idx</span> <span class="o">=</span> <span class="n">j</span> <span class="k">if</span> <span class="n">remote_control</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">!=</span> <span class="n">i</span> <span class="k">else</span> <span class="n">i</span>
 
-    <span class="k">elif</span> <span class="n">candidate_Vm</span> <span class="o">!=</span> <span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bus_voltage_used</span><span class="p">[</span><span class="n">controlled_bus_idx</span><span class="p">]:</span>
+        <span class="n">existing_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">controlled_bus_idx</span><span class="p">])</span>
+        <span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">controlled_bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">rect</span><span class="p">(</span><span class="n">candidate_Vm</span><span class="p">,</span> <span class="n">existing_angle</span><span class="p">)</span>
+        <span class="n">bus_voltage_used</span><span class="p">[</span><span class="n">controlled_bus_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">candidate_Vm</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">controlled_bus_idx</span><span class="p">])):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Different control voltage set points&#39;</span><span class="p">,</span>
                          <span class="n">device</span><span class="o">=</span><span class="n">bus_name</span><span class="p">,</span>
                          <span class="n">value</span><span class="o">=</span><span class="n">candidate_Vm</span><span class="p">,</span>
-                         <span class="n">expected_value</span><span class="o">=</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+                         <span class="n">expected_value</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">[</span><span class="n">controlled_bus_idx</span><span class="p">]))</span></div>
 
 
 
@@ -532,6 +531,7 @@
                   <span class="n">bus_data</span><span class="p">:</span> <span class="n">BusData</span><span class="p">,</span>
                   <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+                  <span class="n">use_stored_guess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                   <span class="n">opf_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">OptimalPowerFlowResults</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">fill_three_phase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -829,6 +829,7 @@
                                         <span class="n">bus_data</span><span class="o">=</span><span class="n">bus_data</span><span class="p">,</span>
                                         <span class="n">bus_voltage_used</span><span class="o">=</span><span class="n">bus_voltage_used</span><span class="p">,</span>
                                         <span class="n">candidate_Vm</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Vm_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">),</span>
+                                        <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
                                         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">ExternalGridMode</span><span class="o">.</span><span class="n">PV</span><span class="p">:</span>
@@ -840,6 +841,7 @@
                                         <span class="n">bus_data</span><span class="o">=</span><span class="n">bus_data</span><span class="p">,</span>
                                         <span class="n">bus_voltage_used</span><span class="o">=</span><span class="n">bus_voltage_used</span><span class="p">,</span>
                                         <span class="n">candidate_Vm</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Vm_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">),</span>
+                                        <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
                                         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
             <span class="n">data</span><span class="o">.</span><span class="n">S</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_S_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
@@ -940,6 +942,7 @@
         <span class="n">bus_data</span><span class="p">:</span> <span class="n">BusData</span><span class="p">,</span>
         <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">control_remote_voltage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">fill_three_phase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1154,6 +1157,7 @@
                                         <span class="n">bus_data</span><span class="o">=</span><span class="n">bus_data</span><span class="p">,</span>
                                         <span class="n">bus_voltage_used</span><span class="o">=</span><span class="n">bus_voltage_used</span><span class="p">,</span>
                                         <span class="n">candidate_Vm</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Vset_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">),</span>
+                                        <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
                                         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">use_kw</span><span class="p">:</span>
@@ -1184,6 +1188,7 @@
         <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
         <span class="n">bus_data</span><span class="p">:</span> <span class="n">BusData</span><span class="p">,</span>
         <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">control_remote_voltage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">fill_three_phase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1304,9 +1309,9 @@
                                     <span class="n">bus_data</span><span class="o">=</span><span class="n">bus_data</span><span class="p">,</span>
                                     <span class="n">bus_voltage_used</span><span class="o">=</span><span class="n">bus_voltage_used</span><span class="p">,</span>
                                     <span class="n">candidate_Vm</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Vset_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">),</span>
+                                    <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
                                     <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
-            <span class="c1"># we pick this value to initialize</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
@@ -1363,6 +1368,7 @@
         <span class="n">t_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">opf_results</span><span class="p">:</span> <span class="n">VALID_OPF_RESULTS</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">time_series</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">control_remote_voltage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">fill_three_phase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
@@ -1396,6 +1402,7 @@
                               <span class="n">bus_voltage_used</span><span class="o">=</span><span class="n">bus_voltage_used</span><span class="p">,</span>
                               <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
                               <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
+                              <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
                               <span class="n">control_remote_voltage</span><span class="o">=</span><span class="n">control_remote_voltage</span><span class="p">,</span>
                               <span class="n">fill_three_phase</span><span class="o">=</span><span class="n">fill_three_phase</span><span class="p">)</span>
 
@@ -1619,8 +1626,17 @@
     <span class="n">ctrl_data</span><span class="o">.</span><span class="n">vset</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_vset_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">opf_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">opf_results</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">ii</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">opf_results</span><span class="o">.</span><span class="n">tap_angle</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">opf_results</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">opf_results</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">ii</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">opf_results</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">ii</span><span class="p">]</span>
+
         <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_module</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_tap_module_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
+        <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_phase_control_mode</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">TapPhaseControl</span><span class="o">.</span><span class="n">fixed</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+        <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_module_control_mode</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">fixed</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_angle</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_tap_phase_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
         <span class="n">ctrl_data</span><span class="o">.</span><span class="n">tap_module</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_tap_module_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
@@ -2436,29 +2452,122 @@
 
 
 
+<div class="viewcode-block" id="resize_fluid_injection_data">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_data.resize_fluid_injection_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resize_fluid_injection_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">FluidTurbineData</span><span class="p">,</span> <span class="n">nelm</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resize fluid injection data arrays to the valid compiled entries.</span>
+
+<span class="sd">    :param data: Fluid injection data structure.</span>
+<span class="sd">    :param nelm: Number of valid compiled entries.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">nelm</span> <span class="o">==</span> <span class="n">nelm</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">names</span><span class="p">[:</span><span class="n">nelm</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">idtag</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[:</span><span class="n">nelm</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">efficiency</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[:</span><span class="n">nelm</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">max_flow_rate</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">max_flow_rate</span><span class="p">[:</span><span class="n">nelm</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">plant_idx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">plant_idx</span><span class="p">[:</span><span class="n">nelm</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">generator_idx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">generator_idx</span><span class="p">[:</span><span class="n">nelm</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">nelm</span> <span class="o">=</span> <span class="n">nelm</span></div>
+
+
+
+<div class="viewcode-block" id="get_valid_fluid_injection_indices">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_data.get_valid_fluid_injection_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_valid_fluid_injection_indices</span><span class="p">(</span><span class="n">elm</span><span class="p">:</span> <span class="n">FluidInjectionTemplate</span><span class="p">,</span>
+                                      <span class="n">plant_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                                      <span class="n">gen_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                                      <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve the plant and generator indices for one fluid injection.</span>
+
+<span class="sd">    :param elm: Fluid injection device.</span>
+<span class="sd">    :param plant_dict: Fluid node index by idtag.</span>
+<span class="sd">    :param gen_dict: Generator index by idtag.</span>
+<span class="sd">    :param logger: Logger receiving invalid-link errors.</span>
+<span class="sd">    :return: Plant and generator indices, or ``None`` for invalid links.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plant_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">gen_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">plant</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Fluid injection has no plant&quot;</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                         <span class="n">device_class</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                         <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;plant&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plant_idx</span> <span class="o">=</span> <span class="n">plant_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plant_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Fluid injection plant is not in the compiled fluid nodes&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">device_class</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;plant&quot;</span><span class="p">,</span>
+                             <span class="n">object_value</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">generator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Fluid injection has no generator&quot;</span><span class="p">,</span>
+                         <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                         <span class="n">device_class</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                         <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;generator&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gen_idx</span> <span class="o">=</span> <span class="n">gen_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gen_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Fluid injection generator is not in the compiled generators&quot;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">device_class</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">device_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                             <span class="n">device_property</span><span class="o">=</span><span class="s2">&quot;generator&quot;</span><span class="p">,</span>
+                             <span class="n">object_value</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">plant_idx</span><span class="p">,</span> <span class="n">gen_idx</span></div>
+
+
+
 <div class="viewcode-block" id="get_fluid_turbine_data">
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_data.get_fluid_turbine_data">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_fluid_turbine_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">FluidTurbineData</span><span class="p">,</span>
                            <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
                            <span class="n">plant_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                           <span class="n">gen_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">FluidTurbineData</span><span class="p">:</span>
+                           <span class="n">gen_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                           <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">FluidTurbineData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param data:</span>
 <span class="sd">    :param circuit:</span>
 <span class="sd">    :param plant_dict:</span>
 <span class="sd">    :param gen_dict:</span>
+<span class="sd">    :param logger:</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_fluid_turbines</span><span class="p">()):</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">plant_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">plant_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">generator_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">gen_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span>
+    <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_fluid_turbines</span><span class="p">():</span>
+        <span class="n">plant_idx</span><span class="p">,</span> <span class="n">gen_idx</span> <span class="o">=</span> <span class="n">get_valid_fluid_injection_indices</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span>
+                                                               <span class="n">plant_dict</span><span class="o">=</span><span class="n">plant_dict</span><span class="p">,</span>
+                                                               <span class="n">gen_dict</span><span class="o">=</span><span class="n">gen_dict</span><span class="p">,</span>
+                                                               <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">efficiency</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">max_flow_rate</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">max_flow_rate</span>
+        <span class="k">if</span> <span class="n">plant_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gen_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">plant_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">plant_idx</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">generator_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">gen_idx</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">efficiency</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">max_flow_rate</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">max_flow_rate</span>
+
+            <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">resize_fluid_injection_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">nelm</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
@@ -2469,25 +2578,41 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_fluid_pump_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">FluidPumpData</span><span class="p">,</span>
                         <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
                         <span class="n">plant_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                        <span class="n">gen_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">FluidPumpData</span><span class="p">:</span>
+                        <span class="n">gen_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">FluidPumpData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param data:</span>
 <span class="sd">    :param circuit:</span>
 <span class="sd">    :param plant_dict:</span>
 <span class="sd">    :param gen_dict:</span>
+<span class="sd">    :param logger:</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_fluid_pumps</span><span class="p">()):</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">plant_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">plant_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">generator_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">gen_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span>
+    <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_fluid_pumps</span><span class="p">():</span>
+        <span class="n">plant_idx</span><span class="p">,</span> <span class="n">gen_idx</span> <span class="o">=</span> <span class="n">get_valid_fluid_injection_indices</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span>
+                                                               <span class="n">plant_dict</span><span class="o">=</span><span class="n">plant_dict</span><span class="p">,</span>
+                                                               <span class="n">gen_dict</span><span class="o">=</span><span class="n">gen_dict</span><span class="p">,</span>
+                                                               <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">efficiency</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">max_flow_rate</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">max_flow_rate</span>
+        <span class="k">if</span> <span class="n">plant_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gen_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">plant_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">plant_idx</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">generator_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">gen_idx</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">efficiency</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">max_flow_rate</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">max_flow_rate</span>
+
+            <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">resize_fluid_injection_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">nelm</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
@@ -2498,25 +2623,41 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_fluid_p2x_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">FluidP2XData</span><span class="p">,</span>
                        <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
                        <span class="n">plant_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                       <span class="n">gen_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">FluidP2XData</span><span class="p">:</span>
+                       <span class="n">gen_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                       <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">FluidP2XData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param data:</span>
 <span class="sd">    :param circuit:</span>
 <span class="sd">    :param plant_dict:</span>
 <span class="sd">    :param gen_dict:</span>
+<span class="sd">    :param logger:</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">get_fluid_p2xs</span><span class="p">()):</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">plant_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">plant_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">generator_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">gen_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span>
+    <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_fluid_p2xs</span><span class="p">():</span>
+        <span class="n">plant_idx</span><span class="p">,</span> <span class="n">gen_idx</span> <span class="o">=</span> <span class="n">get_valid_fluid_injection_indices</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span>
+                                                               <span class="n">plant_dict</span><span class="o">=</span><span class="n">plant_dict</span><span class="p">,</span>
+                                                               <span class="n">gen_dict</span><span class="o">=</span><span class="n">gen_dict</span><span class="p">,</span>
+                                                               <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">efficiency</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">max_flow_rate</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">max_flow_rate</span>
+        <span class="k">if</span> <span class="n">plant_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">gen_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">plant_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">plant_idx</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">generator_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">gen_idx</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">idtag</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span>
+
+            <span class="n">data</span><span class="o">.</span><span class="n">efficiency</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">efficiency</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">max_flow_rate</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">max_flow_rate</span>
+
+            <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">resize_fluid_injection_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">nelm</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
@@ -2652,6 +2793,7 @@
         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
         <span class="n">opf_results</span><span class="o">=</span><span class="n">opf_results</span><span class="p">,</span>
         <span class="n">control_remote_voltage</span><span class="o">=</span><span class="n">control_remote_voltage</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
         <span class="n">fill_three_phase</span><span class="o">=</span><span class="n">fill_three_phase</span>
     <span class="p">)</span>
 
@@ -2677,6 +2819,7 @@
         <span class="n">bus_data</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="p">,</span>
         <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
         <span class="n">control_remote_voltage</span><span class="o">=</span><span class="n">control_remote_voltage</span><span class="p">,</span>
         <span class="n">fill_three_phase</span><span class="o">=</span><span class="n">fill_three_phase</span>
     <span class="p">)</span>
@@ -2689,6 +2832,7 @@
         <span class="n">bus_data</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="p">,</span>
         <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span>
         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="o">=</span><span class="n">use_stored_guess</span><span class="p">,</span>
         <span class="n">opf_results</span><span class="o">=</span><span class="n">opf_results</span><span class="p">,</span>
         <span class="n">fill_three_phase</span><span class="o">=</span><span class="n">fill_three_phase</span>
     <span class="p">)</span>
@@ -2748,21 +2892,27 @@
             <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
             <span class="n">plant_dict</span><span class="o">=</span><span class="n">plant_dict</span><span class="p">,</span>
             <span class="n">gen_dict</span><span class="o">=</span><span class="n">gen_dict</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">nc</span><span class="o">.</span><span class="n">nfluidturbine</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">fluid_turbine_data</span><span class="o">.</span><span class="n">nelm</span>
 
         <span class="n">get_fluid_pump_data</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">fluid_pump_data</span><span class="p">,</span>
             <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
             <span class="n">plant_dict</span><span class="o">=</span><span class="n">plant_dict</span><span class="p">,</span>
-            <span class="n">gen_dict</span><span class="o">=</span><span class="n">gen_dict</span>
+            <span class="n">gen_dict</span><span class="o">=</span><span class="n">gen_dict</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">nc</span><span class="o">.</span><span class="n">nfluidpump</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">fluid_pump_data</span><span class="o">.</span><span class="n">nelm</span>
 
         <span class="n">get_fluid_p2x_data</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">fluid_p2x_data</span><span class="p">,</span>
             <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
             <span class="n">plant_dict</span><span class="o">=</span><span class="n">plant_dict</span><span class="p">,</span>
             <span class="n">gen_dict</span><span class="o">=</span><span class="n">gen_dict</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">nc</span><span class="o">.</span><span class="n">nfluidp2x</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">fluid_p2x_data</span><span class="o">.</span><span class="n">nelm</span>
 
         <span class="n">get_fluid_path_data</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">fluid_path_data</span><span class="p">,</span>

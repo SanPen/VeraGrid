@@ -22,3 +22,7 @@ Limits how fast a retained output can move toward a requested source value.
 ## Runtime behavior
 
 The first accepted update initializes the held output from the source. Each later update restricts the change using elapsed accepted time. Reversed lower and upper bounds are normalized automatically.
+
+## Library block
+
+The standalone block has input `u`, output `y`, and editable `lower_rate` and `upper_rate` parameters with defaults `-1.0` and `1.0`.

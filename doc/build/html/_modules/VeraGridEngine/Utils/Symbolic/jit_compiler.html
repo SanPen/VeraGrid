@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Symbolic.jit_compiler &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Utils.Symbolic.jit_compiler &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -2761,7 +2761,7 @@
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.jit_compiler.RMSCompiler.compile_event_params_fn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile_event_params_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">],</span> <span class="n">alias_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
                                 <span class="n">EVENT_PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">TIME_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_params_fn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]:</span>
+                                <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_params_fn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compiles event parameters equations into a fast, executable JIT function.</span>
 
@@ -2809,7 +2809,7 @@
 <div class="viewcode-block" id="RMSCompiler.compile_derivative_fn">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.jit_compiler.RMSCompiler.compile_derivative_fn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile_derivative_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid2idx_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                              <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;derivative_fn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]:</span>
+                              <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;derivative_fn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compiles the derivative evaluation function for differential variables.</span>
 
@@ -2986,7 +2986,7 @@
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.jit_compiler.RMSCompilerVec.compile_event_params_fn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile_event_params_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eqs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Expr</span><span class="p">],</span> <span class="n">alias_names_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
                                 <span class="n">EVENT_PARAMS_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">TIME_NAME</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                                <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_params_fn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]:</span>
+                                <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;event_params_fn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compiles event parameters equations into a fast, executable JIT function.</span>
 
@@ -3034,7 +3034,7 @@
 <div class="viewcode-block" id="RMSCompilerVec.compile_derivative_fn">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.jit_compiler.RMSCompilerVec.compile_derivative_fn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile_derivative_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid2idx_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                              <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;derivative_fn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]:</span>
+                              <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;derivative_fn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Vec</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compiles the derivative evaluation function for differential variables.</span>
 

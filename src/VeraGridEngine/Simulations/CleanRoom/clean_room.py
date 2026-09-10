@@ -1919,7 +1919,7 @@ def demo():
     # Plot a few devices
     plot_devices_real_vs_syn(P_real_clean, P_syn, [0, 1, 2, 10], 5000, "Devices real vs synthetic (simplex shares)")
 
-    plt.show()
+    plt.show(block=False)
 
 def _make_synthetic_demo_data(T: int, N: int, R: int, seed: int) -> tuple[
     np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -2081,7 +2081,7 @@ def demo2():
     plt.legend()
     plt.title("Aggregate: Real vs Synthetic")
     plt.tight_layout()
-    plt.show()
+    plt.show(block=False)
 
     # Optional: device-level example
     plt.figure()
@@ -2093,7 +2093,7 @@ def demo2():
     plt.legend()
     plt.title("Example device trajectory")
     plt.tight_layout()
-    plt.show()
+    plt.show(block=False)
 
     # Quick numeric check
     rel_err = float(np.mean(np.abs(P_agg_syn - P_agg_real)) / (np.mean(P_agg_real) + 1e-9))

@@ -739,13 +739,20 @@ def _build_dgs_default_rms_template(
         and device.bus_to.is_dc
     )
     if isinstance(device, DcLine) or is_two_terminal_dc_branch:
-        # Only a native Line exported with a positive DC series inductance owns
-        # an RL energy state. DcLine, switch, and series-reactance objects do
-        # not expose that physical parameter and therefore use exact Ohm law.
-        use_dynamic_inductance: bool = (
-            isinstance(device, Line)
-            and float(device.dc_series_inductance_pu_seconds) > 0.0
-        )
+        if isinstance(device, DcLine):
+            dynamic_values: tuple[float, float] | None = (
+                device.get_applied_dynamic_values_pu_seconds(
+                    Sbase=float(circuit.Sbase),
+                )
+            )
+            use_dynamic_inductance: bool = (
+                dynamic_values is not None
+                and float(dynamic_values[0]) > 0.0
+            )
+        else:
+            # Legacy DC-connected passive branches have no physical cable
+            # template, so their established model is exact Ohm law.
+            use_dynamic_inductance = False
         template = get_dc_line_rms_template(
             vfactory=circuit.var_factory,
             name="DGS DC line RMS shell",
@@ -1347,28 +1354,23 @@ def prepare_dgs_circuit_for_rms(
     device: DynamicDevice
     dc_bus_capacitance: Dict[Bus, float] = dict()
 
-    # A DGS DC cable exports total shunt capacitance through TypLne.bline.
-    # Split each active cable equally between its terminal nodes, which is the
-    # standard lumped pi representation used by PowerFactory RMS simulation.
+    # Split each active physical cable capacitance equally between its terminal
+    # nodes, which is the standard lumped pi representation used by RMS.
     for bus in circuit.buses:
         dc_bus_capacitance[bus] = 0.0
-    for line in circuit.lines:
-        is_dc_cable: bool = line.bus_from.is_dc and line.bus_to.is_dc
-        if is_dc_cable:
-            if not line.dc_cable_dynamic_parameters_complete:
-                raise ValueError(
-                    f"DGS DC cable {line.idtag} lacks complete RMS energy parameters."
-                )
-            else:
-                pass
-            if line.active:
-                terminal_capacitance: float = (
-                    0.5 * float(line.dc_shunt_capacitance_pu_seconds)
-                )
-                dc_bus_capacitance[line.bus_from] += terminal_capacitance
-                dc_bus_capacitance[line.bus_to] += terminal_capacitance
-            else:
-                pass
+    dc_line: DcLine
+    for dc_line in circuit.dc_lines:
+        if dc_line.active:
+            dynamic_values: tuple[float, float] = dc_line.get_dynamic_values_pu_seconds(
+                Sbase=float(circuit.Sbase),
+                logger=logger,
+            )
+            terminal_capacitance: float = 0.5 * max(
+                0.0,
+                float(dynamic_values[1]),
+            )
+            dc_bus_capacitance[dc_line.bus_from] += terminal_capacitance
+            dc_bus_capacitance[dc_line.bus_to] += terminal_capacitance
         else:
             pass
 

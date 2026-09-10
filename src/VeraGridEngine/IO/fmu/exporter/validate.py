@@ -115,6 +115,7 @@ def simulate_fmu_with_fmpy(
     start_values: dict[str, float] | None = None,
     input_signal=None,
     extraction_root: str | Path | None = None,
+    output_interval: float | None = None,
 ):
     fmpy_module = _require_fmpy()
     simulate_fmu = fmpy_module.simulate_fmu
@@ -126,6 +127,7 @@ def simulate_fmu_with_fmpy(
             output=output,
             start_values=start_values or {},
             input=input_signal,
+            output_interval=output_interval,
         )
 
 

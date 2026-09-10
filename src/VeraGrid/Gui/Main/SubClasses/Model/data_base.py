@@ -9,9 +9,10 @@ from typing import Union, List, Set, Tuple, Dict
 from PySide6 import QtGui, QtCore, QtWidgets
 from matplotlib import pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.figure import Figure
 
 from VeraGrid.Gui.associations_model import AssociationsModel
-from VeraGrid.Gui.table_view_header_wrap import HeaderViewWithWordWrap
+from VeraGrid.Gui.table_view_header_wrap import HeaderViewWithWordWrap, VerticalHeaderWidthResizer
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model import CompiledArraysModule
 from VeraGridEngine.Topology.VoltageLevels import vl_creation_common_functions as substation_wizards
@@ -30,11 +31,9 @@ from VeraGridEngine.Topology.detect_substations import detect_substations, detec
 from VeraGrid.Gui.Analysis.object_plot_analysis import object_histogram_analysis
 from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg
 from VeraGrid.Gui.Main.SubClasses.Model.diagrams import DiagramsMain
-from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_device_editor import LoadDeviceEditorDialog
-from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog
-from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor import VscDeviceEditorDialog
 from VeraGrid.Gui.DeviceEditors.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
 from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, exec_dialog_safely, is_dialog_available
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 from VeraGrid.Gui.FmuTemplateEditor.fmu_template_editor import FmuTemplateEditorDialog
 from VeraGrid.Gui.SystemScaler.system_scaler import SystemScaler
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget, generate_map_diagram
@@ -43,13 +42,7 @@ from VeraGrid.Gui.GridReduce.grid_reduce import GridReduceDialogue
 from VeraGrid.Gui.SubstationDesigner.substation_designer import SubstationDesigner
 from VeraGrid.Gui.general_dialogues import (LogsDialogue, CustomQuestionDialogue, CheckListDialogue,
                                             NewConnectedDeviceDialogue, DeviceSelectorDialogue)
-from VeraGrid.Gui.DeviceEditors.TransformerEditor.transformer_device_editor import TransformerDeviceEditorDialog
-from VeraGrid.Gui.DeviceEditors.Transformer3wEditor.transformer3w_device_editor import Transformer3WDeviceEditorDialog
-from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_device_editor import (
-    ControllableShuntDeviceEditorDialog,
-)
 from VeraGrid.Gui.DeviceEditors.device_editor_factory import build_device_editor_dialog
-from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 
 
@@ -75,6 +68,9 @@ class DataBaseTableMain(DiagramsMain):
 
         # Current column filter popup, kept alive while it is shown.
         self.object_column_filter_dialog: ObjectColumnFilterDialog | None = None
+
+        # Width-resize controller for the object table index/name header.
+        self.db_table_index_resizer: VerticalHeaderWidthResizer | None = None
 
         # setup the objects tree
         self.setup_objects_tree()
@@ -146,6 +142,7 @@ class DataBaseTableMain(DiagramsMain):
 
         # wrap headers
         self.ui.dataStructureTableView.setHorizontalHeader(HeaderViewWithWordWrap(self.ui.dataStructureTableView))
+        self.db_table_index_resizer = VerticalHeaderWidthResizer(table_view=self.ui.dataStructureTableView)
         self.ui.profiles_tableView.setHorizontalHeader(HeaderViewWithWordWrap(self.ui.profiles_tableView))
         self.ui.associationsTableView.setHorizontalHeader(HeaderViewWithWordWrap(self.ui.associationsTableView))
         self.ui.dataStructureTableView.horizontalHeader().setContextMenuPolicy(
@@ -153,6 +150,12 @@ class DataBaseTableMain(DiagramsMain):
         )
         self.ui.dataStructureTableView.horizontalHeader().customContextMenuRequested.connect(
             self.show_object_column_filter_dialog
+        )
+        self.ui.dataStructureTableView.verticalHeader().setContextMenuPolicy(
+            QtCore.Qt.ContextMenuPolicy.CustomContextMenu
+        )
+        self.ui.dataStructureTableView.verticalHeader().customContextMenuRequested.connect(
+            self.show_db_table_index_context_menu
         )
 
         # combobox change
@@ -439,6 +442,10 @@ class DataBaseTableMain(DiagramsMain):
             # update slice-view
             self.type_objects_list = elements
             self.ui.dataStructureTableView.setModel(proxy)
+            if self.db_table_index_resizer is not None:
+                self.db_table_index_resizer.reposition()
+            else:
+                pass
 
             # update time series view
             ts_mdl = gf.get_list_model(self.circuit.profile_magnitudes[elm_type][0])
@@ -833,16 +840,13 @@ class DataBaseTableMain(DiagramsMain):
 
                 self.show_info_toast(f"{len(to_be_deleted)} buses removed from the model")
 
-    def grid_reduction_from_table_selection(self):
+    def grid_reduction_from_table_selection(self) -> None:
         """
         Crop model to buses selection
         """
         selected_buses, selected_objects = self.get_selected_table_buses()
 
         if len(selected_buses):
-            # get the previous power flow
-            _, pf_res = self.session.power_flow
-
             grid_reduction_dialogue: GridReduceDialogue = GridReduceDialogue(grid=self.circuit,
                                                                              session=self.session,
                                                                              selected_buses_set=selected_buses)
@@ -850,74 +854,89 @@ class DataBaseTableMain(DiagramsMain):
             try:
                 grid_reduction_dialogue.exec()
                 did_reduce: bool = grid_reduction_dialogue.did_reduce
+                reduction_logger: bs.Logger = grid_reduction_dialogue.logger
+                reduced_grid: dev.MultiCircuit | None = grid_reduction_dialogue.reduced_grid
             finally:
                 delete_dialog_safely(dialog=grid_reduction_dialogue)
 
-            if did_reduce:
+            if did_reduce and reduced_grid is not None:
 
-                # delete from the diagrams
-                self.delete_from_all_diagrams(elements=list(selected_buses))
+                self.set_circuit(grid=reduced_grid, create_diagram=True)
 
                 # update the view
                 self.view_objects_data()
                 self.update_from_to_list_views()
                 self.update_date_dependent_combos()
+
+                if reduction_logger.has_logs():
+                    logs_dialogue: LogsDialogue = LogsDialogue(name=self.tr("Grid reduction"), logger=reduction_logger)
+                    exec_dialog_safely(dialog=logs_dialogue)
+                else:
+                    pass
             else:
                 self.show_warning_toast("No reduction done")
+                if reduction_logger.has_logs():
+                    logs_dialogue: LogsDialogue = LogsDialogue(name=self.tr("Grid reduction"), logger=reduction_logger)
+                    exec_dialog_safely(dialog=logs_dialogue)
+                else:
+                    pass
         else:
             self.show_warning_toast("Select some elements first")
 
-    def grid_reduction_from_schematic_selection(self):
+    def grid_reduction_from_schematic_selection(self) -> None:
         """
         Call the grid reduction dialogue on the schematic selection
         """
 
-        diagram_widget = self.get_selected_diagram_widget()
+        diagram_widget: SchematicWidget | GridMapWidget | None = self.get_selected_diagram_widget()
         if isinstance(diagram_widget, SchematicWidget):
-            selected_buses = diagram_widget.get_selected_buses()
-            selected_se = list()
+            self.remove_dead_graphics_from_all_diagrams()
+            selected_buses: List[Tuple[int, dev.Bus, object]] = diagram_widget.get_selected_buses()
 
         elif isinstance(diagram_widget, GridMapWidget):
-            selected_se = diagram_widget.get_selected_substations()
+            self.remove_dead_graphics_from_all_diagrams()
             selected_buses = diagram_widget.get_selected_buses()
         else:
-            return None
+            return
 
         if len(selected_buses):
-            # get the previous power flow
-            _, pf_res = self.session.power_flow
-
             selected_buses_set: Set[dev.Bus] = {bus for i, bus, graphic in selected_buses}
 
-            grid_reduction_dialogue = GridReduceDialogue(grid=self.circuit,
-                                                         session=self.session,
-                                                         selected_buses_set=selected_buses_set)
+            grid_reduction_dialogue: GridReduceDialogue = GridReduceDialogue(
+                grid=self.circuit,
+                session=self.session,
+                selected_buses_set=selected_buses_set
+            )
 
             try:
                 grid_reduction_dialogue.exec()
-                did_reduce = grid_reduction_dialogue.did_reduce
+                did_reduce: bool = grid_reduction_dialogue.did_reduce
+                reduction_logger: bs.Logger = grid_reduction_dialogue.logger
+                reduced_grid: dev.MultiCircuit | None = grid_reduction_dialogue.reduced_grid
             finally:
                 delete_dialog_safely(dialog=grid_reduction_dialogue)
 
-            if did_reduce:
-                self.delete_from_all_diagrams(elements=[bus for i, bus, graphic in selected_buses])
+            if did_reduce and reduced_grid is not None:
+                self.set_circuit(grid=reduced_grid, create_diagram=True)
+                self.show_info_toast("Done!")
+
+                if reduction_logger.has_logs():
+                    logs_dialogue: LogsDialogue = LogsDialogue(name=self.tr("Grid reduction"), logger=reduction_logger)
+                    exec_dialog_safely(dialog=logs_dialogue)
+                else:
+                    pass
             else:
-                pass
+                self.show_warning_toast("No reduction done")
+                if reduction_logger.has_logs():
+                    logs_dialogue: LogsDialogue = LogsDialogue(name=self.tr("Grid reduction"), logger=reduction_logger)
+                    exec_dialog_safely(dialog=logs_dialogue)
+                else:
+                    pass
 
-            if isinstance(diagram_widget, GridMapWidget):
-                # if this is a map, delete the elements from there
-                for se_graphics in selected_se:
-                    if se_graphics.api_object is not None:
-                        diagram_widget.delete_element_utility_function(
-                            device=se_graphics.api_object,
-                            propagate=True
-                        )
-
-            self.show_info_toast("Done!")
-            return None
+            return
         else:
             self.show_warning_toast("No selected buses :/")
-            return None
+            return
 
     def add_objects(self):
         """
@@ -1612,6 +1631,12 @@ class DataBaseTableMain(DiagramsMain):
                 obj = dev.UndergroundLineType(name=name)
                 self.circuit.add_underground_line(obj)
 
+            elif elm_type == DeviceType.DcCableTypeDevice:
+
+                name = f'DC cable {len(self.circuit.dc_cable_types) + 1}'
+                obj = dev.DcCableType(name=name)
+                self.circuit.add_dc_cable_type(obj)
+
             elif elm_type == DeviceType.SequenceLineDevice:
 
                 name = f'Sequence line {len(self.circuit.sequence_line_types) + 1}'
@@ -1760,7 +1785,48 @@ class DataBaseTableMain(DiagramsMain):
             else:
                 self.show_warning_toast("Nothing selected :/")
 
-    def launch_object_editor(self):
+    def launch_device_editor(self, elm: EditableDevice) -> None:
+        """
+        Open the best available editor for one editable device.
+
+        :param elm: Device to edit.
+        :return: None.
+        """
+        # Route the device through the same specialized editors used by database-row editing.
+        if elm.device_type == DeviceType.OverheadLineTypeDevice:
+            tower_builder_window: TowerBuilderGUI = TowerBuilderGUI(
+                tower=elm,
+                wires_catalogue=self.circuit.wire_types
+            )
+            tower_builder_window.setModal(True)
+            tower_builder_window.resize(int(1.81 * 700.0), 700)
+            exec_dialog_safely(dialog=tower_builder_window)
+
+        elif elm.device_type == DeviceType.RmsModelTemplateDevice:
+            self.open_dynamic_editor(api_object=elm, circuit=self.circuit,
+                                     preferred_mode=DynamicSimulationMode.RMS)
+
+        elif elm.device_type == DeviceType.EmtModelTemplateDevice:
+            self.open_dynamic_editor(api_object=elm, circuit=self.circuit,
+                                     preferred_mode=DynamicSimulationMode.EMT)
+
+        elif elm.device_type == DeviceType.FmuTemplateDevice:
+            dlg: QtWidgets.QDialog = FmuTemplateEditorDialog(
+                circuit=self.circuit,
+                template=elm,
+                project_directory=self.project_directory,
+                parent=self,
+            )
+            if exec_dialog_safely(dialog=dlg):
+                self.view_objects_data()
+            else:
+                pass
+
+        else:
+            dlg: QtWidgets.QDialog = build_device_editor_dialog(api_object=elm, circuit=self.circuit, main_gui=self)
+            exec_dialog_safely(dialog=dlg)
+
+    def launch_object_editor(self) -> None:
         """
         Edit catalogue element
         """
@@ -1782,100 +1848,8 @@ class DataBaseTableMain(DiagramsMain):
 
                     if elm is None:
                         info_msg(self.tr('Choose an element from the table'))
-
-                    elif elm_type == DeviceType.OverheadLineTypeDevice:
-
-                        # launch editor
-                        tower_builder_window: TowerBuilderGUI = TowerBuilderGUI(
-                            tower=elm,
-                            wires_catalogue=self.circuit.wire_types
-                        )
-                        tower_builder_window.setModal(True)
-                        tower_builder_window.resize(int(1.81 * 700.0), 700)
-                        exec_dialog_safely(dialog=tower_builder_window)
-
-                    elif elm_type == DeviceType.LineDevice or elm_type == DeviceType.DCLineDevice:
-                        dlg: QtWidgets.QDialog = build_device_editor_dialog(api_object=elm, circuit=self.circuit)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
-
-                    elif elm_type == DeviceType.VscDevice:
-                        dlg = VscDeviceEditorDialog(api_object=elm, circuit=self.circuit, main_gui=self)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
-
-                    elif elm_type == DeviceType.Transformer2WDevice:
-                        dlg = TransformerDeviceEditorDialog(api_object=elm, circuit=self.circuit)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
-
-                    elif elm_type == DeviceType.ControllableShuntDevice:
-                        dlg = ControllableShuntDeviceEditorDialog(api_object=elm, circuit=self.circuit)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
-
-                    elif elm_type == DeviceType.LoadDevice:
-                        dlg = LoadDeviceEditorDialog(api_object=elm, circuit=self.circuit)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
-
-                    elif elm_type == DeviceType.GeneratorDevice:
-                        dlg = GeneratorEditorDialog(api_object=elm, circuit=self.circuit)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
-
-                    elif elm_type == DeviceType.BatteryDevice:
-                        dlg = GeneratorEditorDialog(api_object=elm, circuit=self.circuit)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
-
-                    elif elm_type == DeviceType.Transformer3WDevice:
-                        dlg = Transformer3WDeviceEditorDialog(api_object=elm, circuit=self.circuit)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
-
-                    elif elm_type == DeviceType.RmsModelTemplateDevice:
-                        self.open_dynamic_editor(api_object=elm, circuit=self.circuit,
-                                                 preferred_mode=DynamicSimulationMode.RMS)
-
-                    elif elm_type == DeviceType.EmtModelTemplateDevice:
-                        self.open_dynamic_editor(api_object=elm, circuit=self.circuit,
-                                                 preferred_mode=DynamicSimulationMode.EMT)
-
-                    elif elm_type == DeviceType.FmuTemplateDevice:
-                        dlg = FmuTemplateEditorDialog(
-                            circuit=self.circuit,
-                            template=elm,
-                            project_directory=self.project_directory,
-                            parent=self,
-                        )
-                        if exec_dialog_safely(dialog=dlg):
-                            self.view_objects_data()
-                        else:
-                            pass
-
                     elif isinstance(elm, EditableDevice):
-                        dlg = TemplateDeviceEditor(api_object=elm, circuit=self.circuit)
-                        if exec_dialog_safely(dialog=dlg):
-                            pass
-                        else:
-                            pass
+                        self.launch_device_editor(elm=elm)
 
                     else:
 
@@ -1907,6 +1881,83 @@ class DataBaseTableMain(DiagramsMain):
                 info_msg(self.tr('Select some element to serve as source to copy'), self.tr('Set value to column'))
         else:
             pass
+
+    def set_db_table_index_width(self) -> None:
+        """
+        Set the database object table index column width.
+
+        :return: None.
+        """
+        vertical_header: QtWidgets.QHeaderView = self.ui.dataStructureTableView.verticalHeader()
+        current_width: int = max(vertical_header.width(), 80)
+        width: int
+        accepted: bool
+        width, accepted = QtWidgets.QInputDialog.getInt(
+            self,
+            self.tr("Index column width"),
+            self.tr("Width in pixels"),
+            current_width,
+            40,
+            2000,
+            10,
+        )
+
+        if accepted:
+            if self.db_table_index_resizer is not None:
+                self.db_table_index_resizer.set_header_width(width=width)
+            else:
+                vertical_header.setMinimumWidth(40)
+                vertical_header.setMaximumWidth(2000)
+                vertical_header.setFixedWidth(width)
+                self.ui.dataStructureTableView.updateGeometries()
+        else:
+            pass
+
+    def show_db_table_index_context_menu(self, pos: QtCore.QPoint) -> None:
+        """
+        Show the database table index-column context menu.
+
+        :param pos: Relative click position.
+        :return: None.
+        """
+        context_menu: QtWidgets.QMenu = QtWidgets.QMenu(parent=self.ui.dataStructureTableView)
+
+        gf.add_menu_entry(menu=context_menu,
+                          text=self.tr("Set index width"),
+                          icon_path=":/Icons/icons/grid_icon.png",
+                          function_ptr=self.set_db_table_index_width)
+
+        context_menu.exec(self.ui.dataStructureTableView.verticalHeader().mapToGlobal(pos))
+
+    def open_hosted_device_editor_at_proxy_index(self, proxy_index: QtCore.QModelIndex) -> bool:
+        """
+        Open the editor for the device stored in one object-table cell.
+
+        :param proxy_index: Clicked index in the visible table model.
+        :return: ``True`` when a hosted device editor was opened.
+        """
+        if proxy_index.isValid():
+            proxy_model: ObjectModelFilterProxy | None = self.get_current_objects_model_view()
+
+            if proxy_model is not None:
+                source_model: QtCore.QAbstractItemModel | None = proxy_model.sourceModel()
+
+                if isinstance(source_model, ObjectsModel):
+                    # The table can be sorted or filtered, so raw values must be read from the source index.
+                    source_index: QtCore.QModelIndex = proxy_model.mapToSource(proxy_index)
+                    hosted_device: EditableDevice | None = source_model.get_hosted_device_at_index(index=source_index)
+
+                    if hosted_device is not None:
+                        self.launch_device_editor(elm=hosted_device)
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
 
     def highlight_selection_buses(self):
         """
@@ -2117,11 +2168,15 @@ class DataBaseTableMain(DiagramsMain):
 
         if elm_type is not None:
             if len(self.circuit.get_elements_by_type(device_type=elm_type)):
+                fig: Figure = plt.figure(figsize=(12, 6))
                 object_histogram_analysis(circuit=self.circuit,
                                           object_type=elm_type.value,
                                           t_idx=self.get_db_slider_index(),
-                                          fig=None)
-                plt.show()
+                                          fig=fig)
+                show_matplotlib_figure(figure=fig,
+                                       parent=self,
+                                       open_dialogs=self._open_plot_dialogs,
+                                       title=self.tr("Object histogram"))
             else:
                 pass
         else:
@@ -2290,9 +2345,14 @@ class DataBaseTableMain(DiagramsMain):
             else:
                 pass
 
+            if self.open_hosted_device_editor_at_proxy_index(proxy_index=context_index):
+                return
+            else:
+                pass
+
             elm_type: DeviceType | None = self.get_db_object_selected_type()
 
-            context_menu = QtWidgets.QMenu(parent=self.ui.diagramsListView)
+            context_menu: QtWidgets.QMenu = QtWidgets.QMenu(parent=self.ui.dataStructureTableView)
 
             gf.add_menu_entry(menu=context_menu,
                               text=self.tr("Edit"),
@@ -2348,6 +2408,11 @@ class DataBaseTableMain(DiagramsMain):
                               text=self.tr("Set value to column"),
                               icon_path=":/Icons/icons/copy2down.png",
                               function_ptr=self.set_value_to_column)
+
+            gf.add_menu_entry(menu=context_menu,
+                              text=self.tr("Set index width"),
+                              icon_path=":/Icons/icons/grid_icon.png",
+                              function_ptr=self.set_db_table_index_width)
 
             gf.add_menu_entry(menu=context_menu,
                               text=self.tr("Assign to profile"),

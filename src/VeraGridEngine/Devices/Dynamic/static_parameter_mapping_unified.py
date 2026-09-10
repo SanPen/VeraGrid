@@ -1167,6 +1167,14 @@ def resolve_direct_dyn_ref_value(
     :param raw_value: Static property value read from the device.
     :return: Direct numerical value or ``None`` when explicit logic must handle it.
     """
+    # Optional physical properties use ``None`` to declare absent evidence.
+    # They must not become a synthetic zero or enter a numeric conversion; the
+    # device-specific fallback remains responsible for the reduced model.
+    if raw_value is None:
+        return None
+    else:
+        pass
+
     if key == ParamPowerFlowReferenceType.g or key == ParamPowerFlowReferenceType.b:
         # Branch-like devices may expose scalar g/b template keys whose meaning
         # depends on the target dynamic model contract. For RMS phasor line
@@ -1561,6 +1569,7 @@ def assign_static_api_object_mapping_for_device(
             elif device_type == DeviceType.DCLineDevice:
                 if isinstance(device, DcLine):
                     assign_dc_line_static_api_mapping(
+                        grid=grid,
                         dc_line=device,
                         mdl=mdl,
                         problem_mapping=problem_mapping,
@@ -3088,6 +3097,7 @@ def assign_vsc_static_api_mapping(
 
 
 def assign_dc_line_static_api_mapping(
+        grid: MultiCircuit,
         dc_line: DcLine,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
@@ -3097,6 +3107,7 @@ def assign_dc_line_static_api_mapping(
     """
     Assign static DC-line parameters exposed by ``mdl.api_obj_mapping``.
 
+    :param grid: Circuit providing the system power base.
     :param dc_line: DC line device.
     :param mdl: DC line EMT block.
     :param logger: Optional logger.
@@ -3106,6 +3117,10 @@ def assign_dc_line_static_api_mapping(
     eps_value: float = 1.0e-12
     resistance_value: float = float(dc_line.R_corrected)
     conductance_value: float = 1.0 / max(abs(resistance_value), eps_value)
+    dynamic_values: Tuple[float, float] = dc_line.get_dynamic_values_pu_seconds(
+        Sbase=float(grid.Sbase),
+        logger=logger if logger is not None else Logger(),
+    )
 
     assign_common_branch_static_api_mapping(
         device=dc_line,
@@ -3142,6 +3157,14 @@ def assign_dc_line_static_api_mapping(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.dc_line_r_pu,
         value=resistance_value,
+        logger=logger,
+        device_name=device_name,
+        problem_mapping=problem_mapping,
+    )
+    assign_api_mapping_value_if_present(
+        mdl=mdl,
+        key=ParamPowerFlowReferenceType.dc_line_l_pu_seconds,
+        value=float(dynamic_values[0]),
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,

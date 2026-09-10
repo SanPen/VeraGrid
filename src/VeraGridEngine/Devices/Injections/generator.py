@@ -1274,7 +1274,7 @@ class Generator(InjectionParent):
             fig.suptitle(self.name, fontsize=20)
 
             if show_fig:
-                plt.show()
+                plt.show(block=False)
 
     def fix_inconsistencies(self, logger: Logger, min_vset=0.98, max_vset=1.02):
         """

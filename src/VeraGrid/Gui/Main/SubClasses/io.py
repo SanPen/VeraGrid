@@ -307,6 +307,12 @@ class IoMain(ScenariosMain):
         else:
             return False
 
+        if self.stop_all_threads():
+            pass
+        else:
+            self.show_warning_toast(self.tr("Some operations are still stopping. Try again after they finish."))
+            return False
+
         # clear the circuit model
         self.circuit = MultiCircuit()
 
@@ -325,10 +331,6 @@ class IoMain(ScenariosMain):
         self.ui.comments_textEdit.setText("")
 
         self.ui.grid_name_line_edit.setText("")
-
-        # clear the simulation objects
-        for thread in self.get_all_threads():
-            thread = None
 
         if self.analysis_dialogue is not None:
             self.analysis_dialogue.close()
@@ -834,12 +836,12 @@ class IoMain(ScenariosMain):
             # make connections
             self.open_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
             self.open_file_thread_object.progress_text.connect(self.ui.progress_label.setText)
-            self.open_file_thread_object.done_signal.connect(self.UNLOCK)
+            self.open_file_thread_object.finished.connect(self.UNLOCK)
 
             if post_function is None:
-                self.open_file_thread_object.done_signal.connect(self.post_open_file)
+                self.open_file_thread_object.finished.connect(self.post_open_file)
             else:
-                self.open_file_thread_object.done_signal.connect(post_function)
+                self.open_file_thread_object.finished.connect(post_function)
 
             # thread start
             self.open_file_thread_object.start()
@@ -1291,7 +1293,18 @@ class IoMain(ScenariosMain):
                 if self.save_file_thread_object.isRunning():
                     ok = yes_no_question(self.tr("There is a saving procedure running.\nCancel and retry?"))
                     if ok:
+                        self.save_file_thread_object.cancel()
                         self.save_file_thread_object.quit()
+                        stopped: bool = self.save_file_thread_object.wait(5000)
+                        if stopped:
+                            pass
+                        else:
+                            warning_msg(self.tr("The current save is still finishing. Please retry when it is done."))
+                            self.UNLOCK()
+                            return
+                    else:
+                        self.UNLOCK()
+                        return
 
             options2 = self.get_file_save_options() if options is None else options
             options2.type_selected = type_selected
@@ -1306,8 +1319,8 @@ class IoMain(ScenariosMain):
             # make connections
             self.save_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
             self.save_file_thread_object.progress_text.connect(self.ui.progress_label.setText)
-            self.save_file_thread_object.done_signal.connect(self.UNLOCK)
-            self.save_file_thread_object.done_signal.connect(self.post_file_save)
+            self.save_file_thread_object.finished.connect(self.UNLOCK)
+            self.save_file_thread_object.finished.connect(self.post_file_save)
 
             # thread start
             self.save_file_thread_object.start()
@@ -1481,7 +1494,7 @@ class IoMain(ScenariosMain):
 
                 self.export_all_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
                 self.export_all_thread_object.progress_text.connect(self.ui.progress_label.setText)
-                self.export_all_thread_object.done_signal.connect(self.post_export_all)
+                self.export_all_thread_object.finished.connect(self.post_export_all)
                 self.export_all_thread_object.start()
         else:
             warning_msg(self.tr('There are no results available :/'))

@@ -896,7 +896,7 @@ class Load(LoadParent):
             fig.suptitle(self.name, fontsize=20)
 
             if show_fig:
-                plt.show()
+                plt.show(block=False)
 
     def initialize_rms(self, rms_event=False):
         """

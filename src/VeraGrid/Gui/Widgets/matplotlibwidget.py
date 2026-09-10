@@ -4,11 +4,11 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from PySide6 import QtWidgets
-import matplotlib
+import shiboken6
+from PySide6 import QtCore, QtGui, QtWidgets
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigationtoolbar
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as Navigationtoolbar
 from matplotlib.axes import Axes
 from matplotlib.backend_bases import MouseEvent
 from matplotlib.figure import Figure
@@ -59,6 +59,23 @@ class MplCanvas(FigureCanvas):
         # self.fig.canvas.mpl_connect("pick_event", self.on_pick_event)
         # self.fig.canvas.mpl_connect("button_release_event", self.on_release_event)
 
+    def cancel_pending_draw(self) -> None:
+        """
+        Cancel Matplotlib idle draws before Qt deletes this canvas.
+
+        :return: None.
+        """
+        self._draw_pending = False
+
+    def is_valid(self) -> bool:
+        """
+        Check whether this canvas still owns a valid Qt object.
+
+        :return: True if the canvas can still be used.
+        """
+        result: bool = shiboken6.isValid(self)
+        return result
+
     def setTitle(self, text):
         """
         Sets the figure title
@@ -96,7 +113,7 @@ class MplCanvas(FigureCanvas):
         xdata: float | None = event.xdata  # get event x location
         ydata: float | None = event.ydata  # get event y location
 
-        if ax is not None and xdata is not None and ydata is not None:
+        if self.is_valid() and ax is not None and xdata is not None and ydata is not None:
             cur_xlim = ax.get_xlim()
             cur_ylim = ax.get_ylim()
 
@@ -205,6 +222,30 @@ class MatplotlibWidget(QtWidgets.QWidget):
 
         self.mpltoolbar.toggleViewAction()
 
+    def closeEvent(self, event: QtGui.QCloseEvent) -> None:
+        """
+        Release Matplotlib resources before Qt closes the widget.
+
+        :param event: Qt close event.
+        :return: None.
+        """
+        self.dispose()
+        QtWidgets.QWidget.closeEvent(self, event)
+
+    def event(self, event: QtCore.QEvent) -> bool:
+        """
+        Release Matplotlib resources before deferred Qt deletion.
+
+        :param event: Qt event.
+        :return: Base widget event result.
+        """
+        if event.type() == QtCore.QEvent.Type.DeferredDelete:
+            self.dispose()
+        else:
+            pass
+
+        return QtWidgets.QWidget.event(self, event)
+
     def setTitle(self, text):
         """
         Sets the figure title
@@ -227,9 +268,11 @@ class MatplotlibWidget(QtWidgets.QWidget):
 
         """
         if force:
+            self.canvas.disconnect_callbacks()
             self.canvas.fig.clear()
             self.canvas.ax = self.canvas.fig.add_subplot(111)
-            self.canvas.zoom_axis = self.canvas.ax
+            self.canvas.zoom_callback_id = self.canvas.zoom_factory(self.canvas.ax,
+                                                                    base_scale=self.canvas.zoom_base_scale)
             # self.canvas.ax.clear()
             # self.canvas = MplCanvas()
         else:
@@ -242,7 +285,12 @@ class MatplotlibWidget(QtWidgets.QWidget):
         Returns:
 
         """
-        self.canvas.ax.figure.canvas.draw()
+        if self._disposed:
+            pass
+        elif self.canvas.is_valid():
+            self.canvas.ax.figure.canvas.draw()
+        else:
+            pass
 
     def dispose(self) -> None:
         """
@@ -250,14 +298,31 @@ class MatplotlibWidget(QtWidgets.QWidget):
         :return: None.
         """
         if not self._disposed:
-            self.canvas.disconnect_callbacks()
-            self.canvas.fig.clear()
-            plt.close(self.canvas.fig)
-            self.mpltoolbar.setParent(None)
-            self.mpltoolbar.deleteLater()
-            self.canvas.setParent(None)
-            self.canvas.deleteLater()
             self._disposed = True
+            canvas_is_valid: bool = self.canvas.is_valid()
+            toolbar_is_valid: bool = shiboken6.isValid(self.mpltoolbar)
+
+            if canvas_is_valid:
+                self.canvas.cancel_pending_draw()
+                self.canvas.disconnect_callbacks()
+                self.canvas.fig.clear()
+                plt.close(self.canvas.fig)
+                self.canvas.close()
+            else:
+                pass
+
+            if toolbar_is_valid:
+                self.mpltoolbar.close()
+                self.mpltoolbar.setParent(None)
+                self.mpltoolbar.deleteLater()
+            else:
+                pass
+
+            if canvas_is_valid:
+                self.canvas.setParent(None)
+                self.canvas.deleteLater()
+            else:
+                pass
         else:
             pass
 

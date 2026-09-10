@@ -289,7 +289,9 @@ class BasicBlockStandaloneModuleEmitter:
 
         for var_obj in sorted_vars:
             identifier: str = self._identifier_map[var_obj.uid]
-            raw_var_name: str = self._build_runtime_free_var_name(var_obj.name)
+            # The generated symbolic name is source code in the equation editor,
+            # so catalogue display punctuation cannot be preserved in this part.
+            raw_var_name: str = self._safe_name(self._build_runtime_free_var_name(var_obj.name))
             if differential_group:
                 base_identifier: str = self._identifier_map[var_obj.base_var.uid]
                 lines.append(

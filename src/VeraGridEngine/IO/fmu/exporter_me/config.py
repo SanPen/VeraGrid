@@ -10,6 +10,9 @@ import platform
 import re
 import uuid
 
+from VeraGridEngine.enumerations import FmiVersion
+from VeraGridEngine.IO.fmu.versions import normalize_fmi_export_version
+
 
 class InterfaceType(str, Enum):
     """
@@ -101,6 +104,7 @@ class ExportConfig:
     __slots__ = (
         "model_name",
         "output_path",
+        "fmi_version",
         "guid",
         "interface_type",
         "target_platform",
@@ -135,7 +139,8 @@ class ExportConfig:
                  include_export_model_resource: bool = True,
                  compile_binary: bool = True,
                  max_newton_iterations: int = 10,
-                 newton_tolerance: float = 1e-9) -> None:
+                 newton_tolerance: float = 1e-9,
+                 fmi_version: FmiVersion | str = FmiVersion.FMI_2_0) -> None:
         """
         Build one explicit FMU export configuration.
 
@@ -156,11 +161,13 @@ class ExportConfig:
         :param compile_binary: Compile the FMU binary.
         :param max_newton_iterations: Maximum nonlinear iterations in the runtime solver.
         :param newton_tolerance: Nonlinear solver tolerance.
+        :param fmi_version: Canonical FMI family selected for export.
         :return: None.
         """
 
         self.model_name: str = model_name
         self.output_path: Path = Path(output_path)
+        self.fmi_version: FmiVersion = normalize_fmi_export_version(fmi_version)
         if guid is None:
             self.guid: str = build_export_guid()
         else:
@@ -197,6 +204,15 @@ class ExportConfig:
         :return: None.
         """
 
+        # Version recognition and exporter capability are separate contracts.
+        # Keep the existing FMI 2 pipeline fail-closed until another version's
+        # XML, ABI, runtime, and packaging implementation is connected.
+        if self.fmi_version == FmiVersion.FMI_2_0:
+            pass
+        else:
+            raise NotImplementedError(
+                f"FMI {self.fmi_version.value} Model Exchange export is not connected yet"
+            )
         if self.fixed_step <= 0.0:
             raise ValueError("fixed_step must be positive")
         else:

@@ -16,6 +16,7 @@ from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely
 from VeraGrid.Session.file_handler import FileOpenThread
 from VeraGrid.Session.session import GcThread
 from VeraGridEngine.enumerations import SimulationTypes
+from tests.GUI.conftest import ModalDialogAutoCloser
 
 
 CND_CONTINGENCY_CRASH_FILE: Path = Path(
@@ -101,21 +102,29 @@ def run_cnd_contingency_gui_flow(message_queue: Any) -> None:
     gui: VeraGridMainGUI = VeraGridMainGUI()
     gui.show()
     app.processEvents()
+    modal_closer: ModalDialogAutoCloser = ModalDialogAutoCloser(app=app, protected_widget=gui, parent=gui)
+    modal_closer.start()
 
     try:
+        message_queue.put("opening file")
         gui.open_file_now(filenames=str(CND_CONTINGENCY_CRASH_FILE))
+        message_queue.put("waiting for file open")
         wait_for_file_open(gui=gui, app=app, timeout_s=60.0)
+        message_queue.put("file opened")
 
         assert gui.circuit.get_bus_number() > 0
         assert len(gui.circuit.contingency_groups) > 0
 
+        message_queue.put("running OPF")
         gui.ui.actionOPF.trigger()
         wait_for_simulation(gui=gui, app=app, simulation_type=SimulationTypes.OPF_run, timeout_s=180.0)
+        message_queue.put("OPF finished")
 
         opf_driver, opf_results = gui.session.optimal_power_flow
         assert opf_driver is not None
         assert opf_results is not None
 
+        message_queue.put("running contingency analysis")
         gui.ui.actionOpf_to_Power_flow.setChecked(True)
         gui.ui.actionContingency_analysis.trigger()
         if gui.ui.actionactivate_time_series.isChecked():
@@ -124,6 +133,7 @@ def run_cnd_contingency_gui_flow(message_queue: Any) -> None:
             simulation_type = SimulationTypes.ContingencyAnalysis_run
 
         wait_for_simulation(gui=gui, app=app, simulation_type=simulation_type, timeout_s=180.0)
+        message_queue.put("contingency analysis finished")
 
         if simulation_type == SimulationTypes.ContingencyAnalysisTS_run:
             contingency_driver, contingency_results = gui.session.contingency_ts
@@ -135,6 +145,7 @@ def run_cnd_contingency_gui_flow(message_queue: Any) -> None:
         message_queue.put(traceback.format_exc())
         raise
     finally:
+        modal_closer.stop()
         gui.hide()
         gui.stop_all_threads()
         delete_dialog_safely(dialog=gui)
@@ -163,21 +174,22 @@ def test_cnd_training_file_contingency_analysis_does_not_clean_crash() -> None:
     process.start()
     process.join(360.0)
 
+    message: str = ""
+    try:
+        while True:
+            queued_message: object = message_queue.get_nowait()
+            if isinstance(queued_message, str):
+                message = queued_message
+            else:
+                message = repr(queued_message)
+    except queue.Empty:
+        pass
+
     if process.is_alive():
         process.terminate()
         process.join(10.0)
-        raise AssertionError("CND contingency GUI subprocess timed out")
+        raise AssertionError(f"CND contingency GUI subprocess timed out: {message}")
     else:
-        pass
-
-    message: str = ""
-    try:
-        queued_message: object = message_queue.get_nowait()
-        if isinstance(queued_message, str):
-            message = queued_message
-        else:
-            message = repr(queued_message)
-    except queue.Empty:
         pass
 
     assert process.exitcode == 0, message

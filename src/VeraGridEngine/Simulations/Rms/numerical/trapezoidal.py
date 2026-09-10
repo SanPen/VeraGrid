@@ -200,13 +200,20 @@ class TrapezoidalImplicitIntegration:
 
                     self.problem.update(t_curr, x_new, self.problem._variable_parameters_values)
 
-                    if has_fmu_cs:
-                        self.problem.advance_fmu_cs_devices(t=t_local_prev, x_snapshot=x_prev, h=h_eff)
                     if has_fmu_me:
                         self.problem.advance_fmu_me_devices(t=t_local_prev, x_snapshot=x_prev, h=h_eff)
+                        state_event_retry_time: float | None = (
+                            self.problem.prepare_fmu_me_state_event_retry()
+                        )
+                    else:
+                        state_event_retry_time = None
+                    if has_fmu_cs and state_event_retry_time is None:
+                        self.problem.advance_fmu_cs_devices(t=t_local_prev, x_snapshot=x_prev, h=h_eff)
+                    else:
+                        pass
 
                     n_iter = 0
-                    substep_converged = False
+                    substep_converged = state_event_retry_time is not None
 
                     dx_prev = dx_last.copy()
 
@@ -261,11 +268,22 @@ class TrapezoidalImplicitIntegration:
                             n_iter += 1
 
                     if substep_converged:
-                        dx_last = dx.copy()
-                        x_prev = x_new.copy()
-                        t_local_prev = t_curr
-                        is_first_local_step = False
+                        if state_event_retry_time is None:
+                            if has_fmu_me:
+                                self.problem.resolve_fmu_me_devices(accepted=True)
+                            else:
+                                pass
+                            dx_last = dx.copy()
+                            x_prev = x_new.copy()
+                            t_local_prev = t_curr
+                            is_first_local_step = False
+                        else:
+                            x_new = x_prev.copy()
                     else:
+                        if has_fmu_me:
+                            self.problem.resolve_fmu_me_devices(accepted=False)
+                        else:
+                            pass
                         converged = False
                         break
 

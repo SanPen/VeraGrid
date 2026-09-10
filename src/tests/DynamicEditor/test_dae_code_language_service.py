@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from VeraGrid.Gui.DynamicModelEditor.dae_code_completion import (
+from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties.dae_code_completion import (
     DaeCompletionEntry,
     DaeCompletionPosition,
     DaeLanguageContext,
@@ -10,9 +10,13 @@ from VeraGrid.Gui.DynamicModelEditor.dae_code_completion import (
     build_dae_completion_entries,
     build_symbolic_function_entries,
 )
-from VeraGrid.Gui.DynamicModelEditor.dae_code_linter import (
+from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties.dae_code_linter import (
     DaeCodeDiagnostic,
     build_dae_code_diagnostics,
+)
+from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties.dynamic_procedural_logic import (
+    build_procedural_logic_call_lines,
+    get_procedural_logic_help,
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import (
     Comparison,
@@ -23,6 +27,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (
     get_symbolic_parser_function_names,
     string_to_symbolic,
 )
+from VeraGridEngine.enumerations import ProceduralLogicType
 
 
 def build_language_context() -> DaeLanguageContext:
@@ -153,6 +158,111 @@ def test_expression_completion_offers_symbols_and_engine_functions() -> None:
     assert "sin" in completion_names
     assert "sqrt" in completion_names
     assert "state_eqs" not in completion_names
+
+
+def test_procedural_completion_inserts_complete_documented_call() -> None:
+    """A procedural completion must insert every required named argument.
+
+    :return: None.
+    """
+    context: DaeLanguageContext = build_language_context()
+    source: str = "procedural_logic = [\n    tim"
+    position: DaeCompletionPosition = analyze_dae_completion_position(
+        source,
+        len(source),
+    )
+
+    entries: list[DaeCompletionEntry] = build_dae_completion_entries(
+        context,
+        position,
+    )
+
+    assert get_completion_names(entries) == list((ProceduralLogicType.TimeDelay.value,))
+    entry: DaeCompletionEntry = entries[0]
+    assert "output=None" in entry.get_insertion_text()
+    assert "source=0.0" in entry.get_insertion_text()
+    assert "delay=0.0" in entry.get_insertion_text()
+    assert "name='time delay'" in entry.get_insertion_text()
+    assert "output=..." in entry.get_display_text()
+    assert "Non-negative delay" in entry.get_tooltip()
+    assert entry.get_selection_length() == len("None")
+
+
+def test_procedural_output_completion_only_offers_retained_modes() -> None:
+    """An output argument must not offer ordinary DAE variables or parameters.
+
+    :return: None.
+    """
+    held: Var = Var("held")
+    source_variable: Var = Var("source_signal")
+    delay_parameter: Var = Var("delay_parameter")
+    namespace: dict[str, Expr] = dict((
+        (held.name, held),
+        (source_variable.name, source_variable),
+        (delay_parameter.name, delay_parameter),
+    ))
+    symbol_entries: list[DaeCompletionEntry] = list((
+        DaeCompletionEntry("held", "held", "held", "Retained mode"),
+        DaeCompletionEntry(
+            "source_signal", "source_signal", "source_signal", "Algebraic variable"
+        ),
+        DaeCompletionEntry(
+            "delay_parameter", "delay_parameter", "delay_parameter", "Event parameter"
+        ),
+    ))
+    context: DaeLanguageContext = DaeLanguageContext(
+        namespace=namespace,
+        symbol_entries=symbol_entries,
+        initializable_names=list(),
+        state_names=list(),
+        algebraic_names=list(("source_signal",)),
+        differential_names=list(),
+        mode_names=list(("held",)),
+        runtime_parameter_names=list(("delay_parameter",)),
+        variable_names=list(("source_signal",)),
+    )
+    source: str = (
+        "procedural_logic = [\n"
+        "    time_delay(\n"
+        "        output="
+    )
+    position: DaeCompletionPosition = analyze_dae_completion_position(
+        source,
+        len(source),
+    )
+
+    entries: list[DaeCompletionEntry] = build_dae_completion_entries(
+        context,
+        position,
+    )
+
+    assert get_completion_names(entries) == list(("held",))
+
+
+def test_every_procedural_type_has_a_complete_template_and_help() -> None:
+    """Every Engine-supported type must expose arguments and contextual help.
+
+    :return: None.
+    """
+    logic_tpe: ProceduralLogicType
+    for logic_tpe in ProceduralLogicType:
+        if logic_tpe != ProceduralLogicType.Base:
+            lines: list[str]
+            first_placeholder: str | None
+            lines, first_placeholder = build_procedural_logic_call_lines(logic_tpe)
+            source: str = "\n".join(lines)
+            help_text: str = get_procedural_logic_help(logic_tpe)
+
+            assert lines[0] == f"{logic_tpe.value}("
+            assert lines[-1] == "),"
+            assert "name=" in source
+            assert "Named arguments:" in help_text
+            if first_placeholder is not None:
+                assert first_placeholder in source
+            else:
+                pass
+        else:
+            pass
 
 
 def test_init_equation_keys_exclude_inputs_events_and_existing_keys() -> None:

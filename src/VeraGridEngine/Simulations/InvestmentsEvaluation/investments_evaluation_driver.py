@@ -103,13 +103,16 @@ class InvestmentsEvaluationDriver(DriverTemplate):
         :return: multi-objective function criteria values
         """
 
-        objectives = self.problem.objective_function(x)
-
-        if record_results:
-            self.results.add(x_vec=x, f_vec=objectives)
-            self.report_progress2(self.results.current_evaluation, self.results.max_eval)
+        if self.is_cancel():
+            objectives: Vec = np.zeros(len(self.problem.get_objectives_names()), dtype=float)
         else:
-            pass
+            objectives = self.problem.objective_function(x)
+
+            if record_results:
+                self.results.add(x_vec=x, f_vec=objectives)
+                self.report_progress2(self.results.current_evaluation, self.results.max_eval)
+            else:
+                pass
 
         return objectives
 
@@ -165,9 +168,13 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             variable_names=self.problem.get_vars_names(),
             report_text=self.report_text,
             logger=self.logger,
+            cancel_checker=self.is_cancel,
         )
 
-        self.results.set_best_combination(combination=best_combination)
+        if self.is_cancel():
+            pass
+        else:
+            self.results.set_best_combination(combination=best_combination)
 
     def optimized_evaluation_mvrsm_pareto(self) -> None:
         """
@@ -199,10 +206,14 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             max_evals=self.options.max_eval,
             n_objectives=len(ret),
             rand_evals=rand_evals,
-            args=()
+            args=(),
+            cancel_checker=self.is_cancel
         )
 
-        self.results.set_best_combination(combination=sorted_x_[0, :])
+        if not self.is_cancel() and len(sorted_x_) > 0:
+            self.results.set_best_combination(combination=sorted_x_[0, :])
+        else:
+            pass
 
     def optimized_evaluation_nsga3(self) -> None:
         """
@@ -238,9 +249,13 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             crossover_prob=0.8,
             mutation_probability=0.1,
             eta=30,
+            cancel_checker=self.is_cancel,
         )
 
-        self.results.set_best_combination(combination=X[:, 0])
+        if not self.is_cancel() and X is not None and len(X) > 0:
+            self.results.set_best_combination(combination=X[:, 0])
+        else:
+            pass
 
     def optimized_evaluation_pint_toot_nsga3(self) -> None:
         """
@@ -268,6 +283,7 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             report_text=self.report_text,
             logger=self.logger,
             record_results=True,
+            cancel_checker=self.is_cancel,
         )
 
         # Find the largest number of reference partitions compatible with the selected population size.
@@ -289,9 +305,13 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             eta=30,
             initial_population=seed_population,
             initial_objectives=seed_objectives,
+            cancel_checker=self.is_cancel,
         )
 
-        self.results.set_best_combination(combination=X[:, 0])
+        if not self.is_cancel() and X is not None and len(X) > 0:
+            self.results.set_best_combination(combination=X[:, 0])
+        else:
+            pass
 
     def randomized_evaluation(self) -> None:
         """
@@ -314,9 +334,13 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             ub=self.problem.x_max,
             n_obj=len(ret),
             max_evals=self.options.max_eval,
+            cancel_checker=self.is_cancel,
         )
 
-        self.results.set_best_combination(combination=X[:, 0])
+        if not self.is_cancel() and len(X) > 0:
+            self.results.set_best_combination(combination=X[:, 0])
+        else:
+            pass
 
     def optimized_evaluation_mixed_nsga2(self) -> None:
         """
@@ -339,20 +363,27 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             n_obj=len(ret),
             max_evals=self.options.max_eval,  # termination
             pop_size=pop_size,
+            cancel_checker=self.is_cancel,
             # crossover_prob=0.8,
             # mutation_probability=0.1,
             # eta=30,
         )
 
         res_x = []
-        for i, v in enumerate(X):
-            if isinstance(v, dict):
-                vall = list(v.values())[0]
-                res_x.append(vall)
-            else:
-                res_x.append(v)
+        if X is not None:
+            for i, v in enumerate(X):
+                if isinstance(v, dict):
+                    vall = list(v.values())[0]
+                    res_x.append(vall)
+                else:
+                    res_x.append(v)
+        else:
+            pass
 
-        self.results.set_best_combination(combination=np.array(res_x))
+        if not self.is_cancel() and len(res_x) > 0:
+            self.results.set_best_combination(combination=np.array(res_x))
+        else:
+            pass
 
     def run(self) -> None:
         """
@@ -441,9 +472,15 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             self.logger.add_info(msg=f"Best combination", device=inv.idtag, value=inv.name)
 
         self.toc()
-        self.report_done()
+        if self.is_cancel():
+            self.report_done("Cancelled!")
+        else:
+            self.report_done()
 
-    def cancel(self):
-        self.__cancel__ = True
+    def cancel(self) -> None:
+        """
+        Request cancellation without emitting completion from the caller thread.
 
-        self.report_done("Cancelled!")
+        :return: None.
+        """
+        DriverTemplate.cancel(self)

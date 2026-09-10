@@ -6,16 +6,16 @@
 
 ## Purpose and interface
 
-This block owns the explicit DC-link voltage state and includes converter losses in the DC-link power balance. It belongs to a static **VSC** device; it is not the DC-line model or an independently assignable static capacitor.
+This block owns the explicit DC-link voltage state, the DC-terminal active power and the equality between the capacitor state and the algebraic DC-bus voltage. It includes converter losses in the DC-link power balance. It belongs to a static **VSC** device; it is not the DC-line model or an independently assignable static capacitor.
 
 | Direction | Position | Signal | Meaning |
 | --- | --- | --- | --- |
 | Input | 1 | `Vdc` | DC bus voltage for state initialization |
-| Input | 2 | `Pf_vsc` | Power entering the VSC from its DC terminal |
-| Input | 3 | `Pt_vsc` | Power entering the VSC from its AC terminal |
-| Input | 4 | `i_d` | Electrical d-axis current used for losses |
-| Input | 5 | `i_q` | Electrical q-axis current used for losses |
+| Input | 2 | `Pt_vsc` | Power entering the VSC from its AC terminal |
+| Input | 3 | `i_d` | Electrical d-axis current used for losses |
+| Input | 4 | `i_q` | Electrical q-axis current used for losses |
 | Output | 1 | `Vdc_state` | Explicit capacitor-voltage state |
+| Output | 2 | `Pf_vsc` | Algebraic power entering the VSC from its DC terminal |
 
 Signals use model per-unit quantities. Positive terminal powers enter the VSC.
 
@@ -30,7 +30,11 @@ $$
 \dot{V}_{dc,state}=\frac{P_{f,vsc}+P_{t,vsc}-P_{loss}}{C_{dc}V_{dc,state}}.
 $$
 
-At equilibrium, the two terminal powers sum to converter losses. During a transient, their imbalance also changes stored DC-link energy. The terminal block supplies the separate algebraic constraint `Vdc = Vdc_state`.
+At equilibrium, the two terminal powers sum to converter losses. During a transient, their imbalance also changes stored DC-link energy. This same block supplies the algebraic constraint:
+
+$$
+V_{dc}-V_{dc,state}=0.
+$$
 
 ## Parameters
 
@@ -45,8 +49,8 @@ The three static coefficients have no numerical template fallback. Their `Const(
 
 ## Initialization and wiring
 
-Initialization sets `Vdc_state0 = Vdc0` from the DC bus. Use positive `Cdc` and a nonzero operating voltage; the equation divides by both. Terminal-power initialization comes from the power flow through the [terminal power block](vsc_terminal_power.md).
+Initialization sets `Vdc_state0 = Vdc0` from the DC bus. `Pf_vsc` is initialized directly from the power-flow DC terminal. Use positive `Cdc` and a nonzero operating voltage; the differential equation divides by both.
 
-Connect `Pf_vsc/Pt_vsc` from that block and `i_d/i_q` from the electrical block. Feed `Vdc_state` to terminal-power input 2 and, in `Vm_dc` mode, to the active controller. The DC-bus voltage remains connected to input 1 and to terminal-power input 1.
+Connect `Pt_vsc` and `i_d/i_q` from the electrical block. Feed `Vdc_state` to the active controller in `Vm_dc` mode and `Pf_vsc` to it in `Pdc` mode. The DC-bus voltage remains connected to input 1.
 
 If assembly reports an unresolved `a0/a1/a2`, inspect the static mapping and the saved root mappings. Do not work around the error by converting these coefficients to dynamic parameters or assigning arbitrary fallback zeros.

@@ -5,11 +5,11 @@ from __future__ import annotations
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from VeraGrid.Gui.base_python_code_editor import BasePythonCodeEditor
-from VeraGrid.Gui.DynamicModelEditor.dae_code_completion import (
+from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties import (
     DaeCompletionEntry,
     DaeLanguageContext,
 )
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_properties import (
+from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties import (
     BlockEquationDraft,
     DaeCodeDiagnostic,
     DaeCodeEditor,

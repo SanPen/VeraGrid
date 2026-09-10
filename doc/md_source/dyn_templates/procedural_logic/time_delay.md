@@ -22,3 +22,7 @@ Stores accepted source samples and exposes the value corresponding to an earlier
 ## Runtime behavior
 
 A non-positive delay passes the current sample through. Positive delays use the available accepted-step history, so accuracy depends on the simulation step and event boundaries. Delays should remain non-negative during operation.
+
+## Library block
+
+The standalone block has input `u`, output `y`, and an editable `delay` parameter initialized to `0.0` seconds.

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.PowerFlow.power_flow_worker &mdash; VeraGrid 6.5.6 documentation</title>
+  <title>VeraGridEngine.Simulations.PowerFlow.power_flow_worker &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=1095f081"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -576,39 +577,41 @@
             <span class="k">if</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="n">SolverType</span><span class="o">.</span><span class="n">HELM</span><span class="p">:</span>
                 <span class="n">adms</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_series_admittance_matrices</span><span class="p">()</span>
 
-                <span class="n">solution</span> <span class="o">=</span> <span class="n">pflw</span><span class="o">.</span><span class="n">helm_dpr</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">island</span><span class="p">,</span>
-                                         <span class="n">Ybus</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="p">,</span>
-                                         <span class="n">Yf</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yf</span><span class="p">,</span>
-                                         <span class="n">Yt</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yt</span><span class="p">,</span>
-                                         <span class="n">Yshunt_bus</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yshunt_bus</span><span class="p">,</span>
-                                         <span class="n">Yseries</span><span class="o">=</span><span class="n">adms</span><span class="o">.</span><span class="n">Yseries</span><span class="p">,</span>
-                                         <span class="n">V0</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span>
-                                         <span class="n">S0</span><span class="o">=</span><span class="n">Sbase_plus_hvdc</span><span class="p">,</span>
-                                         <span class="n">Ysh0</span><span class="o">=</span><span class="n">adms</span><span class="o">.</span><span class="n">Yshunt</span><span class="p">,</span>
-                                         <span class="n">pq</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pq</span><span class="p">,</span>
-                                         <span class="n">pv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pv</span><span class="p">,</span>
-                                         <span class="n">vd</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">vd</span><span class="p">,</span>
-                                         <span class="n">no_slack</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">,</span>
-                                         <span class="n">tolerance</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
-                                         <span class="n">max_coefficients</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
-                                         <span class="n">use_pade</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                         <span class="n">use_classical_germ</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                         <span class="n">control_q</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">control_Q</span><span class="p">,</span>
-                                         <span class="n">pqv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pqv</span><span class="p">,</span>
-                                         <span class="n">p</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
-                                         <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
-                                         <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
-                                         <span class="n">control_discrete_shunts</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
-                                             <span class="n">island</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">control_mode_int</span> <span class="o">==</span> <span class="n">ShuntControlMode</span><span class="o">.</span><span class="n">Discrete</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
-                                         <span class="p">),</span>
-                                         <span class="n">control_qv_droop</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
-                                             <span class="n">island</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">control_mode_int</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">QVDroop</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
-                                         <span class="p">),</span>
-                                         <span class="n">distributed_slack</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">distributed_slack</span><span class="p">,</span>
-                                         <span class="n">bus_installed_power</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">installed_power</span><span class="p">,</span>
-                                         <span class="n">controls_tol</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">controls_start_tolerance</span><span class="p">,</span>
-                                         <span class="n">verbose</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
-                                         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                <span class="n">solution</span> <span class="o">=</span> <span class="n">pflw</span><span class="o">.</span><span class="n">helm_dpr</span><span class="p">(</span>
+                    <span class="n">nc</span><span class="o">=</span><span class="n">island</span><span class="p">,</span>
+                    <span class="n">Ybus</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="p">,</span>
+                    <span class="n">Yf</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yf</span><span class="p">,</span>
+                    <span class="n">Yt</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yt</span><span class="p">,</span>
+                    <span class="n">Yshunt_bus</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yshunt_bus</span><span class="p">,</span>
+                    <span class="n">Yseries</span><span class="o">=</span><span class="n">adms</span><span class="o">.</span><span class="n">Yseries</span><span class="p">,</span>
+                    <span class="n">V0</span><span class="o">=</span><span class="n">V0</span><span class="p">,</span>
+                    <span class="n">S0</span><span class="o">=</span><span class="n">Sbase_plus_hvdc</span><span class="p">,</span>
+                    <span class="n">Ysh0</span><span class="o">=</span><span class="n">adms</span><span class="o">.</span><span class="n">Yshunt</span><span class="p">,</span>
+                    <span class="n">pq</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pq</span><span class="p">,</span>
+                    <span class="n">pv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pv</span><span class="p">,</span>
+                    <span class="n">vd</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">vd</span><span class="p">,</span>
+                    <span class="n">pqv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pqv</span><span class="p">,</span>
+                    <span class="n">p</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
+                    <span class="n">no_slack</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">,</span>
+                    <span class="n">tolerance</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
+                    <span class="n">max_coefficients</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span>
+                    <span class="n">use_pade</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">use_classical_germ</span><span class="o">=</span><span class="ow">not</span> <span class="n">options</span><span class="o">.</span><span class="n">use_stored_guess</span><span class="p">,</span>
+                    <span class="n">control_q</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">control_Q</span><span class="p">,</span>
+                    <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
+                    <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
+                    <span class="n">control_discrete_shunts</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+                        <span class="n">island</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">control_mode_int</span> <span class="o">==</span> <span class="n">ShuntControlMode</span><span class="o">.</span><span class="n">Discrete</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+                    <span class="p">),</span>
+                    <span class="n">control_qv_droop</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+                        <span class="n">island</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">control_mode_int</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">QVDroop</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+                    <span class="p">),</span>
+                    <span class="n">distributed_slack</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">distributed_slack</span><span class="p">,</span>
+                    <span class="n">bus_installed_power</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">installed_power</span><span class="p">,</span>
+                    <span class="n">controls_tol</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">controls_start_tolerance</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+                <span class="p">)</span>
 
             <span class="c1"># type DC</span>
             <span class="k">elif</span> <span class="n">solver_type</span> <span class="o">==</span> <span class="n">SolverType</span><span class="o">.</span><span class="n">Linear</span><span class="p">:</span>
@@ -1154,7 +1157,7 @@
 
         <span class="n">vm_abs</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>
         <span class="n">slack_bus_mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">bus_types</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">bus_types</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span>
         <span class="p">)</span>
         <span class="n">fixed_load_bus</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">get_injections_per_bus</span><span class="p">()</span>
@@ -1199,6 +1202,7 @@
             <span class="n">v_ctrl_val_gen</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span><span class="o">.</span><span class="n">idx</span><span class="p">(),</span>
             <span class="n">qv_droop_val_gen</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">QVDroop</span><span class="o">.</span><span class="n">idx</span><span class="p">(),</span>
             <span class="n">Vm</span><span class="o">=</span><span class="n">vm_abs</span><span class="p">,</span>
+            <span class="n">enforce_q_limits</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">control_Q</span><span class="p">,</span>
             <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -1286,7 +1290,7 @@
 
         <span class="n">vm_abs</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>
         <span class="n">slack_bus_mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">bus_types</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">bus_types</span> <span class="o">==</span> <span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="o">.</span><span class="n">value</span>
         <span class="p">)</span>
         <span class="n">fixed_load_bus</span><span class="p">:</span> <span class="n">CxVec</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">get_injections_per_bus</span><span class="p">()</span>
@@ -1329,6 +1333,7 @@
             <span class="n">v_ctrl_val_gen</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span><span class="o">.</span><span class="n">idx</span><span class="p">(),</span>
             <span class="n">qv_droop_val_gen</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">QVDroop</span><span class="o">.</span><span class="n">idx</span><span class="p">(),</span>
             <span class="n">Vm</span><span class="o">=</span><span class="n">vm_abs</span><span class="p">,</span>
+            <span class="n">enforce_q_limits</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">control_Q</span><span class="p">,</span>
             <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span>
         <span class="p">)</span>
 

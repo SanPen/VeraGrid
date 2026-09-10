@@ -8,7 +8,7 @@ import pytest
 import numpy as np
 
 import VeraGridEngine.api as gce
-from VeraGridEngine.Devices.Branches.line import Line
+from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -135,17 +135,17 @@ def test_dgs_v2_first_rms_step_is_finite_and_converged() -> None:
         options=rms_options,
         pf_results=power_flow_results,
     )
-    dc_cable: Line = next(
-        line
-        for line in grid.get_lines()
-        if line.bus_from.is_dc and line.bus_to.is_dc
-    )
+    dc_cable: DcLine = grid.dc_lines[0]
     inductance_parameter: Var = dc_cable.rms_model.api_obj_mapping[
         ParamPowerFlowReferenceType.dc_line_l_pu_seconds
     ]
+    dynamic_values: tuple[float, float] | None = (
+        dc_cable.get_applied_dynamic_values_pu_seconds(Sbase=float(grid.Sbase))
+    )
+    assert dynamic_values is not None
     assert problem._static_parameters_values_mapping[
         inductance_parameter
-    ].value == dc_cable.dc_series_inductance_pu_seconds
+    ].value == dynamic_values[0]
     assert len(problem._external_time_uids) == 3
     problem.set_events_group(
         rms_events_group=RmsEventsGroup(name="Nuactis V2 directed step")

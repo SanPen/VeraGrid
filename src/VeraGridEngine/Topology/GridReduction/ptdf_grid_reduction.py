@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import numpy as np
 import networkx as nx
-from typing import Tuple, Sequence, Set, List, TYPE_CHECKING
+from typing import Tuple, Sequence, Set, List, Dict, TYPE_CHECKING
 from VeraGridEngine.basic_structures import IntVec, Mat, Logger, Vec
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Devices.Injections.generator import Generator
@@ -21,6 +21,67 @@ from VeraGridEngine.enumerations import BusMode, GeneratorControlMode
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.multi_circuit import MultiCircuit
     from VeraGridEngine.Devices.Substation.bus import Bus
+    from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
+
+
+def get_reduced_branch_flows(original_nc: "NumericalCircuit",
+                             reduced_nc: "NumericalCircuit",
+                             original_flows: Vec) -> Vec:
+    """
+    Reorder original branch flows to match the reduced numerical circuit branch rows.
+
+    :param original_nc: Numerical circuit before removing buses.
+    :param reduced_nc: Numerical circuit after removing buses.
+    :param original_flows: Branch flows ordered as ``original_nc``.
+    :return: Branch flows ordered as ``reduced_nc``.
+    """
+    original_flow_by_idtag: Dict[str, float] = dict()
+    reduced_flows: Vec = np.zeros(reduced_nc.nbr, dtype=float)
+
+    for i in range(original_nc.nbr):
+        original_branch_idtag: str = str(original_nc.passive_branch_data.idtag[i])
+        original_flow_by_idtag[original_branch_idtag] = original_flows[i]
+
+    for i in range(reduced_nc.nbr):
+        reduced_branch_idtag: str = str(reduced_nc.passive_branch_data.idtag[i])
+        original_flow: float | None = original_flow_by_idtag.get(reduced_branch_idtag, None)
+
+        if original_flow is None:
+            pass
+        else:
+            reduced_flows[i] = original_flow
+
+    return reduced_flows
+
+
+def get_reduced_branch_flows_ts(original_nc: "NumericalCircuit",
+                                reduced_nc: "NumericalCircuit",
+                                original_flows_ts: Mat) -> Mat:
+    """
+    Reorder original time-series branch flows to match reduced numerical circuit branch rows.
+
+    :param original_nc: Numerical circuit before removing buses.
+    :param reduced_nc: Numerical circuit after removing buses.
+    :param original_flows_ts: Time-series branch flows ordered as ``original_nc``.
+    :return: Time-series branch flows ordered as ``reduced_nc``.
+    """
+    original_index_by_idtag: Dict[str, int] = dict()
+    reduced_flows_ts: Mat = np.zeros((original_flows_ts.shape[0], reduced_nc.nbr), dtype=float)
+
+    for i in range(original_nc.nbr):
+        original_branch_idtag: str = str(original_nc.passive_branch_data.idtag[i])
+        original_index_by_idtag[original_branch_idtag] = i
+
+    for i in range(reduced_nc.nbr):
+        reduced_branch_idtag: str = str(reduced_nc.passive_branch_data.idtag[i])
+        original_index: int | None = original_index_by_idtag.get(reduced_branch_idtag, None)
+
+        if original_index is None:
+            pass
+        else:
+            reduced_flows_ts[:, i] = original_flows_ts[:, original_index]
+
+    return reduced_flows_ts
 
 
 def get_Pgen(grid: MultiCircuit) -> Tuple[Vec, Vec]:
@@ -497,14 +558,20 @@ def ptdf_reduction(grid: MultiCircuit,
     # re-make the linear analysis
     nc2 = compile_numerical_circuit_at(grid)
     lin2 = LinearAnalysis(nc2)
+    Flows0_reduced_order: Vec = get_reduced_branch_flows(original_nc=nc,
+                                                         reduced_nc=nc2,
+                                                         original_flows=Flows0)
 
     # reconstruct injections that should be to keep the flows the same
-    Pbus3, _, _, _ = np.linalg.lstsq(lin2.PTDF, Flows0[i_branches])
+    Pbus3, _, _, _ = np.linalg.lstsq(lin2.PTDF, Flows0_reduced_order, rcond=None)
     dPbus = Pbus2 - Pbus3
 
     if grid.has_time_series:
         lin_ts2 = LinearAnalysisTs(grid=grid, compute_multi_contingencies=False)
-        Pbus3_ts = lin_ts2.get_reverse_injections_ts(flows_ts=Flows0_ts[:, i_branches])
+        Flows0_ts_reduced_order: Mat = get_reduced_branch_flows_ts(original_nc=nc,
+                                                                   reduced_nc=nc2,
+                                                                   original_flows_ts=Flows0_ts)
+        Pbus3_ts = lin_ts2.get_reverse_injections_ts(flows_ts=Flows0_ts_reduced_order)
         Pbus2_ts = grid.get_Pbus_prof(apply_active=True)
         dPbus_ts = Pbus2_ts - Pbus3_ts
     else:
@@ -525,7 +592,7 @@ def ptdf_reduction(grid: MultiCircuit,
     # proof that the flows are actually the same
     # Pbus4 = grid.get_Pbus(apply_active=True)
     # Flows4 = lin2.PTDF @ Pbus4
-    # diff = Flows0[i_branches] - Flows4
+    # diff = Flows0_reduced_order - Flows4
 
     return grid, logger
 
@@ -543,7 +610,7 @@ def ptdf_reduction_ree_bad(grid: MultiCircuit,
     logger = Logger()
 
     # find the boundary set: buses from the internal set the join to the external set
-    e_buses, i_buses, i_branches = get_reduction_sets(grid=grid, reduction_bus_indices=reduction_bus_indices)
+    e_buses, i_buses, _ = get_reduction_sets(grid=grid, reduction_bus_indices=reduction_bus_indices)
 
     if len(e_buses) == 0:
         logger.add_info(msg="Nothing to reduce")
@@ -633,7 +700,7 @@ def ptdf_reduction_ree_less_bad(grid: MultiCircuit,
     logger = Logger()
 
     # find the boundary set: buses from the internal set the join to the external set
-    e_buses, i_buses, i_branches = get_reduction_sets(grid=grid, reduction_bus_indices=reduction_bus_indices)
+    e_buses, i_buses, _ = get_reduction_sets(grid=grid, reduction_bus_indices=reduction_bus_indices)
 
     if len(e_buses) == 0:
         logger.add_info(msg="Nothing to reduce")
@@ -860,13 +927,28 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     # re-make the linear analysis
     nc2 = compile_numerical_circuit_at(grid)
     lin2 = LinearAnalysis(nc2, distributed_slack=distribute_slack)
+    Flow0_load_reduced_order: Vec = get_reduced_branch_flows(original_nc=nc,
+                                                             reduced_nc=nc2,
+                                                             original_flows=Flow0_load)
+    Flow0_gen_reduced_order: Vec = get_reduced_branch_flows(original_nc=nc,
+                                                            reduced_nc=nc2,
+                                                            original_flows=Flow0_gen)
+    Flow0_gen_srap_reduced_order: Vec = get_reduced_branch_flows(original_nc=nc,
+                                                                 reduced_nc=nc2,
+                                                                 original_flows=Flow0_gen_srap)
+    Flow0_hvdc_reduced_order: Vec = get_reduced_branch_flows(original_nc=nc,
+                                                             reduced_nc=nc2,
+                                                             original_flows=Flow0_hvdc)
 
     # reconstruct injections that should be to keep the flows the same
     # We want to find dP such that: PTDF @ (Pbus2 + dP) = Flow0
     # So: PTDF @ dP = Flow0 - PTDF @ Pbus2
 
     # Target flows in the original grid (including HVDC contribution)
-    Flow0_total = Flow0_load + Flow0_gen + Flow0_gen_srap + Flow0_hvdc
+    Flow0_total_reduced_order: Vec = (Flow0_load_reduced_order
+                                      + Flow0_gen_reduced_order
+                                      + Flow0_gen_srap_reduced_order
+                                      + Flow0_hvdc_reduced_order)
     
     # Total injections and flows in the reduced grid
     Pbus2_total = Pload2 + Pgen2 + Pgen_srap2
@@ -888,10 +970,10 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     Flow2_gen_srap = lin2.get_flows(Pgen_srap2)
    
     # Residual flow to compensate
-    residual_flow = Flow0_total[i_branches] - Flow2
-    residual_flow_load = Flow0_load[i_branches] - Flow2_load
-    residual_flow_gen = Flow0_gen[i_branches] - Flow2_gen
-    residual_flow_gen_srap = Flow0_gen_srap[i_branches] - Flow2_gen_srap
+    residual_flow = Flow0_total_reduced_order - Flow2
+    residual_flow_load = Flow0_load_reduced_order - Flow2_load
+    residual_flow_gen = Flow0_gen_reduced_order - Flow2_gen
+    residual_flow_gen_srap = Flow0_gen_srap_reduced_order - Flow2_gen_srap
     
     # Solve for compensation across all remaining buses (minimum-norm solution).
     dP, _, _, _ = np.linalg.lstsq(lin2.PTDF, residual_flow, rcond=None)
@@ -928,10 +1010,16 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         # We use the same logic as for the static case but for each time step (vectorized)
         # The target flows on internal branches must be preserved
 
-        # Target flows (TS) on internal branches
-        Flows0_load_ts_i = Flows0_load_ts[:, i_branches]
-        Flows0_gen_ts_i = Flows0_gen_ts[:, i_branches]
-        Flows0_gen_srap_ts_i = Flows0_gen_srap_ts[:, i_branches]
+        # Target flows (TS) on reduced branch rows
+        Flows0_load_ts_i = get_reduced_branch_flows_ts(original_nc=nc,
+                                                       reduced_nc=nc2,
+                                                       original_flows_ts=Flows0_load_ts)
+        Flows0_gen_ts_i = get_reduced_branch_flows_ts(original_nc=nc,
+                                                      reduced_nc=nc2,
+                                                      original_flows_ts=Flows0_gen_ts)
+        Flows0_gen_srap_ts_i = get_reduced_branch_flows_ts(original_nc=nc,
+                                                           reduced_nc=nc2,
+                                                           original_flows_ts=Flows0_gen_srap_ts)
 
         # Get the equivalent injections that would produce these flows in the reduced grid
         Pbus3_load_ts = lin_ts2.get_reverse_injections_ts(flows_ts=Flows0_load_ts_i)
@@ -947,9 +1035,12 @@ def ptdf_reduction_projected(grid: MultiCircuit,
             Pdc_hvdc_ts2 = get_hvdc_Pdc_ts(grid)
             Flows2_hvdc_ts = lin_ts2.get_hvdc_flows_ts(Pdc_hvdc_ts=Pdc_hvdc_ts2)
         else:
-            Flows2_hvdc_ts = np.zeros((grid.get_time_number(), len(i_branches)))
+            Flows2_hvdc_ts = np.zeros((grid.get_time_number(), nc2.nbr))
 
-        residual_hvdc_ts = Flows0_hvdc_ts[:, i_branches] - Flows2_hvdc_ts
+        Flows0_hvdc_ts_i = get_reduced_branch_flows_ts(original_nc=nc,
+                                                       reduced_nc=nc2,
+                                                       original_flows_ts=Flows0_hvdc_ts)
+        residual_hvdc_ts = Flows0_hvdc_ts_i - Flows2_hvdc_ts
 
         if np.any(np.abs(residual_hvdc_ts) > tol):
             dP_hvdc_ts = lin_ts2.get_reverse_injections_ts(flows_ts=residual_hvdc_ts)

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -119,6 +119,7 @@
     <span class="n">EmtBoundaryUpdateProtocol</span><span class="p">,</span>
     <span class="n">EmtProblemTemplate</span><span class="p">,</span>
     <span class="n">get_solver_forced_event_time</span><span class="p">,</span>
+    <span class="n">resolve_solver_boundary_step</span><span class="p">,</span>
     <span class="n">resolve_solver_boundary_updater</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.emt_boundary_update_wrapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">BoundaryUpdateWrapper</span>
@@ -1275,9 +1276,13 @@
                     <span class="k">pass</span>
 
                 <span class="k">if</span> <span class="n">active_boundary_updater</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">pass</span>
+                    <span class="n">state_event_retry_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">active_boundary_updater</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">t_curr</span><span class="p">,</span> <span class="n">x_prev</span><span class="p">,</span> <span class="n">full_params</span><span class="p">)</span>
+                    <span class="n">state_event_retry_time</span> <span class="o">=</span> <span class="n">active_boundary_updater</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                        <span class="n">t_curr</span><span class="p">,</span>
+                        <span class="n">x_prev</span><span class="p">,</span>
+                        <span class="n">full_params</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">ev_params</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">full_params</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">ev_params</span><span class="p">)]</span>
 
                 <span class="n">x_iter</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_prev</span>
@@ -1300,9 +1305,14 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">pass</span>
 
-                <span class="n">substep_converged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">substep_converged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">state_event_retry_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">substep_numerical_failure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newton_max_iter</span><span class="p">):</span>
+                <span class="n">newton_iteration_count</span><span class="p">:</span> <span class="nb">int</span>
+                <span class="k">if</span> <span class="n">state_event_retry_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">newton_iteration_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newton_max_iter</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">newton_iteration_count</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">newton_iteration_count</span><span class="p">):</span>
                     <span class="n">total_newton_iterations</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">ctx</span> <span class="o">=</span> <span class="n">NewtonSolveContext</span><span class="p">(</span>
                         <span class="n">t</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">t_curr</span><span class="p">),</span>
@@ -1491,46 +1501,58 @@
                     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">is_first_local_step</span><span class="p">:</span>
                         <span class="n">well_initialized</span> <span class="o">=</span> <span class="kc">False</span>
 
-                <span class="k">if</span> <span class="n">substep_numerical_failure</span><span class="p">:</span>
-                    <span class="c1"># Preserve the last accepted solution when Newton breaks down</span>
-                    <span class="c1"># numerically so the EMT driver can report a failed substep</span>
-                    <span class="c1"># instead of crashing the whole simulation.</span>
+                <span class="k">if</span> <span class="n">state_event_retry_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">state_event_retry_time</span> <span class="o">=</span> <span class="n">resolve_solver_boundary_step</span><span class="p">(</span>
+                        <span class="n">boundary_updater</span><span class="o">=</span><span class="n">active_boundary_updater</span><span class="p">,</span>
+                        <span class="n">accepted</span><span class="o">=</span><span class="n">substep_converged</span><span class="p">,</span>
+                        <span class="n">params</span><span class="o">=</span><span class="n">full_params</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="n">state_event_retry_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">x_iter</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_prev</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">pass</span>
-
-                <span class="k">if</span> <span class="n">substep_numerical_failure</span><span class="p">:</span>
-                    <span class="k">pass</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeTrapezoidal</span><span class="p">:</span>
-                        <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">h_eff</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_iter</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">])</span>
-                                <span class="o">-</span> <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span>
-                        <span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">:</span>
-                        <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                <span class="p">(</span><span class="n">x_iter</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">])</span> <span class="o">/</span> <span class="n">h_eff</span>
-                        <span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBDF2</span><span class="p">:</span>
-                        <span class="n">x_prev2</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_prev</span>
-                        <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                                     <span class="mf">1.5</span> <span class="o">*</span> <span class="n">x_iter</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span>
-                                                     <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">x_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span>
-                                                     <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x_prev2</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span>
-                                             <span class="p">)</span> <span class="o">/</span> <span class="n">h_eff</span>
+                    <span class="k">if</span> <span class="n">substep_numerical_failure</span><span class="p">:</span>
+                        <span class="c1"># Preserve the last accepted solution when Newton breaks down</span>
+                        <span class="c1"># numerically so the EMT driver can report a failed substep</span>
+                        <span class="c1"># instead of crashing the whole simulation.</span>
+                        <span class="n">x_iter</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_prev</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                                <span class="p">(</span><span class="n">x_iter</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">])</span> <span class="o">/</span> <span class="n">h_eff</span>
-                        <span class="p">)</span>
+                        <span class="k">pass</span>
 
-                <span class="k">if</span> <span class="n">method</span> <span class="o">!=</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBDF2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">substep_numerical_failure</span><span class="p">:</span>
-                    <span class="n">x_prev2</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_prev</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">pass</span>
+                    <span class="k">if</span> <span class="n">substep_numerical_failure</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeTrapezoidal</span><span class="p">:</span>
+                            <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                    <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">h_eff</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x_iter</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">])</span>
+                                    <span class="o">-</span> <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">:</span>
+                            <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                    <span class="p">(</span><span class="n">x_iter</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">])</span> <span class="o">/</span> <span class="n">h_eff</span>
+                            <span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBDF2</span><span class="p">:</span>
+                            <span class="n">x_prev2</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_prev</span>
+                            <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                                         <span class="mf">1.5</span> <span class="o">*</span> <span class="n">x_iter</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span>
+                                                         <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">x_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span>
+                                                         <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x_prev2</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span>
+                                                 <span class="p">)</span> <span class="o">/</span> <span class="n">h_eff</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">dx_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                    <span class="p">(</span><span class="n">x_iter</span><span class="p">[:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_prev</span><span class="p">[:</span><span class="n">n_states</span><span class="p">])</span> <span class="o">/</span> <span class="n">h_eff</span>
+                            <span class="p">)</span>
 
-                <span class="n">x_prev</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_iter</span>
-                <span class="n">t_local_prev</span> <span class="o">=</span> <span class="n">t_curr</span>
-                <span class="n">is_first_local_step</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">method</span> <span class="o">!=</span> <span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBDF2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">substep_numerical_failure</span><span class="p">:</span>
+                        <span class="n">x_prev2</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_prev</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+                    <span class="n">x_prev</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">x_iter</span>
+                    <span class="n">t_local_prev</span> <span class="o">=</span> <span class="n">t_curr</span>
+                    <span class="n">is_first_local_step</span> <span class="o">=</span> <span class="kc">False</span>
 
 
 

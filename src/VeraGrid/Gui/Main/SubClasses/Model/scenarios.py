@@ -482,6 +482,12 @@ class ScenariosMain(ConfigurationMain):
             self.show_warning_toast(f"'{node.circuit.name}' is already the active scenario")
             return
 
+        if self.session.is_anything_running() or self.any_thread_running():
+            self.show_warning_toast(self.tr("Wait until the running operations finish before changing scenario."))
+            return
+        else:
+            pass
+
         circuit: MultiCircuit = self.multiverse.activate_scenario(node.node_id)
 
         # set the session drivers

@@ -24,6 +24,14 @@ class ConnectionIntentVariable(Protocol):
         """
         ...
 
+    @property
+    def ref(self) -> VarPowerFlowReferenceType | None:
+        """Return the semantic power-flow reference carried by the variable.
+
+        :return: Semantic variable reference or ``None`` when it has none.
+        """
+        ...
+
 
 class ConnectionIntentBlock(Protocol):
     """Expose the bounded block structure required by intent parsing."""
@@ -171,6 +179,14 @@ class DynamicConnectionIntent:
         :return: Internal variable UID.
         """
         return self._internal_variable_uid
+
+    def set_internal_variable_uid(self, internal_variable_uid: int) -> None:
+        """Replace an unavailable port identity with its semantic successor.
+
+        :param internal_variable_uid: Current non-mutable UID of the internal variable.
+        :return: None.
+        """
+        self._internal_variable_uid = internal_variable_uid
 
     def is_suppressed(self) -> bool:
         """
@@ -363,6 +379,123 @@ def _resolve_internal_variable_uid(data: Dict[str, object],
             return None
     else:
         return None
+
+
+def reconcile_dynamic_connection_intent_target(intent: DynamicConnectionIntent,
+                                               root_block: ConnectionIntentBlock) -> bool:
+    """Resolve an intent against a current internal target when possible.
+
+    Root-interface availability is deliberately not part of this check. An
+    intent must survive a temporary topology change when its external phase is
+    unavailable, but it cannot be restored after its internal block or port has
+    been deleted.
+
+    :param intent: Runtime connection intent to inspect.
+    :param root_block: Root block that owns the intent collection.
+    :return: ``True`` when the internal block and direction-specific variable exist.
+    """
+    internal_block: ConnectionIntentBlock | None = _find_internal_block(
+        root_block=root_block,
+        internal_block_uid=intent.get_internal_block_uid(),
+    )
+    variables: Sequence[ConnectionIntentVariable]
+    candidate_var: ConnectionIntentVariable
+    matching_reference_var: ConnectionIntentVariable | None = None
+    matching_reference_count: int = 0
+
+    if internal_block is None:
+        return False
+    elif intent.get_direction() == DynamicConnectionIntentDirection.INPUT:
+        variables = internal_block.in_vars
+    else:
+        variables = internal_block.out_vars
+
+    for candidate_var in variables:
+        if candidate_var.non_mutable_uid == intent.get_internal_variable_uid():
+            return True
+        else:
+            pass
+
+    # Generated interfaces can recreate the same semantic port with a new
+    # variable UID. A unique direction-specific reference identifies that
+    # successor without relying on its former graphical position.
+    for candidate_var in variables:
+        if candidate_var.ref == intent.get_root_reference():
+            matching_reference_var = candidate_var
+            matching_reference_count += 1
+        else:
+            pass
+
+    if matching_reference_count == 1 and matching_reference_var is not None:
+        intent.set_internal_variable_uid(
+            internal_variable_uid=matching_reference_var.non_mutable_uid
+        )
+        return True
+    else:
+        return False
+
+
+def is_legacy_suppressed_connection_intent_tombstone(data: Dict[str, object],
+                                                     root_block: ConnectionIntentBlock) -> bool:
+    """Recognize a valid old suppression record whose internal target was deleted.
+
+    Earlier editors retained suppression records after replacing an internal
+    block. Those records are harmless history and should not generate an open
+    warning. Malformed records and active missing connections are intentionally
+    excluded so genuine persistence problems remain visible.
+
+    :param data: Persisted connection-intent fields.
+    :param root_block: Fully reconstructed root block used to resolve the target.
+    :return: ``True`` only for a well-formed suppressed record with a missing target.
+    """
+    origin: DynamicConnectionIntentOrigin | None = _parse_origin(data.get("origin", None))
+    direction: DynamicConnectionIntentDirection | None = _parse_direction(data=data)
+    root_reference: VarPowerFlowReferenceType | None = _parse_root_reference(data.get("root_ref", None))
+    internal_block_uid_value: object = data.get("internal_block_uid", None)
+    internal_variable_uid_value: object = data.get("internal_variable_uid", None)
+    internal_port_index_value: object = data.get("internal_port_index", None)
+    suppressed_value: object = data.get("suppressed", False)
+    internal_block: ConnectionIntentBlock | None
+    internal_variable_uid: int | None
+    has_stable_variable_reference: bool = (
+        isinstance(internal_variable_uid_value, int)
+        and not isinstance(internal_variable_uid_value, bool)
+    )
+    has_legacy_port_reference: bool = (
+        isinstance(internal_port_index_value, int)
+        and not isinstance(internal_port_index_value, bool)
+    )
+
+    # A tombstone must still be structurally valid. This keeps corrupted data
+    # visible to the parser's warning path instead of silently discarding it.
+    if origin is None or direction is None or root_reference is None:
+        return False
+    elif not isinstance(internal_block_uid_value, int) or isinstance(internal_block_uid_value, bool):
+        return False
+    elif suppressed_value is not True:
+        return False
+    elif not has_stable_variable_reference and not has_legacy_port_reference:
+        return False
+    else:
+        pass
+
+    internal_block = _find_internal_block(
+        root_block=root_block,
+        internal_block_uid=internal_block_uid_value,
+    )
+    if internal_block is None:
+        return True
+    else:
+        internal_variable_uid = _resolve_internal_variable_uid(
+            data=data,
+            internal_block=internal_block,
+            direction=direction,
+        )
+
+    if internal_variable_uid is None:
+        return True
+    else:
+        return False
 
 
 def dynamic_connection_intent_from_dict(data: Dict[str, object],

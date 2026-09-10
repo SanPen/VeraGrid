@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils package &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Utils package &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -1573,6 +1573,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.ConnectionIntentVariable"><code class="docutils literal notranslate"><span class="pre">ConnectionIntentVariable</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.ConnectionIntentVariable.non_mutable_uid"><code class="docutils literal notranslate"><span class="pre">ConnectionIntentVariable.non_mutable_uid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.ConnectionIntentVariable.ref"><code class="docutils literal notranslate"><span class="pre">ConnectionIntentVariable.ref</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.DynamicConnectionIntent"><code class="docutils literal notranslate"><span class="pre">DynamicConnectionIntent</span></code></a><ul>
@@ -1584,6 +1585,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.DynamicConnectionIntent.get_root_reference"><code class="docutils literal notranslate"><span class="pre">DynamicConnectionIntent.get_root_reference()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.DynamicConnectionIntent.has_same_identity"><code class="docutils literal notranslate"><span class="pre">DynamicConnectionIntent.has_same_identity()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.DynamicConnectionIntent.is_suppressed"><code class="docutils literal notranslate"><span class="pre">DynamicConnectionIntent.is_suppressed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.DynamicConnectionIntent.set_internal_variable_uid"><code class="docutils literal notranslate"><span class="pre">DynamicConnectionIntent.set_internal_variable_uid()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.DynamicConnectionIntent.set_root_reference"><code class="docutils literal notranslate"><span class="pre">DynamicConnectionIntent.set_root_reference()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.DynamicConnectionIntent.set_suppressed"><code class="docutils literal notranslate"><span class="pre">DynamicConnectionIntent.set_suppressed()</span></code></a></li>
 </ul>
@@ -1600,6 +1602,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.dynamic_connection_intent_from_dict"><code class="docutils literal notranslate"><span class="pre">dynamic_connection_intent_from_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.dynamic_connection_intent_to_dict"><code class="docutils literal notranslate"><span class="pre">dynamic_connection_intent_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.is_legacy_suppressed_connection_intent_tombstone"><code class="docutils literal notranslate"><span class="pre">is_legacy_suppressed_connection_intent_tombstone()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.dynamic_connection_intent.reconcile_dynamic_connection_intent_target"><code class="docutils literal notranslate"><span class="pre">reconcile_dynamic_connection_intent_target()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.Symbolic.html#module-VeraGridEngine.Utils.Symbolic.equation_decomposer">VeraGridEngine.Utils.Symbolic.equation_decomposer module</a><ul>
@@ -5196,8 +5200,15 @@ and a dictionary with clases of equivalence of their variables.
 <dl class="py method">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.scores.TechnoEconomicScores.arr">
 <span class="sig-name descname"><span class="pre">arr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/scores.html#TechnoEconomicScores.arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.scores.TechnoEconomicScores.arr" title="Link to this definition"></a></dt>
-<dd><p>Return multidimensional metrics for the optimization
-:return: array of 2 values</p>
+<dd><p>Return multidimensional metrics for the optimization.</p>
+<p>CAPEX and OPEX are reported as two separate entries, matching the objective formulation
+documented in <cite>investment_optimization.md</cite>, so that the search sees the investment cost and
+the operational cost as two independent magnitudes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array of 6 values: losses, overload, voltage module, voltage angle, CAPEX and OPEX</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">

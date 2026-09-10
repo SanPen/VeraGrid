@@ -97,6 +97,7 @@ class ForcedEventTracker(
         self._cursor: int = 0
         self.query_calls: List[Tuple[float, float]] = []
         self.update_calls: List[float] = []
+        self.resolve_calls: List[bool] = []
 
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
         self.query_calls.append((float(t_prev), float(t_target)))
@@ -121,6 +122,17 @@ class ForcedEventTracker(
                 self._cursor += 1
             else:
                 break
+
+    def resolve_step(self, accepted: bool, params: np.ndarray) -> None:
+        """Record one solver decision for the prepared boundary step.
+
+        :param accepted: Whether the EMT numerical step converged.
+        :param params: Full runtime-parameter vector.
+        :return: None.
+        """
+
+        _unused: np.ndarray = params
+        self.resolve_calls.append(bool(accepted))
 
 
 class DummyJacobian:
@@ -290,6 +302,7 @@ def test_force_step_alignment_is_used_by_all_three_solvers(
         np.array(updater.update_calls, dtype=np.float64),
         np.array(expected_updates, dtype=np.float64),
     )
+    assert updater.resolve_calls == [True, True, True, True]
 
     rounded_updates = [round(v, 8) for v in updater.update_calls]
     assert 0.05 in rounded_updates

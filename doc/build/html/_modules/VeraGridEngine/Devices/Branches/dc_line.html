@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Branches.dc_line &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Devices.Branches.dc_line &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -104,14 +104,16 @@
   <h1>Source code for VeraGridEngine.Devices.Branches.dc_line</h1><div class="highlight"><pre>
 <span></span><span class="c1"># This Source Code Form is subject to the terms of the Mozilla Public</span>
 <span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
-<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.  </span>
+<span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
 <span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Substation.bus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.dc_cable_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">DcCableType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.branch_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">BranchParent</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProfileFloat</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">BuildStatus</span><span class="p">,</span> <span class="n">SubObjectType</span><span class="p">,</span> <span class="n">PrpCat</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span>
@@ -168,8 +170,8 @@
         <span class="n">GCProp</span><span class="p">(</span>
             <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;template&#39;</span><span class="p">,</span>
             <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-            <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">AnyLineTemplateDevice</span><span class="p">,</span>
-            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">DcCableTypeDevice</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Physical DC cable type applied to this line.&#39;</span><span class="p">,</span>
             <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
         <span class="p">),</span>
@@ -203,7 +205,7 @@
                  <span class="n">temp_base</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
                  <span class="n">temp_oper</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
                  <span class="n">alpha</span><span class="o">=</span><span class="mf">0.00330</span><span class="p">,</span>
-                 <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">template</span><span class="p">:</span> <span class="n">DcCableType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">contingency_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                  <span class="n">protection_rating_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">,</span>
                  <span class="n">contingency_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -283,7 +285,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.0001</span>
 
         <span class="c1"># type template</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">:</span> <span class="n">DcCableType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">template</span>
 
         <span class="c1"># Line locations</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_locations</span><span class="p">:</span> <span class="n">LineLocations</span> <span class="o">=</span> <span class="n">LineLocations</span><span class="p">()</span>
@@ -375,7 +377,7 @@
 
 <div class="viewcode-block" id="DcLine.get_weight">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.dc_line.DcLine.get_weight">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :return:</span>
@@ -383,40 +385,168 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span></div>
 
 
+<div class="viewcode-block" id="DcLine.apply_template">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.dc_line.DcLine.apply_template">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                       <span class="n">obj</span><span class="p">:</span> <span class="n">DcCableType</span><span class="p">,</span>
+                       <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                       <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply one physical DC cable type to this line atomically.</span>
+
+<span class="sd">        The resistance copied to ``DcLine`` is the static per-unit value used</span>
+<span class="sd">        by network compilation. Inductance and capacitance remain canonical in</span>
+<span class="sd">        ``DcCableType`` and are converted on demand by the dynamic consumers.</span>
+<span class="sd">        The branch rating is intentionally preserved until the public DC pole</span>
+<span class="sd">        voltage convention is defined.</span>
+
+<span class="sd">        :param obj: DC cable type to apply.</span>
+<span class="sd">        :param Sbase: System power base in MVA.</span>
+<span class="sd">        :param logger: Optional logger receiving validation failures.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">calculation_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">calculation_logger</span> <span class="o">=</span> <span class="n">logger</span>
+
+        <span class="n">line_voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_bus_nominal_voltage</span><span class="p">()</span>
+        <span class="n">valid_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">DcCableType</span><span class="p">)</span>
+        <span class="n">valid_bases</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Sbase</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">line_voltage</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+        <span class="n">valid_parameters</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">valid_type</span>
+            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">Vnom</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">Imax</span> <span class="o">&gt;=</span> <span class="mf">0.0</span>
+            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">R</span> <span class="o">&gt;=</span> <span class="mf">0.0</span>
+            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">L</span> <span class="o">&gt;=</span> <span class="mf">0.0</span>
+            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">C</span> <span class="o">&gt;=</span> <span class="mf">0.0</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valid_type</span> <span class="ow">and</span> <span class="n">valid_bases</span> <span class="ow">and</span> <span class="n">valid_parameters</span><span class="p">:</span>
+            <span class="n">resistance_pu</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">inductance_pu_seconds</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">capacitance_pu_seconds</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">resistance_pu</span><span class="p">,</span> <span class="n">inductance_pu_seconds</span><span class="p">,</span> <span class="n">capacitance_pu_seconds</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span>
+                <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+                <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                <span class="n">line_Vnom</span><span class="o">=</span><span class="n">line_voltage</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># All validation and conversion finishes before the branch changes,</span>
+            <span class="c1"># so a failed application cannot leave a mixed old/new state.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">resistance_pu</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">obj</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rms_template</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">rms_template</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">emt_template</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">emt_template</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">calculation_logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;DC cable template could not be applied&#39;</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DcLine.get_applied_dynamic_values_pu_seconds">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.dc_line.DcLine.get_applied_dynamic_values_pu_seconds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_applied_dynamic_values_pu_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                              <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the associated physical cable data for dynamic consumers.</span>
+
+<span class="sd">        This method returns ``None`` when the line has no physical cable</span>
+<span class="sd">        evidence. It does not apply a simulation fallback or write a log.</span>
+
+<span class="sd">        :param Sbase: System power base in MVA.</span>
+<span class="sd">        :return: Total series inductance and shunt capacitance in p.u. seconds,</span>
+<span class="sd">                 or ``None`` when no physical cable type is associated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">line_voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_max_bus_nominal_voltage</span><span class="p">()</span>
+            <span class="n">resistance_pu</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">inductance_pu_seconds</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">capacitance_pu_seconds</span><span class="p">:</span> <span class="nb">float</span>
+            <span class="n">resistance_pu</span><span class="p">,</span> <span class="n">inductance_pu_seconds</span><span class="p">,</span> <span class="n">capacitance_pu_seconds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span>
+                <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+                <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+                <span class="n">line_Vnom</span><span class="o">=</span><span class="n">line_voltage</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">inductance_pu_seconds</span><span class="p">,</span> <span class="n">capacitance_pu_seconds</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DcLine.get_dynamic_values_pu_seconds">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.dc_line.DcLine.get_dynamic_values_pu_seconds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_dynamic_values_pu_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                      <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                      <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the physical cable coefficients required by a dynamic simulation.</span>
+
+<span class="sd">        A line without a physical cable template remains usable as a purely</span>
+<span class="sd">        resistive branch. The missing optional dynamics are reported instead</span>
+<span class="sd">        of stopping the simulation.</span>
+
+<span class="sd">        :param Sbase: System power base in MVA.</span>
+<span class="sd">        :param logger: Simulation logger receiving the resistive-fallback warning.</span>
+<span class="sd">        :return: Total series inductance and shunt capacitance in p.u. seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">physical_values</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_applied_dynamic_values_pu_seconds</span><span class="p">(</span>
+            <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">physical_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">physical_values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># No physical L/C default exists for a DC cable. Returning zero</span>
+            <span class="c1"># selects the existing resistive simulation reduction without</span>
+            <span class="c1"># creating a fictitious physical DcCableType.</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;DC line has no cable template; using the resistive fallback&#39;</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="s1">&#39;L=0, C=0&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span></div>
+
+
 <div class="viewcode-block" id="DcLine.copy">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.dc_line.DcLine.copy">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bus_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Bus</span><span class="p">,</span> <span class="n">Bus</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DcLine&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a copy of the dc line</span>
-<span class="sd">        @return: A new  with the same content as this</span>
+<span class="sd">        Copy the DC line and keep its physical span.</span>
+
+<span class="sd">        :param bus_dict: Optional mapping from source buses to copied buses.</span>
+<span class="sd">        :return: New DC line with the same electrical data and cable template.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">bus_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span>
+            <span class="n">bus_from</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span>
+            <span class="n">bus_to</span><span class="p">:</span> <span class="n">Bus</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]</span>
+            <span class="n">bus_from</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]</span>
+            <span class="n">bus_to</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]</span>
 
-        <span class="n">b</span> <span class="o">=</span> <span class="n">DcLine</span><span class="p">(</span><span class="n">bus_from</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
-                   <span class="n">bus_to</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
-                   <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                   <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
-                   <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
-                   <span class="n">active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
-                   <span class="n">mttf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mttf</span><span class="p">,</span>
-                   <span class="n">mttr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mttr</span><span class="p">,</span>
-                   <span class="n">temp_base</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_base</span><span class="p">,</span>
-                   <span class="n">temp_oper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_oper</span><span class="p">,</span>
-                   <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
-                   <span class="n">template</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">)</span>
+        <span class="n">copied_line</span><span class="p">:</span> <span class="n">DcLine</span> <span class="o">=</span> <span class="n">DcLine</span><span class="p">(</span>
+            <span class="n">bus_from</span><span class="o">=</span><span class="n">bus_from</span><span class="p">,</span>
+            <span class="n">bus_to</span><span class="o">=</span><span class="n">bus_to</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span>
+            <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="p">,</span>
+            <span class="n">active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
+            <span class="n">mttf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mttf</span><span class="p">,</span>
+            <span class="n">mttr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mttr</span><span class="p">,</span>
+            <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
+            <span class="n">temp_base</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_base</span><span class="p">,</span>
+            <span class="n">temp_oper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_oper</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="n">b</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span>
+        <span class="n">copied_line</span><span class="o">.</span><span class="n">measurements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span>
 
-        <span class="n">b</span><span class="o">.</span><span class="n">active_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_prof</span>
-        <span class="n">b</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span>
+        <span class="n">copied_line</span><span class="o">.</span><span class="n">active_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_prof</span>
+        <span class="n">copied_line</span><span class="o">.</span><span class="n">rate_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_prof</span>
 
-        <span class="k">return</span> <span class="n">b</span></div>
+        <span class="k">return</span> <span class="n">copied_line</span></div>
 
 
     <span class="c1"># def get_save_data(self):</span>
@@ -479,7 +609,7 @@
             <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DcLine.get_coordinates">

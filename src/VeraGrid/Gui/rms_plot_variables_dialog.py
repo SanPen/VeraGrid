@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
@@ -13,7 +12,9 @@ from PySide6.QtWidgets import (
     QComboBox, QListWidget, QDialogButtonBox, QMenu
 )
 from PySide6.QtCore import Qt, QPoint
+from PySide6.QtGui import QCloseEvent
 
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults #, ResultsTable
 from VeraGridEngine.Simulations.results_table import ResultsTable
@@ -60,6 +61,7 @@ class RmsPlotDialog(QDialog):
         )
 
         self.selected_vars = []
+        self._open_plot_dialogs: list[QDialog] = list()
 
         # main layout
         layout = QVBoxLayout(self)
@@ -114,6 +116,39 @@ class RmsPlotDialog(QDialog):
 
         # update variables
         self.update_variables(0)
+        self._plot_disposed: bool = False
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        """
+        Release Matplotlib resources before the dialog closes.
+
+        :param event: Qt close event.
+        :return: None.
+        """
+        if self._plot_disposed:
+            pass
+        else:
+            self._plot_disposed = True
+            self.canvas._draw_pending = False
+            self.figure.clear()
+            self.canvas.close()
+        QDialog.closeEvent(self, event)
+
+    def done(self, result: int) -> None:
+        """
+        Release Matplotlib resources before accepting or rejecting the dialog.
+
+        :param result: Qt dialog result code.
+        :return: None.
+        """
+        if self._plot_disposed:
+            pass
+        else:
+            self._plot_disposed = True
+            self.canvas._draw_pending = False
+            self.figure.clear()
+            self.canvas.close()
+        QDialog.done(self, result)
 
     def update_variables(self, index):
 
@@ -168,26 +203,10 @@ class RmsPlotDialog(QDialog):
 
         selected_col_idx = [self.uid2idx[uid] for uid in self.selected_vars]
 
-        # Create a separate dialog for the plot
-        external_dialog = QDialog(self)
-        external_dialog.setWindowTitle(self.tr("Plot Window"))
-        external_dialog.resize(900, 500)
-
-        layout = QVBoxLayout(external_dialog)
-
-        # Create figure and canvas
         figure = Figure(figsize=(10, 5))
         ax = figure.add_subplot(111)
-        canvas = FigureCanvas(figure)
-
-        # Add Matplotlib toolbar (includes Save, Zoom, Pan, etc.)
-        toolbar = NavigationToolbar(canvas, external_dialog)
-        layout.addWidget(toolbar)
-
-        layout.addWidget(canvas)
-
-        # Plot data
         self.results_table.plot(ax=ax, selected_col_idx=selected_col_idx)
-        canvas.draw()
-
-        external_dialog.show()
+        show_matplotlib_figure(figure=figure,
+                               parent=self,
+                               open_dialogs=self._open_plot_dialogs,
+                               title=self.tr("Plot Window"))

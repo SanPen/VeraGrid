@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Templates.Rms.transformer_rms_template &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Templates.Rms.transformer_rms_template &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -106,12 +107,12 @@
 <span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
 <span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">WindingType</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">WindingType</span><span class="p">,</span> <span class="n">ParamPowerFlowReferenceType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsModelTemplate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transformer2W</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Var</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindingsConnection</span>
 
 
@@ -362,6 +363,155 @@
 
 
 
+<div class="viewcode-block" id="IdealTrafoRmsTemplate">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.IdealTrafoRmsTemplate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IdealTrafoRmsTemplate</span><span class="p">(</span><span class="n">RmsModelTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent an ideal two-winding transformer without a fake impedance.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;tpe&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_block&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rms_ideal_trafo_template&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the fixed-size polar DAE of an ideal transformer.</span>
+
+<span class="sd">        The model preserves the exact voltage-ratio and phase constraints while</span>
+<span class="sd">        leaving active and reactive transfer powers to the connected bus</span>
+<span class="sd">        balances. This is the finite DAE counterpart of the zero-impedance</span>
+<span class="sd">        branch contraction used by the static solver.</span>
+
+<span class="sd">        :param vf: Variable factory shared by the owning circuit.</span>
+<span class="sd">        :param name: Human-readable template name.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpe</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer2WDevice</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;Transformer two-winding ideal RMS model&#39;</span>
+
+        <span class="c1"># Four power-flow variables retain the regular transformer interface so</span>
+        <span class="c1"># buses and result reporting do not need a case-specific code path.</span>
+        <span class="n">active_power_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pf&quot;</span><span class="p">)</span>
+        <span class="n">active_power_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Pt&quot;</span><span class="p">)</span>
+        <span class="n">reactive_power_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Qf&quot;</span><span class="p">)</span>
+        <span class="n">reactive_power_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;Qt&quot;</span><span class="p">)</span>
+        <span class="n">tap_module</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">)</span>
+        <span class="n">tap_phase</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">)</span>
+        <span class="n">iron_conductance</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;gFe&quot;</span><span class="p">)</span>
+        <span class="n">magnetizing_susceptance</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;bmu&quot;</span><span class="p">)</span>
+        <span class="n">voltage_tap_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;vtap_f&quot;</span><span class="p">)</span>
+        <span class="n">voltage_tap_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;vtap_t&quot;</span><span class="p">)</span>
+        <span class="n">conduction_status</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
+
+        <span class="n">voltage_magnitude_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+            <span class="s2">&quot;Vmf&quot;</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmf</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">voltage_angle_from</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+            <span class="s2">&quot;Vaf&quot;</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vaf</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">voltage_magnitude_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+            <span class="s2">&quot;Vmt&quot;</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmt</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">voltage_angle_to</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+            <span class="s2">&quot;Vat&quot;</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vat</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Virtual taps convert both terminals to the same internal per-unit</span>
+        <span class="c1"># base. The ideal branch then enforces equality without a large-number</span>
+        <span class="c1"># admittance approximation that would damage the Newton conditioning.</span>
+        <span class="n">internal_voltage_from</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">voltage_magnitude_from</span> <span class="o">/</span> <span class="p">(</span><span class="n">tap_module</span> <span class="o">*</span> <span class="n">voltage_tap_from</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">internal_voltage_to</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">voltage_magnitude_to</span> <span class="o">/</span> <span class="n">voltage_tap_to</span>
+        <span class="n">total_squared_voltage</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">internal_voltage_from</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">internal_voltage_to</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="n">total_active_shunt_power</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">iron_conductance</span> <span class="o">*</span> <span class="n">total_squared_voltage</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="p">)</span>
+        <span class="n">total_reactive_shunt_power</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="n">magnetizing_susceptance</span> <span class="o">*</span> <span class="n">total_squared_voltage</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="p">)</span>
+
+        <span class="c1"># When closed, two equations conserve transfer power and two impose the</span>
+        <span class="c1"># ideal voltage constraints. When open, the same four rows reduce to</span>
+        <span class="c1"># independent zero-flow equations, preserving a fixed nonsingular DAE.</span>
+        <span class="n">block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+            <span class="n">algebraic_vars</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">active_power_from</span><span class="p">,</span>
+                <span class="n">active_power_to</span><span class="p">,</span>
+                <span class="n">reactive_power_from</span><span class="p">,</span>
+                <span class="n">reactive_power_to</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">algebraic_eqs</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">active_power_from</span>
+                <span class="o">+</span> <span class="n">active_power_to</span>
+                <span class="o">-</span> <span class="n">conduction_status</span> <span class="o">*</span> <span class="n">total_active_shunt_power</span><span class="p">,</span>
+                <span class="n">reactive_power_from</span>
+                <span class="o">+</span> <span class="n">reactive_power_to</span>
+                <span class="o">-</span> <span class="n">conduction_status</span> <span class="o">*</span> <span class="n">total_reactive_shunt_power</span><span class="p">,</span>
+                <span class="n">conduction_status</span> <span class="o">*</span> <span class="p">(</span><span class="n">internal_voltage_from</span> <span class="o">-</span> <span class="n">internal_voltage_to</span><span class="p">)</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">conduction_status</span><span class="p">)</span> <span class="o">*</span> <span class="n">active_power_from</span><span class="p">,</span>
+                <span class="n">conduction_status</span>
+                <span class="o">*</span> <span class="p">(</span><span class="n">voltage_angle_from</span> <span class="o">-</span> <span class="n">voltage_angle_to</span> <span class="o">-</span> <span class="n">tap_phase</span><span class="p">)</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">conduction_status</span><span class="p">)</span> <span class="o">*</span> <span class="n">reactive_power_from</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">in_vars</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">voltage_magnitude_from</span><span class="p">,</span>
+                <span class="n">voltage_angle_from</span><span class="p">,</span>
+                <span class="n">voltage_magnitude_to</span><span class="p">,</span>
+                <span class="n">voltage_angle_to</span><span class="p">,</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pf</span><span class="p">:</span> <span class="n">active_power_from</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pt</span><span class="p">:</span> <span class="n">active_power_to</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qf</span><span class="p">:</span> <span class="n">reactive_power_from</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Qt</span><span class="p">:</span> <span class="n">reactive_power_to</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vaf</span><span class="p">:</span> <span class="n">voltage_angle_from</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmf</span><span class="p">:</span> <span class="n">voltage_magnitude_from</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vmt</span><span class="p">:</span> <span class="n">voltage_magnitude_to</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vat</span><span class="p">:</span> <span class="n">voltage_angle_to</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">gFe</span><span class="p">:</span> <span class="n">iron_conductance</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">bsh</span><span class="p">:</span> <span class="n">magnetizing_susceptance</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">tap_module</span><span class="p">:</span> <span class="n">tap_module</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">tap_phase</span><span class="p">:</span> <span class="n">tap_phase</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">vtap_f</span><span class="p">:</span> <span class="n">voltage_tap_from</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">vtap_t</span><span class="p">:</span> <span class="n">voltage_tap_to</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">iron_conductance</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">magnetizing_susceptance</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">tap_module</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">tap_phase</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">voltage_tap_from</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">voltage_tap_to</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">event_dict</span><span class="p">[</span><span class="n">conduction_status</span><span class="p">]</span> <span class="o">=</span> <span class="n">vf</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_conduction_status_var_uid</span> <span class="o">=</span> <span class="n">conduction_status</span><span class="o">.</span><span class="n">uid</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">rms_ideal_transformer</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># An ideal transformer has no local constitutive equation that fixes</span>
+        <span class="c1"># transfer power: the two connected nodal balances determine it. Keep</span>
+        <span class="c1"># the power-flow Pf/Pt/Qf/Qt seeds until the global DAE is assembled</span>
+        <span class="c1"># instead of applying the underdetermined device-local initializer.</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">skip_device_local_explicit_init</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">dynamic_model_contract</span><span class="o">.</span><span class="n">startup_initial_reduced_polish_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+            <span class="s2">&quot;Pf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Pt&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Qf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Qt&quot;</span><span class="p">,</span>
+        <span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">block</span></div>
+
+
 <div class="viewcode-block" id="TrafoPhasorRmsTemplate">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.TrafoPhasorRmsTemplate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TrafoPhasorRmsTemplate</span><span class="p">(</span><span class="n">RmsModelTemplate</span><span class="p">):</span>
@@ -473,6 +623,21 @@
         <span class="k">return</span> <span class="n">TrafoPhasorRmsTemplate</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">TrafoRmsTemplate</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="get_ideal_transformer2w_rms">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Templates.Rms.html#VeraGridEngine.Templates.Rms.transformer_rms_template.get_ideal_transformer2w_rms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ideal_transformer2w_rms</span><span class="p">(</span>
+        <span class="n">vf</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rms_ideal_trafo_template&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the exact zero-series-impedance transformer RMS template.</span>
+
+<span class="sd">    :param vf: Variable factory shared by the owning circuit.</span>
+<span class="sd">    :param name: Human-readable template name.</span>
+<span class="sd">    :return: Ideal-transformer RMS template.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">IdealTrafoRmsTemplate</span><span class="p">(</span><span class="n">vf</span><span class="o">=</span><span class="n">vf</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="initialize_trafo_rms">

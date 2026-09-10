@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.enumerations &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.enumerations &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -694,6 +694,41 @@
 
 
 
+<div class="viewcode-block" id="CandidateKind">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.CandidateKind">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CandidateKind</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kinds of reinforcement produced by the candidate-investment generator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NewLine</span> <span class="o">=</span> <span class="s2">&quot;New line&quot;</span>
+    <span class="n">Upgrade</span> <span class="o">=</span> <span class="s2">&quot;Upgrade&quot;</span>
+    <span class="n">ShuntReactor</span> <span class="o">=</span> <span class="s2">&quot;Shunt reactor&quot;</span>
+    <span class="n">StaticGenerator</span> <span class="o">=</span> <span class="s2">&quot;Static generator&quot;</span>
+    <span class="n">Battery</span> <span class="o">=</span> <span class="s2">&quot;Battery&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CandidateKind.argparse">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.CandidateKind.argparse">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">argparse</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param s:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CandidateKind</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">s</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="BranchImpedanceMode">
 <a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.BranchImpedanceMode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BranchImpedanceMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -892,6 +927,48 @@
     <span class="n">FMI_1_0</span> <span class="o">=</span> <span class="s2">&quot;1.0&quot;</span>
     <span class="n">FMI_2_0</span> <span class="o">=</span> <span class="s2">&quot;2.0&quot;</span>
     <span class="n">FMI_3_0</span> <span class="o">=</span> <span class="s2">&quot;3.0&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmuInterfaceMode">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.FmuInterfaceMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuInterfaceMode</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execution interfaces currently represented by the FMU importer.&quot;&quot;&quot;</span>
+
+    <span class="n">CO_SIMULATION</span> <span class="o">=</span> <span class="s2">&quot;CoSimulation&quot;</span>
+    <span class="n">MODEL_EXCHANGE</span> <span class="o">=</span> <span class="s2">&quot;ModelExchange&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmuVariableType">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.FmuVariableType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmuVariableType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Primitive variable types recognized in FMI model descriptions.&quot;&quot;&quot;</span>
+
+    <span class="n">REAL</span> <span class="o">=</span> <span class="s2">&quot;Real&quot;</span>
+    <span class="n">INTEGER</span> <span class="o">=</span> <span class="s2">&quot;Integer&quot;</span>
+    <span class="n">BOOLEAN</span> <span class="o">=</span> <span class="s2">&quot;Boolean&quot;</span>
+    <span class="n">STRING</span> <span class="o">=</span> <span class="s2">&quot;String&quot;</span>
+    <span class="n">ENUMERATION</span> <span class="o">=</span> <span class="s2">&quot;Enumeration&quot;</span>
+    <span class="n">FLOAT32</span> <span class="o">=</span> <span class="s2">&quot;Float32&quot;</span>
+    <span class="n">FLOAT64</span> <span class="o">=</span> <span class="s2">&quot;Float64&quot;</span>
+    <span class="n">UINT64</span> <span class="o">=</span> <span class="s2">&quot;UInt64&quot;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;Unknown&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FmiThreeVariableCausality">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.FmiThreeVariableCausality">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FmiThreeVariableCausality</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Variable causalities defined by the FMI 3 model-description schema.&quot;&quot;&quot;</span>
+
+    <span class="n">STRUCTURAL_PARAMETER</span> <span class="o">=</span> <span class="s2">&quot;structuralParameter&quot;</span>
+    <span class="n">PARAMETER</span> <span class="o">=</span> <span class="s2">&quot;parameter&quot;</span>
+    <span class="n">CALCULATED_PARAMETER</span> <span class="o">=</span> <span class="s2">&quot;calculatedParameter&quot;</span>
+    <span class="n">INPUT</span> <span class="o">=</span> <span class="s2">&quot;input&quot;</span>
+    <span class="n">OUTPUT</span> <span class="o">=</span> <span class="s2">&quot;output&quot;</span>
+    <span class="n">LOCAL</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span>
+    <span class="n">INDEPENDENT</span> <span class="o">=</span> <span class="s2">&quot;independent&quot;</span></div>
 
 
 
@@ -2801,6 +2878,7 @@
     <span class="n">PowerFlow</span> <span class="o">=</span> <span class="s1">&#39;PowerFlow&#39;</span>
     <span class="n">TimeSeriesPowerFlow</span> <span class="o">=</span> <span class="s1">&#39;TimeSeriesPowerFlow&#39;</span>
     <span class="n">LinearOptimalPowerFlowTimeSeries</span> <span class="o">=</span> <span class="s1">&#39;Linear OPF time series&#39;</span>
+    <span class="n">OptimalPowerFlowThenPowerFlowTimeSeries</span> <span class="o">=</span> <span class="s1">&#39;Linear OPF + Power flow time series&#39;</span>
     <span class="n">GenerationAdequacy</span> <span class="o">=</span> <span class="s2">&quot;Adequacy&quot;</span>
     <span class="n">SimpleDispatch</span> <span class="o">=</span> <span class="s2">&quot;Simple dispatch&quot;</span>
     <span class="n">FromPlugin</span> <span class="o">=</span> <span class="s1">&#39;From Plugin&#39;</span>
@@ -4857,6 +4935,63 @@
     <span class="n">Sf_complex</span> <span class="o">=</span> <span class="s2">&quot;Sf_complex&quot;</span>  <span class="c1"># Complex power at from bus</span>
     <span class="n">St_complex</span> <span class="o">=</span> <span class="s2">&quot;St_complex&quot;</span>  <span class="c1"># Complex power at to bus</span>
 
+    <span class="n">UR</span> <span class="o">=</span> <span class="s2">&quot;UR&quot;</span>
+    <span class="n">UI</span> <span class="o">=</span> <span class="s2">&quot;UI&quot;</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="s2">&quot;U&quot;</span>
+    <span class="n">U2R</span> <span class="o">=</span> <span class="s2">&quot;U2R&quot;</span>
+    <span class="n">U2I</span> <span class="o">=</span> <span class="s2">&quot;U2I&quot;</span>
+    <span class="n">U2</span> <span class="o">=</span> <span class="s2">&quot;U2&quot;</span>
+    <span class="n">U0R</span> <span class="o">=</span> <span class="s2">&quot;U0R&quot;</span>
+    <span class="n">U0I</span> <span class="o">=</span> <span class="s2">&quot;U0I&quot;</span>
+    <span class="n">U0</span> <span class="o">=</span> <span class="s2">&quot;U0&quot;</span>
+    <span class="n">FREF</span> <span class="o">=</span> <span class="s2">&quot;FREF&quot;</span>
+    <span class="n">FE</span> <span class="o">=</span> <span class="s2">&quot;FE&quot;</span>
+    <span class="n">DU</span> <span class="o">=</span> <span class="s2">&quot;DU&quot;</span>
+    <span class="n">DUR</span> <span class="o">=</span> <span class="s2">&quot;DUR&quot;</span>
+    <span class="n">DUI</span> <span class="o">=</span> <span class="s2">&quot;DUI&quot;</span>
+    <span class="n">DU2</span> <span class="o">=</span> <span class="s2">&quot;DU2&quot;</span>
+    <span class="n">DU2R</span> <span class="o">=</span> <span class="s2">&quot;DU2R&quot;</span>
+    <span class="n">DU2I</span> <span class="o">=</span> <span class="s2">&quot;DU2I&quot;</span>
+    <span class="n">DU0</span> <span class="o">=</span> <span class="s2">&quot;DU0&quot;</span>
+    <span class="n">DU0R</span> <span class="o">=</span> <span class="s2">&quot;DU0R&quot;</span>
+    <span class="n">DU0I</span> <span class="o">=</span> <span class="s2">&quot;DU0I&quot;</span>
+    <span class="n">UR_A</span> <span class="o">=</span> <span class="s2">&quot;UR_A&quot;</span>
+    <span class="n">UR_B</span> <span class="o">=</span> <span class="s2">&quot;UR_B&quot;</span>
+    <span class="n">UR_C</span> <span class="o">=</span> <span class="s2">&quot;UR_C&quot;</span>
+    <span class="n">UI_A</span> <span class="o">=</span> <span class="s2">&quot;UI_A&quot;</span>
+    <span class="n">UI_B</span> <span class="o">=</span> <span class="s2">&quot;UI_B&quot;</span>
+    <span class="n">UI_C</span> <span class="o">=</span> <span class="s2">&quot;UI_C&quot;</span>
+    <span class="n">DUR_A</span> <span class="o">=</span> <span class="s2">&quot;DUR_A&quot;</span>
+    <span class="n">DUR_B</span> <span class="o">=</span> <span class="s2">&quot;DUR_B&quot;</span>
+    <span class="n">DUR_C</span> <span class="o">=</span> <span class="s2">&quot;DUR_C&quot;</span>
+    <span class="n">DUI_A</span> <span class="o">=</span> <span class="s2">&quot;DUI_A&quot;</span>
+    <span class="n">DUI_B</span> <span class="o">=</span> <span class="s2">&quot;DUI_B&quot;</span>
+    <span class="n">DUI_C</span> <span class="o">=</span> <span class="s2">&quot;DUI_C&quot;</span>
+
+    <span class="n">IR</span> <span class="o">=</span> <span class="s2">&quot;IR&quot;</span>
+    <span class="n">II</span> <span class="o">=</span> <span class="s2">&quot;II&quot;</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
+    <span class="n">IA</span> <span class="o">=</span> <span class="s2">&quot;IA&quot;</span>
+    <span class="n">I2R</span> <span class="o">=</span> <span class="s2">&quot;I2R&quot;</span>
+    <span class="n">I2I</span> <span class="o">=</span> <span class="s2">&quot;I2I&quot;</span>
+    <span class="n">I2</span> <span class="o">=</span> <span class="s2">&quot;I2&quot;</span>
+    <span class="n">I0R</span> <span class="o">=</span> <span class="s2">&quot;I0R&quot;</span>
+    <span class="n">I0I</span> <span class="o">=</span> <span class="s2">&quot;I0&quot;</span>
+    <span class="n">IR_A</span> <span class="o">=</span> <span class="s2">&quot;IR_A&quot;</span>
+    <span class="n">IR_B</span> <span class="o">=</span> <span class="s2">&quot;IR_B&quot;</span>
+    <span class="n">IR_C</span> <span class="o">=</span> <span class="s2">&quot;IR_C&quot;</span>
+    <span class="n">II_A</span> <span class="o">=</span> <span class="s2">&quot;II_A&quot;</span>
+    <span class="n">II_B</span> <span class="o">=</span> <span class="s2">&quot;II_B&quot;</span>
+    <span class="n">II_C</span> <span class="o">=</span> <span class="s2">&quot;II_C&quot;</span>
+
+    <span class="n">I_DC</span> <span class="o">=</span> <span class="s2">&quot;I_DC&quot;</span>
+
+    <span class="n">VD</span> <span class="o">=</span> <span class="s2">&quot;VD&quot;</span>
+    <span class="n">VQ</span> <span class="o">=</span> <span class="s2">&quot;VQ&quot;</span>
+
+    <span class="n">ID</span> <span class="o">=</span> <span class="s2">&quot;ID&quot;</span>
+    <span class="n">IQ</span> <span class="o">=</span> <span class="s2">&quot;IQ&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
 
@@ -5655,6 +5790,7 @@
 
     <span class="c1"># generic</span>
     <span class="n">GENERIC</span> <span class="o">=</span> <span class="s2">&quot;Generic&quot;</span>
+    <span class="n">PROCEDURAL_LOGIC</span> <span class="o">=</span> <span class="s2">&quot;PROCEDURAL_LOGIC&quot;</span>
 
     <span class="c1"># common basic maths</span>
     <span class="n">CONST</span> <span class="o">=</span> <span class="s2">&quot;CONST&quot;</span>
@@ -5733,7 +5869,6 @@
     <span class="n">VSC_VD_HAT_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_VD_HAT_RMS&quot;</span>
     <span class="n">VSC_VQ_HAT_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_VQ_HAT_RMS&quot;</span>
     <span class="n">VSC_DC_LINK_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_DC_LINK_RMS&quot;</span>
-    <span class="n">VSC_TERMINAL_POWER_RMS</span> <span class="o">=</span> <span class="s2">&quot;VSC_TERMINAL_POWER_RMS&quot;</span>
     <span class="n">VOLTAGE_SOURCE_RMS</span> <span class="o">=</span> <span class="s2">&quot;Voltage_source_rms&quot;</span>
     <span class="n">TRANSFORMER_2W_RMS</span> <span class="o">=</span> <span class="s2">&quot;Transformer_2w_rms&quot;</span>
     <span class="n">DC_LINE_RMS</span> <span class="o">=</span> <span class="s2">&quot;DC_line_rms&quot;</span>
@@ -5874,6 +6009,15 @@
     <span class="n">BATTERY_EMT</span> <span class="o">=</span> <span class="s2">&quot;BATTERY_EMT&quot;</span>
     <span class="n">COMPLETE_PSEUDO_VSC_EMT</span> <span class="o">=</span> <span class="s2">&quot;COMPLETE_PSEUDO_VSC_EMT&quot;</span>
 
+    <span class="n">MEASUREMENTS_VOLTAGE_ANGLE</span> <span class="o">=</span> <span class="s2">&quot;MEASUREMENTS_VOLTAGE_ANGLE&quot;</span>
+    <span class="n">MEASUREMENTS_P_Q</span> <span class="o">=</span> <span class="s2">&quot;MEASUREMENTS_P_Q&quot;</span>
+    <span class="n">MEASUREMENTS_VOLTAGE_FROM_POLAR</span> <span class="o">=</span> <span class="s2">&quot;MEASUREMENTS_VOLTAGE_FROM_POLAR&quot;</span>
+    <span class="n">MEASUREMENTS_VOLTAGE_FROM_DC</span> <span class="o">=</span> <span class="s2">&quot;MEASUREMENTS_VOLTAGE_FROM_DC&quot;</span>
+    <span class="n">MEASUREMENTS_CURRENT_FROM_PQ</span> <span class="o">=</span> <span class="s2">&quot;MEASUREMENTS_CURRENT_FROM_PQ&quot;</span>
+    <span class="n">MEASUREMENTS_CURRENT_FROM_DC</span> <span class="o">=</span> <span class="s2">&quot;MEASUREMENTS_CURRENT_FROM_DC&quot;</span>
+    <span class="n">MEASUREMENTS_CURRENT_PARK</span> <span class="o">=</span> <span class="s2">&quot;MEASUREMENTS_CURRENT_PARK&quot;</span>
+    <span class="n">MEASUREMENTS_PLL</span> <span class="o">=</span> <span class="s2">&quot;MEASUREMENTS_PLL&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
 
@@ -5917,8 +6061,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">BlockSymbolCategory</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Visible symbol group used to filter dynamic-block symbol tables.&quot;&quot;&quot;</span>
 
+    <span class="n">GENERAL</span> <span class="o">=</span> <span class="s2">&quot;General structure&quot;</span>
     <span class="n">VARIABLES</span> <span class="o">=</span> <span class="s2">&quot;Variables&quot;</span>
-    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="s2">&quot;Parameters&quot;</span></div>
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="s2">&quot;Parameters&quot;</span>
+    <span class="n">RETAINED_MODES</span> <span class="o">=</span> <span class="s2">&quot;Retained modes&quot;</span></div>
 
 
 
@@ -6060,6 +6206,95 @@
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">s</span></div>
 </div>
+
+
+
+<div class="viewcode-block" id="InternationalStandardModel">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.InternationalStandardModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InternationalStandardModel</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify every supported international-standard dynamic model.&quot;&quot;&quot;</span>
+
+    <span class="n">AC1A</span> <span class="o">=</span> <span class="s1">&#39;ac1a&#39;</span>
+    <span class="n">AC1C</span> <span class="o">=</span> <span class="s1">&#39;ac1c&#39;</span>
+    <span class="n">AC6A</span> <span class="o">=</span> <span class="s1">&#39;ac6a&#39;</span>
+    <span class="n">AC6C</span> <span class="o">=</span> <span class="s1">&#39;ac6c&#39;</span>
+    <span class="n">AC7B</span> <span class="o">=</span> <span class="s1">&#39;ac7b&#39;</span>
+    <span class="n">AC7C</span> <span class="o">=</span> <span class="s1">&#39;ac7c&#39;</span>
+    <span class="n">AC8B</span> <span class="o">=</span> <span class="s1">&#39;ac8b&#39;</span>
+    <span class="n">AC8C</span> <span class="o">=</span> <span class="s1">&#39;ac8c&#39;</span>
+    <span class="n">BBSEX1</span> <span class="o">=</span> <span class="s1">&#39;bbsex1&#39;</span>
+    <span class="n">BESSCBCURRENTSOURCENOPLANTCONTROL</span> <span class="o">=</span> <span class="s1">&#39;besscbcurrentsourcenoplantcontrol&#39;</span>
+    <span class="n">DC1A</span> <span class="o">=</span> <span class="s1">&#39;dc1a&#39;</span>
+    <span class="n">DC1C</span> <span class="o">=</span> <span class="s1">&#39;dc1c&#39;</span>
+    <span class="n">EXAC1</span> <span class="o">=</span> <span class="s1">&#39;exac1&#39;</span>
+    <span class="n">GOVHYDRO4</span> <span class="o">=</span> <span class="s1">&#39;govhydro4&#39;</span>
+    <span class="n">GOVSTEAM1</span> <span class="o">=</span> <span class="s1">&#39;govsteam1&#39;</span>
+    <span class="n">GOVSTEAMEU</span> <span class="o">=</span> <span class="s1">&#39;govsteameu&#39;</span>
+    <span class="n">IEEEG1</span> <span class="o">=</span> <span class="s1">&#39;ieeeg1&#39;</span>
+    <span class="n">IEEEG2</span> <span class="o">=</span> <span class="s1">&#39;ieeeg2&#39;</span>
+    <span class="n">IEEET1</span> <span class="o">=</span> <span class="s1">&#39;ieeet1&#39;</span>
+    <span class="n">IEEEX2</span> <span class="o">=</span> <span class="s1">&#39;ieeex2&#39;</span>
+    <span class="n">IEEX2A</span> <span class="o">=</span> <span class="s1">&#39;ieex2a&#39;</span>
+    <span class="n">MAXEX2</span> <span class="o">=</span> <span class="s1">&#39;maxex2&#39;</span>
+    <span class="n">OEL2C</span> <span class="o">=</span> <span class="s1">&#39;oel2c&#39;</span>
+    <span class="n">OEL3C</span> <span class="o">=</span> <span class="s1">&#39;oel3c&#39;</span>
+    <span class="n">OEL4C</span> <span class="o">=</span> <span class="s1">&#39;oel4c&#39;</span>
+    <span class="n">OEL5C</span> <span class="o">=</span> <span class="s1">&#39;oel5c&#39;</span>
+    <span class="n">PSS1AOMEGA</span> <span class="o">=</span> <span class="s1">&#39;pss1aomega&#39;</span>
+    <span class="n">PSS1APGEN</span> <span class="o">=</span> <span class="s1">&#39;pss1apgen&#39;</span>
+    <span class="n">PSS2A</span> <span class="o">=</span> <span class="s1">&#39;pss2a&#39;</span>
+    <span class="n">PSS2B</span> <span class="o">=</span> <span class="s1">&#39;pss2b&#39;</span>
+    <span class="n">PSS2C</span> <span class="o">=</span> <span class="s1">&#39;pss2c&#39;</span>
+    <span class="n">PSS3B</span> <span class="o">=</span> <span class="s1">&#39;pss3b&#39;</span>
+    <span class="n">PSS3C</span> <span class="o">=</span> <span class="s1">&#39;pss3c&#39;</span>
+    <span class="n">PSS6C</span> <span class="o">=</span> <span class="s1">&#39;pss6c&#39;</span>
+    <span class="n">PSSKUNDUR</span> <span class="o">=</span> <span class="s1">&#39;psskundur&#39;</span>
+    <span class="n">PVCURRENTSOURCEBNOPLANTCONTROL</span> <span class="o">=</span> <span class="s1">&#39;pvcurrentsourcebnoplantcontrol&#39;</span>
+    <span class="n">PVVOLTAGESOURCEANOPLANTCONTROL</span> <span class="o">=</span> <span class="s1">&#39;pvvoltagesourceanoplantcontrol&#39;</span>
+    <span class="n">PVVOLTAGESOURCEBNOPLANTCONTROL</span> <span class="o">=</span> <span class="s1">&#39;pvvoltagesourcebnoplantcontrol&#39;</span>
+    <span class="n">REECB</span> <span class="o">=</span> <span class="s1">&#39;reecb&#39;</span>
+    <span class="n">REECC</span> <span class="o">=</span> <span class="s1">&#39;reecc&#39;</span>
+    <span class="n">REGCBCS</span> <span class="o">=</span> <span class="s1">&#39;regcbcs&#39;</span>
+    <span class="n">REPCA</span> <span class="o">=</span> <span class="s1">&#39;repca&#39;</span>
+    <span class="n">SCL1C</span> <span class="o">=</span> <span class="s1">&#39;scl1c&#39;</span>
+    <span class="n">SCL2C</span> <span class="o">=</span> <span class="s1">&#39;scl2c&#39;</span>
+    <span class="n">SCRX</span> <span class="o">=</span> <span class="s1">&#39;scrx&#39;</span>
+    <span class="n">SEXS</span> <span class="o">=</span> <span class="s1">&#39;sexs&#39;</span>
+    <span class="n">ST1A</span> <span class="o">=</span> <span class="s1">&#39;st1a&#39;</span>
+    <span class="n">ST1C</span> <span class="o">=</span> <span class="s1">&#39;st1c&#39;</span>
+    <span class="n">ST4B</span> <span class="o">=</span> <span class="s1">&#39;st4b&#39;</span>
+    <span class="n">ST4C</span> <span class="o">=</span> <span class="s1">&#39;st4c&#39;</span>
+    <span class="n">ST5B</span> <span class="o">=</span> <span class="s1">&#39;st5b&#39;</span>
+    <span class="n">ST5C</span> <span class="o">=</span> <span class="s1">&#39;st5c&#39;</span>
+    <span class="n">ST6B</span> <span class="o">=</span> <span class="s1">&#39;st6b&#39;</span>
+    <span class="n">ST6C</span> <span class="o">=</span> <span class="s1">&#39;st6c&#39;</span>
+    <span class="n">ST7B</span> <span class="o">=</span> <span class="s1">&#39;st7b&#39;</span>
+    <span class="n">ST7C</span> <span class="o">=</span> <span class="s1">&#39;st7c&#39;</span>
+    <span class="n">ST9C</span> <span class="o">=</span> <span class="s1">&#39;st9c&#39;</span>
+    <span class="n">TGOV3</span> <span class="o">=</span> <span class="s1">&#39;tgov3&#39;</span>
+    <span class="n">UEL1</span> <span class="o">=</span> <span class="s1">&#39;uel1&#39;</span>
+    <span class="n">UEL2C</span> <span class="o">=</span> <span class="s1">&#39;uel2c&#39;</span>
+    <span class="n">VRKUNDUR</span> <span class="o">=</span> <span class="s1">&#39;vrkundur&#39;</span>
+    <span class="n">WPP4BCURRENTSOURCE2020</span> <span class="o">=</span> <span class="s1">&#39;wpp4bcurrentsource2020&#39;</span>
+    <span class="n">WT4ACURRENTSOURCE</span> <span class="o">=</span> <span class="s1">&#39;wt4acurrentsource&#39;</span>
+    <span class="n">WT4ACURRENTSOURCE2020</span> <span class="o">=</span> <span class="s1">&#39;wt4acurrentsource2020&#39;</span>
+    <span class="n">WT4BCURRENTSOURCE2020</span> <span class="o">=</span> <span class="s1">&#39;wt4bcurrentsource2020&#39;</span>
+    <span class="n">WT4BCURRENTSOURCE</span> <span class="o">=</span> <span class="s1">&#39;wt4bcurrentsource&#39;</span>
+    <span class="n">WT4INJECTOR</span> <span class="o">=</span> <span class="s1">&#39;wt4injector&#39;</span>
+    <span class="n">WTG4ACURRENTSOURCE</span> <span class="o">=</span> <span class="s1">&#39;wtg4acurrentsource&#39;</span>
+    <span class="n">WTG4BCURRENTSOURCE</span> <span class="o">=</span> <span class="s1">&#39;wtg4bcurrentsource&#39;</span>
+    <span class="n">IEEEVC_1981</span> <span class="o">=</span> <span class="s1">&#39;ieeevc_1981&#39;</span>
+    <span class="n">ESDC2A</span> <span class="o">=</span> <span class="s1">&#39;esdc2a&#39;</span>
+    <span class="n">FRQTPA</span> <span class="o">=</span> <span class="s1">&#39;frqtpa&#39;</span>
+    <span class="n">VTGTPA</span> <span class="o">=</span> <span class="s1">&#39;vtgtpa&#39;</span>
+    <span class="n">CIMTR1</span> <span class="o">=</span> <span class="s1">&#39;cimtr1&#39;</span>
+    <span class="n">CIMW</span> <span class="o">=</span> <span class="s1">&#39;cimw&#39;</span>
+    <span class="n">GENSAL</span> <span class="o">=</span> <span class="s1">&#39;gensal&#39;</span>
+    <span class="n">GENROU</span> <span class="o">=</span> <span class="s1">&#39;genrou&#39;</span>
+    <span class="n">GGOV1</span> <span class="o">=</span> <span class="s1">&#39;ggov1&#39;</span>
+    <span class="n">HYGOV</span> <span class="o">=</span> <span class="s1">&#39;hygov&#39;</span>
+    <span class="n">IEEL</span> <span class="o">=</span> <span class="s1">&#39;ieel&#39;</span>
+    <span class="n">TGOV1</span> <span class="o">=</span> <span class="s1">&#39;tgov1&#39;</span></div>
 
 
 
@@ -6241,6 +6476,80 @@
 
     <span class="n">GENERATOR</span> <span class="o">=</span> <span class="s2">&quot;generator&quot;</span>
     <span class="n">MOTOR</span> <span class="o">=</span> <span class="s2">&quot;motor&quot;</span></div>
+
+
+<div class="viewcode-block" id="MeasurementVarType">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.MeasurementVarType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeasurementVarType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    this class contains the existing measurement variables</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">UR</span> <span class="o">=</span> <span class="s2">&quot;UR&quot;</span>
+    <span class="n">UI</span> <span class="o">=</span> <span class="s2">&quot;UI&quot;</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="s2">&quot;U&quot;</span>
+    <span class="n">U2R</span> <span class="o">=</span> <span class="s2">&quot;U2R&quot;</span>
+    <span class="n">U2I</span> <span class="o">=</span> <span class="s2">&quot;U2I&quot;</span>
+    <span class="n">U2</span> <span class="o">=</span> <span class="s2">&quot;U2&quot;</span>
+    <span class="n">U0R</span> <span class="o">=</span> <span class="s2">&quot;U0R&quot;</span>
+    <span class="n">U0I</span> <span class="o">=</span> <span class="s2">&quot;U0I&quot;</span>
+    <span class="n">U0</span> <span class="o">=</span> <span class="s2">&quot;U0&quot;</span>
+    <span class="n">FREF</span> <span class="o">=</span> <span class="s2">&quot;FREF&quot;</span>
+    <span class="n">FE</span> <span class="o">=</span> <span class="s2">&quot;FE&quot;</span>
+    <span class="n">DU</span> <span class="o">=</span> <span class="s2">&quot;DU&quot;</span>
+    <span class="n">DUR</span> <span class="o">=</span> <span class="s2">&quot;DUR&quot;</span>
+    <span class="n">DUI</span> <span class="o">=</span> <span class="s2">&quot;DUI&quot;</span>
+    <span class="n">DU2</span> <span class="o">=</span> <span class="s2">&quot;DU2&quot;</span>
+    <span class="n">DU2R</span> <span class="o">=</span> <span class="s2">&quot;DU2R&quot;</span>
+    <span class="n">DU2I</span> <span class="o">=</span> <span class="s2">&quot;DU2I&quot;</span>
+    <span class="n">DU0</span> <span class="o">=</span> <span class="s2">&quot;DU0&quot;</span>
+    <span class="n">DU0R</span> <span class="o">=</span> <span class="s2">&quot;DU0R&quot;</span>
+    <span class="n">DU0I</span> <span class="o">=</span> <span class="s2">&quot;DU0I&quot;</span>
+    <span class="n">UR_A</span> <span class="o">=</span> <span class="s2">&quot;UR_A&quot;</span>
+    <span class="n">UR_B</span> <span class="o">=</span> <span class="s2">&quot;UR_B&quot;</span>
+    <span class="n">UR_C</span> <span class="o">=</span> <span class="s2">&quot;UR_C&quot;</span>
+    <span class="n">UI_A</span> <span class="o">=</span> <span class="s2">&quot;UI_A&quot;</span>
+    <span class="n">UI_B</span> <span class="o">=</span> <span class="s2">&quot;UI_B&quot;</span>
+    <span class="n">UI_C</span> <span class="o">=</span> <span class="s2">&quot;UI_C&quot;</span>
+    <span class="n">DUR_A</span> <span class="o">=</span> <span class="s2">&quot;DUR_A&quot;</span>
+    <span class="n">DUR_B</span> <span class="o">=</span> <span class="s2">&quot;DUR_B&quot;</span>
+    <span class="n">DUR_C</span> <span class="o">=</span> <span class="s2">&quot;DUR_C&quot;</span>
+    <span class="n">DUI_A</span> <span class="o">=</span> <span class="s2">&quot;DUI_A&quot;</span>
+    <span class="n">DUI_B</span> <span class="o">=</span> <span class="s2">&quot;DUI_B&quot;</span>
+    <span class="n">DUI_C</span> <span class="o">=</span> <span class="s2">&quot;DUI_C&quot;</span>
+
+    <span class="n">IR</span> <span class="o">=</span> <span class="s2">&quot;IR&quot;</span>
+    <span class="n">II</span> <span class="o">=</span> <span class="s2">&quot;II&quot;</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
+    <span class="n">IA</span> <span class="o">=</span> <span class="s2">&quot;IA&quot;</span>
+    <span class="n">I2R</span> <span class="o">=</span> <span class="s2">&quot;I2R&quot;</span>
+    <span class="n">I2I</span> <span class="o">=</span> <span class="s2">&quot;I2I&quot;</span>
+    <span class="n">I2</span> <span class="o">=</span> <span class="s2">&quot;I2&quot;</span>
+    <span class="n">I0R</span> <span class="o">=</span> <span class="s2">&quot;I0R&quot;</span>
+    <span class="n">I0I</span> <span class="o">=</span> <span class="s2">&quot;I0&quot;</span>
+    <span class="n">IR_A</span> <span class="o">=</span> <span class="s2">&quot;IR_A&quot;</span>
+    <span class="n">IR_B</span> <span class="o">=</span> <span class="s2">&quot;IR_B&quot;</span>
+    <span class="n">IR_C</span> <span class="o">=</span> <span class="s2">&quot;IR_C&quot;</span>
+    <span class="n">II_A</span> <span class="o">=</span> <span class="s2">&quot;II_A&quot;</span>
+    <span class="n">II_B</span> <span class="o">=</span> <span class="s2">&quot;II_B&quot;</span>
+    <span class="n">II_C</span> <span class="o">=</span> <span class="s2">&quot;II_C&quot;</span>
+
+    <span class="n">I_DC</span> <span class="o">=</span> <span class="s2">&quot;I_DC&quot;</span>
+
+    <span class="n">VD</span> <span class="o">=</span> <span class="s2">&quot;VD&quot;</span>
+    <span class="n">VQ</span> <span class="o">=</span> <span class="s2">&quot;VQ&quot;</span>
+
+    <span class="n">ID</span> <span class="o">=</span> <span class="s2">&quot;ID&quot;</span>
+    <span class="n">IQ</span> <span class="o">=</span> <span class="s2">&quot;IQ&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="DynamicEditorContentType">
+<a class="viewcode-back" href="../../rst_source/api/auto/VeraGridEngine.html#VeraGridEngine.enumerations.DynamicEditorContentType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DynamicEditorContentType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify the kind of content hosted by a dynamic workspace tab.&quot;&quot;&quot;</span>
+
+    <span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;Model&quot;</span>
+    <span class="n">EVENTS</span> <span class="o">=</span> <span class="s2">&quot;Events&quot;</span></div>
 
 </pre></div>
 

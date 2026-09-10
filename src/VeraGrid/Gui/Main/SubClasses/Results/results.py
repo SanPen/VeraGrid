@@ -16,6 +16,7 @@ from VeraGrid.Gui.Main.SubClasses.simulations import SimulationsMain
 from VeraGrid.Gui.results_model import ResultsModel
 from VeraGrid.Gui.general_dialogues import fill_tree_from_logs
 from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 import VeraGridEngine.Utils.Filtering as flt
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import (ResultTypes, SimulationTypes, PlotSimulationType, DynamicPlotEntryKind,
@@ -863,7 +864,10 @@ class ResultsMain(SimulationsMain):
                     stacked=self.ui.stacked_plot_checkBox.isChecked()
                 )
 
-                plt.show()
+                show_matplotlib_figure(figure=fig,
+                                       parent=self,
+                                       open_dialogs=self._open_plot_dialogs,
+                                       title=self.tr("Results plot"))
             else:
                 pass
         else:

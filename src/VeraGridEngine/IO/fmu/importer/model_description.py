@@ -5,404 +5,520 @@
 
 from __future__ import annotations
 
-from enum import Enum
 from pathlib import Path
 from typing import Optional
+import warnings
 import xml.etree.ElementTree as ET
-import zipfile
 
 from VeraGridEngine.IO.fmu.importer.errors import FmuArchiveError, FmuModeError
+from VeraGridEngine.IO.fmu.importer.inspection import (
+    FmuArchiveInspectionPolicy,
+    FmuInspectionResult,
+    inspect_fmu,
+)
+from VeraGridEngine.IO.fmu.importer.fmi3_model_description import (
+    parse_fmi3_model_description,
+)
+from VeraGridEngine.IO.fmu.versions import parse_declared_fmi_version
+from VeraGridEngine.enumerations import FmiVersion, FmuInterfaceMode, FmuVariableType
+from VeraGridEngine.IO.fmu.importer.model_description_metadata import (
+    FmuModelDescription,
+    FmuVariableDescription,
+)
+from VeraGridEngine.IO.fmu.importer.model_description_xml import (
+    parse_fmi_boolean as _parse_fmi_boolean,
+    parse_fmi_uint32 as _parse_fmi_uint32,
+    read_required_attribute as _read_required_attribute,
+)
 
 
-class FmuVariableType(str, Enum):
-    """Enumerate the FMI 2.0 scalar variable primitive types.
+def _validate_fmi_one_co_simulation_interface(
+    interface_node: ET.Element,
+    path: Path,
+) -> None:
+    """Validate the required structure of one FMI 1 Co-Simulation interface.
 
+    Capability values remain metadata-only and are deliberately not stored.
+
+    :param interface_node: Stand-alone or tool interface element.
+    :param path: FMU source path used in diagnostics.
     :return: None.
+    :raises FmuArchiveError: If required interface children are missing.
     """
 
-    REAL = "Real"
-    INTEGER = "Integer"
-    BOOLEAN = "Boolean"
-    STRING = "String"
-    ENUMERATION = "Enumeration"
-    UNKNOWN = "Unknown"
-
-
-class FmuInterfaceMode(str, Enum):
-    """Enumerate the FMI 2.0 execution modes supported by VeraGrid.
-
-    :return: None.
-    """
-
-    CO_SIMULATION = "CoSimulation"
-    MODEL_EXCHANGE = "ModelExchange"
-
-
-class FmuVariableDescription:
-    """Store the metadata for one FMU scalar variable.
-
-    :param name: FMI variable name.
-    :param value_reference: FMI value reference.
-    :param variable_type: FMI scalar primitive type.
-    :param causality: FMI causality string.
-    :param variability: FMI variability string.
-    :param initial: FMI initial string.
-    :param start: FMI start value string.
-    :param derivative_index: FMI derivative index if available.
-    """
-
-    __slots__ = (
-        "name",
-        "value_reference",
-        "variable_type",
-        "causality",
-        "variability",
-        "initial",
-        "start",
-        "derivative_index",
-    )
-
-    def __init__(
-        self,
-        name: str,
-        value_reference: int,
-        variable_type: FmuVariableType,
-        causality: str | None,
-        variability: str | None,
-        initial: str | None,
-        start: str | None,
-        derivative_index: int | None,
-    ) -> None:
-        """Store the parsed scalar-variable metadata.
-
-        :return: None.
-        """
-
-        self.name: str = name
-        self.value_reference: int = value_reference
-        self.variable_type: FmuVariableType = variable_type
-        self.causality: str | None = causality
-        self.variability: str | None = variability
-        self.initial: str | None = initial
-        self.start: str | None = start
-        self.derivative_index: int | None = derivative_index
-
-
-class FmuModelDescription:
-    """Store the execution metadata extracted from an FMU archive.
-
-    :param path: Absolute FMU path.
-    :param fmi_version: FMI version string.
-    :param model_name: Model name declared in the FMU.
-    :param guid: FMI GUID.
-    :param variable_naming_convention: FMI naming convention.
-    :param interface_modes: Supported FMI modes.
-    :param model_identifiers: Mapping from FMI mode to model identifier.
-    :param platforms: Available binary platforms.
-    :param variables: Ordered scalar variables.
-    """
-
-    __slots__ = (
-        "path",
-        "fmi_version",
-        "model_name",
-        "guid",
-        "variable_naming_convention",
-        "number_of_event_indicators",
-        "interface_modes",
-        "model_identifiers",
-        "platforms",
-        "variables",
-    )
-
-    def __init__(
-        self,
-        path: Path,
-        fmi_version: str,
-        model_name: str,
-        guid: str,
-        variable_naming_convention: str | None,
-        number_of_event_indicators: int,
-        interface_modes: tuple[FmuInterfaceMode, ...],
-        model_identifiers: dict[FmuInterfaceMode, str],
-        platforms: tuple[str, ...],
-        variables: tuple[FmuVariableDescription, ...],
-    ) -> None:
-        """Store the parsed FMU execution metadata.
-
-        :return: None.
-        """
-
-        self.path: Path = path
-        self.fmi_version: str = fmi_version
-        self.model_name: str = model_name
-        self.guid: str = guid
-        self.variable_naming_convention: str | None = variable_naming_convention
-        self.number_of_event_indicators: int = number_of_event_indicators
-        self.interface_modes: tuple[FmuInterfaceMode, ...] = interface_modes
-        self.model_identifiers: dict[FmuInterfaceMode, str] = model_identifiers
-        self.platforms: tuple[str, ...] = platforms
-        self.variables: tuple[FmuVariableDescription, ...] = variables
-
-    def get_model_identifier(self, mode: FmuInterfaceMode) -> str:
-        """Return the FMI `modelIdentifier` for the requested mode.
-
-        :param mode: Requested FMI execution mode.
-        :return: The FMI model identifier.
-        """
-
-        identifier: Optional[str] = self.model_identifiers.get(mode, None)
-        if identifier is None:
-            raise FmuModeError(f"The FMU does not support mode {mode.value}")
+    interface_children: list[ET.Element] = list(interface_node)
+    if interface_node.tag == "CoSimulation_StandAlone":
+        if len(interface_children) == 1 and interface_children[0].tag == "Capabilities":
+            pass
         else:
-            return identifier
-
-    def get_supports_co_simulation(self) -> bool:
-        """Return whether the FMU declares the Co-Simulation interface.
-
-        :return: `True` when Co-Simulation is declared.
-        """
-
-        return FmuInterfaceMode.CO_SIMULATION in self.interface_modes
-
-    def get_supports_model_exchange(self) -> bool:
-        """Return whether the FMU declares the Model Exchange interface.
-
-        :return: `True` when Model Exchange is declared.
-        """
-
-        return FmuInterfaceMode.MODEL_EXCHANGE in self.interface_modes
-
-    def get_variable_names(self) -> tuple[str, ...]:
-        """Return the ordered scalar-variable names.
-
-        :return: Tuple with the FMU variable names.
-        """
-
-        variable_names: list[str] = list()
-        variable: FmuVariableDescription
-        for variable in self.variables:
-            variable_names.append(variable.name)
-        return tuple(variable_names)
-
-    def get_variable(self, name: str) -> FmuVariableDescription:
-        """Return the scalar-variable metadata for the requested name.
-
-        :param name: Requested FMU variable name.
-        :return: Matching variable metadata.
-        """
-
-        result: Optional[FmuVariableDescription] = None
-        candidate: FmuVariableDescription
-        for candidate in self.variables:
-            if candidate.name == name:
-                result = candidate
-            else:
-                pass
-
-        if result is None:
-            raise KeyError(name)
-        else:
-            return result
-
-    def get_state_variables(self) -> tuple[FmuVariableDescription, ...]:
-        """Return the FMI variables representing continuous states.
-
-        :return: Tuple with the continuous-state variables.
-        """
-
-        state_variables: list[FmuVariableDescription] = list()
-        variable: FmuVariableDescription
-        for variable in self.variables:
-            if variable.causality == "output" and variable.variability == "continuous":
-                state_variables.append(variable)
-            else:
-                pass
-        return tuple(state_variables)
-
-    def get_derivative_variables(self) -> tuple[FmuVariableDescription, ...]:
-        """Return the FMI variables representing continuous derivatives.
-
-        :return: Tuple with the derivative variables.
-        """
-
-        derivative_variables: list[FmuVariableDescription] = list()
-        variable: FmuVariableDescription
-        for variable in self.variables:
-            if variable.derivative_index is not None:
-                derivative_variables.append(variable)
-            else:
-                pass
-        return tuple(derivative_variables)
-
-    def resolve_mode(self, preferred_mode: FmuInterfaceMode | None = None) -> FmuInterfaceMode:
-        """Choose the effective FMI mode to execute.
-
-        :param preferred_mode: Optional preferred FMI mode.
-        :return: Effective FMI mode to execute.
-        """
-
-        if preferred_mode is not None:
-            if preferred_mode in self.interface_modes:
-                return preferred_mode
-            else:
-                raise FmuModeError(f"The FMU does not support preferred mode {preferred_mode.value}")
-        else:
-            if len(self.interface_modes) == 1:
-                return self.interface_modes[0]
-            else:
-                if FmuInterfaceMode.CO_SIMULATION in self.interface_modes:
-                    return FmuInterfaceMode.CO_SIMULATION
-                else:
-                    if FmuInterfaceMode.MODEL_EXCHANGE in self.interface_modes:
-                        return FmuInterfaceMode.MODEL_EXCHANGE
-                    else:
-                        raise FmuModeError("The FMU does not declare Co-Simulation or Model Exchange")
-
-
-def _read_archive_xml(path: Path) -> tuple[bytes, tuple[str, ...]]:
-    """Read the FMU XML bytes and available binary platforms.
-
-    :param path: FMU archive path or extracted directory.
-    :return: Tuple with XML bytes and supported platforms.
-    """
-
-    if path.is_dir():
-        xml_path: Path = path / "modelDescription.xml"
-        if xml_path.exists():
-            binaries_dir: Path = path / "binaries"
-            platforms_list: list[str] = list()
-            if binaries_dir.exists():
-                entry: Path
-                for entry in binaries_dir.iterdir():
-                    platforms_list.append(entry.name)
-            else:
-                pass
-            return xml_path.read_bytes(), tuple(sorted(platforms_list))
-        else:
-            raise FmuArchiveError(f"Directory {path} does not contain modelDescription.xml")
+            raise FmuArchiveError(
+                f"FMI 1 CoSimulation_StandAlone in {path} requires one Capabilities element"
+            )
     else:
-        if path.exists():
-            try:
-                with zipfile.ZipFile(path) as archive:
-                    xml_bytes: bytes = archive.read("modelDescription.xml")
-                    platform_names: set[str] = set()
-                    archive_name: str
-                    for archive_name in archive.namelist():
-                        if archive_name.startswith("binaries/"):
-                            parts: list[str] = archive_name.split("/")
-                            if len(parts) > 2:
-                                platform_names.add(parts[1])
-                            else:
-                                pass
-                        else:
-                            pass
-                    return xml_bytes, tuple(sorted(platform_names))
-            except (KeyError, OSError, zipfile.BadZipFile) as exc:
-                raise FmuArchiveError(f"Could not read modelDescription.xml from {path}") from exc
+        if interface_node.tag == "CoSimulation_Tool":
+            if (
+                len(interface_children) == 2
+                and interface_children[0].tag == "Capabilities"
+                and interface_children[1].tag == "Model"
+            ):
+                _read_required_attribute(
+                    interface_children[1],
+                    "entryPoint",
+                    "FMI 1 CoSimulation_Tool Model",
+                    path,
+                )
+                _read_required_attribute(
+                    interface_children[1],
+                    "type",
+                    "FMI 1 CoSimulation_Tool Model",
+                    path,
+                )
+            else:
+                raise FmuArchiveError(
+                    f"FMI 1 CoSimulation_Tool in {path} requires Capabilities and Model elements"
+                )
         else:
-            raise FmuArchiveError(f"FMU file not found: {path}")
+            raise FmuArchiveError(
+                f"Unknown FMI 1 Co-Simulation interface {interface_node.tag!r} in {path}"
+            )
 
 
-def _parse_interface_modes(root: ET.Element) -> tuple[tuple[FmuInterfaceMode, ...], dict[FmuInterfaceMode, str]]:
-    """Parse the supported FMI interface modes from the XML root.
+def _parse_fmi_one_interface_modes(
+    root: ET.Element,
+    model_identifier: str,
+    path: Path,
+) -> tuple[tuple[FmuInterfaceMode, ...], dict[FmuInterfaceMode, str]]:
+    """Infer the FMI 1 interface from its optional Implementation element.
+
+    :param root: FMI 1 model-description root.
+    :param model_identifier: Required root model identifier.
+    :param path: FMU source path used in diagnostics.
+    :return: Declared interface and its model identifier.
+    :raises FmuArchiveError: If the interface declaration is ambiguous.
+    """
+
+    implementation_nodes: list[ET.Element] = root.findall("Implementation")
+    if len(implementation_nodes) > 1:
+        raise FmuArchiveError(f"FMI 1 Implementation element is duplicated in {path}")
+    else:
+        identifiers: dict[FmuInterfaceMode, str] = dict()
+        if len(implementation_nodes) == 0:
+            interface_mode: FmuInterfaceMode = FmuInterfaceMode.MODEL_EXCHANGE
+        else:
+            implementation_children: list[ET.Element] = list(implementation_nodes[0])
+            if len(implementation_children) == 1:
+                implementation_kind: str = implementation_children[0].tag
+                if implementation_kind == "CoSimulation_StandAlone":
+                    _validate_fmi_one_co_simulation_interface(
+                        implementation_children[0],
+                        path,
+                    )
+                    interface_mode = FmuInterfaceMode.CO_SIMULATION
+                else:
+                    if implementation_kind == "CoSimulation_Tool":
+                        _validate_fmi_one_co_simulation_interface(
+                            implementation_children[0],
+                            path,
+                        )
+                        interface_mode = FmuInterfaceMode.CO_SIMULATION
+                    else:
+                        raise FmuArchiveError(
+                            f"Unknown FMI 1 Implementation interface {implementation_kind!r} in {path}"
+                        )
+            else:
+                raise FmuArchiveError(
+                    f"FMI 1 Implementation in {path} must declare exactly one interface"
+                )
+        identifiers[interface_mode] = model_identifier
+        return (interface_mode,), identifiers
+
+
+def _parse_fmi_two_interface_modes(
+    root: ET.Element,
+    path: Path,
+) -> tuple[tuple[FmuInterfaceMode, ...], dict[FmuInterfaceMode, str]]:
+    """Parse the supported FMI 2 interface modes from the XML root.
 
     :param root: XML root element.
+    :param path: FMU source path used to identify validation failures.
     :return: Supported modes and their model identifiers.
+    :raises FmuArchiveError: If an interface declaration is duplicated or incomplete.
+    :raises FmuModeError: If Co-Simulation requires an external execution tool.
     """
 
     modes: list[FmuInterfaceMode] = list()
     identifiers: dict[FmuInterfaceMode, str] = dict()
 
-    co_simulation_node: Optional[ET.Element] = root.find("CoSimulation")
-    if co_simulation_node is not None:
-        modes.append(FmuInterfaceMode.CO_SIMULATION)
-        identifiers[FmuInterfaceMode.CO_SIMULATION] = co_simulation_node.attrib.get("modelIdentifier", "")
+    co_simulation_nodes: list[ET.Element] = root.findall("CoSimulation")
+    if len(co_simulation_nodes) > 1:
+        raise FmuArchiveError(f"FMI 2 CoSimulation interface is duplicated in {path}")
     else:
-        pass
+        if len(co_simulation_nodes) == 1:
+            co_simulation_node: ET.Element = co_simulation_nodes[0]
+            co_simulation_identifier: str = _read_required_attribute(
+                co_simulation_node,
+                "modelIdentifier",
+                "CoSimulation",
+                path,
+            )
+            needs_execution_tool_raw: str | None = co_simulation_node.attrib.get(
+                "needsExecutionTool",
+                None,
+            )
+            if needs_execution_tool_raw is None:
+                needs_execution_tool: bool = False
+            else:
+                needs_execution_tool = _parse_fmi_boolean(
+                    needs_execution_tool_raw,
+                    "needsExecutionTool",
+                    "CoSimulation",
+                    path,
+                )
+            if needs_execution_tool:
+                raise FmuModeError(
+                    "FMI 2 Co-Simulation models that require an external execution tool are not supported"
+                )
+            else:
+                modes.append(FmuInterfaceMode.CO_SIMULATION)
+                identifiers[FmuInterfaceMode.CO_SIMULATION] = co_simulation_identifier
+        else:
+            pass
 
-    model_exchange_node: Optional[ET.Element] = root.find("ModelExchange")
-    if model_exchange_node is not None:
-        modes.append(FmuInterfaceMode.MODEL_EXCHANGE)
-        identifiers[FmuInterfaceMode.MODEL_EXCHANGE] = model_exchange_node.attrib.get("modelIdentifier", "")
+    model_exchange_nodes: list[ET.Element] = root.findall("ModelExchange")
+    if len(model_exchange_nodes) > 1:
+        raise FmuArchiveError(f"FMI 2 ModelExchange interface is duplicated in {path}")
     else:
-        pass
+        if len(model_exchange_nodes) == 1:
+            model_exchange_node: ET.Element = model_exchange_nodes[0]
+            model_exchange_identifier: str = _read_required_attribute(
+                model_exchange_node,
+                "modelIdentifier",
+                "ModelExchange",
+                path,
+            )
+            needs_execution_tool_raw = model_exchange_node.attrib.get(
+                "needsExecutionTool",
+                None,
+            )
+            if needs_execution_tool_raw is None:
+                pass
+            else:
+                _parse_fmi_boolean(
+                    needs_execution_tool_raw,
+                    "needsExecutionTool",
+                    "ModelExchange",
+                    path,
+                )
+            modes.append(FmuInterfaceMode.MODEL_EXCHANGE)
+            identifiers[FmuInterfaceMode.MODEL_EXCHANGE] = model_exchange_identifier
+        else:
+            pass
 
-    return tuple(modes), identifiers
+    if len(modes) > 0:
+        return tuple(modes), identifiers
+    else:
+        raise FmuArchiveError(
+            f"FMI 2 model description in {path} declares no supported interface"
+        )
 
 
-def _parse_variable_type(variable_node: ET.Element) -> tuple[FmuVariableType, ET.Element | None]:
+def _parse_variable_type(
+    variable_node: ET.Element,
+    variable_name: str,
+    fmi_version_family: FmiVersion,
+    path: Path,
+) -> tuple[FmuVariableType, ET.Element]:
     """Parse the primitive FMI type for one scalar variable.
 
     :param variable_node: ScalarVariable XML node.
+    :param variable_name: Required variable name used in diagnostics.
+    :param fmi_version_family: FMI family that defines trailing child elements.
+    :param path: FMU source path used to identify validation failures.
     :return: Primitive FMI type and matching child node.
+    :raises FmuArchiveError: If the variable has no unique known primitive type.
     """
+
+    variable_type: FmuVariableType = FmuVariableType.UNKNOWN
+    type_node: ET.Element | None = None
+    trailing_element_seen: bool = False
+    if fmi_version_family == FmiVersion.FMI_1_0:
+        trailing_element_name: str = "DirectDependency"
+    else:
+        if fmi_version_family == FmiVersion.FMI_2_0:
+            trailing_element_name = "Annotations"
+        else:
+            raise FmuArchiveError(
+                f"FMI {fmi_version_family.value} scalar-variable parsing is not supported"
+            )
 
     child_node: ET.Element
     for child_node in variable_node:
-        try:
-            return FmuVariableType(child_node.tag), child_node
-        except ValueError:
-            pass
-    return FmuVariableType.UNKNOWN, None
+        if child_node.tag == trailing_element_name:
+            if type_node is None:
+                raise FmuArchiveError(
+                    f"ScalarVariable {variable_name!r} in {path} declares "
+                    f"{trailing_element_name} before its primitive type"
+                )
+            else:
+                if trailing_element_seen:
+                    raise FmuArchiveError(
+                        f"ScalarVariable {variable_name!r} in {path} duplicates "
+                        f"{trailing_element_name}"
+                    )
+                else:
+                    trailing_element_seen = True
+        else:
+            if trailing_element_seen:
+                raise FmuArchiveError(
+                    f"ScalarVariable {variable_name!r} in {path} declares a child "
+                    f"after {trailing_element_name}"
+                )
+            else:
+                pass
+            try:
+                candidate_type: FmuVariableType = FmuVariableType(child_node.tag)
+            except ValueError as exc:
+                raise FmuArchiveError(
+                    f"ScalarVariable {variable_name!r} in {path} has unknown type {child_node.tag!r}"
+                ) from exc
+            if candidate_type == FmuVariableType.UNKNOWN:
+                raise FmuArchiveError(
+                    f"ScalarVariable {variable_name!r} in {path} has unknown type {child_node.tag!r}"
+                )
+            else:
+                if type_node is None:
+                    variable_type = candidate_type
+                    type_node = child_node
+                else:
+                    raise FmuArchiveError(
+                        f"ScalarVariable {variable_name!r} in {path} declares multiple primitive types"
+                    )
+
+    if type_node is None:
+        raise FmuArchiveError(
+            f"ScalarVariable {variable_name!r} in {path} does not declare a primitive type"
+        )
+    else:
+        return variable_type, type_node
 
 
-def _parse_variables(model_variables_node: ET.Element | None) -> tuple[FmuVariableDescription, ...]:
+def _parse_variables(
+    model_variables_node: ET.Element | None,
+    fmi_version_family: FmiVersion,
+    path: Path,
+) -> tuple[FmuVariableDescription, ...]:
     """Parse the ordered scalar variables declared in the FMU.
 
     :param model_variables_node: XML `<ModelVariables>` node.
+    :param fmi_version_family: FMI family that defines variable semantics.
+    :param path: FMU source path used to identify validation failures.
     :return: Ordered scalar-variable descriptions.
+    :raises FmuArchiveError: If variable identity, type or derivative metadata is invalid.
     """
 
     variables: list[FmuVariableDescription] = list()
+    variable_names: set[str] = set()
     if model_variables_node is None:
         return tuple()
     else:
+        # ModelVariables may contain only unqualified FMI ScalarVariable
+        # elements. Checking every child prevents namespace-qualified entries
+        # from disappearing through the exact-name lookup below.
+        model_variable_child: ET.Element
+        for model_variable_child in model_variables_node:
+            if model_variable_child.tag == "ScalarVariable":
+                pass
+            else:
+                if model_variable_child.tag.startswith("{"):
+                    raise FmuArchiveError(
+                        f"XML namespaces are not accepted for FMI "
+                        f"{fmi_version_family.value} variables in {path}"
+                    )
+                else:
+                    raise FmuArchiveError(
+                        f"Unexpected ModelVariables element {model_variable_child.tag!r} in {path}"
+                    )
+
         scalar_variable_node: ET.Element
         for scalar_variable_node in model_variables_node.findall("ScalarVariable"):
+            variable_name: str = _read_required_attribute(
+                scalar_variable_node,
+                "name",
+                "ScalarVariable",
+                path,
+            )
+            if variable_name in variable_names:
+                raise FmuArchiveError(
+                    f"ScalarVariable name {variable_name!r} is duplicated in {path}"
+                )
+            else:
+                variable_names.add(variable_name)
+
+            value_reference_raw: str = _read_required_attribute(
+                scalar_variable_node,
+                "valueReference",
+                f"ScalarVariable {variable_name!r}",
+                path,
+            )
+            value_reference: int = _parse_fmi_uint32(
+                value_reference_raw,
+                "valueReference",
+                f"ScalarVariable {variable_name!r}",
+                path,
+            )
             variable_type: FmuVariableType
-            type_node: ET.Element | None
-            variable_type, type_node = _parse_variable_type(scalar_variable_node)
+            type_node: ET.Element
+            variable_type, type_node = _parse_variable_type(
+                scalar_variable_node,
+                variable_name,
+                fmi_version_family,
+                path,
+            )
             derivative_index: int | None = None
-            start: str | None = None
-            if type_node is not None:
-                derivative_raw: Optional[str] = type_node.attrib.get("derivative", None)
-                if derivative_raw is not None:
-                    derivative_index = int(derivative_raw)
+            derivative_raw: Optional[str] = type_node.attrib.get("derivative", None)
+            if derivative_raw is not None:
+                if fmi_version_family == FmiVersion.FMI_2_0:
+                    if variable_type == FmuVariableType.REAL:
+                        derivative_index = _parse_fmi_uint32(
+                            derivative_raw,
+                            "derivative",
+                            f"ScalarVariable {variable_name!r}",
+                            path,
+                        )
+                    else:
+                        raise FmuArchiveError(
+                            f"ScalarVariable {variable_name!r} in {path} declares "
+                            "derivative on a non-Real type"
+                        )
                 else:
-                    derivative_index = None
-                start = type_node.attrib.get("start", None)
+                    raise FmuArchiveError(
+                        f"ScalarVariable {variable_name!r} in {path} declares "
+                        "derivative outside FMI 2"
+                    )
             else:
                 pass
+            start: str | None = type_node.attrib.get("start", None)
+
+            if fmi_version_family == FmiVersion.FMI_1_0:
+                causality: str | None = scalar_variable_node.attrib.get(
+                    "causality",
+                    "internal",
+                )
+                variability: str | None = scalar_variable_node.attrib.get(
+                    "variability",
+                    "continuous",
+                )
+            else:
+                causality = scalar_variable_node.attrib.get("causality", None)
+                variability = scalar_variable_node.attrib.get("variability", None)
 
             variables.append(
                 FmuVariableDescription(
-                    name=scalar_variable_node.attrib["name"],
-                    value_reference=int(scalar_variable_node.attrib.get("valueReference", "0")),
+                    name=variable_name,
+                    value_reference=value_reference,
                     variable_type=variable_type,
-                    causality=scalar_variable_node.attrib.get("causality", None),
-                    variability=scalar_variable_node.attrib.get("variability", None),
+                    causality=causality,
+                    variability=variability,
                     initial=scalar_variable_node.attrib.get("initial", None),
                     start=start,
                     derivative_index=derivative_index,
                 )
             )
+        variable_count: int = len(variables)
+        variable: FmuVariableDescription
+        for variable in variables:
+            if variable.derivative_index is None:
+                pass
+            else:
+                if 1 <= variable.derivative_index <= variable_count:
+                    state_variable: FmuVariableDescription = variables[
+                        variable.derivative_index - 1
+                    ]
+                    if state_variable.variable_type == FmuVariableType.REAL:
+                        pass
+                    else:
+                        raise FmuArchiveError(
+                            f"ScalarVariable {variable.name!r} derivative index in {path} "
+                            "does not reference a Real variable"
+                        )
+                else:
+                    raise FmuArchiveError(
+                        f"ScalarVariable {variable.name!r} derivative index in {path} "
+                        "is outside the 1-based variable range"
+                    )
         return tuple(variables)
 
 
-def read_fmu_model_description(path: str | Path) -> FmuModelDescription:
-    """Parse the FMU archive and build the runtime metadata object.
+def _parse_supported_fmi_version(
+    root: ET.Element,
+    path: Path,
+) -> tuple[str, FmiVersion]:
+    """Validate the declared version before version-specific XML parsing.
+
+    FMI 1 and FMI 2 use the established scalar-variable parser. FMI 3 is
+    dispatched to its dedicated model-description parser.
+
+    :param root: Parsed ``fmiModelDescription`` XML root.
+    :param path: FMU path used to identify validation failures.
+    :return: Exact declared version and its canonical FMI family.
+    :raises FmuArchiveError: If the declaration is missing, invalid, or unsupported.
+    """
+
+    # Preserve the source declaration exactly because it is provenance, while
+    # the enum family provides the identity used for dispatch.
+    raw_fmi_version: str | None = root.attrib.get("fmiVersion", None)
+    if raw_fmi_version is not None:
+        try:
+            fmi_version_family: FmiVersion = parse_declared_fmi_version(raw_fmi_version)
+        except (TypeError, ValueError) as exc:
+            raise FmuArchiveError(
+                f"Invalid FMI version declaration in {path}: {raw_fmi_version!r}"
+            ) from exc
+    else:
+        raise FmuArchiveError(f"modelDescription.xml in {path} is missing fmiVersion")
+
+    if (
+        fmi_version_family == FmiVersion.FMI_1_0
+        or fmi_version_family == FmiVersion.FMI_2_0
+        or fmi_version_family == FmiVersion.FMI_3_0
+    ):
+        pass
+    else:
+        raise FmuArchiveError(
+            f"FMI {raw_fmi_version} model-description parsing is not supported"
+        )
+
+    return raw_fmi_version, fmi_version_family
+
+
+def read_fmu_model_description(
+    path: str | Path,
+    inspection_policy: FmuArchiveInspectionPolicy | None = None,
+) -> FmuModelDescription:
+    """Parse an FMU archive into validated model-description metadata.
 
     :param path: FMU archive path or extracted directory.
+    :param inspection_policy: Optional finite archive-inspection limits.
     :return: Parsed FMU metadata.
     """
 
-    normalized_path: Path = Path(path).expanduser().resolve()
+    # Inspect the source without extraction or native-code loading before XML
+    # parsing. The receipt records exactly which source bytes were observed.
+    inspection_result: FmuInspectionResult = inspect_fmu(path, policy=inspection_policy)
+    normalized_path: Path = inspection_result.receipt.path
+    xml_bytes: bytes = inspection_result.model_description_xml
+    platforms: tuple[str, ...] = inspection_result.receipt.platforms
 
-    # First the archive is inspected to recover the XML and the binary platforms.
-    xml_bytes: bytes
-    platforms: tuple[str, ...]
-    xml_bytes, platforms = _read_archive_xml(normalized_path)
+    # FMI model descriptions do not require DTD processing. Reject DTD and
+    # entity declarations before parsing so untrusted XML cannot request entity
+    # expansion; removing NUL bytes also covers UTF-16/32 ASCII declarations.
+    comparable_xml: bytes = xml_bytes.replace(b"\x00", b"").upper()
+    if b"<!DOCTYPE" in comparable_xml or b"<!ENTITY" in comparable_xml:
+        raise FmuArchiveError(
+            f"DTD and entity declarations are not accepted in {normalized_path}"
+        )
+    else:
+        pass
 
     # Then the XML is parsed into an element tree to extract each metadata section.
     try:
@@ -410,19 +526,131 @@ def read_fmu_model_description(path: str | Path) -> FmuModelDescription:
     except ET.ParseError as exc:
         raise FmuArchiveError(f"Invalid modelDescription.xml in {normalized_path}") from exc
 
+    # Version dispatch precedes every FMI-family-specific structural lookup so
+    # FMI 1 or FMI 3 can never be partially interpreted as FMI 2.
+    raw_fmi_version: str
+    fmi_version_family: FmiVersion
+    raw_fmi_version, fmi_version_family = _parse_supported_fmi_version(
+        root,
+        normalized_path,
+    )
+
+    if root.tag.startswith("{"):
+        raise FmuArchiveError(
+            f"XML namespaces are not accepted for FMI {raw_fmi_version} "
+            f"model descriptions in {normalized_path}"
+        )
+    else:
+        if root.tag == "fmiModelDescription":
+            pass
+        else:
+            raise FmuArchiveError(
+                f"Invalid modelDescription.xml root element in {normalized_path}: {root.tag!r}"
+            )
+
+    if fmi_version_family == FmiVersion.FMI_3_0:
+        return parse_fmi3_model_description(
+            root=root,
+            path=normalized_path,
+            raw_fmi_version=raw_fmi_version,
+            platforms=platforms,
+            inspection_receipt=inspection_result.receipt,
+        )
+    else:
+        pass
+
+    # FMI 1 and FMI 2 schema elements are unqualified. Reject qualified children
+    # before exact-name parsing so an alternate namespace cannot be ignored
+    # beside an otherwise valid interface declaration.
+    root_child: ET.Element
+    for root_child in root:
+        if root_child.tag.startswith("{"):
+            raise FmuArchiveError(
+                f"XML namespaces are not accepted for FMI {raw_fmi_version} "
+                f"elements in {normalized_path}"
+            )
+        else:
+            pass
+
+    model_name: str = _read_required_attribute(
+        root,
+        "modelName",
+        "fmiModelDescription",
+        normalized_path,
+    )
+    guid: str = _read_required_attribute(
+        root,
+        "guid",
+        "fmiModelDescription",
+        normalized_path,
+    )
+    number_of_event_indicators_raw: str | None = root.attrib.get(
+        "numberOfEventIndicators",
+        None,
+    )
+    if number_of_event_indicators_raw is None:
+        if fmi_version_family == FmiVersion.FMI_1_0:
+            raise FmuArchiveError(
+                f"fmiModelDescription in {normalized_path} is missing required "
+                "attribute numberOfEventIndicators"
+            )
+        else:
+            number_of_event_indicators: int = 0
+    else:
+        number_of_event_indicators = _parse_fmi_uint32(
+            number_of_event_indicators_raw,
+            "numberOfEventIndicators",
+            "fmiModelDescription",
+            normalized_path,
+        )
+
     interface_modes: tuple[FmuInterfaceMode, ...]
     model_identifiers: dict[FmuInterfaceMode, str]
-    interface_modes, model_identifiers = _parse_interface_modes(root)
-    variables: tuple[FmuVariableDescription, ...] = _parse_variables(root.find("ModelVariables"))
+    if fmi_version_family == FmiVersion.FMI_1_0:
+        model_identifier: str = _read_required_attribute(
+            root,
+            "modelIdentifier",
+            "fmiModelDescription",
+            normalized_path,
+        )
+        number_of_continuous_states_raw: str = _read_required_attribute(
+            root,
+            "numberOfContinuousStates",
+            "fmiModelDescription",
+            normalized_path,
+        )
+        _parse_fmi_uint32(
+            number_of_continuous_states_raw,
+            "numberOfContinuousStates",
+            "fmiModelDescription",
+            normalized_path,
+        )
+        interface_modes, model_identifiers = _parse_fmi_one_interface_modes(
+            root,
+            model_identifier,
+            normalized_path,
+        )
+    else:
+        interface_modes, model_identifiers = _parse_fmi_two_interface_modes(
+            root,
+            normalized_path,
+        )
+    variables: tuple[FmuVariableDescription, ...] = _parse_variables(
+        root.find("ModelVariables"),
+        fmi_version_family,
+        normalized_path,
+    )
 
-    # Finally the immutable metadata container is assembled for the callers.
+    # Finally the metadata container is assembled for the callers.
     return FmuModelDescription(
         path=normalized_path,
-        fmi_version=root.attrib.get("fmiVersion", ""),
-        model_name=root.attrib.get("modelName", normalized_path.stem),
-        guid=root.attrib.get("guid", ""),
+        fmi_version=raw_fmi_version,
+        fmi_version_family=fmi_version_family,
+        inspection_receipt=inspection_result.receipt,
+        model_name=model_name,
+        guid=guid,
         variable_naming_convention=root.attrib.get("variableNamingConvention", None),
-        number_of_event_indicators=int(root.attrib.get("numberOfEventIndicators", "0")),
+        number_of_event_indicators=number_of_event_indicators,
         interface_modes=interface_modes,
         model_identifiers=model_identifiers,
         platforms=platforms,
@@ -430,24 +658,75 @@ def read_fmu_model_description(path: str | Path) -> FmuModelDescription:
     )
 
 
-def list_fmu_variable_names(path: str | Path) -> tuple[str, ...]:
+def list_fmu_variable_names(
+    path: str | Path,
+    inspection_policy: FmuArchiveInspectionPolicy | None = None,
+) -> tuple[str, ...]:
     """Return the ordered scalar-variable names declared by the FMU.
 
     :param path: FMU archive path or extracted directory.
+    :param inspection_policy: Optional finite archive-inspection limits.
     :return: Tuple with the variable names.
     """
 
-    metadata: FmuModelDescription = read_fmu_model_description(path)
+    metadata: FmuModelDescription = read_fmu_model_description(
+        path,
+        inspection_policy=inspection_policy,
+    )
     return metadata.get_variable_names()
 
 
-def choose_fmu_mode(path: str | Path, preferred_mode: FmuInterfaceMode | None = None) -> FmuInterfaceMode:
-    """Choose the FMI mode to use for the FMU runtime.
+def select_declared_fmu_interface(
+    path: str | Path,
+    preferred_interface: FmuInterfaceMode | None = None,
+    inspection_policy: FmuArchiveInspectionPolicy | None = None,
+) -> FmuInterfaceMode:
+    """Select one interface declared in an FMU model description.
+
+    This metadata helper does not approve runtime execution. Runtime consumers
+    must use ``FmuImportConfig.resolve_execution_mode``.
 
     :param path: FMU archive path or extracted directory.
-    :param preferred_mode: Optional preferred FMI mode.
-    :return: Effective FMI execution mode.
+    :param preferred_interface: Preferred FMI interface, when specified.
+    :param inspection_policy: Optional finite archive-inspection limits.
+    :return: Interface selected from the model description.
+    :raises FmuModeError: If the preferred interface is absent or no represented
+        interface is declared.
     """
 
-    metadata: FmuModelDescription = read_fmu_model_description(path)
-    return metadata.resolve_mode(preferred_mode)
+    metadata: FmuModelDescription = read_fmu_model_description(
+        path,
+        inspection_policy=inspection_policy,
+    )
+    return metadata.select_declared_interface(preferred_interface)
+
+
+def choose_fmu_mode(
+    path: str | Path,
+    preferred_mode: FmuInterfaceMode | None = None,
+    inspection_policy: FmuArchiveInspectionPolicy | None = None,
+) -> FmuInterfaceMode:
+    """Call the former metadata-selection API with a deprecation warning.
+
+    The historical name did not distinguish declared metadata from runtime
+    approval. New code must use ``select_declared_fmu_interface`` for metadata
+    or ``FmuImportConfig.resolve_execution_mode`` for execution.
+
+    :param path: FMU archive path or extracted directory.
+    :param preferred_mode: Preferred declared FMI interface, when specified.
+    :param inspection_policy: Optional finite archive-inspection limits.
+    :return: Interface selected from the model description.
+    :raises FmuModeError: If the preferred interface is absent or no represented
+        interface is declared.
+    """
+
+    warnings.warn(
+        "choose_fmu_mode() is deprecated; use select_declared_fmu_interface()",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return select_declared_fmu_interface(
+        path=path,
+        preferred_interface=preferred_mode,
+        inspection_policy=inspection_policy,
+    )

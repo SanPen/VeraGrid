@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Symbolic.block &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Utils.Symbolic.block &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -130,7 +130,8 @@
                                                                      <span class="n">DynamicConnectionIntentDirection</span><span class="p">,</span>
                                                                      <span class="n">DynamicConnectionIntentOrigin</span><span class="p">,</span>
                                                                      <span class="n">dynamic_connection_intent_from_dict</span><span class="p">,</span>
-                                                                     <span class="n">dynamic_connection_intent_to_dict</span><span class="p">)</span>
+                                                                     <span class="n">dynamic_connection_intent_to_dict</span><span class="p">,</span>
+                                                                     <span class="n">reconcile_dynamic_connection_intent_target</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.variable_alignment_engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">align_variables</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.procedural_logic_contract</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ProceduralLogicCodecContract</span><span class="p">,</span>
@@ -2025,7 +2026,11 @@
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Symbolic.html#VeraGridEngine.Utils.Symbolic.block.normalize_dynamic_connection_intents">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">normalize_dynamic_connection_intents</span><span class="p">(</span><span class="n">block</span><span class="p">:</span> <span class="s2">&quot;Block&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Keep one current typed state for each connection-intent identity.</span>
+<span class="sd">    Keep one current reachable typed state for each connection-intent identity.</span>
+
+<span class="sd">    A missing root-interface phase is not considered unreachable because it can</span>
+<span class="sd">    return after a topology change. An internal block or port outside the owned</span>
+<span class="sd">    block tree cannot return semantically and its obsolete intent is removed.</span>
 
 <span class="sd">    :param block: Block whose intents must be normalized.</span>
 <span class="sd">    :return: None.</span>
@@ -2037,7 +2042,8 @@
     <span class="n">matching_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
 
     <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">connection_intents</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">DynamicConnectionIntent</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">DynamicConnectionIntent</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">reconcile_dynamic_connection_intent_target</span><span class="p">(</span><span class="n">intent</span><span class="o">=</span><span class="n">entry</span><span class="p">,</span> <span class="n">root_block</span><span class="o">=</span><span class="n">block</span><span class="p">)):</span>
             <span class="n">matching_index</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">for</span> <span class="n">existing_index</span><span class="p">,</span> <span class="n">existing_entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">normalized_entries</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">existing_entry</span><span class="o">.</span><span class="n">has_same_identity</span><span class="p">(</span><span class="n">entry</span><span class="p">):</span>
@@ -2928,6 +2934,10 @@
 <span class="sd">        Get dictionary representation of this block</span>
 <span class="sd">        :return: Dictionary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Canonical persistence excludes historical intents whose internal</span>
+        <span class="c1"># block or port has already been removed from this block hierarchy.</span>
+        <span class="n">normalize_dynamic_connection_intents</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
         <span class="c1"># Persistence is the stable boundary where a fully built in-memory</span>
         <span class="c1"># model must become one coherent declarative contract.</span>
         <span class="n">validate_dynamic_model_contract</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>

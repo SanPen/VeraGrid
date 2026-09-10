@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.EMT.emt_driver &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Simulations.EMT.emt_driver &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -121,7 +121,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowResults3Ph</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerFlowResults</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.diagnostic</span><span class="w"> </span><span class="kn">import</span> <span class="n">NewtonDiagnosticsConfig</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.emt_boundary</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_emt_boundary_updater</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.emt_boundary</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompositeEmtBoundaryUpdater</span><span class="p">,</span> <span class="n">build_emt_boundary_updater</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">StrVec</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">EngineType</span><span class="p">,</span> <span class="n">SimulationTypes</span>
@@ -357,10 +357,18 @@
                     <span class="n">cancel_checker</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_cancel</span><span class="p">,</span>
                 <span class="p">)</span>
 
-                <span class="n">boundary_updater</span> <span class="o">=</span> <span class="n">build_emt_boundary_updater</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
-                <span class="c1"># t, y, dy = solver.simulate(boundary_updater=boundary_updater)</span>
-                <span class="c1">#uncomment when convergence and well initialized is reported</span>
-                <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">well_initialized</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">boundary_updater</span><span class="o">=</span><span class="n">boundary_updater</span><span class="p">)</span>
+                <span class="n">boundary_updater</span><span class="p">:</span> <span class="n">EmtProblemDae</span> <span class="o">|</span> <span class="n">CompositeEmtBoundaryUpdater</span> <span class="o">=</span> <span class="n">build_emt_boundary_updater</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># The solver uses the FMU-aware wrapper when native adapters</span>
+                    <span class="c1"># are present and the original problem otherwise.</span>
+                    <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">well_initialized</span><span class="p">,</span> <span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">boundary_updater</span><span class="o">=</span><span class="n">boundary_updater</span><span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="c1"># The driver creates this wrapper, so it also owns releasing</span>
+                    <span class="c1"># every native runtime on success, failure, or cancellation.</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">boundary_updater</span><span class="p">,</span> <span class="n">CompositeEmtBoundaryUpdater</span><span class="p">):</span>
+                        <span class="n">boundary_updater</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cancel</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">report_text</span><span class="p">(</span><span class="s2">&quot;Cancelled!&quot;</span><span class="p">)</span>

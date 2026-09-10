@@ -257,15 +257,24 @@ class EmtBoundaryUpdateProtocol(Protocol):
     Structural protocol implemented by EMT boundary update providers.
     """
 
-    def update(self, t: float, x: Vec, params: Vec) -> None:
+    def update(self, t: float, x: Vec, params: Vec) -> float | None:
         """
-        Update the full parameter vector in place.
+        Update the full parameter vector and return a shortened retry target.
         """
         ...
 
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
         """
         Return the next exact-alignment event time inside ``(t_prev, t_target]``.
+        """
+        ...
+
+    def resolve_step(self, accepted: bool, params: Vec) -> float | None:
+        """Resolve a prepared external boundary step after Newton.
+
+        :param accepted: Whether the EMT numerical step converged.
+        :param params: Full runtime-parameter vector.
+        :return: Earlier state-event retry time, or ``None``.
         """
         ...
 
@@ -286,6 +295,23 @@ def _implements_forced_event_time_api(boundary_updater: Any) -> bool:
         else:
             pass
 
+    return False
+
+
+def _implements_step_resolution_api(boundary_updater: Any) -> bool:
+    """Return whether one boundary updater implements ``resolve_step``.
+
+    :param boundary_updater: Boundary updater instance.
+    :return: ``True`` when transactional step resolution is implemented.
+    """
+
+    updater_type: type = type(boundary_updater)
+    base_type: type
+    for base_type in updater_type.__mro__:
+        if "resolve_step" in base_type.__dict__:
+            return True
+        else:
+            pass
     return False
 
 
@@ -344,6 +370,35 @@ def get_solver_forced_event_time(
         return None
     else:
         return float(next_time)
+
+
+def resolve_solver_boundary_step(
+        boundary_updater: EmtBoundaryUpdateProtocol | None,
+        accepted: bool,
+        params: Vec,
+) -> float | None:
+    """Resolve a prepared external boundary step when the updater supports it.
+
+    Legacy and native boundary updaters without transactional FMU ME state do
+    not need a resolution callback.
+
+    :param boundary_updater: Effective boundary updater used by the solver.
+    :param accepted: Whether the EMT Newton step converged.
+    :param params: Full runtime-parameter vector receiving resolved outputs.
+    :return: Earlier state-event retry time, or ``None``.
+    """
+
+    if boundary_updater is None:
+        retry_time: float | None = None
+    else:
+        if _implements_step_resolution_api(boundary_updater):
+            retry_time = boundary_updater.resolve_step(
+                accepted=accepted,
+                params=params,
+            )
+        else:
+            retry_time = None
+    return retry_time
 
 
 def is_problem_owned_boundary_updater(problem: "EmtProblemTemplate",

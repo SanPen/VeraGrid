@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.EMT.emt_options &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Simulations.EMT.emt_options &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -107,6 +107,7 @@
 <span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
 <span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.options_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptionsTemplate</span>
@@ -159,6 +160,13 @@
         <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;external_sparse_solver_directory&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">),</span>
         <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;external_sparse_solver_plugin_name&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">),</span>
         <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;allow_internal_sparse_fallback&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;fmi_state_event_time_tolerance&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;fmi_state_event_max_iterations&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;fmi_me_newton_absolute_tolerance&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;fmi_me_newton_relative_tolerance&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;fmi_me_newton_max_iterations&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;fmi_me_max_continuous_states&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;fmi_me_max_runtime_evaluations_per_step&quot;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -196,13 +204,28 @@
                  <span class="n">sparse_solver</span><span class="p">:</span> <span class="n">SparseSolver</span> <span class="o">=</span> <span class="n">SparseSolver</span><span class="o">.</span><span class="n">SuperLU</span><span class="p">,</span>
                  <span class="n">external_sparse_solver_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
                  <span class="n">external_sparse_solver_plugin_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                 <span class="n">allow_internal_sparse_fallback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+                 <span class="n">allow_internal_sparse_fallback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">fmi_state_event_time_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">,</span>
+                 <span class="n">fmi_state_event_max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+                 <span class="n">fmi_me_newton_absolute_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
+                 <span class="n">fmi_me_newton_relative_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
+                 <span class="n">fmi_me_newton_max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+                 <span class="n">fmi_me_max_continuous_states</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+                 <span class="n">fmi_me_max_runtime_evaluations_per_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        EmtOptions</span>
 <span class="sd">        :param time_step: time step of the simulations (s)</span>
 <span class="sd">        :param simulation_time: simulation time (s)</span>
 <span class="sd">        :param tolerance: Integration tolerance</span>
 <span class="sd">        :param verbose: Verbosity level</span>
+<span class="sd">        :param fmi_state_event_time_tolerance: Absolute FMI ME event-time tolerance in seconds.</span>
+<span class="sd">        :param fmi_state_event_max_iterations: Maximum FMI ME event bisections.</span>
+<span class="sd">        :param fmi_me_newton_absolute_tolerance: Absolute scale used by the FMI ME Newton residual.</span>
+<span class="sd">        :param fmi_me_newton_relative_tolerance: Relative scale used by the FMI ME Newton residual.</span>
+<span class="sd">        :param fmi_me_newton_max_iterations: Maximum FMI ME Backward Euler Newton updates.</span>
+<span class="sd">        :param fmi_me_max_continuous_states: Maximum dense FMI ME state dimension.</span>
+<span class="sd">        :param fmi_me_max_runtime_evaluations_per_step: Shared runtime-call limit for one FMI ME step.</span>
+<span class="sd">        :return: None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">OptionsTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;EmtSimulationOptions&#39;</span><span class="p">)</span>
@@ -241,9 +264,85 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sparse_solver</span><span class="p">:</span> <span class="n">SparseSolver</span> <span class="o">=</span> <span class="n">sparse_solver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">external_sparse_solver_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">external_sparse_solver_directory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">external_sparse_solver_plugin_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">external_sparse_solver_plugin_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">allow_internal_sparse_fallback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">allow_internal_sparse_fallback</span></div>
-
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_internal_sparse_fallback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">allow_internal_sparse_fallback</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">fmi_state_event_time_tolerance</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">fmi_state_event_time_tolerance</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmi_state_event_time_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">fmi_state_event_time_tolerance</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;EMT FMI state-event time tolerance must be finite and positive&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmi_state_event_max_iterations</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmi_state_event_max_iterations</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">fmi_state_event_max_iterations</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmi_state_event_max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">fmi_state_event_max_iterations</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;EMT FMI state-event maximum iterations must be a positive integer&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">fmi_me_newton_absolute_tolerance</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">fmi_me_newton_absolute_tolerance</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmi_me_newton_absolute_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">fmi_me_newton_absolute_tolerance</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;EMT FMI ME Newton absolute tolerance must be finite and positive&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">fmi_me_newton_relative_tolerance</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">fmi_me_newton_relative_tolerance</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmi_me_newton_relative_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">fmi_me_newton_relative_tolerance</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;EMT FMI ME Newton relative tolerance must be finite and positive&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmi_me_newton_max_iterations</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmi_me_newton_max_iterations</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">fmi_me_newton_max_iterations</span> <span class="o">&lt;=</span> <span class="mi">100</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmi_me_newton_max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">fmi_me_newton_max_iterations</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;EMT FMI ME Newton iteration limit must be an integer between 1 and 100&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmi_me_max_continuous_states</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmi_me_max_continuous_states</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">fmi_me_max_continuous_states</span> <span class="o">&lt;=</span> <span class="mi">128</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmi_me_max_continuous_states</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">fmi_me_max_continuous_states</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;EMT FMI ME state limit must be an integer between 1 and 128&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmi_me_max_runtime_evaluations_per_step</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmi_me_max_runtime_evaluations_per_step</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">fmi_me_max_runtime_evaluations_per_step</span> <span class="o">&lt;=</span> <span class="mi">10_000_000</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmi_me_max_runtime_evaluations_per_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">fmi_me_max_runtime_evaluations_per_step</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;EMT FMI ME runtime evaluation limit must be an integer between &quot;</span>
+                <span class="s2">&quot;1 and 10000000&quot;</span>
+            <span class="p">)</span></div>
 
 </pre></div>
 

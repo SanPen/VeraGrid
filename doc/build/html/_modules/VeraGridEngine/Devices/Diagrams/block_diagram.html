@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Diagrams.block_diagram &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Devices.Diagrams.block_diagram &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -105,10 +106,106 @@
 <span class="c1"># License, v. 2.0. If a copy of the MPL was not distributed with this</span>
 <span class="c1"># file, You can obtain one at https://mozilla.org/MPL/2.0/.</span>
 <span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
+<span class="sd">&quot;&quot;&quot;Persist the graphical projection of one symbolic block hierarchy.</span>
+
+<span class="sd">``BlockDiagram`` stores editor layout, visible ports, and wire routing only.</span>
+<span class="sd">Electrical assembly must resolve physical connectivity from ``MultiCircuit``</span>
+<span class="sd">and symbolic behavior from ``Block``; diagram records are never authoritative</span>
+<span class="sd">runtime topology.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+
+<div class="viewcode-block" id="BlockDiagramProjectionNode">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlockDiagramProjectionNode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store one Qt-free position in a derived semantic projection.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_layout_uid&quot;</span><span class="p">,</span> <span class="s2">&quot;_x&quot;</span><span class="p">,</span> <span class="s2">&quot;_y&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layout_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize one stable projection position.</span>
+
+<span class="sd">        :param layout_uid: Deterministic semantic projection identifier.</span>
+<span class="sd">        :param x: Scene x coordinate.</span>
+<span class="sd">        :param y: Scene y coordinate.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">layout_uid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BlockDiagramProjectionNode.get_layout_uid">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_layout_uid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_layout_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the deterministic projection identifier.</span>
+
+<span class="sd">        :return: Stable projection identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_uid</span></div>
+
+
+<div class="viewcode-block" id="BlockDiagramProjectionNode.get_x">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_x">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the persisted scene x coordinate.</span>
+
+<span class="sd">        :return: Scene x coordinate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span></div>
+
+
+<div class="viewcode-block" id="BlockDiagramProjectionNode.get_y">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_y">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the persisted scene y coordinate.</span>
+
+<span class="sd">        :return: Scene y coordinate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span></div>
+
+
+<div class="viewcode-block" id="BlockDiagramProjectionNode.set_position">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.set_position">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace the persisted scene position.</span>
+
+<span class="sd">        :param x: New scene x coordinate.</span>
+<span class="sd">        :param y: New scene y coordinate.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlockDiagramProjectionNode.get_projection_node_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.get_projection_node_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_projection_node_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the declarative persistence record.</span>
+
+<span class="sd">        :return: JSON-compatible projection position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">layout_uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout_uid</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlockDiagramProjectionNode.copy">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagramProjectionNode.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BlockDiagramProjectionNode&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an independent projection position.</span>
+
+<span class="sd">        :return: Copied projection node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BlockDiagramProjectionNode</span><span class="p">(</span>
+            <span class="n">layout_uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_layout_uid</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
 
 
 <div class="viewcode-block" id="BlockDiagramNode">
@@ -155,6 +252,7 @@
             <span class="n">data</span><span class="p">[</span><span class="s1">&#39;sub_diagram&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_diagram</span><span class="o">.</span><span class="n">get_node_data_dict</span><span class="p">(),</span>
                 <span class="s2">&quot;connections&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_diagram</span><span class="o">.</span><span class="n">get_con_data_dict</span><span class="p">(),</span>
+                <span class="s2">&quot;projection_nodes&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_diagram</span><span class="o">.</span><span class="n">get_projection_node_data_dict</span><span class="p">(),</span>
             <span class="p">}</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
@@ -264,12 +362,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BlockDiagramNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">con_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BlockDiagramConnection</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">BlockDiagramProjectionNode</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="BlockDiagram.empty">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.empty">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_data</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_data</span></div>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_data</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_data</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span></div>
 
 
 <div class="viewcode-block" id="BlockDiagram.copy">
@@ -286,6 +385,9 @@
 
         <span class="n">diag</span><span class="o">.</span><span class="n">node_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="n">diag</span><span class="o">.</span><span class="n">con_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">con_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">diag</span><span class="o">.</span><span class="n">projection_node_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">val</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">diag</span></div>
 
@@ -390,6 +492,63 @@
         <span class="k">return</span> <span class="n">graph_info</span></div>
 
 
+<div class="viewcode-block" id="BlockDiagram.get_projection_node_data_dict">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.get_projection_node_data_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_projection_node_data_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return every derived projection position for persistence.</span>
+
+<span class="sd">        :return: Projection positions keyed by deterministic semantic uid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">graph_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">layout_uid</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="n">projection_node</span><span class="p">:</span> <span class="n">BlockDiagramProjectionNode</span>
+        <span class="k">for</span> <span class="n">layout_uid</span><span class="p">,</span> <span class="n">projection_node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">graph_info</span><span class="p">[</span><span class="n">layout_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">projection_node</span><span class="o">.</span><span class="n">get_projection_node_dict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">graph_info</span></div>
+
+
+<div class="viewcode-block" id="BlockDiagram.set_projection_node_position">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.set_projection_node_position">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_projection_node_position</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">layout_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create or update one stable derived projection position.</span>
+
+<span class="sd">        :param layout_uid: Deterministic semantic projection identifier.</span>
+<span class="sd">        :param x: Scene x coordinate.</span>
+<span class="sd">        :param y: Scene y coordinate.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">projection_node</span><span class="p">:</span> <span class="n">BlockDiagramProjectionNode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layout_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">projection_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span><span class="p">[</span><span class="n">layout_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">BlockDiagramProjectionNode</span><span class="p">(</span>
+                <span class="n">layout_uid</span><span class="o">=</span><span class="n">layout_uid</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">projection_node</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlockDiagram.get_projection_node">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.get_projection_node">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_projection_node</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">layout_uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlockDiagramProjectionNode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return one declared projection position when it exists.</span>
+
+<span class="sd">        :param layout_uid: Deterministic semantic projection identifier.</span>
+<span class="sd">        :return: Matching projection node or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layout_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="BlockDiagram.to_dict">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -400,7 +559,8 @@
             <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
             <span class="c1"># &quot;block_counters&quot;: self.block_counters,</span>
             <span class="s2">&quot;nodes_data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_node_data_dict</span><span class="p">(),</span>
-            <span class="s2">&quot;cons_data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_con_data_dict</span><span class="p">()</span>
+            <span class="s2">&quot;cons_data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_con_data_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;projection_nodes_data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_projection_node_data_dict</span><span class="p">(),</span>
         <span class="p">}</span></div>
 
 
@@ -415,6 +575,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">nodes_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
         <span class="n">cons_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="n">projection_nodes_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]</span>
 
         <span class="c1"># Legacy dynamic block diagrams can omit editor-only sections. Treat</span>
         <span class="c1"># those omissions as an empty diagram so project loading remains</span>
@@ -422,14 +583,17 @@
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">nodes_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
             <span class="n">cons_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">projection_nodes_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">nodes_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nodes_data&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
             <span class="n">cons_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cons_data&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+            <span class="n">projection_nodes_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;projection_nodes_data&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parse_nodes</span><span class="p">(</span><span class="n">nodes_data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parse_branches</span><span class="p">(</span><span class="n">cons_data</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_branches</span><span class="p">(</span><span class="n">cons_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_projection_nodes</span><span class="p">(</span><span class="n">projection_nodes_data</span><span class="p">)</span></div>
 
 
 
@@ -446,6 +610,9 @@
                 <span class="n">subdiagram</span> <span class="o">=</span> <span class="n">BlockDiagram</span><span class="p">()</span>
                 <span class="n">subdiagram</span><span class="o">.</span><span class="n">parse_nodes</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s2">&quot;sub_diagram&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()))</span>
                 <span class="n">subdiagram</span><span class="o">.</span><span class="n">parse_branches</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s2">&quot;sub_diagram&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;connections&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()))</span>
+                <span class="n">subdiagram</span><span class="o">.</span><span class="n">parse_projection_nodes</span><span class="p">(</span>
+                    <span class="n">node</span><span class="p">[</span><span class="s2">&quot;sub_diagram&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;projection_nodes&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
 
@@ -462,6 +629,29 @@
                 <span class="n">algeb_outs</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;algeb_outs&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">()),</span>
                 <span class="n">color</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="s1">&#39;#f5fdff&#39;</span><span class="p">),</span>
                 <span class="n">sub_diagram</span><span class="o">=</span><span class="n">subdiagram</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlockDiagram.parse_projection_nodes">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Diagrams.html#VeraGridEngine.Devices.Diagrams.block_diagram.BlockDiagram.parse_projection_nodes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_projection_nodes</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">projection_nodes_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse Qt-free derived projection positions.</span>
+
+<span class="sd">        :param projection_nodes_data: Declarative projection-node records.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">uid_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span>
+        <span class="n">node_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">uid_value</span><span class="p">,</span> <span class="n">node_data</span> <span class="ow">in</span> <span class="n">projection_nodes_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">layout_uid</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">node_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;layout_uid&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">uid_value</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">projection_node_data</span><span class="p">[</span><span class="n">layout_uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">BlockDiagramProjectionNode</span><span class="p">(</span>
+                <span class="n">layout_uid</span><span class="o">=</span><span class="n">layout_uid</span><span class="p">,</span>
+                <span class="n">x</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">node_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)),</span>
+                <span class="n">y</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">node_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)),</span>
             <span class="p">)</span></div>
 
 

@@ -342,15 +342,15 @@ def di_shi_reduction(grid: MultiCircuit,
 
     if len(e_buses) == 0:
         logger.add_info(msg="Nothing to reduce")
-        return logger
+        return grid, logger
 
     if len(i_buses) == 0:
         logger.add_info(msg="Nothing to keep (null grid as a result)")
-        return logger
+        return grid, logger
 
     if len(b_buses) == 0:
         logger.add_info(msg="The reducible and non reducible sets are disjoint and cannot be reduced")
-        return logger
+        return grid, logger
 
     adm = nc.get_admittance_matrices()
 

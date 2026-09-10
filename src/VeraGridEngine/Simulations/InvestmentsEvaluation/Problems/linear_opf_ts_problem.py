@@ -316,7 +316,7 @@ class TimeSeriesLinearOptimalPowerFlowInvestmentProblem(BlackBoxProblemTemplate)
         :param opf_options: OPF options provided externally.
         :type opf_options: OptimalPowerFlowOptions | None
         :param time_indices: Time indices to evaluate.
-        :type time_indices: IntVec
+        :type time_indices: IntVec | None
         :param clustering_results: Optional clustering results.
         :type clustering_results: ClusteringResults | None
         :param engine: Engine used by the OPF driver.
@@ -331,12 +331,17 @@ class TimeSeriesLinearOptimalPowerFlowInvestmentProblem(BlackBoxProblemTemplate)
         self.opf_options: OptimalPowerFlowOptions = clone_linear_opf_options(opf_options=opf_options)
 
         # The selected horizon defines the admissible year-of-entry values of the GA.
-        self.time_indices: IntVec = np.array(time_indices, dtype=int)
+        if time_indices is None:
+            self.time_indices: IntVec = grid.get_all_time_indices()
+        else:
+            self.time_indices = np.array(time_indices, dtype=int)
+
         self.clustering_results: ClusteringResults | None = clustering_results
         self.engine: EngineType = engine
-        self.years_starts_indices: IntVec = determine_starting_index_of_every_year(
+        local_year_indices: IntVec = determine_starting_index_of_every_year(
             index=self.grid.time_profile[self.time_indices]
         )
+        self.years_starts_indices: IntVec = self.time_indices[local_year_indices]
         self.x_max *= len(self.years_starts_indices)
         self.inv_group_capex = self.grid.get_capex_by_investment_group()
 

@@ -6,14 +6,23 @@
 import numpy as np
 import pytest
 
+from VeraGridEngine.api import power_flow
 from VeraGridEngine.basic_structures import BoolVec, ObjVec
+from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized import (
+    BackEulerImplicitIntegrationFullVec,
+)
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized import (
+    BackEulerImplicitIntegrationVec,
+)
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import RmsProblemDaeVec
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor import RmsProblemPhasor
@@ -25,6 +34,11 @@ from VeraGridEngine.Simulations.Rms.problems.rms_terminal_power_assembly import 
     convert_rms_ac_power_balance_to_current_balance,
 )
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import (
+    get_complete_generator_template_rms,
+)
+from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
 from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
 from VeraGridEngine.Utils.Symbolic.block import (
     Block,
@@ -33,6 +47,7 @@ from VeraGridEngine.Utils.Symbolic.block import (
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var, get_expression_vars
 from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
 
@@ -328,6 +343,75 @@ def build_legacy_vsc_current_seed_case() -> tuple[MultiCircuit, PowerFlowResults
     return grid, power_flow_results
 
 
+def build_supported_vectorized_ac_load_case() -> tuple[MultiCircuit, PowerFlowResults]:
+    """Build a supported square RMS case for vectorized initial projection.
+
+    The established generator, line, and load templates provide a physical
+    two-bus AC system with a converged power-flow seed. This avoids using the
+    independently underdetermined legacy partial-VSC topology as an adapter
+    test.
+
+    :return: Grid and converged power-flow results for vectorized RMS problems.
+    """
+    # Build the smallest established network fixture that has a voltage angle
+    # reference and non-trivial network coupling.
+    grid: MultiCircuit = MultiCircuit(Sbase=100.0, fbase=50.0)
+    slack_bus: Bus = Bus(name="Bus0", Vnom=10.0, is_slack=True)
+    load_bus: Bus = Bus(name="Bus1", Vnom=10.0)
+    grid.add_bus(obj=slack_bus)
+    grid.add_bus(obj=load_bus)
+    initialize_bus_rms(bus=slack_bus, vf=grid.var_factory)
+    initialize_bus_rms(bus=load_bus, vf=grid.var_factory)
+
+    # Reuse the same static devices and RMS templates exercised by the
+    # established RMS simulation regression.
+    line: Line = Line(
+        name="line 0-1",
+        bus_from=slack_bus,
+        bus_to=load_bus,
+        r=0.029585798816568046,
+        x=0.07100591715976332,
+        b=0.03,
+        rate=900.0,
+    )
+    load: Load = Load(name="Load1", P=9.999999, Q=0.999999)
+    generator: Generator = Generator(
+        name="Gen0",
+        P=10.0,
+        vset=1.0,
+        Snom=900.0,
+        x1=0.86138701,
+        r1=0.3,
+        freq=50.0,
+    )
+    grid.add_line(obj=line)
+    grid.add_load(bus=load_bus, api_obj=load)
+    grid.add_generator(bus=slack_bus, api_obj=generator)
+
+    generator_model: Block = get_complete_generator_template_rms(
+        grid.var_factory
+    ).block
+    line_model: Block = get_line_rms_template(grid.var_factory).block
+    load_model: Block = get_load_rms_template(grid.var_factory).block
+    load_model.set_parameter_in_model(var_name="Pl0", new_value=-0.0999999)
+    load_model.set_parameter_in_model(
+        var_name="Ql0",
+        new_value=-0.009999999862208533,
+    )
+    set_rms_model(
+        device=generator,
+        model=generator_model,
+        var_factory=grid.var_factory,
+    )
+    set_rms_model(device=line, model=line_model, var_factory=grid.var_factory)
+    set_rms_model(device=load, model=load_model, var_factory=grid.var_factory)
+
+    # A real power-flow seed exercises the same initialization boundary used
+    # by the driver instead of inventing algebraic values in the test.
+    power_flow_results: PowerFlowResults = power_flow(grid=grid)
+    return grid, power_flow_results
+
+
 def test_dae_constructors_preserve_power_flow_vsc_current_base() -> None:
     """Seed every power-balance DAE with the PF VSC current base unchanged.
 
@@ -455,7 +539,18 @@ def test_dae_constructors_preserve_legacy_vsc_power_coupling() -> None:
         dx=differentials,
         h=1.0e-3,
     ).toarray()
+    generic_residual: np.ndarray = full_vectorized_problem.rhs_algebraic(
+        x=variables,
+        dx=differentials,
+    )
+    generic_jacobian: np.ndarray = full_vectorized_problem.get_j22(
+        x=variables,
+        dx=differentials,
+        h=1.0e-3,
+    ).toarray()
 
+    assert np.array_equal(generic_residual, residual)
+    assert np.array_equal(generic_jacobian, jacobian)
     assert residual[:3].tolist() == pytest.approx((0.20, -0.19, 0.03))
     assert full_vectorized_problem.Q_vec[1] == pytest.approx(-0.03)
     # The physical AC converter bus retains both Q and P nodal rows; converter
@@ -464,6 +559,121 @@ def test_dae_constructors_preserve_legacy_vsc_power_coupling() -> None:
     assert jacobian[-3, from_active_index] == pytest.approx(-1.0)
     assert jacobian[-2, to_reactive_index] == pytest.approx(-1.0)
     assert jacobian[-1, to_active_index] == pytest.approx(-1.0)
+
+
+def test_vectorized_integrators_use_supported_initial_projection() -> None:
+    """Exercise the shared algebraic projector through both vectorized solvers.
+
+    A zero-macro-step run isolates initialization and cleanup while still
+    dispatching the real ``rhs_algebraic`` projection interface selected by
+    each solver.
+
+    :return: None.
+    """
+    partial_grid: MultiCircuit
+    partial_power_flow_results: PowerFlowResults
+    partial_grid, partial_power_flow_results = (
+        build_supported_vectorized_ac_load_case()
+    )
+    assert partial_power_flow_results.converged
+    partial_problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=partial_grid,
+        options=RmsOptions(),
+        pf_results=partial_power_flow_results,
+    )
+    partial_problem.set_events_group(rms_events_group=RmsEventsGroup())
+
+    # Compare the generic projection boundary with the established vectorized
+    # owner on the same gathered non-trivial operating point.
+    partial_variables: np.ndarray = partial_problem.get_x0()
+    partial_differentials: np.ndarray = partial_problem.get_dx0()
+    partial_problem.update_input_matrices_by_model(
+        x=partial_variables,
+        dx=partial_differentials,
+    )
+    partial_vectorized_residual: np.ndarray = partial_problem.rhs_algebraic_vec(
+        x=partial_variables,
+        dx=partial_differentials,
+    )
+    partial_vectorized_jacobian: np.ndarray = partial_problem.get_j22_vec(
+        x=partial_variables,
+        dx=partial_differentials,
+        h=1.0e-3,
+    ).toarray()
+    partial_generic_residual: np.ndarray = partial_problem.rhs_algebraic(
+        x=partial_variables,
+        dx=partial_differentials,
+    )
+    partial_generic_jacobian: np.ndarray = partial_problem.get_j22(
+        x=partial_variables,
+        dx=partial_differentials,
+        h=1.0e-3,
+    ).toarray()
+    assert np.array_equal(partial_generic_residual, partial_vectorized_residual)
+    assert np.array_equal(partial_generic_jacobian, partial_vectorized_jacobian)
+    assert np.any(np.abs(partial_vectorized_jacobian) > 0.0)
+
+    partial_solver: BackEulerImplicitIntegrationVec = (
+        BackEulerImplicitIntegrationVec(
+            problem=partial_problem,
+            t0=0.0,
+            t_end=0.0,
+            h=1.0e-3,
+            max_iter=25,
+        )
+    )
+    partial_times: np.ndarray
+    partial_values: np.ndarray
+    partial_well_initialized: bool
+    partial_converged: bool
+    (
+        partial_times,
+        partial_values,
+        partial_well_initialized,
+        partial_converged,
+    ) = partial_solver.simulate()
+
+    assert partial_times.tolist() == pytest.approx((0.0,))
+    assert partial_values.shape == (1, partial_problem.get_all_vars_number())
+    assert np.all(np.isfinite(partial_values))
+    assert partial_well_initialized
+    assert not partial_converged
+
+    full_grid: MultiCircuit
+    full_power_flow_results: PowerFlowResults
+    full_grid, full_power_flow_results = build_supported_vectorized_ac_load_case()
+    assert full_power_flow_results.converged
+    full_problem: RmsProblemDaeFullVec = RmsProblemDaeFullVec(
+        grid=full_grid,
+        options=RmsOptions(),
+        pf_results=full_power_flow_results,
+    )
+    full_problem.set_events_group(rms_events_group=RmsEventsGroup())
+    full_solver: BackEulerImplicitIntegrationFullVec = (
+        BackEulerImplicitIntegrationFullVec(
+            problem=full_problem,
+            t0=0.0,
+            t_end=0.0,
+            h=1.0e-3,
+            max_iter=25,
+        )
+    )
+    full_times: np.ndarray
+    full_values: np.ndarray
+    full_well_initialized: bool
+    full_converged: bool
+    (
+        full_times,
+        full_values,
+        full_well_initialized,
+        full_converged,
+    ) = full_solver.simulate()
+
+    assert full_times.tolist() == pytest.approx((0.0,))
+    assert full_values.shape == (1, full_problem.get_all_vars_number())
+    assert np.all(np.isfinite(full_values))
+    assert full_well_initialized
+    assert not full_converged
 
 
 def test_full_vectorized_capacitive_dc_nodal_layout_matches_jacobian() -> None:

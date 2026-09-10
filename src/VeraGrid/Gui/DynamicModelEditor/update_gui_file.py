@@ -9,7 +9,9 @@ from VeraGrid.Gui.update_gui_common import convert_ui_file
 
 if __name__ == '__main__':
     file_name: str
-    for file_name in list(('block_editor.ui', 'dynamic_editor_workspace.ui', 'dynamic_block_properties.ui',)):
+    for file_name in list((
+            'dynamic_editor_workspace.ui',
+    )):
         convert_ui_file(source=file_name)
 else:
     pass

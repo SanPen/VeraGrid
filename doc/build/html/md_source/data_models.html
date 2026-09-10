@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Models &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Data Models &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -91,6 +91,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#controllableshunt">ControllableShunt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#country">Country</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#currentinjection">CurrentInjection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dccabletype">DcCableType</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#dcline">DcLine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#dynamicplot">DynamicPlot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#dynamicplotentry">DynamicPlotEntry</a></li>
@@ -4749,6 +4750,276 @@
 </tbody>
 </table>
 </section>
+<section id="dccabletype">
+<h3>DcCableType<a class="headerlink" href="#dccabletype" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>name</p></th>
+<th class="head"><p>class_type</p></th>
+<th class="head"><p>unit</p></th>
+<th class="head"><p>mandatory</p></th>
+<th class="head"><p>max_chars</p></th>
+<th class="head"><p>descriptions</p></th>
+<th class="head"><p>has_profile</p></th>
+<th class="head"><p>comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>idtag</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Unique ID</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>name</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Name of the device.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>code</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Secondary ID</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>rdfid</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>RDF ID for further compatibility</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>action</p></td>
+<td><p>enum ActionType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Object action to perform. Only used for model merging.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>selected_to_merge</p></td>
+<td><p>bool</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Whether this object should be applied during diff merge.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>comment</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>User comment</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>diff_changes</p></td>
+<td><p>MergeInformation</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>modelling_authority</p></td>
+<td><p>Modelling Authority</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Modelling authority of this asset</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>commissioned_date</p></td>
+<td><p>int</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Commissioned date of the asset</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>decommissioned_date</p></td>
+<td><p>int</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Decommissioned date of the asset</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>build_status</p></td>
+<td><p>enum BuildStatus</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device build status. Used in expansion planning.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>owners</p></td>
+<td><p>AssociationsList</p></td>
+<td><p>p.u.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Owners associations to injections</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>rms_model</p></td>
+<td><p>DaeBlock</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>RMS dynamic model</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>emt_model</p></td>
+<td><p>DaeBlock</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>EMT dynamic model</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>rms_template</p></td>
+<td><p>RMS template</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Native RMS template used. Assigning it clears rms_fmu_template.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>emt_template</p></td>
+<td><p>EMT template</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Native EMT template used. Assigning it clears emt_fmu_template.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>rms_fmu_template</p></td>
+<td><p>FMU template</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>RMS FMU template used only by RMS simulations. Assigning it clears rms_template.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>emt_fmu_template</p></td>
+<td><p>FMU template</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>EMT FMU template used only by EMT simulations. Assigning it clears emt_template.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>rms_fmu_import_config</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Serialized FMU Co-Simulation RMS configuration</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>emt_fmu_import_config</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Serialized FMU Co-Simulation EMT configuration</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>rms_fmu_me_import_config</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Serialized FMU Model Exchange RMS configuration</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>emt_fmu_me_import_config</p></td>
+<td><p>str</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Serialized FMU Model Exchange EMT configuration</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Vnom</p></td>
+<td><p>float</p></td>
+<td><p>kV</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Rated DC voltage of the cable.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Imax</p></td>
+<td><p>float</p></td>
+<td><p>kA</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Continuous current rating of the represented DC cable path.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>R</p></td>
+<td><p>float</p></td>
+<td><p>Ohm/km</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Series resistance per kilometre.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>L</p></td>
+<td><p>float</p></td>
+<td><p>H/km</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Series inductance per kilometre.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>C</p></td>
+<td><p>float</p></td>
+<td><p>F/km</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Equivalent shunt capacitance per kilometre of the represented DC cable path.</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="dcline">
 <h3>DcLine<a class="headerlink" href="#dcline" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
@@ -5197,11 +5468,11 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>template</p></td>
-<td><p>Any line template</p></td>
+<td><p>DC cable type</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
 <td><p></p></td>
-<td><p></p></td>
+<td><p>Physical DC cable type applied to this line.</p></td>
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>

@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from PySide6 import QtCore
 from PySide6.QtGui import QIcon, QImage
 from PySide6.QtWidgets import (QListView, QTableView, QVBoxLayout, QHBoxLayout, QFrame, QSplitter, QAbstractItemView,
-                               QGraphicsItem, QToolBox, QComboBox)
+                               QGraphicsItem, QToolBox, QComboBox, QDialog)
 
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
@@ -36,10 +36,14 @@ import VeraGridEngine.Devices.Diagrams.palettes as palettes
 
 from VeraGrid.Gui.Diagrams.graphics_manager import GraphicsManager, ALL_GRAPHICS
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionNexusPathItem
+from VeraGrid.Gui.DeviceEditors.device_editor_factory import build_device_editor_dialog
+from VeraGrid.Gui.dialog_lifecycle import exec_dialog_safely
 from VeraGrid.Gui.general_dialogues import DeleteDialogue
 from VeraGrid.Gui.messages import yes_no_question, info_msg
 from VeraGrid.Gui.object_model import ObjectsModel
+from VeraGrid.Gui.matplotlib_dialog import show_matplotlib_figure
 import VeraGrid.Gui.gui_functions as gf
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import MapLibraryModel
@@ -170,6 +174,8 @@ class BaseDiagramWidget(QSplitter):
 
         # Table to display object's properties
         self.object_editor_table = QTableView(self)
+        self.object_editor_table.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
+        self.object_editor_table.customContextMenuRequested.connect(self.show_object_editor_table_context_menu)
         # change_font_size(self.object_editor_table, 9)
         # change_font_size(self.object_editor_table.verticalHeader(), 9)
         # change_font_size(self.object_editor_table.horizontalHeader(), 9)
@@ -606,6 +612,43 @@ class BaseDiagramWidget(QSplitter):
         if self.api_object is not None:
             self.set_editor_model(api_object=self.api_object)
 
+    def open_hosted_device_editor(self, hosted_device: EditableDevice) -> None:
+        """
+        Open the best available editor for one hosted device.
+
+        :param hosted_device: Device referenced by the clicked cell.
+        :return: None.
+        """
+        # Use the diagram circuit so selectors and specialized editor tabs have the same model context.
+        dialog: QDialog = build_device_editor_dialog(api_object=hosted_device,
+                                                     circuit=self.circuit,
+                                                     main_gui=self.gui)
+        exec_dialog_safely(dialog=dialog)
+
+    def show_object_editor_table_context_menu(self, position: QtCore.QPoint) -> None:
+        """
+        Open the hosted device editor for a right-clicked property cell.
+
+        :param position: Table-local click position.
+        :return: None.
+        """
+        index: QtCore.QModelIndex = self.object_editor_table.indexAt(position)
+
+        if index.isValid():
+            model: QtCore.QAbstractItemModel | None = self.object_editor_table.model()
+
+            if isinstance(model, ObjectsModel):
+                hosted_device: EditableDevice | None = model.get_hosted_device_at_index(index=index)
+
+                if hosted_device is not None:
+                    self.open_hosted_device_editor(hosted_device=hosted_device)
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+
     def set_editor_model(self, api_object: ALL_DEV_TYPES):
         """
         Set an api object to appear in the editable table view of the editor
@@ -709,7 +752,10 @@ class BaseDiagramWidget(QSplitter):
 
         if any_plot:
             plt.legend()
-            plt.show()
+            show_matplotlib_figure(figure=fig,
+                                   parent=self.gui,
+                                   open_dialogs=self.gui._open_plot_dialogs,
+                                   title=self.tr("{device_name} results plot").format(device_name=api_object.name))
         else:
             info_msg(self.tr("No time series results to plot, run some time series results. Even partial results are fine"),
                      self.tr("{device_name} results plot").format(device_name=api_object.name))
@@ -759,7 +805,10 @@ class BaseDiagramWidget(QSplitter):
 
         if any_plot:
             plt.legend()
-            plt.show()
+            show_matplotlib_figure(figure=fig,
+                                   parent=self.gui,
+                                   open_dialogs=self.gui._open_plot_dialogs,
+                                   title=self.tr("{device_name} results plot").format(device_name=api_object.name))
         else:
             info_msg(self.tr("No time series results to plot, run some time series results. Even partial results are fine"),
                      self.tr("{device_name} results plot").format(device_name=api_object.name))

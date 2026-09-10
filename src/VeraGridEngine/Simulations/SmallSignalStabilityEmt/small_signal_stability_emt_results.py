@@ -167,7 +167,7 @@ class SmallSignalStabilityEmtResults(ResultsTemplate):
                 plt.axis('equal')
                 plt.grid(True)
                 plt.title("Floquet Multipliers: Unit Circle Stability")
-                plt.show()
+                plt.show(block=False)
 
             row_indices = np.arange(len(self.multipliers))
 

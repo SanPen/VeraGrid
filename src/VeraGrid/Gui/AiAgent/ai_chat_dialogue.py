@@ -24,34 +24,34 @@ from typing import Any, Optional, TYPE_CHECKING
 import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 
+from VeraGrid.AI.mcp_client import McpBackedLLMProvider
+from VeraGrid.AI.mcp_client import VeraGridMcpClient
 from VeraGridEngine.enumerations import EngineType, LogSeverity
-from VeraGrid.Gui.AiAgent.ai_backend import ApprovalPolicy
-from VeraGrid.Gui.AiAgent.ai_backend import ChatMessage
-from VeraGrid.Gui.AiAgent.ai_backend import ConversationOrchestrator
-from VeraGrid.Gui.AiAgent.ai_backend import ConversationRunResult
-from VeraGrid.Gui.AiAgent.ai_backend import ModelListResult
-from VeraGrid.Gui.AiAgent.ai_backend import PendingApproval
-from VeraGrid.Gui.AiAgent.ai_backend import PromptFactory
-from VeraGrid.Gui.AiAgent.ai_backend import ProviderConfig
-from VeraGrid.Gui.AiAgent.ai_backend import ProviderType
-from VeraGrid.Gui.AiAgent.ai_backend import ToolErrorCode
-from VeraGrid.Gui.AiAgent.ai_backend import ToolRegistry
-from VeraGrid.Gui.AiAgent.ai_backend import ToolExecutionResult
-from VeraGrid.Gui.AiAgent.ai_backend import ToolRisk
-from VeraGrid.Gui.AiAgent.ai_backend import ToolSpec
-from VeraGrid.Gui.AiAgent.ai_backend import VeraGridContext
-from VeraGrid.Gui.AiAgent.ai_backend import build_default_tool_registry
-from VeraGrid.Gui.AiAgent.ai_backend import build_provider
-from VeraGrid.Gui.AiAgent.ai_backend import sanitize_visible_assistant_text
-from VeraGrid.Gui.AiAgent.ai_backend import list_provider_models
+from VeraGrid.AI import ApprovalPolicy
+from VeraGrid.AI import ChatMessage
+from VeraGrid.AI import ConversationOrchestrator
+from VeraGrid.AI import ConversationRunResult
+from VeraGrid.AI import ModelListResult
+from VeraGrid.AI import PendingApproval
+from VeraGrid.AI import PromptFactory
+from VeraGrid.AI import ProviderConfig
+from VeraGrid.AI import ProviderType
+from VeraGrid.AI import ToolErrorCode
+from VeraGrid.AI import ToolRegistry
+from VeraGrid.AI import ToolExecutionResult
+from VeraGrid.AI import ToolRisk
+from VeraGrid.AI import ToolSpec
+from VeraGrid.AI import VeraGridContext
+from VeraGrid.AI import build_default_tool_registry
+from VeraGrid.AI import sanitize_visible_assistant_text
 from VeraGrid.Gui.AiAgent.ai_chat_gui import Ui_AiChatDialog
 from VeraGrid.Gui.Analysis.object_plot_analysis import GridErrorLog
 from VeraGrid.Gui.Analysis.object_plot_analysis import grid_analysis
-from VeraGrid.Gui.AiAgent.ai_retrieval import ProgramKnowledgeIndex
-from VeraGrid.Gui.AiAgent.ai_retrieval import RuntimeKnowledgeSnapshot
-from VeraGrid.Gui.AiAgent.ai_retrieval import build_default_knowledge_package_name
-from VeraGrid.Gui.AiAgent.ai_retrieval import build_retrieved_context_text
-from VeraGrid.Gui.AiAgent.ai_retrieval import build_runtime_knowledge_snapshot
+from VeraGrid.AI.retrieval import ProgramKnowledgeIndex
+from VeraGrid.AI.retrieval import RuntimeKnowledgeSnapshot
+from VeraGrid.AI.retrieval import build_default_knowledge_package_name
+from VeraGrid.AI.retrieval import build_retrieved_context_text
+from VeraGrid.AI.retrieval import build_runtime_knowledge_snapshot
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_results import PowerFlowTimeSeriesResults
 from VeraGridEngine.enumerations import SimulationTypes
@@ -3124,15 +3124,22 @@ class AiTurnWorker(QtCore.QObject):
         "_cached_provider",
         "_cached_provider_signature",
         "_cancel_requested",
+        "_mcp_client",
     )
 
-    def __init__(self) -> None:
+    def __init__(self, mcp_client: Optional[VeraGridMcpClient] = None) -> None:
         """
         Build the worker state.
+
+        :param mcp_client: Shared MCP client.
         """
         QtCore.QObject.__init__(self)
         self._cached_provider: Any = None
         self._cancel_requested: bool = False
+        if mcp_client is None:
+            self._mcp_client = VeraGridMcpClient()
+        else:
+            self._mcp_client = mcp_client
         self._cached_provider_signature: Optional[
             tuple[str, str, str, str, float, int, int, int, float, float, int, int, int]
         ] = None
@@ -3149,9 +3156,10 @@ class AiTurnWorker(QtCore.QObject):
         """
         api_key_value: str = "" if config.api_key is None else config.api_key
         base_url_value: str = "" if config.base_url is None else config.base_url
+        provider_value: str = config.provider_tpe.value
 
         return (
-            config.provider_tpe.value,
+            provider_value,
             config.model_name,
             api_key_value,
             base_url_value,
@@ -3179,11 +3187,11 @@ class AiTurnWorker(QtCore.QObject):
 
         if self._cached_provider_signature == provider_signature:
             if self._cached_provider is None:
-                self._cached_provider = build_provider(config)
+                self._cached_provider = McpBackedLLMProvider(self._mcp_client, config)
             else:
                 pass
         else:
-            self._cached_provider = build_provider(config)
+            self._cached_provider = McpBackedLLMProvider(self._mcp_client, config)
             self._cached_provider_signature = provider_signature
 
         return self._cached_provider
@@ -3434,9 +3442,9 @@ class AiBackendState:
     :param timeout_s: Request timeout in seconds.
     :param context_window_tokens: Local context-window token budget.
     :param completion_tokens: Completion token budget.
-    :param gpu_layers: Local llama.cpp GPU layer count.
-    :param temperature: Local llama.cpp sampling temperature.
-    :param top_p: Local llama.cpp nucleus sampling factor.
+    :param gpu_layers: Legacy local-model GPU layer count.
+    :param temperature: Provider sampling temperature.
+    :param top_p: Provider nucleus sampling factor.
     :param history_message_limit: Prompt history message budget.
     :param history_char_budget: Prompt history character budget.
     :param grounding_char_budget: Prompt grounding character budget.
@@ -3506,15 +3514,19 @@ def build_provider_presets() -> list[ProviderPreset]:
     """
     presets: list[ProviderPreset] = list()
 
-    # Local llama.cpp is the default mode because VeraGrid should work offline first.
+    # Ollama is the default local mode because it avoids in-process model loading.
     presets.append(
         ProviderPreset(
-            provider_tpe=ProviderType.LOCAL_LLAMA_CPP,
-            display_name="Local llama.cpp",
+            provider_tpe=ProviderType.OLLAMA,
+            display_name="Ollama",
             typical_model_names=list(),
-            default_base_url="",
+            default_base_url="http://localhost:11434/v1",
         )
     )
+    presets[-1].typical_model_names.append("llama3.2")
+    presets[-1].typical_model_names.append("llama3.1")
+    presets[-1].typical_model_names.append("qwen2.5")
+    presets[-1].typical_model_names.append("mistral")
 
     # OpenAI uses the Responses API, so the default points at the v1 root.
     presets.append(
@@ -3726,7 +3738,7 @@ def compact_turn_payload_for_provider(
     max_grounding_chars: int
     max_system_prompt_chars: int
 
-    if config.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
+    if config.provider_tpe == ProviderType.OLLAMA:
         max_history_messages = max(config.history_message_limit, 1)
         max_history_chars = max(config.history_char_budget, 256)
         max_message_chars = 480
@@ -4972,7 +4984,6 @@ class AiChatDialogue(QtWidgets.QDialog):
     turn_execution_requested = QtCore.Signal(object)
     direct_simulation_analysis_requested = QtCore.Signal(object)
     reset_cached_provider_requested = QtCore.Signal()
-    cancel_turn_requested = QtCore.Signal()
     dialogue_visibility_changed = QtCore.Signal(bool)
     _GOLDEN_RATIO: float = (1.0 + (5.0 ** 0.5)) / 2.0
 
@@ -4990,7 +5001,6 @@ class AiChatDialogue(QtWidgets.QDialog):
         "_turn_thread",
         "_turn_worker",
         "_turn_running",
-        "_path_scan_timer",
         "_waiting_animation_timer",
         "_waiting_animation_index",
         "_waiting_status_base_text",
@@ -5003,18 +5013,23 @@ class AiChatDialogue(QtWidgets.QDialog):
         "_code_snippets_by_id",
         "_next_code_snippet_id",
         "_last_rendered_history_size",
+        "_mcp_client",
+        "_ollama_startup_check_done",
+        "_ollama_startup_greeting_running",
     )
 
     def __init__(
         self,
         parent: Optional[QtWidgets.QWidget] = None,
         app: Optional["SimulationsMain"] = None,
+        mcp_client: Optional[VeraGridMcpClient] = None,
     ) -> None:
         """
         Build the dialogue and connect the explicit UI workflow.
 
         :param parent: Optional Qt parent widget.
         :param app: Optional concrete VeraGrid main window.
+        :param mcp_client: Shared MCP client.
         """
         QtWidgets.QDialog.__init__(self, parent)
 
@@ -5026,23 +5041,20 @@ class AiChatDialogue(QtWidgets.QDialog):
         self.ui.conversation_text_browser.setOpenExternalLinks(False)
         self.ui.message_plain_text_edit.installEventFilter(self)
         if self.ui.local_model_combo_box.lineEdit() is not None:
-            self.ui.local_model_combo_box.lineEdit().setPlaceholderText(self.tr("Pick or type a GGUF file name"))
+            self.ui.local_model_combo_box.lineEdit().setPlaceholderText(self.tr("Pick or type an Ollama model"))
         else:
             pass
-        if self.ui.api_model_combo_box.lineEdit() is not None:
-            self.ui.api_model_combo_box.lineEdit().setPlaceholderText(self.tr("Provider model name"))
-        else:
-            pass
+        self.ui.ollama_status_value_label.setText(self.tr("Checking automatically when the chat opens."))
         self._configure_transcript_browser()
         self._configure_splitter_layout()
 
         # Create explicit controller state used by future user turns.
         self._provider_presets: list[ProviderPreset] = build_provider_presets()
+        if mcp_client is None:
+            self._mcp_client = VeraGridMcpClient()
+        else:
+            self._mcp_client = mcp_client
         self._backend_mode_button_group: QtWidgets.QButtonGroup = QtWidgets.QButtonGroup(self)
-        self._backend_mode_button_group.addButton(self.ui.local_ai_radioButton)
-        self._backend_mode_button_group.addButton(self.ui.api_ai_radioButton)
-        self._backend_mode_button_group.setExclusive(True)
-        self.ui.local_ai_radioButton.setChecked(True)
         self._program_knowledge_index: ProgramKnowledgeIndex = ProgramKnowledgeIndex(
             build_default_knowledge_package_name()
         )
@@ -5056,7 +5068,7 @@ class AiChatDialogue(QtWidgets.QDialog):
         self._pending_state: Optional[PendingConversationState] = None
         self._embedded_mode: bool = False
         self._turn_thread: QtCore.QThread = QtCore.QThread(self)
-        self._turn_worker: AiTurnWorker = AiTurnWorker()
+        self._turn_worker: AiTurnWorker = AiTurnWorker(self._mcp_client)
         self._turn_running: bool = False
         self._turn_worker.moveToThread(self._turn_thread)
         self.turn_execution_requested.connect(self._turn_worker.run_request)
@@ -5064,15 +5076,12 @@ class AiChatDialogue(QtWidgets.QDialog):
             self._turn_worker.run_direct_simulation_analysis
         )
         self.reset_cached_provider_requested.connect(self._turn_worker.reset_cached_provider)
-        self.cancel_turn_requested.connect(self._turn_worker.request_cancellation)
         self._turn_worker.completed.connect(self._handle_turn_execution_response)
         self._turn_worker.partial_text_received.connect(self._handle_partial_text_received)
         self._turn_worker.direct_simulation_analysis_completed.connect(
             self._handle_direct_simulation_analysis_response
         )
         self._turn_thread.start()
-        self._path_scan_timer: QtCore.QTimer = QtCore.QTimer(self)
-        self._path_scan_timer.setSingleShot(True)
         self._waiting_animation_timer: QtCore.QTimer = QtCore.QTimer(self)
         self._waiting_animation_index: int = 0
         self._waiting_status_base_text: str = ""
@@ -5087,10 +5096,11 @@ class AiChatDialogue(QtWidgets.QDialog):
         self._code_snippets_by_id: dict[str, str] = dict()
         self._next_code_snippet_id: int = 0
         self._last_rendered_history_size: int = 0
+        self._ollama_startup_check_done: bool = False
+        self._ollama_startup_greeting_running: bool = False
         self._waiting_animation_timer.setInterval(140)
         self._waiting_animation_timer.timeout.connect(self._advance_waiting_animation)
         self._stream_update_timer.timeout.connect(self._flush_pending_stream_text_delta)
-        self._path_scan_timer.timeout.connect(self._scan_local_model_path_if_directory)
         qt_application: Optional[QtWidgets.QApplication] = QtWidgets.QApplication.instance()
         if qt_application is None:
             pass
@@ -5100,7 +5110,10 @@ class AiChatDialogue(QtWidgets.QDialog):
         # Initialize the controls before any signal starts reacting to changes.
         self._populate_provider_combo_box()
         self._connect_signals()
-        self._apply_provider_preset(self.ui.api_provider_combo_box.currentIndex())
+        self.ui.local_model_path_label.setText(self.tr("Ollama base URL"))
+        self.ui.local_model_path_line_edit.setPlaceholderText(self.tr("http://localhost:11434/v1"))
+        self.ui.local_model_label.setText(self.tr("Ollama model"))
+        self._apply_provider_preset(0)
         self._hide_context_controls()
         self._hide_approval_controls()
         self.refresh_context_from_app()
@@ -5289,18 +5302,18 @@ class AiChatDialogue(QtWidgets.QDialog):
 
         :returns: True when API mode is selected.
         """
-        return self.ui.api_ai_radioButton.isChecked()
+        return False
 
     def _get_local_provider_preset(self) -> ProviderPreset:
         """
         Return the fixed local provider preset.
 
-        :returns: Local llama.cpp preset.
+        :returns: Local Ollama preset.
         """
         index: int = 0
 
         while index < len(self._provider_presets):
-            if self._provider_presets[index].provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
+            if self._provider_presets[index].provider_tpe == ProviderType.OLLAMA:
                 return self._provider_presets[index]
             else:
                 pass
@@ -5314,18 +5327,7 @@ class AiChatDialogue(QtWidgets.QDialog):
 
         :returns: API preset list.
         """
-        visible_presets: list[ProviderPreset] = list()
-        index: int = 0
-
-        while index < len(self._provider_presets):
-            preset: ProviderPreset = self._provider_presets[index]
-            if preset.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-                pass
-            else:
-                visible_presets.append(preset)
-            index += 1
-
-        return visible_presets
+        return list()
 
     def _get_visible_provider_presets(self) -> list[ProviderPreset]:
         """
@@ -5395,16 +5397,7 @@ class AiChatDialogue(QtWidgets.QDialog):
 
         :returns: Nothing.
         """
-        visible_presets: list[ProviderPreset] = self._get_api_provider_presets()
-        index: int = 0
-
-        self.ui.api_provider_combo_box.clear()
-
-        # The combo box order must match the filtered preset array order for lookup.
-        while index < len(visible_presets):
-            preset = visible_presets[index]
-            self.ui.api_provider_combo_box.addItem(preset.display_name)
-            index += 1
+        pass
 
     def _connect_signals(self) -> None:
         """
@@ -5412,16 +5405,8 @@ class AiChatDialogue(QtWidgets.QDialog):
 
         :returns: Nothing.
         """
-        self.ui.local_ai_radioButton.toggled.connect(self._handle_backend_mode_changed)
-        self.ui.api_ai_radioButton.toggled.connect(self._handle_backend_mode_changed)
-
-        # Provider selection loads the matching endpoint defaults.
-        self.ui.api_provider_combo_box.currentIndexChanged.connect(self._apply_provider_preset)
-        self.ui.local_model_path_line_edit.textChanged.connect(self._handle_model_path_text_changed)
-
         # Utility actions are limited to model discovery and transcript control.
         self.ui.local_refresh_models_button.clicked.connect(self.refresh_available_models)
-        self.ui.api_refresh_models_button.clicked.connect(self.refresh_available_models)
         self.ui.clear_chat_button.clicked.connect(self.clear_chat)
         self.ui.conversation_text_browser.anchorClicked.connect(self._handle_transcript_anchor_clicked)
 
@@ -5467,34 +5452,7 @@ class AiChatDialogue(QtWidgets.QDialog):
         :returns: Nothing.
         """
         if checked:
-            self._apply_provider_preset(self.ui.api_provider_combo_box.currentIndex())
-        else:
-            pass
-
-    def _handle_model_path_text_changed(self, text: str) -> None:
-        """
-        Debounce a local model scan when the model-path text becomes a folder.
-
-        :param text: Current model-path text.
-        :returns: Nothing.
-        """
-        expanded_text: str = os.path.expanduser(text.strip())
-
-        if os.path.isdir(expanded_text):
-            self._path_scan_timer.start(350)
-        else:
-            self._path_scan_timer.stop()
-
-    def _scan_local_model_path_if_directory(self) -> None:
-        """
-        Trigger a local model scan when the current model-path text is a folder.
-
-        :returns: Nothing.
-        """
-        current_text: str = os.path.expanduser(self.ui.local_model_path_line_edit.text().strip())
-
-        if self._is_local_provider_selected() and os.path.isdir(current_text):
-            self.refresh_available_models()
+            self._apply_provider_preset(0)
         else:
             pass
 
@@ -5507,14 +5465,7 @@ class AiChatDialogue(QtWidgets.QDialog):
         """
         preset: ProviderPreset
 
-        if self._is_api_mode_selected():
-            visible_presets: list[ProviderPreset] = self._get_api_provider_presets()
-            if (index >= 0) and (index < len(visible_presets)):
-                preset = visible_presets[index]
-            else:
-                preset = visible_presets[0]
-        else:
-            preset = self._get_local_provider_preset()
+        preset = self._get_local_provider_preset()
 
         return preset
 
@@ -5525,16 +5476,6 @@ class AiChatDialogue(QtWidgets.QDialog):
         :param provider_tpe: Provider type to look up.
         :returns: Matching combo-box index or zero.
         """
-        index: int = 0
-        visible_presets: list[ProviderPreset] = self._get_api_provider_presets()
-
-        while index < len(visible_presets):
-            if visible_presets[index].provider_tpe == provider_tpe:
-                return index
-            else:
-                pass
-            index += 1
-
         return 0
 
     def _configure_provider_inputs(self, preset: ProviderPreset) -> None:
@@ -5544,100 +5485,28 @@ class AiChatDialogue(QtWidgets.QDialog):
         :param preset: Active provider preset.
         :returns: Nothing.
         """
-        if preset.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-            self.ui.groupBox.setEnabled(True)
-            self.ui.groupBox_2.setEnabled(True)
-            self.ui.local_model_label.setEnabled(True)
-            self.ui.local_model_combo_box.setEnabled(True)
-            self.ui.local_model_path_label.setEnabled(True)
-            self.ui.local_model_path_line_edit.setEnabled(True)
-            self.ui.local_refresh_models_button.setEnabled(True)
-            self.ui.local_timeout_label.setEnabled(True)
-            self.ui.local_timeout_double_spin_box.setEnabled(True)
-            self.ui.local_context_tokens_label.setEnabled(True)
-            self.ui.local_context_tokens_spin_box.setEnabled(True)
-            self.ui.local_completion_tokens_label.setEnabled(True)
-            self.ui.local_completion_tokens_spin_box.setEnabled(True)
-            self.ui.local_gpu_layers_label.setEnabled(True)
-            self.ui.local_gpu_layers_spin_box.setEnabled(True)
-            self.ui.local_temperature_label.setEnabled(True)
-            self.ui.local_temperature_double_spin_box.setEnabled(True)
-            self.ui.local_top_p_label.setEnabled(True)
-            self.ui.local_top_p_double_spin_box.setEnabled(True)
-            self.ui.local_history_messages_label.setEnabled(True)
-            self.ui.local_history_messages_spin_box.setEnabled(True)
-            self.ui.local_history_chars_label.setEnabled(True)
-            self.ui.local_history_chars_spin_box.setEnabled(True)
-            self.ui.local_grounding_chars_label.setEnabled(True)
-            self.ui.local_grounding_chars_spin_box.setEnabled(True)
-            self.ui.api_provider_label.setEnabled(False)
-            self.ui.api_provider_combo_box.setEnabled(False)
-            self.ui.api_base_url_label.setEnabled(False)
-            self.ui.api_base_url_line_edit.setEnabled(False)
-            self.ui.api_api_key_label.setEnabled(False)
-            self.ui.api_api_key_line_edit.setEnabled(False)
-            self.ui.api_model_label.setEnabled(False)
-            self.ui.api_model_combo_box.setEnabled(False)
-            self.ui.api_refresh_models_button.setEnabled(False)
-            self.ui.api_timeout_label.setEnabled(False)
-            self.ui.api_timeout_double_spin_box.setEnabled(False)
-            self.ui.local_refresh_models_button.setToolTip(self.tr("Scan the configured path for GGUF files."))
-            if self.ui.local_model_combo_box.lineEdit() is None:
-                pass
-            else:
-                self.ui.local_model_combo_box.lineEdit().setPlaceholderText(
-                    self.tr("Pick or type a GGUF file name")
-                )
+        self.ui.groupBox.setEnabled(True)
+        self.ui.local_model_path_label.setText(self.tr("Ollama base URL"))
+        self.ui.local_model_path_line_edit.setPlaceholderText(self.tr("http://localhost:11434/v1"))
+        self.ui.local_model_label.setText(self.tr("Ollama model"))
+        self.ui.local_model_label.setEnabled(True)
+        self.ui.local_model_combo_box.setEnabled(True)
+        self.ui.local_model_path_label.setEnabled(True)
+        self.ui.local_model_path_line_edit.setEnabled(True)
+        self.ui.local_refresh_models_button.setEnabled(True)
+        self.ui.local_timeout_label.setEnabled(True)
+        self.ui.local_timeout_double_spin_box.setEnabled(True)
+        self.ui.local_refresh_models_button.setToolTip(self.tr("Query Ollama for models."))
+        if self.ui.local_model_combo_box.lineEdit() is None:
+            pass
         else:
-            self.ui.groupBox.setEnabled(True)
-            self.ui.groupBox_2.setEnabled(True)
-            self.ui.local_model_label.setEnabled(False)
-            self.ui.local_model_combo_box.setEnabled(False)
-            self.ui.local_model_path_label.setEnabled(False)
-            self.ui.local_model_path_line_edit.setEnabled(False)
-            self.ui.local_refresh_models_button.setEnabled(False)
-            self.ui.local_timeout_label.setEnabled(False)
-            self.ui.local_timeout_double_spin_box.setEnabled(False)
-            self.ui.local_context_tokens_label.setEnabled(False)
-            self.ui.local_context_tokens_spin_box.setEnabled(False)
-            self.ui.local_completion_tokens_label.setEnabled(False)
-            self.ui.local_completion_tokens_spin_box.setEnabled(False)
-            self.ui.local_gpu_layers_label.setEnabled(False)
-            self.ui.local_gpu_layers_spin_box.setEnabled(False)
-            self.ui.local_temperature_label.setEnabled(False)
-            self.ui.local_temperature_double_spin_box.setEnabled(False)
-            self.ui.local_top_p_label.setEnabled(False)
-            self.ui.local_top_p_double_spin_box.setEnabled(False)
-            self.ui.local_history_messages_label.setEnabled(False)
-            self.ui.local_history_messages_spin_box.setEnabled(False)
-            self.ui.local_history_chars_label.setEnabled(False)
-            self.ui.local_history_chars_spin_box.setEnabled(False)
-            self.ui.local_grounding_chars_label.setEnabled(False)
-            self.ui.local_grounding_chars_spin_box.setEnabled(False)
-            self.ui.api_provider_label.setEnabled(True)
-            self.ui.api_provider_combo_box.setEnabled(True)
-            self.ui.api_base_url_label.setEnabled(True)
-            self.ui.api_base_url_line_edit.setEnabled(True)
-            self.ui.api_api_key_label.setEnabled(True)
-            self.ui.api_api_key_line_edit.setEnabled(True)
-            self.ui.api_model_label.setEnabled(True)
-            self.ui.api_model_combo_box.setEnabled(True)
-            self.ui.api_refresh_models_button.setEnabled(True)
-            self.ui.api_timeout_label.setEnabled(True)
-            self.ui.api_timeout_double_spin_box.setEnabled(True)
-            self.ui.api_api_key_label.setText(self.tr("API key"))
-            self.ui.api_api_key_line_edit.setPlaceholderText(
-                self.tr("Leave empty for unauthenticated endpoints")
+            self.ui.local_model_combo_box.lineEdit().setPlaceholderText(
+                self.tr("Ollama reports installed models automatically")
             )
-            self.ui.api_refresh_models_button.setToolTip(self.tr("Query the configured backend for models."))
-            if self.ui.api_model_combo_box.lineEdit() is None:
-                pass
-            else:
-                self.ui.api_model_combo_box.lineEdit().setPlaceholderText(self.tr("Provider model name"))
 
     def _is_local_provider_selected(self) -> bool:
         """
-        Check whether the local llama.cpp mode is currently selected.
+        Check whether the local Ollama mode is currently selected.
 
         :returns: True when the current preset is the local provider.
         """
@@ -5656,18 +5525,12 @@ class AiChatDialogue(QtWidgets.QDialog):
         self._configure_provider_inputs(preset)
         self._set_model_choices(preset.typical_model_names)
 
-        if preset.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-            pass
-        else:
-            self.ui.api_base_url_line_edit.setText(preset.default_base_url)
+        self.ui.local_model_path_line_edit.setText(preset.default_base_url)
 
         # Keep the status area informative so the user sees what changed.
-        if preset.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-            self._set_status_message(
-                "Choose a GGUF file or directory, click Scan, then start chatting."
-            )
-        else:
-            self._set_status_message(f"Loaded defaults for {preset.display_name}.")
+        self._set_status_message(
+            self.tr("Ollama will be detected and checked automatically when the chat opens.")
+        )
 
         if len(self._history) == 0:
             self._render_transcript()
@@ -5684,10 +5547,7 @@ class AiChatDialogue(QtWidgets.QDialog):
         combo_box: QtWidgets.QComboBox
         index: int = 0
 
-        if self._is_local_provider_selected():
-            combo_box = self.ui.local_model_combo_box
-        else:
-            combo_box = self.ui.api_model_combo_box
+        combo_box = self.ui.local_model_combo_box
 
         current_text: str = combo_box.currentText().strip()
 
@@ -5719,10 +5579,7 @@ class AiChatDialogue(QtWidgets.QDialog):
         """
         model_name: str
 
-        if self._is_local_provider_selected():
-            model_name = self.ui.local_model_combo_box.currentText().strip()
-        else:
-            model_name = self.ui.api_model_combo_box.currentText().strip()
+        model_name = self.ui.local_model_combo_box.currentText().strip()
         return model_name
 
     def get_backend_state(self) -> AiBackendState:
@@ -5731,44 +5588,18 @@ class AiChatDialogue(QtWidgets.QDialog):
 
         :returns: Backend-state snapshot.
         """
-        provider_tpe: ProviderType = self._get_provider_preset_at(
-            self.ui.api_provider_combo_box.currentIndex()
-        ).provider_tpe
+        provider_tpe: ProviderType = ProviderType.OLLAMA
         model_name: str = self._get_selected_model_name()
         base_url: str
-        api_key_text: str
-        api_key: Optional[str]
 
-        if provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-            base_url = self.ui.local_model_path_line_edit.text().strip()
-            api_key_text = ""
-        else:
-            base_url = self.ui.api_base_url_line_edit.text().strip()
-            api_key_text = self.ui.api_api_key_line_edit.text().strip()
-
-        if len(api_key_text) > 0:
-            api_key = api_key_text
-        else:
-            api_key = None
+        base_url = self.ui.local_model_path_line_edit.text().strip()
 
         return AiBackendState(
             provider_tpe=provider_tpe,
             model_name=model_name,
             base_url=base_url,
-            api_key=api_key,
-            timeout_s=(
-                float(self.ui.local_timeout_double_spin_box.value())
-                if provider_tpe == ProviderType.LOCAL_LLAMA_CPP
-                else float(self.ui.api_timeout_double_spin_box.value())
-            ),
-            context_window_tokens=int(self.ui.local_context_tokens_spin_box.value()),
-            completion_tokens=int(self.ui.local_completion_tokens_spin_box.value()),
-            gpu_layers=int(self.ui.local_gpu_layers_spin_box.value()),
-            temperature=float(self.ui.local_temperature_double_spin_box.value()),
-            top_p=float(self.ui.local_top_p_double_spin_box.value()),
-            history_message_limit=int(self.ui.local_history_messages_spin_box.value()),
-            history_char_budget=int(self.ui.local_history_chars_spin_box.value()),
-            grounding_char_budget=int(self.ui.local_grounding_chars_spin_box.value()),
+            api_key=None,
+            timeout_s=float(self.ui.local_timeout_double_spin_box.value()),
         )
 
     def apply_backend_state(self, state: AiBackendState) -> None:
@@ -5778,47 +5609,10 @@ class AiChatDialogue(QtWidgets.QDialog):
         :param state: Backend-state snapshot.
         :returns: Nothing.
         """
-        provider_index: int = self._find_provider_index(state.provider_tpe)
-        current_index: int = self.ui.api_provider_combo_box.currentIndex()
-
-        self.ui.local_context_tokens_spin_box.setValue(state.context_window_tokens)
-        self.ui.local_completion_tokens_spin_box.setValue(state.completion_tokens)
-        self.ui.local_gpu_layers_spin_box.setValue(state.gpu_layers)
-        self.ui.local_temperature_double_spin_box.setValue(state.temperature)
-        self.ui.local_top_p_double_spin_box.setValue(state.top_p)
-        self.ui.local_history_messages_spin_box.setValue(state.history_message_limit)
-        self.ui.local_history_chars_spin_box.setValue(state.history_char_budget)
-        self.ui.local_grounding_chars_spin_box.setValue(state.grounding_char_budget)
-
-        if state.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-            if not self.ui.local_ai_radioButton.isChecked():
-                self.ui.local_ai_radioButton.setChecked(True)
-            else:
-                self._apply_provider_preset(0)
-
-            self.ui.local_model_path_line_edit.setText(state.base_url)
-            self.ui.local_model_combo_box.setCurrentText(state.model_name)
-            self.ui.local_timeout_double_spin_box.setValue(state.timeout_s)
-        else:
-            if not self.ui.api_ai_radioButton.isChecked():
-                self.ui.api_ai_radioButton.setChecked(True)
-            else:
-                pass
-
-            if current_index != provider_index:
-                self.ui.api_provider_combo_box.setCurrentIndex(provider_index)
-            else:
-                self._apply_provider_preset(provider_index)
-
-            self.ui.api_base_url_line_edit.setText(state.base_url)
-            self.ui.api_model_combo_box.setCurrentText(state.model_name)
-
-            if state.api_key is None:
-                self.ui.api_api_key_line_edit.clear()
-            else:
-                self.ui.api_api_key_line_edit.setText(state.api_key)
-
-            self.ui.api_timeout_double_spin_box.setValue(state.timeout_s)
+        self._apply_provider_preset(0)
+        self.ui.local_model_path_line_edit.setText(state.base_url)
+        self.ui.local_model_combo_box.setCurrentText(state.model_name)
+        self.ui.local_timeout_double_spin_box.setValue(state.timeout_s)
 
     def apply_local_model_defaults(
         self,
@@ -5829,14 +5623,14 @@ class AiChatDialogue(QtWidgets.QDialog):
         """
         Apply local-model defaults from the host main window.
 
-        :param model_path: GGUF file path or model directory.
-        :param model_name: Selected GGUF file name.
+        :param model_path: Ollama base URL.
+        :param model_name: Selected Ollama model.
         :param timeout_s: Request timeout in seconds.
         :returns: Nothing.
         """
         self.apply_backend_state(
             AiBackendState(
-                provider_tpe=ProviderType.LOCAL_LLAMA_CPP,
+                provider_tpe=ProviderType.OLLAMA,
                 model_name=model_name,
                 base_url=model_path,
                 api_key=None,
@@ -5853,102 +5647,176 @@ class AiChatDialogue(QtWidgets.QDialog):
         """
         model_name: str = self._get_selected_model_name()
         base_url_text: str
-        api_key_text: str
         timeout_s: float
-        provider_tpe: ProviderType = self._get_provider_preset_at(
-            self.ui.api_provider_combo_box.currentIndex()
-        ).provider_tpe
+        provider_tpe: ProviderType = ProviderType.OLLAMA
         config: Optional[ProviderConfig]
         requires_model_name: bool = require_model_name
 
-        if provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-            base_url_text = self.ui.local_model_path_line_edit.text().strip()
-            api_key_text = ""
-            timeout_s = float(self.ui.local_timeout_double_spin_box.value())
-        else:
-            base_url_text = self.ui.api_base_url_line_edit.text().strip()
-            api_key_text = self.ui.api_api_key_line_edit.text().strip()
-            timeout_s = float(self.ui.api_timeout_double_spin_box.value())
+        base_url_text = self.ui.local_model_path_line_edit.text().strip()
+        timeout_s = float(self.ui.local_timeout_double_spin_box.value())
 
-        # Local single-file configurations can derive the model from a manual scan later.
-        if provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
+        # Ollama chat completions require an explicit model, while model discovery does not.
+        if provider_tpe == ProviderType.OLLAMA:
             requires_model_name = require_model_name
         else:
             pass
 
         # Chat completions require an explicit model, while model discovery does not.
         if requires_model_name and (len(model_name) == 0):
-            self._set_status_message("The model field is empty.")
+            self._set_status_message(self.tr("The model field is empty."))
             config = None
         else:
             # The backend also requires a base URL because it does not infer endpoints.
             if len(base_url_text) == 0:
-                if provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-                    self._set_status_message("The model path field is empty.")
+                if provider_tpe == ProviderType.OLLAMA:
+                    self._set_status_message(self.tr("The Ollama base URL field is empty."))
                 else:
-                    self._set_status_message("The base URL field is empty.")
+                    self._set_status_message(self.tr("The base URL field is empty."))
                 config = None
             else:
-                api_key: Optional[str]
-                if provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-                    api_key = None
-                else:
-                    if len(api_key_text) > 0:
-                        api_key = api_key_text
-                    else:
-                        api_key = None
-
                 config = ProviderConfig(
                     provider_tpe=provider_tpe,
                     model_name=model_name,
-                    api_key=api_key,
+                    api_key=None,
                     base_url=base_url_text,
                     timeout_s=timeout_s,
-                    context_window_tokens=int(self.ui.local_context_tokens_spin_box.value()),
-                    completion_tokens=int(self.ui.local_completion_tokens_spin_box.value()),
-                    gpu_layers=int(self.ui.local_gpu_layers_spin_box.value()),
-                    temperature=float(self.ui.local_temperature_double_spin_box.value()),
-                    top_p=float(self.ui.local_top_p_double_spin_box.value()),
-                    history_message_limit=int(self.ui.local_history_messages_spin_box.value()),
-                    history_char_budget=int(self.ui.local_history_chars_spin_box.value()),
-                    grounding_char_budget=int(self.ui.local_grounding_chars_spin_box.value()),
                 )
 
         return config
 
-    def refresh_available_models(self) -> None:
+    def refresh_available_models(self) -> bool:
         """
         Query the configured backend for the available models and update the combo box.
 
-        :returns: Nothing.
+        :returns: True when model discovery succeeds.
         """
+        base_url_text: str = self.ui.local_model_path_line_edit.text().strip()
+        if len(base_url_text) == 0:
+            self.ui.local_model_path_line_edit.setText("http://localhost:11434/v1")
+        else:
+            if base_url_text.startswith("http://") or base_url_text.startswith("https://"):
+                pass
+            else:
+                self.ui.local_model_path_line_edit.setText("http://localhost:11434/v1")
+
         config: Optional[ProviderConfig] = self._build_provider_config(require_model_name=False)
+        success: bool = False
 
         # The query can only run when the current backend form is already valid.
         if config is None:
             pass
         else:
-            if config.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-                self._set_status_message("Scanning the configured model path...")
+            if config.provider_tpe == ProviderType.OLLAMA:
+                self._set_status_message(self.tr("Refreshing models from Ollama..."))
             else:
-                self._set_status_message("Refreshing models from the configured backend...")
-            result: ModelListResult = list_provider_models(config)
+                self._set_status_message(self.tr("Refreshing models from the configured backend..."))
+            result: ModelListResult = self._mcp_client.list_provider_models(config)
 
             if result.success:
                 self._set_model_choices(result.model_names)
-                if config.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
+                success = True
+                if config.provider_tpe == ProviderType.OLLAMA:
+                    self.ui.ollama_status_value_label.setText(
+                        self.tr("Running. {model_count} installed models reported.").format(
+                            model_count=len(result.model_names)
+                        )
+                    )
                     self._set_status_message(
-                        f"Found {len(result.model_names)} local GGUF models in the configured path."
+                        self.tr("Ollama is running. Loaded {model_count} models.").format(
+                            model_count=len(result.model_names)
+                        )
                     )
                 else:
                     self._set_status_message(
-                        f"Loaded {len(result.model_names)} models from the backend."
+                        self.tr("Loaded {model_count} models from the backend.").format(
+                            model_count=len(result.model_names)
+                        )
                     )
             else:
-                if config.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
-                    self._set_status_message(f"Could not scan local models: {result.error_message}")
+                if config.provider_tpe == ProviderType.OLLAMA:
+                    self.ui.ollama_status_value_label.setText(
+                        self.tr("Not ready. {error_message}").format(
+                            error_message=result.error_message
+                        )
+                    )
+                    self._set_status_message(
+                        self.tr("Ollama did not report models: {error_message}").format(
+                            error_message=result.error_message
+                        )
+                    )
                 else:
-                    self._set_status_message(f"Could not refresh models: {result.error_message}")
+                    self._set_status_message(
+                        self.tr("Could not refresh models: {error_message}").format(
+                            error_message=result.error_message
+                        )
+                    )
+
+        return success
+
+    def run_ollama_startup_check(self) -> bool:
+        """
+        Ask Ollama for models and run one tiny greeting turn on first chat open.
+
+        :returns: True when the startup check starts or has already run.
+        """
+        selected_model_name: str
+        greeting_prompt: str
+        base_url_text: str
+
+        if self._ollama_startup_check_done:
+            return True
+        else:
+            pass
+
+        if self._is_local_provider_selected():
+            base_url_text = self.ui.local_model_path_line_edit.text().strip()
+            if len(base_url_text) == 0:
+                self.ui.local_model_path_line_edit.setText("http://localhost:11434/v1")
+            else:
+                if base_url_text.startswith("http://") or base_url_text.startswith("https://"):
+                    pass
+                else:
+                    self.ui.local_model_path_line_edit.setText("http://localhost:11434/v1")
+
+            if self.refresh_available_models():
+                selected_model_name = self._get_selected_model_name()
+                if len(selected_model_name) > 0:
+                    self._ollama_startup_check_done = True
+                    self.ui.ollama_status_value_label.setText(
+                        self.tr("Running. Using {model_name}.").format(
+                            model_name=selected_model_name
+                        )
+                    )
+                    if len(self._history) == 0:
+                        greeting_prompt = (
+                            self.tr(
+                                "Reply with one short greeting sentence. Say that VeraGrid AI is ready "
+                                "and Ollama is working with model {model_name}. Do not ask a question."
+                            ).format(model_name=selected_model_name)
+                        )
+                        self._ollama_startup_greeting_running = True
+                        self._run_turn(
+                            base_history=list(),
+                            user_message=greeting_prompt,
+                            approved_tool_name=None,
+                            approved_arguments_json=None,
+                        )
+                    else:
+                        pass
+                    return True
+                else:
+                    self.ui.ollama_status_value_label.setText(
+                        self.tr("Running, but no installed models were reported.")
+                    )
+                    self._set_status_message(
+                        self.tr("Ollama is running, but it reported no installed models.")
+                    )
+                    return False
+            else:
+                return False
+        else:
+            self._ollama_startup_check_done = True
+            return True
 
     def build_context_from_ui(self) -> VeraGridContext:
         """
@@ -6028,7 +5896,7 @@ class AiChatDialogue(QtWidgets.QDialog):
                 pass
             else:
                 self._turn_cancel_requested = True
-                self.cancel_turn_requested.emit()
+                self._turn_worker.request_cancellation()
                 self.ui.send_button.setEnabled(False)
                 self._set_status_message(self.tr("Stopping AI turn..."))
         else:
@@ -6450,6 +6318,7 @@ class AiChatDialogue(QtWidgets.QDialog):
         """
         result: ConversationRunResult = response.result
         was_cancel_requested: bool = self._turn_cancel_requested
+        was_ollama_startup_greeting: bool = self._ollama_startup_greeting_running
 
         self._flush_pending_stream_text_delta()
         self._set_turn_running(False)
@@ -6474,13 +6343,33 @@ class AiChatDialogue(QtWidgets.QDialog):
             pass
 
         self._history = result.transcript
+        if was_ollama_startup_greeting:
+            startup_history: list[ChatMessage] = list()
+            history_index: int = 0
+            while history_index < len(self._history):
+                if self._history[history_index].role == "user":
+                    pass
+                else:
+                    startup_history.append(self._history[history_index])
+                history_index += 1
+            self._history = startup_history
+            self._ollama_startup_greeting_running = False
+        else:
+            pass
 
         if result.pending_approval is None:
             self._pending_state = None
             if response.success:
-                self._set_status_message("Turn completed.")
+                if was_ollama_startup_greeting:
+                    self._set_status_message(self.tr("Ollama is ready."))
+                else:
+                    self._set_status_message(self.tr("Turn completed."))
             else:
-                self._set_status_message(f"AI turn failed: {response.error_message}")
+                self._set_status_message(
+                    self.tr("AI turn failed: {error_message}").format(
+                        error_message=response.error_message
+                    )
+                )
         else:
             self._pending_state = PendingConversationState(
                 base_history=copy_chat_history(response.request.base_history),
@@ -6539,17 +6428,21 @@ class AiChatDialogue(QtWidgets.QDialog):
         self._active_turn_base_history = list()
         self._active_turn_user_message = ""
 
-    def shutdown_turn_thread(self) -> None:
+    def shutdown_turn_thread(self) -> bool:
         """
         Stop the background AI worker thread.
 
-        :returns: Nothing.
+        :returns: ``True`` when the worker thread has stopped.
         """
         if self._turn_thread.isRunning():
-            self._turn_thread.quit()
-            self._turn_thread.wait(2000)
+            self._turn_worker.request_cancellation()
+            if self._turn_running:
+                return False
+            else:
+                self._turn_thread.quit()
+                return self._turn_thread.wait(2000)
         else:
-            pass
+            return True
 
     def prepare_for_shutdown(self) -> None:
         """
@@ -6810,8 +6703,7 @@ class AiChatDialogue(QtWidgets.QDialog):
                 "How can VeraGrid help?"
                 "</div>"
                 f"<div style='font-size:10pt;color:{muted_text_color};margin-bottom:18px;'>"
-                "Select a GGUF file or model directory in Settings, scan it, choose a local model, "
-                "then start a conversation with the current VeraGrid session."
+                f"{self.tr('VeraGrid checks Ollama automatically and uses the model reported by the local server.')}"
                 "</div>"
                 f"<div style='background-color:{card_background_color};"
                 f"border:1px solid {card_border_color};border-radius:16px;padding:16px 18px;'>"

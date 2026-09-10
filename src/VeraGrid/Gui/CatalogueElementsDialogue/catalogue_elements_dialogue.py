@@ -249,156 +249,162 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
         return categories
 
     def build_rms_actions(self) -> List[CatalogueAction]:
-        """
-        Build the RMS template action list.
+        """Build RMS catalog actions for complete MultiCircuit devices only.
 
-        :return: List[CatalogueAction]
+        Control components belong to the Dynamic Editor library and are not
+        reusable device templates that can be associated with circuit assets.
+        Phasor-only alternatives remain engine implementation details and are
+        intentionally excluded from the user-facing template catalog.
+
+        :return: Device-compatible RMS template actions.
         """
-        actions: List[CatalogueAction] = list()
-        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-        #                                args=(self._circuit.var_factory,),
-        #                                name='GENQEC',
-        #                                voltage_text='',
-        #                                power_text='',
-        #                                unique_key='rms:get_genqec_rms',
-        #                                function_ptr=tem.get_genqec_rms)
-        #                )
-        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-        #                                args=(self._circuit.var_factory,),
-        #                                name='Governor',
-        #                                voltage_text='',
-        #                                power_text='',
-        #                                unique_key='rms:get_governor_rms',
-        #                                function_ptr=tem.get_governor_rms)
-        #                )
-        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-        #                                args=(self._circuit.var_factory,),
-        #                                name='Stabilizer',
-        #                                voltage_text='',
-        #                                power_text='',
-        #                                unique_key='rms:get_stabilizer_rms',
-        #                                function_ptr=tem.get_stabilizer_rms)
-        #                )
-        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-        #                                args=(self._circuit.var_factory,),
-        #                                name='Exciter',
-        #                                voltage_text='',
-        #                                power_text='',
-        #                                unique_key='rms:get_exciter_rms',
-        #                                function_ptr=tem.get_exciter_rms)
-        #                )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory, 'Voltage source'),
-                                       name='Voltage source',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:VoltageSourceBuild',
-                                       function_ptr=tem.VoltageSourceBuild)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='Complete generator',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_complete_generator_template_rms',
-                                       function_ptr=tem.get_complete_generator_template_rms)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='GENROU/GENROW',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_genrow_rms_template',
-                                       function_ptr=tem.get_genrow_rms_template)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='Line',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_line_rms_template',
-                                       function_ptr=tem.get_line_rms_template)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory, 'DC line'),
-                                       name='DC line',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:build_dc_line_rms_v2',
-                                       function_ptr=tem.build_dc_line_rms_v2)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='Load',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_load_rms_template',
-                                       function_ptr=tem.get_load_rms_template)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                        args=(self._circuit.var_factory,),
-                                        name='Distributed PV',
-                                        voltage_text='',
-                                        power_text='',
-                                        unique_key='rms:get_distributed_pv_rms_template',
-                                        function_ptr=tem.get_pvd1_dc_mppt_rms_template)
-                        )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                        args=(self._circuit.var_factory,),
-                                        name='Battery',
-                                        voltage_text='',
-                                        power_text='',
-                                        unique_key='rms:get_battery_rms_template',
-                                        function_ptr=tem.get_esd1_rms_template)
-                        )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                        args=(self._circuit.var_factory,),
-                                        name='2W Transformer',
-                                        voltage_text='',
-                                        power_text='',
-                                        unique_key='rms:get_transformer2w_rms_template',
-                                        function_ptr=tem.get_transformer2w_rms)
-                        )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='GFL VSC',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:build_vsc_rms',
-                                       function_ptr=tem.build_vsc_rms)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='HVDC GFL VSC - Vdc/Q',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_hvdc_vdc_q_vsc_rms',
-                                       function_ptr=tem.get_hvdc_vdc_q_vsc_rms)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='HVDC GFL VSC - Pdc/Q',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_hvdc_pdc_q_vsc_rms',
-                                       function_ptr=tem.get_hvdc_pdc_q_vsc_rms)
-                       )
-        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-        #                                args=(self._circuit.var_factory,),
-        #                                name='DC PV source',
-        #                                voltage_text='',
-        #                                power_text='',
-        #                                unique_key='rms:DCPVSourceAveraged',
-        #                                function_ptr=tem.DCPVSourceAveraged)
-        #                )
-        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-        #                                args=(self._circuit.var_factory,),
-        #                                name='Empty template',
-        #                                voltage_text='',
-        #                                power_text='',
-        #                                unique_key='rms:get_empty_rms_template',
-        #                                function_ptr=tem.get_empty_rms_template)
-        #                )
+        actions: List[CatalogueAction] = list((
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='complete_generator',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_complete_generator_template_rms',
+                function_ptr=tem.get_complete_generator_template_rms,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='genqec',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_genqec_rms',
+                function_ptr=tem.get_genqec_rms,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='genrow',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_genrow_rms_template',
+                function_ptr=tem.get_genrow_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='line',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_line_rms_template',
+                function_ptr=tem.get_line_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='dc_line',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:build_dc_line_rms_v2',
+                function_ptr=tem.build_dc_line_rms_v2,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='load',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_load_rms_template',
+                function_ptr=tem.get_load_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='transformer2w',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_transformer2w_rms',
+                function_ptr=tem.get_transformer2w_rms,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='shunt',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_shunt_template',
+                function_ptr=tem.get_shunt_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='pvd1',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_pvd1_rms_template',
+                function_ptr=tem.get_pvd1_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='pvd1_complete',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_pvd1_complete_rms_template',
+                function_ptr=tem.get_pvd1_complete_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='pvd1_dc_mppt',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_pvd1_dc_mppt_rms_template',
+                function_ptr=tem.get_pvd1_dc_mppt_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='pvd1_dc_link_mppt',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_pvd1_dc_link_mppt_rms_template',
+                function_ptr=tem.get_pvd1_dc_link_mppt_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='pvd1_dc_link_bess',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_pvd1_dc_link_bess_rms_template',
+                function_ptr=tem.get_pvd1_dc_link_bess_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='esd1',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:get_esd1_rms_template',
+                function_ptr=tem.get_esd1_rms_template,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='voltage_source',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:VoltageSourceBuild',
+                function_ptr=tem.VoltageSourceBuild,
+            ),
+            CatalogueAction(
+                kind=CatalogueActionKind.AddRmsTemplate,
+                args=(self._circuit.var_factory,),
+                name='hvdc_vsc_gfl',
+                voltage_text='',
+                power_text='',
+                unique_key='rms:build_hvdc_vsc_gfl_rms',
+                function_ptr=tem.build_hvdc_vsc_gfl_rms,
+            ),
+        ))
+
         return actions
 
     def build_emt_actions(self) -> List[CatalogueAction]:

@@ -323,6 +323,24 @@ class SingleBlockDaeProblem:
     def advance_fmu_me_devices(self, t: float, x_snapshot: np.ndarray, h: float) -> None:
         _ = (t, x_snapshot, h)
 
+    def resolve_fmu_me_devices(self, accepted: bool) -> float | None:
+        """Resolve a prepared FMU ME step for the no-device test problem.
+
+        :param accepted: Whether the RMS numerical step converged.
+        :return: Always ``None`` because this problem owns no FMU.
+        """
+
+        _ = accepted
+        return None
+
+    def prepare_fmu_me_state_event_retry(self) -> float | None:
+        """Return no ME retry because this test problem owns no FMU.
+
+        :return: Always ``None``.
+        """
+
+        return None
+
     def close_fmu_cs_devices(self) -> None:
         return None
 

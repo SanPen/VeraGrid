@@ -23,3 +23,7 @@ Determines the retained conduction state of a controlled electrical valve from i
 ## Runtime behavior
 
 The state machine applies valve-specific turn-on, turn-off and reverse-path rules at accepted boundaries. Deadbands prevent numerical chatter near zero. All references are mandatory and must identify symbols compiled into the same dynamic system.
+
+## Library block
+
+The standalone block has `valve_voltage` and `valve_current` inputs and a retained `state` output. Valve type, gate command, antiparallel enable and numerical deadbands are editable runtime parameters.

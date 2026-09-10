@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.procedural_logic import FixedSampleLogic
 from VeraGridEngine.Utils.Symbolic.block import Block

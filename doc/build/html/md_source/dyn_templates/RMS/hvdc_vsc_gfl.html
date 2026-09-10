@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Complete GFL VSC HVDC &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Complete GFL VSC HVDC &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -149,7 +149,7 @@
 <strong>Builder:</strong> <code class="docutils literal notranslate"><span class="pre">build_hvdc_vsc_gfl_rms()</span></code>; configurable definition: <code class="docutils literal notranslate"><span class="pre">HvdcVscGflRmsTemplate</span></code>.</p>
 <section id="purpose-and-network-interface">
 <h2>Purpose and network interface<a class="headerlink" href="#purpose-and-network-interface" title="Link to this heading"></a></h2>
-<p>This positive-sequence, grid-following VSC combines the PLL, current dynamics, outer controls, current-reference limiter, inner PIs, DC-link capacitor and terminal-power interface. Its uses include RMS control-response studies and small-signal analysis around a consistent operating point. It is not a switching model or a grid-forming converter.</p>
+<p>This positive-sequence, grid-following VSC combines the PLL, current dynamics, outer controls, current-reference limiter, inner PIs and DC-link capacitor. Its uses include RMS control-response studies and small-signal analysis around a consistent operating point. It is not a switching model or a grid-forming converter.</p>
 <p>The static VSC is oriented <strong>from the DC bus to the AC bus</strong>. An external AC transformer, where present, is a separate network device.</p>
 <table class="docutils align-default">
 <thead>
@@ -208,12 +208,12 @@
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">control1</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Vm_dc</span></code>, <code class="docutils literal notranslate"><span class="pre">Pdc</span></code>, <code class="docutils literal notranslate"><span class="pre">Pac</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Vm_dc</span></code></p></td>
-<td><p>Capacitor <code class="docutils literal notranslate"><span class="pre">Vdc_state</span></code> for <code class="docutils literal notranslate"><span class="pre">Vm_dc</span></code>; internal electrical <code class="docutils literal notranslate"><span class="pre">P</span></code> for both power modes</p></td>
+<td><p>Capacitor <code class="docutils literal notranslate"><span class="pre">Vdc_state</span></code>, DC-terminal <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code>, or AC-terminal <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code>, respectively</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">control2</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Qac</span></code>, <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Qac</span></code></p></td>
-<td><p>Internal electrical <code class="docutils literal notranslate"><span class="pre">Q</span></code> or PLL <code class="docutils literal notranslate"><span class="pre">vq</span></code>, respectively</p></td>
+<td><p>AC-terminal <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code> or PLL <code class="docutils literal notranslate"><span class="pre">vq</span></code>, respectively</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cdc</span></code></p></td>
 <td><p>Numerical capacitance setting</p></td>
@@ -222,7 +222,7 @@
 </tr>
 </tbody>
 </table>
-<p><code class="docutils literal notranslate"><span class="pre">Pdc</span></code> and <code class="docutils literal notranslate"><span class="pre">Pac</span></code> currently share the same internal power-feedback law. <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code> uses <code class="docutils literal notranslate"><span class="pre">vq</span></code>, which equals the AC magnitude at PLL equilibrium but need not equal it during angle transients. See the <a class="reference internal" href="vsc_active_control.html"><span class="std std-doc">active-control</span></a> and <a class="reference internal" href="vsc_reactive_control.html"><span class="std std-doc">reactive-control</span></a> pages for errors, gains and reference initialization.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Pdc</span></code> and <code class="docutils literal notranslate"><span class="pre">Pac</span></code> use different physical terminals and sign conventions. <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code> uses <code class="docutils literal notranslate"><span class="pre">vq</span></code>, which equals the AC magnitude at PLL equilibrium but need not equal it during angle transients. See the <a class="reference internal" href="vsc_active_control.html"><span class="std std-doc">active-control</span></a> and <a class="reference internal" href="vsc_reactive_control.html"><span class="std std-doc">reactive-control</span></a> pages for errors, gains and reference initialization.</p>
 <p>These dynamic-model options are distinct from the static VSC’s power-flow controls. Dynamic references initially capture their connected feedback unless explicitly changed. Review the operating point and dynamic reference separately when preparing an event.</p>
 </section>
 <section id="component-parameters-and-states">
@@ -267,17 +267,13 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">Cdc</span> <span class="pre">=</span> <span class="pre">0.40</span></code>; losses from static <code class="docutils literal notranslate"><span class="pre">alpha1/2/3</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Vdc_state</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="vsc_terminal_power.html"><span class="std std-doc">Terminal power equations</span></a></p></td>
-<td><p>DC-side <code class="docutils literal notranslate"><span class="pre">Qf</span> <span class="pre">=</span> <span class="pre">0</span></code></p></td>
-<td><p>None</p></td>
-</tr>
 </tbody>
 </table>
 <p>The component equations define an RMS DAE with explicit states. A reduced standard small-signal problem additionally requires that the algebraic subsystem can be eliminated at the selected operating point. No stability or convergence guarantee follows solely from using explicit states.</p>
 </section>
 <section id="assembling-the-same-model-from-small-blocks">
 <h2>Assembling the same model from small blocks<a class="headerlink" href="#assembling-the-same-model-from-small-blocks" title="Link to this heading"></a></h2>
-<p>The complete model remains available as one Library item. To build it manually, place the nine components documented above. A Generic Device may group the seven converter-control/electrical components; an extra wrapper is not required for the equations.</p>
+<p>The complete model remains available as one Library item. To build it manually, place the eight components documented above. A Generic Device may group the seven converter-control/electrical components; an extra wrapper is not required for the equations.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Producer</p></th>
@@ -292,43 +288,43 @@
 <td><p>Electrical inputs 1, 2 and 3</p></td>
 </tr>
 <tr class="row-even"><td><p>Electrical <code class="docutils literal notranslate"><span class="pre">i_d</span></code></p></td>
-<td><p>d-axis current PI controller input 1; reactive-control input 2; capacitor input 4</p></td>
+<td><p>d-axis current PI controller input 1; reactive-control input 2; DC-link input 3</p></td>
 </tr>
 <tr class="row-odd"><td><p>Electrical <code class="docutils literal notranslate"><span class="pre">i_q</span></code></p></td>
-<td><p>q-axis current PI controller input 1; active-control input 2; limiter input 3; capacitor input 5</p></td>
+<td><p>q-axis current PI controller input 1; active-control input 2; limiter input 3; DC-link input 4</p></td>
 </tr>
-<tr class="row-even"><td><p>Electrical <code class="docutils literal notranslate"><span class="pre">P</span></code>, <code class="docutils literal notranslate"><span class="pre">Q</span></code></p></td>
-<td><p>Terminal-power inputs 3 and 4</p></td>
+<tr class="row-even"><td><p>DC-link <code class="docutils literal notranslate"><span class="pre">Vdc_state</span></code></p></td>
+<td><p>Active-control input 1 in <code class="docutils literal notranslate"><span class="pre">Vm_dc</span></code> mode</p></td>
 </tr>
-<tr class="row-odd"><td><p>Capacitor <code class="docutils literal notranslate"><span class="pre">Vdc_state</span></code></p></td>
-<td><p>Terminal-power input 2; active-control input 1 in <code class="docutils literal notranslate"><span class="pre">Vm_dc</span></code> mode</p></td>
+<tr class="row-odd"><td><p>DC-link <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code> / electrical <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code></p></td>
+<td><p>Active-control input 1 in <code class="docutils literal notranslate"><span class="pre">Pdc</span></code> / <code class="docutils literal notranslate"><span class="pre">Pac</span></code> mode</p></td>
 </tr>
-<tr class="row-even"><td><p>Electrical <code class="docutils literal notranslate"><span class="pre">P</span></code></p></td>
-<td><p>Active-control input 1 in <code class="docutils literal notranslate"><span class="pre">Pdc</span></code> or <code class="docutils literal notranslate"><span class="pre">Pac</span></code> mode</p></td>
-</tr>
-<tr class="row-odd"><td><p>Electrical <code class="docutils literal notranslate"><span class="pre">Q</span></code> / PLL <code class="docutils literal notranslate"><span class="pre">vq</span></code></p></td>
+<tr class="row-even"><td><p>Electrical <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code> / PLL <code class="docutils literal notranslate"><span class="pre">vq</span></code></p></td>
 <td><p>Reactive-control input 1 in <code class="docutils literal notranslate"><span class="pre">Qac</span></code> / <code class="docutils literal notranslate"><span class="pre">Vm_ac</span></code> mode</p></td>
 </tr>
-<tr class="row-even"><td><p>Reactive-control <code class="docutils literal notranslate"><span class="pre">i_d_ref</span></code></p></td>
+<tr class="row-odd"><td><p>Reactive-control <code class="docutils literal notranslate"><span class="pre">i_d_ref</span></code></p></td>
 <td><p>Limiter input 1</p></td>
 </tr>
-<tr class="row-odd"><td><p>Active-control <code class="docutils literal notranslate"><span class="pre">i_q_ref</span></code></p></td>
+<tr class="row-even"><td><p>Active-control <code class="docutils literal notranslate"><span class="pre">i_q_ref</span></code></p></td>
 <td><p>Limiter input 2</p></td>
 </tr>
-<tr class="row-even"><td><p>Limiter <code class="docutils literal notranslate"><span class="pre">i_d_ref_sat</span></code>, <code class="docutils literal notranslate"><span class="pre">i_q_ref_sat</span></code></p></td>
+<tr class="row-odd"><td><p>Limiter <code class="docutils literal notranslate"><span class="pre">i_d_ref_sat</span></code>, <code class="docutils literal notranslate"><span class="pre">i_q_ref_sat</span></code></p></td>
 <td><p>d-axis and q-axis current PI controller input 2, respectively</p></td>
 </tr>
-<tr class="row-odd"><td><p>d-axis PI <code class="docutils literal notranslate"><span class="pre">y_vd_hat</span></code>, q-axis PI <code class="docutils literal notranslate"><span class="pre">y_vq_hat</span></code></p></td>
+<tr class="row-even"><td><p>d-axis PI <code class="docutils literal notranslate"><span class="pre">y_vd_hat</span></code>, q-axis PI <code class="docutils literal notranslate"><span class="pre">y_vq_hat</span></code></p></td>
 <td><p>Electrical inputs 4 and 5 (voltage corrections)</p></td>
 </tr>
-<tr class="row-even"><td><p>Root <code class="docutils literal notranslate"><span class="pre">Vdc</span></code></p></td>
-<td><p>Capacitor input 1 and terminal-power input 1</p></td>
+<tr class="row-odd"><td><p>Root <code class="docutils literal notranslate"><span class="pre">Vdc</span></code></p></td>
+<td><p>DC-link input 1</p></td>
 </tr>
-<tr class="row-odd"><td><p>Terminal <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code>, <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code></p></td>
-<td><p>Root outputs 1 and 2, and capacitor inputs 2 and 3</p></td>
+<tr class="row-even"><td><p>Electrical <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code></p></td>
+<td><p>Root output 2 and DC-link input 2</p></td>
 </tr>
-<tr class="row-even"><td><p>Terminal <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code></p></td>
+<tr class="row-odd"><td><p>Electrical <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code></p></td>
 <td><p>Root output 3</p></td>
+</tr>
+<tr class="row-even"><td><p>DC-link <code class="docutils literal notranslate"><span class="pre">Pf_vsc</span></code></p></td>
+<td><p>Root output 1</p></td>
 </tr>
 </tbody>
 </table>
@@ -336,7 +332,7 @@
 </section>
 <section id="initialization-and-verification">
 <h2>Initialization and verification<a class="headerlink" href="#initialization-and-verification" title="Link to this heading"></a></h2>
-<p>Start from a converged power flow. Terminal powers seed internal <code class="docutils literal notranslate"><span class="pre">P/Q</span></code>; the PLL initializes its reference frame; electrical currents and converter voltages determine the inner-PI biases. Outer PI outputs initialize to actual currents. The DC-link state initializes to the DC-bus voltage.</p>
+<p>Start from a converged power flow. The physical terminal powers seed the electrical currents; the PLL initializes its reference frame; electrical currents and converter voltages determine the inner-PI biases. Outer PI outputs initialize to actual currents. The DC-link state initializes to the DC-bus voltage.</p>
 <p>After wiring, apply/save the RMS model to bind the component initialization and synchronize the root mappings. Do not add initialization-only ports or force the PI biases to zero. If components have been replaced, saving the model must remove mappings to deleted variables and retain mappings to the current components.</p>
 <p>Before testing disturbances, check the initialization status and residuals. Keep the initial operating point within the limiter assumptions and use the same solver settings when comparing a manually assembled model with the complete template.</p>
 </section>

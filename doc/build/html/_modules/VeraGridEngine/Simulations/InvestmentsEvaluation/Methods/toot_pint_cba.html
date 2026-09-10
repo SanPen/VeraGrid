@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -44,6 +44,7 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/veragrid_scripting_guide.html">📑 VeraGrid scripting guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
@@ -362,7 +363,8 @@
                                   <span class="n">pop_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                                   <span class="n">report_text</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                   <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                  <span class="n">record_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">IntMat</span><span class="p">,</span> <span class="n">Mat</span><span class="p">]:</span>
+                                  <span class="n">record_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                  <span class="n">cancel_checker</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">IntMat</span><span class="p">,</span> <span class="n">Mat</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build an optional NSGA3 warm-start population from the direct PINT and TOOT evaluations.</span>
 
@@ -391,6 +393,8 @@
 <span class="sd">    :type logger: Logger | None</span>
 <span class="sd">    :param record_results: Record the evaluated seed points in the results object.</span>
 <span class="sd">    :type record_results: bool</span>
+<span class="sd">    :param cancel_checker: Optional cancellation check.</span>
+<span class="sd">    :type cancel_checker: Callable[[], bool] | None</span>
 <span class="sd">    :return: Seed decision vectors and aligned objective vectors.</span>
 <span class="sd">    :rtype: tuple[IntMat, Mat]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -398,6 +402,11 @@
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_var</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_obj</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cancel_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cancel_checker</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_var</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_obj</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
 
     <span class="n">reference_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">get_reference_combination</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">)</span>
     <span class="n">target_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">get_target_combination</span><span class="p">(</span><span class="n">n_var</span><span class="o">=</span><span class="n">n_var</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">)</span>
@@ -417,61 +426,66 @@
     <span class="n">pint_objectives</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_var</span><span class="p">,</span> <span class="n">n_obj</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">toot_combinations</span><span class="p">:</span> <span class="n">IntMat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_var</span><span class="p">,</span> <span class="n">n_var</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">toot_objectives</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_var</span><span class="p">,</span> <span class="n">n_obj</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">evaluated_projects</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_var</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">report_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">cancel_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cancel_checker</span><span class="p">():</span>
+            <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">report_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating project </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> with PINT/TOOT warm-start logic...&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">report_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">report_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating project </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> with PINT/TOOT warm-start logic...&quot;</span><span class="p">)</span>
 
-        <span class="n">activation_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_candidate_activation_value</span><span class="p">(</span><span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
-        <span class="n">pint_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">pint_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_value</span>
-        <span class="n">pint_combinations</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pint_combination</span>
+            <span class="n">activation_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_candidate_activation_value</span><span class="p">(</span><span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">pint_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">pint_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_value</span>
+            <span class="n">pint_combinations</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pint_combination</span>
 
-        <span class="c1"># PINT gives the single-project &quot;project in&quot; combinations used for the hybrid warm-start.</span>
-        <span class="n">pint_objective_vector</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pint_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">record_results</span><span class="o">=</span><span class="n">record_results</span><span class="p">)</span>
-        <span class="n">pint_objectives</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pint_objective_vector</span>
-        <span class="n">pint_delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">baseline_objectives</span> <span class="o">-</span> <span class="n">pint_objective_vector</span>
+            <span class="c1"># PINT gives the single-project &quot;project in&quot; combinations used for the hybrid warm-start.</span>
+            <span class="n">pint_objective_vector</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pint_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">record_results</span><span class="o">=</span><span class="n">record_results</span><span class="p">)</span>
+            <span class="n">pint_objectives</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pint_objective_vector</span>
+            <span class="n">pint_delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">baseline_objectives</span> <span class="o">-</span> <span class="n">pint_objective_vector</span>
 
-        <span class="n">toot_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">target_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">toot_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="n">toot_combinations</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">toot_combination</span>
+            <span class="n">toot_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">target_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">toot_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">toot_combinations</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">toot_combination</span>
 
-        <span class="c1"># TOOT gives complementary &quot;take one out&quot; combinations that broaden the first NSGA3 generation.</span>
-        <span class="n">toot_objective_vector</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">toot_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">record_results</span><span class="o">=</span><span class="n">record_results</span><span class="p">)</span>
-        <span class="n">toot_objectives</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">toot_objective_vector</span>
-        <span class="n">toot_delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">toot_objective_vector</span> <span class="o">-</span> <span class="n">target_objectives</span>
+            <span class="c1"># TOOT gives complementary &quot;take one out&quot; combinations that broaden the first NSGA3 generation.</span>
+            <span class="n">toot_objective_vector</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">toot_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">record_results</span><span class="o">=</span><span class="n">record_results</span><span class="p">)</span>
+            <span class="n">toot_objectives</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">toot_objective_vector</span>
+            <span class="n">toot_delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">toot_objective_vector</span> <span class="o">-</span> <span class="n">target_objectives</span>
 
-        <span class="k">if</span> <span class="n">capex_idx</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">pint_capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pint_objective_vector</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">baseline_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">])</span>
-            <span class="n">toot_capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">toot_objective_vector</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">])</span>
-            <span class="n">project_capex</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">pint_capex</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">pint_capex</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">toot_capex</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">project_capex</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="n">capex_idx</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">pint_capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pint_objective_vector</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">baseline_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">])</span>
+                <span class="n">toot_capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">toot_objective_vector</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">])</span>
+                <span class="n">project_capex</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">pint_capex</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pint_capex</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">toot_capex</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">project_capex</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-        <span class="n">pint_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">get_normalized_cba_score</span><span class="p">(</span><span class="n">delta_objectives</span><span class="o">=</span><span class="n">pint_delta</span><span class="p">,</span>
-                                                     <span class="n">capex_delta</span><span class="o">=</span><span class="n">pint_capex</span><span class="p">,</span>
-                                                     <span class="n">capex_idx</span><span class="o">=</span><span class="n">capex_idx</span><span class="p">,</span>
-                                                     <span class="n">scale</span><span class="o">=</span><span class="n">objective_scale</span><span class="p">)</span>
-        <span class="n">toot_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">get_normalized_cba_score</span><span class="p">(</span><span class="n">delta_objectives</span><span class="o">=</span><span class="n">toot_delta</span><span class="p">,</span>
-                                                     <span class="n">capex_delta</span><span class="o">=</span><span class="n">toot_capex</span><span class="p">,</span>
-                                                     <span class="n">capex_idx</span><span class="o">=</span><span class="n">capex_idx</span><span class="p">,</span>
-                                                     <span class="n">scale</span><span class="o">=</span><span class="n">objective_scale</span><span class="p">)</span>
-        <span class="n">project_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pint_score</span> <span class="o">+</span> <span class="n">toot_score</span><span class="p">)</span>
+            <span class="n">pint_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">get_normalized_cba_score</span><span class="p">(</span><span class="n">delta_objectives</span><span class="o">=</span><span class="n">pint_delta</span><span class="p">,</span>
+                                                         <span class="n">capex_delta</span><span class="o">=</span><span class="n">pint_capex</span><span class="p">,</span>
+                                                         <span class="n">capex_idx</span><span class="o">=</span><span class="n">capex_idx</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">objective_scale</span><span class="p">)</span>
+            <span class="n">toot_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">get_normalized_cba_score</span><span class="p">(</span><span class="n">delta_objectives</span><span class="o">=</span><span class="n">toot_delta</span><span class="p">,</span>
+                                                         <span class="n">capex_delta</span><span class="o">=</span><span class="n">toot_capex</span><span class="p">,</span>
+                                                         <span class="n">capex_idx</span><span class="o">=</span><span class="n">capex_idx</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">objective_scale</span><span class="p">)</span>
+            <span class="n">project_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pint_score</span> <span class="o">+</span> <span class="n">toot_score</span><span class="p">)</span>
+            <span class="n">evaluated_projects</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;PINT/TOOT NSGA3 warm-start score&quot;</span><span class="p">,</span>
-                            <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">variable_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]),</span>
-                            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">expected_value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;PINT </span><span class="si">{</span><span class="n">pint_score</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> / TOOT </span><span class="si">{</span><span class="n">toot_score</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;PINT/TOOT NSGA3 warm-start score&quot;</span><span class="p">,</span>
+                                <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">variable_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]),</span>
+                                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">expected_value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;PINT </span><span class="si">{</span><span class="n">pint_score</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> / TOOT </span><span class="si">{</span><span class="n">toot_score</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">get_sorted_project_indices</span><span class="p">(</span><span class="n">scores</span><span class="o">=</span><span class="n">project_scores</span><span class="p">,</span>
-                                                        <span class="n">capex_values</span><span class="o">=</span><span class="n">project_capex</span><span class="p">)</span>
+    <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">get_sorted_project_indices</span><span class="p">(</span><span class="n">scores</span><span class="o">=</span><span class="n">project_scores</span><span class="p">[:</span><span class="n">evaluated_projects</span><span class="p">],</span>
+                                                        <span class="n">capex_values</span><span class="o">=</span><span class="n">project_capex</span><span class="p">[:</span><span class="n">evaluated_projects</span><span class="p">])</span>
     <span class="n">candidate_population</span><span class="p">:</span> <span class="n">IntMat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_var</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_var</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">candidate_objectives</span><span class="p">:</span> <span class="n">Mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_var</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_obj</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">candidate_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
@@ -539,7 +553,8 @@
                   <span class="n">objective_names</span><span class="p">:</span> <span class="n">StrVec</span><span class="p">,</span>
                   <span class="n">variable_names</span><span class="p">:</span> <span class="n">StrVec</span><span class="p">,</span>
                   <span class="n">report_text</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                  <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
+                  <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">cancel_checker</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run a CBA-like independent project ranking based on PINT and TOOT evaluations.</span>
 
@@ -564,11 +579,18 @@
 <span class="sd">    :type report_text: Callable | None</span>
 <span class="sd">    :param logger: Optional logger.</span>
 <span class="sd">    :type logger: Logger | None</span>
+<span class="sd">    :param cancel_checker: Optional cancellation check.</span>
+<span class="sd">    :type cancel_checker: Callable[[], bool] | None</span>
 <span class="sd">    :return: Best-ranked combination according to the CBA sequence.</span>
 <span class="sd">    :rtype: IntVec</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">reference_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">get_reference_combination</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">)</span>
     <span class="n">target_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">get_target_combination</span><span class="p">(</span><span class="n">n_var</span><span class="o">=</span><span class="n">n_var</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cancel_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cancel_checker</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">reference_combination</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
 
     <span class="c1"># The reference case is the baseline used in the PINT logic.</span>
     <span class="n">baseline_objectives</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">reference_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">record_results</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -587,76 +609,84 @@
     <span class="n">project_scores</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_var</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">project_capex</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_var</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">st</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span><span class="p">()</span>
+    <span class="n">evaluated_projects</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_var</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">report_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">cancel_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cancel_checker</span><span class="p">():</span>
+            <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">report_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating project </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> with PINT/TOOT logic...&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">report_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">report_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating project </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> with PINT/TOOT logic...&quot;</span><span class="p">)</span>
 
-        <span class="n">activation_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_candidate_activation_value</span><span class="p">(</span><span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
-        <span class="n">pint_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">pint_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_value</span>
+            <span class="n">activation_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_candidate_activation_value</span><span class="p">(</span><span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">pint_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">pint_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">activation_value</span>
 
-        <span class="c1"># PINT adds one project to the reference grid.</span>
-        <span class="n">pint_objectives</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pint_combination</span><span class="p">,</span> <span class="n">record_results</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">pint_delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">baseline_objectives</span> <span class="o">-</span> <span class="n">pint_objectives</span>
+            <span class="c1"># PINT adds one project to the reference grid.</span>
+            <span class="n">pint_objectives</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pint_combination</span><span class="p">,</span> <span class="n">record_results</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">pint_delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">baseline_objectives</span> <span class="o">-</span> <span class="n">pint_objectives</span>
 
-        <span class="c1"># TOOT removes one project from the target grid to estimate its marginal contribution there.</span>
-        <span class="n">toot_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">target_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">toot_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="n">toot_objectives</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">toot_combination</span><span class="p">,</span> <span class="n">record_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">toot_delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">toot_objectives</span> <span class="o">-</span> <span class="n">target_objectives</span>
+            <span class="c1"># TOOT removes one project from the target grid to estimate its marginal contribution there.</span>
+            <span class="n">toot_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">target_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">toot_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">toot_objectives</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">toot_combination</span><span class="p">,</span> <span class="n">record_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">toot_delta</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">toot_objectives</span> <span class="o">-</span> <span class="n">target_objectives</span>
 
-        <span class="k">if</span> <span class="n">capex_idx</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">pint_capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pint_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">baseline_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">])</span>
-            <span class="n">toot_capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">toot_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">])</span>
-            <span class="n">project_capex</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">pint_capex</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">pint_capex</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">toot_capex</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">project_capex</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="n">capex_idx</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">pint_capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pint_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">baseline_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">])</span>
+                <span class="n">toot_capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">toot_objectives</span><span class="p">[</span><span class="n">capex_idx</span><span class="p">])</span>
+                <span class="n">project_capex</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">pint_capex</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pint_capex</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">toot_capex</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">project_capex</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-        <span class="n">pint_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">get_normalized_cba_score</span><span class="p">(</span><span class="n">delta_objectives</span><span class="o">=</span><span class="n">pint_delta</span><span class="p">,</span>
-                                                     <span class="n">capex_delta</span><span class="o">=</span><span class="n">pint_capex</span><span class="p">,</span>
-                                                     <span class="n">capex_idx</span><span class="o">=</span><span class="n">capex_idx</span><span class="p">,</span>
-                                                     <span class="n">scale</span><span class="o">=</span><span class="n">objective_scale</span><span class="p">)</span>
+            <span class="n">pint_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">get_normalized_cba_score</span><span class="p">(</span><span class="n">delta_objectives</span><span class="o">=</span><span class="n">pint_delta</span><span class="p">,</span>
+                                                         <span class="n">capex_delta</span><span class="o">=</span><span class="n">pint_capex</span><span class="p">,</span>
+                                                         <span class="n">capex_idx</span><span class="o">=</span><span class="n">capex_idx</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">objective_scale</span><span class="p">)</span>
 
-        <span class="n">toot_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">get_normalized_cba_score</span><span class="p">(</span><span class="n">delta_objectives</span><span class="o">=</span><span class="n">toot_delta</span><span class="p">,</span>
-                                                     <span class="n">capex_delta</span><span class="o">=</span><span class="n">toot_capex</span><span class="p">,</span>
-                                                     <span class="n">capex_idx</span><span class="o">=</span><span class="n">capex_idx</span><span class="p">,</span>
-                                                     <span class="n">scale</span><span class="o">=</span><span class="n">objective_scale</span><span class="p">)</span>
+            <span class="n">toot_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">get_normalized_cba_score</span><span class="p">(</span><span class="n">delta_objectives</span><span class="o">=</span><span class="n">toot_delta</span><span class="p">,</span>
+                                                         <span class="n">capex_delta</span><span class="o">=</span><span class="n">toot_capex</span><span class="p">,</span>
+                                                         <span class="n">capex_idx</span><span class="o">=</span><span class="n">capex_idx</span><span class="p">,</span>
+                                                         <span class="n">scale</span><span class="o">=</span><span class="n">objective_scale</span><span class="p">)</span>
 
-        <span class="n">project_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pint_score</span> <span class="o">+</span> <span class="n">toot_score</span><span class="p">)</span>
+            <span class="n">project_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pint_score</span> <span class="o">+</span> <span class="n">toot_score</span><span class="p">)</span>
+            <span class="n">evaluated_projects</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Independent CBA project score&quot;</span><span class="p">,</span>
-                            <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">variable_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]),</span>
-                            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">expected_value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;PINT </span><span class="si">{</span><span class="n">pint_score</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> / TOOT </span><span class="si">{</span><span class="n">toot_score</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Independent CBA project score&quot;</span><span class="p">,</span>
+                                <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">variable_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]),</span>
+                                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">expected_value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;PINT </span><span class="si">{</span><span class="n">pint_score</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> / TOOT </span><span class="si">{</span><span class="n">toot_score</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">get_sorted_project_indices</span><span class="p">(</span><span class="n">scores</span><span class="o">=</span><span class="n">project_scores</span><span class="p">,</span>
-                                                        <span class="n">capex_values</span><span class="o">=</span><span class="n">project_capex</span><span class="p">)</span>
+    <span class="n">sorted_indices</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">get_sorted_project_indices</span><span class="p">(</span><span class="n">scores</span><span class="o">=</span><span class="n">project_scores</span><span class="p">[:</span><span class="n">evaluated_projects</span><span class="p">],</span>
+                                                        <span class="n">capex_values</span><span class="o">=</span><span class="n">project_capex</span><span class="p">[:</span><span class="n">evaluated_projects</span><span class="p">])</span>
 
     <span class="n">cumulative_combination</span><span class="p">:</span> <span class="n">IntVec</span> <span class="o">=</span> <span class="n">reference_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1"># The first ranked project has already been evaluated as a PINT case above, so only new cumulative</span>
     <span class="c1"># combinations are added from the second project onwards.</span>
     <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">project_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_indices</span><span class="p">):</span>
-        <span class="n">activation_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_candidate_activation_value</span><span class="p">(</span><span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">project_idx</span><span class="p">))</span>
-        <span class="n">cumulative_combination</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">project_idx</span><span class="p">)]</span> <span class="o">=</span> <span class="n">activation_value</span>
-
-        <span class="k">if</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">report_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">pass</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">report_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating cumulative combination ranked up to project </span><span class="si">{</span><span class="n">project_idx</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-
-            <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">cumulative_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">record_results</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cancel_checker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cancel_checker</span><span class="p">():</span>
+            <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">pass</span>
+            <span class="n">activation_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_candidate_activation_value</span><span class="p">(</span><span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">project_idx</span><span class="p">))</span>
+            <span class="n">cumulative_combination</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">project_idx</span><span class="p">)]</span> <span class="o">=</span> <span class="n">activation_value</span>
+
+            <span class="k">if</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">report_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">report_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating cumulative combination ranked up to project </span><span class="si">{</span><span class="n">project_idx</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+
+                <span class="n">obj_func</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">cumulative_combination</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">record_results</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
 
     <span class="n">et</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span><span class="p">()</span>
 

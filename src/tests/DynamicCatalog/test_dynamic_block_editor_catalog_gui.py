@@ -1,29 +1,33 @@
 from __future__ import annotations
 
 import gc
-import math
 import sys
 
-import numpy as np
 import pytest
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtTest import QTest
 
-import VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor as dynamic_block_editor_module
-import VeraGrid.Gui.DynamicModelEditor.dynamic_editor_graphics as graph
+import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor as dynamic_block_editor_module
+import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_graphics as graph
 import VeraGridEngine.api as gce
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_properties import DynamicBlockPropertiesDialog
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties import DynamicBlockPropertiesDialog
+from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import DynamicEditorLibrary
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.BasicBlockCatalog import BasicBlockTemplateDescriptor
 from VeraGridEngine.Templates.BasicBlockCatalog import get_basic_block_catalog_descriptor_by_key
+from VeraGridEngine.Templates.ProceduralLogicCatalog import (
+    ProceduralBlockTemplateDescriptor,
+    get_procedural_block_template_descriptors,
+)
+from VeraGridEngine.Templates.InternationalStandardsCatalog import (
+    InternationalStandardTemplateDescriptor,
+    get_international_standard_template_descriptors,
+)
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.enumerations import BlockType
 from VeraGridEngine.enumerations import DynamicSimulationMode
 from VeraGridEngine.enumerations import DeviceType
-from VeraGridEngine.enumerations import ShuntConnectionType
-from VeraGridEngine.enumerations import WindingType
 
 pytestmark = pytest.mark.filterwarnings("error")
 
@@ -35,11 +39,16 @@ class _ApiStub:
 
     __slots__ = ("name", "rms_template", "emt_template", "device_type")
 
-    def __init__(self) -> None:
+    def __init__(self, device_type: DeviceType = DeviceType.NoDevice) -> None:
+        """Create a minimal device context for one library mode.
+
+        :param device_type: Device family whose specific leaves are exposed.
+        :return: None.
+        """
         self.name = "Stub"
         self.rms_template = None
         self.emt_template = None
-        self.device_type = DeviceType.NoDevice
+        self.device_type = device_type
 
 
 def _get_app() -> QtWidgets.QApplication:
@@ -345,9 +354,9 @@ def test_rms_editor_exposes_basic_block_catalog_under_basic() -> None:
 
 def test_proxy_drag_payload_materializes_catalog_template() -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
-    park_descriptor = get_basic_block_catalog_descriptor_by_key()["park_transform_dq"]
-    park_label = park_descriptor.display_label
-    source_index = _find_index_by_label(editor.library.library_model, park_label)
+    descriptor = get_basic_block_catalog_descriptor_by_key()["movingavg"]
+    descriptor_label = descriptor.display_label
+    source_index = _find_index_by_label(editor.library.library_model, descriptor_label)
 
     assert source_index.isValid()
 
@@ -359,11 +368,195 @@ def test_proxy_drag_payload_materializes_catalog_template() -> None:
 
     assert payload is not None
     assert isinstance(payload, BasicBlockTemplateDescriptor)
-    assert payload.template_key == "park_transform_dq"
+    assert payload.template_key == "movingavg"
 
+    children_before: int = len(editor.main_block.children)
     block_item = editor.create_library_payload_item(payload, 10.0, 20.0)
+
     assert block_item is not None
-    assert len(editor.main_block.children) == 1
+    assert len(editor.main_block.children) == children_before + 1
+    assert block_item.subsys is editor.main_block.children[-1]
+    assert block_item.subsys.name == "movingavg__77"
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+@pytest.mark.parametrize("mode", (DynamicSimulationMode.RMS, DynamicSimulationMode.EMT))
+def test_procedural_logic_branch_exposes_every_engine_descriptor(
+        mode: DynamicSimulationMode,
+) -> None:
+    """RMS and EMT libraries must expose the same native procedural primitives.
+
+    :param mode: Dynamic editor mode under inspection.
+    :return: None.
+    """
+    editor: DynamicBlockEditorGUI = _build_editor(mode)
+    procedural_root: QtCore.QModelIndex = _find_index_by_label(
+        editor.library.library_model,
+        "Procedural logic",
+    )
+    assert procedural_root.isValid()
+    descriptor: ProceduralBlockTemplateDescriptor
+    for descriptor in get_procedural_block_template_descriptors():
+        source_index: QtCore.QModelIndex = _find_index_by_label(
+            editor.library.library_model,
+            descriptor.display_label,
+            procedural_root,
+        )
+        assert source_index.isValid(), descriptor.display_label
+        payload: object = source_index.data(editor.block_role)
+        assert isinstance(payload, ProceduralBlockTemplateDescriptor)
+        assert payload.logic_tpe == descriptor.logic_tpe
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_procedural_library_double_click_materializes_canvas_block() -> None:
+    """A procedural leaf double-click must use the normal template creation path.
+
+    :return: None.
+    """
+    editor: DynamicBlockEditorGUI = _build_editor(DynamicSimulationMode.EMT)
+    descriptor: ProceduralBlockTemplateDescriptor = list(
+        get_procedural_block_template_descriptors()
+    )[0]
+    procedural_root: QtCore.QModelIndex = _find_index_by_label(
+        editor.library.library_model,
+        "Procedural logic",
+    )
+    assert procedural_root.isValid()
+    source_index: QtCore.QModelIndex = _find_index_by_label(
+        editor.library.library_model,
+        descriptor.display_label,
+        procedural_root,
+    )
+    proxy_index: QtCore.QModelIndex = editor.library_proxy_model.mapFromSource(source_index)
+    children_before: int = len(editor.main_block.children)
+
+    editor.on_library_item_double_clicked(proxy_index)
+
+    assert len(editor.main_block.children) == children_before + 1
+    inserted_block: Block = editor.main_block.children[-1]
+    assert len(inserted_block.procedural_logic) == 1
+    assert inserted_block.procedural_logic[0].logic_tpe == descriptor.logic_tpe
+    assert editor.diagram.node_data[inserted_block.uid].tpe == BlockType.PROCEDURAL_LOGIC.name
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_rms_library_exposes_every_international_standard_descriptor() -> None:
+    """Expose every categorized international-standard leaf only in RMS mode.
+
+    :return: None.
+    """
+    rms_editor: DynamicBlockEditorGUI = _build_editor(DynamicSimulationMode.RMS)
+    standards_root: QtCore.QModelIndex = _find_index_by_label(
+        rms_editor.library.library_model,
+        "International standards",
+    )
+    assert standards_root.isValid()
+    standards_proxy_root: QtCore.QModelIndex = rms_editor.library_proxy_model.mapFromSource(
+        standards_root
+    )
+    assert rms_editor.ui.libraryTreeView.isExpanded(standards_proxy_root)
+
+    category_row: int
+    for category_row in range(rms_editor.library_proxy_model.rowCount(standards_proxy_root)):
+        category_proxy_index: QtCore.QModelIndex = rms_editor.library_proxy_model.index(
+            category_row,
+            0,
+            standards_proxy_root,
+        )
+        assert not rms_editor.ui.libraryTreeView.isExpanded(category_proxy_index)
+
+    descriptor: InternationalStandardTemplateDescriptor
+    for descriptor in get_international_standard_template_descriptors():
+        source_index: QtCore.QModelIndex = _find_index_by_label(
+            rms_editor.library.library_model,
+            descriptor.display_label,
+            standards_root,
+        )
+        assert source_index.isValid(), descriptor.display_label
+        payload: object = source_index.data(rms_editor.block_role)
+        assert isinstance(payload, InternationalStandardTemplateDescriptor)
+        assert payload.model == descriptor.model
+
+    rms_editor.has_unapplied_changes = False
+    rms_editor.close()
+
+    emt_editor: DynamicBlockEditorGUI = _build_editor(DynamicSimulationMode.EMT)
+    emt_standards_root: QtCore.QModelIndex = _find_index_by_label(
+        emt_editor.library.library_model,
+        "International standards",
+    )
+    assert not emt_standards_root.isValid()
+    emt_editor.has_unapplied_changes = False
+    emt_editor.close()
+
+
+def test_controls_removed_from_catalogue_remain_in_dynamic_library() -> None:
+    """Keep native control-building blocks available in the RMS editor.
+
+    :return: None.
+    """
+    application: QtWidgets.QApplication = _get_app()
+    generator_library: DynamicEditorLibrary = DynamicEditorLibrary(
+        api_object=_ApiStub(device_type=DeviceType.GeneratorDevice),
+        mode=DynamicSimulationMode.RMS,
+        templates_list=list(),
+    )
+    generator_labels: set[str] = set(_collect_leaf_labels(generator_library.library_model))
+    expected_generator_controls: set[str] = set((
+        "Pll transformer",
+        "Pi current controller",
+        "Pi power controller",
+        "Governor",
+        "Stabilizer",
+        "Exciter",
+    ))
+    assert expected_generator_controls.issubset(generator_labels)
+
+    vsc_library: DynamicEditorLibrary = DynamicEditorLibrary(
+        api_object=_ApiStub(device_type=DeviceType.VscDevice),
+        mode=DynamicSimulationMode.RMS,
+        templates_list=list(),
+    )
+    vsc_labels: set[str] = set(_collect_leaf_labels(vsc_library.library_model))
+    assert "Gfl converter" in vsc_labels
+    application.processEvents()
+
+
+def test_international_standard_library_payload_materializes_canvas_block() -> None:
+    """Create an RMS canvas block from the typed international-standard payload.
+
+    :return: None.
+    """
+    editor: DynamicBlockEditorGUI = _build_editor(DynamicSimulationMode.RMS)
+    descriptor: InternationalStandardTemplateDescriptor = list(
+        get_international_standard_template_descriptors()
+    )[0]
+    standards_root: QtCore.QModelIndex = _find_index_by_label(
+        editor.library.library_model,
+        "International standards",
+    )
+    source_index: QtCore.QModelIndex = _find_index_by_label(
+        editor.library.library_model,
+        descriptor.display_label,
+        standards_root,
+    )
+    proxy_index: QtCore.QModelIndex = editor.library_proxy_model.mapFromSource(source_index)
+    mime_data: QtCore.QMimeData = editor.library_proxy_model.mimeData(list((proxy_index,)))
+    payload: object = editor.get_library_payload_from_mime_data(mime_data)
+    children_before: int = len(editor.main_block.children)
+
+    assert isinstance(payload, InternationalStandardTemplateDescriptor)
+    block_item: object = editor.create_library_payload_item(payload, 10.0, 20.0)
+    assert isinstance(block_item, graph.GenericBlockItem)
+    assert len(editor.main_block.children) == children_before + 1
+    assert block_item.subsys is editor.main_block.children[-1]
 
     editor.has_unapplied_changes = False
     editor.close()
@@ -460,7 +653,10 @@ def test_modal_parameter_edit_preserves_non_structural_block_identity() -> None:
 
 
 def test_parameter_modal_separates_runtime_modes_for_pulse_block() -> None:
-    """General options keeps events while Runtime logic owns retained modes."""
+    """General options separates events from Python-authored retained modes.
+
+    :return: None.
+    """
     editor: DynamicBlockEditorGUI = _build_editor(DynamicSimulationMode.EMT)
     block_item: graph.GenericBlockItem = _build_catalog_block_item(editor, "pulse")
     assert block_item.subsys is not None
@@ -478,8 +674,28 @@ def test_parameter_modal_separates_runtime_modes_for_pulse_block() -> None:
 
     assert any(row_type.startswith("Dynamic parameter") for row_type in row_types)
     assert not any(row_type.startswith("Mode parameter") for row_type in row_types)
-    assert dialogue._runtime_logic_editor._mode_model.rowCount() > 0
-    assert dialogue._tabs.tabText(2) == "Runtime logic"
+    assert dialogue._retained_mode_model.rowCount() > 0
+    python_source: str = dialogue._equation_buffers[0].get_code()
+    assert "retained_modes = {" in python_source
+    assert "procedural_logic = [" in python_source
+    mode_row_index: int
+    for mode_row_index in range(dialogue._retained_mode_model.rowCount()):
+        mode_name_index: QtCore.QModelIndex = dialogue._retained_mode_model.index(
+            mode_row_index,
+            0,
+        )
+        mode_name: str = str(
+            dialogue._retained_mode_model.data(
+                mode_name_index,
+                QtCore.Qt.ItemDataRole.DisplayRole,
+            )
+        )
+        assert f"{mode_name}:" in python_source
+    tab_titles: list[str] = list()
+    tab_index: int
+    for tab_index in range(dialogue._tabs.count()):
+        tab_titles.append(dialogue._tabs.tabText(tab_index))
+    assert "Runtime logic" not in tab_titles
     dialogue.close()
 
     editor.has_unapplied_changes = False
@@ -512,5 +728,3 @@ def test_ground_emt_block_is_available_from_library() -> None:
 
     editor.has_unapplied_changes = False
     editor.close()
-
-

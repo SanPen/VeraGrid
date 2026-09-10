@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Converter electrical equations &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>Converter electrical equations &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -149,7 +149,7 @@
 <strong>Builder:</strong> <code class="docutils literal notranslate"><span class="pre">build_vsc_electrical_rms()</span></code> in <code class="docutils literal notranslate"><span class="pre">hvdc_vsc_gfl_rms_template_v2.py</span></code>.</p>
 <section id="purpose-and-interface">
 <h2>Purpose and interface<a class="headerlink" href="#purpose-and-interface" title="Link to this heading"></a></h2>
-<p>This block owns the explicit converter-current states and calculates the internal AC powers. The voltages <code class="docutils literal notranslate"><span class="pre">v_d_c</span></code> and <code class="docutils literal notranslate"><span class="pre">v_q_c</span></code> are algebraic variables, not additional output ports.</p>
+<p>This block owns the explicit converter-current states and the physical AC-terminal powers. The voltages <code class="docutils literal notranslate"><span class="pre">v_d_c</span></code> and <code class="docutils literal notranslate"><span class="pre">v_q_c</span></code> are algebraic variables, not additional output ports.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Direction</p></th>
@@ -196,17 +196,17 @@
 </tr>
 <tr class="row-odd"><td><p>Output</p></td>
 <td><p>3</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">P</span></code></p></td>
-<td><p>Internal active power</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code></p></td>
+<td><p>AC-terminal active power entering the converter</p></td>
 </tr>
 <tr class="row-even"><td><p>Output</p></td>
 <td><p>4</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Q</span></code></p></td>
-<td><p>Internal reactive power</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code></p></td>
+<td><p>AC-terminal reactive power entering the converter</p></td>
 </tr>
 </tbody>
 </table>
-<p>Voltages, currents and powers are in model per-unit quantities. <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code>, <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code>, <code class="docutils literal notranslate"><span class="pre">vd_hat0</span></code> and <code class="docutils literal notranslate"><span class="pre">vq_hat0</span></code> are <strong>not</strong> extra ports of this block.</p>
+<p>Voltages, currents and powers are in model per-unit quantities. The powers follow the branch convention and are positive into the VSC.</p>
 </section>
 <section id="equations">
 <h2>Equations<a class="headerlink" href="#equations" title="Link to this heading"></a></h2>
@@ -218,7 +218,7 @@
 <p><img src="../../../_images/math/744c2b25649153fa1ae9fb435046ea6a9b23d7e9.svg" alt="v_{d,c}=y_{vd,hat}+v_d-L\omega i_q,\qquad
 v_{q,c}=y_{vq,hat}+v_q+L\omega i_d,"/></p>
 </div><div class="math">
-<p><img src="../../../_images/math/28c63b3ee656401fa5618ab9f22bf767564f2716.svg" alt="P=v_qi_q+v_di_d,\qquad Q=v_qi_d-v_di_q."/></p>
+<p><img src="../../../_images/math/4a4ece1db371c9ab9129ed2cfc2d3db817bbf77a.svg" alt="P_{t,vsc}=-(v_qi_q+v_di_d),\qquad Q_{t,vsc}=-(v_qi_d-v_di_q)."/></p>
 </div><p>Use these components together with their matching PLL and current controllers. Replacing individual signs with another dq convention changes the model.</p>
 </section>
 <section id="dynamic-parameters">
@@ -245,9 +245,9 @@ v_{q,c}=y_{vq,hat}+v_q+L\omega i_d,"/></p>
 </section>
 <section id="explicit-initialization">
 <h2>Explicit initialization<a class="headerlink" href="#explicit-initialization" title="Link to this heading"></a></h2>
-<p>The connected <a class="reference internal" href="vsc_terminal_power.html"><span class="std std-doc">terminal power block</span></a> supplies the initialization relations <code class="docutils literal notranslate"><span class="pre">P0</span> <span class="pre">=</span> <span class="pre">-Pt_vsc0</span></code> and <code class="docutils literal notranslate"><span class="pre">Q0</span> <span class="pre">=</span> <span class="pre">-Qt_vsc0</span></code>. With the PLL initialized on the q axis:</p>
+<p>The power flow initializes <code class="docutils literal notranslate"><span class="pre">Pt_vsc0</span></code> and <code class="docutils literal notranslate"><span class="pre">Qt_vsc0</span></code> directly. With the PLL initialized on the q axis:</p>
 <div class="math">
-<p><img src="../../../_images/math/885b0f849e7ea5a27e2e0a7664fbb4a6aa65fe66.svg" alt="i_{q0}=P_0/v_{q0},\qquad i_{d0}=Q_0/v_{q0},"/></p>
+<p><img src="../../../_images/math/b935f50cc90308602161cf4b4f43d73e0407b429.svg" alt="i_{q0}=-P_{t,vsc0}/v_{q0},\qquad i_{d0}=-Q_{t,vsc0}/v_{q0},"/></p>
 </div><div class="math">
 <p><img src="../../../_images/math/a259262573d3014efe7516eb826e72b9d1a78f64.svg" alt="v_{d,c0}=v_{d0}-Ri_{d0}+\omega_0Li_{q0},\qquad
 v_{q,c0}=v_{q0}+Ri_{q0}+\omega_0Li_{d0}."/></p>
@@ -255,7 +255,7 @@ v_{q,c0}=v_{q0}+Ri_{q0}+\omega_0Li_{d0}."/></p>
 </section>
 <section id="connections">
 <h2>Connections<a class="headerlink" href="#connections" title="Link to this heading"></a></h2>
-<p>Connect <code class="docutils literal notranslate"><span class="pre">vd/vq/omega</span></code> from the PLL, <code class="docutils literal notranslate"><span class="pre">y_vd_hat</span></code> from the <a class="reference internal" href="vsc_vd_hat.html"><span class="std std-doc">d-axis current PI controller</span></a>, and <code class="docutils literal notranslate"><span class="pre">y_vq_hat</span></code> from the <a class="reference internal" href="vsc_vq_hat.html"><span class="std std-doc">q-axis current PI controller</span></a>. These last two signals are voltage corrections, not voltage estimates or complete converter-voltage commands. Feed <code class="docutils literal notranslate"><span class="pre">P/Q</span></code> to the terminal power block and the selected outer power controllers. Feed <code class="docutils literal notranslate"><span class="pre">i_d/i_q</span></code> back to the inner PIs, to their corresponding outer-controller initialization inputs, and to the DC-link loss model. The current limiter also consumes <code class="docutils literal notranslate"><span class="pre">i_q</span></code>.</p>
+<p>Connect <code class="docutils literal notranslate"><span class="pre">vd/vq/omega</span></code> from the PLL, <code class="docutils literal notranslate"><span class="pre">y_vd_hat</span></code> from the <a class="reference internal" href="vsc_vd_hat.html"><span class="std std-doc">d-axis current PI controller</span></a>, and <code class="docutils literal notranslate"><span class="pre">y_vq_hat</span></code> from the <a class="reference internal" href="vsc_vq_hat.html"><span class="std std-doc">q-axis current PI controller</span></a>. These last two signals are voltage corrections, not voltage estimates or complete converter-voltage commands. Feed <code class="docutils literal notranslate"><span class="pre">Pt_vsc</span></code> to the DC-link and to the active controller in <code class="docutils literal notranslate"><span class="pre">Pac</span></code> mode; feed <code class="docutils literal notranslate"><span class="pre">Qt_vsc</span></code> to the reactive controller in <code class="docutils literal notranslate"><span class="pre">Qac</span></code> mode. Feed <code class="docutils literal notranslate"><span class="pre">i_d/i_q</span></code> back to the inner PIs, to their corresponding outer-controller initialization inputs, and to the DC-link loss model. The current limiter also consumes <code class="docutils literal notranslate"><span class="pre">i_q</span></code>.</p>
 <p>Apply/save the assembled RMS model to derive its initialization bindings. The standalone electrical component does not by itself represent a complete VSC network interface.</p>
 </section>
 </section>

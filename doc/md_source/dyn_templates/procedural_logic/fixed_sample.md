@@ -21,3 +21,7 @@ Evaluates a condition once, on the first accepted runtime update, and stores the
 ## Runtime behavior
 
 This is useful for selecting an operating branch from initial conditions. The output mode must exist and must not be written by another procedural entry. Put this entry before logic that consumes its output during the same boundary update.
+
+## Library block
+
+The standalone block has the input `condition` and output `y`. Its internal retained mode starts at `0.0`; `y` is an algebraic alias of that mode.

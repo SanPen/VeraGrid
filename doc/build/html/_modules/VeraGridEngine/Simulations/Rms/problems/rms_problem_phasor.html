@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor &mdash; VeraGrid 6.5.16 documentation</title>
+  <title>VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor &mdash; VeraGrid 6.5.26 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=6b7e4d52"></script>
+      <script src="../../../../../_static/documentation_options.js?v=c62e3d9e"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -135,18 +135,22 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.jit_compiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">RMSCompiler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transformer2W</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DummySignal</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_cs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.co_simulation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">advance_rms_fmu_cs_devices</span><span class="p">,</span>
     <span class="n">close_rms_fmu_cs_devices</span><span class="p">,</span>
     <span class="n">initialize_rms_fmu_cs_devices</span><span class="p">,</span>
     <span class="n">register_rms_fmu_cs_device</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.experimental_me</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.model_exchange</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">advance_rms_fmu_me_devices</span><span class="p">,</span>
     <span class="n">close_rms_fmu_me_devices</span><span class="p">,</span>
+    <span class="n">get_next_rms_fmu_me_event_time</span><span class="p">,</span>
     <span class="n">initialize_rms_fmu_me_devices</span><span class="p">,</span>
+    <span class="n">_prepare_rms_fmu_me_state_event_retry</span><span class="p">,</span>
     <span class="n">register_rms_fmu_me_device</span><span class="p">,</span>
+    <span class="n">resolve_rms_fmu_me_devices</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.fmu.importer.runtime_profile</span><span class="w"> </span><span class="kn">import</span> <span class="n">FmuMeEvaluationBudget</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_tic</span><span class="p">():</span>
@@ -218,10 +222,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">RmsProblemPhasor</span><span class="p">(</span><span class="n">RmsProblemTemplate</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Phasor-based DAE (Differential-Algebraic Equation) class.</span>
-<span class="sd">    </span>
+
 <span class="sd">    This class uses phasor representation (Vr, Vi) for voltages instead of polar coordinates (Vm, Va).</span>
 <span class="sd">    The phasor representation makes current equations linear and is more suitable for certain analysis.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Responsibilities:</span>
 <span class="sd">        - Store state and algebraic variables (x, y) using phasor representation</span>
 <span class="sd">        - Store Jacobian matrices</span>
@@ -274,6 +278,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_cs_initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_evaluation_budget</span><span class="p">:</span> <span class="n">FmuMeEvaluationBudget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># --------------------------------------------------------------------------------------------------------------</span>
         <span class="c1"># Initialize the RMS problem</span>
@@ -434,23 +439,23 @@
                 <span class="c1"># I = (P - jQ) / (Vr - jVi) = (P*Vr + Q*Vi) / |V|^2 + j*(P*Vi - Q*Vr) / |V|^2</span>
                 <span class="n">f_idx</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_from</span><span class="p">]</span>
                 <span class="n">t_idx</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">bus_to</span><span class="p">]</span>
-                
+
                 <span class="n">Vf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_flow_results</span><span class="o">.</span><span class="n">voltage</span><span class="p">[</span><span class="n">f_idx</span><span class="p">]</span>
                 <span class="n">Vt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_flow_results</span><span class="o">.</span><span class="n">voltage</span><span class="p">[</span><span class="n">t_idx</span><span class="p">]</span>
-                
+
                 <span class="n">Sf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">branch_num</span><span class="p">]</span>
                 <span class="n">St</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">St</span><span class="p">[</span><span class="n">branch_num</span><span class="p">]</span>
-                
+
                 <span class="c1"># From end current</span>
                 <span class="n">Vf_mag_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Vf</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
                 <span class="n">Irf</span> <span class="o">=</span> <span class="p">(</span><span class="n">Sf</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">Vf</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="n">Sf</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="n">Vf</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="o">/</span> <span class="n">Vf_mag_sq</span>
                 <span class="n">Iif</span> <span class="o">=</span> <span class="p">(</span><span class="n">Sf</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">Vf</span><span class="o">.</span><span class="n">imag</span> <span class="o">-</span> <span class="n">Sf</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="n">Vf</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">/</span> <span class="n">Vf_mag_sq</span>
-                
+
                 <span class="c1"># To end current</span>
                 <span class="n">Vt_mag_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Vt</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
                 <span class="n">Irt</span> <span class="o">=</span> <span class="p">(</span><span class="n">St</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">Vt</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="n">St</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="n">Vt</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span> <span class="o">/</span> <span class="n">Vt_mag_sq</span>
                 <span class="n">Iit</span> <span class="o">=</span> <span class="p">(</span><span class="n">St</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">Vt</span><span class="o">.</span><span class="n">imag</span> <span class="o">-</span> <span class="n">St</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="n">Vt</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">/</span> <span class="n">Vt_mag_sq</span>
-                
+
                 <span class="c1"># add init values from powerflow to initial guess</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">set_init_guess</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Irf</span><span class="p">,</span> <span class="n">Irf</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">set_init_guess</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">rms_model</span><span class="p">,</span> <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Iif</span><span class="p">,</span> <span class="n">Iif</span><span class="p">)</span>
@@ -929,7 +934,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_alias_names_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">VARIABLE_PARAMS_NAME</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_event_params</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_uid2idx_event_params</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_event_params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_event_params</span> <span class="o">+=</span> <span class="mi">1</span>
-        
+
         <span class="c1">##################### To be removed when order is preserved in the first part #############################</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state_algeb_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sys_vars</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
@@ -1211,8 +1216,8 @@
 <div class="viewcode-block" id="RmsProblemPhasor.get_E_matrix">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.Rms.problems.html#VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor.RmsProblemPhasor.get_E_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_E_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">Vec</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span><span class="n">Vec</span><span class="p">):</span>
-        <span class="c1">#We first find all diff_vars </span>
-        <span class="n">xdot</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span> 
+        <span class="c1">#We first find all diff_vars</span>
+        <span class="n">xdot</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="c1"># for var in self._state_vars:</span>
         <span class="c1">#     if var.diff_var is None:</span>
         <span class="c1">#         diff_var = self.grid.var_factory.add_diff_var(name = &#39;&#39;, base_var=var)</span>
@@ -1243,8 +1248,8 @@
         <span class="n">n_vars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_vars</span>
         <span class="n">E_value</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">((</span><span class="n">n_vars</span><span class="p">,</span> <span class="n">n_vars</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="n">E_partial</span> <span class="o">=</span> <span class="n">E_call</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">cp</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span>
-    
-        
+
+
         <span class="c1"># Map each d(eq)/d(diff_var_j) column to the column of the diff_var base</span>
         <span class="c1"># variable in the global [state_vars + algebraic_vars] ordering.</span>
         <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">dvar</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xdot</span><span class="p">):</span>
@@ -1252,13 +1257,13 @@
             <span class="n">col_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uid2idx_vars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base_var</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">col_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">E_value</span><span class="p">[:,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">E_partial</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>    
+            <span class="k">else</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="n">E_value</span><span class="p">[:</span><span class="n">n_states</span><span class="p">,</span> <span class="p">:</span><span class="n">n_states</span><span class="p">]</span> <span class="o">-=</span> <span class="n">sp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_states</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">E_value</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;lil&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">E_value</span><span class="o">.</span><span class="n">tocsc</span><span class="p">()</span></div>
 
-    
+
 <div class="viewcode-block" id="RmsProblemPhasor.get_static_state_matrix">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.Rms.problems.html#VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor.RmsProblemPhasor.get_static_state_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_static_state_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span><span class="n">Vec</span><span class="p">,</span> <span class="n">dx</span><span class="p">:</span><span class="n">Vec</span><span class="p">):</span>
@@ -1397,9 +1402,23 @@
 
 <div class="viewcode-block" id="RmsProblemPhasor.get_next_forced_event_time">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.Rms.problems.html#VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor.RmsProblemPhasor.get_next_forced_event_time">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_next_forced_event_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_prev</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t_target</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Phasor RMS currently has no forced sub-step events.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_next_forced_event_time</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">t_prev</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">t_target</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the earliest imported FMI ME time event in one interval.</span>
+
+<span class="sd">        :param t_prev: Previous accepted RMS time.</span>
+<span class="sd">        :param t_target: Candidate RMS target time.</span>
+<span class="sd">        :return: Earliest FMI event in ``(t_prev, t_target]`` or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">get_next_rms_fmu_me_event_time</span><span class="p">(</span>
+            <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">t_prev</span><span class="o">=</span><span class="n">t_prev</span><span class="p">,</span>
+            <span class="n">t_target</span><span class="o">=</span><span class="n">t_target</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RmsProblemPhasor.update_variable_params">
@@ -1501,6 +1520,42 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">advance_rms_fmu_me_devices</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_value</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">x_snapshot</span><span class="o">=</span><span class="n">x_snapshot</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">h</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RmsProblemPhasor.resolve_fmu_me_devices">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.Rms.problems.html#VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor.RmsProblemPhasor.resolve_fmu_me_devices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_fmu_me_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accepted</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve all prepared FMI ME candidates after one RMS step.</span>
+
+<span class="sd">        :param accepted: Whether the RMS numerical step converged.</span>
+<span class="sd">        :return: Earlier state-event retry time, or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">resolve_rms_fmu_me_devices</span><span class="p">(</span>
+                <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">accepted</span><span class="o">=</span><span class="n">accepted</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="RmsProblemPhasor.prepare_fmu_me_state_event_retry">
+<a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.Rms.problems.html#VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor.RmsProblemPhasor.prepare_fmu_me_state_event_retry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_fmu_me_state_event_retry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Localize an ME state event before any CS device advances.</span>
+
+<span class="sd">        :return: Global shortened target time, or ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fmu_me_adapters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_prepare_rms_fmu_me_state_event_retry</span><span class="p">(</span>
+                <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">state_event_time_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">fmi_state_event_time_tolerance</span><span class="p">,</span>
+                <span class="n">state_event_max_iterations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">fmi_state_event_max_iterations</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="RmsProblemPhasor.close_fmu_me_devices">

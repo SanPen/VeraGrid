@@ -387,12 +387,14 @@ class Tiles(BaseTiles):
                 self.request_queue.queue.clear()
             self.queued_requests.clear()
 
-    def shutdown(self) -> None:
+    def shutdown(self) -> bool:
         """
         Stop tile callbacks and background workers for this tile source.
+
+        :return: ``True`` when every tile worker has stopped.
         """
         if self._shutdown:
-            return
+            return True
 
         self._shutdown = True
         self.callback = None
@@ -401,8 +403,15 @@ class Tiles(BaseTiles):
         for worker in self.workers:
             worker.stop()
 
+        all_stopped: bool = True
         for worker in self.workers:
-            worker.wait(6000)
+            stopped: bool = worker.wait(6000)
+            if stopped:
+                pass
+            else:
+                all_stopped = False
+
+        return all_stopped
 
     def get_server_tile(self, level: int, x: float, y: float) -> None:
         """

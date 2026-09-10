@@ -21,3 +21,7 @@ Switches a retained startup mode according to a runtime enable-time parameter.
 ## Runtime behavior
 
 Before the configured time the startup path remains selected; at the boundary the mode changes to the normal-operation path. The entry participates in event-boundary scheduling so the handover can occur at the requested time rather than only at the end of a larger step.
+
+## Library block
+
+The standalone block has no signal input, exposes output `enabled`, and provides an editable `enable_time` parameter initialized to `0.0` seconds.

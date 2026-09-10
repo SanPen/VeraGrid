@@ -37,7 +37,7 @@ class FakeThreadObject:
     Minimal file-open thread used to capture the normalized input path.
     """
 
-    __slots__ = ("file_name", "options", "progress_signal", "progress_text", "done_signal", "started")
+    __slots__ = ("file_name", "options", "progress_signal", "progress_text", "done_signal", "finished", "started")
 
     def __init__(self, file_name: str | list[str], previous_circuit: Any, options: Any) -> None:
         """
@@ -54,6 +54,7 @@ class FakeThreadObject:
         self.progress_signal: FakeSignal = FakeSignal()
         self.progress_text: FakeSignal = FakeSignal()
         self.done_signal: FakeSignal = FakeSignal()
+        self.finished: FakeSignal = FakeSignal()
         self.started: bool = False
 
     def start(self) -> None:

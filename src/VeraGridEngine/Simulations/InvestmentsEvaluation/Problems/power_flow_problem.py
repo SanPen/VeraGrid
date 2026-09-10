@@ -73,9 +73,10 @@ class PowerFlowInvestmentProblem(BlackBoxProblemTemplate):
         :param grid: MultiCircuit
         :param pf_options: PowerFlowOptions
         """
+        # The Pareto plot shows the CAPEX (objective 4) against the overload cost (objective 1).
         super().__init__(grid=grid,
                          x_dim=len(grid.investments_groups),
-                         plot_x_idx=4, plot_y_idx=5)
+                         plot_x_idx=4, plot_y_idx=1)
 
         # options object
         self.pf_options = pf_options
@@ -117,7 +118,7 @@ class PowerFlowInvestmentProblem(BlackBoxProblemTemplate):
         """
         return np.array(["losses score", "overload score",
                          "voltage module_score", "voltage angle score",
-                         "financial score", "Technical score"])
+                         "CAPEX", "OPEX"])
 
     def get_vars_names(self) -> StrVec:
         """
@@ -137,7 +138,7 @@ class PowerFlowInvestmentProblem(BlackBoxProblemTemplate):
 
         # enable the investment
         self.grid.set_investments_status(investments_list=inv_list,
-                                         status=True,
+                                         apply_investment=True,
                                          all_elements_dict=self.get_all_elements_dict)
 
         scores = power_flow_function(inv_list=inv_list,
@@ -153,7 +154,12 @@ class PowerFlowInvestmentProblem(BlackBoxProblemTemplate):
 
         # revert to the initial state
         self.grid.set_investments_status(investments_list=inv_list,
-                                         status=False,
+                                         apply_investment=False,
                                          all_elements_dict=self.get_all_elements_dict)
 
-        return scores.arr()
+        return np.array([scores.losses_score,
+                         scores.overload_score,
+                         scores.voltage_module_score,
+                         scores.voltage_angle_score,
+                         scores.capex_score,
+                         scores.opex_score])

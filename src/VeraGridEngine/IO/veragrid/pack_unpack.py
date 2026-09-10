@@ -1,6 +1,6 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.  
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
@@ -92,6 +92,7 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
         'overhead_line_types': devices.OverheadLineType(),
         'underground_cable_types': devices.UndergroundLineType(),
         'sequence_line_types': devices.SequenceLineType(),
+        'dc_cable_types': devices.DcCableType(),
         'transformer_types': devices.TransformerType(),
 
         'branch_group': devices.BranchGroup(),

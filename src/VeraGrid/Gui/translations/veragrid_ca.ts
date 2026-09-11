@@ -283,148 +283,147 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <translation>Diàleg</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="141"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="135"/>
         <source>Ask about the active VeraGrid project, the selected study or the current network model.</source>
         <translation>Pregunta pel projecte VeraGrid actiu, l&apos;estudi seleccionat o el model de xarxa actual.</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="173"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="167"/>
         <source>Clear chat</source>
         <translation>Esborra el xat</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="186"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="180"/>
         <source>Ready.</source>
         <translation>A punt.</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="196"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="190"/>
         <source>Send</source>
         <translation>Enviar</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="207"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="201"/>
         <source>Settings</source>
         <translation>Configuració</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="219"/>
-        <source>Local AI</source>
-        <translation>Local AI</translation>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="213"/>
+        <source>Ollama</source>
+        <translation>Ollama</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="248"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="219"/>
+        <source>Status</source>
+        <translation>Estatut</translation>
+    </message>
+    <message>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="226"/>
+        <source>Checked automatically when the chat opens.</source>
+        <translation>Comprovat automàticament quan s&apos;obre el xat.</translation>
+    </message>
+    <message>
+        <source>Local AI</source>
+        <translation type="vanished">Local AI</translation>
+    </message>
+    <message>
         <source>/path/to/model.gguf or /path/to/models</source>
-        <translation>/path/to/model.gguf o /path/to/models</translation>
+        <translation type="vanished">/path/to/model.gguf o /path/to/models</translation>
+    </message>
+    <message>
+        <source>Local AI settings</source>
+        <translation type="vanished">Configuració local de AI</translation>
+    </message>
+    <message>
+        <source>Scan</source>
+        <translation type="vanished">Escaneja</translation>
+    </message>
+    <message>
+        <source>GGUF model</source>
+        <translation type="vanished">Model GGUF</translation>
+    </message>
+    <message>
+        <source>Model path</source>
+        <translation type="vanished">Camí model</translation>
     </message>
     <message>
         <location filename="../AiAgent/ai_chat_gui.ui" line="274"/>
-        <source>Local AI settings</source>
-        <translation>Configuració local de AI</translation>
-    </message>
-    <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="284"/>
-        <source>Scan</source>
-        <translation>Escaneja</translation>
-    </message>
-    <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="291"/>
-        <source>GGUF model</source>
-        <translation>Model GGUF</translation>
-    </message>
-    <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="298"/>
-        <source>Model path</source>
-        <translation>Camí model</translation>
-    </message>
-    <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="305"/>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="567"/>
         <source>Timeout [s]</source>
         <translation>Temps d&apos;espera [s]</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="312"/>
         <source>Context tokens</source>
-        <translation>Fitxes de context</translation>
+        <translation type="vanished">Fitxes de context</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="335"/>
         <source>Completion tokens</source>
-        <translation>Fitxes de finalització</translation>
+        <translation type="vanished">Fitxes de finalització</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="358"/>
         <source>GPU layers</source>
-        <translation>GPU capes</translation>
+        <translation type="vanished">GPU capes</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="378"/>
         <source>Temperature</source>
-        <translation>Temperatura</translation>
+        <translation type="vanished">Temperatura</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="404"/>
         <source>Top p</source>
-        <translation>superior pàg</translation>
+        <translation type="vanished">superior pàg</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="430"/>
         <source>History messages</source>
-        <translation>Missatges històrics</translation>
+        <translation type="vanished">Missatges històrics</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="450"/>
         <source>History chars</source>
-        <translation>Caràcters de la història</translation>
+        <translation type="vanished">Caràcters de la història</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="473"/>
         <source>Grounding chars</source>
-        <translation>Caràcters de connexió a terra</translation>
+        <translation type="vanished">Caràcters de connexió a terra</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="505"/>
         <source>Remote AI</source>
-        <translation>Comandament a distància AI</translation>
+        <translation type="vanished">Comandament a distància AI</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="511"/>
         <source>API key</source>
-        <translation>Clau API</translation>
+        <translation type="vanished">Clau API</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="550"/>
         <source>https://api.example.com/v1</source>
-        <translation>https://api.example.com/v1</translation>
+        <translation type="vanished">https://api.example.com/v1</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="560"/>
         <source>Leave empty for unauthenticated endpoints</source>
-        <translation>Deixeu-lo en blanc per als punts finals no autenticats</translation>
+        <translation type="vanished">Deixeu-lo en blanc per als punts finals no autenticats</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="574"/>
         <source>API provider</source>
-        <translation>Proveïdor API</translation>
+        <translation type="vanished">Proveïdor API</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="581"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="250"/>
         <source>Model</source>
         <translation>Model</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="598"/>
         <source>API AI settings</source>
-        <translation>Configuració de API AI</translation>
+        <translation type="vanished">Configuració de API AI</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="605"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="236"/>
         <source>Base URL</source>
         <translation>URL base</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="615"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="243"/>
+        <source>http://localhost:11434/v1</source>
+        <translation>http://localhost:11434/v1</translation>
+    </message>
+    <message>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="267"/>
         <source>Refresh</source>
         <translation>Actualitza</translation>
     </message>
@@ -437,11 +436,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </message>
     <message>
         <source>Pick or type a GGUF file name</source>
-        <translation>Trieu o escriviu un nom de fitxer GGUF</translation>
+        <translation type="vanished">Trieu o escriviu un nom de fitxer GGUF</translation>
     </message>
     <message>
         <source>Provider model name</source>
-        <translation>Nom del model del proveïdor</translation>
+        <translation type="vanished">Nom del model del proveïdor</translation>
     </message>
     <message>
         <source>VeraGrid AI</source>
@@ -449,19 +448,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </message>
     <message>
         <source>Scan the configured path for GGUF files.</source>
-        <translation>Escaneja el camí configurat per als fitxers GGUF.</translation>
+        <translation type="vanished">Escaneja el camí configurat per als fitxers GGUF.</translation>
     </message>
     <message>
         <source>API key</source>
-        <translation>Clau API</translation>
+        <translation type="vanished">Clau API</translation>
     </message>
     <message>
         <source>Leave empty for unauthenticated endpoints</source>
-        <translation>Deixeu-lo en blanc per als punts finals no autenticats</translation>
+        <translation type="vanished">Deixeu-lo en blanc per als punts finals no autenticats</translation>
     </message>
     <message>
         <source>Query the configured backend for models.</source>
-        <translation>Consulteu el backend configurat per als models.</translation>
+        <translation type="vanished">Consulteu el backend configurat per als models.</translation>
     </message>
     <message>
         <source>Type a message before sending.</source>
@@ -519,6 +518,114 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <source>Tool</source>
         <translation>Eina</translation>
     </message>
+    <message>
+        <source>AI turn failed: {error_message}</source>
+        <translation>L&apos;esdeveniment d&apos;IA ha fallat: {error_message}</translation>
+    </message>
+    <message>
+        <source>Checking automatically when the chat opens.</source>
+        <translation>Comprovació automàtica quan s&apos;obre el xat.</translation>
+    </message>
+    <message>
+        <source>Could not refresh models: {error_message}</source>
+        <translation>No s&apos;han pogut refrescar els models: {error_message}</translation>
+    </message>
+    <message>
+        <source>Loaded {model_count} models from the backend.</source>
+        <translation>S&apos;han carregat {model_count} models del backend.</translation>
+    </message>
+    <message>
+        <source>Not ready. {error_message}</source>
+        <translation>No preparat. {error_message}</translation>
+    </message>
+    <message>
+        <source>Ollama base URL</source>
+        <translation>URL base d&apos;Ollama</translation>
+    </message>
+    <message>
+        <source>Ollama did not report models: {error_message}</source>
+        <translation>Ollama no ha reportat models: {error_message}</translation>
+    </message>
+    <message>
+        <source>Ollama is ready.</source>
+        <translation>Ollama està preparat.</translation>
+    </message>
+    <message>
+        <source>Ollama is running, but it reported no installed models.</source>
+        <translation>Ollama està executant, però no ha reportat models instal·lats.</translation>
+    </message>
+    <message>
+        <source>Ollama is running. Loaded {model_count} models.</source>
+        <translation>Ollama està executant. S&apos;han carregat {model_count} models.</translation>
+    </message>
+    <message>
+        <source>Ollama model</source>
+        <translation>Model de Ollama</translation>
+    </message>
+    <message>
+        <source>Ollama reports installed models automatically</source>
+        <translation>Ollama reporta els models instal·lats automàticament</translation>
+    </message>
+    <message>
+        <source>Ollama will be detected and checked automatically when the chat opens.</source>
+        <translation>Ollama s&apos;detectarà i es comprovarà automàticament quan s&apos;obre el xat.</translation>
+    </message>
+    <message>
+        <source>Pick or type an Ollama model</source>
+        <translation>Seleccioneu o digueu un model d&apos;Ollama</translation>
+    </message>
+    <message>
+        <source>Query Ollama for models.</source>
+        <translation>Consultar Ollama per models.</translation>
+    </message>
+    <message>
+        <source>Refreshing models from Ollama...</source>
+        <translation>Refrescant models des d&apos;Ollama...</translation>
+    </message>
+    <message>
+        <source>Refreshing models from the configured backend...</source>
+        <translation>Refrescant models des del backend configurat...</translation>
+    </message>
+    <message>
+        <source>Reply with one short greeting sentence. Say that VeraGrid AI is ready and Ollama is working with model {model_name}. Do not ask a question.</source>
+        <translation>Responeu amb una frase de salutació curta. Diu que VeraGrid AI està preparat i que Ollama està funcionant amb el model {model_name}. No preguntis res.</translation>
+    </message>
+    <message>
+        <source>Running, but no installed models were reported.</source>
+        <translation>Està executant, però no s&apos;han reportat models instal·lats.</translation>
+    </message>
+    <message>
+        <source>Running. Using {model_name}.</source>
+        <translation>Està executant. Utilitzant {model_name}.</translation>
+    </message>
+    <message>
+        <source>Running. {model_count} installed models reported.</source>
+        <translation>Està executant. {model_count} models instal·lats reportats.</translation>
+    </message>
+    <message>
+        <source>The Ollama base URL field is empty.</source>
+        <translation>El camp d&apos;URL base d&apos;Ollama està buit.</translation>
+    </message>
+    <message>
+        <source>The base URL field is empty.</source>
+        <translation>El camp d&apos;URL base està buit.</translation>
+    </message>
+    <message>
+        <source>The model field is empty.</source>
+        <translation>El camp de model està buit.</translation>
+    </message>
+    <message>
+        <source>Turn completed.</source>
+        <translation>Esdeveniment completat.</translation>
+    </message>
+    <message>
+        <source>VeraGrid checks Ollama automatically and uses the model reported by the local server.</source>
+        <translation>VeraGrid comprova Ollama automàticament i utilitza el model reportat pel servidor local.</translation>
+    </message>
+    <message>
+        <source>http://localhost:11434/v1</source>
+        <translation>http://localhost:11434/v1</translation>
+    </message>
 </context>
 <context>
     <name>ArrayEditor</name>
@@ -552,6 +659,17 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <message>
         <source>{device_name} results plot</source>
         <translation>Gràfic de resultats de {device_name}</translation>
+    </message>
+</context>
+<context>
+    <name>BaseMainGui</name>
+    <message>
+        <source>Are you sure that you want to cancel the simulation?</source>
+        <translation>¿És segur que vols cancel·lar la simulació?</translation>
+    </message>
+    <message>
+        <source>Unlocking the UI may cause crash depending on the conditions. Are you sure?</source>
+        <translation>Desblocar la UI pot causar un col·lapse depenent de les condicions. Voleu estar segur?</translation>
     </message>
 </context>
 <context>
@@ -2113,6 +2231,49 @@ Combreu?</translation>
     </message>
 </context>
 <context>
+    <name>DiagramScene</name>
+    <message>
+        <source>Block info</source>
+        <translation>Informació del bloc</translation>
+    </message>
+    <message>
+        <source>Edit block</source>
+        <translation type="vanished">Editar bloc</translation>
+    </message>
+    <message>
+        <source>Change Color</source>
+        <translation>Canvia el color</translation>
+    </message>
+    <message>
+        <source>Change Name</source>
+        <translation>Canvi Nom</translation>
+    </message>
+    <message>
+        <source>Change Variable Name</source>
+        <translation>Canviar nom de la variable</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation>Duplicat</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Edita</translation>
+    </message>
+    <message>
+        <source>Open internals</source>
+        <translation>Obrir internals</translation>
+    </message>
+    <message>
+        <source>Properties</source>
+        <translation>Propietats</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Eliminar</translation>
+    </message>
+</context>
+<context>
     <name>DiagramsMain</name>
     <message>
         <source>Are you sure that you want to try an automatic layout?</source>
@@ -2851,6 +3012,18 @@ Combreu?</translation>
         <source>You are going to delete the complete model and start from scratch. Are you sure?</source>
         <translation type="vanished">Vaneu eliminar el model complet i començar des de zero. En el seu cos?</translation>
     </message>
+    <message>
+        <source>Block info</source>
+        <translation>Informació del bloc</translation>
+    </message>
+    <message>
+        <source>No online catalogue documentation is available for this custom block.</source>
+        <translation>No hi ha documentació de catàleg online disponible per a aquest bloc personalitzat.</translation>
+    </message>
+    <message>
+        <source>The online block documentation could not be opened.</source>
+        <translation>No s&apos;ha pogut obrir la documentació del bloc online.</translation>
+    </message>
 </context>
 <context>
     <name>DynamicBlockPropertiesDialog</name>
@@ -2860,9 +3033,8 @@ Combreu?</translation>
         <translation>Bloquejar propietats</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="70"/>
         <source>Apply changes</source>
-        <translation>Aplicar canvis</translation>
+        <translation type="vanished">Aplicar canvis</translation>
     </message>
     <message>
         <source>Close</source>
@@ -2874,11 +3046,11 @@ Combreu?</translation>
     </message>
     <message>
         <source>Add symbol</source>
-        <translation>Afegir símbol</translation>
+        <translation type="vanished">Afegir símbol</translation>
     </message>
     <message>
         <source>Add symbol to selected block</source>
-        <translation>Afegir símbol al bloc seleccionat</translation>
+        <translation type="vanished">Afegir símbol al bloc seleccionat</translation>
     </message>
     <message>
         <source>Advanced runtime logic</source>
@@ -2889,16 +3061,17 @@ Combreu?</translation>
         <translation>Aplicar configuracions estructurals separat del codi DAE o dels canvis d&apos;interfície de símbol.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="405"/>
         <source>Block / equation group</source>
         <translation>Bloc / grup d&apos;equacions</translation>
     </message>
     <message>
         <source>Block configuration</source>
-        <translation>Configuració del bloc</translation>
+        <translation type="vanished">Configuració del bloc</translation>
     </message>
     <message>
         <source>Block info</source>
-        <translation>Informació del bloc</translation>
+        <translation type="vanished">Informació del bloc</translation>
     </message>
     <message>
         <source>Block properties - {name}</source>
@@ -2922,11 +3095,11 @@ Combreu?</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Clar</translation>
+        <translation type="vanished">Clar</translation>
     </message>
     <message>
         <source>Create derivative variable</source>
-        <translation>Crear variable derivativa</translation>
+        <translation type="vanished">Crear variable derivativa</translation>
     </message>
     <message>
         <source>DAE and runtime-logic changes applied to the editor working copy.</source>
@@ -2937,8 +3110,9 @@ Combreu?</translation>
         <translation type="vanished">El codi DAE és vàlid.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="134"/>
         <source>DAE model</source>
-        <translation type="vanished">Model DAE</translation>
+        <translation>Model DAE</translation>
     </message>
     <message>
         <source>DAE validation failed at line {line}: {message}</source>
@@ -2950,11 +3124,11 @@ Combreu?</translation>
     </message>
     <message>
         <source>Download rendered PDF</source>
-        <translation>Descarregar PDF renderitzat</translation>
+        <translation type="vanished">Descarregar PDF renderitzat</translation>
     </message>
     <message>
         <source>Enter a name</source>
-        <translation>Introduir un nom</translation>
+        <translation type="vanished">Introduir un nom</translation>
     </message>
     <message>
         <source>Enter a valid Python symbol name.</source>
@@ -2965,14 +3139,53 @@ Combreu?</translation>
         <translation>PDF d&apos;equació creat: {path}</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="188"/>
         <source>Equation owner</source>
         <translation>Propietari de l&apos;equació</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="254"/>
+        <source>&lt;&lt;</source>
+        <translation>&lt;&lt;</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="264"/>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="292"/>
+        <source>LaTeX rendering</source>
+        <translation>Renderitzatge LaTeX</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="333"/>
+        <source>Select None</source>
+        <translation>Seleccionar Cap</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="360"/>
+        <source>Save redered PDF</source>
+        <translation>Guardar PDF renderitzat</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="389"/>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="410"/>
         <source>Equations</source>
         <translation>Equacions</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="427"/>
+        <source>LaTex source</source>
+        <translation>Font de LaTex</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="529"/>
+        <source>Accept changes</source>
+        <translation>Acceptar canvis</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="40"/>
         <source>General options</source>
         <translation>Opcions generals</translation>
     </message>
@@ -2982,7 +3195,7 @@ Combreu?</translation>
     </message>
     <message>
         <source>Initial numeric value</source>
-        <translation>Valor numèric inicial</translation>
+        <translation type="vanished">Valor numèric inicial</translation>
     </message>
     <message>
         <source>Inputs</source>
@@ -2994,11 +3207,11 @@ Combreu?</translation>
     </message>
     <message>
         <source>LaTeX</source>
-        <translation>LaTeX</translation>
+        <translation type="vanished">LaTeX</translation>
     </message>
     <message>
         <source>LaTeX source</source>
-        <translation>Font LaTeX</translation>
+        <translation type="vanished">Font LaTeX</translation>
     </message>
     <message>
         <source>Name</source>
@@ -3006,11 +3219,11 @@ Combreu?</translation>
     </message>
     <message>
         <source>New symbol name</source>
-        <translation>Nom nou de símbol</translation>
+        <translation type="vanished">Nom nou de símbol</translation>
     </message>
     <message>
         <source>Next</source>
-        <translation>Següent</translation>
+        <translation type="vanished">Següent</translation>
     </message>
     <message>
         <source>No matches</source>
@@ -3018,7 +3231,7 @@ Combreu?</translation>
     </message>
     <message>
         <source>No online catalogue documentation is available for this custom block.</source>
-        <translation>No hi ha documentació de catàleg en línia disponible per a aquest bloc personalitzat.</translation>
+        <translation type="vanished">No hi ha documentació de catàleg en línia disponible per a aquest bloc personalitzat.</translation>
     </message>
     <message>
         <source>None</source>
@@ -3034,11 +3247,11 @@ Combreu?</translation>
     </message>
     <message>
         <source>Opens the documentation for the original predefined library block. If this block has been modified in the editor, its current equations, symbols, parameters, or runtime logic may differ from the online documentation.</source>
-        <translation>Obre la documentació del bloc bibliotecari predefinit original. Si aquest bloc s&apos;ha modificat a l&apos;editor, les seves equacions, símbols, paràmetres o lògica de temps de treball actuals poden diferir de la documentació en línia.</translation>
+        <translation type="vanished">Obre la documentació del bloc bibliotecari predefinit original. Si aquest bloc s&apos;ha modificat a l&apos;editor, les seves equacions, símbols, paràmetres o lògica de temps de treball actuals poden diferir de la documentació en línia.</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>Sortida</translation>
+        <translation type="vanished">Sortida</translation>
     </message>
     <message>
         <source>Outputs</source>
@@ -3046,7 +3259,7 @@ Combreu?</translation>
     </message>
     <message>
         <source>Owner block</source>
-        <translation>Bloc propietari</translation>
+        <translation type="vanished">Bloc propietari</translation>
     </message>
     <message>
         <source>PDF documents (*.pdf)</source>
@@ -3062,19 +3275,19 @@ Combreu?</translation>
     </message>
     <message>
         <source>Power-flow variable</source>
-        <translation>Variable de flux de potència</translation>
+        <translation type="vanished">Variable de flux de potència</translation>
     </message>
     <message>
         <source>Power-flow variable used to initialize this dynamic variable.</source>
-        <translation>Variable de flux de potència utilitzada per inicialitzar aquesta variable dinàmica.</translation>
+        <translation type="vanished">Variable de flux de potència utilitzada per inicialitzar aquesta variable dinàmica.</translation>
     </message>
     <message>
         <source>Previous</source>
-        <translation>Anterior</translation>
+        <translation type="vanished">Anterior</translation>
     </message>
     <message>
         <source>Python code</source>
-        <translation>Codi Python</translation>
+        <translation type="vanished">Codi Python</translation>
     </message>
     <message>
         <source>Rename...</source>
@@ -3089,6 +3302,7 @@ Combreu?</translation>
         <translation>Guardar PDF d&apos;equacions dinàmiques</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="241"/>
         <source>Search Python code...</source>
         <translation>Cercar codi Python...</translation>
     </message>
@@ -3109,6 +3323,7 @@ Combreu?</translation>
         <translation>Triar un tipus de símbol vàlid.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="319"/>
         <source>Select all</source>
         <translation>Seleccioneu-ho tot</translation>
     </message>
@@ -3117,10 +3332,12 @@ Combreu?</translation>
         <translation>Triar almenys un grup d&apos;equacions no buit.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="439"/>
         <source>Select equation groups to generate copyable LaTeX source.</source>
         <translation>Triar els grups d&apos;equacions per generar una font LaTeX copiable.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="395"/>
         <source>Select the equation groups to include. Each internal block and each DAE section can be selected independently.</source>
         <translation>Triar els grups d&apos;equacions a incloure. Cada bloc intern i cada secció DAE es poden triar de manera independent.</translation>
     </message>
@@ -3130,11 +3347,11 @@ Combreu?</translation>
     </message>
     <message>
         <source>Static device mapping</source>
-        <translation>Mapegegege de dispositius estàtics</translation>
+        <translation type="vanished">Mapegegege de dispositius estàtics</translation>
     </message>
     <message>
         <source>Symbol category</source>
-        <translation>Categoria de símbol</translation>
+        <translation type="vanished">Categoria de símbol</translation>
     </message>
     <message>
         <source>The PDF could not be created: {message}</source>
@@ -3142,9 +3359,10 @@ Combreu?</translation>
     </message>
     <message>
         <source>The online block documentation could not be opened in the system browser.</source>
-        <translation>No s&apos;ha pogut obrir la documentació del bloc en línia al navegador del sistema.</translation>
+        <translation type="vanished">No s&apos;ha pogut obrir la documentació del bloc en línia al navegador del sistema.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="457"/>
         <source>These settings contain structured data used to regenerate the block. Edit sequences with valid Python tuple/list syntax.</source>
         <translation>Aquests paràmetres contenen dades estructurades utilitzades per regenerar el bloc. Editeu seqüències amb sintaxi vàlida de tuple/lista Python.</translation>
     </message>
@@ -3154,7 +3372,7 @@ Combreu?</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tipus</translation>
+        <translation type="vanished">Tipus</translation>
     </message>
     <message>
         <source>Validate all code</source>
@@ -3174,19 +3392,20 @@ Combreu?</translation>
     </message>
     <message>
         <source>+ Add procedural logic</source>
-        <translation>+ Afegir lògica procedural</translation>
+        <translation type="vanished">+ Afegir lògica procedural</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="161"/>
         <source>Add one procedural behavior to the active equation owner&apos;s Python code.</source>
         <translation>Afegir un comportament procedural al codi Python del propietari de l&apos;equació activa.</translation>
     </message>
     <message>
         <source>DAE editor</source>
-        <translation>Editor DAE</translation>
+        <translation type="vanished">Editor DAE</translation>
     </message>
     <message>
         <source>Documentation</source>
-        <translation>Documentació</translation>
+        <translation type="vanished">Documentació</translation>
     </message>
     <message>
         <source>Model code is valid.</source>
@@ -3205,6 +3424,7 @@ Combreu?</translation>
         <translation>Mode conservat</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="82"/>
         <source>Search properties...</source>
         <translation>Cercar propietats...</translation>
     </message>
@@ -3214,9 +3434,10 @@ Combreu?</translation>
     </message>
     <message>
         <source>Show or hide Python code and LaTeX rendering tool</source>
-        <translation>Mostrar o amagar l&apos;eina de renderitzat de codi Python i LaTeX</translation>
+        <translation type="vanished">Mostrar o amagar l&apos;eina de renderitzat de codi Python i LaTeX</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="451"/>
         <source>Special configuration</source>
         <translation>Configuració especial</translation>
     </message>
@@ -3229,12 +3450,10 @@ Combreu?</translation>
         <translation>El propietari seleccionat no té buffer de codi Python.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="502"/>
         <source>Validate model</source>
         <translation>Validar model</translation>
     </message>
-</context>
-<context>
-    <name>DynamicBlockPropertiesDockWidget</name>
     <message>
         <source>Block Properties contains changes that have not been applied. Discard those changes and close the editor?</source>
         <translation>Propietats del bloc conté canvis que no s&apos;han aplicats. Descartar aquests canvis i tancar l&apos;editor?</translation>
@@ -3242,6 +3461,22 @@ Combreu?</translation>
     <message>
         <source>Unsaved Block Properties changes</source>
         <translation>Canvis no guardats de Propietats del bloc</translation>
+    </message>
+    <message>
+        <source>Add parameter...</source>
+        <translation>Afegir paràmetre...</translation>
+    </message>
+    <message>
+        <source>Add retained mode...</source>
+        <translation>Afegir mode de manteniment...</translation>
+    </message>
+    <message>
+        <source>Add variable...</source>
+        <translation>Afegir variable...</translation>
+    </message>
+    <message>
+        <source>Nothing was added: {message}</source>
+        <translation>No s&apos;ha afegit res: {message}</translation>
     </message>
 </context>
 <context>
@@ -3328,19 +3563,19 @@ Combreu?</translation>
     <name>DynamicEditorWorkspaceSession</name>
     <message>
         <source>Invalid dynamic events</source>
-        <translation>Esdeveniments dinàmics no vàlids</translation>
+        <translation type="vanished">Esdeveniments dinàmics no vàlids</translation>
     </message>
     <message>
         <source>Save the changes before closing the last events tab?</source>
-        <translation>¿Desitgeu guardar els canvis abans de tancar la última pestanya d&apos;esdeveniments?</translation>
+        <translation type="vanished">¿Desitgeu guardar els canvis abans de tancar la última pestanya d&apos;esdeveniments?</translation>
     </message>
     <message>
         <source>The dynamic events contain unsaved changes.</source>
-        <translation>Els esdeveniments dinàmics contenen canvis no guardats.</translation>
+        <translation type="vanished">Els esdeveniments dinàmics contenen canvis no guardats.</translation>
     </message>
     <message>
         <source>Unsaved dynamic events</source>
-        <translation>Esdeveniments dinàmics no guardats</translation>
+        <translation type="vanished">Esdeveniments dinàmics no guardats</translation>
     </message>
 </context>
 <context>
@@ -3645,38 +3880,52 @@ Combreu?</translation>
     </message>
 </context>
 <context>
+    <name>DynamicEventGroupsTreeModel</name>
+    <message>
+        <source>Event groups</source>
+        <translation>Grups d&apos;esdeveniments</translation>
+    </message>
+</context>
+<context>
     <name>DynamicEventsDraftSession</name>
     <message>
         <source>An event and its events group use different simulation modes.</source>
-        <translation>Un esdeveniment i el seu grup d&apos;esdeveniments utilitzen modes de simulació diferents.</translation>
+        <translation type="vanished">Un esdeveniment i el seu grup d&apos;esdeveniments utilitzen modes de simulació diferents.</translation>
     </message>
     <message>
         <source>An event has no target device.</source>
-        <translation>Un esdeveniment no té dispositiu objectiu.</translation>
+        <translation type="vanished">Un esdeveniment no té dispositiu objectiu.</translation>
     </message>
     <message>
         <source>An event in device &apos;{device}&apos; has no valid events group.</source>
-        <translation>Un esdeveniment en el dispositiu &apos;{device}&apos; no té un grup d&apos;esdeveniments vàlid.</translation>
+        <translation type="vanished">Un esdeveniment en el dispositiu &apos;{device}&apos; no té un grup d&apos;esdeveniments vàlid.</translation>
     </message>
     <message>
         <source>An event in device &apos;{device}&apos; has no valid parameter.</source>
-        <translation>Un esdeveniment en el dispositiu &apos;{device}&apos; no té un paràmetre vàlid.</translation>
+        <translation type="vanished">Un esdeveniment en el dispositiu &apos;{device}&apos; no té un paràmetre vàlid.</translation>
     </message>
     <message>
         <source>An events group has an empty name.</source>
-        <translation>Un grup d&apos;esdeveniments té un nom buit.</translation>
+        <translation type="vanished">Un grup d&apos;esdeveniments té un nom buit.</translation>
     </message>
     <message>
         <source>Events for parameter &apos;{parameter}&apos; overlap in group &apos;{group}&apos; and device &apos;{device}&apos;.</source>
-        <translation>Els esdeveniments per al paràmetre &apos;{parameter}&apos; es superposen al grup &apos;{group}&apos; i al dispositiu &apos;{device}&apos;.</translation>
+        <translation type="vanished">Els esdeveniments per al paràmetre &apos;{parameter}&apos; es superposen al grup &apos;{group}&apos; i al dispositiu &apos;{device}&apos;.</translation>
     </message>
     <message>
         <source>The events group name &apos;{name}&apos; is duplicated.</source>
-        <translation>El nom del grup d&apos;esdeveniments &apos;{name}&apos; està duplicat.</translation>
+        <translation type="vanished">El nom del grup d&apos;esdeveniments &apos;{name}&apos; està duplicat.</translation>
     </message>
     <message>
         <source>The ramp event for parameter &apos;{parameter}&apos; has an invalid end time.</source>
-        <translation>L&apos;esdeveniment de ramp per al paràmetre &apos;{parameter}&apos; té una hora de finalització no vàlida.</translation>
+        <translation type="vanished">L&apos;esdeveniment de ramp per al paràmetre &apos;{parameter}&apos; té una hora de finalització no vàlida.</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicEventsFilterPopup</name>
+    <message>
+        <source>All</source>
+        <translation type="vanished">Tot</translation>
     </message>
 </context>
 <context>
@@ -3710,50 +3959,104 @@ Combreu?</translation>
     <name>DynamicEventsItemDelegate</name>
     <message>
         <source>Ramp</source>
-        <translation>Rampa</translation>
+        <translation type="vanished">Rampa</translation>
     </message>
     <message>
         <source>Step</source>
-        <translation>Pas</translation>
+        <translation type="vanished">Pas</translation>
     </message>
 </context>
 <context>
     <name>DynamicEventsPage</name>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="165"/>
         <source>Add an event to the selected event group</source>
         <translation>Afegir un esdeveniment al grup d&apos;esdeveniments seleccionat</translation>
     </message>
     <message>
         <source>Are you sure you want to remove group &apos;{group}&apos;? This will remove {events} events from {devices} devices.</source>
-        <translation>Està segur que voleu eliminar el grup &apos;{group}&apos;? Això eliminarà {events} esdeveniments de {devices} dispositius.</translation>
+        <translation type="vanished">Està segur que voleu eliminar el grup &apos;{group}&apos;? Això eliminarà {events} esdeveniments de {devices} dispositius.</translation>
     </message>
     <message>
         <source>Are you sure you want to remove the event for &apos;{parameter}&apos; at {time:.4f} s?</source>
-        <translation>Està segur que voleu eliminar l&apos;esdeveniment per a &apos;{parameter}&apos; a {time:.4f} s?</translation>
+        <translation type="vanished">Està segur que voleu eliminar l&apos;esdeveniment per a &apos;{parameter}&apos; a {time:.4f} s?</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="14"/>
+        <source>Dynamic Events</source>
+        <translation>Esdeveniments Dinàmics</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="124"/>
+        <source>New</source>
+        <translation>Nou</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="127"/>
+        <source>Delete all events of this simulation mode from the current device</source>
+        <translation>Eliminar tots els esdeveniments d&apos;aquest mode de simulació del dispositiu actual</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="139"/>
+        <source>Save</source>
+        <translation>Desa</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="142"/>
+        <source>Save event changes</source>
+        <translation>Guardar canvis d&apos;esdeveniment</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="145"/>
+        <source>Ctrl+S</source>
+        <translation>Ctrl+S</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="153"/>
         <source>Create an EMT switch opening and reclosing event sequence</source>
         <translation>Crear una seqüència d&apos;esdeveniment d&apos;apertura i tancament d&apos;interruptor EMT</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="182"/>
+        <source>Create Event Group</source>
+        <translation>Crear grup d&apos;esdeveniments</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="185"/>
+        <source>Create an event group</source>
+        <translation>Crear un grup d&apos;esdeveniments</translation>
+    </message>
+    <message>
+        <source>Add Event</source>
+        <translation type="vanished">Afegir Esdeveniment</translation>
+    </message>
+    <message>
+        <source>Remove Selected</source>
+        <translation type="vanished">Elimina els seleccionats</translation>
+    </message>
+    <message>
+        <source>Add Event Group</source>
+        <translation>Afegir Grup d&apos;Esdeveniments</translation>
+    </message>
+    <message>
         <source>Create an event group for this simulation mode</source>
-        <translation>Crear un grup d&apos;esdeveniments per a aquest mode de simulació</translation>
+        <translation type="vanished">Crear un grup d&apos;esdeveniments per a aquest mode de simulació</translation>
     </message>
     <message>
         <source>Empty dynamic model</source>
-        <translation>Model dinàmic buit</translation>
+        <translation type="vanished">Model dinàmic buit</translation>
     </message>
     <message>
         <source>Events cannot be added because this dynamic model has no event parameters.</source>
-        <translation>No es poden afegir esdeveniments perquè aquest model dinàmic no té paràmetres d&apos;esdeveniment.</translation>
+        <translation type="vanished">No es poden afegir esdeveniments perquè aquest model dinàmic no té paràmetres d&apos;esdeveniment.</translation>
     </message>
     <message>
         <source>Events saved</source>
-        <translation>Esdeveniments guardats</translation>
+        <translation type="vanished">Esdeveniments guardats</translation>
     </message>
     <message>
         <source>Invalid dynamic events</source>
-        <translation>Esdeveniments dinàmics no vàlids</translation>
+        <translation type="vanished">Esdeveniments dinàmics no vàlids</translation>
     </message>
     <message>
         <source>Invalid event group</source>
@@ -3761,15 +4064,15 @@ Combreu?</translation>
     </message>
     <message>
         <source>Invalid parameter</source>
-        <translation>Paràmetre no vàlid</translation>
+        <translation type="vanished">Paràmetre no vàlid</translation>
     </message>
     <message>
         <source>No events can be added because the dynamic model has no event parameters.</source>
-        <translation>No es poden afegir esdeveniments perquè el model dinàmic no té paràmetres d&apos;esdeveniment.</translation>
+        <translation type="vanished">No es poden afegir esdeveniments perquè el model dinàmic no té paràmetres d&apos;esdeveniment.</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Eliminar</translation>
+        <translation type="vanished">Eliminar</translation>
     </message>
     <message>
         <source>Remove event</source>
@@ -3777,82 +4080,145 @@ Combreu?</translation>
     </message>
     <message>
         <source>Remove events group</source>
-        <translation>Eliminar grup d&apos;esdeveniments</translation>
+        <translation type="vanished">Eliminar grup d&apos;esdeveniments</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="177"/>
         <source>Remove the selected event or event group</source>
         <translation>Eliminar l&apos;esdeveniment o el grup d&apos;esdeveniments seleccionat</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation>Renominar</translation>
+        <translation type="vanished">Renominar</translation>
     </message>
     <message>
         <source>Save events</source>
-        <translation>Guardar esdeveniments</translation>
+        <translation type="vanished">Guardar esdeveniments</translation>
     </message>
     <message>
         <source>Select the event group where you want to add the event.</source>
-        <translation>Seleccioneu el grup d&apos;esdeveniments on voleu afegir l&apos;esdeveniment.</translation>
+        <translation type="vanished">Seleccioneu el grup d&apos;esdeveniments on voleu afegir l&apos;esdeveniment.</translation>
     </message>
     <message>
         <source>Select the event or event group you want to remove.</source>
-        <translation>Seleccioneu l&apos;esdeveniment o el grup d&apos;esdeveniments que voleu eliminar.</translation>
+        <translation type="vanished">Seleccioneu l&apos;esdeveniment o el grup d&apos;esdeveniments que voleu eliminar.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="150"/>
         <source>Switch Sequence Wizard</source>
         <translation>Passare de seqüència</translation>
     </message>
     <message>
         <source>The event group name must be non-empty and unique in this simulation mode.</source>
-        <translation>El nom del grup d&apos;esdeveniments ha de ser no buit i únic en aquest mode de simulació.</translation>
+        <translation type="vanished">El nom del grup d&apos;esdeveniments ha de ser no buit i únic en aquest mode de simulació.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="101"/>
         <source>This dynamic model is empty. New events cannot be added until the model is built.</source>
         <translation>Aquest model dinàmic està buit. No es poden afegir esdeveniments fins que el model estigui construït.</translation>
     </message>
     <message>
         <source>➕ New Event Group</source>
-        <translation>➕ Nou Grup d&apos;Esdeveniments</translation>
+        <translation type="vanished">➕ Nou Grup d&apos;Esdeveniments</translation>
+    </message>
+    <message>
+        <source>Add an event and select its event group</source>
+        <translation type="vanished">Afegir un esdeveniment i seleccionar el seu grup d&apos;esdeveniments</translation>
+    </message>
+    <message>
+        <source>Create an event group before adding an event.</source>
+        <translation type="vanished">Crea un grup d&apos;esdeveniments abans d&apos;afegir un esdeveniment.</translation>
+    </message>
+    <message>
+        <source>Select the event you want to remove.</source>
+        <translation type="vanished">Seleccioneu l&apos;esdeveniment que voleu eliminar.</translation>
+    </message>
+    <message>
+        <source>An event group with this name already exists.</source>
+        <translation>Ja existeix un grup d&apos;esdeveniments amb aquest nom.</translation>
+    </message>
+    <message>
+        <source>Delete all device events</source>
+        <translation>Eliminar tots els esdeveniments del dispositiu</translation>
+    </message>
+    <message>
+        <source>Delete all events for this device and simulation mode?</source>
+        <translation>Eliminar tots els esdeveniments per a aquest dispositiu i mode de simulació?</translation>
+    </message>
+    <message>
+        <source>Group name:</source>
+        <translation>Nom del grup:</translation>
+    </message>
+    <message>
+        <source>Remove &apos;{name}&apos; and all events in this group?</source>
+        <translation>Eliminar &apos;{name}&apos; i tots els esdeveniments d&apos;aquest grup?</translation>
+    </message>
+    <message>
+        <source>Remove event group</source>
+        <translation>Eliminar grup d&apos;esdeveniments</translation>
+    </message>
+    <message>
+        <source>Remove the selected event?</source>
+        <translation>Eliminar l&apos;esdeveniment seleccionat?</translation>
+    </message>
+    <message>
+        <source>Select an event group before adding an event.</source>
+        <translation>Seleccioneu un grup d&apos;esdeveniments abans d&apos;afegir un esdeveniment.</translation>
+    </message>
+    <message>
+        <source>Select an event or event group to remove.</source>
+        <translation>Seleccioneu un esdeveniment o grup d&apos;esdeveniments per eliminar.</translation>
+    </message>
+    <message>
+        <source>The dynamic model has no event parameters.</source>
+        <translation>El model dinàmic no té paràmetres d&apos;esdeveniment.</translation>
     </message>
 </context>
 <context>
     <name>DynamicEventsTreeModel</name>
     <message>
         <source>Align Step</source>
-        <translation>Alinear pas</translation>
+        <translation type="vanished">Alinear pas</translation>
     </message>
     <message>
         <source>End Time</source>
-        <translation>Temps final</translation>
+        <translation type="vanished">Temps final</translation>
     </message>
     <message>
         <source>Invalid / Ungrouped Events</source>
-        <translation>Esdeveniments no vàlids / Desgrupats</translation>
+        <translation type="vanished">Esdeveniments no vàlids / Desgrupats</translation>
     </message>
     <message>
         <source>Invalid parameter</source>
-        <translation>Paràmetre no vàlid</translation>
+        <translation type="vanished">Paràmetre no vàlid</translation>
     </message>
     <message>
         <source>New Value</source>
-        <translation>Nou valor</translation>
+        <translation type="vanished">Nou valor</translation>
     </message>
     <message>
         <source>Parameter</source>
-        <translation>Paràmetre</translation>
+        <translation type="vanished">Paràmetre</translation>
     </message>
     <message>
         <source>These persisted events do not reference a valid events group and can only be removed.</source>
-        <translation>Aquests esdeveniments persistents no refereixen a un grup d&apos;esdeveniments vàlid i només poden ser eliminats.</translation>
+        <translation type="vanished">Aquests esdeveniments persistents no refereixen a un grup d&apos;esdeveniments vàlid i només poden ser eliminats.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Temps</translation>
+        <translation type="vanished">Temps</translation>
     </message>
     <message>
         <source>Transition</source>
-        <translation>Transició</translation>
+        <translation type="vanished">Transició</translation>
+    </message>
+    <message>
+        <source>Event Group</source>
+        <translation type="vanished">Grup d&apos;Esdeveniments</translation>
+    </message>
+    <message>
+        <source>Select Event Group</source>
+        <translation type="vanished">Seleccionar Grup d&apos;Esdeveniments</translation>
     </message>
 </context>
 <context>
@@ -4029,6 +4395,79 @@ triar el format de processament esperat</translation>
     <message>
         <source>Choose an FMU file first.</source>
         <translation>Trieu primer un fitxer FMU.</translation>
+    </message>
+</context>
+<context>
+    <name>Form</name>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="14"/>
+        <source>Add block property</source>
+        <translation>Afegir propietat del bloc</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="26"/>
+        <source>Add symbol to selected block</source>
+        <translation>Afegir símbol al bloc seleccionat</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="71"/>
+        <source>Output</source>
+        <translation>Sortida</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="78"/>
+        <source>Create derivative variable</source>
+        <translation>Crear variable derivativa</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="144"/>
+        <source>New symbol name</source>
+        <translation>Nom nou de símbol</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="151"/>
+        <source>Symbol category</source>
+        <translation>Categoria de símbol</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="158"/>
+        <source>Owner block</source>
+        <translation>Bloc propietari</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="165"/>
+        <source>Type</source>
+        <translation>Tipus</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="172"/>
+        <source>Add symbol</source>
+        <translation>Afegir símbol</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="195"/>
+        <source>Static device mapping</source>
+        <translation>Mapegegege de dispositius estàtics</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="202"/>
+        <source>Power-flow variable used to initialize this dynamic variable.</source>
+        <translation>Variable de flux de potència utilitzada per inicialitzar aquesta variable dinàmica.</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="205"/>
+        <source>Power-flow variable</source>
+        <translation>Variable de flux de potència</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="266"/>
+        <source>Enter a name</source>
+        <translation>Introduir un nom</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="273"/>
+        <source>Initial numeric value</source>
+        <translation>Valor numèric inicial</translation>
     </message>
 </context>
 <context>
@@ -4320,7 +4759,7 @@ IMPORTANT: Això tindrà en compte cada moviment de les ubicacions de les subest
     </message>
     <message>
         <source>Import profiles</source>
-        <translation>Importar perfils</translation>
+        <translation type="vanished">Importar perfils</translation>
     </message>
     <message>
         <source>No reduction happened</source>
@@ -5505,8 +5944,8 @@ Si us plau, corregiu les dades i proveu de nou.</translation>
     <message>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="151"/>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="195"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="115"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="169"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="102"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="112"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="55"/>
         <source> MW</source>
         <translation> MW</translation>
@@ -5545,15 +5984,13 @@ Si us plau, corregiu les dades i proveu de nou.</translation>
     </message>
     <message>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="275"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="156"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="77"/>
         <source>Generate</source>
         <translation>Generar</translation>
     </message>
     <message>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="292"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="218"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="296"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="254"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="355"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="630"/>
         <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="220"/>
         <source>Copy to clipboard</source>
@@ -5561,8 +5998,8 @@ Si us plau, corregiu les dades i proveu de nou.</translation>
     </message>
     <message>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="301"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="227"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="305"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="263"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="364"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="639"/>
         <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="229"/>
         <source>Save</source>
@@ -5574,54 +6011,74 @@ Si us plau, corregiu les dades i proveu de nou.</translation>
         <translation>Assistent d&apos;energia solar</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="49"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="182"/>
         <source>Site data</source>
         <translation>Dades del lloc</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="63"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="139"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="72"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="82"/>
         <source>Longitude</source>
         <translation>Longitud</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="70"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="99"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="123"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="146"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="56"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="79"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="66"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="89"/>
         <source> deg</source>
         <translation> graus</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="128"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="116"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="49"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="59"/>
         <source>Latitude</source>
         <translation>Latitud</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="135"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="162"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="95"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="105"/>
         <source>Power</source>
         <translation>Poder</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="142"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="115"/>
+        <source>Shift PVGIS UTC timestamps by longitude so the generated power matches the circuit timestamps as local solar time.</source>
+        <translation>Desplaçar els marcatze temps UTC de PVGIS per longitud perquè la potència generada coincideixi amb els marcatze temps del circuit com a temps solar local.</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="118"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="177"/>
+        <source>Use local solar time</source>
+        <translation>Utilitzar temps solar local</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="148"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="197"/>
+        <source>Generate time series</source>
+        <translation>Generar sèries temporals</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="162"/>
         <source>Bus</source>
         <translation>Autobús</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="149"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="172"/>
         <source>Generator</source>
         <translation>Generador</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="173"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="202"/>
+        <source>Apply and accept</source>
+        <translation>Aplicar i acceptar</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="232"/>
         <source>Plot data</source>
         <translation>Dades de traçat</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="200"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="278"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="612"/>
         <source>Accept</source>
         <translation>Acceptar</translation>
@@ -5632,48 +6089,64 @@ Si us plau, corregiu les dades i proveu de nou.</translation>
         <translation>Assistent d&apos;energia eòlica</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="61"/>
         <source>Turbine library</source>
-        <translation>Biblioteca de turbines</translation>
+        <translation type="vanished">Biblioteca de turbines</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="67"/>
         <source>Template</source>
-        <translation>Plantilla</translation>
+        <translation type="vanished">Plantilla</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="84"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="308"/>
         <source>Plot design curves</source>
         <translation>Traça les corbes de disseny</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="103"/>
         <source>Site and model</source>
-        <translation>Lloc i model</translation>
+        <translation type="vanished">Lloc i model</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="109"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="49"/>
         <source>Wind turbine data</source>
         <translation>Dades de l&apos;aerogenerador</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="182"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="125"/>
         <source>Hub height</source>
         <translation>Alçada del nucli</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="189"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="212"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="132"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="155"/>
         <source> m</source>
         <translation> m</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="205"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="148"/>
         <source>Roughness</source>
         <translation>Rugositat</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="258"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="174"/>
+        <source>Shift Open-Meteo GMT timestamps by longitude so the generated power matches the circuit timestamps as local solar time.</source>
+        <translation>Desplaçar els marcatze temps GMT d&apos;Open-Meteo per longitud perquè la potència generada coincideixi amb els marcatze temps del circuit com a temps solar local.</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="234"/>
+        <source>Accept and apply</source>
+        <translation>Acceptar i aplicar</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="252"/>
+        <source>Time series</source>
+        <translation>Sèries temporals</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="266"/>
+        <source>Turbine model</source>
+        <translation>Model de turbina</translation>
+    </message>
+    <message>
         <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="169"/>
         <source>Plot</source>
         <translation>Trama</translation>
@@ -6618,6 +7091,44 @@ Si us plau, corregiu les dades i proveu de nou.</translation>
     <message>
         <source>MATPOWER export</source>
         <translation>Exportació MATPOWER</translation>
+    </message>
+</context>
+<context>
+    <name>MeasurementsDialog</name>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="14"/>
+        <source>Configure measurement block</source>
+        <translation>Configurar bloc de mesura</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="38"/>
+        <source>Bus</source>
+        <translation>Bus</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="69"/>
+        <source>Click to select a bus</source>
+        <translation>Clicar per seleccionar un bus</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="78"/>
+        <source>Select bus...</source>
+        <translation>Seleccionar bus...</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="123"/>
+        <source>Name</source>
+        <translation>Nom</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="128"/>
+        <source>I/O</source>
+        <translation>I/O</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="133"/>
+        <source>Comment</source>
+        <translation>Comentari</translation>
     </message>
 </context>
 <context>
@@ -9068,6 +9579,10 @@ Modifica el nombre de clusters a la configuració d&apos;ML.</translation>
     <message>
         <source>Wait until the running simulations finish before clearing results.</source>
         <translation>Espera fins que les simulacions en execució acabin abans de netejar els resultats.</translation>
+    </message>
+    <message>
+        <source>Linear OPF and power flow investment studies need time data...</source>
+        <translation>Els estudis d&apos;inversió OPF lineal i de flux de potència necessiten dades temporals...</translation>
     </message>
 </context>
 <context>
@@ -12245,7 +12760,7 @@ Ha de carregar o crear una xarxa!</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="86"/>
-        <location filename="../Main/MainWindow.ui" line="11122"/>
+        <location filename="../Main/MainWindow.ui" line="11170"/>
         <source>Model</source>
         <translation>Model</translation>
     </message>
@@ -12431,7 +12946,7 @@ Ha de carregar o crear una xarxa!</translation>
     <message>
         <location filename="../Main/MainWindow.ui" line="920"/>
         <location filename="../Main/MainWindow.ui" line="3670"/>
-        <location filename="../Main/MainWindow.ui" line="5949"/>
+        <location filename="../Main/MainWindow.ui" line="5952"/>
         <source>General settings</source>
         <translation>Configuració general</translation>
     </message>
@@ -12523,11 +13038,11 @@ Ha de carregar o crear una xarxa!</translation>
         <location filename="../Main/MainWindow.ui" line="1217"/>
         <location filename="../Main/MainWindow.ui" line="1714"/>
         <location filename="../Main/MainWindow.ui" line="2685"/>
-        <location filename="../Main/MainWindow.ui" line="10609"/>
-        <location filename="../Main/MainWindow.ui" line="10623"/>
-        <location filename="../Main/MainWindow.ui" line="10630"/>
-        <location filename="../Main/MainWindow.ui" line="10693"/>
-        <location filename="../Main/MainWindow.ui" line="10895"/>
+        <location filename="../Main/MainWindow.ui" line="10612"/>
+        <location filename="../Main/MainWindow.ui" line="10626"/>
+        <location filename="../Main/MainWindow.ui" line="10633"/>
+        <location filename="../Main/MainWindow.ui" line="10696"/>
+        <location filename="../Main/MainWindow.ui" line="10898"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -12749,7 +13264,7 @@ Ha de carregar o crear una xarxa!</translation>
     <message>
         <location filename="../Main/MainWindow.ui" line="2387"/>
         <location filename="../Main/MainWindow.ui" line="2452"/>
-        <location filename="../Main/MainWindow.ui" line="12908"/>
+        <location filename="../Main/MainWindow.ui" line="12957"/>
         <source>Results</source>
         <translation>Resultats</translation>
     </message>
@@ -12811,7 +13326,7 @@ Ha de carregar o crear una xarxa!</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="2785"/>
-        <location filename="../Main/MainWindow.ui" line="11023"/>
+        <location filename="../Main/MainWindow.ui" line="11071"/>
         <source>Export data</source>
         <translation>Exportar dades</translation>
     </message>
@@ -12836,27 +13351,47 @@ Ha de carregar o crear una xarxa!</translation>
         <translation>Obriu l&apos;editor de trames dinàmiques de pre-simulació RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12734"/>
+        <location filename="../Main/MainWindow.ui" line="3856"/>
+        <source>Name of the grid</source>
+        <translation>Nom de la xarxa</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="10944"/>
+        <source>Unlock the Interface</source>
+        <translation>Desbloar la interfície</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="12783"/>
         <source>Add RMS event</source>
         <translation>Afegir esdeveniment RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12737"/>
+        <location filename="../Main/MainWindow.ui" line="12786"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add RMS event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the Dynamic events editor preferring RMS events&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Afegir esdeveniment RMS&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Obreu l&apos;editor d&apos;esdeveniments Dinàmics preferint esdeveniments RMS&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13068"/>
+        <location filename="../Main/MainWindow.ui" line="13008"/>
+        <source>Candidate investment generator</source>
+        <translation>Generador de inversió candidat</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="13011"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Candidate investment generator&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Generate candidate reinforcements (new lines and upgrades) for N-1 violations via LODF/PTDF screening&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Generador de inversió candidat&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Generar reforçaments candidats (noves línies i actualitzacions) per violacions N-1 mitjançant cribratge LODF/PTDF&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="13129"/>
         <source>Add EMT event</source>
         <translation>Afegir esdeveniment EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13071"/>
+        <location filename="../Main/MainWindow.ui" line="13132"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add EMT event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the Dynamic events editor preferring EMT events&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Afegir esdeveniment EMT&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Obreu l&apos;editor d&apos;esdeveniments Dinàmics preferint esdeveniments EMT&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13143"/>
+        <location filename="../Main/MainWindow.ui" line="13204"/>
         <source>Community chat</source>
         <translation>Xat comunitari</translation>
     </message>
@@ -12954,149 +13489,149 @@ Ha de carregar o crear una xarxa!</translation>
         <translation>Configuració</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3760"/>
+        <location filename="../Main/MainWindow.ui" line="3870"/>
         <source>Frequency</source>
         <translation>Freqüència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3767"/>
+        <location filename="../Main/MainWindow.ui" line="3760"/>
         <source>Snapshot time</source>
         <translation>Hora de la instantània</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3798"/>
+        <location filename="../Main/MainWindow.ui" line="3817"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;System frequency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This only has an effect in the program when computing lines&apos; per-unit impedance from ohm values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Freqüència del sistema&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Això només té un efecte al programa quan es calcula la impedància per unitat de línies a partir dels valors d&apos;ohms.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3801"/>
+        <location filename="../Main/MainWindow.ui" line="3820"/>
         <source> Hz</source>
         <translation> Hz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3827"/>
+        <location filename="../Main/MainWindow.ui" line="3788"/>
         <source>Base power</source>
         <translation>Potència base</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3834"/>
+        <location filename="../Main/MainWindow.ui" line="3853"/>
         <source>Name of the grid model</source>
         <translation>Nom del model de quadrícula</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3848"/>
+        <location filename="../Main/MainWindow.ui" line="3774"/>
         <source>Grid name</source>
         <translation>Nom de la graella</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3855"/>
+        <location filename="../Main/MainWindow.ui" line="3795"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Base power&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Despite all the bibliography, changing this number to anything other than 100 MVA, might change the meaning of what sensible per-unit voltage are.&lt;/p&gt;&lt;p&gt;So, don&apos;t touch it. To have power in kW, use the option at the loads, geneerators, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Potència base&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Malgrat tota la bibliografia, canviar aquest número a qualsevol cosa que no sigui 100 MVA, podria canviar el significat del que és sensible la tensió per unitat.&lt;/p&gt;&lt;p&gt;Per tant, no el toqueu. Per tenir potència a kW, utilitzeu l&apos;opció a les càrregues, generadors, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3858"/>
+        <location filename="../Main/MainWindow.ui" line="3798"/>
         <source> MVA</source>
         <translation> MVA</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3877"/>
+        <location filename="../Main/MainWindow.ui" line="3904"/>
         <source>Engine to be used when available</source>
         <translation>Motor que s&apos;utilitzarà quan estigui disponible</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3884"/>
+        <location filename="../Main/MainWindow.ui" line="3839"/>
         <source>Engine</source>
         <translation>Motor</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3891"/>
+        <location filename="../Main/MainWindow.ui" line="3863"/>
         <source>Language</source>
         <translation>Llengua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3901"/>
+        <location filename="../Main/MainWindow.ui" line="3846"/>
         <source>Dark mode</source>
         <translation>Mode fosc</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3930"/>
+        <location filename="../Main/MainWindow.ui" line="3933"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Settings for state estimation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configuració per a l&apos;estimació de l&apos;estat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3967"/>
-        <location filename="../Main/MainWindow.ui" line="3977"/>
+        <location filename="../Main/MainWindow.ui" line="3970"/>
+        <location filename="../Main/MainWindow.ui" line="3980"/>
         <source>Power flow settings</source>
         <translation>Configuració del flux d&apos;energia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3974"/>
+        <location filename="../Main/MainWindow.ui" line="3977"/>
         <source>Pf</source>
         <translation>Pf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4050"/>
+        <location filename="../Main/MainWindow.ui" line="4053"/>
         <source>Power flow</source>
         <translation>Flux de potència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4190"/>
+        <location filename="../Main/MainWindow.ui" line="4193"/>
         <source>PTDF / LODF</source>
         <translation>PTDF / LODF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4262"/>
+        <location filename="../Main/MainWindow.ui" line="4265"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Theoretically PTDF and LODF values should be in the range (-1, 1)&lt;br/&gt;However, this is not true in general for any grid due to the existence of antennas.&lt;br/&gt;With this option the values are truncated to the range (-1, 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Teòricament, els valors PTDF i LODF haurien d&apos;estar en el rang (-1, 1)&lt;br/&gt;Tanmateix, això no és cert en general per a qualsevol xarxa a causa de l&apos;existència d&apos;antenes.&lt;br/&gt;Amb aquesta opció, els valors es trunquen a l&apos;interval (-1, 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4265"/>
+        <location filename="../Main/MainWindow.ui" line="4268"/>
         <source>Correct nonsense values</source>
         <translation>Corregeix els valors de tonteria</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4275"/>
+        <location filename="../Main/MainWindow.ui" line="4278"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;With this option, the PTDF is computed such that the slack effects are distributed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Amb aquesta opció, el PTDF es calcula de manera que es distribueixen els efectes de slack&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4278"/>
-        <location filename="../Main/MainWindow.ui" line="4507"/>
+        <location filename="../Main/MainWindow.ui" line="4281"/>
+        <location filename="../Main/MainWindow.ui" line="4510"/>
         <source>Distributed slack</source>
         <translation>Laxitud distribuïda</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4288"/>
+        <location filename="../Main/MainWindow.ui" line="4291"/>
         <source>Threshold under which sensitivities are ignored when the PTDF is converted to sparse</source>
         <translation>Llindar sota el qual s&apos;ignoren les sensibilitats quan el PTDF es converteix en escàs</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4307"/>
+        <location filename="../Main/MainWindow.ui" line="4310"/>
         <source>LODF threshold</source>
         <translation>Llindar LODF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4351"/>
+        <location filename="../Main/MainWindow.ui" line="4354"/>
         <source>Threshold under which sensitivities are ignored when the LODF is converted to sparse</source>
         <translation>Llindar sota el qual s&apos;ignoren les sensibilitats quan el LODF es converteix en escàs</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4370"/>
+        <location filename="../Main/MainWindow.ui" line="4373"/>
         <source>PTDF threshold</source>
         <translation>Llindar PTDF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4396"/>
+        <location filename="../Main/MainWindow.ui" line="4399"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum numberof iterations to use.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tipical values: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;Fast decoupled: 10&lt;/p&gt;&lt;p&gt;Others: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nombre màxim d&apos;iteracions a utilitzar.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Valors típics: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;Desacoblament ràpid: 10&lt;/p&gt;&lt;p&gt;Altres: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4399"/>
+        <location filename="../Main/MainWindow.ui" line="4402"/>
         <source> iterations</source>
         <translation> iteracions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4421"/>
+        <location filename="../Main/MainWindow.ui" line="4424"/>
         <source>Find the tolerance that best represents the load values for power flow</source>
         <translation>Trobeu la tolerància que millor representi els valors de càrrega per al flux de potència</translation>
     </message>
@@ -13105,1066 +13640,1066 @@ Ha de carregar o crear una xarxa!</translation>
         <translation type="vanished">Troba</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4448"/>
+        <location filename="../Main/MainWindow.ui" line="4451"/>
         <source>Max. iterations</source>
         <translation>Màx. iteracions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4464"/>
+        <location filename="../Main/MainWindow.ui" line="4467"/>
         <source>General switch for generators remote voltage control</source>
         <translation>Interruptor general per a control remot de tensió de generadors</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4467"/>
+        <location filename="../Main/MainWindow.ui" line="4470"/>
         <source>Control remote voltage</source>
         <translation>Control remot de voltatge</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4474"/>
+        <location filename="../Main/MainWindow.ui" line="4477"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the selected method does not converge, try a list of methods that may help&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si el mètode seleccionat no convergeix, proveu una llista de mètodes que us poden ajudar&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4477"/>
+        <location filename="../Main/MainWindow.ui" line="4480"/>
         <source>Retry with other methods</source>
         <translation>Torna-ho a provar amb altres mètodes</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4487"/>
+        <location filename="../Main/MainWindow.ui" line="4490"/>
         <source>General switch for branches tap module control</source>
         <translation>Interruptor general per a control del mòdul d&apos;aixetes de branques</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4490"/>
+        <location filename="../Main/MainWindow.ui" line="4493"/>
         <source>Control tap module</source>
         <translation>Mòdul de control de l&apos;aixeta</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4497"/>
+        <location filename="../Main/MainWindow.ui" line="4500"/>
         <source>Apply impedance tolerances</source>
         <translation>Aplicar toleràncies d&apos;impedància</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4504"/>
+        <location filename="../Main/MainWindow.ui" line="4507"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the slack power is distributed among the generators according to their installed power &amp;quot;Snom&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si està actiu, la potència fluixa es distribueix entre els generadors segons la seva potència instal·lada &quot;Snom&quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4514"/>
+        <location filename="../Main/MainWindow.ui" line="4517"/>
         <source>If checked, the power flow solution is initialized with a linear (so called DC) power flow first</source>
         <translation>Si està marcat, la solució de flux de potència s&apos;inicialitza primer amb un flux de potència lineal (anomenat DC).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4517"/>
+        <location filename="../Main/MainWindow.ui" line="4520"/>
         <source>Initialize angles</source>
         <translation>Inicialitzar angles</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4524"/>
+        <location filename="../Main/MainWindow.ui" line="4527"/>
         <source>If active, the islands of a single node are ignored.</source>
         <translation>Si està activa, les illes d&apos;un sol node s&apos;ignoren.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4527"/>
+        <location filename="../Main/MainWindow.ui" line="4530"/>
         <source>Ignore single node islands</source>
         <translation>Ignora les illes d&apos;un sol node</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4537"/>
+        <location filename="../Main/MainWindow.ui" line="4540"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the Vm0 and Va0 properties of the bus objects are used to initialize the power flow simulation.&lt;/p&gt;&lt;p&gt;If you need this it is a sign of grid ill conditioning by something else like incorrect impedances of too much loading, specially reactive power that cannot be transported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si estan actives, les propietats Vm0 i Va0 dels objectes de bus s&apos;utilitzen per inicialitzar la simulació del flux de potència.&lt;/p&gt;&lt;p&gt;Si ho necessiteu, és un signe d&apos;un mal condicionament de la xarxa per una altra cosa, com ara impedàncies incorrectes de massa càrrega, especialment potència reactiva que no es pot transportar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4540"/>
+        <location filename="../Main/MainWindow.ui" line="4543"/>
         <source>Use voltage guess</source>
         <translation>Utilitzeu una estimació de voltatge</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4547"/>
-        <location filename="../Main/MainWindow.ui" line="6033"/>
+        <location filename="../Main/MainWindow.ui" line="4550"/>
+        <location filename="../Main/MainWindow.ui" line="6036"/>
         <source>Add a results report in the logs</source>
         <translation>Afegiu un informe de resultats als registres</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4550"/>
-        <location filename="../Main/MainWindow.ui" line="6036"/>
+        <location filename="../Main/MainWindow.ui" line="4553"/>
+        <location filename="../Main/MainWindow.ui" line="6039"/>
         <source>Add report</source>
         <translation>Afegeix un informe</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4557"/>
+        <location filename="../Main/MainWindow.ui" line="4560"/>
         <source>General switch for reactive power limits control</source>
         <translation>Interruptor general per al control de límits de potència reactiva</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4560"/>
-        <location filename="../Main/MainWindow.ui" line="5933"/>
+        <location filename="../Main/MainWindow.ui" line="4563"/>
+        <location filename="../Main/MainWindow.ui" line="5936"/>
         <source>Control Q limits</source>
         <translation>Control dels límits Q</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4567"/>
+        <location filename="../Main/MainWindow.ui" line="4570"/>
         <source>General switch for branches tap phase control</source>
         <translation>Interruptor general per a control de fase de derivacions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4570"/>
+        <location filename="../Main/MainWindow.ui" line="4573"/>
         <source>Control tap phase</source>
         <translation>Fase de presa de control</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4577"/>
+        <location filename="../Main/MainWindow.ui" line="4580"/>
         <source>If checked, the controls are adjusted to their closest tap</source>
         <translation>Si està marcat, els controls s&apos;ajusten al toc més proper</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4580"/>
+        <location filename="../Main/MainWindow.ui" line="4583"/>
         <source>Orthogonalize controls</source>
         <translation>Ortogonalitzar els controls</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4587"/>
+        <location filename="../Main/MainWindow.ui" line="4590"/>
         <source>Correct the branches resistance using the temperature</source>
         <translation>Corregiu la resistència de les branques utilitzant la temperatura</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4590"/>
+        <location filename="../Main/MainWindow.ui" line="4593"/>
         <source>Apply temperature correction</source>
         <translation>Aplicar la correcció de temperatura</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4600"/>
-        <location filename="../Main/MainWindow.ui" line="5892"/>
+        <location filename="../Main/MainWindow.ui" line="4603"/>
+        <location filename="../Main/MainWindow.ui" line="5895"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor that multiplies each increment solution. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor que multiplica cada solució d&apos;increment. &lt;/p&gt;&lt;p&gt;A la pràctica, això s&apos;utilitza per frenar les solucions problemàtiques.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4603"/>
-        <location filename="../Main/MainWindow.ui" line="4652"/>
-        <location filename="../Main/MainWindow.ui" line="4705"/>
+        <location filename="../Main/MainWindow.ui" line="4606"/>
+        <location filename="../Main/MainWindow.ui" line="4655"/>
+        <location filename="../Main/MainWindow.ui" line="4708"/>
         <source> p.u.</source>
         <translation> p.u.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4625"/>
+        <location filename="../Main/MainWindow.ui" line="4628"/>
         <source>Level of console information. 0: None, 1: some information, 2: all the information</source>
         <translation>Nivell d&apos;informació de la consola. 0: Cap, 1: alguna informació, 2: tota la informació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4635"/>
-        <location filename="../Main/MainWindow.ui" line="5177"/>
-        <location filename="../Main/MainWindow.ui" line="8611"/>
+        <location filename="../Main/MainWindow.ui" line="4638"/>
+        <location filename="../Main/MainWindow.ui" line="5180"/>
+        <location filename="../Main/MainWindow.ui" line="8614"/>
         <source>Solver</source>
         <translation>Solucionador</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4642"/>
-        <location filename="../Main/MainWindow.ui" line="5917"/>
+        <location filename="../Main/MainWindow.ui" line="4645"/>
+        <location filename="../Main/MainWindow.ui" line="5920"/>
         <source>Trust radius</source>
         <translation>Radi de confiança</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4649"/>
-        <location filename="../Main/MainWindow.ui" line="5305"/>
-        <location filename="../Main/MainWindow.ui" line="5851"/>
-        <location filename="../Main/MainWindow.ui" line="8101"/>
-        <location filename="../Main/MainWindow.ui" line="8519"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Error tolerance of the method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tolerància a errors del mètode&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="../Main/MainWindow.ui" line="4655"/>
-        <location filename="../Main/MainWindow.ui" line="4708"/>
+        <location filename="../Main/MainWindow.ui" line="4652"/>
         <location filename="../Main/MainWindow.ui" line="5308"/>
         <location filename="../Main/MainWindow.ui" line="5854"/>
         <location filename="../Main/MainWindow.ui" line="8104"/>
         <location filename="../Main/MainWindow.ui" line="8522"/>
-        <location filename="../Main/MainWindow.ui" line="10030"/>
-        <location filename="../Main/MainWindow.ui" line="10292"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Error tolerance of the method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tolerància a errors del mètode&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="4658"/>
+        <location filename="../Main/MainWindow.ui" line="4711"/>
+        <location filename="../Main/MainWindow.ui" line="5311"/>
+        <location filename="../Main/MainWindow.ui" line="5857"/>
+        <location filename="../Main/MainWindow.ui" line="8107"/>
+        <location filename="../Main/MainWindow.ui" line="8525"/>
+        <location filename="../Main/MainWindow.ui" line="10033"/>
+        <location filename="../Main/MainWindow.ui" line="10295"/>
         <source>1e-</source>
         <translation>1e-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4681"/>
+        <location filename="../Main/MainWindow.ui" line="4684"/>
         <source>Verbosity</source>
         <translation>Verbositat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4688"/>
-        <location filename="../Main/MainWindow.ui" line="5285"/>
-        <location filename="../Main/MainWindow.ui" line="5838"/>
-        <location filename="../Main/MainWindow.ui" line="8175"/>
-        <location filename="../Main/MainWindow.ui" line="8558"/>
+        <location filename="../Main/MainWindow.ui" line="4691"/>
+        <location filename="../Main/MainWindow.ui" line="5288"/>
+        <location filename="../Main/MainWindow.ui" line="5841"/>
+        <location filename="../Main/MainWindow.ui" line="8178"/>
+        <location filename="../Main/MainWindow.ui" line="8561"/>
         <source>Tolerance</source>
         <translation>Tolerància</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4695"/>
+        <location filename="../Main/MainWindow.ui" line="4698"/>
         <source>Controls apply after</source>
         <translation>Els controls s&apos;apliquen després</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4702"/>
+        <location filename="../Main/MainWindow.ui" line="4705"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid does not have an &amp;quot;outer loop&amp;quot;&lt;br/&gt;Instead, in iterative numerical methods (Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg) the controls apply after a certain error threshold has been reached.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid no té un &quot;bucle exterior&quot;&lt;br/&gt;En canvi, en mètodes numèrics iteratius (Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg) els controls s&apos;apliquen després d&apos;haver arribat a un determinat llindar d&apos;error.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4728"/>
+        <location filename="../Main/MainWindow.ui" line="4731"/>
         <source>Continuation power flow settings</source>
         <translation>Configuració del flux de potència de continuació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4735"/>
+        <location filename="../Main/MainWindow.ui" line="4738"/>
         <source>Cpf</source>
         <translation>Cpf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4738"/>
+        <location filename="../Main/MainWindow.ui" line="4741"/>
         <source>Continuation power flow related settings</source>
         <translation>Configuració relacionada amb el flux d&apos;energia de continuació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4769"/>
+        <location filename="../Main/MainWindow.ui" line="4772"/>
         <source>Stop at</source>
         <translation>Atureu-vos a</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4776"/>
+        <location filename="../Main/MainWindow.ui" line="4779"/>
         <source>Refer to the NTC areas (Linear tab)</source>
         <translation>Consulteu les àrees NTC (pestanya Lineal)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4856"/>
+        <location filename="../Main/MainWindow.ui" line="4859"/>
         <source>Now</source>
         <translation>Ara</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4863"/>
+        <location filename="../Main/MainWindow.ui" line="4866"/>
         <source>Use departure and target points from time series</source>
         <translation>Utilitzeu punts de partida i objectius de sèries temporals</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4873"/>
+        <location filename="../Main/MainWindow.ui" line="4876"/>
         <source>Available transfer capacity</source>
         <translation>Capacitat de transferència disponible</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4887"/>
+        <location filename="../Main/MainWindow.ui" line="4890"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lambda factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor lambda&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4894"/>
-        <location filename="../Main/MainWindow.ui" line="5090"/>
+        <location filename="../Main/MainWindow.ui" line="4897"/>
+        <location filename="../Main/MainWindow.ui" line="5093"/>
         <source>Max. Iterations</source>
         <translation>Màx. Iteracions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4901"/>
+        <location filename="../Main/MainWindow.ui" line="4904"/>
         <source>Target</source>
         <translation>Objectiu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5003"/>
-        <location filename="../Main/MainWindow.ui" line="11435"/>
+        <location filename="../Main/MainWindow.ui" line="5006"/>
+        <location filename="../Main/MainWindow.ui" line="11484"/>
         <source>Continuation power flow</source>
         <translation>Continuació del flux d&apos;energia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5021"/>
+        <location filename="../Main/MainWindow.ui" line="5024"/>
         <source>Simulation mode</source>
         <translation>Mode de simulació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5028"/>
+        <location filename="../Main/MainWindow.ui" line="5031"/>
         <source>Increase system loading</source>
         <translation>Augmenta la càrrega del sistema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5072"/>
+        <location filename="../Main/MainWindow.ui" line="5075"/>
         <source>SE</source>
         <translation>SE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5100"/>
+        <location filename="../Main/MainWindow.ui" line="5103"/>
         <source>Observability analysis</source>
         <translation>Anàlisi d&apos;observabilitat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5170"/>
+        <location filename="../Main/MainWindow.ui" line="5173"/>
         <source>Fixed slack</source>
         <translation>S&apos;ha corregit el fluix</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5272"/>
-        <location filename="../Main/MainWindow.ui" line="12764"/>
+        <location filename="../Main/MainWindow.ui" line="5275"/>
+        <location filename="../Main/MainWindow.ui" line="12813"/>
         <source>State estimation</source>
         <translation>Estimació de l&apos;estat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5324"/>
+        <location filename="../Main/MainWindow.ui" line="5327"/>
         <source>Prefer correct</source>
         <translation>Prefereix el correcte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5331"/>
+        <location filename="../Main/MainWindow.ui" line="5334"/>
         <source>Add pseudo measurements</source>
         <translation>Afegiu pseudo mesures</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5338"/>
+        <location filename="../Main/MainWindow.ui" line="5341"/>
         <source>Measurements profiling</source>
         <translation>Perfil de mesures</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5362"/>
-        <location filename="../Main/MainWindow.ui" line="5372"/>
+        <location filename="../Main/MainWindow.ui" line="5365"/>
+        <location filename="../Main/MainWindow.ui" line="5375"/>
         <source>Optimal power flow settings</source>
         <translation>Configuració òptima del flux d&apos;energia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5369"/>
+        <location filename="../Main/MainWindow.ui" line="5372"/>
         <source>Opf</source>
         <translation>Opf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5384"/>
+        <location filename="../Main/MainWindow.ui" line="5387"/>
         <source>Linear settings</source>
         <translation>Configuració lineal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5520"/>
+        <location filename="../Main/MainWindow.ui" line="5523"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the time grouping to possibly shorten the solution time.&lt;/p&gt;&lt;p&gt;This splits the time series by week, month, etc. and the subproblems are solved sequentially.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Trieu l&apos;agrupació de temps per escurçar possiblement el temps de solució.&lt;/p&gt;&lt;p&gt;Això divideix la sèrie temporal per setmana, mes, etc. i els subproblemes es resolen de manera seqüencial.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5554"/>
+        <location filename="../Main/MainWindow.ui" line="5557"/>
         <source>Consider per-area generation spinning reserve</source>
         <translation>Considereu la reserva de filatura per generació per àrea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5557"/>
+        <location filename="../Main/MainWindow.ui" line="5560"/>
         <source>Spinning reserve</source>
         <translation>Reserva de filatura</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5669"/>
+        <location filename="../Main/MainWindow.ui" line="5672"/>
         <source>Instead of using the generation, loads cost for dispatching, use the GLSK (Generation, Load Shift Keys)</source>
         <translation>En lloc d&apos;utilitzar la generació, el cost de les càrregues per a l&apos;enviament, utilitzeu el GLSK (generació, càrrega de tecles de canvi)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5672"/>
+        <location filename="../Main/MainWindow.ui" line="5675"/>
         <source>Use GSLK as costs</source>
         <translation>Utilitzeu GSLK com a costos</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5435"/>
+        <location filename="../Main/MainWindow.ui" line="5438"/>
         <source>MIP framework</source>
         <translation>Marc MIP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5653"/>
+        <location filename="../Main/MainWindow.ui" line="5656"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, the generation costs will use the quadratic coefficients cost, which will trigger a more complex formulation to approximate the quadratic thermal generation curve. Otherwise a linear model is used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si es marca, els costos de generació utilitzaran el cost amb coeficients quadràtics, cosa que activarà una formulació més complexa per aproximar la corba quadràtica de generació tèrmica. En cas contrari, s&apos;utilitzarà un model lineal.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5656"/>
+        <location filename="../Main/MainWindow.ui" line="5659"/>
         <source>Use quadratic costs</source>
         <translation>Utilitzeu costos quadràtics</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5481"/>
+        <location filename="../Main/MainWindow.ui" line="5484"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the zonal grouping.&lt;br/&gt;When All (Copper plate) is selected, the branch restrictions are ignored&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Trieu l&apos;agrupació zonal.&lt;br/&gt;Quan se selecciona Tot (placa de coure), les restriccions de branca s&apos;ignoren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5494"/>
+        <location filename="../Main/MainWindow.ui" line="5497"/>
         <source>Choose the external mixed integer framework</source>
         <translation>Trieu el marc d&apos;enter mixt extern</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5461"/>
+        <location filename="../Main/MainWindow.ui" line="5464"/>
         <source>Time grouping</source>
         <translation>Agrupació temporal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5570"/>
+        <location filename="../Main/MainWindow.ui" line="5573"/>
         <source>Consider generation minimum up/down time</source>
         <translation>Considereu el temps mínim d&apos;activació/desactivació de la generació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5573"/>
+        <location filename="../Main/MainWindow.ui" line="5576"/>
         <source>Consider min up/down time</source>
         <translation>Considereu el temps mínim de pujada/desactivació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5685"/>
+        <location filename="../Main/MainWindow.ui" line="5688"/>
         <source>When checked, the branch losses will be aproximated by a factor r * rate / (V^2)</source>
         <translation>Quan es marca, les pèrdues de branca s&apos;aproximaran amb un factor r * taxa / (V^2)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5688"/>
+        <location filename="../Main/MainWindow.ui" line="5691"/>
         <source>Approximate losses</source>
         <translation>Pèrdues aproximades</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5409"/>
+        <location filename="../Main/MainWindow.ui" line="5412"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select how the generation dispatch should behave&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Seleccioneu com s&apos;ha de comportar l&apos;enviament de generació&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5640"/>
+        <location filename="../Main/MainWindow.ui" line="5643"/>
         <source>Contingency tolerance</source>
         <translation>Tolerància a la contingència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5602"/>
+        <location filename="../Main/MainWindow.ui" line="5605"/>
         <source>LODF matrix tolerance choosing contingencies</source>
         <translation>Tolerància de la matriu LODF escollint contingències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5586"/>
+        <location filename="../Main/MainWindow.ui" line="5589"/>
         <source>Consider the contingencies when dispatching</source>
         <translation>Tingueu en compte les contingències a l&apos;hora d&apos;enviar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5589"/>
+        <location filename="../Main/MainWindow.ui" line="5592"/>
         <source>Compute contingencies</source>
         <translation>Calcula les contingències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5717"/>
+        <location filename="../Main/MainWindow.ui" line="5720"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The program will save the MIP formulation and be displayed in the text tab of the results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;El programa desarà la formulació MIP i es mostrarà a la pestanya de text dels resultats&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5720"/>
+        <location filename="../Main/MainWindow.ui" line="5723"/>
         <source>Report MIP formulation</source>
         <translation>Formulació del MIP de l&apos;informe</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5701"/>
+        <location filename="../Main/MainWindow.ui" line="5704"/>
         <source>Fix infeasible problems and rey with the relaxed problem. Applies to OPF and NTC</source>
         <translation>Arregla problemes inviables i rei amb el problema relaxat. S&apos;aplica a OPF i NTC</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5704"/>
+        <location filename="../Main/MainWindow.ui" line="5707"/>
         <source>Fix infeasibilities and retry</source>
         <translation>Solucioneu les inviabilitats i torneu-ho a provar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5624"/>
+        <location filename="../Main/MainWindow.ui" line="5627"/>
         <source>Consider generation ramps</source>
         <translation>Considereu les rampes de generació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5627"/>
+        <location filename="../Main/MainWindow.ui" line="5630"/>
         <source>Consider ramps</source>
         <translation>Penseu en les rampes</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5422"/>
+        <location filename="../Main/MainWindow.ui" line="5425"/>
         <source>Dispatch mode</source>
         <translation>Mode d&apos;enviament</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5448"/>
+        <location filename="../Main/MainWindow.ui" line="5451"/>
         <source>Choose the external mixed integer programming solver</source>
         <translation>Trieu el solucionador extern de programació de nombres enters mixtes</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5396"/>
+        <location filename="../Main/MainWindow.ui" line="5399"/>
         <source>Zone grouping</source>
         <translation>Agrupació de zones</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5739"/>
+        <location filename="../Main/MainWindow.ui" line="5742"/>
         <source>Nonlinear settings</source>
         <translation>Configuració no lineal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5764"/>
+        <location filename="../Main/MainWindow.ui" line="5767"/>
         <source>Interior point solver maximum number of iterations</source>
         <translation>Nombre màxim d&apos;iteracions del solucionador de punts interiors</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5767"/>
+        <location filename="../Main/MainWindow.ui" line="5770"/>
         <source>Iterations</source>
         <translation>Iteracions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5780"/>
+        <location filename="../Main/MainWindow.ui" line="5783"/>
         <source>Initialize the interior point OPF with the power flow solution</source>
         <translation>Inicialitzar el punt interior OPF amb la solució de flux d&apos;energia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5783"/>
+        <location filename="../Main/MainWindow.ui" line="5786"/>
         <source>Initialize with power flow</source>
         <translation>Inicialitzar amb flux d&apos;energia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5806"/>
+        <location filename="../Main/MainWindow.ui" line="5809"/>
         <source>Number of iterations of the method</source>
         <translation>Nombre d&apos;iteracions del mètode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5835"/>
+        <location filename="../Main/MainWindow.ui" line="5838"/>
         <source>Interior point solver tolerance</source>
         <translation>Tolerància al solucionador de punts interiors</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5876"/>
+        <location filename="../Main/MainWindow.ui" line="5879"/>
         <source>Interior point solver method</source>
         <translation>Mètode de resolució de punts interiors</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5879"/>
+        <location filename="../Main/MainWindow.ui" line="5882"/>
         <source>IPS method</source>
         <translation>Mètode IPS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5914"/>
+        <location filename="../Main/MainWindow.ui" line="5917"/>
         <source>Interior point trust radius</source>
         <translation>Radi de confiança del punt interior</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5930"/>
+        <location filename="../Main/MainWindow.ui" line="5933"/>
         <source>General switch for reactive power limits control in the nonlinear optimal power flow</source>
         <translation>Interruptor general per al control dels límits de potència reactiva en el flux de potència òptim no lineal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5961"/>
+        <location filename="../Main/MainWindow.ui" line="5964"/>
         <source>Verbosity level</source>
         <translation>Nivell de verbositat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5974"/>
-        <location filename="../Main/MainWindow.ui" line="6250"/>
+        <location filename="../Main/MainWindow.ui" line="5977"/>
+        <location filename="../Main/MainWindow.ui" line="6253"/>
         <source>Skip generation limits</source>
         <translation>Omet els límits de generació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5987"/>
+        <location filename="../Main/MainWindow.ui" line="5990"/>
         <source>Verbose</source>
         <translation>Verbosa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6007"/>
+        <location filename="../Main/MainWindow.ui" line="6010"/>
         <source>Choose the optimal power flow method</source>
         <translation>Trieu el mètode de flux d&apos;energia òptim</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6020"/>
-        <location filename="../Main/MainWindow.ui" line="6910"/>
-        <location filename="../Main/MainWindow.ui" line="9083"/>
-        <location filename="../Main/MainWindow.ui" line="9988"/>
-        <location filename="../Main/MainWindow.ui" line="10053"/>
+        <location filename="../Main/MainWindow.ui" line="6023"/>
+        <location filename="../Main/MainWindow.ui" line="6913"/>
+        <location filename="../Main/MainWindow.ui" line="9086"/>
+        <location filename="../Main/MainWindow.ui" line="9991"/>
+        <location filename="../Main/MainWindow.ui" line="10056"/>
         <source>Method</source>
         <translation>Mètode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6189"/>
+        <location filename="../Main/MainWindow.ui" line="6192"/>
         <source>Optimal Power Flow</source>
         <translation>Flux d&apos;energia òptim</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6200"/>
+        <location filename="../Main/MainWindow.ui" line="6203"/>
         <source>Net transfer capacity settings</source>
         <translation>Configuració de la capacitat de transferència neta</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6207"/>
+        <location filename="../Main/MainWindow.ui" line="6210"/>
         <source>Ntc</source>
         <translation>Ntc</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6210"/>
+        <location filename="../Main/MainWindow.ui" line="6213"/>
         <source>Network transfer capacity related settings</source>
         <translation>Configuració relacionada amb la capacitat de transferència de xarxa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6221"/>
+        <location filename="../Main/MainWindow.ui" line="6224"/>
         <source>Optimization</source>
         <translation>Optimització</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6232"/>
+        <location filename="../Main/MainWindow.ui" line="6235"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This criteria springs from the ACER (Agency for the Cooperation for Energy Regulators).&lt;/p&gt;&lt;p&gt;It determines that a branch is only relevant to be considered in a NTC calculation if the flow due to the exchange is over a percentage (70%) &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;A branch is monitored only if:&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / branch_alpha &amp;lt;= total exchange rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aquest criteri neix de l&apos;ACER (Agència de Cooperació per a Reguladors de l&apos;Energia).&lt;/p&gt;&lt;p&gt;Determina que una branca només és rellevant per ser considerada en un càlcul de NTC si el flux degut a l&apos;intercanvi és superior a un percentatge (70%). &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Una branca només es supervisa si:&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / branch_alpha &lt;= valoració de canvi total&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6235"/>
+        <location filename="../Main/MainWindow.ui" line="6238"/>
         <source>Branch rating contribution (ACER)</source>
         <translation>Contribució a la qualificació de l&apos;oficina (ACER)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6247"/>
+        <location filename="../Main/MainWindow.ui" line="6250"/>
         <source>If activated, the generation limits are not considered</source>
         <translation>Si està activat, no es tenen en compte els límits de generació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6265"/>
-        <location filename="../Main/MainWindow.ui" line="7608"/>
+        <location filename="../Main/MainWindow.ui" line="6268"/>
+        <location filename="../Main/MainWindow.ui" line="7611"/>
         <source> MW</source>
         <translation> MW</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6289"/>
+        <location filename="../Main/MainWindow.ui" line="6292"/>
         <source>If checked, the NTC optimization will use the system declared contingencies</source>
         <translation>Si es marca, l&apos;optimització NTC utilitzarà les contingències declarades del sistema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6292"/>
+        <location filename="../Main/MainWindow.ui" line="6295"/>
         <source>Consider constingencies</source>
         <translation>Considereu les contingències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6304"/>
+        <location filename="../Main/MainWindow.ui" line="6307"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A branch is monitored solely based on its contribution to the inter-area excahge sensitivity. Therefore a branch is selected if it&apos;s alpha value is greater than the set alpha %&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;El seguiment d&apos;una sucursal es fa únicament en funció de la seva contribució a la sensibilitat de l&apos;intercanvi entre zones. Per tant, es selecciona una branca si el seu valor alfa és superior al % alfa establert&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6307"/>
+        <location filename="../Main/MainWindow.ui" line="6310"/>
         <source>Branch exchange sensitivity (α)</source>
         <translation>Sensibilitat d&apos;intercanvi de branques (α)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6322"/>
-        <location filename="../Main/MainWindow.ui" line="6472"/>
-        <location filename="../Main/MainWindow.ui" line="6571"/>
+        <location filename="../Main/MainWindow.ui" line="6325"/>
+        <location filename="../Main/MainWindow.ui" line="6475"/>
+        <location filename="../Main/MainWindow.ui" line="6574"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6405"/>
+        <location filename="../Main/MainWindow.ui" line="6408"/>
         <source>Determine the branches that enter the optimization</source>
         <translation>Determineu les branques que entren a l&apos;optimització</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6408"/>
+        <location filename="../Main/MainWindow.ui" line="6411"/>
         <source>Branch monitoring selection criteria</source>
         <translation>Criteris de selecció de seguiment de l&apos;oficina</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6457"/>
-        <location filename="../Main/MainWindow.ui" line="7529"/>
-        <location filename="../Main/MainWindow.ui" line="12899"/>
-        <location filename="../Main/MainWindow.ui" line="12926"/>
+        <location filename="../Main/MainWindow.ui" line="6460"/>
+        <location filename="../Main/MainWindow.ui" line="7532"/>
+        <location filename="../Main/MainWindow.ui" line="12948"/>
+        <location filename="../Main/MainWindow.ui" line="12975"/>
         <source>Contingencies</source>
         <translation>Contingències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6469"/>
+        <location filename="../Main/MainWindow.ui" line="6472"/>
         <source>Minimum exchange contribution (Alpha)</source>
         <translation>Contribució mínima d&apos;intercanvi (alfa)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6490"/>
         <location filename="../Main/MainWindow.ui" line="6493"/>
+        <location filename="../Main/MainWindow.ui" line="6496"/>
         <source>Transmission reliability margin (TRM)</source>
         <translation>Marge de fiabilitat de la transmissió (TRM)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6505"/>
+        <location filename="../Main/MainWindow.ui" line="6508"/>
         <source>More strict NTC Formulation: No slacks of any type and specific monitoring criteria</source>
         <translation>Formulació NTC més estricta: sense pantalons de cap tipus i criteris de control específics</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6508"/>
+        <location filename="../Main/MainWindow.ui" line="6511"/>
         <source>Strict formulation</source>
         <translation>Formulació estricta</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6523"/>
-        <location filename="../Main/MainWindow.ui" line="6860"/>
+        <location filename="../Main/MainWindow.ui" line="6526"/>
+        <location filename="../Main/MainWindow.ui" line="6863"/>
         <source>General</source>
         <translation>General</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6547"/>
+        <location filename="../Main/MainWindow.ui" line="6550"/>
         <source>Loading threshold to report</source>
         <translation>Llindar de càrrega per informar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6559"/>
+        <location filename="../Main/MainWindow.ui" line="6562"/>
         <source>Transfer method</source>
         <translation>Mètode de transferència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6689"/>
+        <location filename="../Main/MainWindow.ui" line="6692"/>
         <source>Linear</source>
         <translation>Lineal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6706"/>
+        <location filename="../Main/MainWindow.ui" line="6709"/>
         <source>Transfer sensitivity threshold</source>
         <translation>Llindar de sensibilitat de transferència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6718"/>
+        <location filename="../Main/MainWindow.ui" line="6721"/>
         <source>n-1 sensibility consideration</source>
         <translation>n-1 consideració de sensibilitat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6746"/>
+        <location filename="../Main/MainWindow.ui" line="6749"/>
         <source>Threshold used to discard insensitive branches</source>
         <translation>Llindar utilitzat per descartar branques insensibles</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6770"/>
+        <location filename="../Main/MainWindow.ui" line="6773"/>
         <source>Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations</source>
         <translation>Utilitzeu els valors de flux de potència existents per a la inicialització de la contingència a la capacitat de transferència neta i les simulacions de contingència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6773"/>
+        <location filename="../Main/MainWindow.ui" line="6776"/>
         <source>Use power flow values for initialization</source>
         <translation>Utilitzeu valors de flux de potència per a la inicialització</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6828"/>
-        <location filename="../Main/MainWindow.ui" line="7072"/>
+        <location filename="../Main/MainWindow.ui" line="6831"/>
+        <location filename="../Main/MainWindow.ui" line="7075"/>
         <source>Select the solver in the OPF tab and the areas in the areas tab</source>
         <translation>Seleccioneu el solucionador a la pestanya OPF i les àrees a la pestanya àrees</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6831"/>
+        <location filename="../Main/MainWindow.ui" line="6834"/>
         <source>Net transfer capacity</source>
         <translation>Capacitat de transferència neta</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6839"/>
+        <location filename="../Main/MainWindow.ui" line="6842"/>
         <source>Nodal capacity hosting options</source>
         <translation>Opcions d&apos;allotjament de capacitat nodal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6846"/>
+        <location filename="../Main/MainWindow.ui" line="6849"/>
         <source>Nhc</source>
         <translation>NHC</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6849"/>
+        <location filename="../Main/MainWindow.ui" line="6852"/>
         <source>Nodal hosting capacity related settings</source>
         <translation>Configuració relacionada amb la capacitat d&apos;allotjament nodal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6871"/>
-        <location filename="../Main/MainWindow.ui" line="6889"/>
+        <location filename="../Main/MainWindow.ui" line="6874"/>
+        <location filename="../Main/MainWindow.ui" line="6892"/>
         <source>If the sense is positive, the algorithm will assess the maximum generation capacity in the selected nodes. If it is negative it will asses the maximum loading capacity in the selected nodes.</source>
         <translation>Si el sentit és positiu, l&apos;algorisme avaluarà la capacitat màxima de generació als nodes seleccionats. Si és negatiu, valorarà la capacitat de càrrega màxima en els nodes seleccionats.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6877"/>
+        <location filename="../Main/MainWindow.ui" line="6880"/>
         <source>Sense</source>
         <translation>Sentit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6922"/>
+        <location filename="../Main/MainWindow.ui" line="6925"/>
         <source>Optimization method to use</source>
         <translation>Mètode d&apos;optimització a utilitzar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7075"/>
+        <location filename="../Main/MainWindow.ui" line="7078"/>
         <source>Nodal hosting capacity</source>
         <translation>Capacitat d&apos;allotjament nodal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7096"/>
+        <location filename="../Main/MainWindow.ui" line="7099"/>
         <source>Area transfer settings</source>
         <translation>Configuració de transferència d&apos;àrea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7103"/>
+        <location filename="../Main/MainWindow.ui" line="7106"/>
         <source>Txfr</source>
         <translation>Txfr</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7106"/>
+        <location filename="../Main/MainWindow.ui" line="7109"/>
         <source>Area, Zone, etc related settings</source>
         <translation>Configuració relacionada amb l&apos;àrea, la zona, etc</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7213"/>
+        <location filename="../Main/MainWindow.ui" line="7216"/>
         <source>Transfer configuration</source>
         <translation>Configuració de transferència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7258"/>
+        <location filename="../Main/MainWindow.ui" line="7261"/>
         <source>From</source>
         <translation>Des de</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7281"/>
+        <location filename="../Main/MainWindow.ui" line="7284"/>
         <source>To</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7302"/>
+        <location filename="../Main/MainWindow.ui" line="7305"/>
         <source>Contingencies settings</source>
         <translation>Configuració de contingències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7309"/>
+        <location filename="../Main/MainWindow.ui" line="7312"/>
         <source>Con</source>
         <translation>Con</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7312"/>
+        <location filename="../Main/MainWindow.ui" line="7315"/>
         <source>Contingencies related settings</source>
         <translation>Configuració relacionada amb contingències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7339"/>
+        <location filename="../Main/MainWindow.ui" line="7342"/>
         <source>Contingency filter</source>
         <translation>Filtre de contingència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7352"/>
+        <location filename="../Main/MainWindow.ui" line="7355"/>
         <source>Filter by</source>
         <translation>Filtra per</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7368"/>
+        <location filename="../Main/MainWindow.ui" line="7371"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Filter contingencies&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This option allows you to only consider the contingencies that fall in ceratain groupings such as Area, Zone or Country. The filtering is performed based on the information stored in the Buses.&lt;/p&gt;&lt;p&gt;This is highly discouraged. We trully advise you to not to filter the contingencies and select All Contingencies. Use this feature at your own risk.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Filtre les contingències&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aquesta opció permet tenir en compte només les contingències que s&apos;inclouen en agrupacions de ceratina com Zona, Zona o País. El filtratge es realitza a partir de la informació emmagatzemada als Busos.&lt;/p&gt;&lt;p&gt;Això està molt desaconsellat. Us recomanem sincerament que no filtreu les contingències i seleccioneu Totes les contingències. Utilitzeu aquesta funció sota el vostre propi risc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7551"/>
+        <location filename="../Main/MainWindow.ui" line="7554"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dead band over the SRAP rating.&lt;/p&gt;&lt;p&gt;If greater than zero, the SRAP is investigated for values over the branch protections rating until the specified value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Banda morta per sobre de la qualificació SRAP.&lt;/p&gt;&lt;p&gt;Si és superior a zero, el SRAP s&apos;investiga per valors per sobre de la qualificació de proteccions de branca fins al valor especificat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7554"/>
+        <location filename="../Main/MainWindow.ui" line="7557"/>
         <source>SRAP dead band</source>
         <translation>Banda morta SRAP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7568"/>
+        <location filename="../Main/MainWindow.ui" line="7571"/>
         <source>SRAP limit</source>
         <translation>Límit SRAP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7575"/>
+        <location filename="../Main/MainWindow.ui" line="7578"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked the SRAP objective solution is the branch nominal rate. Otherwise, the objective rating is the contingency rating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si es marca, la solució objectiu SRAP és la taxa nominal de la branca. En cas contrari, la qualificació objectiu és la qualificació de contingència.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7578"/>
+        <location filename="../Main/MainWindow.ui" line="7581"/>
         <source>Revert to nominal rating</source>
         <translation>Torna a la qualificació nominal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7585"/>
+        <location filename="../Main/MainWindow.ui" line="7588"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Activate SRAP (Sistema de reducción automática de potencia)&lt;/p&gt;&lt;p&gt;It is a mechanism that helps avoiding considering a contingency if it would be eventually resolved by nearby generation shifting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Activar SRAP (Sistema de reducció automàtica de potència)&lt;/p&gt;&lt;p&gt;És un mecanisme que ajuda a evitar considerar una contingència si finalment es resolgués amb un canvi generacional proper.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7588"/>
+        <location filename="../Main/MainWindow.ui" line="7591"/>
         <source>Use SRAP</source>
         <translation>Utilitzeu SRAP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7595"/>
+        <location filename="../Main/MainWindow.ui" line="7598"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, a massive posibly intractable report is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Si es marca, es genera un informe massiu possiblement intractable.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7598"/>
+        <location filename="../Main/MainWindow.ui" line="7601"/>
         <source>Detailed report</source>
         <translation>Informe detallat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7605"/>
+        <location filename="../Main/MainWindow.ui" line="7608"/>
         <source>Maximum overload power that is solvable using the SRAP technique.</source>
         <translation>Màxima potència de sobrecàrrega que es pot resoldre mitjançant la tècnica SRAP.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7637"/>
-        <location filename="../Main/MainWindow.ui" line="7677"/>
-        <location filename="../Main/MainWindow.ui" line="9145"/>
+        <location filename="../Main/MainWindow.ui" line="7640"/>
+        <location filename="../Main/MainWindow.ui" line="7680"/>
+        <location filename="../Main/MainWindow.ui" line="9148"/>
         <source> %</source>
         <translation> %</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7650"/>
+        <location filename="../Main/MainWindow.ui" line="7653"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Amount of contingency loading with respect to the base situation loading that triggers the report of the contingency. This is specially useful when we want to avoig reporting contingencies that are not significant with respect to the base situation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Import de la càrrega de contingència respecte a la càrrega de situació base que desencadena l&apos;informe de la contingència. Això és especialment útil quan volem evitar reportar contingències que no siguin significatives respecte a la situació base.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7653"/>
+        <location filename="../Main/MainWindow.ui" line="7656"/>
         <source>Contingency dead band</source>
         <translation>Banda morta de contingència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7660"/>
+        <location filename="../Main/MainWindow.ui" line="7663"/>
         <source>Maximum number of generation nodes to participate in the SRAP</source>
         <translation>Nombre màxim de nodes de generació per participar en el SRAP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7663"/>
+        <location filename="../Main/MainWindow.ui" line="7666"/>
         <source>SRAP top N</source>
         <translation>SRAP superior N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7670"/>
+        <location filename="../Main/MainWindow.ui" line="7673"/>
         <source>Contingency engine</source>
         <translation>Motor de contingència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7720"/>
+        <location filename="../Main/MainWindow.ui" line="7723"/>
         <source>Dyn</source>
         <translation>Din</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7723"/>
+        <location filename="../Main/MainWindow.ui" line="7726"/>
         <source>Rms simulation settings</source>
         <translation>Configuració de simulació Rms</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7851"/>
+        <location filename="../Main/MainWindow.ui" line="7854"/>
         <source>RMS</source>
         <translation>RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7959"/>
-        <location filename="../Main/MainWindow.ui" line="8005"/>
-        <location filename="../Main/MainWindow.ui" line="8120"/>
-        <location filename="../Main/MainWindow.ui" line="8462"/>
-        <location filename="../Main/MainWindow.ui" line="8487"/>
-        <location filename="../Main/MainWindow.ui" line="8816"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Initial time for the simulation. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Temps inicial per a la simulació. &lt;/p&gt;&lt;p&gt;A la pràctica, això s&apos;utilitza per frenar les solucions problemàtiques.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
+        <location filename="../Main/MainWindow.ui" line="7962"/>
         <location filename="../Main/MainWindow.ui" line="8008"/>
         <location filename="../Main/MainWindow.ui" line="8123"/>
         <location filename="../Main/MainWindow.ui" line="8465"/>
         <location filename="../Main/MainWindow.ui" line="8490"/>
-        <location filename="../Main/MainWindow.ui" line="8803"/>
         <location filename="../Main/MainWindow.ui" line="8819"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Initial time for the simulation. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Temps inicial per a la simulació. &lt;/p&gt;&lt;p&gt;A la pràctica, això s&apos;utilitza per frenar les solucions problemàtiques.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8011"/>
+        <location filename="../Main/MainWindow.ui" line="8126"/>
+        <location filename="../Main/MainWindow.ui" line="8468"/>
+        <location filename="../Main/MainWindow.ui" line="8493"/>
+        <location filename="../Main/MainWindow.ui" line="8806"/>
+        <location filename="../Main/MainWindow.ui" line="8822"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8094"/>
-        <location filename="../Main/MainWindow.ui" line="8682"/>
+        <location filename="../Main/MainWindow.ui" line="8097"/>
+        <location filename="../Main/MainWindow.ui" line="8685"/>
         <source>Assessment time</source>
         <translation>Temps d&apos;avaluació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7952"/>
-        <location filename="../Main/MainWindow.ui" line="8841"/>
+        <location filename="../Main/MainWindow.ui" line="7955"/>
+        <location filename="../Main/MainWindow.ui" line="8844"/>
         <source>Initialization</source>
         <translation>Inicialització</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8195"/>
-        <location filename="../Main/MainWindow.ui" line="8689"/>
+        <location filename="../Main/MainWindow.ui" line="8198"/>
+        <location filename="../Main/MainWindow.ui" line="8692"/>
         <source>Time step</source>
         <translation>Pas de temps</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7984"/>
-        <location filename="../Main/MainWindow.ui" line="8618"/>
+        <location filename="../Main/MainWindow.ui" line="7987"/>
+        <location filename="../Main/MainWindow.ui" line="8621"/>
         <source>Integration</source>
         <translation>Integració</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7962"/>
+        <location filename="../Main/MainWindow.ui" line="7965"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8155"/>
-        <location filename="../Main/MainWindow.ui" line="8625"/>
+        <location filename="../Main/MainWindow.ui" line="8158"/>
+        <location filename="../Main/MainWindow.ui" line="8628"/>
         <source>Simulation time</source>
         <translation>Temps de simulació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8251"/>
+        <location filename="../Main/MainWindow.ui" line="8254"/>
         <source>RMS Small-Signal</source>
         <translation>RMS Petit senyal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7939"/>
-        <location filename="../Main/MainWindow.ui" line="8574"/>
-        <location filename="../Main/MainWindow.ui" line="8578"/>
+        <location filename="../Main/MainWindow.ui" line="7942"/>
+        <location filename="../Main/MainWindow.ui" line="8577"/>
+        <location filename="../Main/MainWindow.ui" line="8581"/>
         <source>trapezoid</source>
         <translation>trapezoïdal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7944"/>
-        <location filename="../Main/MainWindow.ui" line="8583"/>
+        <location filename="../Main/MainWindow.ui" line="7947"/>
+        <location filename="../Main/MainWindow.ui" line="8586"/>
         <source>implicit euler</source>
         <translation>euler implícit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8148"/>
-        <location filename="../Main/MainWindow.ui" line="8594"/>
+        <location filename="../Main/MainWindow.ui" line="8151"/>
+        <location filename="../Main/MainWindow.ui" line="8597"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of modes.&lt;br/&gt;If zero, all modes are included and the calculation is done using dense matrices.&lt;br/&gt;If a number of modes greater than zero is given the calculation is sparse.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nombre de modes.&lt;br/&gt;Si és zero, s&apos;inclouen tots els modes i el càlcul es fa mitjançant matrius denses.&lt;br/&gt;Si es dóna un nombre de modes superior a zero, el càlcul és escàs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8030"/>
-        <location filename="../Main/MainWindow.ui" line="8696"/>
+        <location filename="../Main/MainWindow.ui" line="8033"/>
+        <location filename="../Main/MainWindow.ui" line="8699"/>
         <source>Modes</source>
         <translation>Modes</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7992"/>
-        <location filename="../Main/MainWindow.ui" line="8787"/>
+        <location filename="../Main/MainWindow.ui" line="7995"/>
+        <location filename="../Main/MainWindow.ui" line="8790"/>
         <source>standard</source>
         <translation>estàndard</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7997"/>
-        <location filename="../Main/MainWindow.ui" line="8792"/>
+        <location filename="../Main/MainWindow.ui" line="8000"/>
+        <location filename="../Main/MainWindow.ui" line="8795"/>
         <source>vectorized</source>
         <translation>vectoritzat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8202"/>
-        <location filename="../Main/MainWindow.ui" line="8551"/>
+        <location filename="../Main/MainWindow.ui" line="8205"/>
+        <location filename="../Main/MainWindow.ui" line="8554"/>
         <source>Problem</source>
         <translation>Problema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8389"/>
+        <location filename="../Main/MainWindow.ui" line="8392"/>
         <source>EMT</source>
         <translation>EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8442"/>
+        <location filename="../Main/MainWindow.ui" line="8445"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Subspace build type. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tipus de construcció de subespai. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8445"/>
-        <location filename="../Main/MainWindow.ui" line="8449"/>
+        <location filename="../Main/MainWindow.ui" line="8448"/>
+        <location filename="../Main/MainWindow.ui" line="8452"/>
         <source>Arnoldi</source>
         <translation>Arnoldi</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8454"/>
+        <location filename="../Main/MainWindow.ui" line="8457"/>
         <source>Hybrid Arnoldi</source>
         <translation>Arnoldi Híbrid</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8512"/>
+        <location filename="../Main/MainWindow.ui" line="8515"/>
         <source>Build type</source>
         <translation>Tipus de construcció</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8604"/>
+        <location filename="../Main/MainWindow.ui" line="8607"/>
         <source>Target period</source>
         <translation>Període objectiu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8745"/>
+        <location filename="../Main/MainWindow.ui" line="8748"/>
         <source>EMT Small-Signal</source>
         <translation>EMT Petit senyal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8800"/>
+        <location filename="../Main/MainWindow.ui" line="8803"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Period of the periodic orbit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Període de l&apos;òrbit periòdic. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -14173,443 +14708,443 @@ Ha de carregar o crear una xarxa!</translation>
         <translation type="vanished">Hz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8884"/>
+        <location filename="../Main/MainWindow.ui" line="8887"/>
         <source>Machine-learning related settings</source>
         <translation>Configuració relacionada amb l&apos;aprenentatge automàtic</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8891"/>
+        <location filename="../Main/MainWindow.ui" line="8894"/>
         <source>ML</source>
         <translation>ML</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8894"/>
+        <location filename="../Main/MainWindow.ui" line="8897"/>
         <source>Machine learning related settings</source>
         <translation>Configuració relacionada amb l&apos;aprenentatge automàtic</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8912"/>
+        <location filename="../Main/MainWindow.ui" line="8915"/>
         <source>Objective function</source>
         <translation>Funció objectiva</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9076"/>
+        <location filename="../Main/MainWindow.ui" line="9079"/>
         <source>Minimum form capacity</source>
         <translation>Capacitat de forma mínima</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9132"/>
+        <location filename="../Main/MainWindow.ui" line="9135"/>
         <source>Node grouping</source>
         <translation>Agrupació de nodes</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9142"/>
+        <location filename="../Main/MainWindow.ui" line="9145"/>
         <source>In adequecy and simple dispatch indicated the minimum share of total firm capacity of the system to be in desirable, less is penalized</source>
         <translation>En adequació i enviament simple s&apos;indica que la quota mínima de la capacitat total de l&apos;empresa del sistema sigui desitjable, es penalitza menys</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9161"/>
+        <location filename="../Main/MainWindow.ui" line="9164"/>
         <source>Number of maximum evaluations for the optimization methods</source>
         <translation>Nombre d&apos;avaluacions màximes dels mètodes d&apos;optimització</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9164"/>
+        <location filename="../Main/MainWindow.ui" line="9167"/>
         <source> x number of investments</source>
         <translation> x nombre d&apos;inversions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9243"/>
-        <location filename="../Main/MainWindow.ui" line="12239"/>
+        <location filename="../Main/MainWindow.ui" line="9246"/>
+        <location filename="../Main/MainWindow.ui" line="12288"/>
         <source>Clustering</source>
         <translation>Agrupació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9256"/>
+        <location filename="../Main/MainWindow.ui" line="9259"/>
         <source>Nodal distances</source>
         <translation>Distàncies nodals</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9263"/>
+        <location filename="../Main/MainWindow.ui" line="9266"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of clusters, this affects all the simulations that deal with clustering&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nombre de clústers, això afecta totes les simulacions que tracten el clustering&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9266"/>
+        <location filename="../Main/MainWindow.ui" line="9269"/>
         <source> Clusters</source>
         <translation> Clústers</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9282"/>
+        <location filename="../Main/MainWindow.ui" line="9285"/>
         <source>Maximum evaluations</source>
         <translation>Màximes avaluacions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9316"/>
+        <location filename="../Main/MainWindow.ui" line="9319"/>
         <source>Máximum standard deviation to determine the groups</source>
         <translation>Desviació estàndard màxima per determinar els grups</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9319"/>
+        <location filename="../Main/MainWindow.ui" line="9322"/>
         <source> σ</source>
         <translation> σ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9335"/>
+        <location filename="../Main/MainWindow.ui" line="9338"/>
         <source>Min. group size</source>
         <translation>Min. mida del grup</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9342"/>
+        <location filename="../Main/MainWindow.ui" line="9345"/>
         <source>Select the investment evaluation method</source>
         <translation>Seleccioneu el mètode d&apos;avaluació de la inversió</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9349"/>
+        <location filename="../Main/MainWindow.ui" line="9352"/>
         <source>Minimum size of the group</source>
         <translation>Mida mínima del grup</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9355"/>
+        <location filename="../Main/MainWindow.ui" line="9358"/>
         <source> elements</source>
         <translation> elements</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9413"/>
+        <location filename="../Main/MainWindow.ui" line="9416"/>
         <source>Investment evaluation</source>
         <translation>Avaluació de la inversió</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9423"/>
+        <location filename="../Main/MainWindow.ui" line="9426"/>
         <source>Number of clusters</source>
         <translation>Nombre de clústers</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9529"/>
+        <location filename="../Main/MainWindow.ui" line="9532"/>
         <source>Number of islands produced until the analysis stops</source>
         <translation>Nombre d&apos;illes produïdes fins que s&apos;atura l&apos;anàlisi</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9570"/>
+        <location filename="../Main/MainWindow.ui" line="9573"/>
         <source>Reliability evaluation method</source>
         <translation>Mètode d&apos;avaluació de la fiabilitat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9577"/>
+        <location filename="../Main/MainWindow.ui" line="9580"/>
         <source>Maximum number of samples</source>
         <translation>Nombre màxim de mostres</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9635"/>
+        <location filename="../Main/MainWindow.ui" line="9638"/>
         <source>Reliability</source>
         <translation>Fiabilitat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9645"/>
-        <location filename="../Main/MainWindow.ui" line="9981"/>
+        <location filename="../Main/MainWindow.ui" line="9648"/>
+        <location filename="../Main/MainWindow.ui" line="9984"/>
         <source>Samples</source>
         <translation>Mostres</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9694"/>
+        <location filename="../Main/MainWindow.ui" line="9697"/>
         <source>Cascading</source>
         <translation>En cascada</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9891"/>
-        <location filename="../Main/MainWindow.ui" line="11420"/>
+        <location filename="../Main/MainWindow.ui" line="9894"/>
+        <location filename="../Main/MainWindow.ui" line="11469"/>
         <source>Stochastic power flow</source>
         <translation>Flux d&apos;energia estocàstica</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9901"/>
+        <location filename="../Main/MainWindow.ui" line="9904"/>
         <source>Maximum number of Monte Carlo samples</source>
         <translation>Nombre màxim de mostres de Montecarlo</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9917"/>
+        <location filename="../Main/MainWindow.ui" line="9920"/>
         <source>Aditional islands until stop</source>
         <translation>Illes addicionals fins a parada</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9924"/>
+        <location filename="../Main/MainWindow.ui" line="9927"/>
         <source>Voltage variance</source>
         <translation>Variància de tensió</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9995"/>
+        <location filename="../Main/MainWindow.ui" line="9998"/>
         <source>Stochastic power flow method</source>
         <translation>Mètode de flux d&apos;energia estocàstic</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10027"/>
+        <location filename="../Main/MainWindow.ui" line="10030"/>
         <source>Monte Carlo variance until stop</source>
         <translation>Variant de Montecarlo fins a la parada</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10077"/>
+        <location filename="../Main/MainWindow.ui" line="10080"/>
         <source>Topology settings</source>
         <translation>Configuració de la topologia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10084"/>
+        <location filename="../Main/MainWindow.ui" line="10087"/>
         <source>Tplgy</source>
         <translation>Tplgy</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10087"/>
+        <location filename="../Main/MainWindow.ui" line="10090"/>
         <source>Topology related settings</source>
         <translation>Configuració relacionada amb la topologia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10206"/>
-        <location filename="../Main/MainWindow.ui" line="12656"/>
+        <location filename="../Main/MainWindow.ui" line="10209"/>
+        <location filename="../Main/MainWindow.ui" line="12705"/>
         <source>Grid reduction</source>
         <translation>Reducció de la xarxa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10269"/>
+        <location filename="../Main/MainWindow.ui" line="10272"/>
         <source>Select branch types to reduce</source>
         <translation>Seleccioneu els tipus de branques per reduir</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10279"/>
+        <location filename="../Main/MainWindow.ui" line="10282"/>
         <source>Filter by r+x under threshold</source>
         <translation>Filtra per r+x sota el llindar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10289"/>
+        <location filename="../Main/MainWindow.ui" line="10292"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exponent of the threshold to use.&lt;/p&gt;&lt;p&gt;threshold = 1x10^-factor&lt;/p&gt;&lt;p&gt;i.e.&lt;/p&gt;&lt;p&gt;factor=3&lt;/p&gt;&lt;p&gt;threshold = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exponent del llindar a utilitzar.&lt;/p&gt;&lt;p&gt;llindar = 1x10^-factor&lt;/p&gt;&lt;p&gt;és a dir&lt;/p&gt;&lt;p&gt;factor=3&lt;/p&gt;&lt;p&gt;llindar = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10418"/>
+        <location filename="../Main/MainWindow.ui" line="10421"/>
         <source>Branch rating</source>
         <translation>Valoració de la sucursal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10490"/>
+        <location filename="../Main/MainWindow.ui" line="10493"/>
         <source>Branch rating factor</source>
         <translation>Factor de valoració de la sucursal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10497"/>
+        <location filename="../Main/MainWindow.ui" line="10500"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor to aply to the branch calculated power to use as rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor a aplicar a la potència calculada de la branca per utilitzar-la com a valor nominal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10516"/>
+        <location filename="../Main/MainWindow.ui" line="10519"/>
         <source>override values</source>
         <translation>anul·lar valors</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10543"/>
+        <location filename="../Main/MainWindow.ui" line="10546"/>
         <source>File settings</source>
         <translation>Configuració del fitxer</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10550"/>
-        <location filename="../Main/MainWindow.ui" line="11002"/>
+        <location filename="../Main/MainWindow.ui" line="10553"/>
+        <location filename="../Main/MainWindow.ui" line="11050"/>
         <source>File</source>
         <translation>Fitxer</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10553"/>
+        <location filename="../Main/MainWindow.ui" line="10556"/>
         <source>File related settings</source>
         <translation>Configuració relacionada amb el fitxer</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10574"/>
+        <location filename="../Main/MainWindow.ui" line="10577"/>
         <source>If checked, the results are stored inside the VeraGrid file in a compressed format.</source>
         <translation>Si està marcat, els resultats s&apos;emmagatzemen dins del fitxer VeraGrid en un format comprimit.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10577"/>
+        <location filename="../Main/MainWindow.ui" line="10580"/>
         <source>Save results in .veragrid files</source>
         <translation>Desa els resultats en fitxers .veragrid</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10616"/>
+        <location filename="../Main/MainWindow.ui" line="10619"/>
         <source>File path</source>
         <translation>Ruta del fitxer</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10742"/>
+        <location filename="../Main/MainWindow.ui" line="10745"/>
         <source>File Information</source>
         <translation>Informació del fitxer</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10790"/>
+        <location filename="../Main/MainWindow.ui" line="10793"/>
         <source>Server</source>
         <translation>Servidor</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10796"/>
+        <location filename="../Main/MainWindow.ui" line="10799"/>
         <source>Server jobs currently on cue</source>
         <translation>Feines del servidor actualment en espera</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10824"/>
+        <location filename="../Main/MainWindow.ui" line="10827"/>
         <source>Url</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10831"/>
+        <location filename="../Main/MainWindow.ui" line="10834"/>
         <source>Type here the VeraGrid server URL (ask your IT team)</source>
         <translation>Escriviu aquí l&apos;URL del servidor VeraGrid (demaneu al vostre equip informàtic)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10838"/>
+        <location filename="../Main/MainWindow.ui" line="10841"/>
         <source>Port</source>
         <translation>Port</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10845"/>
+        <location filename="../Main/MainWindow.ui" line="10848"/>
         <source>Type here the VeraGrid server Port (ask your IT team)</source>
         <translation>Escriviu aquí el port del servidor VeraGrid (demaneu al vostre equip informàtic)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10858"/>
+        <location filename="../Main/MainWindow.ui" line="10861"/>
         <source>Password</source>
         <translation>Contrasenya</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10865"/>
+        <location filename="../Main/MainWindow.ui" line="10868"/>
         <source>Type here the VeraGrid server password (ask your IT team)</source>
         <translation>Escriviu aquí la contrasenya del servidor VeraGrid (demaneu al vostre equip informàtic)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10875"/>
+        <location filename="../Main/MainWindow.ui" line="10878"/>
         <source>Secure</source>
         <translation>Segur</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10933"/>
+        <location filename="../Main/MainWindow.ui" line="11015"/>
         <source>Cancel process</source>
         <translation>Cancel·la el procés</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11006"/>
+        <location filename="../Main/MainWindow.ui" line="11054"/>
         <source>Export grid</source>
         <translation>Exporta la graella</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11032"/>
+        <location filename="../Main/MainWindow.ui" line="11080"/>
         <source>Import data</source>
         <translation>Importa dades</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11053"/>
+        <location filename="../Main/MainWindow.ui" line="11101"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11062"/>
+        <location filename="../Main/MainWindow.ui" line="11110"/>
         <source>Actions</source>
         <translation>Accions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11075"/>
+        <location filename="../Main/MainWindow.ui" line="11123"/>
         <source>Simulations</source>
         <translation>Simulacions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11151"/>
+        <location filename="../Main/MainWindow.ui" line="11200"/>
         <source>Diagram</source>
         <translation>Diagrama</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11155"/>
+        <location filename="../Main/MainWindow.ui" line="11204"/>
         <source>Branches drawing style</source>
         <translation>Estil de dibuix de branques</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11195"/>
+        <location filename="../Main/MainWindow.ui" line="11244"/>
         <source>plugins</source>
         <translation>connectors</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11200"/>
+        <location filename="../Main/MainWindow.ui" line="11249"/>
         <source>Events</source>
         <translation>Esdeveniments</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11221"/>
+        <location filename="../Main/MainWindow.ui" line="11270"/>
         <source>toolBar</source>
         <translation>toolBar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11288"/>
+        <location filename="../Main/MainWindow.ui" line="11337"/>
         <source>Open file</source>
         <translation>Obre el fitxer</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11294"/>
+        <location filename="../Main/MainWindow.ui" line="11343"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11303"/>
+        <location filename="../Main/MainWindow.ui" line="11352"/>
         <source>Save</source>
         <translation>Desa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11309"/>
-        <location filename="../Main/MainWindow.ui" line="13125"/>
+        <location filename="../Main/MainWindow.ui" line="11358"/>
+        <location filename="../Main/MainWindow.ui" line="13186"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11318"/>
+        <location filename="../Main/MainWindow.ui" line="11367"/>
         <source>Take picture</source>
         <translation>Fes una foto</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11330"/>
+        <location filename="../Main/MainWindow.ui" line="11379"/>
         <source>New project</source>
         <translation>Nou projecte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11336"/>
+        <location filename="../Main/MainWindow.ui" line="11385"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11345"/>
+        <location filename="../Main/MainWindow.ui" line="11394"/>
         <source>Power Flow</source>
         <translation>Flux de potència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11348"/>
+        <location filename="../Main/MainWindow.ui" line="11397"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Flux de potència&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Feu una anàlisi del flux d&apos;energia&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11354"/>
+        <location filename="../Main/MainWindow.ui" line="11403"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11366"/>
+        <location filename="../Main/MainWindow.ui" line="11415"/>
         <source>Power flow time series</source>
         <translation>Sèrie temporal de flux de potència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11369"/>
+        <location filename="../Main/MainWindow.ui" line="11418"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the power flow study with time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Flux de potència&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu l&apos;estudi del flux d&apos;energia amb dades de sèries temporals&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11375"/>
+        <location filename="../Main/MainWindow.ui" line="11424"/>
         <source>Ctrl+F5</source>
         <translation>Ctrl+F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11384"/>
+        <location filename="../Main/MainWindow.ui" line="11433"/>
         <source>Expand</source>
         <translation>Expandir</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11387"/>
+        <location filename="../Main/MainWindow.ui" line="11436"/>
         <source>Expand distances</source>
         <translation>Ampliar distàncies</translation>
     </message>
@@ -14618,12 +15153,12 @@ Ha de carregar o crear una xarxa!</translation>
         <translation type="vanished">Ctrl+Alt++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11402"/>
+        <location filename="../Main/MainWindow.ui" line="11451"/>
         <source>Shrink</source>
         <translation>Encongir-se</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11405"/>
+        <location filename="../Main/MainWindow.ui" line="11454"/>
         <source>Shrink distances</source>
         <translation>Redueix les distàncies</translation>
     </message>
@@ -14632,282 +15167,282 @@ Ha de carregar o crear una xarxa!</translation>
         <translation type="vanished">Ctrl+Alt+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11393"/>
+        <location filename="../Main/MainWindow.ui" line="11442"/>
         <source>Ctrl+Shift++</source>
         <translation>Ctrl+Shift++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11411"/>
+        <location filename="../Main/MainWindow.ui" line="11460"/>
         <source>Ctrl+Shift+-</source>
         <translation>Ctrl+Shift+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11423"/>
+        <location filename="../Main/MainWindow.ui" line="11472"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Stochastic power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a stochastic power flow over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Flux d&apos;energia estocàstica&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzeu un flux de potència estocàstic sobre les dades de la sèrie temporal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11438"/>
+        <location filename="../Main/MainWindow.ui" line="11487"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Continuation power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a continuation power flow over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Continuació del flux d&apos;energia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu un flux d&apos;alimentació de continuació sobre les dades de la instantània&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11450"/>
+        <location filename="../Main/MainWindow.ui" line="11499"/>
         <source>About</source>
         <translation>Sobre</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11462"/>
+        <location filename="../Main/MainWindow.ui" line="11511"/>
         <source>center view</source>
         <translation>vista central</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11465"/>
+        <location filename="../Main/MainWindow.ui" line="11514"/>
         <source>Center view</source>
         <translation>Vista central</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11471"/>
+        <location filename="../Main/MainWindow.ui" line="11520"/>
         <source>Ctrl+E</source>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11480"/>
+        <location filename="../Main/MainWindow.ui" line="11529"/>
         <source>Short Circuit</source>
         <translation>Curt Circuit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11483"/>
+        <location filename="../Main/MainWindow.ui" line="11532"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Short Circuit&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a short circuit study over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Curt Circuit&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Feu un estudi de curtcircuit sobre les dades de la instantània&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11495"/>
+        <location filename="../Main/MainWindow.ui" line="11544"/>
         <source>Automatic grid layout</source>
         <translation>Disseny automàtic de quadrícula</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11498"/>
+        <location filename="../Main/MainWindow.ui" line="11547"/>
         <source>Automatic layout the of the grid</source>
         <translation>Disseny automàtic de la graella</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11513"/>
+        <location filename="../Main/MainWindow.ui" line="11562"/>
         <source>Blackout cascade</source>
         <translation>Cascada d&apos;apagada</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11516"/>
+        <location filename="../Main/MainWindow.ui" line="11565"/>
         <source>Run a simulation or step by step blackout cascade</source>
         <translation>Executeu una simulació o una cascada d&apos;apagada pas a pas</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11528"/>
+        <location filename="../Main/MainWindow.ui" line="11577"/>
         <source>Optimal power flow</source>
         <translation>Flux de potència òptim</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11531"/>
+        <location filename="../Main/MainWindow.ui" line="11580"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Flux de potència òptim&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Això fa que el flux d&apos;energia sigui òptim&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11537"/>
+        <location filename="../Main/MainWindow.ui" line="11586"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11546"/>
+        <location filename="../Main/MainWindow.ui" line="11595"/>
         <source>Optimal power flow time series</source>
         <translation>Sèrie temporal de flux de potència òptim</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11549"/>
+        <location filename="../Main/MainWindow.ui" line="11598"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Flux de potència òptim&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Això executa un flux d&apos;energia òptim per a les dades de la sèrie temporal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11555"/>
+        <location filename="../Main/MainWindow.ui" line="11604"/>
         <source>Ctrl+F6</source>
         <translation>Ctrl+F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11564"/>
+        <location filename="../Main/MainWindow.ui" line="11613"/>
         <source>Detect transformers</source>
         <translation>Detectar transformadors</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11567"/>
+        <location filename="../Main/MainWindow.ui" line="11616"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detect transformers.&lt;/p&gt;&lt;p&gt;Use the nodes nominal voltage to determine which branches should be a transformer.&lt;/p&gt;&lt;p&gt;If a branch joins two nodes with different voltage levels, the branch should be a transformer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detectar transformadors.&lt;/p&gt;&lt;p&gt;Utilitzeu la tensió nominal dels nodes per determinar quines branques haurien de ser un transformador.&lt;/p&gt;&lt;p&gt;Si una branca uneix dos nodes amb diferents nivells de tensió, la branca hauria de ser un transformador.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11579"/>
+        <location filename="../Main/MainWindow.ui" line="11628"/>
         <source>Auto rate branches</source>
         <translation>Sucursals de tarifa automàtica</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11582"/>
+        <location filename="../Main/MainWindow.ui" line="11631"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatic rating of the branches.&lt;/p&gt;&lt;p&gt;Use the branches calculated power to establish a rate, if the branch rate is unknown. A factor is available in the settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Valoració automàtica de les oficines.&lt;/p&gt;&lt;p&gt;Utilitzeu la potència calculada de les branques per establir una taxa, si es desconeix la taxa de branca. Hi ha un factor disponible a la configuració.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11597"/>
+        <location filename="../Main/MainWindow.ui" line="11646"/>
         <source>Storage location suggestion</source>
         <translation>Suggeriment d&apos;ubicació d&apos;emmagatzematge</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11600"/>
+        <location filename="../Main/MainWindow.ui" line="11649"/>
         <source>Suggest places where storage devices are useful</source>
         <translation>Suggereix llocs on els dispositius d&apos;emmagatzematge siguin útils</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11612"/>
+        <location filename="../Main/MainWindow.ui" line="11661"/>
         <source>Launch data analysis tool</source>
         <translation>Inicieu l&apos;eina d&apos;anàlisi de dades</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11615"/>
+        <location filename="../Main/MainWindow.ui" line="11664"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Data analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the data analysis tool that finds and tries to repair common grid modelling issues&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Anàlisi de dades&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Inicieu l&apos;eina d&apos;anàlisi de dades que troba i intenta reparar problemes habituals de modelització de la xarxa&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11621"/>
+        <location filename="../Main/MainWindow.ui" line="11670"/>
         <source>F12</source>
         <translation>F12</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11630"/>
+        <location filename="../Main/MainWindow.ui" line="11679"/>
         <source>Online documentation</source>
         <translation>Documentació en línia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11636"/>
+        <location filename="../Main/MainWindow.ui" line="11685"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11645"/>
+        <location filename="../Main/MainWindow.ui" line="11694"/>
         <source>Save as</source>
         <translation>Desa com a</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11657"/>
+        <location filename="../Main/MainWindow.ui" line="11706"/>
         <source>Delete selected</source>
         <translation>Suprimeix el seleccionat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11660"/>
+        <location filename="../Main/MainWindow.ui" line="11709"/>
         <source>Delete selected objects from the diagrams and optionally from the database</source>
         <translation>Elimina els objectes seleccionats dels diagrames i, opcionalment, de la base de dades</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11666"/>
+        <location filename="../Main/MainWindow.ui" line="11715"/>
         <source>Del</source>
         <translation>Del</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11675"/>
+        <location filename="../Main/MainWindow.ui" line="11724"/>
         <source>Linear analysis</source>
         <translation>Anàlisi lineal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11678"/>
+        <location filename="../Main/MainWindow.ui" line="11727"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform linear analysis with distribution factors (PTDF, LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Anàlisi lineal&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzar anàlisis lineals amb factors de distribució (PTDF, LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11684"/>
+        <location filename="../Main/MainWindow.ui" line="11733"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11693"/>
+        <location filename="../Main/MainWindow.ui" line="11742"/>
         <source>Reset console</source>
         <translation>Restableix la consola</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11708"/>
+        <location filename="../Main/MainWindow.ui" line="11757"/>
         <source>Set OPF results to power flow (non destructive)</source>
         <translation>Estableix els resultats de OPF al flux d&apos;energia (no destructiu)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11711"/>
+        <location filename="../Main/MainWindow.ui" line="11760"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Set the OPF results into the power flow or time series simulations (non destructive)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copieu les dades OPF&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Configureu els resultats de OPF al flux de potència o a les simulacions de sèries temporals (no destructives)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11723"/>
+        <location filename="../Main/MainWindow.ui" line="11772"/>
         <source>Correct buses location</source>
         <translation>Localització correcta dels autobusos</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11726"/>
+        <location filename="../Main/MainWindow.ui" line="11775"/>
         <source>Set selected buses location closer to their neighbours</source>
         <translation>Estableix la ubicació dels autobusos seleccionats més a prop dels seus veïns</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11738"/>
+        <location filename="../Main/MainWindow.ui" line="11787"/>
         <source>Copy OPF generation to database (destructive)</source>
         <translation>Copia la generació de OPF a la base de dades (destructiva)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11741"/>
+        <location filename="../Main/MainWindow.ui" line="11790"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Destructive copy of the OPF generation results to the input profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copieu les dades OPF&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Còpia destructiva dels resultats de la generació OPF als perfils d&apos;entrada&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11753"/>
+        <location filename="../Main/MainWindow.ui" line="11802"/>
         <source>Linear analysis time series power flow</source>
         <translation>Anàlisi lineal del flux de potència de sèrie temporal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11756"/>
+        <location filename="../Main/MainWindow.ui" line="11805"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF based time series power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Anàlisi lineal&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Flux de potència de sèrie temporal basat en PTDF&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11762"/>
+        <location filename="../Main/MainWindow.ui" line="11811"/>
         <source>Ctrl+F7</source>
         <translation>Ctrl+F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11771"/>
+        <location filename="../Main/MainWindow.ui" line="11820"/>
         <source>Import circuit</source>
         <translation>Circuit d&apos;importació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11774"/>
+        <location filename="../Main/MainWindow.ui" line="11823"/>
         <source>Add circuit to the current circuit</source>
         <translation>Afegiu un circuit al circuit actual</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11780"/>
+        <location filename="../Main/MainWindow.ui" line="11829"/>
         <source>Ctrl+N, Ctrl+O</source>
         <translation>Ctrl+N, Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11792"/>
+        <location filename="../Main/MainWindow.ui" line="11841"/>
         <source>Sync</source>
         <translation>Sincronització</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11795"/>
+        <location filename="../Main/MainWindow.ui" line="11844"/>
         <source>Sync with the file for colaborative editing of the grid</source>
         <translation>Sincronització amb el fitxer per a l&apos;edició col·laborativa de la graella</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11804"/>
+        <location filename="../Main/MainWindow.ui" line="11853"/>
         <source>Draw schematic</source>
         <translation>Dibuixa un esquema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11813"/>
+        <location filename="../Main/MainWindow.ui" line="11862"/>
         <source>Sigma analysis</source>
         <translation>Anàlisi Sigma</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11816"/>
+        <location filename="../Main/MainWindow.ui" line="11865"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sigma analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform HELM-Sigma analysis over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Anàlisi Sigma&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzeu l&apos;anàlisi HELM-Sigma sobre les dades de la instantània&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -14916,72 +15451,72 @@ Ha de carregar o crear una xarxa!</translation>
         <translation type="vanished">Esborra &quot;coses en funcionament ara mateix&quot;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11843"/>
+        <location filename="../Main/MainWindow.ui" line="11892"/>
         <source>Add default catalogue</source>
         <translation>Afegeix un catàleg predeterminat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11858"/>
+        <location filename="../Main/MainWindow.ui" line="11907"/>
         <source>Find node groups</source>
         <translation>Cerca grups de nodes</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11861"/>
+        <location filename="../Main/MainWindow.ui" line="11910"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Finds the electrically related nodes by using their electrical distance and the DBSCAN clustering method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Troba els nodes relacionats elèctricament utilitzant la seva distància elèctrica i el mètode d&apos;agrupació DBSCAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11873"/>
+        <location filename="../Main/MainWindow.ui" line="11922"/>
         <source>Grid Generator</source>
         <translation>Generador de xarxa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11879"/>
+        <location filename="../Main/MainWindow.ui" line="11928"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11888"/>
+        <location filename="../Main/MainWindow.ui" line="11937"/>
         <source>Node load</source>
         <translation>Càrrega del node</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11897"/>
+        <location filename="../Main/MainWindow.ui" line="11946"/>
         <source>Generator generation</source>
         <translation>Generació de generadors</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11906"/>
+        <location filename="../Main/MainWindow.ui" line="11955"/>
         <source>Contingency analysis time series</source>
         <translation>Sèries temporals d&apos;anàlisi de contingències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11909"/>
+        <location filename="../Main/MainWindow.ui" line="11958"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Per form a contingency analysis with the selected method over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Anàlisi de contingència&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzar una anàlisi de contingència amb el mètode seleccionat sobre les dades de la sèrie temporal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11915"/>
+        <location filename="../Main/MainWindow.ui" line="11964"/>
         <source>Ctrl+F8</source>
         <translation>Ctrl+F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11924"/>
+        <location filename="../Main/MainWindow.ui" line="11973"/>
         <source>Branch rates</source>
         <translation>Tarifes de sucursal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11933"/>
+        <location filename="../Main/MainWindow.ui" line="11982"/>
         <source>Set selected buses&apos; Area</source>
         <translation>Estableix l&apos;àrea d&apos;autobusos seleccionada</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11945"/>
+        <location filename="../Main/MainWindow.ui" line="11994"/>
         <source>Set selected buses&apos; Zone</source>
         <translation>Estableix la Zona d&apos;autobusos seleccionada</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11957"/>
+        <location filename="../Main/MainWindow.ui" line="12006"/>
         <source>Set seleted buses&apos; Country</source>
         <translation>Estableix el país dels autobusos seleccionats</translation>
     </message>
@@ -14990,441 +15525,441 @@ Ha de carregar o crear una xarxa!</translation>
         <translation type="vanished">Importa les coordenades de l&apos;autobús</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11828"/>
-        <location filename="../Main/MainWindow.ui" line="11831"/>
+        <location filename="../Main/MainWindow.ui" line="11877"/>
+        <location filename="../Main/MainWindow.ui" line="11880"/>
         <source>Stop &quot;stuff running right now&quot;</source>
         <translation>Parar &quot;el que s&apos;està executant ara&quot;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11969"/>
+        <location filename="../Main/MainWindow.ui" line="12018"/>
         <source>Coordinates</source>
         <translation>Coordenades</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11981"/>
+        <location filename="../Main/MainWindow.ui" line="12030"/>
         <source>Available Transfer Capacity</source>
         <translation>Capacitat de transferència disponible</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11984"/>
+        <location filename="../Main/MainWindow.ui" line="12033"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Capacitat de transferència neta&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzeu una avaluació de la capacitat de transferència neta lineal per a les dades de la instantània&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11996"/>
+        <location filename="../Main/MainWindow.ui" line="12045"/>
         <source>Available Transfer Capacity Time Series</source>
         <translation>Sèrie temporal de capacitat de transferència disponible</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11999"/>
+        <location filename="../Main/MainWindow.ui" line="12048"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Capacitat de transferència neta&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzeu una avaluació de la capacitat de transferència neta lineal per a les dades de la sèrie temporal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12011"/>
+        <location filename="../Main/MainWindow.ui" line="12060"/>
         <source>Contingency analysis</source>
         <translation>Anàlisi de contingència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12014"/>
+        <location filename="../Main/MainWindow.ui" line="12063"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a contingency analysis with the selected method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Anàlisi de contingència&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzar una anàlisi de contingència amb el mètode seleccionat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12020"/>
+        <location filename="../Main/MainWindow.ui" line="12069"/>
         <source>F8</source>
         <translation>F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12029"/>
+        <location filename="../Main/MainWindow.ui" line="12078"/>
         <source>Optimal net transfer capacity</source>
         <translation>Capacitat de transferència neta òptima</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12032"/>
+        <location filename="../Main/MainWindow.ui" line="12081"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an optimal net transfer capacity optimization&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Capacitat de transferència neta òptima&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzeu una optimització òptima de la capacitat de transferència neta&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12044"/>
+        <location filename="../Main/MainWindow.ui" line="12093"/>
         <source>Set schematic (x,y) from (lat,lon)</source>
         <translation>Estableix l&apos;esquema (x,y) des de (lat,lon)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12056"/>
+        <location filename="../Main/MainWindow.ui" line="12105"/>
         <source>Inputs analysis</source>
         <translation>Anàlisi d&apos;inputs</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12059"/>
+        <location filename="../Main/MainWindow.ui" line="12108"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inputs analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an analysis of the inputs for both the snapshot and time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Anàlisi d&apos;inputs&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzeu una anàlisi de les entrades tant per a les dades de la instantània com per a les sèries temporals&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12065"/>
+        <location filename="../Main/MainWindow.ui" line="12114"/>
         <source>F11</source>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12074"/>
+        <location filename="../Main/MainWindow.ui" line="12123"/>
         <source>Fuse devices</source>
         <translation>Dispositius de fusibles</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12077"/>
+        <location filename="../Main/MainWindow.ui" line="12126"/>
         <source>Fuse devices into a single device of each category per node</source>
         <translation>Fusionar dispositius en un únic dispositiu de cada categoria per node</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12089"/>
-        <location filename="../Main/MainWindow.ui" line="12092"/>
+        <location filename="../Main/MainWindow.ui" line="12138"/>
+        <location filename="../Main/MainWindow.ui" line="12141"/>
         <source>Delete inconsistencies</source>
         <translation>Elimina les incoherències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12104"/>
+        <location filename="../Main/MainWindow.ui" line="12153"/>
         <source>Optimal NTC time series</source>
         <translation>Sèrie temporal NTC òptima</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12107"/>
+        <location filename="../Main/MainWindow.ui" line="12156"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a net transfer capacity optimization over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Capacitat de transferència neta&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzeu una optimització de la capacitat de transferència neta sobre les dades de la sèrie temporal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12119"/>
+        <location filename="../Main/MainWindow.ui" line="12168"/>
         <source>re-index time</source>
         <translation>temps de reindexació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12131"/>
+        <location filename="../Main/MainWindow.ui" line="12180"/>
         <source>Fix generators active based on the power</source>
         <translation>Arregla els generadors actius en funció de la potència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12143"/>
-        <location filename="../Main/MainWindow.ui" line="12146"/>
+        <location filename="../Main/MainWindow.ui" line="12192"/>
+        <location filename="../Main/MainWindow.ui" line="12195"/>
         <source>Fix loads active based on the power</source>
         <translation>Fixeu les càrregues actives en funció de la potència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12158"/>
+        <location filename="../Main/MainWindow.ui" line="12207"/>
         <source>Initialize contingencies</source>
         <translation>Inicialitzar contingències</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12161"/>
+        <location filename="../Main/MainWindow.ui" line="12210"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingencies wizard&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the contingencies wizard to automatically set up the contingency objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Assistent de contingències&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Inicieu l&apos;assistent de contingències per configurar automàticament els objectes de contingència&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12173"/>
+        <location filename="../Main/MainWindow.ui" line="12222"/>
         <source>Add selected as new contingency</source>
         <translation>Afegeix seleccionats com a nova contingència</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12176"/>
+        <location filename="../Main/MainWindow.ui" line="12225"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add contingency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new contingency from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Afegeix contingència&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Creeu una nova contingència a partir de la selecció esquemàtica&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12182"/>
+        <location filename="../Main/MainWindow.ui" line="12231"/>
         <source>Ctrl+A, Ctrl+C</source>
         <translation>Ctrl+A, Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12191"/>
+        <location filename="../Main/MainWindow.ui" line="12240"/>
         <source>Add selected as new investment</source>
         <translation>Afegeix seleccionats com a inversió nova</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12194"/>
+        <location filename="../Main/MainWindow.ui" line="12243"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create new investment with the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inversions&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Creeu una nova inversió amb la selecció esquemàtica&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12200"/>
+        <location filename="../Main/MainWindow.ui" line="12249"/>
         <source>Ctrl+A, Ctrl+I</source>
         <translation>Ctrl+A, Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12209"/>
+        <location filename="../Main/MainWindow.ui" line="12258"/>
         <source>Zoom in</source>
         <translation>Apropa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12215"/>
+        <location filename="../Main/MainWindow.ui" line="12264"/>
         <source>Ctrl++</source>
         <translation>Ctrl++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12224"/>
+        <location filename="../Main/MainWindow.ui" line="12273"/>
         <source>Zoom out</source>
         <translation>Allunya el zoom</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12230"/>
+        <location filename="../Main/MainWindow.ui" line="12279"/>
         <source>Ctrl+-</source>
         <translation>Ctrl+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12242"/>
+        <location filename="../Main/MainWindow.ui" line="12291"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a clustering study of the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Agrupació&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzar un estudi de agrupació de dades de sèries temporals&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12260"/>
+        <location filename="../Main/MainWindow.ui" line="12309"/>
         <source>Use clustering</source>
         <translation>Utilitzeu l&apos;agrupació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12263"/>
+        <location filename="../Main/MainWindow.ui" line="12312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If active, the available clustering results are used in all the simulations that handle time series data non-destructivelly&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Agrupació&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Si estan actius, els resultats de l&apos;agrupació disponibles s&apos;utilitzen en totes les simulacions que gestionen dades de sèries temporals de manera no destructiva&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12275"/>
+        <location filename="../Main/MainWindow.ui" line="12324"/>
         <source>Investments evaluation</source>
         <translation>Avaluació d&apos;inversions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12278"/>
+        <location filename="../Main/MainWindow.ui" line="12327"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform the investments evaluation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inversions&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Realitzar l&apos;avaluació de les inversions&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12284"/>
+        <location filename="../Main/MainWindow.ui" line="12333"/>
         <source>Ctrl+I, Ctrl+E</source>
         <translation>Ctrl+I, Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12293"/>
+        <location filename="../Main/MainWindow.ui" line="12342"/>
         <source>New schematic from selection</source>
         <translation>Nou esquema de selecció</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12305"/>
+        <location filename="../Main/MainWindow.ui" line="12354"/>
         <source>New schematic</source>
         <translation>Nou esquema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12317"/>
+        <location filename="../Main/MainWindow.ui" line="12366"/>
         <source>New map</source>
         <translation>Mapa nou</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12329"/>
+        <location filename="../Main/MainWindow.ui" line="12378"/>
         <source>Remove selected diagram</source>
         <translation>Elimina el diagrama seleccionat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12338"/>
+        <location filename="../Main/MainWindow.ui" line="12387"/>
         <source>Report a bug or feature</source>
         <translation>Informa d&apos;un error o funció</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12350"/>
+        <location filename="../Main/MainWindow.ui" line="12399"/>
         <source>Search</source>
         <translation>Cerca</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12362"/>
+        <location filename="../Main/MainWindow.ui" line="12411"/>
         <source>Process topology</source>
         <translation>Topologia del procés</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12374"/>
+        <location filename="../Main/MainWindow.ui" line="12423"/>
         <source>Edit simulation time limits</source>
         <translation>Edita els límits de temps de simulació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12377"/>
+        <location filename="../Main/MainWindow.ui" line="12426"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Edit simulation time limits&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sèries temporals&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Edita els límits de temps de simulació&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12392"/>
+        <location filename="../Main/MainWindow.ui" line="12441"/>
         <source>activate time series</source>
         <translation>activar sèries temporals</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12395"/>
+        <location filename="../Main/MainWindow.ui" line="12444"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;When activated, the simulations run their time series version&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Mode sèrie temporal&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Quan s&apos;activen, les simulacions executen la seva versió de sèrie temporal&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12401"/>
+        <location filename="../Main/MainWindow.ui" line="12450"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12410"/>
+        <location filename="../Main/MainWindow.ui" line="12459"/>
         <source>Clean database</source>
         <translation>Neteja la base de dades</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12416"/>
+        <location filename="../Main/MainWindow.ui" line="12465"/>
         <source>Ctrl+C, Ctrl+D</source>
         <translation>Ctrl+C, Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12425"/>
+        <location filename="../Main/MainWindow.ui" line="12474"/>
         <source>Scale</source>
         <translation>Escala</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12428"/>
+        <location filename="../Main/MainWindow.ui" line="12477"/>
         <source>Scale the system load and or generation</source>
         <translation>Escala la càrrega i/o la generació del sistema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12440"/>
+        <location filename="../Main/MainWindow.ui" line="12489"/>
         <source>Disable all results tags</source>
         <translation>Desactiveu totes les etiquetes de resultats</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12452"/>
+        <location filename="../Main/MainWindow.ui" line="12501"/>
         <source>Enable all results tags</source>
         <translation>Activa totes les etiquetes de resultats</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12464"/>
+        <location filename="../Main/MainWindow.ui" line="12513"/>
         <source>Detect substations</source>
         <translation>Detectar subestacions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12476"/>
+        <location filename="../Main/MainWindow.ui" line="12525"/>
         <source>Optimal hosting capacity</source>
         <translation>Capacitat d&apos;allotjament òptima</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12479"/>
+        <location filename="../Main/MainWindow.ui" line="12528"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nodal hosting capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the nodal hosting capacity calculation using the selected optimization method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Capacitat d&apos;allotjament nodal&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu el càlcul de la capacitat d&apos;allotjament nodal mitjançant el mètode d&apos;optimització seleccionat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12494"/>
+        <location filename="../Main/MainWindow.ui" line="12543"/>
         <source>Enable server mode</source>
         <translation>Activa el mode de servidor</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12506"/>
+        <location filename="../Main/MainWindow.ui" line="12555"/>
         <source>Record video</source>
         <translation>Grava vídeo</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12509"/>
+        <location filename="../Main/MainWindow.ui" line="12558"/>
         <source>Record video of the schematic</source>
         <translation>Grava el vídeo de l&apos;esquema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12521"/>
+        <location filename="../Main/MainWindow.ui" line="12570"/>
         <source>Save  differential</source>
         <translation>Estalviar el diferencial</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12533"/>
+        <location filename="../Main/MainWindow.ui" line="12582"/>
         <source>Consolidate coordinates</source>
         <translation>Consolidar les coordenades</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12545"/>
+        <location filename="../Main/MainWindow.ui" line="12594"/>
         <source>Add selected as new remedial action</source>
         <translation>Afegeix el seleccionat com a acció correctiva nova</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12548"/>
+        <location filename="../Main/MainWindow.ui" line="12597"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add remedial action&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new remedial action from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Afegeix una acció correctiva&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Creeu una nova acció correctiva a partir de la selecció esquemàtica&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12554"/>
+        <location filename="../Main/MainWindow.ui" line="12603"/>
         <source>Ctrl+A, Ctrl+R</source>
         <translation>Ctrl+A, Ctrl+R</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12563"/>
+        <location filename="../Main/MainWindow.ui" line="12612"/>
         <source>Detect facilities</source>
         <translation>Detectar instal·lacions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12572"/>
+        <location filename="../Main/MainWindow.ui" line="12621"/>
         <source>Rotate</source>
         <translation>Gira</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12584"/>
+        <location filename="../Main/MainWindow.ui" line="12633"/>
         <source>Reset diagram coordinates to database values</source>
         <translation>Restableix les coordenades del diagrama als valors de la base de dades</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12596"/>
+        <location filename="../Main/MainWindow.ui" line="12645"/>
         <source>Reliability analysis</source>
         <translation>Anàlisi de la fiabilitat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12599"/>
+        <location filename="../Main/MainWindow.ui" line="12648"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Reliability study&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the reliability calculation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Estudi de fiabilitat&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu el càlcul de la fiabilitat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12614"/>
+        <location filename="../Main/MainWindow.ui" line="12663"/>
         <source>Color buses by...</source>
         <translation>Autobusos de colors de...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12626"/>
+        <location filename="../Main/MainWindow.ui" line="12675"/>
         <source>Color substations by...</source>
         <translation>Subestacions de color de...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12641"/>
+        <location filename="../Main/MainWindow.ui" line="12690"/>
         <source>Select buses by...</source>
         <translation>Seleccioneu autobusos per...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12668"/>
+        <location filename="../Main/MainWindow.ui" line="12717"/>
         <source>Substation wizard</source>
         <translation>Assistent de subestació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12671"/>
+        <location filename="../Main/MainWindow.ui" line="12720"/>
         <source>Add substation with a wizard form</source>
         <translation>Afegiu una subestació amb un formulari d&apos;assistent</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12674"/>
+        <location filename="../Main/MainWindow.ui" line="12723"/>
         <source>Ctrl+A, Ctrl+S</source>
         <translation>Ctrl+A, Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12686"/>
+        <location filename="../Main/MainWindow.ui" line="12735"/>
         <source>Dynamic RMS Simulation</source>
         <translation>Simulació dinàmica RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12689"/>
+        <location filename="../Main/MainWindow.ui" line="12738"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic RMS simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulació&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu una simulació RMS dinàmica&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12701"/>
+        <location filename="../Main/MainWindow.ui" line="12750"/>
         <source>Prepare RMS dynamic plots</source>
         <translation>Prepareu trames dinàmiques RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12704"/>
+        <location filename="../Main/MainWindow.ui" line="12753"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare RMS dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the RMS dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepareu trames dinàmiques RMS&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Obriu l&apos;editor de trames dinàmiques RMS abans d&apos;executar la simulació&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12716"/>
-        <location filename="../Main/MainWindow.ui" line="12719"/>
+        <location filename="../Main/MainWindow.ui" line="12765"/>
+        <location filename="../Main/MainWindow.ui" line="12768"/>
         <source>Small-Signal RMS Simulation</source>
         <translation>Simulació de senyal petit RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12722"/>
+        <location filename="../Main/MainWindow.ui" line="12771"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an RMS Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Simulació de senyal petit (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu una simulació d&apos;anàlisi d&apos;estabilitat de senyal petit RMS&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -15437,164 +15972,164 @@ Ha de carregar o crear una xarxa!</translation>
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Afegeix l&apos;esdeveniment RMS&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Creeu un nou esdeveniment RMS a la selecció esquemàtica&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12752"/>
+        <location filename="../Main/MainWindow.ui" line="12801"/>
         <source>Clear highlights</source>
         <translation>Destacats clars</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12767"/>
+        <location filename="../Main/MainWindow.ui" line="12816"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;State estimation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a state estimation analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Estimació de l&apos;estat&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu una anàlisi d&apos;estimació d&apos;estat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12779"/>
+        <location filename="../Main/MainWindow.ui" line="12828"/>
         <source>Add short circuit events</source>
         <translation>Afegiu esdeveniments de curtcircuit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12791"/>
+        <location filename="../Main/MainWindow.ui" line="12840"/>
         <source>PSS/e Raw / Rawx</source>
         <translation>PSS/e Raw / Rawx</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12800"/>
+        <location filename="../Main/MainWindow.ui" line="12849"/>
         <source>Power Factory DGS</source>
         <translation>Power Factory DGS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12809"/>
+        <location filename="../Main/MainWindow.ui" line="12858"/>
         <source>Matpower</source>
         <translation>Matpower</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12818"/>
+        <location filename="../Main/MainWindow.ui" line="12867"/>
         <source>UCTE</source>
         <translation>UCTE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12827"/>
+        <location filename="../Main/MainWindow.ui" line="12876"/>
         <source>CGMES</source>
         <translation>CGMES</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12836"/>
+        <location filename="../Main/MainWindow.ui" line="12885"/>
         <source>Power Grid Models</source>
         <translation>Models de xarxa elèctrica</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12845"/>
+        <location filename="../Main/MainWindow.ui" line="12894"/>
         <source>CIM</source>
         <translation>CIM</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12854"/>
+        <location filename="../Main/MainWindow.ui" line="12903"/>
         <source>H5</source>
         <translation>H5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12863"/>
+        <location filename="../Main/MainWindow.ui" line="12912"/>
         <source>JSON</source>
         <translation>JSON</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12872"/>
+        <location filename="../Main/MainWindow.ui" line="12921"/>
         <source>Microsoft Excel</source>
         <translation>Microsoft Excel</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12881"/>
+        <location filename="../Main/MainWindow.ui" line="12930"/>
         <source>SQLite</source>
         <translation>SQLite</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12890"/>
+        <location filename="../Main/MainWindow.ui" line="12939"/>
         <source>Profiles</source>
         <translation>Perfils</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12917"/>
-        <location filename="../Main/MainWindow.ui" line="12935"/>
+        <location filename="../Main/MainWindow.ui" line="12966"/>
+        <location filename="../Main/MainWindow.ui" line="12984"/>
         <source>Catalogue</source>
         <translation>Catàleg</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12944"/>
+        <location filename="../Main/MainWindow.ui" line="12993"/>
         <source>Clean Room</source>
         <translation>Habitació Neta</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12947"/>
+        <location filename="../Main/MainWindow.ui" line="12996"/>
         <source>Cleam room utility to produce an machine learning statistical representation of the static time series</source>
         <translation>Utilitat de sala blanca per produir una representació estadística d&apos;aprenentatge automàtic de la sèrie temporal estàtica</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12959"/>
+        <location filename="../Main/MainWindow.ui" line="13020"/>
         <source>Procedural grid expansion</source>
         <translation>Ampliació de graella procedimental</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12968"/>
+        <location filename="../Main/MainWindow.ui" line="13029"/>
         <source>Catalogue element optimization</source>
         <translation>Optimització d&apos;elements de catàleg</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12977"/>
+        <location filename="../Main/MainWindow.ui" line="13038"/>
         <source>Dynamic EMT Simulation</source>
         <translation>Simulació dinàmica EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12980"/>
+        <location filename="../Main/MainWindow.ui" line="13041"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic EMT simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulació&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu una simulació EMT dinàmica&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12992"/>
+        <location filename="../Main/MainWindow.ui" line="13053"/>
         <source>Prepare EMT dynamic plots</source>
         <translation>Prepareu trames dinàmiques EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12995"/>
+        <location filename="../Main/MainWindow.ui" line="13056"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare EMT dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the EMT dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepareu trames dinàmiques EMT&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Obriu l&apos;editor de trames dinàmiques EMT abans d&apos;executar la simulació&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13007"/>
-        <location filename="../Main/MainWindow.ui" line="13010"/>
+        <location filename="../Main/MainWindow.ui" line="13068"/>
+        <location filename="../Main/MainWindow.ui" line="13071"/>
         <source>Small-Signal EMT Simulation</source>
         <translation>Simulació de senyal petit EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13013"/>
+        <location filename="../Main/MainWindow.ui" line="13074"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an EMT Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Simulació de senyal petit (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu una simulació d&apos;anàlisi d&apos;estabilitat de senyal petit EMT&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13021"/>
+        <location filename="../Main/MainWindow.ui" line="13082"/>
         <source>Reticular</source>
         <translation>Reticular</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13026"/>
+        <location filename="../Main/MainWindow.ui" line="13087"/>
         <source>Straight</source>
         <translation>Recte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13035"/>
+        <location filename="../Main/MainWindow.ui" line="13096"/>
         <source>ai_chat</source>
         <translation>ai_chat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13038"/>
+        <location filename="../Main/MainWindow.ui" line="13099"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Show the VeraGrid AI chat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mostra el xat VeraGrid AI&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13050"/>
+        <location filename="../Main/MainWindow.ui" line="13111"/>
         <source>Power Flow 3-phase</source>
         <translation>Flux de potència trifàsica</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13053"/>
+        <location filename="../Main/MainWindow.ui" line="13114"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow 3-phase&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an unbalanced 3-phase power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Flux de potència trifàsica&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Executeu una anàlisi de flux d&apos;energia trifàsica desequilibrada&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -15607,32 +16142,32 @@ Ha de carregar o crear una xarxa!</translation>
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Afegeix l&apos;esdeveniment EMT&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Creeu un nou esdeveniment EMT a la selecció esquemàtica&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13080"/>
+        <location filename="../Main/MainWindow.ui" line="13141"/>
         <source>Set model (x,y) based on (lat, lon)</source>
         <translation>Estableix el model (x,y) basat en (lat, lon)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13089"/>
+        <location filename="../Main/MainWindow.ui" line="13150"/>
         <source>Restore investments</source>
         <translation>Recuperar les inversions</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13101"/>
+        <location filename="../Main/MainWindow.ui" line="13162"/>
         <source>Veragrid Scenario</source>
         <translation>Escenari de Veragrid</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13110"/>
+        <location filename="../Main/MainWindow.ui" line="13171"/>
         <source>Show dynamic models editor</source>
         <translation>Mostra l&apos;editor de models dinàmics</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13122"/>
+        <location filename="../Main/MainWindow.ui" line="13183"/>
         <source>Repair diagram</source>
         <translation>Diagrama de reparació</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13134"/>
+        <location filename="../Main/MainWindow.ui" line="13195"/>
         <source>Clear cache</source>
         <translation>Netejar la memòria</translation>
     </message>

@@ -83,9 +83,10 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
     eps: Const = Const(1.0e-10)
     c0: Const = Const(0.0)
     c23: Const = Const(2.0 / 3.0)
+    c_voltage_headroom: Const = Const(1.15)
     v_dc_eff: Expr = sym.max(v_dc, vdc_floor)
     omega_ratio: Expr = omega_pll / (omega_base + eps)
-    i_d0: Expr = c23 * ((P_ref / sbase) + (P_loss0 / sbase)) / (Vpk + eps)
+    i_d0: Expr = c23 * ((P_ref / sbase) + P_loss0) / (Vpk + eps)
     i_q0: Expr = c23 * (Q_ref / sbase) / (Vpk + eps)
     v_cmd_d0: Expr = Vpk - R_f * i_d0 - L_f * i_q0
     v_cmd_q0: Expr = -R_f * i_q0 + L_f * i_d0
@@ -108,13 +109,12 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
             v_pi_d_u - (i_kp * (i_d_ref - i_d) + xi_id),
             v_pi_q_u - (i_kp * (i_q_ref - i_q) + xi_iq),
             v_pi_0_u - (i_kp * (i_0_ref - i_0) + xi_i0),
-            # The switched abc RL plant induces the opposite dq cross-coupling signs to the pseudo
-            # dq branch, so the decoupling terms must be flipped here to recover the same low-
-            # frequency closed-loop behaviour after handover.
+            # With this sine-based Park transform the rotating-frame derivatives
+            # contribute -omega*i_q on d and +omega*i_d on q.
             v_cmd_d_u - (v_d - R_f * i_d - omega_ratio * L_f * i_q - v_pi_d_u),
             v_cmd_q_u - (v_q - R_f * i_q + omega_ratio * L_f * i_d - v_pi_q_u),
             v_cmd_0_u - (v_0 - R_f * i_0 - v_pi_0_u),
-            k_v_conv - (sym.sqrt(v_cmd_d0 * v_cmd_d0 + v_cmd_q0 * v_cmd_q0 + eps) / (m_max * (Vdc_ref + eps))),
+            k_v_conv - (c_voltage_headroom * sym.sqrt(v_cmd_d0 * v_cmd_d0 + v_cmd_q0 * v_cmd_q0 + eps) / (m_max * (Vdc_ref + eps))),
             v_lim - (k_v_conv * m_max * v_dc_eff),
             v_cmd_d - v_d_cap,
             v_cmd_q - sym.hard_sat(v_cmd_q_u, -v_q_cap, v_q_cap),
@@ -131,7 +131,7 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
             (v_cmd_d_u, v_cmd_d0),
             (v_cmd_q_u, v_cmd_q0),
             (v_cmd_0_u, c0),
-            (k_v_conv, sym.sqrt(v_cmd_d0 * v_cmd_d0 + v_cmd_q0 * v_cmd_q0 + eps) / (m_max * (Vdc_ref + eps))),
+            (k_v_conv, c_voltage_headroom * sym.sqrt(v_cmd_d0 * v_cmd_d0 + v_cmd_q0 * v_cmd_q0 + eps) / (m_max * (Vdc_ref + eps))),
             (v_lim, k_v_conv * m_max * v_dc_eff),
             (v_cmd_d, v_cmd_d0),
             (v_cmd_q, v_cmd_q0),
@@ -498,6 +498,33 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
         P_loss0_in,
         Vpk_in,
     ]))
+
+    # Initialize the physical RL-filter currents at the commanded dq0 operating
+    # point.  The standalone plant defaults these states to zero because it has
+    # no current-reference inputs of its own.  In the controlled converter that
+    # zero-current seed is inconsistent with a non-zero power-flow transfer and
+    # produces a large artificial transient at the first EMT step.
+    shift: Const = Const(2.0 * np.pi / 3.0)
+    theta_b: Expr = pll_theta - shift
+    theta_c: Expr = pll_theta + shift
+    plant_block.init_eqs[plant_i_A] = (
+        sym.sin(pll_theta) * i_d_ref_in
+        - sym.cos(pll_theta) * i_q_ref_in
+        + i_0_ref_in
+    )
+    plant_block.init_eqs[plant_i_B] = (
+        sym.sin(theta_b) * i_d_ref_in
+        - sym.cos(theta_b) * i_q_ref_in
+        + i_0_ref_in
+    )
+    plant_block.init_eqs[plant_i_C] = (
+        sym.sin(theta_c) * i_d_ref_in
+        - sym.cos(theta_c) * i_q_ref_in
+        + i_0_ref_in
+    )
+    plant_block.init_eqs[plant_i_d] = i_d_ref_in
+    plant_block.init_eqs[plant_i_q] = i_q_ref_in
+    plant_block.init_eqs[plant_i_0] = i_0_ref_in
 
     templ.block.children.extend(list([plant_block, measurement_filter_block, pll_input_filter_block, pll_block, current_ctrl_block]))
     templ.block.unify_blocks()

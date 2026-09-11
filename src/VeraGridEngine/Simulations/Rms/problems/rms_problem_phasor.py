@@ -1289,17 +1289,27 @@ class RmsProblemPhasor(RmsProblemTemplate):
         else:
             self._fmu_cs_initialized = True
 
-    def advance_fmu_cs_devices(self, t: float, x_snapshot: Vec, h: float) -> None:
+    def advance_fmu_cs_devices(self, t: float, x_snapshot: Vec, h: float) -> bool:
         """
         Advance imported FMU Co-Simulation devices for one RMS communication step.
 
         :param t: Current simulation time.
         :param x_snapshot: Current accepted state vector.
         :param h: RMS communication step.
-        :return: None.
+        :return: Whether at least one registered CS adapter advanced.
         """
+
+        co_simulation_advanced: bool = False
         if len(self._fmu_cs_adapters) > 0:
-            advance_rms_fmu_cs_devices(problem=self, time_value=t, x_snapshot=x_snapshot, step_size=h)
+            co_simulation_advanced = advance_rms_fmu_cs_devices(
+                problem=self,
+                time_value=t,
+                x_snapshot=x_snapshot,
+                step_size=h,
+            )
+        else:
+            pass
+        return co_simulation_advanced
 
     def close_fmu_cs_devices(self) -> None:
         """

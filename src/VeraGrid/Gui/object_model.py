@@ -21,7 +21,7 @@ from VeraGridEngine.Devices import Bus, ContingencyGroup
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp, GCPROP_TYPES
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-from VeraGridEngine.enumerations import DeviceType, PrpCat
+from VeraGridEngine.enumerations import DeviceType, PrpCat, SubObjectType
 
 
 class DeviceSelectorDelegate(QtWidgets.QItemDelegate):
@@ -369,6 +369,17 @@ class ObjectsModel(WrappableTableModel):
                     delegate = ComboDelegate(self.parent, objects, values)
                     F(i, delegate)
 
+                elif tpe == SubObjectType.VarType:
+                    # Symbolic event parameters are supplied by the owning dynamic model because
+                    # they are not circuit devices and therefore cannot use DeviceSelectorDelegate.
+                    parameter_objects: List[Any] | None = self._get_delegate_objects(i)
+                    if parameter_objects is not None:
+                        parameter_names: List[str] = [parameter.name for parameter in parameter_objects]
+                        delegate = ComboDelegate(self.parent, parameter_objects, parameter_names)
+                        F(i, delegate)
+                    else:
+                        F(i, None)
+
                 elif self._get_delegate_objects(i) is not None:
                     # Foreign key object references use the searchable device selector.
                     objs = self._get_delegate_objects(i)
@@ -683,7 +694,10 @@ class ObjectsModel(WrappableTableModel):
                 if has_selector_data and is_editable_cell:
                     tpe: GCPROP_TYPES = self.attribute_types[attr_idx]
 
-                    if isinstance(tpe, DeviceType):
+                    if tpe == SubObjectType.VarType:
+                        # Symbolic variables use an inline combo box, so a reference icon is redundant.
+                        return None
+                    elif isinstance(tpe, DeviceType):
                         device_type: DeviceType = tpe
                     else:
                         if delegate_objects is not None and len(delegate_objects) > 0:

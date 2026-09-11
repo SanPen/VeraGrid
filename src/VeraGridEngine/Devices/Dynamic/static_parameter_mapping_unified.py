@@ -2470,7 +2470,9 @@ def assign_load_static_api_mapping(
         assign_api_mapping_value_if_present(
             mdl=mdl,
             key=ParamPowerFlowReferenceType.Pl0,
-            value=float(load.P) / sbase,
+            # RMS network injections use generation-positive signs, whereas
+            # the static Load API stores consumed P/Q as positive values.
+            value=-float(load.P) / sbase,
             logger=logger,
             device_name=device_name,
             problem_mapping=problem_mapping,
@@ -2478,7 +2480,7 @@ def assign_load_static_api_mapping(
         assign_api_mapping_value_if_present(
             mdl=mdl,
             key=ParamPowerFlowReferenceType.Ql0,
-            value=float(load.Q) / sbase,
+            value=-float(load.Q) / sbase,
             logger=logger,
             device_name=device_name,
             problem_mapping=problem_mapping,
@@ -2651,10 +2653,38 @@ def assign_shunt_static_api_mapping(
     :param logger: Optional logger.
     :return: None.
     """
-    if direct_assigned_keys is None:
-        pass
-    else:
-        pass
+    _ = direct_assigned_keys
+
+    # The generic direct mapper deliberately leaves the historical ``g`` and
+    # ``b`` keys unresolved because they mean series admittance for branches.
+    # For a shunt their meaning is unambiguous: the static MW/MVAr-at-1-pu
+    # values become system-per-unit conductance and susceptance.
+    device_name: str = str(shunt.name)
+    for key, value in (
+            (ParamPowerFlowReferenceType.g, float(shunt.G) / float(grid.Sbase)),
+            (ParamPowerFlowReferenceType.b, float(shunt.B) / float(grid.Sbase)),
+    ):
+        target: Var | None = mdl.api_obj_mapping.get(key, None)
+        if target is not None:
+            problem_mapping[target] = Const(value)
+
+    # Also support templates using the unambiguous shunt-specific references.
+    assign_api_mapping_value_if_present(
+        mdl=mdl,
+        key=ParamPowerFlowReferenceType.shunt_g_pu,
+        value=float(shunt.G) / float(grid.Sbase),
+        logger=logger,
+        device_name=device_name,
+        problem_mapping=problem_mapping,
+    )
+    assign_api_mapping_value_if_present(
+        mdl=mdl,
+        key=ParamPowerFlowReferenceType.shunt_b_pu,
+        value=float(shunt.B) / float(grid.Sbase),
+        logger=logger,
+        device_name=device_name,
+        problem_mapping=problem_mapping,
+    )
 
 
 def assign_controllable_shunt_static_api_mapping(
@@ -3205,6 +3235,22 @@ def assign_transformer2w_static_api_mapping(
         mdl=mdl,
         problem_mapping=problem_mapping,
         logger=logger,
+    )
+    assign_api_mapping_value_if_present(
+        mdl=mdl,
+        key=ParamPowerFlowReferenceType.r,
+        value=float(transformer.R),
+        logger=logger,
+        device_name=transformer.name,
+        problem_mapping=problem_mapping,
+    )
+    assign_api_mapping_value_if_present(
+        mdl=mdl,
+        key=ParamPowerFlowReferenceType.x,
+        value=float(transformer.X),
+        logger=logger,
+        device_name=transformer.name,
+        problem_mapping=problem_mapping,
     )
     needs_series_admittance: bool = (
         ParamPowerFlowReferenceType.g in mdl.api_obj_mapping

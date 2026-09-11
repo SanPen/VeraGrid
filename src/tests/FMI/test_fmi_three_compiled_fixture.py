@@ -11,7 +11,7 @@ import zipfile
 
 import fmpy
 from fmpy.fmi1 import FMICallException
-from fmpy.fmi3 import FMU3Slave
+from fmpy.fmi3 import FMU3Slave, fmi3FMUState
 from fmpy.model_description import ModelDescription
 from fmpy.template import create_fmu
 import pytest
@@ -324,6 +324,72 @@ def test_compiled_fmi_three_fmu_supports_deterministic_scalar_steps(
         assert second_values == pytest.approx(list((1.5, -1.0, 0.5)))
         runtime.terminate()
     finally:
+        if instantiated:
+            runtime.freeInstance()
+        else:
+            runtime.freeLibrary()
+
+
+def test_compiled_fmi_three_scalar_fixture_exposes_int32_access_and_rollback(
+    compiled_fmi_three_scalar_co_simulation_fmu: Path,
+    tmp_path: Path,
+) -> None:
+    """Verify direct Int32 ABI access and mixed native-state restoration.
+
+    :param compiled_fmi_three_scalar_co_simulation_fmu: Host-native scalar FMU.
+    :param tmp_path: Isolated extraction directory supplied by pytest.
+    :return: None.
+    """
+
+    runtime: FMU3Slave = _open_fmi_three_reference_runtime(
+        compiled_fmu_path=compiled_fmi_three_scalar_co_simulation_fmu,
+        extracted_directory=tmp_path / "int32-reference-runtime",
+        instantiation_token_override=None,
+    )
+    instantiated: bool = False
+    native_state: fmi3FMUState | None = None
+    try:
+        runtime.instantiate(
+            visible=False,
+            loggingOn=False,
+            eventModeUsed=False,
+            earlyReturnAllowed=False,
+            requiredIntermediateVariables=list(),
+        )
+        instantiated = True
+        runtime.enterInitializationMode(
+            tolerance=1.0e-6,
+            startTime=0.0,
+            stopTime=1.0,
+        )
+        runtime.setFloat64(list((1,)), list((2.0,)))
+        runtime.setInt32(list((7,)), list((-2,)))
+        assert runtime.getInt32(list((7, 8))) == list((-2, 0))
+        runtime.exitInitializationMode()
+
+        native_state = runtime.getFMUState()
+        runtime.setFloat64(list((1,)), list((3.0,)))
+        runtime.setInt32(list((7,)), list((-2147483648,)))
+        assert runtime.doStep(
+            currentCommunicationPoint=0.0,
+            communicationStepSize=0.25,
+        ) == (False, False, False, 0.25)
+        assert runtime.getInt32(list((8, 7))) == list(
+            (-2147483648, -2147483648)
+        )
+
+        # One native snapshot restores Float64, Int32, outputs, and time together.
+        runtime.setFMUState(native_state)
+        assert runtime.getFloat64(list((0, 1, 2))) == pytest.approx(
+            list((0.0, 2.0, 0.0))
+        )
+        assert runtime.getInt32(list((7, 8))) == list((-2, 0))
+        runtime.terminate()
+    finally:
+        if native_state is not None:
+            runtime.freeFMUState(native_state)
+        else:
+            pass
         if instantiated:
             runtime.freeInstance()
         else:

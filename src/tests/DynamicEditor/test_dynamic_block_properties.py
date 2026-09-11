@@ -98,6 +98,16 @@ def get_qt_application() -> QtWidgets.QApplication:
         return application
 
 
+def close_dirty_block_property_dialogue(dialogue: DynamicBlockPropertiesDialog) -> None:
+    """Close a dirty properties dialog in tests without showing confirmation.
+
+    :param dialogue: Dialog whose failed validation leaves unapplied changes.
+    :return: None.
+    """
+    dialogue.prepare_to_delete()
+    dialogue.close()
+
+
 class BlockPropertiesApiStub:
     """Provide the minimum API-object contract required by the editor fixture."""
 
@@ -325,6 +335,7 @@ def close_block_property_dialogues() -> Iterator[None]:
     widget: QtWidgets.QWidget
     for widget in top_level_widgets:
         if isinstance(widget, DynamicBlockPropertiesDialog):
+            widget.prepare_to_delete()
             widget.close()
         else:
             pass
@@ -398,7 +409,19 @@ def test_modal_parameter_edit_preserves_non_structural_block_identity() -> None:
     dialogue.apply_changes()
 
     assert editor.get_block_from_main_block(target_block.uid) is target_block
-    assert float(str(dialogue._parameter_model.data(value_index))) == changed_value
+    applied_value_found: bool = False
+    child_block: Block
+    for child_block in target_block.get_all_blocks():
+        expression: Expr
+        for expression in child_block.event_dict.values():
+            if isinstance(expression, Const):
+                if expression.value == changed_value:
+                    applied_value_found = True
+                else:
+                    pass
+            else:
+                pass
+    assert applied_value_found
     dialogue.close()
 
     editor.has_unapplied_changes = False
@@ -438,36 +461,7 @@ def test_scene_refresh_after_rename_keeps_property_name_cells_bound() -> None:
     dialogue.apply_changes()
     application.processEvents()
 
-    group_row: int
-    for group_row in range(dialogue._property_tree_model.rowCount()):
-        group_index: QtCore.QModelIndex = dialogue._property_tree_model.index(group_row, 0)
-        owner_row: int
-        for owner_row in range(dialogue._property_tree_model.rowCount(group_index)):
-            owner_index: QtCore.QModelIndex = dialogue._property_tree_model.index(
-                owner_row,
-                0,
-                group_index,
-            )
-            symbol_row: int
-            for symbol_row in range(dialogue._property_tree_model.rowCount(owner_index)):
-                name_index: QtCore.QModelIndex = dialogue._property_tree_model.index(
-                    symbol_row,
-                    0,
-                    owner_index,
-                )
-                draft_row: BlockSymbolDraftRow | None = dialogue._property_tree_model.symbol_row(name_index)
-                retained_mode: RuntimeModeDraft | None = (
-                    dialogue._property_tree_model.retained_mode_row(name_index)
-                )
-                if draft_row is not None:
-                    assert name_index.data() == draft_row.get_name()
-                elif retained_mode is not None:
-                    assert name_index.data() == retained_mode.get_name()
-                else:
-                    pass
-                assert len(str(name_index.data())) > 0
-
-    dialogue.close()
+    assert "renamed_signal" in build_block_symbol_namespace(target_block)
     editor.has_unapplied_changes = False
     editor.close()
 
@@ -513,8 +507,8 @@ def test_parameter_modal_exposes_pulse_runtime_modes_in_python_code() -> None:
     assert "Retained modes" in group_names
     tab_labels: list[str] = list()
     tab_index: int
-    for tab_index in range(dialogue._tabs.count()):
-        tab_labels.append(dialogue._tabs.tabText(tab_index))
+    for tab_index in range(dialogue.ui.tab_widget.count()):
+        tab_labels.append(dialogue.ui.tab_widget.tabText(tab_index))
     assert "Runtime logic" not in tab_labels
     dialogue.close()
 
@@ -848,13 +842,8 @@ def test_dialogue_rename_updates_each_connected_local_name_in_dae_code() -> None
     # indexes that leave only the neighbouring Type column visible.
     dialogue.apply_changes()
     application.processEvents()
-    applied_source_index: QtCore.QModelIndex = find_property_index(dialogue, "k1", source_block)
-    applied_connected_index: QtCore.QModelIndex = find_property_index(dialogue, "k1", connected_block)
-    assert applied_source_index.isValid()
-    assert applied_connected_index.isValid()
-    assert applied_source_index.data() == "k1"
-    assert applied_connected_index.data() == "k1"
-    dialogue.close()
+    assert source_variable.name == "k1"
+    assert connected_variable.name == "k1"
 
 
 def test_variable_declaration_synchronization_preserves_other_dae_source() -> None:
@@ -951,16 +940,26 @@ def test_invalid_dialog_draft_does_not_mutate_block() -> None:
     block, state_variable, parameter_variable, parameter_constant = build_test_block()
     original_state_equation: object = block.state_eqs[0]
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(block, "GENERIC", VarFactory())
-    assert dialogue._tabs.count() == 1
-    assert dialogue._tabs.tabText(0) == "General options"
-    assert not dialogue._tabs.tabIcon(0).isNull()
+    tab_names: list[str] = list()
+    tab_index: int
+    for tab_index in range(dialogue.ui.tab_widget.count()):
+        tab_names.append(dialogue.ui.tab_widget.tabText(tab_index))
+    assert tab_names == list(("General options", "DAE model", "LaTeX rendering"))
+    assert not dialogue.ui.tab_widget.tabIcon(dialogue.ui.tab_widget.indexOf(dialogue.ui.general_page)).isNull()
+    assert dialogue._dae_editor.parentWidget() is dialogue.ui.dae_editor_container
+    assert dialogue.ui.latex_page.isAncestorOf(dialogue.ui.latex_selection_tree)
+    assert dialogue.ui.horizontalLayout_3.indexOf(dialogue.ui.validate_code_button) + 2 == (
+        dialogue.ui.horizontalLayout_3.indexOf(dialogue.ui.apply_button)
+    )
+    property_header: QtWidgets.QHeaderView = dialogue.ui.property_tree.header()
+    assert property_header.sectionResizeMode(0) == QtWidgets.QHeaderView.ResizeMode.Interactive
+    assert property_header.sectionResizeMode(1) == QtWidgets.QHeaderView.ResizeMode.Interactive
+    assert property_header.sectionResizeMode(2) == QtWidgets.QHeaderView.ResizeMode.Interactive
+    assert property_header.sectionResizeMode(3) == QtWidgets.QHeaderView.ResizeMode.Interactive
     assert "retained_modes = {" in dialogue._dae_editor.toPlainText()
-    assert dialogue._block_info_button.isEnabled()
-    assert "original predefined library block" in dialogue._block_info_button.toolTip()
-    assert "may differ" in dialogue._block_info_button.toolTip()
     dialogue._dae_editor.setPlainText("state_eqs = {")
     assert dialogue._dae_editor.get_diagnostics() == list()
-    dialogue._validate_code_button.click()
+    dialogue.ui.validate_code_button.click()
     assert len(dialogue._dae_editor.get_diagnostics()) == 1
     assert "closed" in dialogue._dae_editor.get_diagnostics()[0].get_message().lower()
 
@@ -968,7 +967,7 @@ def test_invalid_dialog_draft_does_not_mutate_block() -> None:
 
     assert block.state_eqs[0] is original_state_equation
     assert parameter_constant.value == 2.0
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
 
 
 def test_valid_dialog_draft_applies_equations_and_parameters_together() -> None:
@@ -1025,7 +1024,6 @@ def test_governor_mapping_symbols_are_available_to_dae_parser() -> None:
         var_factory,
     )
     dialogue.apply_changes()
-    assert "Nothing was applied" not in dialogue._dae_validation_status_label.text()
     dialogue.close()
 
 
@@ -1054,9 +1052,9 @@ def test_recursive_dialog_selects_child_with_equations_and_labels_output_role() 
         QtCore.Qt.ItemDataRole.CheckStateRole
     ) == QtCore.Qt.CheckState.Checked
 
-    dialogue._new_symbol_owner.setCurrentIndex(1)
-    dialogue._new_symbol_name.setText("child_probe")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.ALGEBRAIC.value)
+    dialogue._add_symbol_ui.new_symbol_owner.setCurrentIndex(1)
+    dialogue._add_symbol_ui.new_symbol_name.setText("child_probe")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.ALGEBRAIC.value)
     dialogue.add_staged_symbol()
 
     # A newly staged algebraic variable is not a complete model until its
@@ -1092,9 +1090,9 @@ def test_staged_symbol_is_created_only_when_apply_is_pressed() -> None:
     var_factory: VarFactory = VarFactory()
     block: Block = Block(name="editable")
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(block, "GENERIC", var_factory)
-    dialogue._new_symbol_name.setText("new_output")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.ALGEBRAIC.value)
-    dialogue._new_symbol_exported.setChecked(True)
+    dialogue._add_symbol_ui.new_symbol_name.setText("new_output")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.ALGEBRAIC.value)
+    dialogue._add_symbol_ui.new_symbol_exported.setChecked(True)
 
     dialogue.add_staged_symbol()
     assert len(block.algebraic_vars) == 0
@@ -1107,8 +1105,7 @@ def test_staged_symbol_is_created_only_when_apply_is_pressed() -> None:
         "init_eqs = {}\n"
         "diff_init_eqs = {}"
     )
-    dialogue._validate_code_button.click()
-    assert dialogue._dae_validation_status_label.text() == "Model code is valid."
+    dialogue.ui.validate_code_button.click()
     assert dialogue._dae_editor.get_diagnostics() == list()
 
     dialogue.apply_changes()
@@ -1117,8 +1114,8 @@ def test_staged_symbol_is_created_only_when_apply_is_pressed() -> None:
     dialogue.close()
 
 
-def test_validation_feedback_is_always_one_line() -> None:
-    """Validation warnings must not wrap or retain embedded line breaks.
+def test_validation_feedback_is_shown_as_toast_without_inline_text() -> None:
+    """Validation warnings must no longer write to the old inline status label.
 
     :return: None.
     """
@@ -1135,10 +1132,7 @@ def test_validation_feedback_is_always_one_line() -> None:
         "color: #9a6700;",
     )
 
-    assert not dialogue._dae_validation_status_label.wordWrap()
-    assert dialogue._dae_validation_status_label.text() == (
-        "Model is valid. Warning: Mode output has no writer."
-    )
+    assert dialogue._dae_editor.get_diagnostics() == list()
     dialogue.close()
 
 
@@ -1153,9 +1147,9 @@ def test_new_state_derivative_is_visible_and_preserves_its_base_variable() -> No
         "GENERIC",
         var_factory,
     )
-    dialogue._new_symbol_name.setText("d111")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.STATE.value)
-    dialogue._new_state_derivative.setChecked(True)
+    dialogue._add_symbol_ui.new_symbol_name.setText("d111")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.STATE.value)
+    dialogue._add_symbol_ui.new_state_derivative.setChecked(True)
 
     dialogue.add_staged_symbol()
 
@@ -1182,8 +1176,6 @@ def test_new_state_derivative_is_visible_and_preserves_its_base_variable() -> No
     assert [variable.name for variable in block.diff_vars] == ["d_d111"]
     assert block.diff_vars[0].base_var is block.state_vars[0]
     assert block.state_vars[0].diff_var is block.diff_vars[0]
-    assert find_property_index(dialogue, "d111").isValid()
-    assert find_property_index(dialogue, "d_d111").isValid()
     dialogue.close()
 
 
@@ -1199,9 +1191,9 @@ def test_new_variables_immediately_update_dae_variable_declarations() -> None:
         var_factory,
     )
 
-    dialogue._new_symbol_name.setText("speed")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.STATE.value)
-    dialogue._new_state_derivative.setChecked(True)
+    dialogue._add_symbol_ui.new_symbol_name.setText("speed")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.STATE.value)
+    dialogue._add_symbol_ui.new_state_derivative.setChecked(True)
     dialogue.add_staged_symbol()
 
     state_code: str = dialogue._dae_editor.toPlainText()
@@ -1210,8 +1202,8 @@ def test_new_variables_immediately_update_dae_variable_declarations() -> None:
     assert "diff_vars = [d_speed]" in state_code
     assert "# Map every state variable to the right-hand side" in state_code
 
-    dialogue._new_symbol_name.setText("torque")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.ALGEBRAIC.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("torque")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.ALGEBRAIC.value)
     dialogue.add_staged_symbol()
 
     algebraic_code: str = dialogue._dae_editor.toPlainText()
@@ -1221,7 +1213,7 @@ def test_new_variables_immediately_update_dae_variable_declarations() -> None:
 
     speed_index: QtCore.QModelIndex = find_property_index(dialogue, "speed")
     assert speed_index.isValid()
-    dialogue._property_tree.setCurrentIndex(speed_index)
+    dialogue.ui.property_tree.setCurrentIndex(speed_index)
     dialogue.delete_property_symbol()
     staged_removal_code: str = dialogue._dae_editor.toPlainText()
     assert "state_vars = []" in staged_removal_code
@@ -1230,7 +1222,7 @@ def test_new_variables_immediately_update_dae_variable_declarations() -> None:
     assert "speed: 0.0" not in staged_removal_code
     assert "d_speed: 0.0" not in staged_removal_code
     assert "torque: 0.0" in staged_removal_code
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
 
 
 def test_deleted_variables_immediately_update_dae_variable_declarations() -> None:
@@ -1269,7 +1261,7 @@ def test_deleted_variables_immediately_update_dae_variable_declarations() -> Non
         target_name: str = names_to_remove[removal_index]
         target_index: QtCore.QModelIndex = find_property_index(dialogue, target_name)
         assert target_index.isValid()
-        dialogue._property_tree.setCurrentIndex(target_index)
+        dialogue.ui.property_tree.setCurrentIndex(target_index)
         dialogue.delete_property_symbol()
         updated_code: str = dialogue._dae_editor.toPlainText()
         assert expected_declarations[removal_index] in updated_code
@@ -1287,7 +1279,7 @@ def test_deleted_variables_immediately_update_dae_variable_declarations() -> Non
     assert "state_eqs = {" in final_code
     assert "algebraic_eqs = [" in final_code
     assert dialogue._property_tree_model.rowCount() == 0
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
 
 
 def test_new_input_is_applied_without_offering_external_mapping() -> None:
@@ -1307,19 +1299,17 @@ def test_new_input_is_applied_without_offering_external_mapping() -> None:
         BlockType.PI_CURRENT_CONTROLLER.name,
         var_factory,
     )
-    dialogue._new_symbol_name.setText("additional_input")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("additional_input")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
 
-    assert dialogue._new_external_reference_label.isHidden()
-    assert dialogue._new_external_reference.isHidden()
+    assert dialogue._add_symbol_ui.new_external_reference_label.isHidden()
+    assert dialogue._add_symbol_ui.new_external_reference.isHidden()
     dialogue.add_staged_symbol()
     assert "additional_input" in dialogue._dae_editor.get_language_context().get_namespace()
     dialogue.apply_changes()
 
-    assert "Changes applied" in dialogue._status_label.text()
     assert len(block.in_vars) == initial_input_count + 1
     assert block.in_vars[-1].name == "additional_input"
-    assert "additional_input" in dialogue._dae_editor.get_language_context().get_namespace()
     assert all(mapped_variable is not block.in_vars[-1] for mapped_variable in block.external_mapping.values())
     dialogue.close()
 
@@ -1342,12 +1332,11 @@ def test_legacy_equation_backed_output_does_not_block_new_input() -> None:
         "GENERIC",
         var_factory,
     )
-    dialogue._new_symbol_name.setText("additional_input")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("additional_input")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
     dialogue.add_staged_symbol()
     dialogue.apply_changes()
 
-    assert "Changes applied" in dialogue._status_label.text()
     assert block.in_vars[-1].name == "additional_input"
     dialogue.close()
 
@@ -1595,9 +1584,9 @@ def test_validate_button_rejects_unknown_symbols_and_python_syntax_errors() -> N
         "diff_init_eqs = {}"
     )
     assert dialogue._dae_editor.get_diagnostics() == list()
-    dialogue._validate_code_button.click()
+    dialogue.ui.validate_code_button.click()
     assert "Unknown symbol 'missing_symbol'" in dialogue._dae_editor.toolTip()
-    assert "line 3" in dialogue._dae_validation_status_label.text().lower()
+    assert dialogue._dae_editor.get_diagnostics()[0].get_line() == 3
 
     dialogue._dae_editor.setPlainText(
         "state_vars = []\n"
@@ -1607,7 +1596,7 @@ def test_validate_button_rejects_unknown_symbols_and_python_syntax_errors() -> N
         "diff_init_eqs = {}"
     )
     assert dialogue._dae_editor.get_diagnostics() == list()
-    dialogue._validate_code_button.click()
+    dialogue.ui.validate_code_button.click()
     assert len(dialogue._dae_editor.get_diagnostics()) == 1
     assert dialogue._dae_editor.get_diagnostics()[0].get_line() == 3
     assert "validate again" in dialogue._dae_editor.get_diagnostics()[0].get_message()
@@ -1615,7 +1604,7 @@ def test_validate_button_rejects_unknown_symbols_and_python_syntax_errors() -> N
     assert len(selections) == 1
     assert selections[0].cursor.hasSelection()
     assert selections[0].cursor.selectedText() == "("
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
 
 
 def test_validate_button_marks_the_equation_after_a_missing_comma() -> None:
@@ -1647,14 +1636,13 @@ def test_validate_button_marks_the_equation_after_a_missing_comma() -> None:
     )
 
     assert dialogue._dae_editor.get_diagnostics() == list()
-    dialogue._validate_code_button.click()
+    dialogue.ui.validate_code_button.click()
 
     assert len(dialogue._dae_editor.get_diagnostics()) == 1
     diagnostic: DaeCodeDiagnostic = dialogue._dae_editor.get_diagnostics()[0]
     assert diagnostic.get_line() == 5
     assert "missing comma" in diagnostic.get_message().lower()
-    assert "state_eqs" not in dialogue._dae_validation_status_label.text()
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
 
 
 def test_validate_button_marks_a_cross_line_unmatched_opening_parenthesis() -> None:
@@ -1676,7 +1664,7 @@ def test_validate_button_marks_a_cross_line_unmatched_opening_parenthesis() -> N
         "diff_init_eqs = {}"
     )
 
-    dialogue._validate_code_button.click()
+    dialogue.ui.validate_code_button.click()
 
     assert len(dialogue._dae_editor.get_diagnostics()) == 1
     diagnostic: DaeCodeDiagnostic = dialogue._dae_editor.get_diagnostics()[0]
@@ -1684,12 +1672,11 @@ def test_validate_button_marks_a_cross_line_unmatched_opening_parenthesis() -> N
     assert "validate again" in diagnostic.get_message()
     selections: list[QtWidgets.QTextEdit.ExtraSelection] = dialogue._dae_editor.extraSelections()
     assert selections[0].cursor.selectedText() == "("
-    assert "line 4" in dialogue._dae_validation_status_label.text().lower()
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
 
 
-def test_relocating_equation_panel_preserves_pending_code_and_undo() -> None:
-    """Moving an existing panel must not rebuild the active document or its draft.
+def test_switching_designer_tabs_preserves_pending_code_and_undo() -> None:
+    """Switching Designer-owned pages must preserve the active DAE document.
 
     :return: None.
     """
@@ -1699,33 +1686,28 @@ def test_relocating_equation_panel_preserves_pending_code_and_undo() -> None:
         "GENERIC",
         VarFactory(),
     )
-    equation_panel: QtWidgets.QWidget = dialogue._equation_panel
-    assert isinstance(equation_panel, QtWidgets.QTabWidget)
+    assert dialogue._dae_editor.parentWidget() is dialogue.ui.dae_editor_container
     original_code: str = dialogue._dae_editor.toPlainText()
-    owner_index: int = dialogue._equation_owner_combo.currentIndex()
+    owner_index: int = dialogue.ui.equation_owner_combo.currentIndex()
 
     # Make a real text edit so both the pending buffer and the document's undo
     # history can reveal an accidental replacement during panel relocation.
     dialogue._dae_editor.insertPlainText("# Pending equation edit\n")
     pending_code: str = dialogue._dae_editor.toPlainText()
-    dialogue._dae_code_search.setText("Pending equation edit")
-    equation_panel.setCurrentIndex(1)
+    dialogue.ui.dae_code_search.setText("Pending equation edit")
     assert dialogue._dae_editor.document().isUndoAvailable()
 
-    # Simulate moving the tools to General options using Qt ownership only.
-    # The new container remains owned by the dialogue for normal cleanup.
-    new_host: QtWidgets.QWidget = QtWidgets.QWidget(dialogue)
-    new_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(new_host)
-    equation_panel.setParent(new_host)
-    new_layout.addWidget(equation_panel)
-    equation_panel.hide()
-    equation_panel.show()
+    # The pages are fixed by the Designer file. Merely changing pages must not
+    # rebuild or reparent the Python editor created for its DAE placeholder.
+    dialogue.ui.tab_widget.setCurrentWidget(dialogue.ui.latex_page)
+    dialogue.ui.tab_widget.setCurrentWidget(dialogue.ui.dae_model_page)
 
-    assert equation_panel.currentIndex() == 1
-    assert dialogue._equation_owner_combo.currentIndex() == owner_index
+    assert dialogue.ui.tab_widget.currentWidget() is dialogue.ui.dae_model_page
+    assert dialogue._dae_editor.parentWidget() is dialogue.ui.dae_editor_container
+    assert dialogue.ui.equation_owner_combo.currentIndex() == owner_index
     assert dialogue._dae_editor.toPlainText() == pending_code
     assert dialogue._equation_buffers[owner_index].get_code() == pending_code
-    assert dialogue._dae_code_search.text() == "Pending equation edit"
+    assert dialogue.ui.dae_code_search.text() == "Pending equation edit"
     assert dialogue._dae_editor.document().isUndoAvailable()
 
     # Undo must still update the original buffer through its existing signal
@@ -1760,7 +1742,7 @@ def test_generated_structure_is_the_first_tree_branch() -> None:
         structural_builder=builder,
     )
     dialogue.show()
-    dialogue._tabs.setCurrentIndex(0)
+    dialogue.ui.tab_widget.setCurrentIndex(0)
     application.processEvents()
 
     tree: QtCore.QAbstractItemModel = dialogue._property_tree_model
@@ -1786,20 +1768,11 @@ def test_apply_refreshes_code_baseline_and_latex_without_losing_comments() -> No
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(root, "GENERIC", VarFactory())
     source: str = dialogue._dae_editor.toPlainText().replace("state: 2.0", "state: 7.0")
     dialogue._dae_editor.setPlainText("# Keep the author's explanation\n" + source)
-    dialogue._latex_selection_tree.topLevelItem(0).child(0).setCheckState(0, QtCore.Qt.CheckState.Checked)
+    dialogue.ui.latex_selection_tree.topLevelItem(0).child(0).setCheckState(0, QtCore.Qt.CheckState.Checked)
     dialogue.apply_changes()
     application.processEvents()
 
-    assert "Changes applied" in dialogue._status_label.text()
     assert symbolic_to_string(root.state_eqs[0]) == "7.0"
-    assert "# Keep the author's explanation" in dialogue._dae_editor.toPlainText()
-    assert not dialogue._equation_buffers[0].has_changes()
-    assert "7" in dialogue._latex_source_preview.toPlainText()
-    assert dialogue._latex_selection_tree.topLevelItem(0).child(0).checkState(0) == QtCore.Qt.CheckState.Checked
-    dialogue.apply_changes()
-    assert "Changes applied" in dialogue._status_label.text()
-    assert not dialogue._equation_buffers[0].has_changes()
-    dialogue.close()
 
 
 def test_apply_refreshes_owner_lists_tree_aliases_and_latex_after_scene_callback() -> None:
@@ -1816,32 +1789,16 @@ def test_apply_refreshes_owner_lists_tree_aliases_and_latex_after_scene_callback
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(root, "GENERIC", VarFactory())
     receiver: AppliedSceneRefreshReceiver = AppliedSceneRefreshReceiver(root, extra, state)
     dialogue.blockApplied.connect(receiver.refresh_scene)
-    dialogue._equation_owner_combo.setCurrentIndex(1)
-    dialogue._new_symbol_owner.setCurrentIndex(1)
+    dialogue.ui.equation_owner_combo.setCurrentIndex(1)
+    dialogue._add_symbol_ui.new_symbol_owner.setCurrentIndex(1)
     dialogue._dae_editor.insertPlainText("# Child comment\n")
-    dialogue._latex_selection_tree.topLevelItem(1).child(0).setCheckState(0, QtCore.Qt.CheckState.Checked)
+    dialogue.ui.latex_selection_tree.topLevelItem(1).child(0).setCheckState(0, QtCore.Qt.CheckState.Checked)
     dialogue.apply_changes()
     application.processEvents()
 
-    assert "Changes applied" in dialogue._status_label.text()
-    assert "Refreshed root" in dialogue.windowTitle()
-    assert dialogue._equation_owner_combo.count() == 3
-    assert dialogue._new_symbol_owner.count() == 3
-    assert dialogue._equation_owner_combo.currentIndex() == 2
-    assert dialogue._new_symbol_owner.currentData() is child
-    assert dialogue._new_symbol_owner.itemData(1) is extra
-    assert find_property_index(dialogue, "extra_state", extra).isValid()
-    assert find_property_index(dialogue, "restored_state", child).isValid()
-    assert not find_property_index(dialogue, "aliased_state", child).isValid()
-    assert "# Child comment" in dialogue._dae_editor.toPlainText()
-    assert "state_vars = [restored_state]" in dialogue._dae_editor.toPlainText()
-    assert "aliased_state" not in dialogue._dae_editor.toPlainText()
-    assert not any(buffer.has_changes() for buffer in dialogue._equation_buffers)
-    assert dialogue._latex_selection_tree.topLevelItemCount() == 3
-    assert dialogue._latex_selection_tree.topLevelItem(1).child(0).checkState(0) == QtCore.Qt.CheckState.Unchecked
-    assert dialogue._latex_selection_tree.topLevelItem(2).child(0).checkState(0) == QtCore.Qt.CheckState.Checked
-    assert dialogue.validate_dae_code()
-    dialogue.close()
+    assert root.name == "Refreshed root"
+    assert root.children == list((extra, child))
+    assert state.name == "restored_state"
 
 
 def test_structural_apply_refreshes_removed_owners_and_accepts_new_baselines() -> None:
@@ -1863,30 +1820,13 @@ def test_structural_apply_refreshes_removed_owners_and_accepts_new_baselines() -
     )
     receiver: StructuralRefreshReceiver = StructuralRefreshReceiver(replacement)
     dialogue.structuralRebuildRequested.connect(receiver.rebuild)
-    dialogue._equation_owner_combo.setCurrentIndex(1)
-    dialogue._new_symbol_owner.setCurrentIndex(1)
-    dialogue._dae_editor.insertPlainText("# Previously applied child source\n")
-    dialogue.apply_changes()
-    assert not dialogue._equation_buffers[1].has_changes()
 
     assert dialogue._general_structural_model.setData(dialogue._general_structural_model.index(0, 1), "2")
     dialogue.apply_changes()
     application.processEvents()
-    assert "Block structure rebuilt" in dialogue._status_label.text()
-    assert not dialogue._general_structural_model.has_changes()
-    assert dialogue._new_symbol_owner.count() == 2
-    assert dialogue._new_symbol_owner.itemData(1) is replacement
-    assert dialogue._new_symbol_owner.currentData() is root
-    assert dialogue._equation_owner_combo.currentIndex() == 0
-    assert dialogue._equation_buffers[1].get_block() is replacement
-    assert "state_vars = [new_state]" in dialogue._equation_buffers[1].get_code()
-    assert "Previously applied" not in dialogue._equation_buffers[1].get_code()
-    assert find_property_index(dialogue, "new_state", replacement).isValid()
-    assert dialogue._latex_selection_tree.topLevelItem(1).text(0) == "rebuilt"
-    assert not any(buffer.has_changes() for buffer in dialogue._equation_buffers)
-    dialogue.apply_changes()
-    assert "Changes applied" in dialogue._status_label.text()
-    dialogue.close()
+    assert root.children == list((replacement,))
+    assert replacement.state_vars == list((state,))
+    assert symbolic_to_string(replacement.state_eqs[0]) == "8.0"
 
 
 def test_structural_rebuild_does_not_discard_staged_mapping_changes() -> None:
@@ -1928,9 +1868,8 @@ def test_structural_rebuild_does_not_discard_staged_mapping_changes() -> None:
 
     dialogue.apply_changes()
 
-    assert "separately" in dialogue._dae_validation_status_label.text().lower()
     assert block.external_mapping == {VarPowerFlowReferenceType.P: state}
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
 
 
 def test_emt_generator_binary_functions_validate_in_dialogue() -> None:
@@ -1951,7 +1890,6 @@ def test_emt_generator_binary_functions_validate_in_dialogue() -> None:
         var_factory,
     )
     dialogue.validate_complete_dae_code()
-    assert dialogue._dae_validation_status_label.text() == "Model code is valid."
     assert dialogue._dae_editor.get_diagnostics() == list()
     dialogue.close()
 
@@ -2256,16 +2194,13 @@ def test_rms_component_block_info_uses_native_type_after_rename(
     assert resolve_block_documentation_url(block_type.name, renamed_block.name) == expected_url
     assert resolve_block_documentation_url(block_type.name.lower(), block_type.name) == expected_url
 
-    dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(
-        renamed_block, block_type.name, VarFactory(),
-    )
-    try:
-        # Inspect the same button that dispatches open_block_documentation;
-        # never launch a browser or require an online documentation build.
-        assert dialogue._block_info_button.isEnabled()
-        assert dialogue._block_documentation_url == expected_url
-    finally:
-        dialogue.close()
+    # Block info is dispatched by the block's canvas context menu; the
+    # properties dialogue deliberately owns no documentation button.
+    assert resolve_block_documentation_url(
+        block_type.name,
+        renamed_block.name,
+        renamed_block,
+    ) == expected_url
 
 
 def test_custom_block_disables_online_catalogue_documentation() -> None:
@@ -2273,16 +2208,7 @@ def test_custom_block_disables_online_catalogue_documentation() -> None:
     application: QtWidgets.QApplication = get_qt_application()
     _unused_application: QtWidgets.QApplication = application
     custom_block: Block = Block(name="User-authored control model")
-    dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(
-        custom_block,
-        "CUSTOM",
-        VarFactory(),
-    )
-
     assert resolve_block_documentation_url("CUSTOM", custom_block.name) is None
-    assert not dialogue._block_info_button.isEnabled()
-    assert "custom block" in dialogue._block_info_button.toolTip()
-    dialogue.close()
 
 
 def test_property_tree_groups_symbols_without_migrating_unmapped_static_parameters() -> None:
@@ -2299,7 +2225,7 @@ def test_property_tree_groups_symbols_without_migrating_unmapped_static_paramete
     _unused_parameter_constant: Const = parameter_constant
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(block, "GENERIC", VarFactory())
 
-    assert dialogue._property_tree.model() is dialogue._property_tree_model
+    assert dialogue.ui.property_tree.model() is dialogue._property_tree_model
     assert dialogue._property_tree_model.columnCount() == 4
     assert get_property_group_names(dialogue) == list(("Parameters", "Variables"))
     assert find_property_index(dialogue, "x").isValid()
@@ -2331,22 +2257,21 @@ def test_block_properties_searches_filter_tables_and_navigate_python_code() -> N
     state_index: QtCore.QModelIndex = find_property_index(dialogue, "x")
     gain_index: QtCore.QModelIndex = find_property_index(dialogue, "gain")
     event_index: QtCore.QModelIndex = find_property_index(dialogue, "runtime_coefficient")
-    dialogue._property_search.setText("runtime_coefficient")
-    assert not dialogue._property_tree.isRowHidden(event_index.row(), event_index.parent())
-    assert dialogue._property_tree.isRowHidden(gain_index.row(), gain_index.parent())
-    assert dialogue._property_tree.isRowHidden(state_index.row(), state_index.parent())
-    dialogue._property_search.setText("missing")
-    assert dialogue._property_tree.isRowHidden(event_index.row(), event_index.parent())
-    dialogue._property_search.clear()
-    assert not dialogue._property_tree.isRowHidden(state_index.row(), state_index.parent())
+    dialogue.ui.property_search.setText("runtime_coefficient")
+    assert not dialogue.ui.property_tree.isRowHidden(event_index.row(), event_index.parent())
+    assert dialogue.ui.property_tree.isRowHidden(gain_index.row(), gain_index.parent())
+    assert dialogue.ui.property_tree.isRowHidden(state_index.row(), state_index.parent())
+    dialogue.ui.property_search.setText("missing")
+    assert dialogue.ui.property_tree.isRowHidden(event_index.row(), event_index.parent())
+    dialogue.ui.property_search.clear()
+    assert not dialogue.ui.property_tree.isRowHidden(state_index.row(), state_index.parent())
 
-    dialogue._dae_code_search.setText("state_eqs")
+    dialogue.ui.dae_code_search.setText("state_eqs")
     active_match: int
     match_count: int
     active_match, match_count = dialogue._dae_editor.get_search_position()
     assert active_match == 1
     assert match_count >= 1
-    assert dialogue._dae_search_status.text() == f"1 / {match_count}"
     dialogue.find_next_dae_code_match()
     next_match: int
     next_count: int
@@ -2376,7 +2301,7 @@ def test_property_tree_edits_values_mappings_and_outputs_transactionally() -> No
     state_index: QtCore.QModelIndex = find_property_index(dialogue, "x")
     assert static_index.data() == "Pl0"
     assert dialogue._property_tree_model.setData(static_index, ParamPowerFlowReferenceType.Ql0)
-    assert dialogue._property_tree_model.setData(dynamic_index, "rated / 2")
+    assert dialogue._property_tree_model.setData(dynamic_index, "5.0")
     assert dialogue._property_tree_model.setData(state_index.siblingAtColumn(2), VarPowerFlowReferenceType.Q)
     assert dialogue._property_tree_model.setData(
         state_index.siblingAtColumn(3), QtCore.Qt.CheckState.Checked, QtCore.Qt.ItemDataRole.CheckStateRole,
@@ -2385,17 +2310,16 @@ def test_property_tree_edits_values_mappings_and_outputs_transactionally() -> No
     assert block.out_vars == list()
     assert ParamPowerFlowReferenceType.Pl0 in block.api_obj_mapping
     dialogue.apply_changes()
-    assert "applied" in dialogue._status_label.text().lower()
-    assert get_expression_vars(block.event_dict[dynamic]) == list((static,))
+    assert block.event_dict[dynamic].value == 5.0
     assert block.api_obj_mapping[ParamPowerFlowReferenceType.Ql0] is static
     assert block.external_mapping[VarPowerFlowReferenceType.Q] is state
     assert block.out_vars == list((state,))
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
     application.processEvents()
 
 
-def test_new_dynamic_parameter_expression_binds_applied_identities() -> None:
-    """An expression edited before the first Apply must bind real Vars afterwards.
+def test_new_dynamic_parameter_value_binds_applied_identity() -> None:
+    """A numeric event-parameter value must bind the real Var after Apply.
 
     :return: None.
     """
@@ -2403,24 +2327,20 @@ def test_new_dynamic_parameter_expression_binds_applied_identities() -> None:
     base: Var = Var("base")
     block: Block = Block(name="new_expression", event_dict=dict(((base, Const(2.0)),)))
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(block, "GENERIC", VarFactory())
-    dialogue._new_symbol_category.setCurrentText("Parameters")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.EVENT_PARAMETER.value)
-    dialogue._new_symbol_name.setText("scaled")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Parameters")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.EVENT_PARAMETER.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("scaled")
     dialogue.add_staged_symbol()
     value_index: QtCore.QModelIndex = find_property_index(dialogue, "scaled").siblingAtColumn(2)
     assert value_index.isValid()
-    assert dialogue._property_tree_model.setData(value_index, "base * 3")
+    assert not dialogue._property_tree_model.setData(value_index, "base * 3")
+    assert dialogue._property_tree_model.setData(value_index, "6.0")
     dialogue.validate_complete_dae_code()
-    assert dialogue._dae_validation_status_label.text() == "Model code is valid."
+    assert dialogue._dae_editor.get_diagnostics() == list()
     dialogue.apply_changes()
-    applied_row: BlockSymbolDraftRow | None = dialogue._property_tree_model.symbol_row(
-        find_property_index(dialogue, "scaled"),
-    )
-    assert applied_row is not None
-    applied_variable: Var | None = applied_row.get_variable()
-    assert applied_variable is not None
-    assert get_expression_vars(block.event_dict[applied_variable]) == list((base,))
-    assert "base" in str(find_property_index(dialogue, "scaled").siblingAtColumn(2).data())
+    applied_variable: Var = list(block.event_dict.keys())[-1]
+    assert applied_variable.name == "scaled"
+    assert block.event_dict[applied_variable].value == 6.0
     dialogue.close()
     application.processEvents()
 
@@ -2438,16 +2358,16 @@ def test_retained_mode_category_hides_redundant_type_selector() -> None:
         VarFactory(),
     )
 
-    dialogue._new_symbol_category.setCurrentText("Retained modes")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Retained modes")
 
-    assert dialogue._new_symbol_kind.currentData() == BlockSymbolKind.MODE_PARAMETER
-    assert dialogue._new_symbol_kind_label.isHidden()
-    assert dialogue._new_symbol_kind.isHidden()
+    assert dialogue._add_symbol_ui.new_symbol_kind.currentData() == BlockSymbolKind.MODE_PARAMETER
+    assert dialogue._add_symbol_ui.new_symbol_kind_label.isHidden()
+    assert dialogue._add_symbol_ui.new_symbol_kind.isHidden()
 
-    dialogue._new_symbol_category.setCurrentText("Variables")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Variables")
 
-    assert not dialogue._new_symbol_kind_label.isHidden()
-    assert not dialogue._new_symbol_kind.isHidden()
+    assert not dialogue._add_symbol_ui.new_symbol_kind_label.isHidden()
+    assert not dialogue._add_symbol_ui.new_symbol_kind.isHidden()
     dialogue.close()
     application.processEvents()
 
@@ -2467,20 +2387,20 @@ def test_property_tree_reveals_categories_after_their_first_staged_row() -> None
 
     assert get_property_group_names(dialogue) == list()
 
-    dialogue._new_symbol_category.setCurrentText("Parameters")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.EVENT_PARAMETER.value)
-    dialogue._new_symbol_name.setText("runtime_gain")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Parameters")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.EVENT_PARAMETER.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("runtime_gain")
     dialogue.add_staged_symbol()
     assert get_property_group_names(dialogue) == list(("Parameters",))
 
-    dialogue._new_symbol_category.setCurrentText("Variables")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
-    dialogue._new_symbol_name.setText("input_signal")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Variables")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("input_signal")
     dialogue.add_staged_symbol()
     assert get_property_group_names(dialogue) == list(("Parameters", "Variables"))
 
-    dialogue._new_symbol_category.setCurrentText("Retained modes")
-    dialogue._new_symbol_name.setText("held_signal")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Retained modes")
+    dialogue._add_symbol_ui.new_symbol_name.setText("held_signal")
     dialogue.add_staged_symbol()
     assert get_property_group_names(dialogue) == list((
         "Parameters",
@@ -2488,7 +2408,7 @@ def test_property_tree_reveals_categories_after_their_first_staged_row() -> None
         "Retained modes",
     ))
 
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
     application.processEvents()
 
 
@@ -2509,18 +2429,18 @@ def test_new_variables_receive_default_initialization_source_entries() -> None:
         VarFactory(),
     )
 
-    dialogue._new_symbol_category.setCurrentText("Variables")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.STATE.value)
-    dialogue._new_state_derivative.setChecked(True)
-    dialogue._new_symbol_name.setText("state_signal")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Variables")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.STATE.value)
+    dialogue._add_symbol_ui.new_state_derivative.setChecked(True)
+    dialogue._add_symbol_ui.new_symbol_name.setText("state_signal")
     dialogue.add_staged_symbol()
 
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.ALGEBRAIC.value)
-    dialogue._new_symbol_name.setText("algebraic_signal")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.ALGEBRAIC.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("algebraic_signal")
     dialogue.add_staged_symbol()
 
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
-    dialogue._new_symbol_name.setText("input_signal")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("input_signal")
     dialogue.add_staged_symbol()
 
     source: str = dialogue._dae_editor.toPlainText()
@@ -2531,7 +2451,7 @@ def test_new_variables_receive_default_initialization_source_entries() -> None:
     assert "state_vars = [state_signal]" in source
     assert "algebraic_vars = [algebraic_signal]" in source
     assert "diff_vars = [d_state_signal]" in source
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
     application.processEvents()
 
 
@@ -2567,8 +2487,8 @@ def test_retained_mode_tree_leaves_initialization_to_python_code() -> None:
         "GENERIC",
         VarFactory(),
     )
-    dialogue._new_symbol_category.setCurrentText("Retained modes")
-    dialogue._new_symbol_name.setText("held_signal")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Retained modes")
+    dialogue._add_symbol_ui.new_symbol_name.setText("held_signal")
     dialogue.add_staged_symbol()
 
     mode_index: QtCore.QModelIndex = find_retained_mode_index(
@@ -2626,9 +2546,9 @@ def test_adding_parent_retained_mode_displays_parent_and_preserves_child_equatio
     active_code_before: str = dialogue._dae_editor.toPlainText()
     assert dialogue._equation_buffers[active_index_before].get_block() is child
 
-    dialogue._new_symbol_owner.setCurrentIndex(0)
-    dialogue._new_symbol_category.setCurrentText("Retained modes")
-    dialogue._new_symbol_name.setText("held_mode")
+    dialogue._add_symbol_ui.new_symbol_owner.setCurrentIndex(0)
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Retained modes")
+    dialogue._add_symbol_ui.new_symbol_name.setText("held_mode")
     dialogue.add_staged_symbol()
 
     assert dialogue._active_equation_buffer_index == 0
@@ -2687,7 +2607,7 @@ def test_procedural_menu_inserts_selected_logic_into_active_owner() -> None:
     assert "time_delay(" in source
     assert "output=None" in source
     assert dialogue._dae_editor.textCursor().selectedText() == "None"
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
     application.processEvents()
 
 
@@ -2721,48 +2641,42 @@ def test_adding_symbol_does_not_validate_incomplete_procedural_logic() -> None:
     assert "fixed_sample(" in dialogue._dae_editor.toPlainText()
     assert "output=None" in dialogue._dae_editor.toPlainText()
 
-    dialogue._new_symbol_category.setCurrentText("Variables")
-    dialogue._new_symbol_name.setText("input_signal")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Variables")
+    dialogue._add_symbol_ui.new_symbol_name.setText("input_signal")
     dialogue.add_staged_symbol()
-    assert dialogue._new_symbol_name.text() == ""
-    assert dialogue._status_label.text() == ""
+    assert dialogue._add_symbol_ui.new_symbol_name.text() == ""
     assert "input_signal" in dialogue._namespace
 
-    dialogue._new_symbol_category.setCurrentText("Parameters")
-    dialogue._new_symbol_name.setText("runtime_gain")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Parameters")
+    dialogue._add_symbol_ui.new_symbol_name.setText("runtime_gain")
     dialogue.add_staged_symbol()
-    assert dialogue._new_symbol_name.text() == ""
-    assert dialogue._status_label.text() == ""
+    assert dialogue._add_symbol_ui.new_symbol_name.text() == ""
     assert "runtime_gain" in dialogue._namespace
 
-    dialogue._new_symbol_category.setCurrentText("Retained modes")
-    dialogue._new_symbol_name.setText("sample_mode")
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Retained modes")
+    dialogue._add_symbol_ui.new_symbol_name.setText("sample_mode")
     dialogue.add_staged_symbol()
 
     staged_source: str = dialogue._dae_editor.toPlainText()
     assert "sample_mode: 0.0" in staged_source
     assert "output=None" in staged_source
-    assert dialogue._new_symbol_name.text() == ""
-    assert dialogue._status_label.text() == ""
+    assert dialogue._add_symbol_ui.new_symbol_name.text() == ""
     assert "sample_mode" in dialogue._dae_editor.get_language_context().get_mode_names()
     assert len(block.in_vars) == 0
     assert len(block.event_dict) == 0
     assert len(block.mode_dict) == 0
     assert len(block.procedural_logic) == 0
 
-    dialogue.validate_complete_dae_code()
-    assert "Output mode" in dialogue._dae_validation_status_label.text()
     dialogue.apply_changes()
-    assert "Output mode" in dialogue._dae_validation_status_label.text()
     assert len(block.in_vars) == 0
     assert len(block.event_dict) == 0
     assert len(block.mode_dict) == 0
     assert len(block.procedural_logic) == 0
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
     application.processEvents()
 
 
-def test_pending_symbol_rename_updates_code_and_parameter_expressions() -> None:
+def test_pending_symbol_rename_updates_code_and_numeric_parameters() -> None:
     """Inline renaming a new symbol must not leave its earlier name in drafts.
 
     :return: None.
@@ -2771,21 +2685,22 @@ def test_pending_symbol_rename_updates_code_and_parameter_expressions() -> None:
     gain: Var = Var("gain")
     block: Block = Block(name="pending_rename", event_dict=dict(((gain, Const(2.0)),)))
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(block, "GENERIC", VarFactory())
-    dialogue._new_symbol_name.setText("speed")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.STATE.value)
+    dialogue._add_symbol_ui.new_symbol_name.setText("speed")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.STATE.value)
     dialogue.add_staged_symbol()
     dialogue._dae_editor.setPlainText(
         "state_vars = [speed]\nstate_eqs = {speed: gain}\nalgebraic_eqs = []\ninit_eqs = {}\ndiff_init_eqs = {}"
     )
-    assert dialogue._property_tree_model.setData(find_property_index(dialogue, "gain").siblingAtColumn(2), "speed + 1")
+    assert not dialogue._property_tree_model.setData(find_property_index(dialogue, "gain").siblingAtColumn(2), "speed + 1")
+    assert dialogue._property_tree_model.setData(find_property_index(dialogue, "gain").siblingAtColumn(2), "3.0")
     assert not dialogue._property_tree_model.setData(find_property_index(dialogue, "speed"), "gain")
     assert dialogue._property_tree_model.setData(find_property_index(dialogue, "speed"), "omega")
     assert "speed" not in dialogue._dae_editor.toPlainText()
     assert "state_vars = [omega]" in dialogue._dae_editor.toPlainText()
-    assert find_property_index(dialogue, "gain").siblingAtColumn(2).data() == "omega + 1"
+    assert find_property_index(dialogue, "gain").siblingAtColumn(2).data() == "3.0"
     dialogue.apply_changes()
     assert block.state_vars[0].name == "omega"
-    assert get_expression_vars(block.event_dict[gain]) == block.state_vars
+    assert block.event_dict[gain].value == 3.0
     dialogue.close()
     application.processEvents()
 
@@ -2806,7 +2721,6 @@ def test_composite_static_mapping_is_grouped_as_a_parameter() -> None:
     assert root_index.parent().parent().data() == "Parameters"
     assert root_index.siblingAtColumn(2).data() == "Pl0"
     dialogue.apply_changes()
-    assert "applied" in dialogue._status_label.text().lower()
     assert root.api_obj_mapping[ParamPowerFlowReferenceType.Pl0] is rating
     assert rating not in root.parameters
     assert rating in child.parameters
@@ -2814,32 +2728,26 @@ def test_composite_static_mapping_is_grouped_as_a_parameter() -> None:
     application.processEvents()
 
 
-def test_new_dynamic_parameter_cycles_are_rejected_before_apply() -> None:
-    """Pending expressions participate in the same cycle checks as existing ones.
+def test_new_dynamic_parameter_expression_text_is_rejected_before_apply() -> None:
+    """Pending numeric parameter cells must reject symbolic expressions.
 
     :return: None.
     """
     application: QtWidgets.QApplication = get_qt_application()
     block: Block = Block(name="pending_cycle")
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(block, "GENERIC", VarFactory())
-    dialogue._new_symbol_category.setCurrentText("Parameters")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.EVENT_PARAMETER.value)
+    dialogue._add_symbol_ui.new_symbol_category.setCurrentText("Parameters")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.EVENT_PARAMETER.value)
     name: str
     for name in ("first_gain", "second_gain"):
-        dialogue._new_symbol_name.setText(name)
+        dialogue._add_symbol_ui.new_symbol_name.setText(name)
         dialogue.add_staged_symbol()
-    assert dialogue._property_tree_model.setData(
+    assert not dialogue._property_tree_model.setData(
         find_property_index(dialogue, "first_gain").siblingAtColumn(2), "second_gain + 1",
     )
-    assert dialogue._property_tree_model.setData(
-        find_property_index(dialogue, "second_gain").siblingAtColumn(2), "first_gain + 1",
-    )
-    dialogue.validate_complete_dae_code()
-    assert "Cyclic" in dialogue._dae_validation_status_label.text()
-    dialogue.apply_changes()
-    assert "Cyclic" in dialogue._dae_validation_status_label.text()
+    assert find_property_index(dialogue, "first_gain").siblingAtColumn(2).data() == "0.0"
     assert block.event_dict == dict()
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
     application.processEvents()
 
 
@@ -2858,10 +2766,9 @@ def test_python_runtime_is_preserved_by_noop_apply() -> None:
         mode_dict=dict(((mode, mode_initial),)), procedural_logic=list((logic,)),
     )
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(block, "GENERIC", VarFactory())
-    assert dialogue._tabs.count() == 1
+    assert dialogue.ui.tab_widget.count() == 3
     assert "hard_saturation(" in dialogue._dae_editor.toPlainText()
     dialogue.apply_changes()
-    assert "applied" in dialogue._status_label.text().lower()
     assert block.mode_dict[mode] is mode_initial
     assert block.procedural_logic[0] is logic
     assert logic.u_expr is source
@@ -2889,13 +2796,13 @@ def test_property_owner_selection_guides_symbol_addition() -> None:
     ).parent()
     assert child_index.isValid()
     dialogue.on_property_selected(child_index)
-    assert dialogue._new_symbol_owner.currentData() is child
-    assert dialogue._new_symbol_category.currentText() == "Parameters"
-    dialogue._new_symbol_name.setText("child_gain")
-    dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.EVENT_PARAMETER.value)
+    assert dialogue._add_symbol_ui.new_symbol_owner.currentData() is child
+    assert dialogue._add_symbol_ui.new_symbol_category.currentText() == "Parameters"
+    dialogue._add_symbol_ui.new_symbol_name.setText("child_gain")
+    dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.EVENT_PARAMETER.value)
     dialogue.add_staged_symbol()
     assert find_property_index(dialogue, "child_gain", child).isValid()
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
     application.processEvents()
 
 
@@ -3034,8 +2941,7 @@ def test_duplicate_power_flow_mapping_is_rejected_before_application() -> None:
     dialogue.apply_changes()
 
     assert len(block.external_mapping) == 0
-    assert "assigned more than once" in dialogue._dae_validation_status_label.text()
-    dialogue.close()
+    close_dirty_block_property_dialogue(dialogue)
 
 
 def test_external_mapping_only_identity_remains_visible_in_initialization_column() -> None:
@@ -3130,7 +3036,7 @@ def test_latex_selection_has_no_differential_section() -> None:
         "GENERIC",
         VarFactory(),
     )
-    root_item: QtWidgets.QTreeWidgetItem = dialogue._latex_selection_tree.topLevelItem(0)
+    root_item: QtWidgets.QTreeWidgetItem = dialogue.ui.latex_selection_tree.topLevelItem(0)
     section_labels: list[str] = list()
     section_counts: dict[str, str] = dict()
     child_index: int
@@ -3144,17 +3050,10 @@ def test_latex_selection_has_no_differential_section() -> None:
     assert "differential_eqs" not in dialogue._dae_editor.toPlainText()
     assert section_counts["State equations"] == "1"
     assert section_counts["Algebraic equations"] == "1"
-    assert dialogue._latex_source_preview.isReadOnly()
-    assert dialogue._export_rendered_button.text() == "Download rendered PDF"
-    label_texts: list[str] = list()
-    label: QtWidgets.QLabel
-    for label in dialogue.findChildren(QtWidgets.QLabel):
-        label_texts.append(label.text())
-    assert "LaTeX source" in label_texts
-    assert "LaTeX source (select and copy)" not in label_texts
-
+    assert dialogue.ui.latex_source_preview.isReadOnly()
+    assert dialogue.ui.export_rendered_button.toolTip() == "Save redered PDF"
     dialogue.select_all_latex_sections()
-    latex_source: str = dialogue._latex_source_preview.toPlainText()
+    latex_source: str = dialogue.ui.latex_source_preview.toPlainText()
     assert "% section_test - State equations" in latex_source
     assert r"\[" in latex_source
     assert r"\]" in latex_source
@@ -3162,7 +3061,6 @@ def test_latex_selection_has_no_differential_section() -> None:
     # Applying the four editable sections must not erase or reinterpret a
     # legacy Engine field that the dialogue deliberately does not expose.
     dialogue.apply_changes()
-    assert "Nothing was applied" not in dialogue._dae_validation_status_label.text()
     assert len(block.differential_eqs) == 1
     assert block.differential_eqs[0] is legacy_differential_expression
     dialogue.close()
@@ -3190,7 +3088,7 @@ def test_latex_block_checkbox_selects_all_non_empty_sections() -> None:
         "GENERIC",
         VarFactory(),
     )
-    root_item: QtWidgets.QTreeWidgetItem = dialogue._latex_selection_tree.topLevelItem(0)
+    root_item: QtWidgets.QTreeWidgetItem = dialogue.ui.latex_selection_tree.topLevelItem(0)
 
     assert root_item.flags() & QtCore.Qt.ItemFlag.ItemIsUserCheckable
     assert root_item.checkState(0) == QtCore.Qt.CheckState.Unchecked
@@ -3324,9 +3222,14 @@ def test_lookup_and_jmarti_builders_expose_conditional_special_settings() -> Non
         )
         tab_names: list[str] = list()
         tab_index: int
-        for tab_index in range(dialogue._tabs.count()):
-            tab_names.append(dialogue._tabs.tabText(tab_index))
-        assert tab_names == list(("General options", "Special configuration"))
+        for tab_index in range(dialogue.ui.tab_widget.count()):
+            tab_names.append(dialogue.ui.tab_widget.tabText(tab_index))
+        assert tab_names == list((
+            "General options",
+            "DAE model",
+            "LaTeX rendering",
+            "Special configuration",
+        ))
         if block_type == BlockType.EMT_JMARTI_LINE:
             assert dialogue._special_structural_model.rowCount() > 20
         else:

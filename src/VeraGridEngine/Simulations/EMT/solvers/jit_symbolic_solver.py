@@ -122,7 +122,8 @@ def _should_use_numba_residual_backend(total_equation_count: int) -> bool:
     :return: ``True`` when the residual backend should use Numba.
     :rtype: bool
     """
-    small_system_threshold: int = 160
+    # Avoid disproportionate Numba lowering time for medium sparse EMT cases.
+    small_system_threshold: int = 800
 
     if total_equation_count <= small_system_threshold:
         return False
@@ -153,9 +154,11 @@ def _should_use_numba_jacobian_backend(total_variable_count: int, jacobian_expre
 
     # Small EMT systems are faster and more predictable when they avoid the first
     # lazy Numba compilation altogether, even if the Jacobian is assembled densely.
-    if total_variable_count <= small_variable_threshold:
+    if jacobian_expression_count <= moderate_jacobian_threshold:
         return False
-    elif total_variable_count <= medium_variable_threshold and jacobian_expression_count <= moderate_jacobian_threshold:
+    elif total_variable_count <= small_variable_threshold:
+        return False
+    elif total_variable_count <= medium_variable_threshold:
         return False
     else:
         return True

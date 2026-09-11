@@ -12,6 +12,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.line_matrix_conversion import build_physical_line_matrices_from_stored_admittances
@@ -336,6 +337,7 @@ def evaluate_algebraic_residual_inf(problem: EmtProblemTemplate) -> float:
 def build_two_bus_real_emt_case(
         zip_load: bool = True,
         initialization_method: EmtInitializationMethod = EmtInitializationMethod.Auto,
+        balanced_pf: bool = False,
 ) -> Tuple[EmtProblemDae, TwoBusRealEmtContext]:
     """
     Build the standard real EMT two-bus benchmark case used by snapshot and
@@ -422,7 +424,7 @@ def build_two_bus_real_emt_case(
         initialize_angles=False,
         generate_report=False,
     )
-    power_flow = PowerFlowDriver3Ph(grid, pf_options)
+    power_flow = PowerFlowDriver(grid, pf_options) if balanced_pf else PowerFlowDriver3Ph(grid, pf_options)
     power_flow.run()
     pf_results = power_flow.results
 
@@ -435,7 +437,12 @@ def build_two_bus_real_emt_case(
         initialization_method=initialization_method,
         verbose=0,
     )
-    problem = EmtProblemDae(grid=grid, options=options, pf_results_3ph=pf_results, pf_results=None)
+    problem = EmtProblemDae(
+        grid=grid,
+        options=options,
+        pf_results_3ph=None if balanced_pf else pf_results,
+        pf_results=pf_results if balanced_pf else None,
+    )
 
     context = TwoBusRealEmtContext(
         grid=grid,
@@ -811,6 +818,54 @@ def test_real_pi_line_problem_uses_template_equivalent_static_matrix_values() ->
 
     assert np.isclose(constant_by_name["Linv_aa"], float(linv_expected[0, 0]))
     assert np.isclose(constant_by_name["Caa"], float(c_expected[0, 0]))
+
+
+def test_balanced_zip_load_is_initialized_by_its_model_equations() -> None:
+    """Verify a balanced-PF ZIP load needs no problem-level state repair."""
+    problem, context = build_two_bus_real_emt_case(
+        zip_load=True,
+        initialization_method=EmtInitializationMethod.Explicit,
+        balanced_pf=True,
+    )
+    model = context.get_grid().loads[0].emt_model
+    variables = {
+        var.name: var
+        for block in model.get_all_blocks()
+        for var in block.state_vars + block.algebraic_vars + list(block.event_dict)
+    }
+    constants = {
+        var.name: float(value.value)
+        for var, value in zip(problem.get_constant_parameters(), problem.get_parameters_values())
+    }
+
+    def value(name: str) -> float:
+        var = variables[name]
+        if var.uid in problem.uid2idx_event_params:
+            return float(problem.event_params_values[problem.uid2idx_event_params[var.uid]])
+        return float(problem.get_x0()[problem.get_var_idx(var)])
+
+    for phase in ("A", "B", "C"):
+        u = value(f"u_{phase}")
+        q = value(f"q_{phase}")
+        voltage_squared = value(f"V{phase}2")
+        voltage_magnitude = value(f"Vm{phase}")
+        ratio = value(f"r{phase}")
+        active_power = value(f"P_{phase}")
+        reactive_power = value(f"Q_{phase}")
+        current = value(f"i_{phase}")
+        eps = value("eps")
+
+        assert np.all(np.isfinite([
+            u, q, voltage_squared, voltage_magnitude, ratio,
+            active_power, reactive_power, current,
+        ]))
+        np.testing.assert_allclose(voltage_squared, u * u + q * q, rtol=1e-10, atol=1e-12)
+        np.testing.assert_allclose(voltage_magnitude, np.sqrt(voltage_squared + eps), rtol=1e-10, atol=1e-12)
+        np.testing.assert_allclose(ratio, (voltage_magnitude + eps) / value("V0"), rtol=1e-10, atol=1e-12)
+        np.testing.assert_allclose(active_power, -constants[f"P0_{phase}"] * ratio * ratio, rtol=1e-10, atol=1e-12)
+        np.testing.assert_allclose(reactive_power, -constants[f"Q0_{phase}"] * ratio * ratio, rtol=1e-10, atol=1e-12)
+        expected_current = -2.0 * (u * (-active_power) + q * (-reactive_power)) / (u * u + q * q + eps)
+        np.testing.assert_allclose(current, expected_current, rtol=1e-10, atol=1e-12)
 
 
 if __name__ == "__main__":

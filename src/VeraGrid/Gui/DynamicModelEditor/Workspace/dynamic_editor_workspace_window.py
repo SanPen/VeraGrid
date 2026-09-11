@@ -355,6 +355,26 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
             pass
         return self.open_entry(entry, preferred_mode=mode, target_workspace=self)
 
+    def _selected_dynamic_entry(self) -> DynamicEditorEntry | None:
+        """
+        Return the selected tree entry, falling back to the active tab entry.
+
+        :return: Selected dynamic editor entry or ``None``.
+        """
+        # Toolbar actions belong to the workspace, so the device tree selection
+        # is the first source even when no editor tab has been opened yet.
+        tree_index: QtCore.QModelIndex = self.ui.treeView.currentIndex()
+        entry: DynamicEditorEntry | None = self._entry_from_tree_index(tree_index)
+        if entry is None:
+            page: DynamicBlockEditorGUI | DynamicEditorTab | DynamicEventsPage | None = self.current_page()
+            if page is not None:
+                entry = page.get_dynamic_editor_entry()
+            else:
+                pass
+        else:
+            pass
+        return entry
+
     @QtCore.Slot(object, object, object)
     def _open_device_tree_entry(
             self,
@@ -382,72 +402,48 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
             pass
 
     def open_emt_editor_entry(self, _checked: bool = False) -> None:
-        """Open the EMT model editor for the currently active device.
+        """Open the EMT model editor for the selected device.
 
         :param _checked: QAction checked state supplied by Qt.
         :return: None.
         """
-        page: DynamicBlockEditorGUI | DynamicEditorTab | DynamicEventsPage | None = self.current_page()
-
-        if page is not None:
-            entry: DynamicEditorEntry | None = page.get_dynamic_editor_entry()
-        else:
-            entry = None
-
-        if entry is not None:
+        entry: DynamicEditorEntry | None = self._selected_dynamic_entry()
+        if entry is not None and DynamicSimulationMode.EMT in entry.available_modes:
             self.open_entry(entry, preferred_mode=DynamicSimulationMode.EMT, target_workspace=self)
         else:
             pass
 
     def open_rms_editor_entry(self, _checked: bool = False) -> None:
-        """Open the RMS model editor for the currently active device.
+        """Open the RMS model editor for the selected device.
 
         :param _checked: QAction checked state supplied by Qt.
         :return: None.
         """
-        page: DynamicBlockEditorGUI | DynamicEditorTab | DynamicEventsPage | None = self.current_page()
-
-        if page is not None:
-            entry: DynamicEditorEntry | None = page.get_dynamic_editor_entry()
-        else:
-            entry = None
-
-        if entry is not None:
+        entry: DynamicEditorEntry | None = self._selected_dynamic_entry()
+        if entry is not None and DynamicSimulationMode.RMS in entry.available_modes:
             self.open_entry(entry, preferred_mode=DynamicSimulationMode.RMS, target_workspace=self)
         else:
             pass
 
     def open_emt_events_entry(self, _checked: bool = False) -> None:
-        """Open the EMT events editor for the currently active device.
+        """Open the EMT events editor for the selected device.
 
         :param _checked: QAction checked state supplied by Qt.
         :return: None.
         """
-        page: DynamicBlockEditorGUI | DynamicEditorTab | DynamicEventsPage | None = self.current_page()
-
-        if page is not None:
-            entry: DynamicEditorEntry | None = page.get_dynamic_editor_entry()
-        else:
-            entry = None
-
+        entry: DynamicEditorEntry | None = self._selected_dynamic_entry()
         if entry is not None:
             self.session.open_events_entry(entry, mode=DynamicSimulationMode.EMT, target_workspace=self)
         else:
             pass
 
     def open_rms_events_entry(self, _checked: bool = False) -> None:
-        """Open the RMS events editor for the currently active device.
+        """Open the RMS events editor for the selected device.
 
         :param _checked: QAction checked state supplied by Qt.
         :return: None.
         """
-        page: DynamicBlockEditorGUI | DynamicEditorTab | DynamicEventsPage | None = self.current_page()
-
-        if page is not None:
-            entry: DynamicEditorEntry | None = page.get_dynamic_editor_entry()
-        else:
-            entry = None
-
+        entry: DynamicEditorEntry | None = self._selected_dynamic_entry()
         if entry is not None:
             self.session.open_events_entry(entry, mode=DynamicSimulationMode.RMS, target_workspace=self)
         else:

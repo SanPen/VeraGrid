@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Tuple, Union, Optional, BinaryIO
+from typing import Dict, List, Tuple, Union, Optional, BinaryIO, Set
 import numpy as np
 import numba as nb
 import time
@@ -2198,6 +2198,7 @@ class EmtPseudoTransientProblemAdapter(RmsProblemTemplate):
 def _collect_reduced_initialization_problem(
         problem: EmtProblemTemplate,
         allow_state_equilibrium: bool,
+        fixed_algebraic_uids: Optional[Set[int]] = None,
 ) -> Tuple[List[Var], List[Expr], np.ndarray] | None:
     """
     Collect the reduced initialization unknowns and residual equations without compiling them.
@@ -2219,9 +2220,11 @@ def _collect_reduced_initialization_problem(
     algebraic_eqs: List[Expr] = problem.get_algebraic_eqs()
     alg_idx: int = 0
 
+    fixed_uids: Set[int] = set() if fixed_algebraic_uids is None else fixed_algebraic_uids
     while alg_idx < len(algebraic_vars):
         algebraic_var: Var = algebraic_vars[alg_idx]
-        algebraic_unknown_vars.append(algebraic_var)
+        if algebraic_var.uid not in fixed_uids:
+            algebraic_unknown_vars.append(algebraic_var)
         algebraic_residual_eqs.append(algebraic_eqs[alg_idx])
         alg_idx += 1
 
@@ -2407,6 +2410,10 @@ def _solve_reduced_linear_system(
     :return: Linear-system solution vector.
     """
     n_unknown: int = int(matrix.shape[0])
+
+    if matrix.shape[0] != matrix.shape[1]:
+        least_squares_solution = spla.lsqr(matrix, rhs)
+        return np.asarray(least_squares_solution[0], dtype=np.float64)
 
     if n_unknown <= dense_threshold:
         dense_matrix: np.ndarray = matrix.toarray()
@@ -2868,9 +2875,18 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
 
         try:
             phase_t0: float = time.perf_counter()
+            fixed_algebraic_uids: Set[int] = set()
+            if options.init_fix_pf_bus_voltages:
+                grid = getattr(problem, "grid", None)
+                for bus in getattr(grid, "buses", []):
+                    bus_model = getattr(bus, "emt_model", None)
+                    for bus_var in getattr(bus_model, "algebraic_vars", []):
+                        if isinstance(bus_var, Var):
+                            fixed_algebraic_uids.add(bus_var.uid)
             reduced_problem_payload = _collect_reduced_initialization_problem(
                 problem=problem,
                 allow_state_equilibrium=bool(options.init_allow_state_equilibrium),
+                fixed_algebraic_uids=fixed_algebraic_uids,
             )
 
             if reduced_problem_payload is None:

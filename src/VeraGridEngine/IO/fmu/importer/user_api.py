@@ -15,8 +15,10 @@ from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 from VeraGridEngine.IO.fmu.importer.bindings import (
     FmiThreeFloat64ConfigurationValue,
     FmiThreeUInt64ConfigurationValue,
+    FmuFloat64ParameterValue,
     FmuImportConfig,
     FmuRefBinding,
+    _validate_fmu_float64_parameter_values,
     _validate_fmi_three_configuration_values,
 )
 from VeraGridEngine.IO.fmu.importer.device_api import (
@@ -81,6 +83,7 @@ class FmuDeviceAttachmentRequest:
     :param maximum_event_iterations: Positive Event Mode convergence bound.
     :param configuration_float64_values: Structural Float64 declarations.
     :param configuration_uint64_values: Structural UInt64 declarations.
+    :param parameter_values: Scalar FMI parameter values overriding metadata starts.
     """
 
     __slots__ = (
@@ -89,6 +92,7 @@ class FmuDeviceAttachmentRequest:
         "mode",
         "configuration_float64_values",
         "configuration_uint64_values",
+        "parameter_values",
         "input_bindings",
         "output_bindings",
         "name",
@@ -122,6 +126,7 @@ class FmuDeviceAttachmentRequest:
         configuration_uint64_values: tuple[
             FmiThreeUInt64ConfigurationValue, ...
         ] = tuple(),
+        parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(),
     ) -> None:
         """Store the high-level user request for one imported FMU device.
 
@@ -140,6 +145,7 @@ class FmuDeviceAttachmentRequest:
         :param maximum_event_iterations: Positive Event Mode convergence bound.
         :param configuration_float64_values: Structural Float64 declarations.
         :param configuration_uint64_values: Structural UInt64 declarations.
+        :param parameter_values: Scalar FMI parameter values overriding metadata starts.
         :return: None.
         """
 
@@ -153,12 +159,43 @@ class FmuDeviceAttachmentRequest:
             configuration_float64_values=configuration_float64_values,
             configuration_uint64_values=configuration_uint64_values,
         )
+        reserved_variable_names: list[str] = [""] * (
+            len(input_bindings)
+            + len(configuration_float64_values)
+            + len(configuration_uint64_values)
+        )
+        reserved_name_index: int = 0
+        input_binding: FmuRefBinding
+        for input_binding in input_bindings:
+            reserved_variable_names[reserved_name_index] = (
+                input_binding.fmu_variable_name
+            )
+            reserved_name_index += 1
+        float64_configuration: FmiThreeFloat64ConfigurationValue
+        for float64_configuration in configuration_float64_values:
+            reserved_variable_names[reserved_name_index] = (
+                float64_configuration.variable_name
+            )
+            reserved_name_index += 1
+        uint64_configuration: FmiThreeUInt64ConfigurationValue
+        for uint64_configuration in configuration_uint64_values:
+            reserved_variable_names[reserved_name_index] = (
+                uint64_configuration.variable_name
+            )
+            reserved_name_index += 1
+        _validate_fmu_float64_parameter_values(
+            parameter_values=parameter_values,
+            reserved_variable_names=tuple(reserved_variable_names),
+        )
         self.configuration_float64_values: tuple[
             FmiThreeFloat64ConfigurationValue, ...
         ] = tuple(configuration_float64_values)
         self.configuration_uint64_values: tuple[
             FmiThreeUInt64ConfigurationValue, ...
         ] = tuple(configuration_uint64_values)
+        self.parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(
+            parameter_values
+        )
         self.input_bindings: tuple[FmuRefBinding, ...] = input_bindings
         self.output_bindings: tuple[FmuRefBinding, ...] = output_bindings
         self.name: str | None = name
@@ -261,6 +298,7 @@ def attach_fmu_to_device(device: Any, grid: MultiCircuit, request: FmuDeviceAtta
                 configuration_uint64_values=(
                     request.configuration_uint64_values
                 ),
+                parameter_values=request.parameter_values,
             )
         else:
             if request.mode == FmuInterfaceMode.MODEL_EXCHANGE:
@@ -280,6 +318,7 @@ def attach_fmu_to_device(device: Any, grid: MultiCircuit, request: FmuDeviceAtta
                     configuration_uint64_values=(
                         request.configuration_uint64_values
                     ),
+                    parameter_values=request.parameter_values,
                 )
             else:
                 raise ValueError(f"Unsupported FMI mode {request.mode.value}")
@@ -301,6 +340,7 @@ def attach_fmu_to_device(device: Any, grid: MultiCircuit, request: FmuDeviceAtta
                     configuration_uint64_values=(
                         request.configuration_uint64_values
                     ),
+                    parameter_values=request.parameter_values,
                 )
             else:
                 if request.mode == FmuInterfaceMode.MODEL_EXCHANGE:
@@ -320,6 +360,7 @@ def attach_fmu_to_device(device: Any, grid: MultiCircuit, request: FmuDeviceAtta
                         configuration_uint64_values=(
                             request.configuration_uint64_values
                         ),
+                        parameter_values=request.parameter_values,
                     )
                 else:
                     raise ValueError(f"Unsupported FMI mode {request.mode.value}")

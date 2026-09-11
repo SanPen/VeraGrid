@@ -9,7 +9,6 @@ from typing import List, Dict, Tuple, TYPE_CHECKING
 
 from PySide6 import QtCore, QtWidgets
 
-from VeraGrid.Gui.DynamicModelEditor.Events.dynamic_events_models import DynamicEventsDraftSession
 from VeraGrid.Gui.DynamicModelEditor.Events.dynamic_events_page import DynamicEventsPage
 from VeraGrid.Gui.DynamicModelEditor.Events.dynamic_events_support import collect_dynamic_events_page_parameters
 from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
@@ -73,8 +72,6 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         self._open_workspaces: List[DynamicEditorWorkspaceWindow] = list()
         self._session_pages: Dict[str, DynamicEditorTab] = dict()
         self._event_pages: List[DynamicEventsPage] = list()
-        self._events_session: DynamicEventsDraftSession | None = None
-        self._events_circuit: MultiCircuit | None = None
         self._last_mode_by_key_base: Dict[str, DynamicSimulationMode] = dict()
         self._last_active_workspace: DynamicEditorWorkspaceWindow | None = None
         self._pending_drag_page: DynamicEditorTab | DynamicBlockEditorGUI | DynamicEventsPage | None = None
@@ -138,28 +135,6 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
             return self._last_active_workspace
         return None
 
-    def _release_events_session(self) -> None:
-        """Release the shared events transaction and its Qt ownership link.
-
-        ``DynamicEventsDraftSession`` is parented to this long-lived workspace
-        session. Clearing only the Python attribute therefore leaves every old
-        transaction alive as a hidden QObject child, together with all event,
-        group, device and symbolic-parameter references it contains.
-
-        :return: None.
-        """
-        events_session: DynamicEventsDraftSession | None = self._events_session
-        self._events_session = None
-        self._events_circuit = None
-        if events_session is not None:
-            # No event page remains connected when this method is used. Detach
-            # before DeferredDelete so the application-long workspace session
-            # cannot retain the transaction in its QObject child collection.
-            events_session.setParent(None)
-            events_session.deleteLater()
-        else:
-            pass
-
     def reset_for_tests(self) -> None:
         """
         Close every workspace and clear all retained session state.
@@ -168,10 +143,6 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         """
         # Close from a stable snapshot because each close event unregisters its
         # workspace and pages from this same session.
-        if self._events_session is not None and self._events_session.has_unapplied_changes:
-            self._events_session.reload_from_circuit()
-        else:
-            pass
         workspaces_to_close: List[DynamicEditorWorkspaceWindow] = list(self._open_workspaces)
         workspace_to_close: DynamicEditorWorkspaceWindow | None
         for workspace_to_close in workspaces_to_close:
@@ -184,7 +155,6 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         self._open_workspaces.clear()
         self._session_pages.clear()
         self._event_pages.clear()
-        self._release_events_session()
         self._last_mode_by_key_base.clear()
         self._last_active_workspace = None
         self._pending_drag_page = None
@@ -207,59 +177,23 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
     ) -> bool:
         """Validate a page-closing operation before any page is destroyed.
 
-        Model pages retain their existing per-document guard. Event pages share
-        one transaction, so it is prompted only when the operation closes the
-        last registered event view across all detachable workspaces.
+        Model pages retain their existing per-document guard. Event pages edit
+        circuit objects immediately and therefore never need a close prompt.
 
         :param pages: Complete set of pages affected by the closing operation.
         :param parent: Widget that owns any save or discard prompt.
         :return: Whether the complete closing operation may proceed.
         """
-        closing_event_pages: int = 0
         page: DynamicBlockEditorGUI | DynamicEditorTab | DynamicEventsPage
         for page in pages:
             if isinstance(page, DynamicEventsPage):
-                closing_event_pages += 1
+                # Event pages edit circuit assets immediately and therefore have no close guard.
+                pass
             else:
                 if not bool(page.can_close_editor(parent)):
                     return False
                 else:
                     pass
-
-        remaining_event_pages: int = len(self._event_pages) - closing_event_pages
-        closes_last_event_view: bool = closing_event_pages > 0 and remaining_event_pages <= 0
-        if (
-                closes_last_event_view
-                and self._events_session is not None
-                and self._events_session.has_unapplied_changes
-        ):
-            message_box: QtWidgets.QMessageBox = QtWidgets.QMessageBox(parent)
-            message_box.setIcon(QtWidgets.QMessageBox.Icon.Question)
-            message_box.setWindowTitle(self.tr("Unsaved dynamic events"))
-            message_box.setText(self.tr("The dynamic events contain unsaved changes."))
-            message_box.setInformativeText(self.tr("Save the changes before closing the last events tab?"))
-            message_box.setStandardButtons(
-                QtWidgets.QMessageBox.StandardButton.Save
-                | QtWidgets.QMessageBox.StandardButton.Discard
-                | QtWidgets.QMessageBox.StandardButton.Cancel
-            )
-            message_box.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Save)
-            answer: QtWidgets.QMessageBox.StandardButton = QtWidgets.QMessageBox.StandardButton(
-                message_box.exec()
-            )
-            if answer == QtWidgets.QMessageBox.StandardButton.Save:
-                validation_error: str | None = self._events_session.validate()
-                if validation_error is not None:
-                    QtWidgets.QMessageBox.warning(parent, self.tr("Invalid dynamic events"), validation_error)
-                    return False
-                else:
-                    self._events_session.commit()
-            elif answer == QtWidgets.QMessageBox.StandardButton.Discard:
-                self._events_session.reload_from_circuit()
-            else:
-                return False
-        else:
-            pass
         return True
 
     def close_all_for_project_replacement(self, parent: QtWidgets.QWidget) -> bool:
@@ -302,7 +236,6 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         self._open_workspaces.clear()
         self._session_pages.clear()
         self._event_pages.clear()
-        self._release_events_session()
         self._last_mode_by_key_base.clear()
         self._last_active_workspace = None
         self._pending_drag_page = None
@@ -522,20 +455,6 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
             return None
         return self.open_entry(entry, preferred_mode=preferred_mode, target_workspace=target_workspace)
 
-    def _get_events_session(self, circuit: MultiCircuit) -> DynamicEventsDraftSession:
-        """Return the single event transaction associated with the current circuit.
-
-        :param circuit: Circuit whose events will be edited.
-        :return: Shared event draft session.
-        """
-        if self._events_session is None or self._events_circuit is not circuit:
-            self._release_events_session()
-            self._events_session = DynamicEventsDraftSession(circuit=circuit, parent=self)
-            self._events_circuit = circuit
-        else:
-            pass
-        return self._events_session
-
     def create_events_page(
             self,
             entry: DynamicEditorEntry,
@@ -558,16 +477,7 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
             entry=entry,
             mode=mode,
         )
-        events_session: DynamicEventsDraftSession = self._get_events_session(circuit=entry.circuit)
-        # Reconcile before constructing the projection so an event page never
-        # starts with detached parameter objects from an earlier model save.
-        events_session.reconcile_device_parameters(
-            device=entry.api_object,
-            mode=mode,
-            parameters=parameters,
-        )
         page: DynamicEventsPage = DynamicEventsPage(
-            session=events_session,
             entry=entry,
             device=entry.api_object,
             mode=mode,
@@ -683,11 +593,6 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
 
         if page in self._retained_pages:
             self._retained_pages.remove(page)
-        else:
-            pass
-
-        if len(self._event_pages) == 0:
-            self._release_events_session()
         else:
             pass
 

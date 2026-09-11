@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import uuid
 
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional, Sequence
 
 from PySide6 import QtCore, QtGui
 
@@ -73,7 +73,7 @@ class DynamicsLibraryTreeModel(QtGui.QStandardItemModel):
         self._drag_token_role: int = block_role + 1
         self._drag_payloads: Dict[str, object] = dict()
 
-        self.setHorizontalHeaderLabels(list(("Models Library",)))
+        self.setHorizontalHeaderLabels(list(("Name", "Description")))
 
     def register_drag_payload(self, item: QtGui.QStandardItem, payload: object) -> None:
         """Register one payload and expose its opaque drag token on an item.
@@ -102,6 +102,10 @@ class DynamicsLibraryTreeModel(QtGui.QStandardItemModel):
         :return: Flags appropriate for a category or draggable leaf.
         """
         if index.isValid():
+            if index.column() != 0:
+                return QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
+            else:
+                pass
             item: QtGui.QStandardItem | None = self.itemFromIndex(index)
             if item is not None:
                 item_data: object = item.data(self._block_role)
@@ -141,7 +145,8 @@ class DynamicsLibraryTreeModel(QtGui.QStandardItemModel):
         index: QtCore.QModelIndex
         for index in indexes:
             if index.isValid():
-                item: QtGui.QStandardItem | None = self.itemFromIndex(index)
+                source_index: QtCore.QModelIndex = index.siblingAtColumn(0)
+                item: QtGui.QStandardItem | None = self.itemFromIndex(source_index)
                 if item is not None:
                     item_token: object = item.data(self._drag_token_role)
                     item_data: object = item.data(self._block_role)
@@ -368,7 +373,6 @@ class DynamicEditorLibrary:
         """
 
         model: DynamicsLibraryTreeModel = DynamicsLibraryTreeModel(self.block_role, self.mime_type)
-        model.setHorizontalHeaderLabels(list(("Dynamic library",)))
         root_item: QtGui.QStandardItem = model.invisibleRootItem()
 
         category: str
@@ -396,18 +400,12 @@ class DynamicEditorLibrary:
         """
 
         branch_item: QtGui.QStandardItem = QtGui.QStandardItem(branch_label)
+        description_item: QtGui.QStandardItem = QtGui.QStandardItem("")
         branch_item.setEditable(False)
+        description_item.setEditable(False)
         branch_item.setData(" ".join((*path_tokens, branch_label)).strip(), self.LIBRARY_SEARCH_TEXT_ROLE)
-        parent_item.appendRow(branch_item)
-
-        if len(path_tokens) == 0:
-            category_icon_path: str | None = device_type_icons.get(branch_label, None)
-            if category_icon_path is not None:
-                branch_item.setIcon(QtGui.QIcon(category_icon_path))
-            else:
-                pass
-        else:
-            pass
+        set_library_branch_icon(item=branch_item, branch_label=branch_label)
+        parent_item.appendRow(list((branch_item, description_item)))
 
         if isinstance(branch_data, dict):
             child_label: str
@@ -419,8 +417,17 @@ class DynamicEditorLibrary:
                 leaf: LibraryLeafSpec
                 for leaf in sorted(branch_data, key=_library_leaf_label_sort_key):
                     item: QtGui.QStandardItem = QtGui.QStandardItem(leaf.label)
+                    leaf_description: str = build_library_item_description(payload=leaf.payload)
+                    leaf_description_item: QtGui.QStandardItem = QtGui.QStandardItem(leaf_description)
                     item.setEditable(False)
-                    item.setData(leaf.search_text if leaf.search_text else leaf.label, self.LIBRARY_SEARCH_TEXT_ROLE)
+                    leaf_description_item.setEditable(False)
+                    if len(leaf.search_text) > 0:
+                        search_text: str = f"{leaf.search_text} {leaf_description}".strip()
+                    else:
+                        search_text = f"{leaf.label} {leaf_description}".strip()
+                    item.setData(search_text, self.LIBRARY_SEARCH_TEXT_ROLE)
+                    item.setToolTip(leaf_description)
+                    leaf_description_item.setToolTip(leaf_description)
                     if isinstance(leaf.payload, ProceduralBlockTemplateDescriptor):
                         procedural_tooltip: str = (
                             f"{leaf.payload.display_label} — {leaf.payload.logic_tpe.value}. "
@@ -440,7 +447,7 @@ class DynamicEditorLibrary:
                         pass
                     set_library_item_icon(item, leaf.payload)
                     model.register_drag_payload(item, leaf.payload)
-                    branch_item.appendRow(item)
+                    branch_item.appendRow(list((item, leaf_description_item)))
             else:
                 raise TypeError(f"Unsupported library branch data type {type(branch_data)!r}")
 
@@ -589,6 +596,223 @@ def insert_library_leaf(branch: Dict[str, object], category_path: tuple[str, ...
             raise TypeError(f"Category '{head}' is already used as a leaf collection")
 
 
+def build_library_item_description(payload: object) -> str:
+    """Return the description shown in the library tree second column.
+
+    :param payload: Typed payload represented by one library leaf.
+    :return: Human-readable description derived from existing block metadata.
+    """
+    if isinstance(payload, BasicBlockTemplateDescriptor):
+        description: str = build_library_interface_description(
+            inputs=payload.inputs,
+            outputs=payload.outputs,
+            states=payload.states,
+            params=payload.params,
+        )
+    elif isinstance(payload, ProceduralBlockTemplateDescriptor):
+        description = build_library_interface_description(
+            inputs=payload.input_names,
+            outputs=payload.output_names,
+            states=tuple(),
+            params=tuple(parameter_spec.name for parameter_spec in payload.parameter_specs),
+        )
+        if payload.requires_configuration:
+            description = f"{description}. Requires external configuration"
+        else:
+            pass
+    elif isinstance(payload, InternationalStandardTemplateDescriptor):
+        description = f"International-standard RMS model: {payload.model.value}"
+    elif isinstance(payload, RmsModelTemplate):
+        if len(payload.comment) > 0:
+            description = payload.comment
+        else:
+            description = "RMS model template"
+    elif isinstance(payload, EmtModelTemplate):
+        if len(payload.comment) > 0:
+            description = payload.comment
+        else:
+            description = "EMT model template"
+    elif isinstance(payload, FmuTemplate):
+        if len(payload.comment) > 0:
+            description = payload.comment
+        else:
+            description = "FMU model template"
+    elif isinstance(payload, BlockType):
+        description = build_block_type_description(block_type=payload)
+    else:
+        description = ""
+
+    return description
+
+
+def build_library_interface_description(
+        inputs: Sequence[str],
+        outputs: Sequence[str],
+        states: Sequence[str],
+        params: Sequence[str],
+) -> str:
+    """Build a compact interface summary from descriptor metadata.
+
+    :param inputs: Input port names.
+    :param outputs: Output port names.
+    :param states: State variable names.
+    :param params: Runtime parameter names.
+    :return: Compact description text.
+    """
+    parts: list[str] = list()
+    input_part: str = build_library_name_list(label="Inputs", names=inputs)
+    output_part: str = build_library_name_list(label="Outputs", names=outputs)
+    state_part: str = build_library_name_list(label="States", names=states)
+    param_part: str = build_library_name_list(label="Parameters", names=params)
+
+    if len(input_part) > 0:
+        parts.append(input_part)
+    else:
+        pass
+    if len(output_part) > 0:
+        parts.append(output_part)
+    else:
+        pass
+    if len(state_part) > 0:
+        parts.append(state_part)
+    else:
+        pass
+    if len(param_part) > 0:
+        parts.append(param_part)
+    else:
+        pass
+
+    if len(parts) > 0:
+        description: str = "; ".join(parts)
+    else:
+        description = "No exposed ports"
+
+    return description
+
+
+def build_library_name_list(label: str, names: Sequence[str]) -> str:
+    """Build one bounded comma-separated description segment.
+
+    :param label: Segment label.
+    :param names: Names to display.
+    :return: Description segment, or an empty string when no names exist.
+    """
+    if len(names) == 0:
+        text: str = ""
+    else:
+        visible_names: list[str] = list()
+        name_index: int
+        for name_index in range(min(6, len(names))):
+            visible_names.append(str(names[name_index]))
+        if len(names) > len(visible_names):
+            visible_names.append(f"+{len(names) - len(visible_names)} more")
+        else:
+            pass
+        text = f"{label}: {', '.join(visible_names)}"
+
+    return text
+
+
+def build_block_type_description(block_type: BlockType) -> str:
+    """Return a compact description for native enum-backed blocks.
+
+    :param block_type: Native block type.
+    :return: Human-readable description.
+    """
+    if block_type == BlockType.FROM_GOTO:
+        description: str = "Signal pair connector"
+    elif block_type == BlockType.INPUT_CONN:
+        description = "Bus or measurement connection helper"
+    elif block_type == BlockType.OUTPUT_CONN:
+        description = "External mapping connection helper"
+    elif block_type == BlockType.GENERIC:
+        description = "Empty custom dynamic block"
+    elif block_type == BlockType.RLC_COMBO_EMT:
+        description = "Configurable EMT RLC branch"
+    elif block_type == BlockType.FAULT_EMT:
+        description = "EMT fault block"
+    elif block_type == BlockType.SWITCH_EMT:
+        description = "EMT switch block"
+    elif block_type.name.startswith("MEASUREMENTS_"):
+        description = "Measurement block"
+    elif block_type.name.endswith("_RMS"):
+        description = "Native RMS dynamic block"
+    elif block_type.name.endswith("_EMT"):
+        description = "Native EMT dynamic block"
+    elif block_type in tuple((
+            BlockType.CONST,
+            BlockType.GAIN,
+            BlockType.SUM,
+            BlockType.DIVIDE,
+            BlockType.PRODUCT,
+            BlockType.ABS,
+            BlockType.INTEGRATOR,
+            BlockType.POWER,
+            BlockType.SIN,
+            BlockType.COS,
+            BlockType.TAN,
+            BlockType.EXP,
+            BlockType.LOG,
+            BlockType.LOG10,
+            BlockType.SQRT,
+            BlockType.ASIN,
+            BlockType.ACOS,
+            BlockType.ATAN,
+            BlockType.SINH,
+            BlockType.COSH,
+            BlockType.TANH,
+            BlockType.REAL,
+            BlockType.IMAG,
+            BlockType.CONJ,
+            BlockType.ANGLE,
+    )):
+        description = "Native mathematical block"
+    elif block_type in tuple((
+            BlockType.INVERSE_LOOKUP_ARRAY,
+            BlockType.LOOKUP_ARRAY_LINEAR,
+            BlockType.LOOKUP_ARRAY_SPLINE,
+            BlockType.LOOKUP_MATRIX_LINEAR,
+            BlockType.LOOKUP_MATRIX_SPLINE,
+    )):
+        description = "Native lookup-table block"
+    else:
+        description = f"Native block: {block_type.value}"
+
+    return description
+
+
+def set_library_branch_icon(item: QtGui.QStandardItem, branch_label: str) -> None:
+    """Apply the best matching icon for one library branch row.
+
+    :param item: Branch item whose icon is updated.
+    :param branch_label: Branch text shown in the library tree.
+    :return: None.
+    """
+    icon_path: str | None = device_type_icons.get(branch_label, None)
+    if icon_path is None:
+        if branch_label == "Basic":
+            icon_path = ":/Icons/icons/Catalogue.png"
+        elif branch_label == "Tools":
+            icon_path = ":/Icons/icons/gear.png"
+        elif branch_label == "Procedural logic":
+            icon_path = ":/Icons/icons/dyn_edit.png"
+        elif branch_label == "International standards":
+            icon_path = ":/Icons/icons/dyn.png"
+        elif branch_label == "Native":
+            icon_path = ":/Icons/icons/dyn_gray.png"
+        elif branch_label == "Faults":
+            icon_path = ":/Icons/icons/short_circuit_plus.png"
+        elif branch_label == "Devices":
+            icon_path = ":/Icons/icons/dyn_gray.png"
+        elif branch_label == "Control blocks":
+            icon_path = ":/Icons/icons/control_pc.png"
+        else:
+            icon_path = ":/Icons/icons/tree.png"
+    else:
+        pass
+    item.setIcon(QtGui.QIcon(icon_path))
+
+
 def set_library_item_icon(item: QtGui.QStandardItem, payload: object) -> None:
     """
     Apply the best matching icon for one draggable library leaf.
@@ -606,5 +830,22 @@ def set_library_item_icon(item: QtGui.QStandardItem, payload: object) -> None:
         item.setIcon(QtGui.QIcon(device_type_icons[DeviceType.RmsModelTemplateDevice.value]))
     elif isinstance(payload, (EmtModelTemplate, BasicBlockTemplateDescriptor, ProceduralBlockTemplateDescriptor)):
         item.setIcon(QtGui.QIcon(device_type_icons[DeviceType.EmtModelTemplateDevice.value]))
+    elif isinstance(payload, BlockType):
+        if payload == BlockType.FROM_GOTO:
+            item.setIcon(QtGui.QIcon(":/Icons/icons/tree.png"))
+        elif payload == BlockType.INPUT_CONN or payload.name.startswith("MEASUREMENTS_"):
+            item.setIcon(QtGui.QIcon(":/Icons/icons/measurement.png"))
+        elif payload == BlockType.SUM:
+            item.setIcon(QtGui.QIcon(":/Icons/icons/plus.png"))
+        elif payload == BlockType.PRODUCT:
+            item.setIcon(QtGui.QIcon(":/Icons/icons/multiply.png"))
+        elif payload == BlockType.DIVIDE:
+            item.setIcon(QtGui.QIcon(":/Icons/icons/divide.png"))
+        elif payload.name.endswith("_EMT"):
+            item.setIcon(QtGui.QIcon(":/Icons/icons/dyn_emt.png"))
+        elif payload.name.endswith("_RMS"):
+            item.setIcon(QtGui.QIcon(":/Icons/icons/dyn.png"))
+        else:
+            item.setIcon(QtGui.QIcon(":/Icons/icons/dyn_gray.png"))
     else:
         pass

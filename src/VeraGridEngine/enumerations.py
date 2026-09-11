@@ -696,6 +696,7 @@ class FmuVariableType(str, Enum):
     ENUMERATION = "Enumeration"
     FLOAT32 = "Float32"
     FLOAT64 = "Float64"
+    INT32 = "Int32"
     UINT64 = "UInt64"
     UNKNOWN = "Unknown"
 

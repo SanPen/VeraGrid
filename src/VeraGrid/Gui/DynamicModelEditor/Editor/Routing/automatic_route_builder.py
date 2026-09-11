@@ -335,7 +335,7 @@ class AutomaticRouteBuilder:
             last_conflict_index: int,
             routing_policy: AutomaticRoutingPolicy,
     ) -> RoutingGraph | None:
-        """Return the best valid deterministic progressive exterior corridor.
+        """Return the nearest valid deterministic progressive exterior corridor.
 
         :param start_position: Source continuation anchor.
         :param end_position: Destination continuation anchor.
@@ -345,13 +345,8 @@ class AutomaticRouteBuilder:
         :param first_conflict_index: First central segment to replace.
         :param last_conflict_index: Last central segment to replace.
         :param routing_policy: Strict or crossing-penalized policy.
-        :return: Best candidate across the progressive margins, or ``None``.
+        :return: First valid candidate across the progressive margins, or ``None``.
         """
-        # Every progressive level remains cheap because it contains only four
-        # deterministic candidates. Comparing all valid levels is necessary to
-        # let a farther two-bend route beat a nearer route with extra elbows.
-        best_candidate: RoutingGraph | None = None
-        best_cost: tuple[int, int, int, int, float, int, float] | None = None
         exterior_margin: float
         for exterior_margin in exterior_margins:
             search_bounds: RoutingBounds = self._build_exterior_search_bounds(
@@ -370,17 +365,10 @@ class AutomaticRouteBuilder:
                 routing_policy=routing_policy,
             )
             if best_candidate_for_margin is not None:
-                candidate_cost: tuple[int, int, int, int, float, int, float] = self._build_complete_graph_cost(
-                    graph=best_candidate_for_margin,
-                )
-                if best_cost is None or candidate_cost < best_cost:
-                    best_candidate = best_candidate_for_margin
-                    best_cost = candidate_cost
-                else:
-                    pass
+                return best_candidate_for_margin
             else:
                 pass
-        return best_candidate
+        return None
 
     def _evaluate_exterior_corridors(
             self,
@@ -614,13 +602,27 @@ class AutomaticRouteBuilder:
         minimum_y: float = min(start_position.get_y(), end_position.get_y())
         maximum_y: float = max(start_position.get_y(), end_position.get_y())
 
+        search_left: float = minimum_x - exterior_margin
+        search_top: float = minimum_y - exterior_margin
+        search_right: float = maximum_x + exterior_margin
+        search_bottom: float = maximum_y + exterior_margin
+
         block_geometry: RoutingBlockGeometry
         for block_geometry in local_geometry.get_other_blocks():
             block_bounds: RoutingBounds = block_geometry.get_bounds()
-            minimum_x = min(minimum_x, block_bounds.get_left())
-            maximum_x = max(maximum_x, block_bounds.get_right())
-            minimum_y = min(minimum_y, block_bounds.get_top())
-            maximum_y = max(maximum_y, block_bounds.get_bottom())
+            if self._bounds_intersect_search_area(
+                    block_bounds=block_bounds,
+                    minimum_search_x=search_left,
+                    maximum_search_x=search_right,
+                    minimum_search_y=search_top,
+                    maximum_search_y=search_bottom,
+            ):
+                minimum_x = min(minimum_x, block_bounds.get_left())
+                maximum_x = max(maximum_x, block_bounds.get_right())
+                minimum_y = min(minimum_y, block_bounds.get_top())
+                maximum_y = max(maximum_y, block_bounds.get_bottom())
+            else:
+                pass
 
         # Foreign wires influence strict validity and relaxed crossing cost,
         # but they must not enlarge the physical frame used to avoid blocks.
@@ -645,27 +647,11 @@ class AutomaticRouteBuilder:
         :param local_geometry: Complete central-search obstacle geometry.
         :return: Increasing unique exterior margins.
         """
-        geometry_bounds: RoutingBounds = self._build_exterior_search_bounds(
-            start_position=start_position,
-            end_position=end_position,
-            local_geometry=local_geometry,
-            exterior_margin=0.0,
-        )
-        geometry_width: float = geometry_bounds.get_right() - geometry_bounds.get_left()
-        geometry_height: float = geometry_bounds.get_bottom() - geometry_bounds.get_top()
-        scene_scale_margin: float = max(
-            1000.0,
-            geometry_width,
-            geometry_height,
-        ) + self._clearance
         candidate_margins: tuple[float, ...] = (
             self._clearance,
             2.0 * self._clearance,
             50.0 + self._clearance,
             self._search_margin + self._clearance,
-            500.0 + self._clearance,
-            1000.0 + self._clearance,
-            scene_scale_margin,
         )
         unique_margins: list[float] = list()
         candidate_margin: float

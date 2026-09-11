@@ -13,14 +13,23 @@ from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import (
     DeviceType,
+    FmiVersion,
     FmuTemplateDomain,
     FmuTemplateMode,
+    FmuVariableType,
     ParamPowerFlowReferenceType,
     VarPowerFlowReferenceType,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
 
-from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig, FmuRefBinding
+from VeraGridEngine.IO.fmu.importer.bindings import (
+    FmuBindingDirection,
+    FmuFloat64ParameterValue,
+    FmuImportConfig,
+    FmuRefBinding,
+    FmuVariableBinding,
+    _validate_fmu_float64_parameter_values,
+)
 from VeraGridEngine.IO.fmu.importer.device_config import (
     build_me_record_from_device_arguments,
     build_record_from_device_arguments,
@@ -424,30 +433,149 @@ def _append_visual_input_ports(block: Block,
                 pass
 
 
-def _append_visual_parameter_entries(block: Block,
-                                     vfactory: VarFactory,
-                                     metadata: FmuModelDescription,
-                                     used_names: set[str]) -> None:
+def append_fmu_parameter_entries(
+    block: Block,
+    vfactory: VarFactory,
+    metadata: FmuModelDescription,
+    used_names: set[str] | None = None,
+    parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(),
+) -> tuple[FmuVariableBinding, ...]:
     """
-    Add editable parameter entries for the declared FMU parameters.
+    Add executable scalar parameter entries and return their identity mappings.
 
     :param block: Symbolic FMU shell block.
     :param vfactory: Variable factory used by the owning grid.
     :param metadata: Parsed FMU metadata.
-    :param used_names: Names already reserved by the block.
-    :return: None.
+    :param used_names: Optional names already reserved by the block.
+    :param parameter_values: Optional values overriding metadata starts.
+    :return: Ordered Block-symbol to FMU-parameter identity mappings.
     """
 
+    # Validate the whole override request against authoritative metadata before
+    # adding variables to the block or allocating symbols in the factory.
+    reserved_names: list[str] = [""] * len(metadata.variables)
+    reserved_name_count: int = 0
     variable: FmuVariableDescription
-    for variable in _list_parameter_variables(metadata):
-        parameter_var = vfactory.add_var(name=_build_unique_symbol_name(variable.name, used_names))
-        block.parameters[parameter_var] = vfactory.add_const(_parse_numeric_start_value(variable))
+    for variable in metadata.variables:
+        if variable.causality in ("input", "structuralParameter"):
+            reserved_names[reserved_name_count] = variable.name
+            reserved_name_count += 1
+        else:
+            pass
+    _validate_fmu_float64_parameter_values(
+        parameter_values=parameter_values,
+        metadata=metadata,
+        reserved_variable_names=tuple(reserved_names[:reserved_name_count]),
+    )
 
-        parameter_reference = _resolve_parameter_reference(variable.name)
+    override_values: dict[str, float] = dict()
+    parameter_value: FmuFloat64ParameterValue
+    for parameter_value in parameter_values:
+        override_values[parameter_value.variable_name] = parameter_value.value
+
+    eligible_variables: list[FmuVariableDescription | None] = [None] * len(
+        metadata.variables
+    )
+    eligible_count: int = 0
+    for variable in metadata.variables:
+        if metadata.fmi_version_family == FmiVersion.FMI_2_0:
+            variable_is_eligible: bool = (
+                variable.causality == "parameter"
+                and variable.variable_type == FmuVariableType.REAL
+                and variable.variability in (None, "fixed", "tunable")
+                and variable.initial in (None, "exact")
+            )
+        else:
+            if metadata.fmi_version_family == FmiVersion.FMI_3_0:
+                variable_is_eligible = (
+                    variable.causality == "parameter"
+                    and variable.variable_type == FmuVariableType.FLOAT64
+                    and variable.variability in ("fixed", "tunable")
+                    and variable.initial == "exact"
+                    and len(variable.dimensions) == 0
+                )
+            else:
+                variable_is_eligible = False
+        if variable_is_eligible:
+            eligible_variables[eligible_count] = variable
+            eligible_count += 1
+        else:
+            pass
+
+    # Resolve and validate every numeric source before the factory or Block is
+    # changed, so a later malformed metadata start cannot leave partial state.
+    resolved_parameter_values: list[FmuFloat64ParameterValue | None] = [
+        None
+    ] * eligible_count
+    parameter_index: int
+    for parameter_index in range(eligible_count):
+        eligible_variable: FmuVariableDescription | None = eligible_variables[
+            parameter_index
+        ]
+        if eligible_variable is None:
+            raise RuntimeError("FMU parameter eligibility plan is incomplete")
+        else:
+            pass
+        parameter_start: float | None = override_values.get(
+            eligible_variable.name,
+            None,
+        )
+        if parameter_start is None:
+            parameter_start = _parse_numeric_start_value(eligible_variable)
+        else:
+            pass
+        resolved_parameter_values[parameter_index] = FmuFloat64ParameterValue(
+            variable_name=eligible_variable.name,
+            value=parameter_start,
+        )
+
+    if used_names is None:
+        active_used_names: set[str] = _iter_block_symbol_names(block)
+    else:
+        active_used_names = used_names
+    parameter_bindings: list[FmuVariableBinding | None] = [None] * eligible_count
+    for parameter_index in range(eligible_count):
+        eligible_variable: FmuVariableDescription | None = eligible_variables[
+            parameter_index
+        ]
+        if eligible_variable is None:
+            raise RuntimeError("FMU parameter eligibility plan is incomplete")
+        else:
+            pass
+        block_parameter_name: str = _build_unique_symbol_name(
+            eligible_variable.name,
+            active_used_names,
+        )
+        parameter_var: Var = vfactory.add_var(name=block_parameter_name)
+        validated_parameter_value: FmuFloat64ParameterValue | None = (
+            resolved_parameter_values[parameter_index]
+        )
+        if validated_parameter_value is not None:
+            pass
+        else:
+            raise RuntimeError("FMU parameter value plan is incomplete")
+        block.parameters[parameter_var] = vfactory.add_const(
+            validated_parameter_value.value
+        )
+        parameter_bindings[parameter_index] = FmuVariableBinding(
+            signal_name=parameter_var.name,
+            variable_name=eligible_variable.name,
+            direction=FmuBindingDirection.PARAMETER,
+        )
+
+        parameter_reference = _resolve_parameter_reference(eligible_variable.name)
         if parameter_reference is None:
             pass
         else:
             block.api_obj_mapping[parameter_reference] = parameter_var
+    resolved_bindings: list[FmuVariableBinding] = list()
+    parameter_binding: FmuVariableBinding | None
+    for parameter_binding in parameter_bindings:
+        if parameter_binding is not None:
+            resolved_bindings.append(parameter_binding)
+        else:
+            raise RuntimeError("FMU parameter binding plan is incomplete")
+    return tuple(resolved_bindings)
 
 
 def _append_unbound_output_ports(block: Block,
@@ -500,7 +628,7 @@ def _decorate_template_block(block: Block,
                              vfactory: VarFactory,
                              metadata: FmuModelDescription,
                              input_bindings: tuple[FmuRefBinding, ...],
-                             output_bindings: tuple[FmuRefBinding, ...]) -> None:
+                             output_bindings: tuple[FmuRefBinding, ...]) -> tuple[FmuVariableBinding, ...]:
     """
     Enrich the generated FMU shell block with visual ports and editable parameters.
 
@@ -509,15 +637,23 @@ def _decorate_template_block(block: Block,
     :param metadata: Parsed FMU metadata.
     :param input_bindings: Auto-discovered runtime input bindings.
     :param output_bindings: Auto-discovered runtime output bindings.
-    :return: None.
+    :return: Ordered executable parameter identity mappings.
     """
 
     used_names = _iter_block_symbol_names(block)
     _rename_bound_output_ports(block, output_bindings, used_names)
     _append_visual_input_ports(block, vfactory, metadata, input_bindings, used_names)
-    _append_visual_parameter_entries(block, vfactory, metadata, used_names)
+    parameter_bindings: tuple[FmuVariableBinding, ...] = (
+        append_fmu_parameter_entries(
+            block=block,
+            vfactory=vfactory,
+            metadata=metadata,
+            used_names=used_names,
+        )
+    )
     _append_unbound_output_ports(block, vfactory, metadata, output_bindings, used_names)
     _refresh_block_var_mapping(block)
+    return parameter_bindings
 
 
 def _build_mode_summary_line(metadata: FmuModelDescription) -> str:
@@ -675,6 +811,7 @@ def configure_fmu_template(
 
     shell_template: RmsModelTemplate | EmtModelTemplate
     serialized_config: str
+    parameter_bindings: tuple[FmuVariableBinding, ...]
     if domain == FmuTemplateDomain.RMS:
         if mode == FmuTemplateMode.CO_SIMULATION:
             shell_template = build_rms_fmu_cs_injection_template(
@@ -687,7 +824,7 @@ def configure_fmu_template(
                 output_defaults=output_defaults,
                 worker_limits=worker_limits,
             )
-            _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
+            parameter_bindings = _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
             serialized_config = dump_fmu_cs_device_config(
                 build_record_from_device_arguments(
                     domain=FmuCsDomain.RMS,
@@ -697,6 +834,7 @@ def configure_fmu_template(
                     output_defaults=output_defaults,
                     block=shell_template.block,
                     worker_limits=worker_limits,
+                    parameter_bindings=parameter_bindings,
                 )
             )
         else:
@@ -711,7 +849,7 @@ def configure_fmu_template(
                     output_defaults=output_defaults,
                     worker_limits=worker_limits,
                 )
-                _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
+                parameter_bindings = _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                 serialized_config = dump_fmu_me_device_config(
                     build_me_record_from_device_arguments(
                         domain=FmuMeDomain.RMS,
@@ -721,6 +859,7 @@ def configure_fmu_template(
                         output_defaults=output_defaults,
                         block=shell_template.block,
                         worker_limits=worker_limits,
+                        parameter_bindings=parameter_bindings,
                     )
                 )
             else:
@@ -738,7 +877,7 @@ def configure_fmu_template(
                     output_defaults=output_defaults,
                     worker_limits=worker_limits,
                 )
-                _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
+                parameter_bindings = _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                 serialized_config = dump_fmu_cs_device_config(
                     build_record_from_device_arguments(
                         domain=FmuCsDomain.EMT,
@@ -748,6 +887,7 @@ def configure_fmu_template(
                         output_defaults=output_defaults,
                         block=shell_template.block,
                         worker_limits=worker_limits,
+                        parameter_bindings=parameter_bindings,
                     )
                 )
             else:
@@ -762,7 +902,7 @@ def configure_fmu_template(
                         output_defaults=output_defaults,
                         worker_limits=worker_limits,
                     )
-                    _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
+                    parameter_bindings = _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                     serialized_config = dump_fmu_me_device_config(
                         build_me_record_from_device_arguments(
                             domain=FmuMeDomain.EMT,
@@ -772,6 +912,7 @@ def configure_fmu_template(
                             output_defaults=output_defaults,
                             block=shell_template.block,
                             worker_limits=worker_limits,
+                            parameter_bindings=parameter_bindings,
                         )
                     )
                 else:

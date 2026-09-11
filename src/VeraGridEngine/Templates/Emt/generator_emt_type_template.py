@@ -1060,6 +1060,8 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     c0 = vf.add_const(0.0)
     c1 = vf.add_const(1.0)
     two_pi_over_3 = 2.0 * np.pi / 3.0
+    torque_scale = 0.5
+    power_scale = 1.0 / 3.0
 
     # ------------------------------------------------------------------
     # Inputs: abc terminal voltages + controller inputs
@@ -1178,6 +1180,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         q_c=q_C,
         omega_base=omega_b,
     )
+    ipk_init = 3.0 * ipk_init
 
 
     # ------------------------------------------------------------------
@@ -1261,12 +1264,12 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
             ),
 
             # electromagnetic torque
-            Te - (3.0 / 2.0) * (psi_d * i_q - psi_q * i_d),
+            Te - torque_scale * (psi_d * i_q - psi_q * i_d),
 
             # terminal powers
-            p_e - (v_A * i_A + v_B * i_B + v_C * i_C),
+            p_e - power_scale * (v_A * i_A + v_B * i_B + v_C * i_C),
 
-            q_e - (1.0 / np.sqrt(3.0)) * (
+            q_e - power_scale * (1.0 / np.sqrt(3.0)) * (
                 (v_A - v_B) * i_C +
                 (v_B - v_C) * i_A +
                 (v_C - v_A) * i_B
@@ -1339,28 +1342,18 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     # ------------------------------------------------------------------
     # INITIALIZATION
     # ------------------------------------------------------------------
+    phi_i_init = phi_v_init + phi_init
     # Rotor angle estimate from transient internal emf phasor
     E_re = (
         vpk_init * sym.cos(phi_v_init)
-        + ra * ipk_init * sym.cos(phi_init)
-        - xqp * ipk_init * sym.sin(phi_init)
+        + ra * ipk_init * sym.cos(phi_i_init)
+        - xq * ipk_init * sym.sin(phi_i_init)
     )
     E_im = (
         vpk_init * sym.sin(phi_v_init)
-        + ra * ipk_init * sym.sin(phi_init)
-        + xqp * ipk_init * sym.cos(phi_init)
+        + ra * ipk_init * sym.sin(phi_i_init)
+        + xq * ipk_init * sym.cos(phi_i_init)
     )
-    q_axis_span = xq - xqp
-    q_axis_det = (vf.add_const(1.0) - gamma_q1) + q_axis_span * gamma_q2
-    e_dp_init = (
-        -(psi_q + xqpp * i_q) * q_axis_span * gamma_q2
-        + (vf.add_const(1.0) - gamma_q1) * q_axis_span * gamma_q1 * i_q
-    ) / q_axis_det
-    psi_pp_q_init = (
-        gamma_q1 * q_axis_span * gamma_q1 * i_q
-        + (vf.add_const(1.0) + q_axis_span * gamma_q2) * (psi_q + xqpp * i_q)
-    ) / q_axis_det
-
     templ.block.init_eqs = {
 
         omega: omega_s,
@@ -1371,8 +1364,8 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         v_q: vpk_init * sym.cos(theta_abs - phi_v_init),
         v_0: c0,
 
-        i_d: ipk_init * sym.sin(theta_abs - phi_init),
-        i_q: ipk_init * sym.cos(theta_abs - phi_init),
+        i_d: ipk_init * sym.sin(theta_abs - phi_i_init),
+        i_q: ipk_init * sym.cos(theta_abs - phi_i_init),
 
         # PF initialization is typically balanced; keep zero-seq explicit but zero initially
         i_0: c0,
@@ -1388,13 +1381,10 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         # chosen to satisfy both d_psi_pp_q = 0 and d_e_dp = 0 for the
         # implemented model equations.
         e_qp: psi_d + xdp * i_d,
-        e_dp: (
-            (xq - xqp) * (gamma_q1 + gamma_q2 * (xqp - xl))
-            / (c1 - (xq - xqp) * gamma_q2)
-        ) * i_q,
+        e_dp: (xq - xqp) * i_q,
 
         psi_pp_d: (psi_d + xdpp * i_d - gamma_d1 * e_qp) / (c1 - gamma_d1),
-        psi_pp_q: -e_dp - (xqp - xl) * i_q,
+        psi_pp_q: -(xq - xl) * i_q,
 
         # abc current injection
         i_A: i_q * sym.sin(theta_abs) - i_d * sym.cos(theta_abs) + i_0,
@@ -1406,15 +1396,15 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         ),
 
         # electromagnetic torque
-        Te: (3.0 / 2.0) * (psi_d * i_q - psi_q * i_d),
+        Te: torque_scale * (psi_d * i_q - psi_q * i_d),
 
         v_f: e_qp + (xd - xdp) * (
             gamma_d1 * i_d - gamma_d2 * psi_pp_d + gamma_d2 * e_qp
         ),
 
-        p_e: v_A * i_A + v_B * i_B + v_C * i_C,
+        p_e: power_scale * (v_A * i_A + v_B * i_B + v_C * i_C),
 
-        q_e: (1.0 / np.sqrt(3.0)) * (
+        q_e: power_scale * (1.0 / np.sqrt(3.0)) * (
             (v_A - v_B) * i_C +
             (v_B - v_C) * i_A +
             (v_C - v_A) * i_B
@@ -1778,10 +1768,10 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
     field_feedback_init = parameters['Ke'].value * vf_init + AEx * vf_init_positive * (
         sym.exp(BEx * (vf_init_positive - Se_threshold)) - vf.add_const(1.0)
     ) * sym.heaviside(vf_init_positive - Se_threshold)
-    us_ref_init = measured_vm
     y2_init = parameters["Kf"].value * vf_init
     y4_init = field_feedback_init
     y3_init = field_feedback_init / parameters["Ka"].value
+    us_ref_init = measured_vm + y2_init + y3_init
     events_dict[UsRefPu] = us_ref_init
     templ.block = Block(
         state_eqs=[

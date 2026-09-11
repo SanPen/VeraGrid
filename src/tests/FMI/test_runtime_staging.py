@@ -10,6 +10,7 @@ import hashlib
 import inspect
 import os
 from pathlib import Path
+from unittest.mock import Mock, call
 import zipfile
 
 import pytest
@@ -19,6 +20,8 @@ from VeraGridEngine.IO.fmu.importer.errors import FmuArchiveError, FmuModeError
 from VeraGridEngine.IO.fmu.importer.model_description import (
     FmuInterfaceMode,
     FmuModelDescription,
+    FmuVariableDescription,
+    FmuVariableType,
     read_fmu_model_description,
 )
 from VeraGridEngine.IO.fmu.importer.native_binary import _resolve_fmi_two_host_binary
@@ -295,6 +298,223 @@ def _build_recording_host(
         staging_area=staging,
     )
     return host, runtime, staging
+
+
+def test_fmi_two_integer_initialization_prevalidates_before_native_access(
+    tmp_path: Path,
+) -> None:
+    """Validate the complete Integer batch before setup and preserve write order.
+
+    :param tmp_path: Isolated directory used as the direct host location.
+    :return: None.
+    """
+
+    integer_input: FmuVariableDescription = FmuVariableDescription(
+        name="integer_input",
+        value_reference=10,
+        variable_type=FmuVariableType.INTEGER,
+        causality="input",
+        variability="discrete",
+        initial="exact",
+        start="-2",
+        derivative_index=None,
+    )
+    integer_output: FmuVariableDescription = FmuVariableDescription(
+        name="integer_output",
+        value_reference=11,
+        variable_type=FmuVariableType.INTEGER,
+        causality="output",
+        variability="discrete",
+        initial="calculated",
+        start=None,
+        derivative_index=None,
+    )
+    fixed_integer: FmuVariableDescription = FmuVariableDescription(
+        name="fixed_integer",
+        value_reference=12,
+        variable_type=FmuVariableType.INTEGER,
+        causality="parameter",
+        variability="fixed",
+        initial="exact",
+        start="3",
+        derivative_index=None,
+    )
+    real_input: FmuVariableDescription = FmuVariableDescription(
+        name="real_input",
+        value_reference=13,
+        variable_type=FmuVariableType.REAL,
+        causality="input",
+        variability="continuous",
+        initial="exact",
+        start="0",
+        derivative_index=None,
+    )
+    model_identifiers: dict[FmuInterfaceMode, str] = dict()
+    model_identifiers[FmuInterfaceMode.CO_SIMULATION] = "integer_model"
+    metadata: FmuModelDescription = FmuModelDescription(
+        path=tmp_path / "integer-model.fmu",
+        fmi_version="2.0",
+        model_name="IntegerModel",
+        guid="integer-guid",
+        variable_naming_convention="flat",
+        number_of_event_indicators=0,
+        interface_modes=(FmuInterfaceMode.CO_SIMULATION,),
+        model_identifiers=model_identifiers,
+        platforms=tuple(),
+        variables=(integer_input, integer_output, fixed_integer, real_input),
+    )
+    runtime: Mock = Mock()
+    host: FmuRuntimeHost = FmuRuntimeHost(
+        config=FmuImportConfig(fmu_path=metadata.path),
+        metadata=metadata,
+        mode=FmuInterfaceMode.CO_SIMULATION,
+        extracted_dir=tmp_path,
+        owns_extracted_dir=False,
+        model_description=object(),
+        runtime=runtime,
+    )
+    try:
+        with pytest.raises(ValueError, match="names and values must align"):
+            host.initialize(
+                integer_start_variable_names=("integer_input",),
+                integer_start_values=tuple(),
+            )
+        with pytest.raises(ValueError, match="Python int"):
+            host.initialize(
+                integer_start_variable_names=("integer_input",),
+                integer_start_values=(True,),
+            )
+        with pytest.raises(ValueError, match="outside signed Int32"):
+            host.initialize(
+                integer_start_variable_names=("integer_input",),
+                integer_start_values=(2147483648,),
+            )
+        with pytest.raises(ValueError, match="Duplicate"):
+            host.initialize(
+                integer_start_variable_names=("integer_input", "integer_input"),
+                integer_start_values=(-2, 3),
+            )
+        with pytest.raises(FmuModeError, match="is not Integer"):
+            host.initialize(
+                integer_start_variable_names=("real_input",),
+                integer_start_values=(1,),
+            )
+        with pytest.raises(FmuModeError, match="not writable"):
+            host.initialize(
+                integer_start_variable_names=("integer_output",),
+                integer_start_values=(1,),
+            )
+        runtime.setupExperiment.assert_not_called()
+
+        real_start_values: dict[str, float] = dict()
+        real_start_values["real_input"] = 1.5
+        host.initialize(
+            start_values=real_start_values,
+            integer_start_variable_names=("integer_input", "fixed_integer"),
+            integer_start_values=(-2, 4),
+        )
+        real_call_index: int = runtime.method_calls.index(
+            call.setReal([13], [1.5])
+        )
+        integer_call_index: int = runtime.method_calls.index(
+            call.setInteger([10, 12], [-2, 4])
+        )
+        assert real_call_index < integer_call_index
+    finally:
+        host.close()
+
+
+def test_fmi_two_integer_access_obeys_lifecycle_and_metadata(
+    tmp_path: Path,
+) -> None:
+    """Permit live Integer access and reject invalid lifecycle or metadata.
+
+    :param tmp_path: Isolated directory used as the direct host location.
+    :return: None.
+    """
+
+    integer_input: FmuVariableDescription = FmuVariableDescription(
+        name="integer_input",
+        value_reference=10,
+        variable_type=FmuVariableType.INTEGER,
+        causality="input",
+        variability="discrete",
+        initial="exact",
+        start="-2",
+        derivative_index=None,
+    )
+    integer_output: FmuVariableDescription = FmuVariableDescription(
+        name="integer_output",
+        value_reference=11,
+        variable_type=FmuVariableType.INTEGER,
+        causality="output",
+        variability="discrete",
+        initial="calculated",
+        start=None,
+        derivative_index=None,
+    )
+    fixed_integer: FmuVariableDescription = FmuVariableDescription(
+        name="fixed_integer",
+        value_reference=12,
+        variable_type=FmuVariableType.INTEGER,
+        causality="parameter",
+        variability="fixed",
+        initial="exact",
+        start="3",
+        derivative_index=None,
+    )
+    model_identifiers: dict[FmuInterfaceMode, str] = dict()
+    model_identifiers[FmuInterfaceMode.CO_SIMULATION] = "integer_model"
+    metadata: FmuModelDescription = FmuModelDescription(
+        path=tmp_path / "integer-access-model.fmu",
+        fmi_version="2.0",
+        model_name="IntegerAccessModel",
+        guid="integer-access-guid",
+        variable_naming_convention="flat",
+        number_of_event_indicators=0,
+        interface_modes=(FmuInterfaceMode.CO_SIMULATION,),
+        model_identifiers=model_identifiers,
+        platforms=tuple(),
+        variables=(integer_input, integer_output, fixed_integer),
+    )
+    runtime: Mock = Mock()
+    host: FmuRuntimeHost = FmuRuntimeHost(
+        config=FmuImportConfig(fmu_path=metadata.path),
+        metadata=metadata,
+        mode=FmuInterfaceMode.CO_SIMULATION,
+        extracted_dir=tmp_path,
+        owns_extracted_dir=False,
+        model_description=object(),
+        runtime=runtime,
+    )
+    with pytest.raises(FmuModeError, match="live initialized runtime"):
+        host.get_integer(("integer_input",))
+    with pytest.raises(FmuModeError, match="live initialized runtime"):
+        host.set_integer(("integer_input",), (-2,))
+
+    host.initialize(
+        integer_start_variable_names=("integer_input", "fixed_integer"),
+        integer_start_values=(-2, 3),
+    )
+    runtime.getInteger.return_value = [3, -2, 0]
+    assert host.get_integer(("fixed_integer", "integer_input", "integer_output")) == (
+        3,
+        -2,
+        0,
+    )
+    host.set_integer(("integer_input",), (2147483647,))
+    runtime.getInteger.return_value = [2147483647]
+    assert host.get_integer(("integer_input",)) == (2147483647,)
+    with pytest.raises(FmuModeError, match="not writable during runtime"):
+        host.set_integer(("fixed_integer",), (4,))
+    with pytest.raises(FmuModeError, match="not writable during runtime"):
+        host.set_integer(("integer_output",), (4,))
+    with pytest.raises(ValueError, match="Duplicate"):
+        host.get_integer(("integer_input", "integer_input"))
+
+    host.close()
+    with pytest.raises(FmuModeError, match="live initialized runtime"):
+        host.get_integer(("integer_input",))
 
 
 def test_close_is_idempotent_before_and_after_initialization(tmp_path: Path) -> None:

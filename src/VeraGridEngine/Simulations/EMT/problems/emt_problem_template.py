@@ -788,7 +788,11 @@ class EmtProblemTemplate(ABC):
 
         if n_runtime > 0:
             self._event_params_values = self._initialize_runtime_parameter_values(0.0, seed_values=self._event_params_values)
-            self._event_params_values = self.def_event_params_fn(self._event_params_values, 0.0)
+            self._event_params_values = self.def_event_params_fn(
+                self._event_params_values,
+                0.0,
+                defer_unavailable_dependencies=True,
+            )
         else:
             pass
 
@@ -1059,11 +1063,50 @@ class EmtProblemTemplate(ABC):
             expression: Any = self._event_parameters_eqs[i]
             if isinstance(expression, Const) and expression.value is None:
                 out[i] = float(out[i])
+            elif isinstance(expression, Expr) and not self._runtime_expression_dependencies_available(expression):
+                # Runtime initialization happens once while the generic problem
+                # storage is being assembled and again after explicit/native
+                # initialization.  A model-owned runtime expression may depend
+                # on algebraic or state values that are intentionally unavailable
+                # during the first pass.  Preserve its provisional seed here;
+                # explicit initialization will resolve the expression through
+                # the full dependency graph and promote the resulting scalar.
+                out[i] = float(out[i])
             else:
                 out[i] = self._evaluate_runtime_expression(expression, out, tm)
             i += 1
 
         return out
+
+    def _runtime_expression_dependencies_available(self, expression: Expr) -> bool:
+        """Return whether a runtime expression can be evaluated at this stage.
+
+        Runtime and constant parameters are always represented in the problem
+        vectors. Algebraic, state, and differential variables become available
+        only after an initialization value has been assigned. Variables owned by
+        a connected sibling block are deliberately deferred to the explicit
+        initialization graph, which supplies its external UID bindings.
+
+        :param expression: Runtime initialization expression to inspect.
+        :return: ``True`` when every referenced variable has a usable binding.
+        """
+        for variable in expression.get_vars():
+            if variable.uid == self._glob_time.uid or variable.name in {"time", self.TIME_NAME}:
+                pass
+            elif variable.uid in self._uid2idx_event_params:
+                pass
+            elif variable.uid in self._uid2idx_params:
+                pass
+            elif variable.uid in self._uid2idx_vars:
+                if self.init_guess.get(variable.uid, None) is None:
+                    return False
+            elif variable.uid in self._uid2idx_diff:
+                if self.diff_init_guess.get(variable.uid, None) is None:
+                    return False
+            else:
+                return False
+
+        return True
 
     def _evaluate_runtime_expression(self, expression: Any, runtime_params: Vec, tm: float) -> float:
         """
@@ -1320,7 +1363,12 @@ class EmtProblemTemplate(ABC):
                 pass
         return dx
 
-    def def_event_params_fn(self, ev_param: Vec, tm: float) -> Vec:
+    def def_event_params_fn(
+            self,
+            ev_param: Vec,
+            tm: float,
+            defer_unavailable_dependencies: bool = False,
+    ) -> Vec:
         """
         Update only the continuous runtime parameter slice.
 
@@ -1330,6 +1378,8 @@ class EmtProblemTemplate(ABC):
 
         :param ev_param: Current flat runtime parameter vector.
         :param tm: Current simulation time.
+        :param defer_unavailable_dependencies: Preserve the current value when
+            construction-time algebraic/state dependencies are not initialized.
         :return: Updated flat runtime parameter vector.
         """
         n_continuous: int = len(self._runtime_continuous_eqs)
@@ -1344,7 +1394,14 @@ class EmtProblemTemplate(ABC):
                 global_idx: int = self._runtime_continuous_slice.start + i
                 expression: Any = self._runtime_continuous_eqs[i]
 
-                out[global_idx] = self._evaluate_runtime_expression(expression, out, tm)
+                if (
+                    defer_unavailable_dependencies
+                    and isinstance(expression, Expr)
+                    and not self._runtime_expression_dependencies_available(expression)
+                ):
+                    pass
+                else:
+                    out[global_idx] = self._evaluate_runtime_expression(expression, out, tm)
                 i += 1
 
             return out
@@ -1543,6 +1600,4 @@ class EmtProblemTemplate(ABC):
     @property
     def event_parameters_eqs(self) -> List[Any]:
         return self._event_parameters_eqs
-
-
 

@@ -31,6 +31,7 @@ class FmiThreeWorkerProtocolVersion(IntEnum):
     VERSION_EIGHT = 8
     VERSION_NINE = 9
     VERSION_TEN = 10
+    VERSION_ELEVEN = 11
 
 
 class FmiThreeWorkerFrameDirection(IntEnum):
@@ -65,6 +66,8 @@ class FmiThreeWorkerRequestKind(IntEnum):
     RESTORE_CHECKPOINT = 20
     DISCARD_CHECKPOINT = 21
     EVALUATE_MODEL_EXCHANGE = 22
+    SET_INT32 = 23
+    GET_INT32 = 24
 
 
 class FmiThreeWorkerResponseKind(IntEnum):
@@ -91,6 +94,8 @@ class FmiThreeWorkerResponseKind(IntEnum):
     CHECKPOINT_RESTORED = 19
     CHECKPOINT_DISCARDED = 20
     MODEL_EXCHANGE_EVALUATED = 21
+    INT32_SET = 22
+    INT32_VALUES = 23
     ERROR = 255
 
 
@@ -261,9 +266,11 @@ class FmiThreeWorkerInitializationRequest:
     :param start_time: Finite simulation start time.
     :param stop_time: Optional finite stop time greater than start time.
     :param relative_tolerance: Optional finite positive relative tolerance.
-    :param initial_value_references: Ordered scalar or array assignments applied
+    :param initial_float64_value_references: Ordered scalar or array assignments applied
         inside Initialization Mode, or an empty tuple.
-    :param initial_values: Concatenated finite values for the references.
+    :param initial_float64_values: Concatenated finite values for the Float64 references.
+    :param initial_int32_value_references: Ordered scalar Int32 assignments.
+    :param initial_int32_values: Signed values aligned with the Int32 references.
     :param maximum_value_count: Positive caller-owned serialized value limit.
     """
 
@@ -271,8 +278,10 @@ class FmiThreeWorkerInitializationRequest:
         "start_time",
         "stop_time",
         "relative_tolerance",
-        "initial_value_references",
-        "initial_values",
+        "initial_float64_value_references",
+        "initial_float64_values",
+        "initial_int32_value_references",
+        "initial_int32_values",
     )
 
     def __init__(
@@ -280,8 +289,10 @@ class FmiThreeWorkerInitializationRequest:
         start_time: float,
         stop_time: float | None,
         relative_tolerance: float | None,
-        initial_value_references: tuple[int, ...],
-        initial_values: tuple[float, ...],
+        initial_float64_value_references: tuple[int, ...],
+        initial_float64_values: tuple[float, ...],
+        initial_int32_value_references: tuple[int, ...],
+        initial_int32_values: tuple[int, ...],
         maximum_value_count: int,
     ) -> None:
         """Validate and store initialization values without runtime defaults.
@@ -289,8 +300,10 @@ class FmiThreeWorkerInitializationRequest:
         :param start_time: Finite simulation start time.
         :param stop_time: Optional finite stop time greater than start time.
         :param relative_tolerance: Optional finite positive relative tolerance.
-        :param initial_value_references: Ordered unique variable references, or empty.
-        :param initial_values: Concatenated finite values for the references.
+        :param initial_float64_value_references: Ordered unique Float64 references.
+        :param initial_float64_values: Concatenated finite Float64 values.
+        :param initial_int32_value_references: Ordered unique scalar Int32 references.
+        :param initial_int32_values: Signed values aligned with Int32 references.
         :param maximum_value_count: Positive caller-owned serialized value limit.
         :return: None.
         """
@@ -327,30 +340,70 @@ class FmiThreeWorkerInitializationRequest:
         self.start_time: float = validated_start_time
         self.stop_time: float | None = validated_stop_time
         self.relative_tolerance: float | None = validated_relative_tolerance
-        if len(initial_value_references) == 0:
-            validate_fmi_three_worker_float64_value_limit(maximum_value_count)
-            if len(initial_values) == 0:
+        validate_fmi_three_worker_float64_value_limit(maximum_value_count)
+        if len(initial_float64_value_references) == 0:
+            if len(initial_float64_values) == 0:
                 pass
             else:
                 raise ValueError(
-                    "FMI 3 worker initial references and values must align"
+                    "FMI 3 worker initial Float64 references and values must align"
                 )
         else:
             _validate_numeric_value_references(
-                initial_value_references,
+                initial_float64_value_references,
                 maximum_value_count,
             )
-            if len(initial_values) <= maximum_value_count:
+            if len(initial_float64_values) <= maximum_value_count:
                 pass
             else:
                 raise ValueError(
-                    "FMI 3 worker initial serialized value count is outside its bound"
+                    "FMI 3 worker initial Float64 value count is outside its bound"
                 )
-        self.initial_value_references: tuple[int, ...] = tuple(
-            initial_value_references
+        if len(initial_int32_value_references) == 0:
+            if len(initial_int32_values) == 0:
+                pass
+            else:
+                raise ValueError(
+                    "FMI 3 worker initial Int32 references and values must align"
+                )
+        else:
+            _validate_numeric_value_references(
+                initial_int32_value_references,
+                maximum_value_count,
+            )
+            if len(initial_int32_values) == len(initial_int32_value_references):
+                pass
+            else:
+                raise ValueError(
+                    "FMI 3 worker initial Int32 references and values must align"
+                )
+        combined_reference_count: int = (
+            len(initial_float64_value_references)
+            + len(initial_int32_value_references)
         )
-        self.initial_values: tuple[float, ...] = _validate_finite_float64_values(
-            initial_values
+        combined_value_count: int = (
+            len(initial_float64_values) + len(initial_int32_values)
+        )
+        if (
+            combined_reference_count <= maximum_value_count
+            and combined_value_count <= maximum_value_count
+        ):
+            pass
+        else:
+            raise ValueError(
+                "FMI 3 worker combined initialization count is outside its bound"
+            )
+        self.initial_float64_value_references: tuple[int, ...] = tuple(
+            initial_float64_value_references
+        )
+        self.initial_float64_values: tuple[float, ...] = (
+            _validate_finite_float64_values(initial_float64_values)
+        )
+        self.initial_int32_value_references: tuple[int, ...] = tuple(
+            initial_int32_value_references
+        )
+        self.initial_int32_values: tuple[int, ...] = _validate_int32_values(
+            initial_int32_values
         )
 
 
@@ -416,6 +469,28 @@ def _validate_finite_float64_values(values: tuple[float, ...]) -> tuple[float, .
         else:
             raise ValueError("FMI 3 worker Float64 values must be finite")
     return tuple(normalized_values)
+
+
+def _validate_int32_values(values: tuple[int, ...]) -> tuple[int, ...]:
+    """Validate Python integer identity and signed Int32 bounds.
+
+    :param values: Ordered scalar values to validate.
+    :return: Values preserved in their original order.
+    :raises ValueError: If a value is Boolean, non-integer, or out of range.
+    """
+
+    validated_values: list[int] = [0] * len(values)
+    value_index: int
+    for value_index in range(len(values)):
+        value: int = values[value_index]
+        if type(value) is int:
+            if -2147483648 <= value <= 2147483647:
+                validated_values[value_index] = value
+            else:
+                raise ValueError("FMI 3 worker value is outside signed Int32")
+        else:
+            raise ValueError("FMI 3 worker Int32 values must be Python int values")
+    return tuple(validated_values)
 
 
 class FmiThreeWorkerSetFloat64Request:
@@ -571,6 +646,92 @@ class FmiThreeWorkerGetFloat64Request:
             )
         self.value_references: tuple[int, ...] = tuple(value_references)
         self.serialized_value_count: int = serialized_value_count
+
+
+class FmiThreeWorkerSetInt32Request:
+    """Describe one bounded write to scalar FMI 3 Int32 variables.
+
+    :param value_references: Ordered unique scalar Int32 references.
+    :param values: Signed values aligned one-to-one with the references.
+    :param maximum_value_count: Positive caller-owned numeric count limit.
+    """
+
+    __slots__ = ("value_references", "values")
+
+    def __init__(
+        self,
+        value_references: tuple[int, ...],
+        values: tuple[int, ...],
+        maximum_value_count: int,
+    ) -> None:
+        """Validate and store one scalar Int32 write request.
+
+        :param value_references: Ordered unique scalar Int32 references.
+        :param values: Signed values aligned with the references.
+        :param maximum_value_count: Positive caller-owned numeric count limit.
+        :return: None.
+        """
+
+        _validate_numeric_value_references(value_references, maximum_value_count)
+        if len(values) == len(value_references):
+            pass
+        else:
+            raise ValueError("FMI 3 worker Int32 references and values must align")
+        self.value_references: tuple[int, ...] = tuple(value_references)
+        self.values: tuple[int, ...] = _validate_int32_values(values)
+
+
+class FmiThreeWorkerGetInt32Request:
+    """Describe one bounded read of scalar FMI 3 Int32 variables.
+
+    :param value_references: Ordered unique scalar Int32 references.
+    :param maximum_value_count: Positive caller-owned numeric count limit.
+    """
+
+    __slots__ = ("value_references",)
+
+    def __init__(
+        self,
+        value_references: tuple[int, ...],
+        maximum_value_count: int,
+    ) -> None:
+        """Validate and store one scalar Int32 read request.
+
+        :param value_references: Ordered unique scalar Int32 references.
+        :param maximum_value_count: Positive caller-owned numeric count limit.
+        :return: None.
+        """
+
+        _validate_numeric_value_references(value_references, maximum_value_count)
+        self.value_references: tuple[int, ...] = tuple(value_references)
+
+
+class FmiThreeWorkerInt32Values:
+    """Own one bounded ordered scalar Int32 response body.
+
+    :param values: Signed scalar values transported in protocol order.
+    :param maximum_value_count: Positive caller-owned numeric count limit.
+    """
+
+    __slots__ = ("values",)
+
+    def __init__(
+        self,
+        values: tuple[int, ...],
+        maximum_value_count: int,
+    ) -> None:
+        """Validate and store transported Int32 values.
+
+        :param values: Signed scalar values transported in protocol order.
+        :param maximum_value_count: Positive caller-owned numeric count limit.
+        :return: None.
+        """
+
+        validate_fmi_three_worker_float64_value_limit(maximum_value_count)
+        if len(values) <= maximum_value_count:
+            self.values: tuple[int, ...] = _validate_int32_values(values)
+        else:
+            raise ValueError("FMI 3 worker Int32 response count is outside its bound")
 
 
 class FmiThreeWorkerDoStepRequest:
@@ -988,6 +1149,8 @@ class FmiThreeWorkerRequest:
     :param continuous_states: SET_CONTINUOUS_STATES body or ``None``.
     :param completed_integrator_step: COMPLETED_INTEGRATOR_STEP body or ``None``.
     :param model_exchange_evaluation: EVALUATE_MODEL_EXCHANGE body or ``None``.
+    :param set_int32: SET_INT32 body or ``None``.
+    :param get_int32: GET_INT32 body or ``None``.
     """
 
     __slots__ = (
@@ -1004,6 +1167,8 @@ class FmiThreeWorkerRequest:
         "continuous_states",
         "completed_integrator_step",
         "model_exchange_evaluation",
+        "set_int32",
+        "get_int32",
     )
 
     def __init__(
@@ -1025,6 +1190,8 @@ class FmiThreeWorkerRequest:
         model_exchange_evaluation: (
             FmiThreeWorkerModelExchangeEvaluationRequest | None
         ) = None,
+        set_int32: FmiThreeWorkerSetInt32Request | None = None,
+        get_int32: FmiThreeWorkerGetInt32Request | None = None,
     ) -> None:
         """Validate and store one request envelope.
 
@@ -1042,74 +1209,53 @@ class FmiThreeWorkerRequest:
         :param completed_integrator_step: COMPLETED_INTEGRATOR_STEP body or ``None``.
         :param model_exchange_evaluation: EVALUATE_MODEL_EXCHANGE body or
             ``None``.
+        :param set_int32: SET_INT32 body or ``None``.
+        :param get_int32: GET_INT32 body or ``None``.
         :return: None.
         """
 
         _validate_request_id(request_id)
-        body_presence: tuple[bool, ...] = (
-            start is not None,
-            initialization is not None,
-            configuration is not None,
-            configuration_uint64 is not None,
-            set_float64 is not None,
-            get_float64 is not None,
-            do_step is not None,
-            set_time is not None,
-            continuous_states is not None,
-            completed_integrator_step is not None,
-            model_exchange_evaluation is not None,
+        # Pair every body-bearing operation with its constructor argument so
+        # the envelope invariant remains explicit as the protocol grows.
+        body_contract: tuple[
+            tuple[FmiThreeWorkerRequestKind, bool], ...
+        ] = (
+            (FmiThreeWorkerRequestKind.START, start is not None),
+            (FmiThreeWorkerRequestKind.INITIALIZE, initialization is not None),
+            (
+                FmiThreeWorkerRequestKind.CONFIGURE_FLOAT64,
+                configuration is not None,
+            ),
+            (
+                FmiThreeWorkerRequestKind.CONFIGURE_UINT64,
+                configuration_uint64 is not None,
+            ),
+            (FmiThreeWorkerRequestKind.SET_FLOAT64, set_float64 is not None),
+            (FmiThreeWorkerRequestKind.GET_FLOAT64, get_float64 is not None),
+            (FmiThreeWorkerRequestKind.DO_STEP, do_step is not None),
+            (FmiThreeWorkerRequestKind.SET_TIME, set_time is not None),
+            (
+                FmiThreeWorkerRequestKind.SET_CONTINUOUS_STATES,
+                continuous_states is not None,
+            ),
+            (
+                FmiThreeWorkerRequestKind.COMPLETED_INTEGRATOR_STEP,
+                completed_integrator_step is not None,
+            ),
+            (
+                FmiThreeWorkerRequestKind.EVALUATE_MODEL_EXCHANGE,
+                model_exchange_evaluation is not None,
+            ),
+            (FmiThreeWorkerRequestKind.SET_INT32, set_int32 is not None),
+            (FmiThreeWorkerRequestKind.GET_INT32, get_int32 is not None),
         )
-        expected_body_index: int | None
-        if kind == FmiThreeWorkerRequestKind.START:
-            expected_body_index = 0
-        else:
-            if kind == FmiThreeWorkerRequestKind.INITIALIZE:
-                expected_body_index = 1
-            else:
-                if kind == FmiThreeWorkerRequestKind.CONFIGURE_FLOAT64:
-                    expected_body_index = 2
-                else:
-                    if kind == FmiThreeWorkerRequestKind.CONFIGURE_UINT64:
-                        expected_body_index = 3
-                    else:
-                        if kind == FmiThreeWorkerRequestKind.SET_FLOAT64:
-                            expected_body_index = 4
-                        else:
-                            if kind == FmiThreeWorkerRequestKind.GET_FLOAT64:
-                                expected_body_index = 5
-                            else:
-                                if kind == FmiThreeWorkerRequestKind.DO_STEP:
-                                    expected_body_index = 6
-                                else:
-                                    if kind == FmiThreeWorkerRequestKind.SET_TIME:
-                                        expected_body_index = 7
-                                    else:
-                                        if (
-                                            kind
-                                            == FmiThreeWorkerRequestKind.SET_CONTINUOUS_STATES
-                                        ):
-                                            expected_body_index = 8
-                                        else:
-                                            if (
-                                                kind
-                                                == FmiThreeWorkerRequestKind.COMPLETED_INTEGRATOR_STEP
-                                            ):
-                                                expected_body_index = 9
-                                            else:
-                                                if (
-                                                    kind
-                                                    == FmiThreeWorkerRequestKind.EVALUATE_MODEL_EXCHANGE
-                                                ):
-                                                    expected_body_index = 10
-                                                else:
-                                                    expected_body_index = None
-        body_index: int
         request_is_valid: bool = True
-        for body_index in range(len(body_presence)):
-            if expected_body_index is not None and body_index == expected_body_index:
-                request_is_valid = request_is_valid and body_presence[body_index]
-            else:
-                request_is_valid = request_is_valid and not body_presence[body_index]
+        body_kind: FmiThreeWorkerRequestKind
+        body_is_present: bool
+        body_matches_kind: bool
+        for body_kind, body_is_present in body_contract:
+            body_matches_kind = body_is_present == (kind == body_kind)
+            request_is_valid = request_is_valid and body_matches_kind
         if request_is_valid:
             pass
         else:
@@ -1137,6 +1283,8 @@ class FmiThreeWorkerRequest:
         self.model_exchange_evaluation: (
             FmiThreeWorkerModelExchangeEvaluationRequest | None
         ) = model_exchange_evaluation
+        self.set_int32: FmiThreeWorkerSetInt32Request | None = set_int32
+        self.get_int32: FmiThreeWorkerGetInt32Request | None = get_int32
 
 
 class FmiThreeWorkerResponse:
@@ -1153,6 +1301,7 @@ class FmiThreeWorkerResponse:
     :param discrete_states_result: DISCRETE_STATES_UPDATED body or ``None``.
     :param model_exchange_evaluation_result: MODEL_EXCHANGE_EVALUATED body or
         ``None``.
+    :param int32_values: INT32_VALUES body or ``None``.
     """
 
     __slots__ = (
@@ -1165,6 +1314,7 @@ class FmiThreeWorkerResponse:
         "completed_integrator_step_result",
         "discrete_states_result",
         "model_exchange_evaluation_result",
+        "int32_values",
     )
 
     def __init__(
@@ -1182,6 +1332,7 @@ class FmiThreeWorkerResponse:
         model_exchange_evaluation_result: (
             FmiThreeWorkerModelExchangeEvaluationResult | None
         ) = None,
+        int32_values: FmiThreeWorkerInt32Values | None = None,
     ) -> None:
         """Validate and store one response envelope.
 
@@ -1196,6 +1347,7 @@ class FmiThreeWorkerResponse:
         :param discrete_states_result: DISCRETE_STATES_UPDATED body or ``None``.
         :param model_exchange_evaluation_result: MODEL_EXCHANGE_EVALUATED body
             or ``None``.
+        :param int32_values: INT32_VALUES body or ``None``.
         :return: None.
         """
 
@@ -1209,6 +1361,7 @@ class FmiThreeWorkerResponse:
                 and completed_integrator_step_result is None
                 and discrete_states_result is None
                 and model_exchange_evaluation_result is None
+                and int32_values is None
             )
         else:
             response_is_valid = failure_kind is None and error_message is None
@@ -1226,6 +1379,7 @@ class FmiThreeWorkerResponse:
                     and completed_integrator_step_result is None
                     and discrete_states_result is None
                     and model_exchange_evaluation_result is None
+                    and int32_values is None
                 )
             else:
                 if kind == FmiThreeWorkerResponseKind.STEP_COMPLETED:
@@ -1236,6 +1390,7 @@ class FmiThreeWorkerResponse:
                         and completed_integrator_step_result is None
                         and discrete_states_result is None
                         and model_exchange_evaluation_result is None
+                        and int32_values is None
                     )
                 else:
                     if (
@@ -1249,6 +1404,7 @@ class FmiThreeWorkerResponse:
                             and completed_integrator_step_result is not None
                             and discrete_states_result is None
                             and model_exchange_evaluation_result is None
+                            and int32_values is None
                         )
                     else:
                         if (
@@ -1262,6 +1418,7 @@ class FmiThreeWorkerResponse:
                                 and completed_integrator_step_result is None
                                 and discrete_states_result is not None
                                 and model_exchange_evaluation_result is None
+                                and int32_values is None
                             )
                         else:
                             if (
@@ -1275,16 +1432,29 @@ class FmiThreeWorkerResponse:
                                     and completed_integrator_step_result is None
                                     and discrete_states_result is None
                                     and model_exchange_evaluation_result is not None
+                                    and int32_values is None
                                 )
                             else:
-                                response_is_valid = (
-                                    response_is_valid
-                                    and float64_values is None
-                                    and do_step_result is None
-                                    and completed_integrator_step_result is None
-                                    and discrete_states_result is None
-                                    and model_exchange_evaluation_result is None
-                                )
+                                if kind == FmiThreeWorkerResponseKind.INT32_VALUES:
+                                    response_is_valid = (
+                                        response_is_valid
+                                        and float64_values is None
+                                        and do_step_result is None
+                                        and completed_integrator_step_result is None
+                                        and discrete_states_result is None
+                                        and model_exchange_evaluation_result is None
+                                        and int32_values is not None
+                                    )
+                                else:
+                                    response_is_valid = (
+                                        response_is_valid
+                                        and float64_values is None
+                                        and do_step_result is None
+                                        and completed_integrator_step_result is None
+                                        and discrete_states_result is None
+                                        and model_exchange_evaluation_result is None
+                                        and int32_values is None
+                                    )
         if response_is_valid:
             pass
         else:
@@ -1304,6 +1474,7 @@ class FmiThreeWorkerResponse:
         self.model_exchange_evaluation_result: (
             FmiThreeWorkerModelExchangeEvaluationResult | None
         ) = model_exchange_evaluation_result
+        self.int32_values: FmiThreeWorkerInt32Values | None = int32_values
 
 
 class _FmiThreeWorkerBodyReader:
@@ -1349,6 +1520,21 @@ class _FmiThreeWorkerBodyReader:
         field_end: int = self.offset + 4
         if field_end <= len(self.body):
             value: int = int(struct.unpack_from("!I", self.body, self.offset)[0])
+            self.offset = field_end
+            return value
+        else:
+            raise ValueError(f"FMI 3 worker body is truncated before {field_name}")
+
+    def read_signed_int(self, field_name: str) -> int:
+        """Read one network-order Int32 or reject a truncated body.
+
+        :param field_name: Field identified in truncation errors.
+        :return: Parsed signed integer value.
+        """
+
+        field_end: int = self.offset + 4
+        if field_end <= len(self.body):
+            value: int = int(struct.unpack_from("!i", self.body, self.offset)[0])
             self.offset = field_end
             return value
         else:
@@ -1585,8 +1771,7 @@ def validate_fmi_three_worker_float64_frame_capacity(
     native read. This prevents a small request from creating an unencodable
     response after crossing the ABI boundary.
 
-    :param request_kind: INITIALIZE, CONFIGURE_FLOAT64, SET_FLOAT64, or
-        GET_FLOAT64 request kind.
+    :param request_kind: CONFIGURE_FLOAT64, SET_FLOAT64, or GET_FLOAT64 kind.
     :param value_reference_count: Number of scalar or array references.
     :param serialized_value_count: Number of concatenated Float64 values.
     :param maximum_frame_size: Maximum complete request or response frame size.
@@ -1595,63 +1780,39 @@ def validate_fmi_three_worker_float64_frame_capacity(
     """
 
     validate_fmi_three_worker_float64_value_limit(maximum_value_count)
-    if request_kind == FmiThreeWorkerRequestKind.INITIALIZE:
-        if (
-            value_reference_count >= 0
-            and value_reference_count <= maximum_value_count
-            and serialized_value_count >= 0
-            and serialized_value_count <= maximum_value_count
-            and (value_reference_count > 0 or serialized_value_count == 0)
-        ):
-            pass
-        else:
-            raise ValueError("FMI 3 worker Float64 value count is outside its bound")
+    if (
+        value_reference_count > 0
+        and value_reference_count <= maximum_value_count
+        and serialized_value_count >= 0
+        and serialized_value_count <= maximum_value_count
+    ):
+        pass
     else:
-        if (
-            value_reference_count > 0
-            and value_reference_count <= maximum_value_count
-            and serialized_value_count >= 0
-            and serialized_value_count <= maximum_value_count
-        ):
-            pass
-        else:
-            raise ValueError("FMI 3 worker Float64 value count is outside its bound")
+        raise ValueError("FMI 3 worker Float64 value count is outside its bound")
     if maximum_frame_size > 0:
         pass
     else:
         raise ValueError("FMI 3 worker maximum frame size must be positive")
     frame_header_size: int = struct.calcsize("!4sBBBQI")
-    initialization_header_size: int = struct.calcsize("!Bddd")
-    if request_kind == FmiThreeWorkerRequestKind.INITIALIZE:
+    if request_kind in (
+        FmiThreeWorkerRequestKind.CONFIGURE_FLOAT64,
+        FmiThreeWorkerRequestKind.SET_FLOAT64,
+    ):
         request_frame_size: int = (
             frame_header_size
-            + initialization_header_size
             + 8
             + value_reference_count * 4
             + serialized_value_count * 8
         )
         response_frame_size: int = frame_header_size
     else:
-        if request_kind in (
-            FmiThreeWorkerRequestKind.CONFIGURE_FLOAT64,
-            FmiThreeWorkerRequestKind.SET_FLOAT64,
-        ):
-            request_frame_size = (
-                frame_header_size
-                + 8
-                + value_reference_count * 4
-                + serialized_value_count * 8
-            )
-            response_frame_size = frame_header_size
+        if request_kind == FmiThreeWorkerRequestKind.GET_FLOAT64:
+            request_frame_size = frame_header_size + 8 + value_reference_count * 4
+            response_frame_size = frame_header_size + 4 + serialized_value_count * 8
         else:
-            if request_kind == FmiThreeWorkerRequestKind.GET_FLOAT64:
-                request_frame_size = frame_header_size + 8 + value_reference_count * 4
-                response_frame_size = frame_header_size + 4 + serialized_value_count * 8
-            else:
-                raise ValueError(
-                    "FMI 3 Float64 frame capacity requires INITIALIZE, "
-                    "CONFIGURE, SET, or GET"
-                )
+            raise ValueError(
+                "FMI 3 Float64 frame capacity requires CONFIGURE, SET, or GET"
+            )
     if (
         request_frame_size <= maximum_frame_size
         and response_frame_size <= maximum_frame_size
@@ -1660,6 +1821,120 @@ def validate_fmi_three_worker_float64_frame_capacity(
     else:
         raise ValueError(
             "FMI 3 worker Float64 request or response exceeds the frame bound"
+        )
+
+
+def validate_fmi_three_worker_int32_frame_capacity(
+    request_kind: FmiThreeWorkerRequestKind,
+    value_count: int,
+    maximum_frame_size: int,
+    maximum_value_count: int,
+) -> None:
+    """Require one scalar Int32 request and response to fit both bounds.
+
+    :param request_kind: SET_INT32 or GET_INT32 operation.
+    :param value_count: Number of aligned scalar references and values.
+    :param maximum_frame_size: Maximum complete request or response size.
+    :param maximum_value_count: Shared numeric cardinality limit.
+    :return: None.
+    """
+
+    validate_fmi_three_worker_float64_value_limit(maximum_value_count)
+    if value_count > 0 and value_count <= maximum_value_count:
+        pass
+    else:
+        raise ValueError("FMI 3 worker Int32 value count is outside its bound")
+    if maximum_frame_size > 0:
+        pass
+    else:
+        raise ValueError("FMI 3 worker maximum frame size must be positive")
+    frame_header_size: int = struct.calcsize("!4sBBBQI")
+    if request_kind == FmiThreeWorkerRequestKind.SET_INT32:
+        request_frame_size: int = frame_header_size + 8 + value_count * 8
+        response_frame_size: int = frame_header_size
+    else:
+        if request_kind == FmiThreeWorkerRequestKind.GET_INT32:
+            request_frame_size = frame_header_size + 4 + value_count * 4
+            response_frame_size = frame_header_size + 4 + value_count * 4
+        else:
+            raise ValueError("FMI 3 Int32 frame capacity requires SET or GET")
+    if (
+        request_frame_size <= maximum_frame_size
+        and response_frame_size <= maximum_frame_size
+    ):
+        pass
+    else:
+        raise ValueError(
+            "FMI 3 worker Int32 request or response exceeds the frame bound"
+        )
+
+
+def validate_fmi_three_worker_initialization_frame_capacity(
+    float64_value_reference_count: int,
+    float64_serialized_value_count: int,
+    int32_value_reference_count: int,
+    int32_value_count: int,
+    maximum_frame_size: int,
+    maximum_value_count: int,
+) -> None:
+    """Require the complete mixed numeric INITIALIZE body to fit its bounds.
+
+    :param float64_value_reference_count: Float64 scalar or array references.
+    :param float64_serialized_value_count: Concatenated Float64 values.
+    :param int32_value_reference_count: Scalar Int32 references.
+    :param int32_value_count: Signed Int32 values.
+    :param maximum_frame_size: Maximum complete request frame size.
+    :param maximum_value_count: Shared numeric cardinality limit.
+    :return: None.
+    """
+
+    validate_fmi_three_worker_float64_value_limit(maximum_value_count)
+    counts_are_nonnegative: bool = (
+        float64_value_reference_count >= 0
+        and float64_serialized_value_count >= 0
+        and int32_value_reference_count >= 0
+        and int32_value_count >= 0
+    )
+    float64_presence_is_valid: bool = (
+        float64_value_reference_count > 0
+        or float64_serialized_value_count == 0
+    )
+    int32_alignment_is_valid: bool = (
+        int32_value_reference_count == int32_value_count
+    )
+    combined_reference_count: int = (
+        float64_value_reference_count + int32_value_reference_count
+    )
+    combined_value_count: int = float64_serialized_value_count + int32_value_count
+    if (
+        counts_are_nonnegative
+        and float64_presence_is_valid
+        and int32_alignment_is_valid
+        and combined_reference_count <= maximum_value_count
+        and combined_value_count <= maximum_value_count
+    ):
+        pass
+    else:
+        raise ValueError(
+            "FMI 3 worker combined initialization count is outside its bound"
+        )
+    if maximum_frame_size > 0:
+        pass
+    else:
+        raise ValueError("FMI 3 worker maximum frame size must be positive")
+    request_frame_size: int = (
+        struct.calcsize("!4sBBBQI")
+        + struct.calcsize("!Bddd")
+        + 16
+        + 4 * combined_reference_count
+        + 8 * float64_serialized_value_count
+        + 4 * int32_value_count
+    )
+    if request_frame_size <= maximum_frame_size:
+        pass
+    else:
+        raise ValueError(
+            "FMI 3 worker initialization request exceeds the frame bound"
         )
 
 
@@ -1800,7 +2075,7 @@ def _encode_worker_frame(
     frame_header: bytes = struct.pack(
         "!4sBBBQI",
         b"VGFW",
-        int(FmiThreeWorkerProtocolVersion.VERSION_TEN),
+        int(FmiThreeWorkerProtocolVersion.VERSION_ELEVEN),
         int(direction),
         opcode,
         request_id,
@@ -1843,7 +2118,7 @@ def _decode_worker_frame(
         pass
     else:
         raise ValueError("FMI 3 worker frame magic is invalid")
-    if version_number == int(FmiThreeWorkerProtocolVersion.VERSION_TEN):
+    if version_number == int(FmiThreeWorkerProtocolVersion.VERSION_ELEVEN):
         pass
     else:
         raise ValueError(f"Unsupported FMI 3 worker protocol version {version_number}")
@@ -1934,6 +2209,39 @@ def _encode_float64_assignments_body(
     return bytes(encoded_body)
 
 
+def _encode_int32_assignments_body(
+    value_references: tuple[int, ...],
+    values: tuple[int, ...],
+) -> bytes:
+    """Encode aligned scalar Int32 references and signed values.
+
+    :param value_references: Validated ordered scalar references.
+    :param values: Validated signed values aligned with the references.
+    :return: Equal counts followed by UInt32 references and Int32 values.
+    """
+
+    value_count: int = len(values)
+    encoded_body: bytearray = bytearray(8 + value_count * 8)
+    struct.pack_into("!II", encoded_body, 0, value_count, value_count)
+    value_index: int
+    for value_index in range(value_count):
+        struct.pack_into(
+            "!I",
+            encoded_body,
+            8 + value_index * 4,
+            value_references[value_index],
+        )
+    values_offset: int = 8 + value_count * 4
+    for value_index in range(value_count):
+        struct.pack_into(
+            "!i",
+            encoded_body,
+            values_offset + value_index * 4,
+            values[value_index],
+        )
+    return bytes(encoded_body)
+
+
 def _encode_uint64_configuration_body(
     configuration: FmiThreeWorkerConfigureUInt64Request,
 ) -> bytes:
@@ -1977,8 +2285,7 @@ def _decode_nonempty_float64_assignments(
     """Decode one bounded non-empty Float64 assignment collection.
 
     :param reader: Bounded request-body reader positioned after the value count.
-    :param request_kind: INITIALIZE, CONFIGURE_FLOAT64, or SET_FLOAT64
-        capacity profile.
+    :param request_kind: CONFIGURE_FLOAT64 or SET_FLOAT64 capacity profile.
     :param field_prefix: Stable diagnostic prefix for the enclosing operation.
     :param value_reference_count: Declared positive reference count.
     :param serialized_value_count: Declared positive serialized value count.
@@ -2011,6 +2318,54 @@ def _decode_nonempty_float64_assignments(
     value_index: int
     for value_index in range(serialized_value_count):
         values[value_index] = reader.read_float64(f"{field_prefix} value")
+    return tuple(value_references), tuple(values)
+
+
+def _decode_nonempty_int32_assignments(
+    reader: _FmiThreeWorkerBodyReader,
+    request_kind: FmiThreeWorkerRequestKind,
+    field_prefix: str,
+    value_reference_count: int,
+    value_count: int,
+    maximum_frame_size: int,
+    maximum_value_count: int,
+) -> tuple[tuple[int, ...], tuple[int, ...]]:
+    """Decode one bounded non-empty scalar Int32 assignment collection.
+
+    :param reader: Bounded reader positioned after both counts.
+    :param request_kind: SET_INT32 capacity profile.
+    :param field_prefix: Stable diagnostic prefix for the operation.
+    :param value_reference_count: Declared positive scalar reference count.
+    :param value_count: Declared signed-value count.
+    :param maximum_frame_size: Maximum complete request frame size.
+    :param maximum_value_count: Shared numeric cardinality bound.
+    :return: Ordered scalar references and signed values.
+    """
+
+    if value_reference_count == value_count:
+        pass
+    else:
+        raise ValueError("FMI 3 worker Int32 references and values must align")
+    validate_fmi_three_worker_int32_frame_capacity(
+        request_kind=request_kind,
+        value_count=value_count,
+        maximum_frame_size=maximum_frame_size,
+        maximum_value_count=maximum_value_count,
+    )
+    expected_body_size: int = value_count * 8
+    if len(reader.body) - reader.offset == expected_body_size:
+        pass
+    else:
+        raise ValueError("FMI 3 worker Int32 collection body size is inconsistent")
+    value_references: list[int] = [0] * value_reference_count
+    values: list[int] = [0] * value_count
+    value_index: int
+    for value_index in range(value_reference_count):
+        value_references[value_index] = reader.read_unsigned_int(
+            f"{field_prefix} value reference"
+        )
+    for value_index in range(value_count):
+        values[value_index] = reader.read_signed_int(f"{field_prefix} value")
     return tuple(value_references), tuple(values)
 
 
@@ -2096,6 +2451,29 @@ def _encode_get_float64_body(
     return bytes(encoded_body)
 
 
+def _encode_get_int32_body(
+    get_int32: FmiThreeWorkerGetInt32Request,
+) -> bytes:
+    """Encode ordered scalar references for one GET_INT32 request.
+
+    :param get_int32: Validated bounded scalar read request.
+    :return: Exact GET_INT32 request body.
+    """
+
+    value_count: int = len(get_int32.value_references)
+    encoded_body: bytearray = bytearray(4 + value_count * 4)
+    struct.pack_into("!I", encoded_body, 0, value_count)
+    value_index: int
+    for value_index in range(value_count):
+        struct.pack_into(
+            "!I",
+            encoded_body,
+            4 + value_index * 4,
+            get_int32.value_references[value_index],
+        )
+    return bytes(encoded_body)
+
+
 def _encode_float64_values_body(
     float64_values: FmiThreeWorkerFloat64Values,
 ) -> bytes:
@@ -2115,6 +2493,29 @@ def _encode_float64_values_body(
             encoded_body,
             4 + value_index * 8,
             float64_values.values[value_index],
+        )
+    return bytes(encoded_body)
+
+
+def _encode_int32_values_body(
+    int32_values: FmiThreeWorkerInt32Values,
+) -> bytes:
+    """Encode ordered signed scalar Int32 response values.
+
+    :param int32_values: Validated Int32 response body.
+    :return: Exact INT32_VALUES response body.
+    """
+
+    value_count: int = len(int32_values.values)
+    encoded_body: bytearray = bytearray(4 + value_count * 4)
+    struct.pack_into("!I", encoded_body, 0, value_count)
+    value_index: int
+    for value_index in range(value_count):
+        struct.pack_into(
+            "!i",
+            encoded_body,
+            4 + value_index * 4,
+            int32_values.values[value_index],
         )
     return bytes(encoded_body)
 
@@ -2176,7 +2577,7 @@ def encode_fmi_three_worker_request(
     :param request: Validated request envelope.
     :param maximum_frame_size: Maximum complete frame size.
     :param maximum_float64_values_per_request: Established shared bound for
-        Float64 values and scalar UInt64 Configuration Mode values.
+        Float64, scalar Int32, and scalar UInt64 Configuration Mode values.
     :return: Complete binary frame.
     """
 
@@ -2264,18 +2665,37 @@ def encode_fmi_three_worker_request(
                 stop_time,
                 relative_tolerance,
             )
-            validate_fmi_three_worker_float64_frame_capacity(
-                request_kind=request.kind,
-                value_reference_count=len(initialization.initial_value_references),
-                serialized_value_count=len(initialization.initial_values),
+            validate_fmi_three_worker_initialization_frame_capacity(
+                float64_value_reference_count=len(
+                    initialization.initial_float64_value_references
+                ),
+                float64_serialized_value_count=len(
+                    initialization.initial_float64_values
+                ),
+                int32_value_reference_count=len(
+                    initialization.initial_int32_value_references
+                ),
+                int32_value_count=len(initialization.initial_int32_values),
                 maximum_frame_size=maximum_frame_size,
                 maximum_value_count=maximum_float64_values_per_request,
             )
-            initialization_values_body: bytes = _encode_float64_assignments_body(
-                value_references=initialization.initial_value_references,
-                values=initialization.initial_values,
+            initialization_float64_body: bytes = _encode_float64_assignments_body(
+                value_references=(
+                    initialization.initial_float64_value_references
+                ),
+                values=initialization.initial_float64_values,
             )
-            body = b"".join((initialization_header, initialization_values_body))
+            initialization_int32_body: bytes = _encode_int32_assignments_body(
+                value_references=initialization.initial_int32_value_references,
+                values=initialization.initial_int32_values,
+            )
+            body = b"".join(
+                (
+                    initialization_header,
+                    initialization_float64_body,
+                    initialization_int32_body,
+                )
+            )
         else:
             if request.kind == FmiThreeWorkerRequestKind.CONFIGURE_FLOAT64:
                 configuration: FmiThreeWorkerConfigureFloat64Request | None = (
@@ -2496,7 +2916,40 @@ def encode_fmi_three_worker_request(
                                                     evaluation
                                                 )
                                             else:
-                                                body = b""
+                                                if request.kind == FmiThreeWorkerRequestKind.SET_INT32:
+                                                    set_int32: FmiThreeWorkerSetInt32Request | None = request.set_int32
+                                                    if set_int32 is not None:
+                                                        validate_fmi_three_worker_int32_frame_capacity(
+                                                            request_kind=request.kind,
+                                                            value_count=len(set_int32.values),
+                                                            maximum_frame_size=maximum_frame_size,
+                                                            maximum_value_count=maximum_float64_values_per_request,
+                                                        )
+                                                        body = _encode_int32_assignments_body(
+                                                            value_references=set_int32.value_references,
+                                                            values=set_int32.values,
+                                                        )
+                                                    else:
+                                                        raise ValueError(
+                                                            "FMI 3 SET_INT32 request is missing its typed body"
+                                                        )
+                                                else:
+                                                    if request.kind == FmiThreeWorkerRequestKind.GET_INT32:
+                                                        get_int32: FmiThreeWorkerGetInt32Request | None = request.get_int32
+                                                        if get_int32 is not None:
+                                                            validate_fmi_three_worker_int32_frame_capacity(
+                                                                request_kind=request.kind,
+                                                                value_count=len(get_int32.value_references),
+                                                                maximum_frame_size=maximum_frame_size,
+                                                                maximum_value_count=maximum_float64_values_per_request,
+                                                            )
+                                                            body = _encode_get_int32_body(get_int32)
+                                                        else:
+                                                            raise ValueError(
+                                                                "FMI 3 GET_INT32 request is missing its typed body"
+                                                            )
+                                                    else:
+                                                        body = b""
     return _encode_worker_frame(
         FmiThreeWorkerFrameDirection.REQUEST,
         int(request.kind),
@@ -2551,6 +3004,8 @@ def decode_fmi_three_worker_request(
     model_exchange_evaluation: (
         FmiThreeWorkerModelExchangeEvaluationRequest | None
     ) = None
+    set_int32: FmiThreeWorkerSetInt32Request | None = None
+    get_int32: FmiThreeWorkerGetInt32Request | None = None
     if request_kind == FmiThreeWorkerRequestKind.START:
         start_flags: int = reader.read_unsigned_byte("START flags")
         if start_flags & ~63 == 0:
@@ -2614,12 +3069,20 @@ def decode_fmi_three_worker_request(
             else:
                 raise ValueError("FMI 3 worker INITIALIZE request has unknown flags")
             start_time: float = reader.read_float64("start time")
+            stop_time_offset: int = reader.offset
             encoded_stop_time: float = reader.read_float64("stop time")
+            encoded_stop_time_bytes: bytes = reader.body[
+                stop_time_offset:reader.offset
+            ]
+            tolerance_offset: int = reader.offset
             encoded_tolerance: float = reader.read_float64("relative tolerance")
+            encoded_tolerance_bytes: bytes = reader.body[
+                tolerance_offset:reader.offset
+            ]
             if initialization_flags & 1:
                 stop_time: float | None = encoded_stop_time
             else:
-                if encoded_stop_time == 0.0:
+                if encoded_stop_time_bytes == b"\x00\x00\x00\x00\x00\x00\x00\x00":
                     stop_time = None
                 else:
                     raise ValueError(
@@ -2628,54 +3091,107 @@ def decode_fmi_three_worker_request(
             if initialization_flags & 2:
                 relative_tolerance: float | None = encoded_tolerance
             else:
-                if encoded_tolerance == 0.0:
+                if encoded_tolerance_bytes == b"\x00\x00\x00\x00\x00\x00\x00\x00":
                     relative_tolerance = None
                 else:
                     raise ValueError(
                         "FMI 3 worker absent tolerance slot must be canonical zero"
                     )
-            initial_value_reference_count: int = reader.read_unsigned_int(
+            initial_float64_reference_count: int = reader.read_unsigned_int(
                 "INITIALIZE Float64 reference count"
             )
-            initial_serialized_value_count: int = reader.read_unsigned_int(
+            initial_float64_value_count: int = reader.read_unsigned_int(
                 "INITIALIZE Float64 serialized value count"
             )
-            if (
-                initial_value_reference_count == 0
-                and initial_serialized_value_count == 0
-            ):
-                validate_fmi_three_worker_float64_frame_capacity(
-                    request_kind=request_kind,
-                    value_reference_count=initial_value_reference_count,
-                    serialized_value_count=initial_serialized_value_count,
-                    maximum_frame_size=maximum_frame_size,
-                    maximum_value_count=maximum_float64_values_per_request,
+            float64_counts_are_valid: bool = (
+                initial_float64_reference_count
+                <= maximum_float64_values_per_request
+                and initial_float64_value_count
+                <= maximum_float64_values_per_request
+                and (
+                    initial_float64_reference_count > 0
+                    or initial_float64_value_count == 0
                 )
-                if len(reader.body) - reader.offset == 0:
-                    initial_value_references: tuple[int, ...] = tuple()
-                    initial_values: tuple[float, ...] = tuple()
-                else:
-                    raise ValueError(
-                        "FMI 3 worker empty initial Float64 collection has trailing bytes"
-                    )
+            )
+            if float64_counts_are_valid:
+                pass
             else:
-                initial_value_references, initial_values = (
-                    _decode_nonempty_float64_assignments(
-                        reader=reader,
-                        request_kind=request_kind,
-                        field_prefix="INITIALIZE Float64",
-                        value_reference_count=initial_value_reference_count,
-                        serialized_value_count=initial_serialized_value_count,
-                        maximum_frame_size=maximum_frame_size,
-                        maximum_value_count=maximum_float64_values_per_request,
+                raise ValueError(
+                    "FMI 3 worker initial Float64 count is outside its bound"
+                )
+            minimum_float64_tail_size: int = (
+                initial_float64_reference_count * 4
+                + initial_float64_value_count * 8
+                + 8
+            )
+            if (
+                len(reader.body) - reader.offset >= minimum_float64_tail_size
+            ):
+                pass
+            else:
+                raise ValueError(
+                    "FMI 3 worker INITIALIZE Float64 collection is truncated"
+                )
+            initial_float64_references: list[int] = [0] * (
+                initial_float64_reference_count
+            )
+            initial_float64_values: list[float] = [0.0] * (
+                initial_float64_value_count
+            )
+            initial_index: int
+            for initial_index in range(initial_float64_reference_count):
+                initial_float64_references[initial_index] = (
+                    reader.read_unsigned_int(
+                        "INITIALIZE Float64 value reference"
                     )
+                )
+            for initial_index in range(initial_float64_value_count):
+                initial_float64_values[initial_index] = reader.read_float64(
+                    "INITIALIZE Float64 value"
+                )
+            initial_int32_reference_count: int = reader.read_unsigned_int(
+                "INITIALIZE Int32 reference count"
+            )
+            initial_int32_value_count: int = reader.read_unsigned_int(
+                "INITIALIZE Int32 value count"
+            )
+            validate_fmi_three_worker_initialization_frame_capacity(
+                float64_value_reference_count=initial_float64_reference_count,
+                float64_serialized_value_count=initial_float64_value_count,
+                int32_value_reference_count=initial_int32_reference_count,
+                int32_value_count=initial_int32_value_count,
+                maximum_frame_size=maximum_frame_size,
+                maximum_value_count=maximum_float64_values_per_request,
+            )
+            expected_int32_body_size: int = initial_int32_value_count * 8
+            if len(reader.body) - reader.offset == expected_int32_body_size:
+                pass
+            else:
+                raise ValueError(
+                    "FMI 3 worker INITIALIZE Int32 collection body is inconsistent"
+                )
+            initial_int32_references: list[int] = [0] * (
+                initial_int32_reference_count
+            )
+            initial_int32_values: list[int] = [0] * initial_int32_value_count
+            for initial_index in range(initial_int32_reference_count):
+                initial_int32_references[initial_index] = reader.read_unsigned_int(
+                    "INITIALIZE Int32 value reference"
+                )
+            for initial_index in range(initial_int32_value_count):
+                initial_int32_values[initial_index] = reader.read_signed_int(
+                    "INITIALIZE Int32 value"
                 )
             initialization = FmiThreeWorkerInitializationRequest(
                 start_time=start_time,
                 stop_time=stop_time,
                 relative_tolerance=relative_tolerance,
-                initial_value_references=initial_value_references,
-                initial_values=initial_values,
+                initial_float64_value_references=tuple(
+                    initial_float64_references
+                ),
+                initial_float64_values=tuple(initial_float64_values),
+                initial_int32_value_references=tuple(initial_int32_references),
+                initial_int32_values=tuple(initial_int32_values),
                 maximum_value_count=maximum_float64_values_per_request,
             )
         else:
@@ -3110,7 +3626,61 @@ def decode_fmi_three_worker_request(
                                                     )
                                                 )
                                             else:
-                                                pass
+                                                if request_kind == FmiThreeWorkerRequestKind.SET_INT32:
+                                                    int32_reference_count: int = reader.read_unsigned_int(
+                                                        "SET_INT32 reference count"
+                                                    )
+                                                    int32_value_count: int = reader.read_unsigned_int(
+                                                        "SET_INT32 value count"
+                                                    )
+                                                    int32_references: tuple[int, ...]
+                                                    int32_values: tuple[int, ...]
+                                                    int32_references, int32_values = (
+                                                        _decode_nonempty_int32_assignments(
+                                                            reader=reader,
+                                                            request_kind=request_kind,
+                                                            field_prefix="SET_INT32",
+                                                            value_reference_count=int32_reference_count,
+                                                            value_count=int32_value_count,
+                                                            maximum_frame_size=maximum_frame_size,
+                                                            maximum_value_count=maximum_float64_values_per_request,
+                                                        )
+                                                    )
+                                                    set_int32 = FmiThreeWorkerSetInt32Request(
+                                                        value_references=int32_references,
+                                                        values=int32_values,
+                                                        maximum_value_count=maximum_float64_values_per_request,
+                                                    )
+                                                else:
+                                                    if request_kind == FmiThreeWorkerRequestKind.GET_INT32:
+                                                        int32_reference_count = reader.read_unsigned_int(
+                                                            "GET_INT32 reference count"
+                                                        )
+                                                        _validate_encoded_value_count(
+                                                            value_count=int32_reference_count,
+                                                            maximum_value_count=maximum_float64_values_per_request,
+                                                            remaining_body_size=len(reader.body) - reader.offset,
+                                                            bytes_per_value=4,
+                                                            allow_zero=False,
+                                                        )
+                                                        validate_fmi_three_worker_int32_frame_capacity(
+                                                            request_kind=request_kind,
+                                                            value_count=int32_reference_count,
+                                                            maximum_frame_size=maximum_frame_size,
+                                                            maximum_value_count=maximum_float64_values_per_request,
+                                                        )
+                                                        int32_reference_values: list[int] = [0] * int32_reference_count
+                                                        int32_index: int
+                                                        for int32_index in range(int32_reference_count):
+                                                            int32_reference_values[int32_index] = reader.read_unsigned_int(
+                                                                "GET_INT32 value reference"
+                                                            )
+                                                        get_int32 = FmiThreeWorkerGetInt32Request(
+                                                            value_references=tuple(int32_reference_values),
+                                                            maximum_value_count=maximum_float64_values_per_request,
+                                                        )
+                                                    else:
+                                                        pass
     reader.ensure_finished()
     return FmiThreeWorkerRequest(
         request_id=request_id,
@@ -3126,6 +3696,8 @@ def decode_fmi_three_worker_request(
         continuous_states=continuous_states,
         completed_integrator_step=completed_integrator_step,
         model_exchange_evaluation=model_exchange_evaluation,
+        set_int32=set_int32,
+        get_int32=get_int32,
     )
 
 
@@ -3279,7 +3851,18 @@ def encode_fmi_three_worker_response(
                                     "missing or exceeds its typed body bound"
                                 )
                         else:
-                            body = b""
+                            if response.kind == FmiThreeWorkerResponseKind.INT32_VALUES:
+                                int32_values: FmiThreeWorkerInt32Values | None = (
+                                    response.int32_values
+                                )
+                                if int32_values is not None:
+                                    body = _encode_int32_values_body(int32_values)
+                                else:
+                                    raise ValueError(
+                                        "FMI 3 INT32_VALUES response is missing its typed body"
+                                    )
+                            else:
+                                body = b""
     return _encode_worker_frame(
         FmiThreeWorkerFrameDirection.RESPONSE,
         int(response.kind),
@@ -3331,6 +3914,7 @@ def decode_fmi_three_worker_response(
     model_exchange_evaluation_result: (
         FmiThreeWorkerModelExchangeEvaluationResult | None
     ) = None
+    int32_values: FmiThreeWorkerInt32Values | None = None
     if response_kind == FmiThreeWorkerResponseKind.ERROR:
         failure_number: int = reader.read_unsigned_byte("failure kind")
         try:
@@ -3503,7 +4087,29 @@ def decode_fmi_three_worker_response(
                                 )
                             )
                         else:
-                            pass
+                            if response_kind == FmiThreeWorkerResponseKind.INT32_VALUES:
+                                int32_value_count: int = reader.read_unsigned_int(
+                                    "INT32_VALUES count"
+                                )
+                                _validate_encoded_value_count(
+                                    value_count=int32_value_count,
+                                    maximum_value_count=maximum_float64_values_per_request,
+                                    remaining_body_size=len(reader.body) - reader.offset,
+                                    bytes_per_value=4,
+                                    allow_zero=True,
+                                )
+                                decoded_int32_values: list[int] = [0] * int32_value_count
+                                int32_index: int
+                                for int32_index in range(int32_value_count):
+                                    decoded_int32_values[int32_index] = reader.read_signed_int(
+                                        "Int32 value"
+                                    )
+                                int32_values = FmiThreeWorkerInt32Values(
+                                    values=tuple(decoded_int32_values),
+                                    maximum_value_count=maximum_float64_values_per_request,
+                                )
+                            else:
+                                pass
     reader.ensure_finished()
     return FmiThreeWorkerResponse(
         request_id=request_id,
@@ -3515,6 +4121,7 @@ def decode_fmi_three_worker_response(
         completed_integrator_step_result=completed_integrator_step_result,
         discrete_states_result=discrete_states_result,
         model_exchange_evaluation_result=model_exchange_evaluation_result,
+        int32_values=int32_values,
     )
 
 

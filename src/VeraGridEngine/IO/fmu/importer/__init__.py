@@ -15,9 +15,11 @@ from VeraGridEngine.IO.fmu.importer.bindings import (
     FmiThreeFloat64ConfigurationValue,
     FmiThreeUInt64ConfigurationValue,
     FmuBindingDirection,
+    FmuFloat64ParameterValue,
     FmuImportConfig,
     FmuRefBinding,
     FmuVariableBinding,
+    resolve_fmi_three_initialization_float64_binding_layout,
     validate_bindings,
 )
 from VeraGridEngine.IO.fmu.importer.model_description import (
@@ -76,7 +78,10 @@ from VeraGridEngine.IO.fmu.importer.device_api import (
     attach_rms_fmu_cs_device,
     attach_rms_fmu_me_device,
 )
-from VeraGridEngine.IO.fmu.importer.template_api import configure_fmu_template
+from VeraGridEngine.IO.fmu.importer.template_api import (
+    append_fmu_parameter_entries,
+    configure_fmu_template,
+)
 from VeraGridEngine.IO.fmu.importer.user_api import (
     FmuDeviceAttachmentRequest,
     FmuDeviceDomain,
@@ -93,8 +98,10 @@ __all__ = [
     "FmiThreeFloat64ConfigurationValue",
     "FmiThreeUInt64ConfigurationValue",
     "FmuBindingDirection",
+    "FmuFloat64ParameterValue",
     "FmuImportConfig",
     "FmuVariableBinding",
+    "resolve_fmi_three_initialization_float64_binding_layout",
     "validate_bindings",
     "FmuInterfaceMode",
     "FmuModelDescription",
@@ -146,6 +153,7 @@ __all__ = [
     "attach_rms_fmu_cs_device",
     "attach_rms_fmu_me_device",
     "configure_fmu_template",
+    "append_fmu_parameter_entries",
     "FmuDeviceAttachmentRequest",
     "FmuDeviceDomain",
     "FmuReferenceValue",

@@ -230,10 +230,10 @@ class BackEulerImplicitIntegrationFullVec:
         timings = self._timings
 
         self.t[0] = self.t0
-        self.y[0, :] = x0.copy()
         dx = dx0.copy()
         dx_last = dx0.copy()
         residual = 0.0
+        self.y[0, :] = x0.copy()
 
         has_fmu_cs = True
         has_fmu_me = True
@@ -301,8 +301,15 @@ class BackEulerImplicitIntegrationFullVec:
                         )
                     else:
                         state_event_retry_time = None
+                    co_simulation_advanced: bool = False
                     if has_fmu_cs and state_event_retry_time is None:
-                        self.problem.advance_fmu_cs_devices(t=t_local_prev, x_snapshot=x_prev, h=h_eff)
+                        co_simulation_advanced = (
+                            self.problem.advance_fmu_cs_devices(
+                                t=t_local_prev,
+                                x_snapshot=x_prev,
+                                h=h_eff,
+                            )
+                        )
                     else:
                         pass
 
@@ -383,6 +390,29 @@ class BackEulerImplicitIntegrationFullVec:
                                 break
 
                             x_new += delta
+                            if has_fmu_me:
+                                # Replace the candidate with outputs evaluated
+                                # from the corrected network iterate before the
+                                # next residual is formed.
+                                self.problem.advance_fmu_me_devices(
+                                    t=t_local_prev,
+                                    x_snapshot=x_new,
+                                    h=h_eff,
+                                )
+                                state_event_retry_time = (
+                                    self.problem.prepare_fmu_me_state_event_retry()
+                                )
+                                if state_event_retry_time is not None:
+                                    if co_simulation_advanced:
+                                        raise RuntimeError(
+                                            "RMS FMI ME state event cannot retry after Co-Simulation devices advanced"
+                                        )
+                                    else:
+                                        substep_converged = True
+                                else:
+                                    pass
+                            else:
+                                pass
                             n_iter += 1
 
                     if substep_converged:

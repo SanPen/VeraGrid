@@ -3,32 +3,639 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
 
 import numpy as np
+import scipy.sparse as sp
 import pytest
 
+from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
+from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig
 from VeraGridEngine.IO.fmu.importer.emt_boundary import CompositeEmtBoundaryUpdater
 from VeraGridEngine.IO.fmu.importer.errors import FmuModeError
 from VeraGridEngine.IO.fmu.importer.model_exchange import (
+    FmuMeDomain,
     FmuMeDeviceAdapter,
     FmuMeSolverPolicy,
     _build_fmu_me_solver_policy,
+    advance_rms_fmu_me_devices,
+    build_fmu_me_device_spec,
     _prepare_rms_fmu_me_state_event_retry,
 )
+from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode
 from VeraGridEngine.IO.fmu.importer.runtime_coordinator import (
     FmiThreeModelExchangeCoordinator,
 )
 from VeraGridEngine.IO.fmu.importer.runtime_host import FmiTwoEventUpdate
 from VeraGridEngine.IO.fmu.importer.runtime_profile import FmuMeEvaluationBudget
+from VeraGridEngine.IO.fmu.importer.runtime_worker_host import FmiThreeWorkerHostLimits
 from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     FmiThreeWorkerCompletedIntegratorStepResult,
     FmiThreeWorkerDiscreteStatesResult,
 )
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
-from VeraGridEngine.enumerations import DynamicIntegrationMethod, VarPowerFlowReferenceType
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized import (
+    BackEulerImplicitIntegrationVec,
+)
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized import (
+    BackEulerImplicitIntegrationFullVec,
+)
+from VeraGridEngine.Simulations.Rms.numerical.midpoint import (
+    MidpointImplicitIntegration,
+)
+from VeraGridEngine.Simulations.Rms.numerical.trapezoidal import (
+    TrapezoidalImplicitIntegration,
+)
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import (
+    RmsProblemDaeVec,
+)
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_full_vectorized import (
+    RmsProblemDaeFullVec,
+)
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor import (
+    RmsProblemPhasor,
+)
+from VeraGridEngine.enumerations import DeviceType, DynamicIntegrationMethod, VarPowerFlowReferenceType
+
+
+class _CurrentPointCouplingProblem:
+    """Expose one differential state and deterministic FMI transaction traces."""
+
+    __slots__ = (
+        "_algebraic_eqs",
+        "_variable_parameters_values",
+        "_fmu_me_adapters",
+        "algebraic_vars",
+        "logger",
+        "me_advance_snapshots",
+        "resolve_acceptances",
+        "operation_log",
+        "cs_advance_count",
+        "enable_cs",
+        "cs_advance_result",
+        "initial_event_time",
+        "corrected_event_time",
+        "pending_retry_time",
+        "event_emitted",
+        "initial_state_value",
+        "cs_initialize_count",
+        "me_initialize_count",
+        "cs_close_count",
+        "me_close_count",
+    )
+
+    def __init__(
+        self,
+        enable_cs: bool = True,
+        cs_advance_result: bool = False,
+        initial_event_time: float | None = None,
+        corrected_event_time: float | None = None,
+        initial_state_value: float | None = None,
+    ) -> None:
+        """Initialize the bounded one-state solver contract.
+
+        :param enable_cs: Whether the problem exposes an active CS owner.
+        :param cs_advance_result: Result returned after each CS advancement.
+        :param initial_event_time: Event exposed by the initial ME candidate.
+        :param corrected_event_time: Event exposed after a Newton correction.
+        :param initial_state_value: Optional state value written by CS
+            initialization.
+        :return: None.
+        """
+
+        self._algebraic_eqs: list[object] = list()
+        self._variable_parameters_values: np.ndarray = np.empty(0, dtype=float)
+        self._fmu_me_adapters: list[object] = list()
+        self.algebraic_vars: list[object] = list()
+        self.logger: Mock = Mock()
+        self.me_advance_snapshots: list[np.ndarray] = list()
+        self.resolve_acceptances: list[bool] = list()
+        self.operation_log: list[str] = list()
+        self.cs_advance_count: int = 0
+        self.enable_cs: bool = enable_cs
+        self.cs_advance_result: bool = cs_advance_result
+        self.initial_event_time: float | None = initial_event_time
+        self.corrected_event_time: float | None = corrected_event_time
+        self.pending_retry_time: float | None = None
+        self.event_emitted: bool = False
+        self.initial_state_value: float | None = initial_state_value
+        self.cs_initialize_count: int = 0
+        self.me_initialize_count: int = 0
+        self.cs_close_count: int = 0
+        self.me_close_count: int = 0
+
+    def get_x0(self) -> np.ndarray:
+        """Return the accepted initial state.
+
+        :return: One-state initial vector.
+        """
+
+        return np.array([1.0], dtype=float)
+
+    def get_all_vars_number(self) -> int:
+        """Return the complete state-vector size.
+
+        :return: One variable.
+        """
+
+        return 1
+
+    def get_diff_var_number(self) -> int:
+        """Return the differential-variable count.
+
+        :return: One differential variable.
+        """
+
+        return 1
+
+    def get_algebraic_var_number(self) -> int:
+        """Return the algebraic-variable count.
+
+        :return: Zero algebraic variables.
+        """
+
+        return 0
+
+    def get_states_number(self) -> int:
+        """Return the differential-state count.
+
+        :return: One state.
+        """
+
+        return 1
+
+    def get_small_signal_reference_indices(self) -> tuple[int, int] | None:
+        """Return the absent reference constraint.
+
+        :return: None because the scalar problem is nonsingular.
+        """
+
+        return None
+
+    def get_dx(
+        self,
+        x_new: np.ndarray,
+        x_previous: np.ndarray,
+        dx_previous: np.ndarray,
+        step_size: float,
+    ) -> np.ndarray:
+        """Compute the visible state slope.
+
+        :param x_new: Current Newton state.
+        :param x_previous: Accepted state.
+        :param dx_previous: Previously accepted slope.
+        :param step_size: Positive local step size.
+        :return: Current finite-difference slope.
+        """
+
+        if dx_previous.size == 1 and step_size > 0.0:
+            return (x_new - x_previous) / step_size
+        else:
+            raise AssertionError("Current-point slope contract is invalid")
+
+    def update_variable_params(
+        self,
+        t: float,
+        x_snapshot: np.ndarray,
+        scheduled_t: float | None = None,
+    ) -> None:
+        """Validate the explicit parameter-update point.
+
+        :param t: Target time.
+        :param x_snapshot: Current network snapshot.
+        :param scheduled_t: Accepted scheduling time.
+        :return: None.
+        """
+
+        scheduling_time: float = t if scheduled_t is None else scheduled_t
+        if math.isfinite(t) and math.isfinite(scheduling_time) and x_snapshot.size == 1:
+            pass
+        else:
+            raise AssertionError("Current-point parameter update is invalid")
+
+    def update(
+        self,
+        t: float,
+        x_snapshot: np.ndarray,
+        variable_parameters: np.ndarray,
+    ) -> None:
+        """Validate the explicit equation-update point.
+
+        :param t: Target time.
+        :param x_snapshot: Current network snapshot.
+        :param variable_parameters: Empty parameter vector.
+        :return: None.
+        """
+
+        if math.isfinite(t) and x_snapshot.size == 1 and variable_parameters.size == 0:
+            pass
+        else:
+            raise AssertionError("Current-point equation update is invalid")
+
+    def update_input_matrices_by_model(
+        self,
+        x_snapshot: np.ndarray,
+        dx_snapshot: np.ndarray,
+    ) -> None:
+        """Validate a vectorized gather without retaining duplicate state.
+
+        :param x_snapshot: Current network snapshot.
+        :param dx_snapshot: Current differential snapshot.
+        :return: None.
+        """
+
+        if x_snapshot.size == 1 and dx_snapshot.size == 1:
+            pass
+        else:
+            raise AssertionError("Current-point vector gather is invalid")
+
+    def rhs_algebraic(
+        self,
+        x_snapshot: np.ndarray,
+        dx_snapshot: np.ndarray,
+    ) -> np.ndarray:
+        """Return the empty algebraic residual.
+
+        :param x_snapshot: Current network snapshot.
+        :param dx_snapshot: Current differential snapshot.
+        :return: Empty residual vector.
+        """
+
+        if x_snapshot.size == 1 and dx_snapshot.size == 1:
+            return np.empty(0, dtype=float)
+        else:
+            raise AssertionError("Current-point algebraic residual is invalid")
+
+    def rhs_algebraic_vec(
+        self,
+        x_snapshot: np.ndarray,
+        dx_snapshot: np.ndarray,
+    ) -> np.ndarray:
+        """Return the empty vectorized algebraic residual.
+
+        :param x_snapshot: Current network snapshot.
+        :param dx_snapshot: Current differential snapshot.
+        :return: Empty residual vector.
+        """
+
+        return self.rhs_algebraic(x_snapshot, dx_snapshot)
+
+    def rhs_state(
+        self,
+        x_snapshot: np.ndarray,
+        dx_snapshot: np.ndarray,
+    ) -> np.ndarray:
+        """Return a constant derivative that forces one Newton correction.
+
+        :param x_snapshot: Current network snapshot.
+        :param dx_snapshot: Current differential snapshot.
+        :return: Unit derivative.
+        """
+
+        if x_snapshot.size == 1 and dx_snapshot.size == 1:
+            return np.ones(1, dtype=float)
+        else:
+            raise AssertionError("Current-point state residual is invalid")
+
+    def rhs_state_vec(self) -> np.ndarray:
+        """Return the gathered vectorized state derivative.
+
+        :return: Unit derivative.
+        """
+
+        return np.ones(1, dtype=float)
+
+    def get_j11(
+        self,
+        x_snapshot: np.ndarray,
+        dx_snapshot: np.ndarray,
+        step_size: float,
+    ) -> sp.csc_matrix:
+        """Return the state-derivative Jacobian.
+
+        :param x_snapshot: Current network snapshot.
+        :param dx_snapshot: Current differential snapshot.
+        :param step_size: Positive local step size.
+        :return: One-by-one zero CSC matrix.
+        """
+
+        if x_snapshot.size == 1 and dx_snapshot.size == 1 and step_size > 0.0:
+            return sp.csc_matrix((1, 1), dtype=float)
+        else:
+            raise AssertionError("Current-point J11 contract is invalid")
+
+    def get_j12(
+        self,
+        x_snapshot: np.ndarray,
+        dx_snapshot: np.ndarray,
+        step_size: float,
+    ) -> sp.csc_matrix:
+        """Return the state-to-algebraic Jacobian block.
+
+        :param x_snapshot: Current network snapshot.
+        :param dx_snapshot: Current differential snapshot.
+        :param step_size: Positive local step size.
+        :return: One-by-zero CSC matrix.
+        """
+
+        if x_snapshot.size == 1 and dx_snapshot.size == 1 and step_size > 0.0:
+            return sp.csc_matrix((1, 0), dtype=float)
+        else:
+            raise AssertionError("Current-point J12 contract is invalid")
+
+    def get_j21(
+        self,
+        x_snapshot: np.ndarray,
+        dx_snapshot: np.ndarray,
+        step_size: float,
+    ) -> sp.csc_matrix:
+        """Return the algebraic-to-state Jacobian block.
+
+        :param x_snapshot: Current network snapshot.
+        :param dx_snapshot: Current differential snapshot.
+        :param step_size: Positive local step size.
+        :return: Zero-by-one CSC matrix.
+        """
+
+        if x_snapshot.size == 1 and dx_snapshot.size == 1 and step_size > 0.0:
+            return sp.csc_matrix((0, 1), dtype=float)
+        else:
+            raise AssertionError("Current-point J21 contract is invalid")
+
+    def get_j22(
+        self,
+        x_snapshot: np.ndarray,
+        dx_snapshot: np.ndarray,
+        step_size: float,
+    ) -> sp.csc_matrix:
+        """Return the empty algebraic Jacobian block.
+
+        :param x_snapshot: Current network snapshot.
+        :param dx_snapshot: Current differential snapshot.
+        :param step_size: Positive local step size.
+        :return: Empty CSC matrix.
+        """
+
+        if x_snapshot.size == 1 and dx_snapshot.size == 1 and step_size > 0.0:
+            return sp.csc_matrix((0, 0), dtype=float)
+        else:
+            raise AssertionError("Current-point J22 contract is invalid")
+
+    def get_j11_vec(self, step_size: float) -> sp.csc_matrix:
+        """Return the gathered vectorized J11 block.
+
+        :param step_size: Positive local step size.
+        :return: One-by-one zero CSC matrix.
+        """
+
+        if step_size > 0.0:
+            return sp.csc_matrix((1, 1), dtype=float)
+        else:
+            raise AssertionError("Current-point vector J11 is invalid")
+
+    def get_j12_vec(self, step_size: float) -> sp.csc_matrix:
+        """Return the gathered vectorized J12 block.
+
+        :param step_size: Positive local step size.
+        :return: One-by-zero CSC matrix.
+        """
+
+        if step_size > 0.0:
+            return sp.csc_matrix((1, 0), dtype=float)
+        else:
+            raise AssertionError("Current-point vector J12 is invalid")
+
+    def get_j21_vec(
+        self,
+        x_snapshot_or_step: np.ndarray | float,
+        dx_snapshot: np.ndarray | None = None,
+        step_size: float | None = None,
+    ) -> sp.csc_matrix:
+        """Return the gathered vectorized J21 block.
+
+        :param x_snapshot_or_step: Current network snapshot for the full
+            vectorized path, or the step for the gathered path.
+        :param dx_snapshot: Current differential snapshot when supplied.
+        :param step_size: Positive local step size when supplied separately.
+        :return: Zero-by-one CSC matrix.
+        """
+
+        if isinstance(x_snapshot_or_step, np.ndarray):
+            if dx_snapshot is not None and step_size is not None:
+                return self.get_j21(
+                    x_snapshot_or_step,
+                    dx_snapshot,
+                    step_size,
+                )
+            else:
+                raise AssertionError("Full-vector J21 inputs are incomplete")
+        else:
+            gathered_step_size: float = float(x_snapshot_or_step)
+            if dx_snapshot is None and step_size is None and gathered_step_size > 0.0:
+                return sp.csc_matrix((0, 1), dtype=float)
+            else:
+                raise AssertionError("Gathered J21 inputs are invalid")
+
+    def get_j22_vec(
+        self,
+        x_snapshot_or_step: np.ndarray | float,
+        dx_snapshot: np.ndarray | None = None,
+        step_size: float | None = None,
+    ) -> sp.csc_matrix:
+        """Return the gathered vectorized J22 block.
+
+        :param x_snapshot_or_step: Current network snapshot for the full
+            vectorized path, or the step for the gathered path.
+        :param dx_snapshot: Current differential snapshot when supplied.
+        :param step_size: Positive local step size when supplied separately.
+        :return: Empty CSC matrix.
+        """
+
+        if isinstance(x_snapshot_or_step, np.ndarray):
+            if dx_snapshot is not None and step_size is not None:
+                return self.get_j22(
+                    x_snapshot_or_step,
+                    dx_snapshot,
+                    step_size,
+                )
+            else:
+                raise AssertionError("Full-vector J22 inputs are incomplete")
+        else:
+            gathered_step_size: float = float(x_snapshot_or_step)
+            if dx_snapshot is None and step_size is None and gathered_step_size > 0.0:
+                return sp.csc_matrix((0, 0), dtype=float)
+            else:
+                raise AssertionError("Gathered J22 inputs are invalid")
+
+    def report_progress2(self, step_index: int, step_count: int) -> None:
+        """Validate deterministic solver progress.
+
+        :param step_index: Zero-based macro-step index.
+        :param step_count: Positive macro-step count.
+        :return: None.
+        """
+
+        if 0 <= step_index < step_count:
+            pass
+        else:
+            raise AssertionError("Current-point progress is invalid")
+
+    def initialize_fmu_me_devices(
+        self,
+        x_snapshot: np.ndarray,
+        time_value: float,
+    ) -> None:
+        """Validate ME ownership initialization.
+
+        :param x_snapshot: Accepted network snapshot.
+        :param time_value: Initial solver time.
+        :return: None.
+        """
+
+        if x_snapshot.size == 1 and math.isfinite(time_value):
+            self.me_initialize_count += 1
+        else:
+            raise AssertionError("Current-point ME initialization is invalid")
+
+    def initialize_fmu_cs_devices(
+        self,
+        x_snapshot: np.ndarray,
+        time_value: float,
+    ) -> None:
+        """Expose or suppress CS ownership for the requested scenario.
+
+        :param x_snapshot: Accepted network snapshot.
+        :param time_value: Initial solver time.
+        :return: None.
+        """
+
+        if self.enable_cs and x_snapshot.size == 1 and math.isfinite(time_value):
+            self.cs_initialize_count += 1
+            if self.initial_state_value is not None:
+                x_snapshot[0] = self.initial_state_value
+            else:
+                pass
+        else:
+            raise AttributeError("Synthetic problem has no active CS owner")
+
+    def advance_fmu_me_devices(
+        self,
+        t: float,
+        x_snapshot: np.ndarray,
+        h: float,
+    ) -> None:
+        """Record each accepted or corrected network point presented to ME.
+
+        :param t: Accepted local time.
+        :param x_snapshot: Network point used to derive FMU inputs.
+        :param h: Positive candidate step size.
+        :return: None.
+        """
+
+        if math.isfinite(t) and x_snapshot.size == 1 and h > 0.0:
+            self.me_advance_snapshots.append(x_snapshot.copy())
+            self.operation_log.append("me")
+        else:
+            raise AssertionError("Current-point ME advance is invalid")
+        if self.pending_retry_time is not None:
+            self.pending_retry_time = None
+        elif not self.event_emitted and np.isclose(x_snapshot[0], 1.0):
+            self.pending_retry_time = self.initial_event_time
+            self.event_emitted = self.initial_event_time is not None
+        elif not self.event_emitted:
+            self.pending_retry_time = self.corrected_event_time
+            self.event_emitted = self.corrected_event_time is not None
+        else:
+            pass
+
+    def prepare_fmu_me_state_event_retry(self) -> float | None:
+        """Return the configured pending event boundary.
+
+        :return: Pending retry time or None.
+        """
+
+        return self.pending_retry_time
+
+    def advance_fmu_cs_devices(
+        self,
+        t: float,
+        x_snapshot: np.ndarray,
+        h: float,
+    ) -> bool:
+        """Record a real or no-op CS advancement result.
+
+        :param t: Accepted local time.
+        :param x_snapshot: Accepted network snapshot.
+        :param h: Positive communication step.
+        :return: Configured advancement result.
+        """
+
+        co_simulation_advanced: bool = False
+        if (
+            math.isfinite(t)
+            and x_snapshot.size == 1
+            and h > 0.0
+        ):
+            self.cs_advance_count += 1
+            self.operation_log.append("cs")
+            co_simulation_advanced = self.cs_advance_result
+        else:
+            raise AssertionError("Current-point CS advance is invalid")
+        return co_simulation_advanced
+
+    def get_next_forced_event_time(
+        self,
+        lower_time: float,
+        upper_time: float,
+    ) -> float | None:
+        """Return a pending localized event inside the active interval.
+
+        :param lower_time: Accepted lower interval boundary.
+        :param upper_time: Candidate upper interval boundary.
+        :return: Pending event time when it lies strictly inside.
+        """
+
+        retry_time: float | None = self.pending_retry_time
+        if retry_time is not None and lower_time < retry_time < upper_time:
+            return retry_time
+        else:
+            return None
+
+    def resolve_fmu_me_devices(self, accepted: bool) -> None:
+        """Record whether the solver accepted the current ME candidate.
+
+        :param accepted: True for accepted candidates.
+        :return: None.
+        """
+
+        self.resolve_acceptances.append(accepted)
+        if accepted:
+            self.pending_retry_time = None
+        else:
+            pass
+
+    def close_fmu_me_devices(self) -> None:
+        """Close the synthetic ME owner.
+
+        :return: None.
+        """
+
+        self.operation_log.append("close_me")
+        self.me_close_count += 1
+
+    def close_fmu_cs_devices(self) -> None:
+        """Close the synthetic CS owner.
+
+        :return: None.
+        """
+
+        self.operation_log.append("close_cs")
+        self.cs_close_count += 1
 
 
 def _evaluate_linear_decay_derivative(
@@ -90,6 +697,8 @@ def _build_mock_backward_euler_adapter(
     adapter.fmi_three_coordinator = coordinator
     adapter.localized_state_event_time = None
     adapter.fmi_two_next_event_time = None
+    adapter.pending_candidate_input_values = None
+    adapter.fmi_two_accepted_input_values = (1.0,)
     return adapter, coordinator
 
 
@@ -131,14 +740,17 @@ def _evaluate_constant_test_derivative(
 
     :param time_value: Finite probe time.
     :param continuous_state_values: Current continuous states.
-    :param writable_values: Empty synthetic writable vector.
+    :param writable_values: Finite synthetic writable vector.
     :return: Constant derivatives and no readable values.
     """
 
-    if math.isfinite(time_value) and len(writable_values) == 0:
+    writable_values_are_finite: bool = all(
+        math.isfinite(writable_value) for writable_value in writable_values
+    )
+    if math.isfinite(time_value) and writable_values_are_finite:
         pass
     else:
-        raise AssertionError("Synthetic derivative probe is invalid")
+        raise AssertionError("Synthetic derivative probe contains a non-finite value")
     derivative_values: list[float] = [3.0] * len(continuous_state_values)
     return tuple(derivative_values), tuple()
 
@@ -150,6 +762,8 @@ def _build_synthetic_localization_adapter(
     candidate_states: tuple[float, ...],
     accepted_indicators: tuple[float, ...],
     candidate_indicators: tuple[float, ...],
+    accepted_inputs: tuple[float, ...] | None = None,
+    candidate_inputs: tuple[float, ...] | None = None,
 ) -> tuple[FmuMeDeviceAdapter, Mock]:
     """Build one bounded localization adapter without opening an FMU.
 
@@ -159,19 +773,40 @@ def _build_synthetic_localization_adapter(
     :param candidate_states: Candidate continuous states.
     :param accepted_indicators: Accepted indicator vector.
     :param candidate_indicators: Candidate indicator vector.
+    :param accepted_inputs: Optional accepted scalar input vector.
+    :param candidate_inputs: Optional candidate scalar input vector.
     :return: Synthetic adapter and its coordinator mock.
     """
 
     coordinator: Mock = Mock()
     coordinator.has_pending_candidate.return_value = True
+    if accepted_inputs is None and candidate_inputs is None:
+        if len(accepted_states) == 0:
+            input_variable_names: tuple[str, ...] = tuple()
+            accepted_input_values: tuple[float, ...] = tuple()
+        else:
+            input_variable_names = ("decay_rate",)
+            accepted_input_values = (1.0,)
+        candidate_input_values: tuple[float, ...] = accepted_input_values
+    else:
+        if (
+            accepted_inputs is not None
+            and candidate_inputs is not None
+            and len(accepted_inputs) == len(candidate_inputs)
+        ):
+            pass
+        else:
+            raise AssertionError("Synthetic localization inputs are incomplete")
+        input_variable_names = tuple(
+            f"coupling_input_{input_index}"
+            for input_index in range(len(accepted_inputs))
+        )
+        accepted_input_values = accepted_inputs
+        candidate_input_values = candidate_inputs
     if len(accepted_states) == 0:
         coordinator.evaluate_probe.side_effect = _evaluate_constant_test_derivative
-        input_variable_names: tuple[str, ...] = tuple()
-        accepted_input_values: tuple[float, ...] = tuple()
     else:
         coordinator.evaluate_probe.side_effect = _evaluate_linear_decay_derivative
-        input_variable_names = ("decay_rate",)
-        accepted_input_values = (1.0,)
     coordinator.evaluate_event_indicators_probe.side_effect = (
         _evaluate_linear_test_event_indicator
     )
@@ -192,6 +827,7 @@ def _build_synthetic_localization_adapter(
     adapter.state_vector = np.array(candidate_states, dtype=float)
     adapter.pending_time = candidate_time
     adapter.pending_candidate_state_values = candidate_states
+    adapter.pending_candidate_input_values = candidate_input_values
     candidate_derivative_values: list[float] = [0.0] * len(candidate_states)
     candidate_state_index: int
     for candidate_state_index in range(len(candidate_states)):
@@ -215,6 +851,7 @@ def _build_synthetic_localization_adapter(
     adapter.pending_accepted_event_indicators = accepted_indicators
     adapter.localized_state_event_time = None
     adapter.fmi_two_next_event_time = None
+    adapter.fmi_two_accepted_input_values = accepted_input_values
     adapter.fmi_two_accepted_derivative_values = None
     adapter.fmi_two_accepted_readable_values = None
     adapter.fmi_two_accepted_event_indicators = None
@@ -1480,3 +2117,543 @@ def test_backward_euler_localization_uses_method_consistent_midpoint_fmi_three()
     assert zero_localized_time == pytest.approx(0.5)
     assert zero_coordinator.evaluate_probe.call_count == 3
     assert zero_coordinator.evaluate_event_indicators_probe.call_count == 3
+
+
+def test_rms_problem_co_simulation_step_boundaries_report_actual_advancement() -> None:
+    """Report advancement only after the shared owner completes an adapter.
+
+    :return: None.
+    """
+
+    state_snapshot: np.ndarray = np.array([1.0], dtype=float)
+    inactive_problem: SimpleNamespace = SimpleNamespace(_fmu_cs_adapters=list())
+    inactive_results: tuple[bool, bool, bool, bool] = (
+        RmsProblemDae.advance_fmu_cs_devices(
+            inactive_problem,
+            t=0.0,
+            x_snapshot=state_snapshot,
+            h=0.1,
+        ),
+        RmsProblemDaeVec.advance_fmu_cs_devices(
+            inactive_problem,
+            t=0.0,
+            x_snapshot=state_snapshot,
+            h=0.1,
+        ),
+        RmsProblemDaeFullVec.advance_fmu_cs_devices(
+            inactive_problem,
+            t=0.0,
+            x_snapshot=state_snapshot,
+            h=0.1,
+        ),
+        RmsProblemPhasor.advance_fmu_cs_devices(
+            inactive_problem,
+            t=0.0,
+            x_snapshot=state_snapshot,
+            h=0.1,
+        ),
+    )
+    assert inactive_results == (False, False, False, False)
+
+    adapter: Mock = Mock()
+    adapter.advance.return_value = dict()
+    active_problem: SimpleNamespace = SimpleNamespace(
+        _fmu_cs_adapters=[adapter],
+        _fmu_cs_initialized=True,
+        _variable_parameters_values=np.array([0.0], dtype=float),
+        _last_variable_parameters_values=None,
+    )
+    active_results: tuple[bool, bool, bool, bool] = (
+        RmsProblemDae.advance_fmu_cs_devices(
+            active_problem,
+            t=0.0,
+            x_snapshot=state_snapshot,
+            h=0.1,
+        ),
+        RmsProblemDaeVec.advance_fmu_cs_devices(
+            active_problem,
+            t=0.0,
+            x_snapshot=state_snapshot,
+            h=0.1,
+        ),
+        RmsProblemDaeFullVec.advance_fmu_cs_devices(
+            active_problem,
+            t=0.0,
+            x_snapshot=state_snapshot,
+            h=0.1,
+        ),
+        RmsProblemPhasor.advance_fmu_cs_devices(
+            active_problem,
+            t=0.0,
+            x_snapshot=state_snapshot,
+            h=0.1,
+        ),
+    )
+    assert active_results == (True, True, True, True)
+    assert adapter.advance.call_count == 4
+    assert adapter.apply_outputs.call_count == 4
+
+
+def test_all_rms_integrators_use_co_simulation_step_boundary() -> None:
+    """Exercise the renamed Co-Simulation boundary in every RMS integrator.
+
+    :return: None.
+    """
+
+    solver_types: tuple[type, ...] = (
+        BackEulerImplicitIntegration,
+        BackEulerImplicitIntegrationVec,
+        BackEulerImplicitIntegrationFullVec,
+        MidpointImplicitIntegration,
+        TrapezoidalImplicitIntegration,
+    )
+    solver_type: type
+    for solver_type in solver_types:
+        problem: _CurrentPointCouplingProblem = _CurrentPointCouplingProblem(
+            enable_cs=True,
+            cs_advance_result=True,
+        )
+        solver = solver_type(
+            problem=problem,
+            t0=0.0,
+            t_end=0.1,
+            h=0.1,
+            max_iter=4,
+            tolerance=1.0e-10,
+        )
+        ignored_result: tuple = solver.simulate()
+        assert problem.cs_advance_count == 1
+        assert problem.operation_log.count("cs") == 1
+
+
+def test_backward_euler_variants_refresh_me_from_current_network_iterate() -> None:
+    """Refresh ME from the corrected point before the next residual.
+
+    :return: None.
+    """
+
+    solver_types: tuple[type, ...] = (
+        BackEulerImplicitIntegration,
+        BackEulerImplicitIntegrationVec,
+        BackEulerImplicitIntegrationFullVec,
+    )
+    solver_type: type
+    for solver_type in solver_types:
+        problem: _CurrentPointCouplingProblem = _CurrentPointCouplingProblem()
+        solver = solver_type(
+            problem=problem,
+            t0=0.0,
+            t_end=0.1,
+            h=0.1,
+            max_iter=4,
+            tolerance=1.0e-10,
+        )
+        ignored_times: np.ndarray
+        state_history: np.ndarray
+        initialized: bool
+        converged: bool
+        ignored_times, state_history, initialized, converged = solver.simulate()
+        assert initialized
+        assert converged
+        assert state_history[-1, 0] == pytest.approx(1.1)
+        assert len(problem.me_advance_snapshots) >= 2
+        assert problem.me_advance_snapshots[0][0] == pytest.approx(1.0)
+        assert problem.me_advance_snapshots[1][0] == pytest.approx(1.1)
+        assert problem.resolve_acceptances == [True]
+
+
+def test_backward_euler_pure_me_and_pre_cs_events_retry_before_cs() -> None:
+    """Retry pure-ME and pre-CS events without advancing CS first.
+
+    :return: None.
+    """
+
+    pure_me_problem: _CurrentPointCouplingProblem = _CurrentPointCouplingProblem(
+        enable_cs=False,
+        initial_event_time=0.05,
+    )
+    pure_me_solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=pure_me_problem,
+        t0=0.0,
+        t_end=0.1,
+        h=0.1,
+        max_iter=4,
+        tolerance=1.0e-10,
+    )
+    ignored_pure_result: tuple = pure_me_solver.simulate()
+    assert pure_me_problem.cs_advance_count == 0
+    assert pure_me_problem.operation_log[:2] == ["me", "me"]
+    assert pure_me_problem.resolve_acceptances == [True, True]
+
+    pre_cs_problem: _CurrentPointCouplingProblem = _CurrentPointCouplingProblem(
+        enable_cs=True,
+        cs_advance_result=True,
+        initial_event_time=0.05,
+    )
+    pre_cs_solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=pre_cs_problem,
+        t0=0.0,
+        t_end=0.1,
+        h=0.1,
+        max_iter=4,
+        tolerance=1.0e-10,
+    )
+    ignored_pre_cs_result: tuple = pre_cs_solver.simulate()
+    assert pre_cs_problem.operation_log[:3] == ["me", "me", "cs"]
+    assert pre_cs_problem.cs_advance_count == 2
+    assert pre_cs_problem.resolve_acceptances == [True, True]
+
+
+def test_backward_euler_variants_fail_closed_after_real_cs_advance() -> None:
+    """Reject an ME retry discovered after any real CS advancement.
+
+    :return: None.
+    """
+
+    expected_message: str = (
+        "RMS FMI ME state event cannot retry after Co-Simulation devices advanced"
+    )
+    solver_types: tuple[type, ...] = (
+        BackEulerImplicitIntegration,
+        BackEulerImplicitIntegrationVec,
+        BackEulerImplicitIntegrationFullVec,
+    )
+    solver_type: type
+    for solver_type in solver_types:
+        problem: _CurrentPointCouplingProblem = _CurrentPointCouplingProblem(
+            enable_cs=True,
+            cs_advance_result=True,
+            corrected_event_time=0.05,
+        )
+        solver = solver_type(
+            problem=problem,
+            t0=0.0,
+            t_end=0.1,
+            h=0.1,
+            max_iter=4,
+            tolerance=1.0e-10,
+        )
+        with pytest.raises(RuntimeError, match=expected_message):
+            solver.simulate()
+        assert problem.cs_advance_count == 1
+        assert problem.me_advance_snapshots[1][0] == pytest.approx(1.1)
+        assert problem.operation_log[-2:] == ["close_cs", "close_me"]
+
+
+def test_fmi_two_candidate_input_does_not_replace_accepted_rollback_input() -> None:
+    """Restore FMI 2 with accepted inputs after rejecting a new candidate.
+
+    :return: None.
+    """
+
+    adapter: FmuMeDeviceAdapter
+    ignored_coordinator: Mock
+    adapter, ignored_coordinator = _build_mock_backward_euler_adapter()
+    runtime_host: Mock = Mock()
+    runtime_host.get_derivatives.return_value = [-1.0]
+    runtime_host.get_real.return_value = dict()
+    runtime_host.get_event_indicators.return_value = (0.5,)
+    adapter.runtime_host = runtime_host
+    adapter.fmi_three_coordinator = None
+    adapter.state_vector = np.array([1.0], dtype=float)
+    adapter.fmi_two_accepted_input_values = (0.25,)
+    adapter.fmi_two_accepted_derivative_values = (-1.0,)
+    adapter.fmi_two_accepted_readable_values = tuple()
+    adapter.fmi_two_accepted_event_indicators = (0.5,)
+    preparation_budget: FmuMeEvaluationBudget = FmuMeEvaluationBudget(20)
+    adapter._prepare_bound_step(
+        current_time=0.0,
+        step_size=0.5,
+        input_values=dict(decay_rate=1.5),
+        evaluation_budget=preparation_budget,
+    )
+    assert adapter.pending_accepted_input_values == (0.25,)
+    assert adapter.pending_candidate_input_values == (1.5,)
+
+    runtime_host.reset_mock()
+    rejection_budget: FmuMeEvaluationBudget = FmuMeEvaluationBudget(2)
+    adapter.resolve_pending_step(
+        accepted=False,
+        evaluation_budget=rejection_budget,
+    )
+    restored_values: dict[str, float] = runtime_host.set_real.call_args.args[0]
+    assert restored_values == dict(decay_rate=0.25)
+    assert adapter.fmi_two_accepted_input_values == (0.25,)
+    assert adapter.pending_candidate_input_values is None
+
+
+def test_rms_me_candidate_replacement_reuses_one_budget() -> None:
+    """Reject then replace all ME candidates under one local-step budget.
+
+    :return: None.
+    """
+
+    runtime_adapter: Mock = Mock()
+    runtime_adapter.has_pending_candidate.side_effect = [False, True]
+    rms_adapter: Mock = Mock()
+    rms_adapter.runtime_adapter = runtime_adapter
+    rms_adapter.advance.side_effect = [dict(), dict()]
+    problem: SimpleNamespace = SimpleNamespace(
+        _fmu_me_adapters=[rms_adapter],
+        _fmu_me_initialized=True,
+        _fmu_me_evaluation_budget=None,
+        _variable_parameters_values=np.zeros(1, dtype=float),
+        _last_variable_parameters_values=None,
+        options=SimpleNamespace(fmi_me_max_runtime_evaluations_per_step=17),
+    )
+    first_snapshot: np.ndarray = np.array([1.0], dtype=float)
+    second_snapshot: np.ndarray = np.array([1.1], dtype=float)
+    advance_rms_fmu_me_devices(
+        problem=problem,
+        time_value=0.0,
+        x_snapshot=first_snapshot,
+        step_size=0.1,
+    )
+    first_budget: FmuMeEvaluationBudget = (
+        rms_adapter.advance.call_args_list[0].kwargs["evaluation_budget"]
+    )
+    advance_rms_fmu_me_devices(
+        problem=problem,
+        time_value=0.0,
+        x_snapshot=second_snapshot,
+        step_size=0.1,
+    )
+    second_budget: FmuMeEvaluationBudget = (
+        rms_adapter.advance.call_args_list[1].kwargs["evaluation_budget"]
+    )
+    assert second_budget is first_budget
+    assert problem._fmu_me_evaluation_budget is first_budget
+    rms_adapter.resolve_step.assert_called_once_with(
+        accepted=False,
+        evaluation_budget=first_budget,
+    )
+    assert rms_adapter.advance.call_args_list[1].kwargs["x_snapshot"] is second_snapshot
+
+
+def test_fmi_two_state_event_localization_interpolates_input_trajectory() -> None:
+    """Present linearly interpolated FMI 2 inputs at every bisection point.
+
+    :return: None.
+    """
+
+    adapter: FmuMeDeviceAdapter
+    ignored_coordinator: Mock
+    adapter, ignored_coordinator = _build_synthetic_localization_adapter(
+        accepted_time=0.0,
+        candidate_time=1.0,
+        accepted_states=tuple(),
+        candidate_states=tuple(),
+        accepted_indicators=(-0.4,),
+        candidate_indicators=(0.6,),
+        accepted_inputs=(0.0,),
+        candidate_inputs=(2.0,),
+    )
+    runtime_host: Mock = Mock()
+    runtime_host.get_derivatives.return_value = list()
+    runtime_host.get_real.return_value = dict()
+    runtime_host.get_event_indicators.side_effect = [
+        (0.1,),
+        (0.6,),
+        (-0.15,),
+        (0.6,),
+        (-0.025,),
+        (0.6,),
+    ]
+    adapter.runtime_host = runtime_host
+    adapter.fmi_three_coordinator = None
+    evaluation_budget: FmuMeEvaluationBudget = FmuMeEvaluationBudget(20)
+    localized_time: float | None = adapter.get_pending_state_event_time(
+        time_tolerance=0.125,
+        maximum_iterations=3,
+        evaluation_budget=evaluation_budget,
+    )
+    assert localized_time == pytest.approx(0.5)
+    presented_inputs: list[float] = list()
+    input_call: object
+    for input_call in runtime_host.set_real.call_args_list:
+        input_values: dict[str, float] = input_call.args[0]
+        presented_inputs.append(input_values["coupling_input_0"])
+    assert presented_inputs == pytest.approx([1.0, 2.0, 0.5, 2.0, 0.75, 2.0])
+
+
+def test_fmi_three_state_event_localization_interpolates_input_trajectory() -> None:
+    """Present linearly interpolated FMI 3 inputs at every bisection point.
+
+    :return: None.
+    """
+
+    adapter: FmuMeDeviceAdapter
+    coordinator: Mock
+    adapter, coordinator = _build_synthetic_localization_adapter(
+        accepted_time=0.0,
+        candidate_time=1.0,
+        accepted_states=tuple(),
+        candidate_states=tuple(),
+        accepted_indicators=(-0.4,),
+        candidate_indicators=(0.6,),
+        accepted_inputs=(0.0,),
+        candidate_inputs=(2.0,),
+    )
+    coordinator.evaluate_event_indicators_probe.side_effect = (
+        _evaluate_time_test_event_indicator
+    )
+    evaluation_budget: FmuMeEvaluationBudget = FmuMeEvaluationBudget(10)
+    localized_time: float | None = adapter.get_pending_state_event_time(
+        time_tolerance=0.125,
+        maximum_iterations=3,
+        evaluation_budget=evaluation_budget,
+    )
+    assert localized_time == pytest.approx(0.5)
+    presented_inputs: list[float] = list()
+    probe_call: object
+    for probe_call in coordinator.evaluate_probe.call_args_list:
+        writable_values: tuple[float, ...] = probe_call.kwargs["writable_values"]
+        presented_inputs.append(writable_values[0])
+    assert presented_inputs == pytest.approx([1.0, 0.5, 0.75])
+
+
+def test_fmi_two_me_spec_rejects_non_continuous_runtime_inputs(
+    tmp_path: Path,
+) -> None:
+    """Accept the FMI 2 continuous default and reject other input domains.
+
+    :param tmp_path: Isolated extracted-FMU parent provided by pytest.
+    :return: None.
+    """
+
+    accepted_source: Path = tmp_path / "fmi-two-continuous-default"
+    accepted_source.mkdir()
+    accepted_xml: str = (
+        '<fmiModelDescription fmiVersion="2.0" modelName="InputDomain" '
+        'guid="fmi-two-continuous-default">'
+        '<ModelExchange modelIdentifier="input_domain"/>'
+        '<ModelVariables><ScalarVariable name="u" valueReference="1" '
+        'causality="input"><Real start="0"/></ScalarVariable></ModelVariables>'
+        '<ModelStructure/></fmiModelDescription>'
+    )
+    (accepted_source / "modelDescription.xml").write_text(
+        accepted_xml,
+        encoding="utf-8",
+    )
+    accepted_spec = build_fmu_me_device_spec(
+        domain=FmuMeDomain.RMS,
+        config=FmuImportConfig(
+            fmu_path=accepted_source,
+            preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE,
+        ),
+        device_tpe=DeviceType.LoadDevice,
+        input_variable_names=("u",),
+        output_variable_names=tuple(),
+    )
+    assert accepted_spec.input_variable_names == ("u",)
+
+    rejected_domains: tuple[tuple[str, str], ...] = (
+        ("parameter", "fixed"),
+        ("input", "discrete"),
+    )
+    causality: str
+    variability: str
+    for causality, variability in rejected_domains:
+        source: Path = tmp_path / f"fmi-two-{causality}-{variability}"
+        source.mkdir()
+        xml_text: str = (
+            '<fmiModelDescription fmiVersion="2.0" modelName="InputDomain" '
+            f'guid="fmi-two-{causality}-{variability}">'
+            '<ModelExchange modelIdentifier="input_domain"/>'
+            '<ModelVariables><ScalarVariable name="u" valueReference="1" '
+            f'causality="{causality}" variability="{variability}">'
+            '<Real start="0"/></ScalarVariable></ModelVariables>'
+            '<ModelStructure/></fmiModelDescription>'
+        )
+        (source / "modelDescription.xml").write_text(xml_text, encoding="utf-8")
+        with pytest.raises(FmuModeError, match="runtime input must be continuous input"):
+            build_fmu_me_device_spec(
+                domain=FmuMeDomain.RMS,
+                config=FmuImportConfig(
+                    fmu_path=source,
+                    preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE,
+                ),
+                device_tpe=DeviceType.LoadDevice,
+                input_variable_names=("u",),
+                output_variable_names=tuple(),
+            )
+
+
+def test_fmi_three_me_spec_rejects_non_continuous_runtime_inputs(
+    tmp_path: Path,
+) -> None:
+    """Accept continuous FMI 3 inputs and reject parameters or discrete inputs.
+
+    :param tmp_path: Isolated extracted-FMU parent provided by pytest.
+    :return: None.
+    """
+
+    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
+        maximum_frame_size=262144,
+        maximum_float64_values_per_request=64,
+        response_timeout_seconds=60.0,
+        graceful_join_timeout_seconds=10.0,
+        terminate_join_timeout_seconds=5.0,
+        kill_join_timeout_seconds=5.0,
+    )
+    accepted_source: Path = tmp_path / "fmi-three-continuous"
+    accepted_source.mkdir()
+    accepted_xml: str = (
+        '<fmiModelDescription fmiVersion="3.0" modelName="InputDomain" '
+        'instantiationToken="fmi-three-continuous">'
+        '<ModelExchange modelIdentifier="input_domain"/>'
+        '<ModelVariables><Float64 name="u" valueReference="1" '
+        'causality="input" variability="continuous" start="0"/>'
+        '<Float64 name="time" valueReference="2" causality="independent" '
+        'variability="continuous"/>'
+        '</ModelVariables><ModelStructure/></fmiModelDescription>'
+    )
+    (accepted_source / "modelDescription.xml").write_text(
+        accepted_xml,
+        encoding="utf-8",
+    )
+    accepted_spec = build_fmu_me_device_spec(
+        domain=FmuMeDomain.RMS,
+        config=FmuImportConfig(
+            fmu_path=accepted_source,
+            preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE,
+        ),
+        device_tpe=DeviceType.LoadDevice,
+        input_variable_names=("u",),
+        output_variable_names=tuple(),
+        worker_limits=worker_limits,
+    )
+    assert accepted_spec.input_variable_names == ("u",)
+
+    rejected_domains: tuple[tuple[str, str], ...] = (
+        ("parameter", "fixed"),
+        ("input", "discrete"),
+    )
+    causality: str
+    variability: str
+    for causality, variability in rejected_domains:
+        source: Path = tmp_path / f"fmi-three-{causality}-{variability}"
+        source.mkdir()
+        xml_text: str = (
+            '<fmiModelDescription fmiVersion="3.0" modelName="InputDomain" '
+            f'instantiationToken="fmi-three-{causality}-{variability}">'
+            '<ModelExchange modelIdentifier="input_domain"/>'
+            '<ModelVariables><Float64 name="u" valueReference="1" '
+            f'causality="{causality}" variability="{variability}" start="0"/>'
+            '<Float64 name="time" valueReference="2" causality="independent" '
+            'variability="continuous"/>'
+            '</ModelVariables><ModelStructure/></fmiModelDescription>'
+        )
+        (source / "modelDescription.xml").write_text(xml_text, encoding="utf-8")
+        with pytest.raises(FmuModeError, match="runtime input must be continuous input"):
+            build_fmu_me_device_spec(
+                domain=FmuMeDomain.RMS,
+                config=FmuImportConfig(
+                    fmu_path=source,
+                    preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE,
+                ),
+                device_tpe=DeviceType.LoadDevice,
+                input_variable_names=("u",),
+                output_variable_names=tuple(),
+                worker_limits=worker_limits,
+            )

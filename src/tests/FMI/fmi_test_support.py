@@ -11,6 +11,7 @@ import uuid
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Injections.load import Load
@@ -40,15 +41,17 @@ from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
-from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model, set_rms_model
 from VeraGridEngine.enumerations import (
     BranchImpedanceMode,
     DynamicIntegrationMethod,
     EmtInitializationMethod,
     EmtSolverTypes,
+    ParamPowerFlowReferenceType,
     SolverType,
     VarPowerFlowReferenceType,
 )
@@ -99,15 +102,15 @@ def _build_test_rms_me_source_block() -> Block:
     u: Var = Var("u")
     return Block(
         state_vars=list((x,)),
-        # The example begins at the coupled load operating point. The voltage
-        # input therefore produces no artificial derivative at u=1 and x=0.
-        state_eqs=list((u - Const(1.0) - x,)),
+        # Keep the accepted initialization voltage as a state so the native
+        # fixture exposes current-point voltage coupling without internal lag.
+        state_eqs=list((Const(0.0),)),
         algebraic_vars=list((p_out, q_out)),
-        # Active power retains a small state response while both outputs start
-        # from the same nonzero values used by the static demonstration load.
+        # Both powers respond directly to the current voltage input. This makes
+        # a stale previous-iterate input distinguishable in the native test.
         algebraic_eqs=list((
-            p_out - (Const(-0.1) - Const(0.02) * x),
-            q_out - Const(-0.01),
+            p_out - (Const(-0.1) - Const(2.0) * (u - x)),
+            q_out - (Const(-0.01) - (u - x)),
         )),
         diff_vars=list((dx,)),
         init_values=dict((
@@ -116,6 +119,7 @@ def _build_test_rms_me_source_block() -> Block:
             (q_out, Const(-0.01)),
         )),
         init_eqs=dict((
+            (x, u),
             (p_out, Const(-0.1)),
             (q_out, Const(-0.01)),
         )),
@@ -341,13 +345,38 @@ def build_test_rms_grid() -> tuple[MultiCircuit, Load]:
         freq=50.0,
     )
     load: Load = Load(name="ImportedLoad", P=10.0, Q=1.0)
+    disturbance_load: Load = Load(name="DisturbanceLoad", P=5.0, Q=1.0)
 
     grid.add_line(line)
     grid.add_generator(bus=bus_slack, api_obj=generator)
     grid.add_load(bus=bus_load, api_obj=load)
+    grid.add_load(bus=bus_load, api_obj=disturbance_load)
     line.rms_template = get_line_rms_template(grid.var_factory)
     generator.rms_template = get_complete_generator_template_rms(grid.var_factory)
-    grid.add_rms_events_group(RmsEventsGroup(name="default_rms_example_group"))
+    disturbance_model: Block = get_load_rms_template(grid.var_factory).block
+    set_rms_model(
+        device=disturbance_load,
+        model=disturbance_model,
+        var_factory=grid.var_factory,
+    )
+    event_group: RmsEventsGroup = RmsEventsGroup(name="default_rms_example_group")
+    grid.add_rms_events_group(event_group)
+    active_power_parameter: Var | None = disturbance_model.api_obj_mapping.get(
+        ParamPowerFlowReferenceType.Pl0,
+        None,
+    )
+    if active_power_parameter is not None:
+        pass
+    else:
+        raise AssertionError("The RMS disturbance load has no Pl0 parameter")
+    grid.add_rms_event(RmsEvent(
+        device=disturbance_load,
+        parameter=active_power_parameter,
+        time=2.0e-3,
+        value=-0.15,
+        group=event_group,
+        force_step_alignment=True,
+    ))
     return grid, load
 
 
@@ -393,10 +422,11 @@ def execute_test_rms_fmu_case(
         source_fmu_path: Path | None = None,
         me_input_variable_name: str = "u",
         active_power_output_name: str = "p_out",
-        reactive_power_output_name: str = "q_out",
+        reactive_power_output_name: str | None = "q_out",
         worker_limits: FmiThreeWorkerHostLimits | None = None,
         static_active_power_mw: float = 10.0,
         static_reactive_power_mvar: float = 1.0,
+        rms_tolerance: float = 1.0e-6,
 ) -> tuple[RmsSimulationDriver, Load, Path]:
     """Execute one RMS FMU integration case through the product API.
 
@@ -408,10 +438,12 @@ def execute_test_rms_fmu_case(
     :param source_fmu_path: Optional prebuilt FMU used instead of local export.
     :param me_input_variable_name: Model Exchange voltage-input variable name.
     :param active_power_output_name: Active-power output variable name.
-    :param reactive_power_output_name: Reactive-power output variable name.
+    :param reactive_power_output_name: Optional reactive-power output variable
+        name. ``None`` leaves reactive power outside the imported shell.
     :param worker_limits: Explicit FMI 3 native-worker supervision policy.
     :param static_active_power_mw: Load active power used by the initial power flow.
     :param static_reactive_power_mvar: Load reactive power used by the initial power flow.
+    :param rms_tolerance: RMS nonlinear convergence tolerance for this fixture.
     :return: Completed RMS driver, attached load, and generated FMU path.
     """
 
@@ -452,19 +484,30 @@ def execute_test_rms_fmu_case(
     else:
         raise RuntimeError("The RMS FMU integration test power flow did not converge")
 
-    if load.bus is None:
-        raise RuntimeError("The RMS FMU integration test load is not connected to a bus")
+    # The FMU replaces one load, so its pre-runtime fallback must represent
+    # that device alone.  Using Sbus here would also include the disturbance
+    # load connected to the same bus and would double-count its contribution.
+    device_active_power: float = -float(load.P) / float(grid.Sbase)
+    device_reactive_power: float = -float(load.Q) / float(grid.Sbase)
+    output_bindings: tuple[FmuRefBinding, ...]
+    output_defaults: tuple[FmuReferenceValue, ...]
+    if reactive_power_output_name is None:
+        # A scalar FMU is a single physical signal. Keep it bound once instead
+        # of duplicating one native value as unrelated active and reactive power.
+        output_bindings = (
+            FmuRefBinding(
+                VarPowerFlowReferenceType.P,
+                active_power_output_name,
+            ),
+        )
+        output_defaults = (
+            FmuReferenceValue(
+                VarPowerFlowReferenceType.P,
+                device_active_power,
+            ),
+        )
     else:
-        bus_index: int = grid.buses.index(load.bus)
-    bus_power: complex = complex(
-        power_flow_driver.results.Sbus[bus_index] / grid.Sbase
-    )
-    request: FmuDeviceAttachmentRequest = FmuDeviceAttachmentRequest(
-        fmu_path=fmu_path,
-        domain=FmuDeviceDomain.RMS,
-        mode=mode,
-        input_bindings=input_bindings,
-        output_bindings=(
+        output_bindings = (
             FmuRefBinding(
                 VarPowerFlowReferenceType.P,
                 active_power_output_name,
@@ -473,11 +516,25 @@ def execute_test_rms_fmu_case(
                 VarPowerFlowReferenceType.Q,
                 reactive_power_output_name,
             ),
-        ),
-        output_defaults=(
-            FmuReferenceValue(VarPowerFlowReferenceType.P, bus_power.real),
-            FmuReferenceValue(VarPowerFlowReferenceType.Q, bus_power.imag),
-        ),
+        )
+        output_defaults = (
+            FmuReferenceValue(
+                VarPowerFlowReferenceType.P,
+                device_active_power,
+            ),
+            FmuReferenceValue(
+                VarPowerFlowReferenceType.Q,
+                device_reactive_power,
+            ),
+        )
+
+    request: FmuDeviceAttachmentRequest = FmuDeviceAttachmentRequest(
+        fmu_path=fmu_path,
+        domain=FmuDeviceDomain.RMS,
+        mode=mode,
+        input_bindings=input_bindings,
+        output_bindings=output_bindings,
+        output_defaults=output_defaults,
         extraction_root=output_dir,
         worker_limits=worker_limits,
     )
@@ -488,7 +545,7 @@ def execute_test_rms_fmu_case(
         options=RmsOptions(
             time_step=1.0e-3,
             simulation_time=5.0e-3,
-            tolerance=1.0e-6,
+            tolerance=rms_tolerance,
             integration_method=DynamicIntegrationMethod.DaeBackEuler,
             max_iter=50,
         ),

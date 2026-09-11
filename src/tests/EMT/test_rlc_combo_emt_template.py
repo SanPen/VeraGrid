@@ -30,6 +30,25 @@ def test_rlc_combo_emt_template_builds_r_plus_l_star_case() -> None:
     assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in templ.block.diagram.node_data.values())
 
 
+def test_rlc_combo_uses_total_three_phase_power_base() -> None:
+    vf = VarFactory()
+    templ = get_shunt_rlc_combo_emt_template(
+        vf=vf,
+        include_r=True,
+        include_l=True,
+        include_c=False,
+        phA=True,
+        phB=False,
+        phC=False,
+        connection_type=ShuntConnectionType.FloatingStar,
+    )
+
+    expressions = {variable.name: str(expression)
+                   for variable, expression in templ.block.event_dict.items()}
+    assert "(3.0) * (Pl0_A)" in expressions["R_A"]
+    assert "(3.0) * (Ql0_A)" in expressions["L_A"]
+
+
 def test_rlc_combo_emt_template_builds_neutralstar_with_explicit_neutral_port() -> None:
     vf = VarFactory()
     templ = get_shunt_rlc_combo_emt_template(

@@ -1485,6 +1485,17 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             else:
                 bus_index = self.bus_dict[elm.bus]
 
+                # Static values must be resolved before parameter registration;
+                # explicit initialization then sees physical values rather than
+                # template defaults (notably for shunt conductance/susceptance).
+                assign_static_api_object_mapping_for_device(
+                    grid=self.grid,
+                    device=elm,
+                    mdl=elm.rms_model,
+                    problem_mapping=self._static_parameters_values_mapping,
+                    logger=self.logger,
+                )
+
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
 
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
@@ -3358,8 +3369,13 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             self._alias_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
             self._uid2idx_event_params[ep.uid] = self._n_event_params
 
-            effective_eq: Expr | Const = eq
-            if isinstance(eq, Const) and eq.value is None:
+            effective_eq: Expr | Const = self._static_parameters_values_mapping.get(ep, eq)
+            if ep in self._static_parameters_values_mapping:
+                mapped_value = self._static_parameters_values_mapping[ep].value
+                if mapped_value is not None:
+                    self.event_params_init_dict[ep.uid] = float(mapped_value)
+
+            if isinstance(effective_eq, Const) and effective_eq.value is None:
                 init_eq_for_ep: Expr | Const | None = None
                 for init_var, init_eq in mdl.init_eqs.items():
                     if init_var.uid == ep.uid:
@@ -3376,8 +3392,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             runtime_expression: Expr | Const = effective_eq if runtime_eq is None else runtime_eq
 
             if runtime_eq is None and ep.uid in self._discrete_event_parameter_uids:
-                if isinstance(eq, Const) and eq.value is not None:
-                    runtime_expression = Const(float(eq.value))
+                if isinstance(effective_eq, Const) and effective_eq.value is not None:
+                    runtime_expression = Const(float(effective_eq.value))
                 else:
                     runtime_expression = Const(0.0)
                     self._mode_runtime_expression_by_uid[ep.uid] = effective_eq
@@ -3755,20 +3771,27 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         else:
             self._fmu_cs_initialized = True
 
-    def advance_fmu_cs_devices(self, t: float, x_snapshot: Vec, h: float) -> None:
+    def advance_fmu_cs_devices(self, t: float, x_snapshot: Vec, h: float) -> bool:
         """
         Advance imported FMU Co-Simulation devices for one RMS communication step.
 
         :param t: Current simulation time.
         :param x_snapshot: Current accepted state vector.
         :param h: RMS communication step.
-        :return: None.
+        :return: Whether at least one registered CS adapter advanced.
         """
 
+        co_simulation_advanced: bool = False
         if len(self._fmu_cs_adapters) > 0:
-            advance_rms_fmu_cs_devices(problem=self, time_value=t, x_snapshot=x_snapshot, step_size=h)
+            co_simulation_advanced = advance_rms_fmu_cs_devices(
+                problem=self,
+                time_value=t,
+                x_snapshot=x_snapshot,
+                step_size=h,
+            )
         else:
             pass
+        return co_simulation_advanced
 
     def close_fmu_cs_devices(self) -> None:
         """

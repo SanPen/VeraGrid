@@ -24,11 +24,13 @@ from VeraGridEngine.IO.fmu.importer.bindings import (
     FmiThreeFloat64ConfigurationValue,
     FmiThreeFloat64SessionValueSelector,
     FmiThreeUInt64ConfigurationValue,
+    FmuFloat64ParameterValue,
     FmuImportConfig,
     FmuRefBinding,
     _build_fmi_three_configuration_session_values,
     _reject_indexed_fmu_ref_bindings,
     _validate_fmi_three_configuration_values,
+    _validate_fmu_float64_parameter_values,
     resolve_fmi_three_float64_session_value_selectors,
 )
 from VeraGridEngine.IO.fmu.importer.device_config import load_fmu_cs_device_config, restore_fmu_cs_spec_from_record
@@ -49,8 +51,8 @@ from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     FmiThreeWorkerDoStepResult,
 )
 from VeraGridEngine.IO.fmu.importer.runtime_session import (
-    FmiThreeFloat64Session,
-    open_fmi_three_float64_session,
+    FmiThreeNumericSession,
+    open_fmi_three_numeric_session,
 )
 from VeraGridEngine.IO.fmu.importer.runtime_worker_host import (
     FmiThreeWorkerHostLimits,
@@ -95,6 +97,7 @@ class FmuCsDeviceSpec:
         "float64_profile",
         "configuration_float64_values",
         "configuration_uint64_values",
+        "parameter_values",
     )
 
     def __init__(
@@ -114,6 +117,7 @@ class FmuCsDeviceSpec:
         configuration_uint64_values: tuple[
             FmiThreeUInt64ConfigurationValue, ...
         ] = tuple(),
+        parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(),
     ) -> None:
         """Store the runtime FMU device specification.
 
@@ -128,6 +132,7 @@ class FmuCsDeviceSpec:
         :param float64_profile: Derived FMI 3 worker shape profile.
         :param configuration_float64_values: Structural Float64 declarations.
         :param configuration_uint64_values: Structural UInt64 declarations.
+        :param parameter_values: Ephemeral values resolved from Block.parameters.
         :return: None.
         """
 
@@ -150,6 +155,10 @@ class FmuCsDeviceSpec:
         self.configuration_uint64_values: tuple[
             FmiThreeUInt64ConfigurationValue, ...
         ] = tuple(configuration_uint64_values)
+        _validate_fmu_float64_parameter_values(parameter_values=parameter_values)
+        self.parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(
+            parameter_values
+        )
 
 
 class FmuCsDeviceAdapter:
@@ -190,7 +199,7 @@ class FmuCsDeviceAdapter:
         self.spec: FmuCsDeviceSpec = spec
         self.output_param_indices: dict[VarPowerFlowReferenceType, int] = output_param_indices
         self.runtime_host: FmuRuntimeHost | None = None
-        self.fmi_three_session: FmiThreeFloat64Session | None = None
+        self.fmi_three_session: FmiThreeNumericSession | None = None
         self.last_time: float = 0.0
         self.initialized: bool = False
         self.last_outputs: dict[VarPowerFlowReferenceType, float] = dict()
@@ -295,9 +304,25 @@ class FmuCsDeviceAdapter:
                 # FMI 2 retains its established in-process runtime until its
                 # isolation boundary is designed as an independent increment.
                 self.runtime_host = open_fmu_runtime_host(self.spec.config)
+                initialization_values: dict[str, float] = dict()
+                parameter_value: FmuFloat64ParameterValue
+                for parameter_value in self.spec.parameter_values:
+                    initialization_values[parameter_value.variable_name] = (
+                        parameter_value.value
+                    )
+                input_values: dict[str, float] = self._build_input_values(x_snapshot)
+                input_name: str
+                input_value: float
+                for input_name, input_value in input_values.items():
+                    if input_name in initialization_values:
+                        raise FmuModeError(
+                            "FMU parameter collides with a Co-Simulation input"
+                        )
+                    else:
+                        initialization_values[input_name] = input_value
                 self.runtime_host.initialize(
                     start_time=start_time,
-                    start_values=self._build_input_values(x_snapshot),
+                    start_values=initialization_values,
                 )
             else:
                 # Writable arrays remain fail-closed because an incomplete set
@@ -329,6 +354,33 @@ class FmuCsDeviceAdapter:
                     writable_variable_names[binding_index] = (
                         self.spec.input_bindings[binding_index].fmu_variable_name
                     )
+                initialization_variable_names: list[str] = [""] * (
+                    len(self.spec.parameter_values)
+                    + len(writable_variable_names)
+                )
+                initial_float64_values: list[float] = [0.0] * len(
+                    initialization_variable_names
+                )
+                parameter_index: int
+                for parameter_index in range(len(self.spec.parameter_values)):
+                    parameter_value = self.spec.parameter_values[parameter_index]
+                    initialization_variable_names[parameter_index] = (
+                        parameter_value.variable_name
+                    )
+                    initial_float64_values[parameter_index] = parameter_value.value
+                input_start_values: tuple[float, ...] = (
+                    self._build_fmi_three_writable_values(x_snapshot)
+                )
+                for binding_index in range(len(writable_variable_names)):
+                    initialization_index: int = (
+                        len(self.spec.parameter_values) + binding_index
+                    )
+                    initialization_variable_names[initialization_index] = (
+                        writable_variable_names[binding_index]
+                    )
+                    initial_float64_values[initialization_index] = (
+                        input_start_values[binding_index]
+                    )
 
                 configuration_session_values: (
                     FmiThreeConfigurationSessionValues
@@ -341,11 +393,14 @@ class FmuCsDeviceAdapter:
                     ),
                 )
 
-                session: FmiThreeFloat64Session = open_fmi_three_float64_session(
+                session: FmiThreeNumericSession = open_fmi_three_numeric_session(
                     config=self.spec.config,
                     instance_name="veragrid-fmi-three-cs-device",
                     readable_variable_names=readable_variable_names,
                     writable_variable_names=tuple(writable_variable_names),
+                    initialization_variable_names=tuple(
+                        initialization_variable_names
+                    ),
                     limits=worker_limits,
                     float64_profile=self.spec.float64_profile,
                     configuration_variable_names=(
@@ -374,8 +429,8 @@ class FmuCsDeviceAdapter:
                             start_time=start_time,
                             stop_time=None,
                             relative_tolerance=self.spec.config.relative_tolerance,
-                            initial_writable_float64_values=(
-                                self._build_fmi_three_writable_values(x_snapshot)
+                            initial_writable_float64_values=tuple(
+                                initial_float64_values
                             ),
                         )
                     )
@@ -599,6 +654,7 @@ def build_fmu_cs_device_spec(
     configuration_uint64_values: tuple[
         FmiThreeUInt64ConfigurationValue, ...
     ] = tuple(),
+    parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(),
 ) -> FmuCsDeviceSpec:
     """Build the validated runtime specification for one CS device.
 
@@ -612,6 +668,7 @@ def build_fmu_cs_device_spec(
     :param worker_limits: Explicit FMI 3 worker supervision policy, when used.
     :param configuration_float64_values: Structural Float64 declarations.
     :param configuration_uint64_values: Structural UInt64 declarations.
+    :param parameter_values: Ephemeral values resolved from Block.parameters.
     :return: Validated runtime specification with its derived worker profile.
     """
 
@@ -650,6 +707,35 @@ def build_fmu_cs_device_spec(
                 f"FMI {metadata.fmi_version} execution is not supported yet"
             )
     if resolved_mode == FmuInterfaceMode.CO_SIMULATION:
+        reserved_parameter_names: list[str] = [""] * (
+            len(input_bindings)
+            + len(configuration_float64_values)
+            + len(configuration_uint64_values)
+        )
+        reserved_name_index: int = 0
+        reserved_input_binding: FmuRefBinding
+        for reserved_input_binding in input_bindings:
+            reserved_parameter_names[reserved_name_index] = (
+                reserved_input_binding.fmu_variable_name
+            )
+            reserved_name_index += 1
+        float64_configuration: FmiThreeFloat64ConfigurationValue
+        for float64_configuration in configuration_float64_values:
+            reserved_parameter_names[reserved_name_index] = (
+                float64_configuration.variable_name
+            )
+            reserved_name_index += 1
+        uint64_configuration: FmiThreeUInt64ConfigurationValue
+        for uint64_configuration in configuration_uint64_values:
+            reserved_parameter_names[reserved_name_index] = (
+                uint64_configuration.variable_name
+            )
+            reserved_name_index += 1
+        _validate_fmu_float64_parameter_values(
+            parameter_values=parameter_values,
+            metadata=metadata,
+            reserved_variable_names=tuple(reserved_parameter_names),
+        )
         available_variables: set[str] = set(metadata.get_variable_names())
         binding: FmuRefBinding
         for binding in input_bindings:
@@ -697,6 +783,7 @@ def build_fmu_cs_device_spec(
             float64_profile=float64_profile,
             configuration_float64_values=configuration_float64_values,
             configuration_uint64_values=configuration_uint64_values,
+            parameter_values=parameter_values,
         )
     else:
         raise ValueError(f"Co-Simulation device blocks require a Co-Simulation FMU, got {resolved_mode.value}")
@@ -1128,14 +1215,14 @@ def align_rms_fmu_cs_device_output_parameters(problem: Any, x_snapshot: np.ndarr
         pass
 
 
-def advance_rms_fmu_cs_devices(problem: Any, time_value: float, x_snapshot: np.ndarray, step_size: float) -> None:
+def advance_rms_fmu_cs_devices(problem: Any, time_value: float, x_snapshot: np.ndarray, step_size: float) -> bool:
     """Advance all imported FMU CS RMS devices for one solver step.
 
     :param problem: RMS problem instance.
     :param time_value: Current simulation time.
     :param x_snapshot: Current accepted state snapshot.
     :param step_size: RMS communication step.
-    :return: None.
+    :return: Whether at least one registered CS adapter completed advancement.
     """
 
     if len(problem._fmu_cs_adapters) > 0:
@@ -1152,8 +1239,9 @@ def advance_rms_fmu_cs_devices(problem: Any, time_value: float, x_snapshot: np.n
                 problem._last_variable_parameters_values = None
             else:
                 problem._last_variable_parameters_values = np.array(problem._variable_parameters_values, copy=True)
+        return True
     else:
-        pass
+        return False
 
 
 def close_rms_fmu_cs_devices(problem: Any) -> None:

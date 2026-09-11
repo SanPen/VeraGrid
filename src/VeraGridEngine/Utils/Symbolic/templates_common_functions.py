@@ -3272,6 +3272,11 @@ def set_rms_model(device: Any, model:Block, var_factory: VarFactory):
     # set the model to the device
     device.rms_model = model
 
+    # The RMS assembler reads power-flow mappings from the saved model root.
+    # Promote mappings owned by complete-template descendants so scripted
+    # assignment follows the same persistence contract as the Dynamic Editor.
+    synchronize_saved_rms_root_mappings_from_children(device=device)
+
 
 def connect_line_emt_from(mdl1: Block, mdl2: Block, var_factory:VarFactory):
     """

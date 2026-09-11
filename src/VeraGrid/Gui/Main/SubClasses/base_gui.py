@@ -179,8 +179,7 @@ class BaseMainGui(QMainWindow):
         self._multiverse: MultiVerse = MultiVerse(current_model=MultiCircuit())
         self.scenario_tree_model: ScenarioTreeModel = ScenarioTreeModel(multiverse=self._multiverse)
 
-        self.lock_ui = False
-        self.ui.progress_frame.setVisible(self.lock_ui)
+        self.ui.progress_frame.setVisible(False)
 
         self.stuff_running_now: List[SimulationTypes] = list()
 
@@ -341,6 +340,7 @@ class BaseMainGui(QMainWindow):
 
         # Buttons
         self.ui.cancelButton.clicked.connect(self.set_cancel_state)
+        self.ui.unlockButton.clicked.connect(self.lock_ui_toggle)
 
         # doubleSpinBox
         self.ui.fbase_doubleSpinBox.valueChanged.connect(self.change_circuit_base)
@@ -395,6 +395,27 @@ class BaseMainGui(QMainWindow):
         """
         refresh_translated_splitter_layouts(root_widget=self)
 
+    def LOCK_UI(self, val: bool = True) -> None:
+        """
+        Simple locking of the UI
+        :param val: True : Locks the UI / False: Unlocks the UI
+        """
+        self.ui.mainTabWidget.setEnabled(not val)
+        self.ui.menuBar.setEnabled(not val)
+        self.ui.toolBar.setEnabled(not val)
+
+    def lock_ui_toggle(self):
+        """
+        Locking UI Toggle
+        :return:
+        """
+        if self.ui.mainTabWidget.isEnabled():
+            self.LOCK_UI(True)
+        else:
+            ok = yes_no_question(self.tr("Unlocking the UI may cause crash depending on the conditions. Are you sure?"))
+            if ok:
+                self.LOCK_UI(False)
+
     def LOCK(self, val: bool = True) -> None:
         """
         Mark the interface as busy while a worker owns the grid state.
@@ -402,21 +423,14 @@ class BaseMainGui(QMainWindow):
         :param val: Whether the main interface must show running-job controls.
         :returns: None.
         """
-        self.lock_ui = val
 
         # Show the running-job controls while leaving the GUI available for
         # inspection and normal interaction.
-        self.ui.progress_frame.setVisible(self.lock_ui)
+        self.ui.progress_frame.setVisible(val)
         self.ui.progress_frame.setEnabled(True)
-        self.ui.cancelButton.setEnabled(self.lock_ui)
+        self.ui.cancelButton.setEnabled(val)
 
-        # self.ui.mainTabWidget.setVisible(not self.lock_ui)
-        # self.ui.menuBar.setVisible(not self.lock_ui)
-        # self.ui.toolBar.setVisible(not self.lock_ui)
-
-        self.ui.mainTabWidget.setEnabled(not self.lock_ui)
-        self.ui.menuBar.setEnabled(not self.lock_ui)
-        self.ui.toolBar.setEnabled(not self.lock_ui)
+        self.LOCK_UI(val)
 
     def UNLOCK(self) -> None:
         """
@@ -1361,12 +1375,12 @@ class BaseMainGui(QMainWindow):
 
     def set_cancel_state(self) -> None:
         """
-        Cancel what ever's going on that can be cancelled
+        Cancel whatever's going on that can be canceled
         @return:
         """
 
         reply = QtWidgets.QMessageBox.question(self, 'Message',
-                                               'Are you sure that you want to cancel the simulation?',
+                                               self.tr('Are you sure that you want to cancel the simulation?'),
                                                QtWidgets.QMessageBox.StandardButton.Yes,
                                                QtWidgets.QMessageBox.StandardButton.No)
 

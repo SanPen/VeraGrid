@@ -29,7 +29,9 @@ from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     FmiThreeWorkerFailureKind,
     FmiThreeWorkerFloat64Values,
     FmiThreeWorkerGetFloat64Request,
+    FmiThreeWorkerGetInt32Request,
     FmiThreeWorkerInitializationRequest,
+    FmiThreeWorkerInt32Values,
     FmiThreeWorkerModelExchangeEvaluationRequest,
     FmiThreeWorkerModelExchangeEvaluationResult,
     FmiThreeWorkerRequest,
@@ -37,6 +39,7 @@ from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     FmiThreeWorkerResponse,
     FmiThreeWorkerResponseKind,
     FmiThreeWorkerSetFloat64Request,
+    FmiThreeWorkerSetInt32Request,
     FmiThreeWorkerSetTimeRequest,
     FmiThreeWorkerStagingIdentity,
     FmiThreeWorkerStartRequest,
@@ -49,6 +52,8 @@ from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     send_fmi_three_worker_frame,
     validate_fmi_three_worker_completed_step,
     validate_fmi_three_worker_float64_frame_capacity,
+    validate_fmi_three_worker_initialization_frame_capacity,
+    validate_fmi_three_worker_int32_frame_capacity,
     validate_fmi_three_worker_model_exchange_evaluation_frame_capacity,
     validate_fmi_three_worker_uint64_configuration_frame_capacity,
     validate_fmi_three_worker_response_correlation,
@@ -769,8 +774,10 @@ def test_fmi_three_worker_zero_length_array_frames_round_trip() -> None:
                 start_time=0.0,
                 stop_time=None,
                 relative_tolerance=None,
-                initial_value_references=(20,),
-                initial_values=tuple(),
+                initial_float64_value_references=(20,),
+                initial_float64_values=tuple(),
+                initial_int32_value_references=tuple(),
+                initial_int32_values=tuple(),
                 maximum_value_count=maximum_value_count,
             ),
         ),
@@ -1272,8 +1279,10 @@ def test_fmi_three_worker_initialization_request_round_trip(
             start_time=0.25,
             stop_time=stop_time,
             relative_tolerance=relative_tolerance,
-            initial_value_references=tuple(),
-            initial_values=tuple(),
+            initial_float64_value_references=tuple(),
+            initial_float64_values=tuple(),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
             maximum_value_count=16384,
         )
     )
@@ -1304,13 +1313,15 @@ def test_fmi_three_worker_initialization_request_round_trip(
     assert decoded.initialization.start_time == pytest.approx(0.25)
     assert decoded.initialization.stop_time == stop_time
     assert decoded.initialization.relative_tolerance == relative_tolerance
-    assert decoded.initialization.initial_value_references == tuple()
-    assert decoded.initialization.initial_values == tuple()
+    assert decoded.initialization.initial_float64_value_references == tuple()
+    assert decoded.initialization.initial_float64_values == tuple()
+    assert decoded.initialization.initial_int32_value_references == tuple()
+    assert decoded.initialization.initial_int32_values == tuple()
     assert decoded.start is None
 
 
-def test_fmi_three_worker_initialization_assignments_have_canonical_wire() -> None:
-    """Preserve separate reference and value collections in protocol version ten.
+def test_mixed_initialization_typed_sections_and_combined_limits() -> None:
+    """Preserve typed numeric sections and their shared cardinality bound.
 
     :return: None.
     """
@@ -1320,8 +1331,10 @@ def test_fmi_three_worker_initialization_assignments_have_canonical_wire() -> No
             start_time=0.25,
             stop_time=5.0,
             relative_tolerance=1.0e-6,
-            initial_value_references=(7,),
-            initial_values=(2.0, -3.0),
+            initial_float64_value_references=(7,),
+            initial_float64_values=(2.0, -3.0),
+            initial_int32_value_references=(11, 12),
+            initial_int32_values=(-2147483648, 2147483647),
             maximum_value_count=8,
         )
     )
@@ -1339,15 +1352,19 @@ def test_fmi_three_worker_initialization_assignments_have_canonical_wire() -> No
     )
     expected_body: bytes = b"".join(
         (
-            struct.pack("!BdddII", 3, 0.25, 5.0, 1.0e-6, 1, 2),
+            struct.pack("!Bddd", 3, 0.25, 5.0, 1.0e-6),
+            struct.pack("!II", 1, 2),
             struct.pack("!I", 7),
             struct.pack("!dd", 2.0, -3.0),
+            struct.pack("!II", 2, 2),
+            struct.pack("!II", 11, 12),
+            struct.pack("!ii", -2147483648, 2147483647),
         )
     )
     expected_header: bytes = struct.pack(
         "!4sBBBQI",
         b"VGFW",
-        10,
+        11,
         1,
         int(FmiThreeWorkerRequestKind.INITIALIZE),
         9,
@@ -1364,8 +1381,22 @@ def test_fmi_three_worker_initialization_assignments_have_canonical_wire() -> No
         pass
     else:
         raise AssertionError("The decoded INITIALIZE body must be present")
-    assert decoded.initialization.initial_value_references == (7,)
-    assert decoded.initialization.initial_values == pytest.approx((2.0, -3.0))
+    assert decoded.initialization.initial_float64_value_references == (7,)
+    assert decoded.initialization.initial_float64_values == pytest.approx((2.0, -3.0))
+    assert decoded.initialization.initial_int32_value_references == (11, 12)
+    assert decoded.initialization.initial_int32_values == (
+        -2147483648,
+        2147483647,
+    )
+    with pytest.raises(ValueError, match="combined initialization count"):
+        validate_fmi_three_worker_initialization_frame_capacity(
+            float64_value_reference_count=1,
+            float64_serialized_value_count=2,
+            int32_value_reference_count=2,
+            int32_value_count=2,
+            maximum_frame_size=128,
+            maximum_value_count=3,
+        )
 
 
 def test_fmi_three_worker_initialization_assignment_frame_capacity() -> None:
@@ -1374,27 +1405,32 @@ def test_fmi_three_worker_initialization_assignment_frame_capacity() -> None:
     :return: None.
     """
 
-    empty_frame_size: int = struct.calcsize("!4sBBBQI") + struct.calcsize("!BdddII")
-    validate_fmi_three_worker_float64_frame_capacity(
-        request_kind=FmiThreeWorkerRequestKind.INITIALIZE,
-        value_reference_count=0,
-        serialized_value_count=0,
+    empty_frame_size: int = (
+        struct.calcsize("!4sBBBQI") + struct.calcsize("!Bddd") + 16
+    )
+    validate_fmi_three_worker_initialization_frame_capacity(
+        float64_value_reference_count=0,
+        float64_serialized_value_count=0,
+        int32_value_reference_count=0,
+        int32_value_count=0,
         maximum_frame_size=empty_frame_size,
         maximum_value_count=8,
     )
     exact_frame_size: int = empty_frame_size + 2 * 4 + 2 * 8
-    validate_fmi_three_worker_float64_frame_capacity(
-        request_kind=FmiThreeWorkerRequestKind.INITIALIZE,
-        value_reference_count=2,
-        serialized_value_count=2,
+    validate_fmi_three_worker_initialization_frame_capacity(
+        float64_value_reference_count=2,
+        float64_serialized_value_count=2,
+        int32_value_reference_count=0,
+        int32_value_count=0,
         maximum_frame_size=exact_frame_size,
         maximum_value_count=8,
     )
-    with pytest.raises(ValueError, match="request or response exceeds"):
-        validate_fmi_three_worker_float64_frame_capacity(
-            request_kind=FmiThreeWorkerRequestKind.INITIALIZE,
-            value_reference_count=2,
-            serialized_value_count=2,
+    with pytest.raises(ValueError, match="initialization request exceeds"):
+        validate_fmi_three_worker_initialization_frame_capacity(
+            float64_value_reference_count=2,
+            float64_serialized_value_count=2,
+            int32_value_reference_count=0,
+            int32_value_count=0,
             maximum_frame_size=exact_frame_size - 1,
             maximum_value_count=8,
         )
@@ -1474,7 +1510,7 @@ def test_fmi_three_worker_close_request_round_trip() -> None:
 
 
 def test_fmi_three_worker_close_frame_has_canonical_network_order() -> None:
-    """Fix the complete version-ten header as a byte-exact wire vector.
+    """Fix the complete version-eleven header as a byte-exact wire vector.
 
     :return: None.
     """
@@ -1493,12 +1529,141 @@ def test_fmi_three_worker_close_frame_has_canonical_network_order() -> None:
 
     assert frame == (
         b"VGFW"
-        b"\x0a"
+        b"\x0b"
         b"\x01"
         b"\x03"
         b"\x01\x02\x03\x04\x05\x06\x07\x08"
         b"\x00\x00\x00\x00"
     )
+
+
+def test_int32_protocol_round_trip_and_network_order_bounds() -> None:
+    """Round-trip signed Int32 extrema and preserve network byte order.
+
+    :return: None.
+    """
+
+    set_request: FmiThreeWorkerRequest = FmiThreeWorkerRequest(
+        request_id=51,
+        kind=FmiThreeWorkerRequestKind.SET_INT32,
+        start=None,
+        initialization=None,
+        set_int32=FmiThreeWorkerSetInt32Request(
+            value_references=(7, 8),
+            values=(-2147483648, 2147483647),
+            maximum_value_count=8,
+        ),
+    )
+    set_frame: bytes = encode_fmi_three_worker_request(
+        request=set_request,
+        maximum_frame_size=128,
+        maximum_float64_values_per_request=8,
+    )
+    assert set_frame.endswith(struct.pack("!ii", -2147483648, 2147483647))
+    decoded_set: FmiThreeWorkerRequest = decode_fmi_three_worker_request(
+        frame=set_frame,
+        maximum_frame_size=128,
+        maximum_float64_values_per_request=8,
+    )
+    if decoded_set.set_int32 is not None:
+        assert decoded_set.set_int32.value_references == (7, 8)
+        assert decoded_set.set_int32.values == (-2147483648, 2147483647)
+    else:
+        raise AssertionError("Decoded SET_INT32 body is missing")
+
+    response: FmiThreeWorkerResponse = FmiThreeWorkerResponse(
+        request_id=52,
+        kind=FmiThreeWorkerResponseKind.INT32_VALUES,
+        failure_kind=None,
+        error_message=None,
+        int32_values=FmiThreeWorkerInt32Values(
+            values=(-2147483648, 2147483647),
+            maximum_value_count=8,
+        ),
+    )
+    response_frame: bytes = encode_fmi_three_worker_response(
+        response=response,
+        maximum_frame_size=128,
+        maximum_float64_values_per_request=8,
+    )
+    assert response_frame.endswith(struct.pack("!ii", -2147483648, 2147483647))
+    decoded_response: FmiThreeWorkerResponse = decode_fmi_three_worker_response(
+        frame=response_frame,
+        maximum_frame_size=128,
+        maximum_float64_values_per_request=8,
+    )
+    if decoded_response.int32_values is not None:
+        assert decoded_response.int32_values.values == (
+            -2147483648,
+            2147483647,
+        )
+    else:
+        raise AssertionError("Decoded INT32_VALUES body is missing")
+    with pytest.raises(ValueError, match="Python int"):
+        FmiThreeWorkerSetInt32Request((7,), (True,), 8)
+    with pytest.raises(ValueError, match="outside signed Int32"):
+        FmiThreeWorkerSetInt32Request((7,), (2147483648,), 8)
+    validate_fmi_three_worker_int32_frame_capacity(
+        request_kind=FmiThreeWorkerRequestKind.GET_INT32,
+        value_count=2,
+        maximum_frame_size=128,
+        maximum_value_count=8,
+    )
+
+
+def test_protocol_version_ten_frames_are_rejected() -> None:
+    """Reject the superseded protocol version before body decoding.
+
+    :return: None.
+    """
+
+    request: FmiThreeWorkerRequest = FmiThreeWorkerRequest(
+        request_id=53,
+        kind=FmiThreeWorkerRequestKind.CLOSE,
+        start=None,
+        initialization=None,
+    )
+    version_ten_frame: bytearray = bytearray(
+        encode_fmi_three_worker_request(request, 64, 8)
+    )
+    version_ten_frame[4] = 10
+    with pytest.raises(ValueError, match="protocol version 10"):
+        decode_fmi_three_worker_request(bytes(version_ten_frame), 64, 8)
+
+
+def test_initialization_absent_optionals_reject_negative_zero() -> None:
+    """Reject negative zero in absent optional Float64 header slots.
+
+    :return: None.
+    """
+
+    initialization: FmiThreeWorkerInitializationRequest = (
+        FmiThreeWorkerInitializationRequest(
+            start_time=0.0,
+            stop_time=None,
+            relative_tolerance=None,
+            initial_float64_value_references=tuple(),
+            initial_float64_values=tuple(),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
+            maximum_value_count=8,
+        )
+    )
+    request: FmiThreeWorkerRequest = FmiThreeWorkerRequest(
+        request_id=54,
+        kind=FmiThreeWorkerRequestKind.INITIALIZE,
+        start=None,
+        initialization=initialization,
+    )
+    frame: bytes = encode_fmi_three_worker_request(request, 128, 8)
+    negative_zero_stop: bytearray = bytearray(frame)
+    struct.pack_into("!d", negative_zero_stop, 28, -0.0)
+    with pytest.raises(ValueError, match="absent stop time slot.*canonical zero"):
+        decode_fmi_three_worker_request(bytes(negative_zero_stop), 128, 8)
+    negative_zero_tolerance: bytearray = bytearray(frame)
+    struct.pack_into("!d", negative_zero_tolerance, 36, -0.0)
+    with pytest.raises(ValueError, match="absent tolerance slot.*canonical zero"):
+        decode_fmi_three_worker_request(bytes(negative_zero_tolerance), 128, 8)
 
 
 def test_fmi_three_worker_success_response_round_trip() -> None:
@@ -1618,8 +1783,10 @@ def test_fmi_three_worker_initialization_rejects_invalid_values(
             start_time=start_time,
             stop_time=stop_time,
             relative_tolerance=relative_tolerance,
-            initial_value_references=tuple(),
-            initial_values=tuple(),
+            initial_float64_value_references=tuple(),
+            initial_float64_values=tuple(),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
             maximum_value_count=16384,
         )
 
@@ -1630,41 +1797,49 @@ def test_fmi_three_worker_initialization_rejects_invalid_assignments() -> None:
     :return: None.
     """
 
-    with pytest.raises(ValueError, match="initial references and values must align"):
+    with pytest.raises(ValueError, match="initial Float64 references and values"):
         FmiThreeWorkerInitializationRequest(
-            0.0,
-            None,
-            None,
-            tuple(),
-            (1.0,),
-            8,
+            start_time=0.0,
+            stop_time=None,
+            relative_tolerance=None,
+            initial_float64_value_references=tuple(),
+            initial_float64_values=(1.0,),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
+            maximum_value_count=8,
         )
     with pytest.raises(ValueError, match="value references must be unique"):
         FmiThreeWorkerInitializationRequest(
-            0.0,
-            None,
-            None,
-            (7, 7),
-            (1.0, 2.0),
-            8,
+            start_time=0.0,
+            stop_time=None,
+            relative_tolerance=None,
+            initial_float64_value_references=(7, 7),
+            initial_float64_values=(1.0, 2.0),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
+            maximum_value_count=8,
         )
     with pytest.raises(ValueError, match="values must be finite"):
         FmiThreeWorkerInitializationRequest(
-            0.0,
-            None,
-            None,
-            (7,),
-            (float("nan"),),
-            8,
+            start_time=0.0,
+            stop_time=None,
+            relative_tolerance=None,
+            initial_float64_value_references=(7,),
+            initial_float64_values=(float("nan"),),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
+            maximum_value_count=8,
         )
-    with pytest.raises(ValueError, match="value count is outside"):
+    with pytest.raises(ValueError, match="numeric value count is outside"):
         FmiThreeWorkerInitializationRequest(
-            0.0,
-            None,
-            None,
-            (7, 8),
-            (1.0, 2.0),
-            1,
+            start_time=0.0,
+            stop_time=None,
+            relative_tolerance=None,
+            initial_float64_value_references=(7, 8),
+            initial_float64_values=(1.0, 2.0),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
+            maximum_value_count=1,
         )
 
 
@@ -1904,12 +2079,14 @@ def test_fmi_three_worker_request_decoder_rejects_body_attacks(tmp_path: Path) -
 
     initialization: FmiThreeWorkerInitializationRequest = (
         FmiThreeWorkerInitializationRequest(
-            0.0,
-            None,
-            None,
-            tuple(),
-            tuple(),
-            16384,
+            start_time=0.0,
+            stop_time=None,
+            relative_tolerance=None,
+            initial_float64_value_references=tuple(),
+            initial_float64_values=tuple(),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
+            maximum_value_count=16384,
         )
     )
     initialize_request: FmiThreeWorkerRequest = FmiThreeWorkerRequest(
@@ -1952,8 +2129,10 @@ def test_fmi_three_worker_initialization_decoder_rejects_assignment_attacks() ->
             start_time=0.0,
             stop_time=None,
             relative_tolerance=None,
-            initial_value_references=(7, 8),
-            initial_values=(1.0, 2.0),
+            initial_float64_value_references=(7, 8),
+            initial_float64_values=(1.0, 2.0),
+            initial_int32_value_references=tuple(),
+            initial_int32_values=tuple(),
             maximum_value_count=8,
         )
     )
@@ -1970,7 +2149,7 @@ def test_fmi_three_worker_initialization_decoder_rejects_assignment_attacks() ->
     )
     empty_count_with_trailing: bytearray = bytearray(assigned_frame)
     struct.pack_into("!II", empty_count_with_trailing, 44, 0, 0)
-    with pytest.raises(ValueError, match="empty initial.*trailing bytes"):
+    with pytest.raises(ValueError, match="combined initialization count"):
         decode_fmi_three_worker_request(
             bytes(empty_count_with_trailing),
             128,
@@ -1978,13 +2157,13 @@ def test_fmi_three_worker_initialization_decoder_rejects_assignment_attacks() ->
         )
     inconsistent_count: bytearray = bytearray(assigned_frame)
     struct.pack_into("!I", inconsistent_count, 44, 3)
-    with pytest.raises(ValueError, match="collection body size is inconsistent"):
+    with pytest.raises(ValueError, match="Float64 collection is truncated"):
         decode_fmi_three_worker_request(
             bytes(inconsistent_count),
             128,
             maximum_float64_values_per_request=8,
         )
-    with pytest.raises(ValueError, match="value count is outside"):
+    with pytest.raises(ValueError, match="Float64 count is outside"):
         decode_fmi_three_worker_request(
             assigned_frame,
             128,

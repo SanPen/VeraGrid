@@ -23,12 +23,14 @@ from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     FmiThreeWorkerFailureKind,
     FmiThreeWorkerFloat64Values,
     FmiThreeWorkerGetFloat64Request,
+    FmiThreeWorkerGetInt32Request,
     FmiThreeWorkerInitializationRequest,
     FmiThreeWorkerRequest,
     FmiThreeWorkerRequestKind,
     FmiThreeWorkerResponse,
     FmiThreeWorkerResponseKind,
     FmiThreeWorkerSetFloat64Request,
+    FmiThreeWorkerSetInt32Request,
     FmiThreeWorkerSetTimeRequest,
     FmiThreeWorkerStartRequest,
     build_fmi_three_worker_staging_identity,
@@ -280,9 +282,11 @@ def test_fmi_three_worker_runs_model_exchange_continuous_time_lifecycle(
                 start_time=0.0,
                 stop_time=1.0,
                 relative_tolerance=1.0e-6,
-                initial_value_references=tuple(),
-                initial_values=tuple(),
-                maximum_value_count=64,
+                    initial_float64_value_references=tuple(),
+                    initial_float64_values=tuple(),
+                    initial_int32_value_references=tuple(),
+                    initial_int32_values=tuple(),
+                    maximum_value_count=64,
             ),
         )
         initialized: FmiThreeWorkerResponse = _exchange_worker_request(
@@ -622,9 +626,11 @@ def test_fmi_three_worker_rejects_variable_step_size_when_not_supported(
                 start_time=0.0,
                 stop_time=1.0,
                 relative_tolerance=1.0e-6,
-                initial_value_references=tuple(),
-                initial_values=tuple(),
-                maximum_value_count=64,
+                    initial_float64_value_references=tuple(),
+                    initial_float64_values=tuple(),
+                    initial_int32_value_references=tuple(),
+                    initial_int32_values=tuple(),
+                    maximum_value_count=64,
             ),
         )
         initialized: FmiThreeWorkerResponse = _exchange_worker_request(
@@ -704,9 +710,11 @@ def test_fmi_three_worker_rejects_initialization_before_start() -> None:
                 start_time=0.0,
                 stop_time=None,
                 relative_tolerance=None,
-                initial_value_references=tuple(),
-                initial_values=tuple(),
-                maximum_value_count=64,
+                    initial_float64_value_references=tuple(),
+                    initial_float64_values=tuple(),
+                    initial_int32_value_references=tuple(),
+                    initial_int32_values=tuple(),
+                    maximum_value_count=64,
             ),
         )
         response: FmiThreeWorkerResponse = _exchange_worker_request(
@@ -958,9 +966,11 @@ def test_fmi_three_worker_child_acl_rejects_initial_output_assignment(
                     start_time=0.0,
                     stop_time=1.0,
                     relative_tolerance=1.0e-6,
-                    initial_value_references=(2,),
-                    initial_values=(3.0,),
-                    maximum_value_count=64,
+                        initial_float64_value_references=(2,),
+                        initial_float64_values=(3.0,),
+                        initial_int32_value_references=tuple(),
+                        initial_int32_values=tuple(),
+                        maximum_value_count=64,
                 ),
             ),
             expected_response_kind=FmiThreeWorkerResponseKind.INITIALIZED,
@@ -1074,9 +1084,11 @@ def test_fmi_three_worker_rejects_get_after_set_before_step(
                 start_time=0.0,
                 stop_time=1.0,
                 relative_tolerance=1.0e-6,
-                initial_value_references=tuple(),
-                initial_values=tuple(),
-                maximum_value_count=64,
+                    initial_float64_value_references=tuple(),
+                    initial_float64_values=tuple(),
+                    initial_int32_value_references=tuple(),
+                    initial_int32_values=tuple(),
+                    maximum_value_count=64,
             ),
         )
         initialized: FmiThreeWorkerResponse = _exchange_worker_request(
@@ -1124,9 +1136,253 @@ def test_fmi_three_worker_rejects_get_after_set_before_step(
         assert rejected_get.kind == FmiThreeWorkerResponseKind.ERROR
         assert rejected_get.failure_kind == FmiThreeWorkerFailureKind.LIFECYCLE
         assert rejected_get.error_message == (
-            "FMI 3 worker GET_FLOAT64 must precede SET_FLOAT64 at the current "
+            "FMI 3 worker GET_FLOAT64 must precede input writes at the current "
             "communication point"
         )
+        _stop_fmi_three_worker_process(process)
+    finally:
+        connection.close()
+        if process.is_alive():
+            _stop_fmi_three_worker_process(process)
+        else:
+            pass
+        staging.close()
+    assert process.exitcode == 0
+
+
+def test_worker_int32_access_matrix_and_terminal_failures(
+    compiled_fmi_three_scalar_co_simulation_fmu: Path,
+) -> None:
+    """Enforce scalar Int32 lifecycle matrices inside the isolated worker.
+
+    :param compiled_fmi_three_scalar_co_simulation_fmu: Generated dual-interface
+        native test FMU.
+    :return: None.
+    """
+
+    metadata: FmuModelDescription
+    staging: FmuStagingArea
+    metadata, staging = _stage_compiled_fmi_three_fmu(
+        compiled_fmi_three_scalar_co_simulation_fmu
+    )
+    process: BaseProcess
+    connection: Connection
+    maximum_frame_size: int
+    process, connection, maximum_frame_size = _start_fmi_three_worker_process()
+    try:
+        _exchange_worker_request(
+            connection=connection,
+            request=_create_worker_start_request(metadata, staging, 101),
+            expected_response_kind=FmiThreeWorkerResponseKind.READY,
+            maximum_frame_size=maximum_frame_size,
+        )
+        _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=102,
+                kind=FmiThreeWorkerRequestKind.INITIALIZE,
+                start=None,
+                initialization=FmiThreeWorkerInitializationRequest(
+                    start_time=0.0,
+                    stop_time=1.0,
+                    relative_tolerance=1.0e-6,
+                    initial_float64_value_references=tuple(),
+                    initial_float64_values=tuple(),
+                    initial_int32_value_references=(7,),
+                    initial_int32_values=(-2,),
+                    maximum_value_count=64,
+                ),
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.INITIALIZED,
+            maximum_frame_size=maximum_frame_size,
+        )
+        initial_values: FmiThreeWorkerResponse = _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=103,
+                kind=FmiThreeWorkerRequestKind.GET_INT32,
+                start=None,
+                initialization=None,
+                get_int32=FmiThreeWorkerGetInt32Request(
+                    value_references=(7, 8),
+                    maximum_value_count=64,
+                ),
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.INT32_VALUES,
+            maximum_frame_size=maximum_frame_size,
+        )
+        if initial_values.int32_values is not None:
+            assert initial_values.int32_values.values == (-2, 0)
+        else:
+            raise AssertionError("Worker omitted the typed Int32 response")
+
+        # Co-Simulation accepts repeated typed writes in the shared pending state.
+        request_id: int
+        int32_value: int
+        for request_id, int32_value in ((104, -3), (105, 4)):
+            int32_set: FmiThreeWorkerResponse = _exchange_worker_request(
+                connection=connection,
+                request=FmiThreeWorkerRequest(
+                    request_id=request_id,
+                    kind=FmiThreeWorkerRequestKind.SET_INT32,
+                    start=None,
+                    initialization=None,
+                    set_int32=FmiThreeWorkerSetInt32Request(
+                        value_references=(7,),
+                        values=(int32_value,),
+                        maximum_value_count=64,
+                    ),
+                ),
+                expected_response_kind=FmiThreeWorkerResponseKind.INT32_SET,
+                maximum_frame_size=maximum_frame_size,
+            )
+            assert int32_set.kind == FmiThreeWorkerResponseKind.INT32_SET
+        rejected_pending_get: FmiThreeWorkerResponse = _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=106,
+                kind=FmiThreeWorkerRequestKind.GET_INT32,
+                start=None,
+                initialization=None,
+                get_int32=FmiThreeWorkerGetInt32Request(
+                    value_references=(8,),
+                    maximum_value_count=64,
+                ),
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.INT32_VALUES,
+            maximum_frame_size=maximum_frame_size,
+        )
+        assert rejected_pending_get.kind == FmiThreeWorkerResponseKind.ERROR
+        assert (
+            rejected_pending_get.failure_kind
+            == FmiThreeWorkerFailureKind.LIFECYCLE
+        )
+        _stop_fmi_three_worker_process(process)
+    finally:
+        connection.close()
+        if process.is_alive():
+            _stop_fmi_three_worker_process(process)
+        else:
+            pass
+
+    process, connection, maximum_frame_size = _start_fmi_three_worker_process()
+    try:
+        _exchange_worker_request(
+            connection=connection,
+            request=_create_worker_start_request(
+                metadata,
+                staging,
+                111,
+                interface_mode=FmuInterfaceMode.MODEL_EXCHANGE,
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.READY,
+            maximum_frame_size=maximum_frame_size,
+        )
+        _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=112,
+                kind=FmiThreeWorkerRequestKind.INITIALIZE,
+                start=None,
+                initialization=FmiThreeWorkerInitializationRequest(
+                    start_time=0.0,
+                    stop_time=1.0,
+                    relative_tolerance=1.0e-6,
+                    initial_float64_value_references=tuple(),
+                    initial_float64_values=tuple(),
+                    initial_int32_value_references=(7,),
+                    initial_int32_values=(-2,),
+                    maximum_value_count=64,
+                ),
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.INITIALIZED,
+            maximum_frame_size=maximum_frame_size,
+        )
+        _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=113,
+                kind=FmiThreeWorkerRequestKind.SET_INT32,
+                start=None,
+                initialization=None,
+                set_int32=FmiThreeWorkerSetInt32Request(
+                    value_references=(7,),
+                    values=(6,),
+                    maximum_value_count=64,
+                ),
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.INT32_SET,
+            maximum_frame_size=maximum_frame_size,
+        )
+        event_values: FmiThreeWorkerResponse = _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=114,
+                kind=FmiThreeWorkerRequestKind.GET_INT32,
+                start=None,
+                initialization=None,
+                get_int32=FmiThreeWorkerGetInt32Request(
+                    value_references=(7,),
+                    maximum_value_count=64,
+                ),
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.INT32_VALUES,
+            maximum_frame_size=maximum_frame_size,
+        )
+        if event_values.int32_values is not None:
+            assert event_values.int32_values.values == (6,)
+        else:
+            raise AssertionError("Worker omitted Event Mode Int32 values")
+        _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=115,
+                kind=FmiThreeWorkerRequestKind.ENTER_CONTINUOUS_TIME_MODE,
+                start=None,
+                initialization=None,
+            ),
+            expected_response_kind=(
+                FmiThreeWorkerResponseKind.CONTINUOUS_TIME_MODE_ENTERED
+            ),
+            maximum_frame_size=maximum_frame_size,
+        )
+        continuous_values: FmiThreeWorkerResponse = _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=116,
+                kind=FmiThreeWorkerRequestKind.GET_INT32,
+                start=None,
+                initialization=None,
+                get_int32=FmiThreeWorkerGetInt32Request(
+                    value_references=(7,),
+                    maximum_value_count=64,
+                ),
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.INT32_VALUES,
+            maximum_frame_size=maximum_frame_size,
+        )
+        if continuous_values.int32_values is not None:
+            assert continuous_values.int32_values.values == (6,)
+        else:
+            raise AssertionError("Worker omitted Continuous-Time Int32 values")
+        rejected_write: FmiThreeWorkerResponse = _exchange_worker_request(
+            connection=connection,
+            request=FmiThreeWorkerRequest(
+                request_id=117,
+                kind=FmiThreeWorkerRequestKind.SET_INT32,
+                start=None,
+                initialization=None,
+                set_int32=FmiThreeWorkerSetInt32Request(
+                    value_references=(7,),
+                    values=(7,),
+                    maximum_value_count=64,
+                ),
+            ),
+            expected_response_kind=FmiThreeWorkerResponseKind.INT32_SET,
+            maximum_frame_size=maximum_frame_size,
+        )
+        assert rejected_write.kind == FmiThreeWorkerResponseKind.ERROR
+        assert rejected_write.failure_kind == FmiThreeWorkerFailureKind.LIFECYCLE
         _stop_fmi_three_worker_process(process)
     finally:
         connection.close()

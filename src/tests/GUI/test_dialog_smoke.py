@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Set
 import numpy as np
 import pandas as pd
 import shiboken6
-from PySide6 import QtCore, QtGui
+from PySide6 import QtCore, QtGui, QtTest
 from PySide6 import QtWidgets
 
 import VeraGridEngine as vge
@@ -47,7 +47,7 @@ from VeraGrid.Gui.DynamicModelEditor.Events.dynamic_events_support import Switch
 from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.jmarti_line_emt_dialog import JMartiLineEmtDialog
 from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.lookup_table_dialog import LookupArrayLinearDialog
 from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.lookup_table_dialog import LookupMatrixLinearDialog
-from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.measurements_dialog import MeasurementsDialog
+from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.MeasurementsDialog import MeasurementsDialog
 from VeraGrid.Gui.DynamicModelEditor.Workspace.detachable_editor_tabs_widget import DynamicEditorPickerDialog
 from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
 from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties import DynamicBlockPropertiesDialog
@@ -1356,6 +1356,84 @@ def test_dialog_opens_and_closes_without_blowing_up() -> None:
     run_dialog_smoke_suite_subprocess(timeout_s=120.0)
 
 
+def test_logs_dialogue_expands_first_column_and_colors_severity(qt_app: QtWidgets.QApplication) -> None:
+    """
+    Check the log tree keeps messages readable and severity-coded.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: None.
+    """
+    logger: Logger = Logger()
+    logger.add_error(msg="Error message", device="Line 1")
+    logger.add_warning(msg="Warning message", device="Bus 2")
+    logger.add_info(msg="Info message", device="Bus 3")
+    logger.add_divergence(msg="Divergence message", device="Bus 4", value=1.0, expected_value=0.0)
+
+    dialog: LogsDialogue = LogsDialogue(name="Log", logger=logger)
+    try:
+        header: QtWidgets.QHeaderView = dialog.logs_table.header()
+        model: QtGui.QStandardItemModel = dialog.logs_table.model()
+        error_item: QtGui.QStandardItem = model.item(0, 0)
+        error_empty_item: QtGui.QStandardItem = model.item(0, 1)
+        warning_item: QtGui.QStandardItem = model.item(1, 0)
+        information_item: QtGui.QStandardItem = model.item(2, 0)
+        divergence_item: QtGui.QStandardItem = model.item(3, 0)
+        error_message_item: QtGui.QStandardItem = error_item.child(0, 0)
+        error_message_empty_item: QtGui.QStandardItem = error_item.child(0, 1)
+        error_child_item: QtGui.QStandardItem = error_message_item.child(0, 0)
+
+        assert header.sectionResizeMode(0) == QtWidgets.QHeaderView.ResizeMode.Interactive
+        assert dialog.logs_table.columnWidth(0) == 320
+        assert dialog.logs_table.selectionMode() == QtWidgets.QAbstractItemView.SelectionMode.NoSelection
+        assert dialog.logs_table.focusPolicy() == QtCore.Qt.FocusPolicy.NoFocus
+        assert error_item.background().style() != QtCore.Qt.BrushStyle.NoBrush
+        assert error_empty_item.background().style() != QtCore.Qt.BrushStyle.NoBrush
+        assert error_item.background().color().name() == "#ff0000"
+        assert error_item.foreground().color().name() == "#ffffff"
+        assert error_message_item.background().style() == QtCore.Qt.BrushStyle.NoBrush
+        assert error_message_empty_item.background().style() == QtCore.Qt.BrushStyle.NoBrush
+        assert error_child_item.background().style() == QtCore.Qt.BrushStyle.NoBrush
+        assert error_message_item.foreground().style() == QtCore.Qt.BrushStyle.NoBrush
+        assert error_child_item.foreground().style() == QtCore.Qt.BrushStyle.NoBrush
+        assert warning_item.background().color().name() == "#ff9900"
+        assert information_item.background().color().name() == "#808080"
+        assert divergence_item.background().color().name() == "#00aa00"
+
+        dialog.show()
+        dialog.accept_btn.setFocus()
+        qt_app.processEvents()
+
+        error_empty_index: QtCore.QModelIndex = model.index(0, 1)
+        error_empty_point: QtCore.QPoint = dialog.logs_table.visualRect(error_empty_index).center()
+        viewport_image: QtGui.QImage = dialog.logs_table.viewport().grab().toImage()
+        assert viewport_image.pixelColor(1, error_empty_point.y()).name() == "#ff0000"
+
+        dialog.logs_table.setStyleSheet("QTreeView::item:!selected:hover { background: rgb(64, 65, 67); }")
+        QtTest.QTest.mouseMove(dialog.logs_table.viewport(), error_empty_point)
+        qt_app.processEvents()
+
+        viewport_image = dialog.logs_table.viewport().grab().toImage()
+        assert viewport_image.pixelColor(error_empty_point).name() == "#ff0000"
+
+        row_idx: int
+        for row_idx in range(model.rowCount()):
+            column_idx: int
+            for column_idx in range(model.columnCount()):
+                group_item: QtGui.QStandardItem = model.item(row_idx, column_idx)
+                assert group_item.foreground().color().name() == "#ffffff"
+                assert group_item.background().style() != QtCore.Qt.BrushStyle.NoBrush
+
+            parent_item: QtGui.QStandardItem = model.item(row_idx, 0)
+            message_idx: int
+            for message_idx in range(parent_item.rowCount()):
+                for column_idx in range(model.columnCount()):
+                    message_item: QtGui.QStandardItem = parent_item.child(message_idx, column_idx)
+                    assert message_item.foreground().style() == QtCore.Qt.BrushStyle.NoBrush
+                    assert message_item.background().style() == QtCore.Qt.BrushStyle.NoBrush
+    finally:
+        close_dialog_for_smoke(dialog=dialog, app=qt_app)
+
+
 def test_dialog_smoke_inventory_is_explicit() -> None:
     """
     Keep the smoke target list aligned with real dialog/window classes.
@@ -1367,6 +1445,106 @@ def test_dialog_smoke_inventory_is_explicit() -> None:
     missing_names: Set[str] = discover_qt_dialog_class_names() - known_names
 
     assert sorted(missing_names) == list()
+
+
+def test_measurements_dialog_tree_io_column_composes_reference_directions(qt_app: QtWidgets.QApplication) -> None:
+    """
+    Check that the I/O tree column composes input and output reference lists.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: None.
+    """
+    app: QtWidgets.QApplication = qt_app
+    bus: vge.Bus = vge.Bus(name="Bus 1", Vnom=110.0)
+    references: List[VarPowerFlowReferenceType] = list()
+    references.append(VarPowerFlowReferenceType.Vm)
+    references.append(VarPowerFlowReferenceType.Va)
+    ac_measurements: Dict[BlockType, List[VarPowerFlowReferenceType]] = dict()
+    ac_measurements[BlockType.MEASUREMENTS_VOLTAGE_ANGLE] = references
+    power_references: List[VarPowerFlowReferenceType] = list()
+    power_references.append(VarPowerFlowReferenceType.P)
+    power_references.append(VarPowerFlowReferenceType.Q)
+    ac_measurements[BlockType.MEASUREMENTS_P_Q] = power_references
+    measurements: Dict[str, Dict[BlockType, List[VarPowerFlowReferenceType]]] = dict()
+    measurements["a_c_bus"] = ac_measurements
+    dialog: MeasurementsDialog = MeasurementsDialog(
+        buses=list((bus,)),
+        measurement_vars_dict=measurements,
+        initial_bus=bus,
+    )
+
+    try:
+        parent_item: QtWidgets.QTreeWidgetItem = dialog.ui.measurement_tree.topLevelItem(0)
+        child_item: QtWidgets.QTreeWidgetItem = parent_item.child(0)
+        sibling_parent_item: QtWidgets.QTreeWidgetItem = dialog.ui.measurement_tree.topLevelItem(1)
+        sibling_child_item: QtWidgets.QTreeWidgetItem = sibling_parent_item.child(0)
+        reference_data: object = child_item.data(0, QtCore.Qt.ItemDataRole.UserRole)
+        assert isinstance(reference_data, VarPowerFlowReferenceType)
+        assert dialog.ui.measurement_tree.columnCount() == 3
+        assert dialog.ui.measurement_tree.headerItem().text(0) == "Name"
+        assert dialog.ui.measurement_tree.headerItem().text(1) == "I/O"
+        assert dialog.ui.measurement_tree.headerItem().text(2) == "Comment"
+        assert parent_item.text(2) == "Direct bus voltage state references."
+        assert child_item.text(2) == "Output-only bus voltage magnitude in p.u."
+        assert sibling_parent_item.text(2) == "Direct active and reactive power references."
+        assert sibling_child_item.text(2) == "Input-only active power injection in p.u."
+        assert not bool(child_item.flags() & QtCore.Qt.ItemFlag.ItemIsUserCheckable)
+        assert not bool(sibling_child_item.flags() & QtCore.Qt.ItemFlag.ItemIsUserCheckable)
+        tree_header: QtWidgets.QHeaderView = dialog.ui.measurement_tree.header()
+        assert not tree_header.stretchLastSection()
+        assert (
+            tree_header.sectionResizeMode(0)
+            == QtWidgets.QHeaderView.ResizeMode.Interactive
+        )
+        assert (
+            tree_header.sectionResizeMode(1)
+            == QtWidgets.QHeaderView.ResizeMode.Interactive
+        )
+        assert (
+            tree_header.sectionResizeMode(2)
+            == QtWidgets.QHeaderView.ResizeMode.Interactive
+        )
+
+        parent_item.setCheckState(0, QtCore.Qt.CheckState.Checked)
+        assert child_item.checkState(1) == QtCore.Qt.CheckState.Unchecked
+        assert parent_item.child(1).checkState(1) == QtCore.Qt.CheckState.Unchecked
+        assert sibling_parent_item.checkState(0) == QtCore.Qt.CheckState.Unchecked
+        assert sibling_child_item.checkState(1) == QtCore.Qt.CheckState.Unchecked
+
+        selected_bus: vge.Bus
+        selected_block_type: BlockType
+        input_references: List[VarPowerFlowReferenceType]
+        output_references: List[VarPowerFlowReferenceType]
+        selected_bus, selected_block_type, input_references, output_references = dialog.get_user_info()
+        assert selected_bus is bus
+        assert selected_block_type is BlockType.MEASUREMENTS_VOLTAGE_ANGLE
+        assert input_references == list()
+        assert output_references == references
+        assert child_item.text(1) == "Output"
+
+        sibling_parent_item.setCheckState(0, QtCore.Qt.CheckState.Checked)
+        assert child_item.checkState(1) == QtCore.Qt.CheckState.Unchecked
+        assert sibling_child_item.checkState(1) == QtCore.Qt.CheckState.Checked
+        assert sibling_parent_item.child(1).checkState(1) == QtCore.Qt.CheckState.Checked
+        selected_bus, selected_block_type, input_references, output_references = dialog.get_user_info()
+        assert selected_block_type is BlockType.MEASUREMENTS_VOLTAGE_ANGLE
+        assert input_references == power_references
+        assert output_references == references
+        assert sibling_child_item.text(1) == "Input"
+
+        parent_item.setCheckState(0, QtCore.Qt.CheckState.Unchecked)
+        assert child_item.checkState(1) == QtCore.Qt.CheckState.Unchecked
+        assert parent_item.child(1).checkState(1) == QtCore.Qt.CheckState.Unchecked
+        assert sibling_parent_item.checkState(0) == QtCore.Qt.CheckState.Checked
+        assert sibling_child_item.checkState(1) == QtCore.Qt.CheckState.Checked
+        selected_bus, selected_block_type, input_references, output_references = dialog.get_user_info()
+        assert selected_block_type is BlockType.MEASUREMENTS_P_Q
+        assert input_references == power_references
+        assert output_references == list()
+        assert child_item.text(1) == "Output"
+    finally:
+        delete_dialog_safely(dialog=dialog)
+        app.processEvents()
 
 
 def test_delete_dialog_safely_deletes_child_widgets(qt_app: QtWidgets.QApplication) -> None:

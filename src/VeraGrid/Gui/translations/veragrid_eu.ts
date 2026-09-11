@@ -283,148 +283,147 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <translation>Dialogue</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="141"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="135"/>
         <source>Ask about the active VeraGrid project, the selected study or the current network model.</source>
         <translation>Galdetu VeraGrid proiektu aktiboaz, hautatutako azterketaz edo egungo sare-ereduaz.</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="173"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="167"/>
         <source>Clear chat</source>
         <translation>Clear chat</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="186"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="180"/>
         <source>Ready.</source>
         <translation>Prest.</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="196"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="190"/>
         <source>Send</source>
         <translation>Bidali</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="207"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="201"/>
         <source>Settings</source>
         <translation>Ezarpenak</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="219"/>
-        <source>Local AI</source>
-        <translation>Local AI</translation>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="213"/>
+        <source>Ollama</source>
+        <translation>Ollama</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="248"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="219"/>
+        <source>Status</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="226"/>
+        <source>Checked automatically when the chat opens.</source>
+        <translation>Egaituta dago otomatikoki bate-hazta irekitzen denean.</translation>
+    </message>
+    <message>
+        <source>Local AI</source>
+        <translation type="vanished">Local AI</translation>
+    </message>
+    <message>
         <source>/path/to/model.gguf or /path/to/models</source>
-        <translation>/path/to/model.gguf edo /path/to/models</translation>
+        <translation type="vanished">/path/to/model.gguf edo /path/to/models</translation>
+    </message>
+    <message>
+        <source>Local AI settings</source>
+        <translation type="vanished">Tokiko AI ezarpenak</translation>
+    </message>
+    <message>
+        <source>Scan</source>
+        <translation type="vanished">Scan</translation>
+    </message>
+    <message>
+        <source>GGUF model</source>
+        <translation type="vanished">GGUF model</translation>
+    </message>
+    <message>
+        <source>Model path</source>
+        <translation type="vanished">Model path</translation>
     </message>
     <message>
         <location filename="../AiAgent/ai_chat_gui.ui" line="274"/>
-        <source>Local AI settings</source>
-        <translation>Tokiko AI ezarpenak</translation>
-    </message>
-    <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="284"/>
-        <source>Scan</source>
-        <translation>Scan</translation>
-    </message>
-    <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="291"/>
-        <source>GGUF model</source>
-        <translation>GGUF model</translation>
-    </message>
-    <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="298"/>
-        <source>Model path</source>
-        <translation>Model path</translation>
-    </message>
-    <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="305"/>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="567"/>
         <source>Timeout [s]</source>
         <translation>Timeout [s]</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="312"/>
         <source>Context tokens</source>
-        <translation>Testuinguru-tokenak</translation>
+        <translation type="vanished">Testuinguru-tokenak</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="335"/>
         <source>Completion tokens</source>
-        <translation>Osatze-tokenak</translation>
+        <translation type="vanished">Osatze-tokenak</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="358"/>
         <source>GPU layers</source>
-        <translation>GPU geruzak</translation>
+        <translation type="vanished">GPU geruzak</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="378"/>
         <source>Temperature</source>
-        <translation>Tenperatura</translation>
+        <translation type="vanished">Tenperatura</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="404"/>
         <source>Top p</source>
-        <translation>Goiko or</translation>
+        <translation type="vanished">Goiko or</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="430"/>
         <source>History messages</source>
-        <translation>Historiako mezuak</translation>
+        <translation type="vanished">Historiako mezuak</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="450"/>
         <source>History chars</source>
-        <translation>Historia karaktereak</translation>
+        <translation type="vanished">Historia karaktereak</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="473"/>
         <source>Grounding chars</source>
-        <translation>Lurreratze karaktereak</translation>
+        <translation type="vanished">Lurreratze karaktereak</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="505"/>
         <source>Remote AI</source>
-        <translation>Urruneko AI</translation>
+        <translation type="vanished">Urruneko AI</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="511"/>
         <source>API key</source>
-        <translation>API giltza</translation>
+        <translation type="vanished">API giltza</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="550"/>
         <source>https://api.example.com/v1</source>
-        <translation>https://api.example.com/v1</translation>
+        <translation type="vanished">https://api.example.com/v1</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="560"/>
         <source>Leave empty for unauthenticated endpoints</source>
-        <translation>Utzi hutsik autentifikatu gabeko amaierako puntuetarako</translation>
+        <translation type="vanished">Utzi hutsik autentifikatu gabeko amaierako puntuetarako</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="574"/>
         <source>API provider</source>
-        <translation>API hornitzailea</translation>
+        <translation type="vanished">API hornitzailea</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="581"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="250"/>
         <source>Model</source>
         <translation>Eredua</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="598"/>
         <source>API AI settings</source>
-        <translation>API AI ezarpenak</translation>
+        <translation type="vanished">API AI ezarpenak</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="605"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="236"/>
         <source>Base URL</source>
         <translation>Oinarrizko URLa</translation>
     </message>
     <message>
-        <location filename="../AiAgent/ai_chat_gui.ui" line="615"/>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="243"/>
+        <source>http://localhost:11434/v1</source>
+        <translation>http://localhost:11434/v1</translation>
+    </message>
+    <message>
+        <location filename="../AiAgent/ai_chat_gui.ui" line="267"/>
         <source>Refresh</source>
         <translation>Freskatu</translation>
     </message>
@@ -437,11 +436,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </message>
     <message>
         <source>Pick or type a GGUF file name</source>
-        <translation>Aukeratu edo idatzi GGUF fitxategi-izen bat</translation>
+        <translation type="vanished">Aukeratu edo idatzi GGUF fitxategi-izen bat</translation>
     </message>
     <message>
         <source>Provider model name</source>
-        <translation>Hornitzailearen ereduaren izena</translation>
+        <translation type="vanished">Hornitzailearen ereduaren izena</translation>
     </message>
     <message>
         <source>VeraGrid AI</source>
@@ -449,19 +448,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </message>
     <message>
         <source>Scan the configured path for GGUF files.</source>
-        <translation>Eskaneatu konfiguratutako bidea GGUF fitxategietarako.</translation>
+        <translation type="vanished">Eskaneatu konfiguratutako bidea GGUF fitxategietarako.</translation>
     </message>
     <message>
         <source>API key</source>
-        <translation>API giltza</translation>
+        <translation type="vanished">API giltza</translation>
     </message>
     <message>
         <source>Leave empty for unauthenticated endpoints</source>
-        <translation>Utzi hutsik autentifikatu gabeko amaierako puntuetarako</translation>
+        <translation type="vanished">Utzi hutsik autentifikatu gabeko amaierako puntuetarako</translation>
     </message>
     <message>
         <source>Query the configured backend for models.</source>
-        <translation>Kontsultatu ereduetarako konfiguratutako backend-a.</translation>
+        <translation type="vanished">Kontsultatu ereduetarako konfiguratutako backend-a.</translation>
     </message>
     <message>
         <source>Type a message before sending.</source>
@@ -519,6 +518,114 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <source>Tool</source>
         <translation>Tresna</translation>
     </message>
+    <message>
+        <source>AI turn failed: {error_message}</source>
+        <translation>AI-aren burutzea askortuta: {error_message}</translation>
+    </message>
+    <message>
+        <source>Checking automatically when the chat opens.</source>
+        <translation>Egasteko da otomatikoki bate-hazta irekitzen denean.</translation>
+    </message>
+    <message>
+        <source>Could not refresh models: {error_message}</source>
+        <translation>Modeloak eguneratzea egiaztu daiteke: {error_message}</translation>
+    </message>
+    <message>
+        <source>Loaded {model_count} models from the backend.</source>
+        <translation>Modelo {model_count} dago backend-etik.</translation>
+    </message>
+    <message>
+        <source>Not ready. {error_message}</source>
+        <translation>Prestatu ez dago. {error_message}</translation>
+    </message>
+    <message>
+        <source>Ollama base URL</source>
+        <translation>Ollama base URL</translation>
+    </message>
+    <message>
+        <source>Ollama did not report models: {error_message}</source>
+        <translation>Ollama-k modeloak ez dituzkoiz: {error_message}</translation>
+    </message>
+    <message>
+        <source>Ollama is ready.</source>
+        <translation>Ollama prest dago.</translation>
+    </message>
+    <message>
+        <source>Ollama is running, but it reported no installed models.</source>
+        <translation>Ollama-k funtzionatzen da, baina ez du instalatu modelak ziurtatu.</translation>
+    </message>
+    <message>
+        <source>Ollama is running. Loaded {model_count} models.</source>
+        <translation>Ollama-k funtzionatzen da. {model_count} modelo dago dagoela.</translation>
+    </message>
+    <message>
+        <source>Ollama model</source>
+        <translation>Ollama modeloa</translation>
+    </message>
+    <message>
+        <source>Ollama reports installed models automatically</source>
+        <translation>Ollama-k instalatu modelak otomatikoki ziurtatzen ditu</translation>
+    </message>
+    <message>
+        <source>Ollama will be detected and checked automatically when the chat opens.</source>
+        <translation>Ollama-k itzultuko eta egialdi utziko otomatikoki bate-hazta irekitzen denean.</translation>
+    </message>
+    <message>
+        <source>Pick or type an Ollama model</source>
+        <translation>Ollama modelo bat aukeratu edo idatzi</translation>
+    </message>
+    <message>
+        <source>Query Ollama for models.</source>
+        <translation>Sorgu Ollama-an modeloak.</translation>
+    </message>
+    <message>
+        <source>Refreshing models from Ollama...</source>
+        <translation>Ollama-tik modeloak eguneratzen ari da...</translation>
+    </message>
+    <message>
+        <source>Refreshing models from the configured backend...</source>
+        <translation>Modeloak eguneratzen ari da konfiguratu backend-etik...</translation>
+    </message>
+    <message>
+        <source>Reply with one short greeting sentence. Say that VeraGrid AI is ready and Ollama is working with model {model_name}. Do not ask a question.</source>
+        <translation>Hitzaldi onena labur batekin erantzut. Eratu VeraGrid AI prest dagoela eta Ollama-k {model_name} modeloarekin lan egiten ari dela. Ez egin galdetako hitzaldia.</translation>
+    </message>
+    <message>
+        <source>Running, but no installed models were reported.</source>
+        <translation>Funtzionatzen ari da, baina ez du instalatu modelak ziurtatu.</translation>
+    </message>
+    <message>
+        <source>Running. Using {model_name}.</source>
+        <translation>Funtzionatzen ari da. {model_name} erabiltzen ari da.</translation>
+    </message>
+    <message>
+        <source>Running. {model_count} installed models reported.</source>
+        <translation>Funtzionatzen ari da. {model_count} instalatu modelo ziurtatu.</translation>
+    </message>
+    <message>
+        <source>The Ollama base URL field is empty.</source>
+        <translation>Ollama base URL lehiak joan dago.</translation>
+    </message>
+    <message>
+        <source>The base URL field is empty.</source>
+        <translation>Base URL lehiak joan dago.</translation>
+    </message>
+    <message>
+        <source>The model field is empty.</source>
+        <translation>Modelo lehiak joan dago.</translation>
+    </message>
+    <message>
+        <source>Turn completed.</source>
+        <translation>Burutzea amaitu.</translation>
+    </message>
+    <message>
+        <source>VeraGrid checks Ollama automatically and uses the model reported by the local server.</source>
+        <translation>VeraGrid-ek Ollama-k egialdi utzi eta lokal server-ek ziurtatutako modeloa erabiltzen du otomatikoki.</translation>
+    </message>
+    <message>
+        <source>http://localhost:11434/v1</source>
+        <translation>http://localhost:11434/v1</translation>
+    </message>
 </context>
 <context>
     <name>ArrayEditor</name>
@@ -552,6 +659,17 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <message>
         <source>{device_name} results plot</source>
         <translation>{device_name} results plot</translation>
+    </message>
+</context>
+<context>
+    <name>BaseMainGui</name>
+    <message>
+        <source>Are you sure that you want to cancel the simulation?</source>
+        <translation>Zure simulazioa kitatu nahi duzun ziurtatu zara?</translation>
+    </message>
+    <message>
+        <source>Unlocking the UI may cause crash depending on the conditions. Are you sure?</source>
+        <translation>UI-a irekitzeko buruzko zailtasunak kausatu dezake. Ziurtatu zara?</translation>
     </message>
 </context>
 <context>
@@ -2113,6 +2231,49 @@ Are you sure?</translation>
     </message>
 </context>
 <context>
+    <name>DiagramScene</name>
+    <message>
+        <source>Block info</source>
+        <translation>Blok informazioa</translation>
+    </message>
+    <message>
+        <source>Edit block</source>
+        <translation type="vanished">Blokak editatu</translation>
+    </message>
+    <message>
+        <source>Change Color</source>
+        <translation>Kolorea aldatu</translation>
+    </message>
+    <message>
+        <source>Change Name</source>
+        <translation>Izena aldatu</translation>
+    </message>
+    <message>
+        <source>Change Variable Name</source>
+        <translation>Zenbatek Izena Aldatzea</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation>Bikoiztu</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Editatu</translation>
+    </message>
+    <message>
+        <source>Open internals</source>
+        <translation>Bidezurua ireki</translation>
+    </message>
+    <message>
+        <source>Properties</source>
+        <translation>Propietateak</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Kendu</translation>
+    </message>
+</context>
+<context>
     <name>DiagramsMain</name>
     <message>
         <source>Are you sure that you want to try an automatic layout?</source>
@@ -2851,6 +3012,18 @@ Are you sure?</translation>
         <source>You are going to delete the complete model and start from scratch. Are you sure?</source>
         <translation type="vanished">Modelo osoa bete nahi duzu eta hasieraetik hasi. Zure ziurtasunez dagozu?</translation>
     </message>
+    <message>
+        <source>Block info</source>
+        <translation>Blok informazioa</translation>
+    </message>
+    <message>
+        <source>No online catalogue documentation is available for this custom block.</source>
+        <translation>Ez dago online katalogo dokumentazioa kudeaketa-blok handika.</translation>
+    </message>
+    <message>
+        <source>The online block documentation could not be opened.</source>
+        <translation>Online blok dokumentazioa ireki nahi ez da.</translation>
+    </message>
 </context>
 <context>
     <name>DynamicBlockPropertiesDialog</name>
@@ -2860,9 +3033,8 @@ Are you sure?</translation>
         <translation>Blokatzeko propietatak</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="70"/>
         <source>Apply changes</source>
-        <translation>Kirolak aplikatu</translation>
+        <translation type="vanished">Kirolak aplikatu</translation>
     </message>
     <message>
         <source>Close</source>
@@ -2874,11 +3046,11 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Add symbol</source>
-        <translation>Simbolo gehitu</translation>
+        <translation type="vanished">Simbolo gehitu</translation>
     </message>
     <message>
         <source>Add symbol to selected block</source>
-        <translation>Simboloa aukeratutako blokean gehitu</translation>
+        <translation type="vanished">Simboloa aukeratutako blokean gehitu</translation>
     </message>
     <message>
         <source>Advanced runtime logic</source>
@@ -2889,16 +3061,17 @@ Are you sure?</translation>
         <translation>Aplikatu egoera-neurriak DAE-kodearekin edo simbolo-interfazioaren gai-aldaketakarekin lotuta.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="405"/>
         <source>Block / equation group</source>
         <translation>Blokea / ekuazio-grupoa</translation>
     </message>
     <message>
         <source>Block configuration</source>
-        <translation>Blokearen konfigurazioa</translation>
+        <translation type="vanished">Blokearen konfigurazioa</translation>
     </message>
     <message>
         <source>Block info</source>
-        <translation>Blokearen informazioa</translation>
+        <translation type="vanished">Blokearen informazioa</translation>
     </message>
     <message>
         <source>Block properties - {name}</source>
@@ -2922,11 +3095,11 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Garbi</translation>
+        <translation type="vanished">Garbi</translation>
     </message>
     <message>
         <source>Create derivative variable</source>
-        <translation>Deribateri variabile sortu</translation>
+        <translation type="vanished">Deribateri variabile sortu</translation>
     </message>
     <message>
         <source>DAE and runtime-logic changes applied to the editor working copy.</source>
@@ -2937,8 +3110,9 @@ Are you sure?</translation>
         <translation type="vanished">DAE-kodea balio bate dago.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="134"/>
         <source>DAE model</source>
-        <translation type="vanished">DAE modeloa</translation>
+        <translation>DAE modeloa</translation>
     </message>
     <message>
         <source>DAE validation failed at line {line}: {message}</source>
@@ -2950,11 +3124,11 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Download rendered PDF</source>
-        <translation>PDF renderatutakoa deskargatu</translation>
+        <translation type="vanished">PDF renderatutakoa deskargatu</translation>
     </message>
     <message>
         <source>Enter a name</source>
-        <translation>Izena sartu</translation>
+        <translation type="vanished">Izena sartu</translation>
     </message>
     <message>
         <source>Enter a valid Python symbol name.</source>
@@ -2965,14 +3139,53 @@ Are you sure?</translation>
         <translation>Ekuazio PDF sortu: {path}</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="188"/>
         <source>Equation owner</source>
         <translation>Ekuazioaren jatorria</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="254"/>
+        <source>&lt;&lt;</source>
+        <translation>&lt;&lt;</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="264"/>
+        <source>&gt;&gt;</source>
+        <translation>&gt;&gt;</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="292"/>
+        <source>LaTeX rendering</source>
+        <translation>LaTeX erakustarakoa</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="333"/>
+        <source>Select None</source>
+        <translation>Batu bat ez aukeratu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="360"/>
+        <source>Save redered PDF</source>
+        <translation>PDF erakustarakoat salbatu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="389"/>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="410"/>
         <source>Equations</source>
         <translation>Ekuazioak</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="427"/>
+        <source>LaTex source</source>
+        <translation>LaTeX iturria</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="529"/>
+        <source>Accept changes</source>
+        <translation>Aldaketak onartu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="40"/>
         <source>General options</source>
         <translation>Optionak nagusiak</translation>
     </message>
@@ -2982,7 +3195,7 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Initial numeric value</source>
-        <translation>Balio numeriko inguruko</translation>
+        <translation type="vanished">Balio numeriko inguruko</translation>
     </message>
     <message>
         <source>Inputs</source>
@@ -2994,11 +3207,11 @@ Are you sure?</translation>
     </message>
     <message>
         <source>LaTeX</source>
-        <translation>LaTeX</translation>
+        <translation type="vanished">LaTeX</translation>
     </message>
     <message>
         <source>LaTeX source</source>
-        <translation>LaTeX iturria</translation>
+        <translation type="vanished">LaTeX iturria</translation>
     </message>
     <message>
         <source>Name</source>
@@ -3006,11 +3219,11 @@ Are you sure?</translation>
     </message>
     <message>
         <source>New symbol name</source>
-        <translation>Simbolo berri izena</translation>
+        <translation type="vanished">Simbolo berri izena</translation>
     </message>
     <message>
         <source>Next</source>
-        <translation>Hurrengo</translation>
+        <translation type="vanished">Hurrengo</translation>
     </message>
     <message>
         <source>No matches</source>
@@ -3018,7 +3231,7 @@ Are you sure?</translation>
     </message>
     <message>
         <source>No online catalogue documentation is available for this custom block.</source>
-        <translation>Ez dago online katalogo dokumentazioa gai bloke honearen gaineko.</translation>
+        <translation type="vanished">Ez dago online katalogo dokumentazioa gai bloke honearen gaineko.</translation>
     </message>
     <message>
         <source>None</source>
@@ -3034,11 +3247,11 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Opens the documentation for the original predefined library block. If this block has been modified in the editor, its current equations, symbols, parameters, or runtime logic may differ from the online documentation.</source>
-        <translation>Ireki da oraindik definitu dagoen biblioteka blokearen dokumentazioa. Hone blokea editorean geroa egin da, bere ekuazioak, simboloak, parametroak edo gointzaren logika neurrategia online dokumentazioarekin ez da lotuta daiteke.</translation>
+        <translation type="vanished">Ireki da oraindik definitu dagoen biblioteka blokearen dokumentazioa. Hone blokea editorean geroa egin da, bere ekuazioak, simboloak, parametroak edo gointzaren logika neurrategia online dokumentazioarekin ez da lotuta daiteke.</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>Irau</translation>
+        <translation type="vanished">Irau</translation>
     </message>
     <message>
         <source>Outputs</source>
@@ -3046,7 +3259,7 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Owner block</source>
-        <translation>Jatorri blokea</translation>
+        <translation type="vanished">Jatorri blokea</translation>
     </message>
     <message>
         <source>PDF documents (*.pdf)</source>
@@ -3062,19 +3275,19 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Power-flow variable</source>
-        <translation>Potentzial-uharraldearen variablea</translation>
+        <translation type="vanished">Potentzial-uharraldearen variablea</translation>
     </message>
     <message>
         <source>Power-flow variable used to initialize this dynamic variable.</source>
-        <translation>Hau dinamiko variablea lehenesanatzeko erabiltzen den potentzial-uharraldearen variablea.</translation>
+        <translation type="vanished">Hau dinamiko variablea lehenesanatzeko erabiltzen den potentzial-uharraldearen variablea.</translation>
     </message>
     <message>
         <source>Previous</source>
-        <translation>Aurreko</translation>
+        <translation type="vanished">Aurreko</translation>
     </message>
     <message>
         <source>Python code</source>
-        <translation>Python koda</translation>
+        <translation type="vanished">Python koda</translation>
     </message>
     <message>
         <source>Rename...</source>
@@ -3089,6 +3302,7 @@ Are you sure?</translation>
         <translation>Dinamiko ekuazioak PDF-era itxurkari</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="241"/>
         <source>Search Python code...</source>
         <translation>Python kodaarekin bilatu...</translation>
     </message>
@@ -3109,6 +3323,7 @@ Are you sure?</translation>
         <translation>Simbolo mota legezko bat aukeratu.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="319"/>
         <source>Select all</source>
         <translation>Hautatu guztiak</translation>
     </message>
@@ -3117,10 +3332,12 @@ Are you sure?</translation>
         <translation>Ekuazio grupo lege ez bat aukeratu.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="439"/>
         <source>Select equation groups to generate copyable LaTeX source.</source>
         <translation>Kopiatu daiteko LaTeX urratzia sortzeko ekuazio grupoak aukeratu.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="395"/>
         <source>Select the equation groups to include. Each internal block and each DAE section can be selected independently.</source>
         <translation>Sertu nahi dituzten ekuazio grupoak aukeratu. Bloke harritako bakoak eta DAE sezioko bakoak independentean aukeratu daitezke.</translation>
     </message>
@@ -3130,11 +3347,11 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Static device mapping</source>
-        <translation>Eginak estatikoak mapatu</translation>
+        <translation type="vanished">Eginak estatikoak mapatu</translation>
     </message>
     <message>
         <source>Symbol category</source>
-        <translation>Simbolo kategoriak</translation>
+        <translation type="vanished">Simbolo kategoriak</translation>
     </message>
     <message>
         <source>The PDF could not be created: {message}</source>
@@ -3142,9 +3359,10 @@ Are you sure?</translation>
     </message>
     <message>
         <source>The online block documentation could not be opened in the system browser.</source>
-        <translation>Online bloke dokumentazioa sistema-browserrean ireki daiteko.</translation>
+        <translation type="vanished">Online bloke dokumentazioa sistema-browserrean ireki daiteko.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="457"/>
         <source>These settings contain structured data used to regenerate the block. Edit sequences with valid Python tuple/list syntax.</source>
         <translation>Ezaugarri hauek blokea berriro sortzeko erabiltzen den egoera datuak dituzte. Sekuentziak Python tuple/list sintaxis legearekin editatu.</translation>
     </message>
@@ -3154,7 +3372,7 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tipoa</translation>
+        <translation type="vanished">Tipoa</translation>
     </message>
     <message>
         <source>Validate all code</source>
@@ -3174,19 +3392,20 @@ Are you sure?</translation>
     </message>
     <message>
         <source>+ Add procedural logic</source>
-        <translation>+ Prozedural logika gehitu</translation>
+        <translation type="vanished">+ Prozedural logika gehitu</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="161"/>
         <source>Add one procedural behavior to the active equation owner&apos;s Python code.</source>
         <translation>Prozedurala ziurtatu bat aktiboa dagoen iruzainaren Python kodean gehitu.</translation>
     </message>
     <message>
         <source>DAE editor</source>
-        <translation>DAE editorea</translation>
+        <translation type="vanished">DAE editorea</translation>
     </message>
     <message>
         <source>Documentation</source>
-        <translation>Dokumentazioa</translation>
+        <translation type="vanished">Dokumentazioa</translation>
     </message>
     <message>
         <source>Model code is valid.</source>
@@ -3205,6 +3424,7 @@ Are you sure?</translation>
         <translation>Modeu mantendu</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="82"/>
         <source>Search properties...</source>
         <translation>Propietateak (...) bilatu</translation>
     </message>
@@ -3214,9 +3434,10 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Show or hide Python code and LaTeX rendering tool</source>
-        <translation>Python kodea eta LaTeX renderatzeko tresna erakustea edo isgauztu</translation>
+        <translation type="vanished">Python kodea eta LaTeX renderatzeko tresna erakustea edo isgauztu</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="451"/>
         <source>Special configuration</source>
         <translation>Konfigurazio zehatza</translation>
     </message>
@@ -3229,12 +3450,10 @@ Are you sure?</translation>
         <translation>Aukeratu dagoen iruzainaren Python-kode buffer batek ez dago.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/dynamic_block_properties.ui" line="502"/>
         <source>Validate model</source>
         <translation>Modeloa baliatu</translation>
     </message>
-</context>
-<context>
-    <name>DynamicBlockPropertiesDockWidget</name>
     <message>
         <source>Block Properties contains changes that have not been applied. Discard those changes and close the editor?</source>
         <translation>Block Properties-ean ez dago aplikatuak den dirudiak. Ez dago dirudiak eta editorea xutetzea?</translation>
@@ -3242,6 +3461,22 @@ Are you sure?</translation>
     <message>
         <source>Unsaved Block Properties changes</source>
         <translation>Block Properties-ko dirudiak ez dago jartuak</translation>
+    </message>
+    <message>
+        <source>Add parameter...</source>
+        <translation>Parametrua gehitu...</translation>
+    </message>
+    <message>
+        <source>Add retained mode...</source>
+        <translation>Estatua mantendu modu gehitu...</translation>
+    </message>
+    <message>
+        <source>Add variable...</source>
+        <translation>Bariablea gehitu...</translation>
+    </message>
+    <message>
+        <source>Nothing was added: {message}</source>
+        <translation>Zer ez da gehitua: {message}</translation>
     </message>
 </context>
 <context>
@@ -3328,19 +3563,19 @@ Are you sure?</translation>
     <name>DynamicEditorWorkspaceSession</name>
     <message>
         <source>Invalid dynamic events</source>
-        <translation>Ekitate dinamikoak balio batean dauden</translation>
+        <translation type="vanished">Ekitate dinamikoak balio batean dauden</translation>
     </message>
     <message>
         <source>Save the changes before closing the last events tab?</source>
-        <translation>Dirudiak jartu baino lehen ekitate ekitateak xutetzea?</translation>
+        <translation type="vanished">Dirudiak jartu baino lehen ekitate ekitateak xutetzea?</translation>
     </message>
     <message>
         <source>The dynamic events contain unsaved changes.</source>
-        <translation>Ekitate dinamikoak dirudiak ez dago jartuak dituzte.</translation>
+        <translation type="vanished">Ekitate dinamikoak dirudiak ez dago jartuak dituzte.</translation>
     </message>
     <message>
         <source>Unsaved dynamic events</source>
-        <translation>Ekitate dinamikoak ez dago jartuak</translation>
+        <translation type="vanished">Ekitate dinamikoak ez dago jartuak</translation>
     </message>
 </context>
 <context>
@@ -3645,38 +3880,52 @@ Are you sure?</translation>
     </message>
 </context>
 <context>
+    <name>DynamicEventGroupsTreeModel</name>
+    <message>
+        <source>Event groups</source>
+        <translation>Gertakari-grupoak</translation>
+    </message>
+</context>
+<context>
     <name>DynamicEventsDraftSession</name>
     <message>
         <source>An event and its events group use different simulation modes.</source>
-        <translation>Ekitate batek eta bere ekitate grupoak simulazio modu ezberdinak erabiltzen dituzte.</translation>
+        <translation type="vanished">Ekitate batek eta bere ekitate grupoak simulazio modu ezberdinak erabiltzen dituzte.</translation>
     </message>
     <message>
         <source>An event has no target device.</source>
-        <translation>Ekitate batek oinarrizko gailu batek ez du.</translation>
+        <translation type="vanished">Ekitate batek oinarrizko gailu batek ez du.</translation>
     </message>
     <message>
         <source>An event in device &apos;{device}&apos; has no valid events group.</source>
-        <translation>Ekitate batek &apos;{device}&apos; gailuan balio batean dagoen ekitate grupo batek ez du.</translation>
+        <translation type="vanished">Ekitate batek &apos;{device}&apos; gailuan balio batean dagoen ekitate grupo batek ez du.</translation>
     </message>
     <message>
         <source>An event in device &apos;{device}&apos; has no valid parameter.</source>
-        <translation>Ekitate batek &apos;{device}&apos; gailuan balio batean dagoen parametro batek ez du.</translation>
+        <translation type="vanished">Ekitate batek &apos;{device}&apos; gailuan balio batean dagoen parametro batek ez du.</translation>
     </message>
     <message>
         <source>An events group has an empty name.</source>
-        <translation>Ekitate grupo batek izen kosong batek gotuz.</translation>
+        <translation type="vanished">Ekitate grupo batek izen kosong batek gotuz.</translation>
     </message>
     <message>
         <source>Events for parameter &apos;{parameter}&apos; overlap in group &apos;{group}&apos; and device &apos;{device}&apos;.</source>
-        <translation>Parametro &apos;{parameter}&apos;ko ekitateak grupo &apos;{group}&apos; eta gailu &apos;{device}&apos; batean isekarteko da.</translation>
+        <translation type="vanished">Parametro &apos;{parameter}&apos;ko ekitateak grupo &apos;{group}&apos; eta gailu &apos;{device}&apos; batean isekarteko da.</translation>
     </message>
     <message>
         <source>The events group name &apos;{name}&apos; is duplicated.</source>
-        <translation>Ekitate grupoaren izena &apos;{name}&apos; errepikatua da.</translation>
+        <translation type="vanished">Ekitate grupoaren izena &apos;{name}&apos; errepikatua da.</translation>
     </message>
     <message>
         <source>The ramp event for parameter &apos;{parameter}&apos; has an invalid end time.</source>
-        <translation>Parametro &apos;{parameter}&apos;ko ramp event-ak amaitzeko denbora balio batean dagoen.</translation>
+        <translation type="vanished">Parametro &apos;{parameter}&apos;ko ramp event-ak amaitzeko denbora balio batean dagoen.</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicEventsFilterPopup</name>
+    <message>
+        <source>All</source>
+        <translation type="vanished">Beterrek</translation>
     </message>
 </context>
 <context>
@@ -3710,50 +3959,104 @@ Are you sure?</translation>
     <name>DynamicEventsItemDelegate</name>
     <message>
         <source>Ramp</source>
-        <translation>Rampa</translation>
+        <translation type="vanished">Rampa</translation>
     </message>
     <message>
         <source>Step</source>
-        <translation>Zututak</translation>
+        <translation type="vanished">Zututak</translation>
     </message>
 </context>
 <context>
     <name>DynamicEventsPage</name>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="165"/>
         <source>Add an event to the selected event group</source>
         <translation>Ego-grupari hautsaitako egoera gehitzea</translation>
     </message>
     <message>
         <source>Are you sure you want to remove group &apos;{group}&apos;? This will remove {events} events from {devices} devices.</source>
-        <translation>Zure ego-grupo &apos;{group}&apos; apurtu nahi duzun ziurtatu? Honek {devices} gai-jaietako {events} egoerak beteko.</translation>
+        <translation type="vanished">Zure ego-grupo &apos;{group}&apos; apurtu nahi duzun ziurtatu? Honek {devices} gai-jaietako {events} egoerak beteko.</translation>
     </message>
     <message>
         <source>Are you sure you want to remove the event for &apos;{parameter}&apos; at {time:.4f} s?</source>
-        <translation>Zure &apos;{parameter}&apos; egoera apurtu nahi duzun ziurtatu {time:.4f} s-an?</translation>
+        <translation type="vanished">Zure &apos;{parameter}&apos; egoera apurtu nahi duzun ziurtatu {time:.4f} s-an?</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="14"/>
+        <source>Dynamic Events</source>
+        <translation>Ereki Dinamikoak</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="124"/>
+        <source>New</source>
+        <translation>Berri</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="127"/>
+        <source>Delete all events of this simulation mode from the current device</source>
+        <translation>Gailu kopurua dagoen simulazio-moduaren gertakari guztien kontaintza egin</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="139"/>
+        <source>Save</source>
+        <translation>Gorde</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="142"/>
+        <source>Save event changes</source>
+        <translation>Gertakari-aldaketak salbatu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="145"/>
+        <source>Ctrl+S</source>
+        <translation>Ktrl+S</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="153"/>
         <source>Create an EMT switch opening and reclosing event sequence</source>
         <translation>EMT altzola ireketa eta bardutze egoera-silsilak sortu</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="182"/>
+        <source>Create Event Group</source>
+        <translation>Gertakari-grupo sortu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="185"/>
+        <source>Create an event group</source>
+        <translation>Gertakari-grupo bat sortu</translation>
+    </message>
+    <message>
+        <source>Add Event</source>
+        <translation type="vanished">Ereki Sartu</translation>
+    </message>
+    <message>
+        <source>Remove Selected</source>
+        <translation type="vanished">Kendu Hautatuak</translation>
+    </message>
+    <message>
+        <source>Add Event Group</source>
+        <translation>Ereki Taldea Sartu</translation>
+    </message>
+    <message>
         <source>Create an event group for this simulation mode</source>
-        <translation>Simulazio-modo honeko ego-grupo bat sortu</translation>
+        <translation type="vanished">Simulazio-modo honeko ego-grupo bat sortu</translation>
     </message>
     <message>
         <source>Empty dynamic model</source>
-        <translation>Modelo dinamiko joan</translation>
+        <translation type="vanished">Modelo dinamiko joan</translation>
     </message>
     <message>
         <source>Events cannot be added because this dynamic model has no event parameters.</source>
-        <translation>Egoerak gehi nahi ez dira, modelo dinamiko honek egoera parametroak ez du.</translation>
+        <translation type="vanished">Egoerak gehi nahi ez dira, modelo dinamiko honek egoera parametroak ez du.</translation>
     </message>
     <message>
         <source>Events saved</source>
-        <translation>Egoerak taldeatu</translation>
+        <translation type="vanished">Egoerak taldeatu</translation>
     </message>
     <message>
         <source>Invalid dynamic events</source>
-        <translation>Ekitate dinamikoak balio batean dauden</translation>
+        <translation type="vanished">Ekitate dinamikoak balio batean dauden</translation>
     </message>
     <message>
         <source>Invalid event group</source>
@@ -3761,15 +4064,15 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Invalid parameter</source>
-        <translation>Parametru ez baliozkoa</translation>
+        <translation type="vanished">Parametru ez baliozkoa</translation>
     </message>
     <message>
         <source>No events can be added because the dynamic model has no event parameters.</source>
-        <translation>Egoerak gehi nahi ez dira, modelo dinamikoak egoera parametroak ez du.</translation>
+        <translation type="vanished">Egoerak gehi nahi ez dira, modelo dinamikoak egoera parametroak ez du.</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Kendu</translation>
+        <translation type="vanished">Kendu</translation>
     </message>
     <message>
         <source>Remove event</source>
@@ -3777,82 +4080,145 @@ Are you sure?</translation>
     </message>
     <message>
         <source>Remove events group</source>
-        <translation>Egoerak grupo bete</translation>
+        <translation type="vanished">Egoerak grupo bete</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="177"/>
         <source>Remove the selected event or event group</source>
         <translation>Hautsaitako egoera edo ego-grupoa bete</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation>Izena daida</translation>
+        <translation type="vanished">Izena daida</translation>
     </message>
     <message>
         <source>Save events</source>
-        <translation>Egoerak taldeatu</translation>
+        <translation type="vanished">Egoerak taldeatu</translation>
     </message>
     <message>
         <source>Select the event group where you want to add the event.</source>
-        <translation>Egoera gehitu nahi duzun ego-grupoa hautatu.</translation>
+        <translation type="vanished">Egoera gehitu nahi duzun ego-grupoa hautatu.</translation>
     </message>
     <message>
         <source>Select the event or event group you want to remove.</source>
-        <translation>Apurtu nahi duzun egoera edo ego-grupoa hautatu.</translation>
+        <translation type="vanished">Apurtu nahi duzun egoera edo ego-grupoa hautatu.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="150"/>
         <source>Switch Sequence Wizard</source>
         <translation>Zigurutuzko Sukegiak Aldatzeko Zirkuitu-Zirkuitua</translation>
     </message>
     <message>
         <source>The event group name must be non-empty and unique in this simulation mode.</source>
-        <translation>Ego-grupoaren izenak ez izan behar ezik eta uniko izan behar simulazio-modo honean.</translation>
+        <translation type="vanished">Ego-grupoaren izenak ez izan behar ezik eta uniko izan behar simulazio-modo honean.</translation>
     </message>
     <message>
+        <location filename="../DynamicModelEditor/Events/dynamic_events_page_ui.ui" line="101"/>
         <source>This dynamic model is empty. New events cannot be added until the model is built.</source>
         <translation>Modelo dinamiko hau joan dago. Modeloa sortu arte, egoerak berriak gehi nahi da ez.</translation>
     </message>
     <message>
         <source>➕ New Event Group</source>
-        <translation>➕ Ego-grupo berria</translation>
+        <translation type="vanished">➕ Ego-grupo berria</translation>
+    </message>
+    <message>
+        <source>Add an event and select its event group</source>
+        <translation type="vanished">Ereki bat sartu eta bere ereki taldea aukeratu</translation>
+    </message>
+    <message>
+        <source>Create an event group before adding an event.</source>
+        <translation type="vanished">Ereki bat sartu baino lehen ereki taldea bat sortu.</translation>
+    </message>
+    <message>
+        <source>Select the event you want to remove.</source>
+        <translation type="vanished">Steitureko erekia aukeratu.</translation>
+    </message>
+    <message>
+        <source>An event group with this name already exists.</source>
+        <translation>Izena baten gertakari-grupo bat dago ere.</translation>
+    </message>
+    <message>
+        <source>Delete all device events</source>
+        <translation>Gailu kopurueko gertakari guztien kontaintza egin</translation>
+    </message>
+    <message>
+        <source>Delete all events for this device and simulation mode?</source>
+        <translation>Gailu kopurueko eta simulazio-moduaren gertakari guztien kontaintza egin?</translation>
+    </message>
+    <message>
+        <source>Group name:</source>
+        <translation>Grupoen izena:</translation>
+    </message>
+    <message>
+        <source>Remove &apos;{name}&apos; and all events in this group?</source>
+        <translation>Taldea honako &apos;{name}&apos; eta gertakari guztien kontaintza egin?</translation>
+    </message>
+    <message>
+        <source>Remove event group</source>
+        <translation>Gertakari-grupoa kontaintza egin</translation>
+    </message>
+    <message>
+        <source>Remove the selected event?</source>
+        <translation>Gertakari hautakontzat kontaintza egin?</translation>
+    </message>
+    <message>
+        <source>Select an event group before adding an event.</source>
+        <translation>Gertakari-grupo bat hautakontzi behar da gertakari bat gehitu baino lehen.</translation>
+    </message>
+    <message>
+        <source>Select an event or event group to remove.</source>
+        <translation>Kontaintza egiteko gertakari edo gertakari-grupo bat hautakontzi.</translation>
+    </message>
+    <message>
+        <source>The dynamic model has no event parameters.</source>
+        <translation>Modelo dinamikoak gertakari parametroak ez ditu.</translation>
     </message>
 </context>
 <context>
     <name>DynamicEventsTreeModel</name>
     <message>
         <source>Align Step</source>
-        <translation>Zuzendarata</translation>
+        <translation type="vanished">Zuzendarata</translation>
     </message>
     <message>
         <source>End Time</source>
-        <translation>Amaitzeko Oroa</translation>
+        <translation type="vanished">Amaitzeko Oroa</translation>
     </message>
     <message>
         <source>Invalid / Ungrouped Events</source>
-        <translation>Egoerak ez baliozkoak / Ego-grupari ez dagoen</translation>
+        <translation type="vanished">Egoerak ez baliozkoak / Ego-grupari ez dagoen</translation>
     </message>
     <message>
         <source>Invalid parameter</source>
-        <translation>Parametru ez baliozkoa</translation>
+        <translation type="vanished">Parametru ez baliozkoa</translation>
     </message>
     <message>
         <source>New Value</source>
-        <translation>Balio berria</translation>
+        <translation type="vanished">Balio berria</translation>
     </message>
     <message>
         <source>Parameter</source>
-        <translation>Parametru</translation>
+        <translation type="vanished">Parametru</translation>
     </message>
     <message>
         <source>These persisted events do not reference a valid events group and can only be removed.</source>
-        <translation>Egoerak taldeatu hauek ego-grupo baliozko bat ez adierazten dituz eta beteak ezin da.</translation>
+        <translation type="vanished">Egoerak taldeatu hauek ego-grupo baliozko bat ez adierazten dituz eta beteak ezin da.</translation>
     </message>
     <message>
         <source>Time</source>
-        <translation>Egutegia</translation>
+        <translation type="vanished">Egutegia</translation>
     </message>
     <message>
         <source>Transition</source>
-        <translation>Trantzisio</translation>
+        <translation type="vanished">Trantzisio</translation>
+    </message>
+    <message>
+        <source>Event Group</source>
+        <translation type="vanished">Ereki Taldea</translation>
+    </message>
+    <message>
+        <source>Select Event Group</source>
+        <translation type="vanished">Ereki Taldea Aukeratu</translation>
     </message>
 </context>
 <context>
@@ -4029,6 +4395,79 @@ prozesatzeko formatu espero denak aukeratu</translation>
     <message>
         <source>Choose an FMU file first.</source>
         <translation>Aukeratu lehenik FMU fitxategi bat.</translation>
+    </message>
+</context>
+<context>
+    <name>Form</name>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="14"/>
+        <source>Add block property</source>
+        <translation>Blok eigiaitza gehitu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="26"/>
+        <source>Add symbol to selected block</source>
+        <translation>Simboloa aukeratutako blokean gehitu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="71"/>
+        <source>Output</source>
+        <translation>Irau</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="78"/>
+        <source>Create derivative variable</source>
+        <translation>Deribateri variabile sortu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="144"/>
+        <source>New symbol name</source>
+        <translation>Simbolo berri izena</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="151"/>
+        <source>Symbol category</source>
+        <translation>Simbolo kategoriak</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="158"/>
+        <source>Owner block</source>
+        <translation>Jatorri blokea</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="165"/>
+        <source>Type</source>
+        <translation>Tipoa</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="172"/>
+        <source>Add symbol</source>
+        <translation>Simbolo gehitu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="195"/>
+        <source>Static device mapping</source>
+        <translation>Eginak estatikoak mapatu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="202"/>
+        <source>Power-flow variable used to initialize this dynamic variable.</source>
+        <translation>Hau dinamiko variablea lehenesanatzeko erabiltzen den potentzial-uharraldearen variablea.</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="205"/>
+        <source>Power-flow variable</source>
+        <translation>Potentzial-uharraldearen variablea</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="266"/>
+        <source>Enter a name</source>
+        <translation>Izena sartu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/BlockProperties/add_symbol_widget.ui" line="273"/>
+        <source>Initial numeric value</source>
+        <translation>Balio numeriko inguruko</translation>
     </message>
 </context>
 <context>
@@ -4320,7 +4759,7 @@ MAIKOA: Honek altibildaritza eta linea pozizioen bakoitzako mugimenduari kontu d
     </message>
     <message>
         <source>Import profiles</source>
-        <translation>Profileak importatu</translation>
+        <translation type="vanished">Profileak importatu</translation>
     </message>
     <message>
         <source>No reduction happened</source>
@@ -5505,8 +5944,8 @@ Please correct the data and try again.</translation>
     <message>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="151"/>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="195"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="115"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="169"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="102"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="112"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="55"/>
         <source> MW</source>
         <translation> MW</translation>
@@ -5545,15 +5984,13 @@ Please correct the data and try again.</translation>
     </message>
     <message>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="275"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="156"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="77"/>
         <source>Generate</source>
         <translation>Sortu</translation>
     </message>
     <message>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="292"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="218"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="296"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="254"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="355"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="630"/>
         <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="220"/>
         <source>Copy to clipboard</source>
@@ -5561,8 +5998,8 @@ Please correct the data and try again.</translation>
     </message>
     <message>
         <location filename="../ContingencyPlanner/contingency_planner_gui.ui" line="301"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="227"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="305"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="263"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="364"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="639"/>
         <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="229"/>
         <source>Save</source>
@@ -5574,54 +6011,74 @@ Please correct the data and try again.</translation>
         <translation>Eguzki energiaren morroia</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="49"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="182"/>
         <source>Site data</source>
         <translation>Gunearen datuak</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="63"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="139"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="72"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="82"/>
         <source>Longitude</source>
         <translation>Luzera</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="70"/>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="99"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="123"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="146"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="56"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="79"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="66"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="89"/>
         <source> deg</source>
         <translation> gradu</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="128"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="116"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="49"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="59"/>
         <source>Latitude</source>
         <translation>Latitudea</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="135"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="162"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="95"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="105"/>
         <source>Power</source>
         <translation>Boterea</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="142"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="115"/>
+        <source>Shift PVGIS UTC timestamps by longitude so the generated power matches the circuit timestamps as local solar time.</source>
+        <translation>Ekarri PVGIS UTC timestampak longitutudinekin, gero sortutako energia-potentzia kobre-sirkuitaren timestamparekin egokitu, lokal energia-egaitza osagarri gisa.</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="118"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="177"/>
+        <source>Use local solar time</source>
+        <translation>Lokal energia-egaitza osagarriak erabiltu</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="148"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="197"/>
+        <source>Generate time series</source>
+        <translation>Ereki-sriak sortu</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="162"/>
         <source>Bus</source>
         <translation>Autobusa</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="149"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="172"/>
         <source>Generator</source>
         <translation>Sorgailua</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="173"/>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="202"/>
+        <source>Apply and accept</source>
+        <translation>Egutzi eta onartu</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="232"/>
         <source>Plot data</source>
         <translation>Marraztu datuak</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="200"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="278"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="612"/>
         <source>Accept</source>
         <translation>Onartu</translation>
@@ -5632,48 +6089,64 @@ Please correct the data and try again.</translation>
         <translation>Energia eolikoaren morroia</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="61"/>
         <source>Turbine library</source>
-        <translation>Turbinen liburutegia</translation>
+        <translation type="vanished">Turbinen liburutegia</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="67"/>
         <source>Template</source>
-        <translation>Txantiloia</translation>
+        <translation type="vanished">Txantiloia</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="84"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="308"/>
         <source>Plot design curves</source>
         <translation>Marraztu diseinu-kurbak</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="103"/>
         <source>Site and model</source>
-        <translation>Gune eta eredua</translation>
+        <translation type="vanished">Gune eta eredua</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="109"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="49"/>
         <source>Wind turbine data</source>
         <translation>Aerosorgailuen datuak</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="182"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="125"/>
         <source>Hub height</source>
         <translation>Hubaren altuera</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="189"/>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="212"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="132"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="155"/>
         <source> m</source>
         <translation>m</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="205"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="148"/>
         <source>Roughness</source>
         <translation>Zimurtasuna</translation>
     </message>
     <message>
-        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="258"/>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="174"/>
+        <source>Shift Open-Meteo GMT timestamps by longitude so the generated power matches the circuit timestamps as local solar time.</source>
+        <translation>Ekarri Open-Meteo GMT timestampak longitutudinekin, gero sortutako energia-potentzia kobre-sirkuitaren timestamparekin egokitu, lokal energia-egaitza osagarri gisa.</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="234"/>
+        <source>Accept and apply</source>
+        <translation>Onartu eta egutzi</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="252"/>
+        <source>Time series</source>
+        <translation>Denbora seriea</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="266"/>
+        <source>Turbine model</source>
+        <translation>Turbina modeloa</translation>
+    </message>
+    <message>
         <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="169"/>
         <source>Plot</source>
         <translation>Lursaila</translation>
@@ -6617,6 +7090,44 @@ Please correct the data and try again.</translation>
     <message>
         <source>MATPOWER export</source>
         <translation>MATPOWER eksportaketa</translation>
+    </message>
+</context>
+<context>
+    <name>MeasurementsDialog</name>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="14"/>
+        <source>Configure measurement block</source>
+        <translation>Neuritzako blokea konfiguratu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="38"/>
+        <source>Bus</source>
+        <translation>Bus</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="69"/>
+        <source>Click to select a bus</source>
+        <translation>Bus bat aukeratzeko klikatu</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="78"/>
+        <source>Select bus...</source>
+        <translation>Bus bat aukeratu...</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="123"/>
+        <source>Name</source>
+        <translation>Izena</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="128"/>
+        <source>I/O</source>
+        <translation>I/O</translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/Editor/ElementDialogues/MeasurementsDialog/measurements_dialog_ui.ui" line="133"/>
+        <source>Comment</source>
+        <translation>Komentario</translation>
     </message>
 </context>
 <context>
@@ -9069,6 +9580,10 @@ Modifikatzi klasterrak ML ingurukoan.</translation>
     <message>
         <source>Wait until the running simulations finish before clearing results.</source>
         <translation>Egutzak borrotzeko, simulazioak amaitzera itxoteko.</translation>
+    </message>
+    <message>
+        <source>Linear OPF and power flow investment studies need time data...</source>
+        <translation>OPF lineal eta energia-sirkulazioaren gai-estudiak energia-egaitza osagarriak behar dituzte...</translation>
     </message>
 </context>
 <context>
@@ -12246,7 +12761,7 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="86"/>
-        <location filename="../Main/MainWindow.ui" line="11122"/>
+        <location filename="../Main/MainWindow.ui" line="11170"/>
         <source>Model</source>
         <translation>Eredua</translation>
     </message>
@@ -12432,7 +12947,7 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
     <message>
         <location filename="../Main/MainWindow.ui" line="920"/>
         <location filename="../Main/MainWindow.ui" line="3670"/>
-        <location filename="../Main/MainWindow.ui" line="5949"/>
+        <location filename="../Main/MainWindow.ui" line="5952"/>
         <source>General settings</source>
         <translation>General settings</translation>
     </message>
@@ -12524,11 +13039,11 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <location filename="../Main/MainWindow.ui" line="1217"/>
         <location filename="../Main/MainWindow.ui" line="1714"/>
         <location filename="../Main/MainWindow.ui" line="2685"/>
-        <location filename="../Main/MainWindow.ui" line="10609"/>
-        <location filename="../Main/MainWindow.ui" line="10623"/>
-        <location filename="../Main/MainWindow.ui" line="10630"/>
-        <location filename="../Main/MainWindow.ui" line="10693"/>
-        <location filename="../Main/MainWindow.ui" line="10895"/>
+        <location filename="../Main/MainWindow.ui" line="10612"/>
+        <location filename="../Main/MainWindow.ui" line="10626"/>
+        <location filename="../Main/MainWindow.ui" line="10633"/>
+        <location filename="../Main/MainWindow.ui" line="10696"/>
+        <location filename="../Main/MainWindow.ui" line="10898"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -12750,7 +13265,7 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
     <message>
         <location filename="../Main/MainWindow.ui" line="2387"/>
         <location filename="../Main/MainWindow.ui" line="2452"/>
-        <location filename="../Main/MainWindow.ui" line="12908"/>
+        <location filename="../Main/MainWindow.ui" line="12957"/>
         <source>Results</source>
         <translation>Emaitzak</translation>
     </message>
@@ -12812,7 +13327,7 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="2785"/>
-        <location filename="../Main/MainWindow.ui" line="11023"/>
+        <location filename="../Main/MainWindow.ui" line="11071"/>
         <source>Export data</source>
         <translation>Esportatu datuak</translation>
     </message>
@@ -12837,27 +13352,47 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation>Ireki RMS simulazio aurreko grafiko dinamikoaren editorea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12734"/>
+        <location filename="../Main/MainWindow.ui" line="3856"/>
+        <source>Name of the grid</source>
+        <translation>Sarearen izena</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="10944"/>
+        <source>Unlock the Interface</source>
+        <translation>Interfeisia zabaltzea</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="12783"/>
         <source>Add RMS event</source>
         <translation>RMS event gehitu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12737"/>
+        <location filename="../Main/MainWindow.ui" line="12786"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add RMS event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the Dynamic events editor preferring RMS events&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS event gehitu&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ireki editorea dinamikoak, RMS eventak preferitzen dituela&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13068"/>
+        <location filename="../Main/MainWindow.ui" line="13008"/>
+        <source>Candidate investment generator</source>
+        <translation>Inbertsio kandidatu sortzailea</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="13011"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Candidate investment generator&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Generate candidate reinforcements (new lines and upgrades) for N-1 violations via LODF/PTDF screening&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inbertsio kandidatu sortzailea&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Sortu indartzeko kandidatuak (lineak berriak eta eguneratzak) N-1 eragtalak LODF/PTDF skreeningaren bidez&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="13129"/>
         <source>Add EMT event</source>
         <translation>EMT event gehitu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13071"/>
+        <location filename="../Main/MainWindow.ui" line="13132"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add EMT event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the Dynamic events editor preferring EMT events&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT event gehitu&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ireki editorea dinamikoak, EMT eventak preferitzen dituela&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13143"/>
+        <location filename="../Main/MainWindow.ui" line="13204"/>
         <source>Community chat</source>
         <translation>Chat komunitateko</translation>
     </message>
@@ -12955,149 +13490,149 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation>Ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3760"/>
+        <location filename="../Main/MainWindow.ui" line="3870"/>
         <source>Frequency</source>
         <translation>Maiztasuna</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3767"/>
+        <location filename="../Main/MainWindow.ui" line="3760"/>
         <source>Snapshot time</source>
         <translation>Argazkiaren denbora</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3798"/>
+        <location filename="../Main/MainWindow.ui" line="3817"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;System frequency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This only has an effect in the program when computing lines&apos; per-unit impedance from ohm values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sistemaren maiztasuna&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This only has an effect in the program when computing lines&apos; per-unit impedance from ohm values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3801"/>
+        <location filename="../Main/MainWindow.ui" line="3820"/>
         <source> Hz</source>
         <translation> Hz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3827"/>
+        <location filename="../Main/MainWindow.ui" line="3788"/>
         <source>Base power</source>
         <translation>Oinarrizko potentzia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3834"/>
+        <location filename="../Main/MainWindow.ui" line="3853"/>
         <source>Name of the grid model</source>
         <translation>Sare-ereduaren izena</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3848"/>
+        <location filename="../Main/MainWindow.ui" line="3774"/>
         <source>Grid name</source>
         <translation>Sarearen izena</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3855"/>
+        <location filename="../Main/MainWindow.ui" line="3795"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Base power&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Despite all the bibliography, changing this number to anything other than 100 MVA, might change the meaning of what sensible per-unit voltage are.&lt;/p&gt;&lt;p&gt;So, don&apos;t touch it. To have power in kW, use the option at the loads, geneerators, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Oinarrizko potentzia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bibliografia guztia izan arren, zenbaki hau 100 MVA ez den beste ezer batera aldatzeak unitateko tentsio zentzudunaren esanahia alda dezake.&lt;/p&gt;&lt;p&gt;Beraz, ez ukitu. To have power in kW, use the option at the loads, geneerators, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3858"/>
+        <location filename="../Main/MainWindow.ui" line="3798"/>
         <source> MVA</source>
         <translation>MVA</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3877"/>
+        <location filename="../Main/MainWindow.ui" line="3904"/>
         <source>Engine to be used when available</source>
         <translation>Eskuragarri dagoenean erabiltzeko motorra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3884"/>
+        <location filename="../Main/MainWindow.ui" line="3839"/>
         <source>Engine</source>
         <translation>Motorra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3891"/>
+        <location filename="../Main/MainWindow.ui" line="3863"/>
         <source>Language</source>
         <translation>Hizkuntza</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3901"/>
+        <location filename="../Main/MainWindow.ui" line="3846"/>
         <source>Dark mode</source>
         <translation>Modu iluna</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3930"/>
+        <location filename="../Main/MainWindow.ui" line="3933"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Settings for state estimation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Egoera kalkulatzeko ezarpenak.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3967"/>
-        <location filename="../Main/MainWindow.ui" line="3977"/>
+        <location filename="../Main/MainWindow.ui" line="3970"/>
+        <location filename="../Main/MainWindow.ui" line="3980"/>
         <source>Power flow settings</source>
         <translation>Potentzia-fluxuaren ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3974"/>
+        <location filename="../Main/MainWindow.ui" line="3977"/>
         <source>Pf</source>
         <translation>Pf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4050"/>
+        <location filename="../Main/MainWindow.ui" line="4053"/>
         <source>Power flow</source>
         <translation>Potentzia-fluxua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4190"/>
+        <location filename="../Main/MainWindow.ui" line="4193"/>
         <source>PTDF / LODF</source>
         <translation>PTDF / LODF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4262"/>
+        <location filename="../Main/MainWindow.ui" line="4265"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Theoretically PTDF and LODF values should be in the range (-1, 1)&lt;br/&gt;However, this is not true in general for any grid due to the existence of antennas.&lt;br/&gt;With this option the values are truncated to the range (-1, 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Teorian PTDF eta LODF balioak tartean egon behar dira (-1, 1)&lt;br/&gt;Hala ere, hori ez da orokorrean egia edozein sarerako antenen existentzia dela eta.&lt;br/&gt;Aukera honekin balioak barrutian mozten dira (-1, 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4265"/>
+        <location filename="../Main/MainWindow.ui" line="4268"/>
         <source>Correct nonsense values</source>
         <translation>Zuzendu zentzugabeko balioak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4275"/>
+        <location filename="../Main/MainWindow.ui" line="4278"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;With this option, the PTDF is computed such that the slack effects are distributed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aukera honekin, PTDF kalkulatzen da slack efektuak banatzen direla&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4278"/>
-        <location filename="../Main/MainWindow.ui" line="4507"/>
+        <location filename="../Main/MainWindow.ui" line="4281"/>
+        <location filename="../Main/MainWindow.ui" line="4510"/>
         <source>Distributed slack</source>
         <translation>Banatutako slack</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4288"/>
+        <location filename="../Main/MainWindow.ui" line="4291"/>
         <source>Threshold under which sensitivities are ignored when the PTDF is converted to sparse</source>
         <translation>PTDF urri bihurtzen denean sentikortasunak alde batera uzten diren atalasea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4307"/>
+        <location filename="../Main/MainWindow.ui" line="4310"/>
         <source>LODF threshold</source>
         <translation>LODF atalasea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4351"/>
+        <location filename="../Main/MainWindow.ui" line="4354"/>
         <source>Threshold under which sensitivities are ignored when the LODF is converted to sparse</source>
         <translation>Atalasea zeinaren azpian dagoen sentsibilitateak alde batera uzten diren LODF eskasa bihurtzen denean</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4370"/>
+        <location filename="../Main/MainWindow.ui" line="4373"/>
         <source>PTDF threshold</source>
         <translation>PTDF atalasea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4396"/>
+        <location filename="../Main/MainWindow.ui" line="4399"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum numberof iterations to use.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tipical values: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;Fast decoupled: 10&lt;/p&gt;&lt;p&gt;Others: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Erabili beharreko gehieneko iterazio kopurua.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Balio tipikoak: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;Desakoplatu azkarra: 10&lt;/p&gt;&lt;p&gt;Beste batzuk: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4399"/>
+        <location filename="../Main/MainWindow.ui" line="4402"/>
         <source> iterations</source>
         <translation> errepikapenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4421"/>
+        <location filename="../Main/MainWindow.ui" line="4424"/>
         <source>Find the tolerance that best represents the load values for power flow</source>
         <translation>Bilatu potentzia-fluxuaren karga-balioak hobekien adierazten dituen perdoitasuna</translation>
     </message>
@@ -13106,1066 +13641,1066 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation type="vanished">Aurkitu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4448"/>
+        <location filename="../Main/MainWindow.ui" line="4451"/>
         <source>Max. iterations</source>
         <translation>Max. errepikapenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4464"/>
+        <location filename="../Main/MainWindow.ui" line="4467"/>
         <source>General switch for generators remote voltage control</source>
         <translation>Sorgailuentzako etengailu orokorra urrutiko tentsioaren kontrola</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4467"/>
+        <location filename="../Main/MainWindow.ui" line="4470"/>
         <source>Control remote voltage</source>
         <translation>Kontrolatu urruneko tentsioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4474"/>
+        <location filename="../Main/MainWindow.ui" line="4477"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the selected method does not converge, try a list of methods that may help&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hautatutako metodoak bat egiten ez badu, saiatu lagungarri izan daitezkeen metodoen zerrenda bat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4477"/>
+        <location filename="../Main/MainWindow.ui" line="4480"/>
         <source>Retry with other methods</source>
         <translation>Saiatu berriro beste metodo batzuekin</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4487"/>
+        <location filename="../Main/MainWindow.ui" line="4490"/>
         <source>General switch for branches tap module control</source>
         <translation>Adarren txorrota moduluaren kontrola etengailu orokorra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4490"/>
+        <location filename="../Main/MainWindow.ui" line="4493"/>
         <source>Control tap module</source>
         <translation>Kontrolatu tap modulua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4497"/>
+        <location filename="../Main/MainWindow.ui" line="4500"/>
         <source>Apply impedance tolerances</source>
         <translation>Aplikatu inpedantzia-perdoiak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4504"/>
+        <location filename="../Main/MainWindow.ui" line="4507"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the slack power is distributed among the generators according to their installed power &amp;quot;Snom&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktibatuta badago, potentzia galga sorgailuen artean banatzen da instalatutako &quot;Snom&quot; potentziaren arabera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4514"/>
+        <location filename="../Main/MainWindow.ui" line="4517"/>
         <source>If checked, the power flow solution is initialized with a linear (so called DC) power flow first</source>
         <translation>Hautatzen bada, potentzia-fluxuaren soluzioa lehenik potentzia-fluxu lineal batekin (DC deitzen dena) hasieratzen da.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4517"/>
+        <location filename="../Main/MainWindow.ui" line="4520"/>
         <source>Initialize angles</source>
         <translation>Hasierako angeluak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4524"/>
+        <location filename="../Main/MainWindow.ui" line="4527"/>
         <source>If active, the islands of a single node are ignored.</source>
         <translation>Aktibo badago, nodo bakarreko uharteak ez dira aintzat hartzen.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4527"/>
+        <location filename="../Main/MainWindow.ui" line="4530"/>
         <source>Ignore single node islands</source>
         <translation>Ez ikusi nodo bakarreko uharteei</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4537"/>
+        <location filename="../Main/MainWindow.ui" line="4540"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the Vm0 and Va0 properties of the bus objects are used to initialize the power flow simulation.&lt;/p&gt;&lt;p&gt;If you need this it is a sign of grid ill conditioning by something else like incorrect impedances of too much loading, specially reactive power that cannot be transported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktibo badago, bus-objektuen Vm0 eta Va0 propietateak erabiltzen dira potentzia-fluxuaren simulazioa abiarazteko.&lt;/p&gt;&lt;p&gt;Hau behar baduzu, sarearen baldintzatze txarraren seinale da, adibidez, karga gehiegiko inpedantzia okerrak, garraiatu ezin den potentzia erreaktiboa bereziki.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4540"/>
+        <location filename="../Main/MainWindow.ui" line="4543"/>
         <source>Use voltage guess</source>
         <translation>Erabili tentsioa asmatzea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4547"/>
-        <location filename="../Main/MainWindow.ui" line="6033"/>
+        <location filename="../Main/MainWindow.ui" line="4550"/>
+        <location filename="../Main/MainWindow.ui" line="6036"/>
         <source>Add a results report in the logs</source>
         <translation>Gehitu emaitzen txostena erregistroetan</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4550"/>
-        <location filename="../Main/MainWindow.ui" line="6036"/>
+        <location filename="../Main/MainWindow.ui" line="4553"/>
+        <location filename="../Main/MainWindow.ui" line="6039"/>
         <source>Add report</source>
         <translation>Gehitu txostena</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4557"/>
+        <location filename="../Main/MainWindow.ui" line="4560"/>
         <source>General switch for reactive power limits control</source>
         <translation>Potentzia erreaktiboaren mugak kontrolatzeko etengailu orokorra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4560"/>
-        <location filename="../Main/MainWindow.ui" line="5933"/>
+        <location filename="../Main/MainWindow.ui" line="4563"/>
+        <location filename="../Main/MainWindow.ui" line="5936"/>
         <source>Control Q limits</source>
         <translation>Kontrolatu Q mugak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4567"/>
+        <location filename="../Main/MainWindow.ui" line="4570"/>
         <source>General switch for branches tap phase control</source>
         <translation>Adarretarako etengailu orokorra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4570"/>
+        <location filename="../Main/MainWindow.ui" line="4573"/>
         <source>Control tap phase</source>
         <translation>Kontrolatu tap fasea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4577"/>
+        <location filename="../Main/MainWindow.ui" line="4580"/>
         <source>If checked, the controls are adjusted to their closest tap</source>
         <translation>Hautatuta, kontrolak hurbilen dagoen kolpera doitzen dira</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4580"/>
+        <location filename="../Main/MainWindow.ui" line="4583"/>
         <source>Orthogonalize controls</source>
         <translation>Kontrolak ortogonalizatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4587"/>
+        <location filename="../Main/MainWindow.ui" line="4590"/>
         <source>Correct the branches resistance using the temperature</source>
         <translation>Zuzendu adarren erresistentzia tenperatura erabiliz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4590"/>
+        <location filename="../Main/MainWindow.ui" line="4593"/>
         <source>Apply temperature correction</source>
         <translation>Aplikatu tenperatura zuzenketa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4600"/>
-        <location filename="../Main/MainWindow.ui" line="5892"/>
+        <location filename="../Main/MainWindow.ui" line="4603"/>
+        <location filename="../Main/MainWindow.ui" line="5895"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor that multiplies each increment solution. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gehitze-soluzio bakoitza biderkatzen duen faktorea. &lt;/p&gt;&lt;p&gt;Praktikan, irtenbide arazoak moteltzeko erabiltzen da.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4603"/>
-        <location filename="../Main/MainWindow.ui" line="4652"/>
-        <location filename="../Main/MainWindow.ui" line="4705"/>
+        <location filename="../Main/MainWindow.ui" line="4606"/>
+        <location filename="../Main/MainWindow.ui" line="4655"/>
+        <location filename="../Main/MainWindow.ui" line="4708"/>
         <source> p.u.</source>
         <translation> p.u.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4625"/>
+        <location filename="../Main/MainWindow.ui" line="4628"/>
         <source>Level of console information. 0: None, 1: some information, 2: all the information</source>
         <translation>Kontsolaren informazio maila. 0: bat ere ez, 1: informazio batzuk, 2: informazio guztia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4635"/>
-        <location filename="../Main/MainWindow.ui" line="5177"/>
-        <location filename="../Main/MainWindow.ui" line="8611"/>
+        <location filename="../Main/MainWindow.ui" line="4638"/>
+        <location filename="../Main/MainWindow.ui" line="5180"/>
+        <location filename="../Main/MainWindow.ui" line="8614"/>
         <source>Solver</source>
         <translation>Ebazlea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4642"/>
-        <location filename="../Main/MainWindow.ui" line="5917"/>
+        <location filename="../Main/MainWindow.ui" line="4645"/>
+        <location filename="../Main/MainWindow.ui" line="5920"/>
         <source>Trust radius</source>
         <translation>Konfiantza-erradioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4649"/>
-        <location filename="../Main/MainWindow.ui" line="5305"/>
-        <location filename="../Main/MainWindow.ui" line="5851"/>
-        <location filename="../Main/MainWindow.ui" line="8101"/>
-        <location filename="../Main/MainWindow.ui" line="8519"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Error tolerance of the method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Metodoaren errore-tolerantzia&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="../Main/MainWindow.ui" line="4655"/>
-        <location filename="../Main/MainWindow.ui" line="4708"/>
+        <location filename="../Main/MainWindow.ui" line="4652"/>
         <location filename="../Main/MainWindow.ui" line="5308"/>
         <location filename="../Main/MainWindow.ui" line="5854"/>
         <location filename="../Main/MainWindow.ui" line="8104"/>
         <location filename="../Main/MainWindow.ui" line="8522"/>
-        <location filename="../Main/MainWindow.ui" line="10030"/>
-        <location filename="../Main/MainWindow.ui" line="10292"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Error tolerance of the method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Metodoaren errore-tolerantzia&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="4658"/>
+        <location filename="../Main/MainWindow.ui" line="4711"/>
+        <location filename="../Main/MainWindow.ui" line="5311"/>
+        <location filename="../Main/MainWindow.ui" line="5857"/>
+        <location filename="../Main/MainWindow.ui" line="8107"/>
+        <location filename="../Main/MainWindow.ui" line="8525"/>
+        <location filename="../Main/MainWindow.ui" line="10033"/>
+        <location filename="../Main/MainWindow.ui" line="10295"/>
         <source>1e-</source>
         <translation>1e-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4681"/>
+        <location filename="../Main/MainWindow.ui" line="4684"/>
         <source>Verbosity</source>
         <translation>Hitzezkotasuna</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4688"/>
-        <location filename="../Main/MainWindow.ui" line="5285"/>
-        <location filename="../Main/MainWindow.ui" line="5838"/>
-        <location filename="../Main/MainWindow.ui" line="8175"/>
-        <location filename="../Main/MainWindow.ui" line="8558"/>
+        <location filename="../Main/MainWindow.ui" line="4691"/>
+        <location filename="../Main/MainWindow.ui" line="5288"/>
+        <location filename="../Main/MainWindow.ui" line="5841"/>
+        <location filename="../Main/MainWindow.ui" line="8178"/>
+        <location filename="../Main/MainWindow.ui" line="8561"/>
         <source>Tolerance</source>
         <translation>Tolerantzia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4695"/>
+        <location filename="../Main/MainWindow.ui" line="4698"/>
         <source>Controls apply after</source>
         <translation>Kontrolak ondoren aplikatzen dira</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4702"/>
+        <location filename="../Main/MainWindow.ui" line="4705"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid does not have an &amp;quot;outer loop&amp;quot;&lt;br/&gt;Instead, in iterative numerical methods (Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg) the controls apply after a certain error threshold has been reached.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid ez du &quot;kanpoko begizta&quot;rik&lt;br/&gt;Horren ordez, zenbakizko metodo iteratiboetan (Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg) kontrolak errore-atalase jakin bat lortu ondoren aplikatzen dira.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4728"/>
+        <location filename="../Main/MainWindow.ui" line="4731"/>
         <source>Continuation power flow settings</source>
         <translation>Jarraipen-potentzia-fluxuaren ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4735"/>
+        <location filename="../Main/MainWindow.ui" line="4738"/>
         <source>Cpf</source>
         <translation>Cpf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4738"/>
+        <location filename="../Main/MainWindow.ui" line="4741"/>
         <source>Continuation power flow related settings</source>
         <translation>Jarraitzeko potentzia-fluxuaren inguruko ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4769"/>
+        <location filename="../Main/MainWindow.ui" line="4772"/>
         <source>Stop at</source>
         <translation>Gelditu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4776"/>
+        <location filename="../Main/MainWindow.ui" line="4779"/>
         <source>Refer to the NTC areas (Linear tab)</source>
         <translation>Ikusi NTC eremuak (Fitxa lineala)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4856"/>
+        <location filename="../Main/MainWindow.ui" line="4859"/>
         <source>Now</source>
         <translation>Orain</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4863"/>
+        <location filename="../Main/MainWindow.ui" line="4866"/>
         <source>Use departure and target points from time series</source>
         <translation>Erabili denbora serieetako irteera eta helburu puntuak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4873"/>
+        <location filename="../Main/MainWindow.ui" line="4876"/>
         <source>Available transfer capacity</source>
         <translation>Eskuragarri dagoen transferentzia-ahalmena</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4887"/>
+        <location filename="../Main/MainWindow.ui" line="4890"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lambda factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lambda faktorea&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4894"/>
-        <location filename="../Main/MainWindow.ui" line="5090"/>
+        <location filename="../Main/MainWindow.ui" line="4897"/>
+        <location filename="../Main/MainWindow.ui" line="5093"/>
         <source>Max. Iterations</source>
         <translation>Max. Iterazioak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4901"/>
+        <location filename="../Main/MainWindow.ui" line="4904"/>
         <source>Target</source>
         <translation>Helburua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5003"/>
-        <location filename="../Main/MainWindow.ui" line="11435"/>
+        <location filename="../Main/MainWindow.ui" line="5006"/>
+        <location filename="../Main/MainWindow.ui" line="11484"/>
         <source>Continuation power flow</source>
         <translation>Jarraipen-potentzia-fluxua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5021"/>
+        <location filename="../Main/MainWindow.ui" line="5024"/>
         <source>Simulation mode</source>
         <translation>Simulazio modua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5028"/>
+        <location filename="../Main/MainWindow.ui" line="5031"/>
         <source>Increase system loading</source>
         <translation>Sistemaren karga handitu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5072"/>
+        <location filename="../Main/MainWindow.ui" line="5075"/>
         <source>SE</source>
         <translation>SE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5100"/>
+        <location filename="../Main/MainWindow.ui" line="5103"/>
         <source>Observability analysis</source>
         <translation>Behagarritasunaren azterketa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5170"/>
+        <location filename="../Main/MainWindow.ui" line="5173"/>
         <source>Fixed slack</source>
         <translation>Altxaketa konpondua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5272"/>
-        <location filename="../Main/MainWindow.ui" line="12764"/>
+        <location filename="../Main/MainWindow.ui" line="5275"/>
+        <location filename="../Main/MainWindow.ui" line="12813"/>
         <source>State estimation</source>
         <translation>Estatuaren estimazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5324"/>
+        <location filename="../Main/MainWindow.ui" line="5327"/>
         <source>Prefer correct</source>
         <translation>Nahiago zuzena</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5331"/>
+        <location filename="../Main/MainWindow.ui" line="5334"/>
         <source>Add pseudo measurements</source>
         <translation>Gehitu sasi-neurriak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5338"/>
+        <location filename="../Main/MainWindow.ui" line="5341"/>
         <source>Measurements profiling</source>
         <translation>Neurketen profila</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5362"/>
-        <location filename="../Main/MainWindow.ui" line="5372"/>
+        <location filename="../Main/MainWindow.ui" line="5365"/>
+        <location filename="../Main/MainWindow.ui" line="5375"/>
         <source>Optimal power flow settings</source>
         <translation>Potentzia-fluxuaren ezarpen optimoak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5369"/>
+        <location filename="../Main/MainWindow.ui" line="5372"/>
         <source>Opf</source>
         <translation>Opf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5384"/>
+        <location filename="../Main/MainWindow.ui" line="5387"/>
         <source>Linear settings</source>
         <translation>Ezarpen linealak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5520"/>
+        <location filename="../Main/MainWindow.ui" line="5523"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the time grouping to possibly shorten the solution time.&lt;/p&gt;&lt;p&gt;This splits the time series by week, month, etc. and the subproblems are solved sequentially.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aukeratu denbora-taldekatzea irtenbide-denbora agian laburtzeko.&lt;/p&gt;&lt;p&gt;Honek denbora-seriea aste, hilabete eta abarren arabera banatzen du eta azpiarazoak sekuentzialki ebazten dira.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5554"/>
+        <location filename="../Main/MainWindow.ui" line="5557"/>
         <source>Consider per-area generation spinning reserve</source>
         <translation>Demagun eremu bakoitzeko belaunaldiko spinning-erreserba</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5557"/>
+        <location filename="../Main/MainWindow.ui" line="5560"/>
         <source>Spinning reserve</source>
         <translation>Spinning erreserba</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5669"/>
+        <location filename="../Main/MainWindow.ui" line="5672"/>
         <source>Instead of using the generation, loads cost for dispatching, use the GLSK (Generation, Load Shift Keys)</source>
         <translation>Sorkuntza erabili beharrean, kargak bidaltzeko kostua, erabili GLSK (Generation, Load Shift Keys)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5672"/>
+        <location filename="../Main/MainWindow.ui" line="5675"/>
         <source>Use GSLK as costs</source>
         <translation>Erabili GSLK kostu gisa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5435"/>
+        <location filename="../Main/MainWindow.ui" line="5438"/>
         <source>MIP framework</source>
         <translation>MIP esparrua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5653"/>
+        <location filename="../Main/MainWindow.ui" line="5656"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, the generation costs will use the quadratic coefficients cost, which will trigger a more complex formulation to approximate the quadratic thermal generation curve. Otherwise a linear model is used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aukeratuta badago, sorkuntza-kostuek koefiziente kuadratikoen kostua erabiliko dute, eta horrek formulazio konplexuago bat aktibatuko du sorkuntza termikoaren kurba kuadratikoa hurbiltzeko. Bestela, eredu lineal bat erabiliko da.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5656"/>
+        <location filename="../Main/MainWindow.ui" line="5659"/>
         <source>Use quadratic costs</source>
         <translation>Erabili kostu kuadratikoak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5481"/>
+        <location filename="../Main/MainWindow.ui" line="5484"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the zonal grouping.&lt;br/&gt;When All (Copper plate) is selected, the branch restrictions are ignored&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aukeratu zonakako taldekatzea.&lt;br/&gt;Guztiak (Kobrezko plaka) hautatzen denean, adar-murrizketak ez dira aintzat hartzen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5494"/>
+        <location filename="../Main/MainWindow.ui" line="5497"/>
         <source>Choose the external mixed integer framework</source>
         <translation>Aukeratu kanpoko zenbaki oso mistoen esparrua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5461"/>
+        <location filename="../Main/MainWindow.ui" line="5464"/>
         <source>Time grouping</source>
         <translation>Denbora taldekatzea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5570"/>
+        <location filename="../Main/MainWindow.ui" line="5573"/>
         <source>Consider generation minimum up/down time</source>
         <translation>Kontuan hartu belaunaldiaren gutxieneko gora-behera denbora</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5573"/>
+        <location filename="../Main/MainWindow.ui" line="5576"/>
         <source>Consider min up/down time</source>
         <translation>Kontuan hartu gora/behera denbora minimoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5685"/>
+        <location filename="../Main/MainWindow.ui" line="5688"/>
         <source>When checked, the branch losses will be aproximated by a factor r * rate / (V^2)</source>
         <translation>Egiaztatuta, adar-galerak r * tasa / (V^2) faktore baten bidez hurbilduko dira.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5688"/>
+        <location filename="../Main/MainWindow.ui" line="5691"/>
         <source>Approximate losses</source>
         <translation>Gutxi gorabeherako galerak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5409"/>
+        <location filename="../Main/MainWindow.ui" line="5412"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select how the generation dispatch should behave&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hautatu belaunaldien bidalketak nola jokatu behar duen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5640"/>
+        <location filename="../Main/MainWindow.ui" line="5643"/>
         <source>Contingency tolerance</source>
         <translation>Kontingentzia-tolerantzia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5602"/>
+        <location filename="../Main/MainWindow.ui" line="5605"/>
         <source>LODF matrix tolerance choosing contingencies</source>
         <translation>LODF matrizearen tolerantzia kontingentziak aukeratzerakoan</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5586"/>
+        <location filename="../Main/MainWindow.ui" line="5589"/>
         <source>Consider the contingencies when dispatching</source>
         <translation>Kontuan izan kontingentziak bidaltzean</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5589"/>
+        <location filename="../Main/MainWindow.ui" line="5592"/>
         <source>Compute contingencies</source>
         <translation>Kontingentziak kalkulatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5717"/>
+        <location filename="../Main/MainWindow.ui" line="5720"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The program will save the MIP formulation and be displayed in the text tab of the results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Programak MIP formulazioa gordeko du eta emaitzen testu fitxan bistaratuko da&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5720"/>
+        <location filename="../Main/MainWindow.ui" line="5723"/>
         <source>Report MIP formulation</source>
         <translation>MIP formulazioa txostena</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5701"/>
+        <location filename="../Main/MainWindow.ui" line="5704"/>
         <source>Fix infeasible problems and rey with the relaxed problem. Applies to OPF and NTC</source>
         <translation>Arazo bideraezinak konpondu eta arazo lasaiarekin rey. OPF eta NTC-i aplikatzen zaie</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5704"/>
+        <location filename="../Main/MainWindow.ui" line="5707"/>
         <source>Fix infeasibilities and retry</source>
         <translation>Konpondu bideraezintasunak eta saiatu berriro</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5624"/>
+        <location filename="../Main/MainWindow.ui" line="5627"/>
         <source>Consider generation ramps</source>
         <translation>Kontuan izan belaunaldi-arrapalak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5627"/>
+        <location filename="../Main/MainWindow.ui" line="5630"/>
         <source>Consider ramps</source>
         <translation>Demagun arrapalak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5422"/>
+        <location filename="../Main/MainWindow.ui" line="5425"/>
         <source>Dispatch mode</source>
         <translation>Bidalketa modua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5448"/>
+        <location filename="../Main/MainWindow.ui" line="5451"/>
         <source>Choose the external mixed integer programming solver</source>
         <translation>Aukeratu kanpoko zenbaki oso mistoen programazio-ebazlea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5396"/>
+        <location filename="../Main/MainWindow.ui" line="5399"/>
         <source>Zone grouping</source>
         <translation>Zona taldekatzea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5739"/>
+        <location filename="../Main/MainWindow.ui" line="5742"/>
         <source>Nonlinear settings</source>
         <translation>Ezarpen ez-linealak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5764"/>
+        <location filename="../Main/MainWindow.ui" line="5767"/>
         <source>Interior point solver maximum number of iterations</source>
         <translation>Barruko puntu ebatzailea gehienezko iterazio-kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5767"/>
+        <location filename="../Main/MainWindow.ui" line="5770"/>
         <source>Iterations</source>
         <translation>Iterazioak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5780"/>
+        <location filename="../Main/MainWindow.ui" line="5783"/>
         <source>Initialize the interior point OPF with the power flow solution</source>
         <translation>Hasieratu barruko puntua OPF potentzia-fluxuaren soluzioarekin</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5783"/>
+        <location filename="../Main/MainWindow.ui" line="5786"/>
         <source>Initialize with power flow</source>
         <translation>Hasieratu potentzia-fluxuarekin</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5806"/>
+        <location filename="../Main/MainWindow.ui" line="5809"/>
         <source>Number of iterations of the method</source>
         <translation>Metodoaren iterazio kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5835"/>
+        <location filename="../Main/MainWindow.ui" line="5838"/>
         <source>Interior point solver tolerance</source>
         <translation>Barruko puntu ebazteko tolerantzia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5876"/>
+        <location filename="../Main/MainWindow.ui" line="5879"/>
         <source>Interior point solver method</source>
         <translation>Barruko puntuak ebazteko metodoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5879"/>
+        <location filename="../Main/MainWindow.ui" line="5882"/>
         <source>IPS method</source>
         <translation>IPS metodoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5914"/>
+        <location filename="../Main/MainWindow.ui" line="5917"/>
         <source>Interior point trust radius</source>
         <translation>Barne-puntuaren konfiantza-erradioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5930"/>
+        <location filename="../Main/MainWindow.ui" line="5933"/>
         <source>General switch for reactive power limits control in the nonlinear optimal power flow</source>
         <translation>Potentzia erreaktiboaren mugak kontrolatzeko etengailu orokorra potentzia-fluxu optimo ez-linealean</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5961"/>
+        <location filename="../Main/MainWindow.ui" line="5964"/>
         <source>Verbosity level</source>
         <translation>Hitzezkotasun maila</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5974"/>
-        <location filename="../Main/MainWindow.ui" line="6250"/>
+        <location filename="../Main/MainWindow.ui" line="5977"/>
+        <location filename="../Main/MainWindow.ui" line="6253"/>
         <source>Skip generation limits</source>
         <translation>Saltatu belaunaldien mugak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5987"/>
+        <location filename="../Main/MainWindow.ui" line="5990"/>
         <source>Verbose</source>
         <translation>Hitzezkoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6007"/>
+        <location filename="../Main/MainWindow.ui" line="6010"/>
         <source>Choose the optimal power flow method</source>
         <translation>Aukeratu potentzia-fluxuaren metodo optimoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6020"/>
-        <location filename="../Main/MainWindow.ui" line="6910"/>
-        <location filename="../Main/MainWindow.ui" line="9083"/>
-        <location filename="../Main/MainWindow.ui" line="9988"/>
-        <location filename="../Main/MainWindow.ui" line="10053"/>
+        <location filename="../Main/MainWindow.ui" line="6023"/>
+        <location filename="../Main/MainWindow.ui" line="6913"/>
+        <location filename="../Main/MainWindow.ui" line="9086"/>
+        <location filename="../Main/MainWindow.ui" line="9991"/>
+        <location filename="../Main/MainWindow.ui" line="10056"/>
         <source>Method</source>
         <translation>Metodoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6189"/>
+        <location filename="../Main/MainWindow.ui" line="6192"/>
         <source>Optimal Power Flow</source>
         <translation>Potentzia-fluxu optimoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6200"/>
+        <location filename="../Main/MainWindow.ui" line="6203"/>
         <source>Net transfer capacity settings</source>
         <translation>Transferentzia garbiaren ahalmenaren ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6207"/>
+        <location filename="../Main/MainWindow.ui" line="6210"/>
         <source>Ntc</source>
         <translation>Ntc</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6210"/>
+        <location filename="../Main/MainWindow.ui" line="6213"/>
         <source>Network transfer capacity related settings</source>
         <translation>Sarearen transferentzia-ahalmena erlazionatutako ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6221"/>
+        <location filename="../Main/MainWindow.ui" line="6224"/>
         <source>Optimization</source>
         <translation>Optimizazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6232"/>
+        <location filename="../Main/MainWindow.ui" line="6235"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This criteria springs from the ACER (Agency for the Cooperation for Energy Regulators).&lt;/p&gt;&lt;p&gt;It determines that a branch is only relevant to be considered in a NTC calculation if the flow due to the exchange is over a percentage (70%) &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;A branch is monitored only if:&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / branch_alpha &amp;lt;= total exchange rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Irizpide hori ACERren (Energia Arautzaileen Lankidetzarako Agentzia) sortzen da.&lt;/p&gt;&lt;p&gt;Zehazten du adar bat garrantzitsua dela NTC kalkulu batean kontuan hartzeko, trukearen ondoriozko fluxua ehuneko bat (% 70) baino gehiagokoa bada. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Sukurtsal bat kontrolatzen da soilik:&lt;/p&gt;&lt;p&gt;(branch_tasa * % 70 / branch_alpha &lt;= truke-balorazio osoa&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6235"/>
+        <location filename="../Main/MainWindow.ui" line="6238"/>
         <source>Branch rating contribution (ACER)</source>
         <translation>Sukurtsalaren balorazio-ekarpena (ACER)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6247"/>
+        <location filename="../Main/MainWindow.ui" line="6250"/>
         <source>If activated, the generation limits are not considered</source>
         <translation>Aktibatzen bada, sorkuntza-mugak ez dira kontuan hartzen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6265"/>
-        <location filename="../Main/MainWindow.ui" line="7608"/>
+        <location filename="../Main/MainWindow.ui" line="6268"/>
+        <location filename="../Main/MainWindow.ui" line="7611"/>
         <source> MW</source>
         <translation> MW</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6289"/>
+        <location filename="../Main/MainWindow.ui" line="6292"/>
         <source>If checked, the NTC optimization will use the system declared contingencies</source>
         <translation>Hautatzen bada, NTC optimizazioak sistemaren deklaratutako kontingentziak erabiliko ditu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6292"/>
+        <location filename="../Main/MainWindow.ui" line="6295"/>
         <source>Consider constingencies</source>
         <translation>Kontuan izan kontingentziak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6304"/>
+        <location filename="../Main/MainWindow.ui" line="6307"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A branch is monitored solely based on its contribution to the inter-area excahge sensitivity. Therefore a branch is selected if it&apos;s alpha value is greater than the set alpha %&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sukurtsal bat eremuen arteko truke-sentsibilitateari egindako ekarpenaren arabera soilik kontrolatzen da. Beraz, adar bat hautatzen da bere alfa balioa ezarritako alfa % baino handiagoa bada&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6307"/>
+        <location filename="../Main/MainWindow.ui" line="6310"/>
         <source>Branch exchange sensitivity (α)</source>
         <translation>Adarren truke-sentsibilitatea (α)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6322"/>
-        <location filename="../Main/MainWindow.ui" line="6472"/>
-        <location filename="../Main/MainWindow.ui" line="6571"/>
+        <location filename="../Main/MainWindow.ui" line="6325"/>
+        <location filename="../Main/MainWindow.ui" line="6475"/>
+        <location filename="../Main/MainWindow.ui" line="6574"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6405"/>
+        <location filename="../Main/MainWindow.ui" line="6408"/>
         <source>Determine the branches that enter the optimization</source>
         <translation>Optimizazioan sartzen diren adarrak zehaztu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6408"/>
+        <location filename="../Main/MainWindow.ui" line="6411"/>
         <source>Branch monitoring selection criteria</source>
         <translation>Sukurtsalen jarraipenaren hautaketa-irizpideak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6457"/>
-        <location filename="../Main/MainWindow.ui" line="7529"/>
-        <location filename="../Main/MainWindow.ui" line="12899"/>
-        <location filename="../Main/MainWindow.ui" line="12926"/>
+        <location filename="../Main/MainWindow.ui" line="6460"/>
+        <location filename="../Main/MainWindow.ui" line="7532"/>
+        <location filename="../Main/MainWindow.ui" line="12948"/>
+        <location filename="../Main/MainWindow.ui" line="12975"/>
         <source>Contingencies</source>
         <translation>Kontingentziak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6469"/>
+        <location filename="../Main/MainWindow.ui" line="6472"/>
         <source>Minimum exchange contribution (Alpha)</source>
         <translation>Gutxieneko truke-ekarpena (Alpha)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6490"/>
         <location filename="../Main/MainWindow.ui" line="6493"/>
+        <location filename="../Main/MainWindow.ui" line="6496"/>
         <source>Transmission reliability margin (TRM)</source>
         <translation>Transmisioaren fidagarritasun-marjina (TRM)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6505"/>
+        <location filename="../Main/MainWindow.ui" line="6508"/>
         <source>More strict NTC Formulation: No slacks of any type and specific monitoring criteria</source>
         <translation>NTC formulazio zorrotzagoa: ez dago inolako galtzarik eta jarraipen irizpide zehatzik</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6508"/>
+        <location filename="../Main/MainWindow.ui" line="6511"/>
         <source>Strict formulation</source>
         <translation>Formulazio zorrotza</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6523"/>
-        <location filename="../Main/MainWindow.ui" line="6860"/>
+        <location filename="../Main/MainWindow.ui" line="6526"/>
+        <location filename="../Main/MainWindow.ui" line="6863"/>
         <source>General</source>
         <translation>Orokorra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6547"/>
+        <location filename="../Main/MainWindow.ui" line="6550"/>
         <source>Loading threshold to report</source>
         <translation>Salatzeko atalasea kargatzen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6559"/>
+        <location filename="../Main/MainWindow.ui" line="6562"/>
         <source>Transfer method</source>
         <translation>Transferentzia metodoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6689"/>
+        <location filename="../Main/MainWindow.ui" line="6692"/>
         <source>Linear</source>
         <translation>Lineala</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6706"/>
+        <location filename="../Main/MainWindow.ui" line="6709"/>
         <source>Transfer sensitivity threshold</source>
         <translation>Transferitu sentikortasun-atalasea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6718"/>
+        <location filename="../Main/MainWindow.ui" line="6721"/>
         <source>n-1 sensibility consideration</source>
         <translation>n-1 sentsibilitatea kontuan hartzea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6746"/>
+        <location filename="../Main/MainWindow.ui" line="6749"/>
         <source>Threshold used to discard insensitive branches</source>
         <translation>Adarrak ez-sentsigarriak baztertzeko erabiltzen den atalasea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6770"/>
+        <location filename="../Main/MainWindow.ui" line="6773"/>
         <source>Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations</source>
         <translation>Erabili lehendik dauden potentzia-fluxuaren balioak kontingentziaren hasierarako transferentzia-ahalmen garbian eta kontingentzia-simulazioetan</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6773"/>
+        <location filename="../Main/MainWindow.ui" line="6776"/>
         <source>Use power flow values for initialization</source>
         <translation>Erabili potentzia-fluxuaren balioak hasieratzeko</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6828"/>
-        <location filename="../Main/MainWindow.ui" line="7072"/>
+        <location filename="../Main/MainWindow.ui" line="6831"/>
+        <location filename="../Main/MainWindow.ui" line="7075"/>
         <source>Select the solver in the OPF tab and the areas in the areas tab</source>
         <translation>Hautatu ebatzailea OPF fitxan eta eremuak eremuak fitxan</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6831"/>
+        <location filename="../Main/MainWindow.ui" line="6834"/>
         <source>Net transfer capacity</source>
         <translation>Transferentzia ahalmen garbia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6839"/>
+        <location filename="../Main/MainWindow.ui" line="6842"/>
         <source>Nodal capacity hosting options</source>
         <translation>Ahalmen nodalaren hosting aukerak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6846"/>
+        <location filename="../Main/MainWindow.ui" line="6849"/>
         <source>Nhc</source>
         <translation>NHC</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6849"/>
+        <location filename="../Main/MainWindow.ui" line="6852"/>
         <source>Nodal hosting capacity related settings</source>
         <translation>Nodal hosting-ahalmenarekin erlazionatutako ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6871"/>
-        <location filename="../Main/MainWindow.ui" line="6889"/>
+        <location filename="../Main/MainWindow.ui" line="6874"/>
+        <location filename="../Main/MainWindow.ui" line="6892"/>
         <source>If the sense is positive, the algorithm will assess the maximum generation capacity in the selected nodes. If it is negative it will asses the maximum loading capacity in the selected nodes.</source>
         <translation>Zentzua positiboa bada, algoritmoak aukeratutako nodoetan gehienezko sorkuntza ahalmena ebaluatuko du. Negatiboa bada, hautatutako nodoetan gehienezko karga-ahalmena ebaluatuko du.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6877"/>
+        <location filename="../Main/MainWindow.ui" line="6880"/>
         <source>Sense</source>
         <translation>Zentzua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6922"/>
+        <location filename="../Main/MainWindow.ui" line="6925"/>
         <source>Optimization method to use</source>
         <translation>Erabili beharreko optimizazio metodoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7075"/>
+        <location filename="../Main/MainWindow.ui" line="7078"/>
         <source>Nodal hosting capacity</source>
         <translation>Ostalaritza-gaitasun nodala</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7096"/>
+        <location filename="../Main/MainWindow.ui" line="7099"/>
         <source>Area transfer settings</source>
         <translation>Eremu transferentziaren ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7103"/>
+        <location filename="../Main/MainWindow.ui" line="7106"/>
         <source>Txfr</source>
         <translation>Txfr</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7106"/>
+        <location filename="../Main/MainWindow.ui" line="7109"/>
         <source>Area, Zone, etc related settings</source>
         <translation>Eremu, Zona, etab. erlazionatutako ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7213"/>
+        <location filename="../Main/MainWindow.ui" line="7216"/>
         <source>Transfer configuration</source>
         <translation>Transferitu konfigurazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7258"/>
+        <location filename="../Main/MainWindow.ui" line="7261"/>
         <source>From</source>
         <translation>Bertatik</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7281"/>
+        <location filename="../Main/MainWindow.ui" line="7284"/>
         <source>To</source>
         <translation>To</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7302"/>
+        <location filename="../Main/MainWindow.ui" line="7305"/>
         <source>Contingencies settings</source>
         <translation>Kontingentziaren ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7309"/>
+        <location filename="../Main/MainWindow.ui" line="7312"/>
         <source>Con</source>
         <translation>Kon</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7312"/>
+        <location filename="../Main/MainWindow.ui" line="7315"/>
         <source>Contingencies related settings</source>
         <translation>Kontingentziarekin lotutako ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7339"/>
+        <location filename="../Main/MainWindow.ui" line="7342"/>
         <source>Contingency filter</source>
         <translation>Kontingentzia-iragazkia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7352"/>
+        <location filename="../Main/MainWindow.ui" line="7355"/>
         <source>Filter by</source>
         <translation>Iragazi arabera</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7368"/>
+        <location filename="../Main/MainWindow.ui" line="7371"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Filter contingencies&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This option allows you to only consider the contingencies that fall in ceratain groupings such as Area, Zone or Country. The filtering is performed based on the information stored in the Buses.&lt;/p&gt;&lt;p&gt;This is highly discouraged. We trully advise you to not to filter the contingencies and select All Contingencies. Use this feature at your own risk.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Iragazi kontingentziak&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aukera honek Eremua, Zona edo Herrialdea bezalako zeratain taldeetan sartzen diren kontingentziak soilik kontuan hartzeko aukera ematen du. Iragazkia Autobusetan gordetako informazioaren arabera egiten da.&lt;/p&gt;&lt;p&gt;Hau oso gomendagarria da. Benetan gomendatzen dizugu kontingentziak ez iragaztea eta Kontingentzia guztiak aukeratzea. Erabili funtzio hau zure ardurapean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7551"/>
+        <location filename="../Main/MainWindow.ui" line="7554"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dead band over the SRAP rating.&lt;/p&gt;&lt;p&gt;If greater than zero, the SRAP is investigated for values over the branch protections rating until the specified value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SRAP baloraziotik gorako banda hila.&lt;/p&gt;&lt;p&gt;Zero baino handiagoa bada, SRAP-a adar babesen baloraziotik gorako balioak ikertzen dira zehaztutako baliora arte.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7554"/>
+        <location filename="../Main/MainWindow.ui" line="7557"/>
         <source>SRAP dead band</source>
         <translation>SRAP banda hila</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7568"/>
+        <location filename="../Main/MainWindow.ui" line="7571"/>
         <source>SRAP limit</source>
         <translation>SRAP muga</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7575"/>
+        <location filename="../Main/MainWindow.ui" line="7578"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked the SRAP objective solution is the branch nominal rate. Otherwise, the objective rating is the contingency rating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Egiaztatuta SRAP objektiboa irtenbide adar-tasa nominala da. Bestela, balorazio objektiboa kontingentziaren kalifikazioa da.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7578"/>
+        <location filename="../Main/MainWindow.ui" line="7581"/>
         <source>Revert to nominal rating</source>
         <translation>Itzuli balorazio nominalera</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7585"/>
+        <location filename="../Main/MainWindow.ui" line="7588"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Activate SRAP (Sistema de reducción automática de potencia)&lt;/p&gt;&lt;p&gt;It is a mechanism that helps avoiding considering a contingency if it would be eventually resolved by nearby generation shifting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktibatu SRAP (potentzia automatikoaren murrizketa sistema)&lt;/p&gt;&lt;p&gt;Kontingentzia bat kontuan hartzea saihesten laguntzen duen mekanismoa da, azkenean hurbileko belaunaldien aldaketarekin konponduko balitz.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7588"/>
+        <location filename="../Main/MainWindow.ui" line="7591"/>
         <source>Use SRAP</source>
         <translation>Erabili SRAP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7595"/>
+        <location filename="../Main/MainWindow.ui" line="7598"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, a massive posibly intractable report is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Egiaztatuz gero, litekeena da konponezina den txosten masiboa sortzen da.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7598"/>
+        <location filename="../Main/MainWindow.ui" line="7601"/>
         <source>Detailed report</source>
         <translation>Txosten xehatua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7605"/>
+        <location filename="../Main/MainWindow.ui" line="7608"/>
         <source>Maximum overload power that is solvable using the SRAP technique.</source>
         <translation>SRAP teknika erabiliz konpon daitekeen gainkarga-potentzia maximoa.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7637"/>
-        <location filename="../Main/MainWindow.ui" line="7677"/>
-        <location filename="../Main/MainWindow.ui" line="9145"/>
+        <location filename="../Main/MainWindow.ui" line="7640"/>
+        <location filename="../Main/MainWindow.ui" line="7680"/>
+        <location filename="../Main/MainWindow.ui" line="9148"/>
         <source> %</source>
         <translation> %</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7650"/>
+        <location filename="../Main/MainWindow.ui" line="7653"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Amount of contingency loading with respect to the base situation loading that triggers the report of the contingency. This is specially useful when we want to avoig reporting contingencies that are not significant with respect to the base situation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kontingentzia-kargaren zenbatekoa kontingentziaren txostena abiarazten duen oinarrizko egoera-kargaren aldean. Hau bereziki erabilgarria da oinarrizko egoerari dagokionez esanguratsuak ez diren kontingentziak salatzea saihestu nahi dugunean.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7653"/>
+        <location filename="../Main/MainWindow.ui" line="7656"/>
         <source>Contingency dead band</source>
         <translation>Kontingentzia banda hila</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7660"/>
+        <location filename="../Main/MainWindow.ui" line="7663"/>
         <source>Maximum number of generation nodes to participate in the SRAP</source>
         <translation>SRAP-en parte hartzeko gehieneko belaunaldi-nodo kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7663"/>
+        <location filename="../Main/MainWindow.ui" line="7666"/>
         <source>SRAP top N</source>
         <translation>SRAP goiko N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7670"/>
+        <location filename="../Main/MainWindow.ui" line="7673"/>
         <source>Contingency engine</source>
         <translation>Kontingentzia motorra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7720"/>
+        <location filename="../Main/MainWindow.ui" line="7723"/>
         <source>Dyn</source>
         <translation>Din</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7723"/>
+        <location filename="../Main/MainWindow.ui" line="7726"/>
         <source>Rms simulation settings</source>
         <translation>Rms simulazio ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7851"/>
+        <location filename="../Main/MainWindow.ui" line="7854"/>
         <source>RMS</source>
         <translation>RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7959"/>
-        <location filename="../Main/MainWindow.ui" line="8005"/>
-        <location filename="../Main/MainWindow.ui" line="8120"/>
-        <location filename="../Main/MainWindow.ui" line="8462"/>
-        <location filename="../Main/MainWindow.ui" line="8487"/>
-        <location filename="../Main/MainWindow.ui" line="8816"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Initial time for the simulation. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simulaziorako hasierako denbora. &lt;/p&gt;&lt;p&gt;Praktikan, irtenbide arazoak moteltzeko erabiltzen da.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
+        <location filename="../Main/MainWindow.ui" line="7962"/>
         <location filename="../Main/MainWindow.ui" line="8008"/>
         <location filename="../Main/MainWindow.ui" line="8123"/>
         <location filename="../Main/MainWindow.ui" line="8465"/>
         <location filename="../Main/MainWindow.ui" line="8490"/>
-        <location filename="../Main/MainWindow.ui" line="8803"/>
         <location filename="../Main/MainWindow.ui" line="8819"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Initial time for the simulation. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Simulaziorako hasierako denbora. &lt;/p&gt;&lt;p&gt;Praktikan, irtenbide arazoak moteltzeko erabiltzen da.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8011"/>
+        <location filename="../Main/MainWindow.ui" line="8126"/>
+        <location filename="../Main/MainWindow.ui" line="8468"/>
+        <location filename="../Main/MainWindow.ui" line="8493"/>
+        <location filename="../Main/MainWindow.ui" line="8806"/>
+        <location filename="../Main/MainWindow.ui" line="8822"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8094"/>
-        <location filename="../Main/MainWindow.ui" line="8682"/>
+        <location filename="../Main/MainWindow.ui" line="8097"/>
+        <location filename="../Main/MainWindow.ui" line="8685"/>
         <source>Assessment time</source>
         <translation>Ebaluazio denbora</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7952"/>
-        <location filename="../Main/MainWindow.ui" line="8841"/>
+        <location filename="../Main/MainWindow.ui" line="7955"/>
+        <location filename="../Main/MainWindow.ui" line="8844"/>
         <source>Initialization</source>
         <translation>Hasieratzea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8195"/>
-        <location filename="../Main/MainWindow.ui" line="8689"/>
+        <location filename="../Main/MainWindow.ui" line="8198"/>
+        <location filename="../Main/MainWindow.ui" line="8692"/>
         <source>Time step</source>
         <translation>Denbora pausoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7984"/>
-        <location filename="../Main/MainWindow.ui" line="8618"/>
+        <location filename="../Main/MainWindow.ui" line="7987"/>
+        <location filename="../Main/MainWindow.ui" line="8621"/>
         <source>Integration</source>
         <translation>Integrazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7962"/>
+        <location filename="../Main/MainWindow.ui" line="7965"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8155"/>
-        <location filename="../Main/MainWindow.ui" line="8625"/>
+        <location filename="../Main/MainWindow.ui" line="8158"/>
+        <location filename="../Main/MainWindow.ui" line="8628"/>
         <source>Simulation time</source>
         <translation>Simulazio denbora</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8251"/>
+        <location filename="../Main/MainWindow.ui" line="8254"/>
         <source>RMS Small-Signal</source>
         <translation>RMS Seinale Txikia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7939"/>
-        <location filename="../Main/MainWindow.ui" line="8574"/>
-        <location filename="../Main/MainWindow.ui" line="8578"/>
+        <location filename="../Main/MainWindow.ui" line="7942"/>
+        <location filename="../Main/MainWindow.ui" line="8577"/>
+        <location filename="../Main/MainWindow.ui" line="8581"/>
         <source>trapezoid</source>
         <translation>trapezioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7944"/>
-        <location filename="../Main/MainWindow.ui" line="8583"/>
+        <location filename="../Main/MainWindow.ui" line="7947"/>
+        <location filename="../Main/MainWindow.ui" line="8586"/>
         <source>implicit euler</source>
         <translation>euler inplizitua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8148"/>
-        <location filename="../Main/MainWindow.ui" line="8594"/>
+        <location filename="../Main/MainWindow.ui" line="8151"/>
+        <location filename="../Main/MainWindow.ui" line="8597"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of modes.&lt;br/&gt;If zero, all modes are included and the calculation is done using dense matrices.&lt;br/&gt;If a number of modes greater than zero is given the calculation is sparse.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Modu kopurua.&lt;br/&gt;Zero bada, modu guztiak sartzen dira eta kalkulua matrize trinkoak erabiliz egiten da.&lt;br/&gt;Zero baino modu kopuru handiagoa ematen bada kalkulua eskasa da.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8030"/>
-        <location filename="../Main/MainWindow.ui" line="8696"/>
+        <location filename="../Main/MainWindow.ui" line="8033"/>
+        <location filename="../Main/MainWindow.ui" line="8699"/>
         <source>Modes</source>
         <translation>Moduak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7992"/>
-        <location filename="../Main/MainWindow.ui" line="8787"/>
+        <location filename="../Main/MainWindow.ui" line="7995"/>
+        <location filename="../Main/MainWindow.ui" line="8790"/>
         <source>standard</source>
         <translation>standard</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7997"/>
-        <location filename="../Main/MainWindow.ui" line="8792"/>
+        <location filename="../Main/MainWindow.ui" line="8000"/>
+        <location filename="../Main/MainWindow.ui" line="8795"/>
         <source>vectorized</source>
         <translation>vetoreatua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8202"/>
-        <location filename="../Main/MainWindow.ui" line="8551"/>
+        <location filename="../Main/MainWindow.ui" line="8205"/>
+        <location filename="../Main/MainWindow.ui" line="8554"/>
         <source>Problem</source>
         <translation>Problema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8389"/>
+        <location filename="../Main/MainWindow.ui" line="8392"/>
         <source>EMT</source>
         <translation>EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8442"/>
+        <location filename="../Main/MainWindow.ui" line="8445"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Subspace build type. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Subespazioaren egoera. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8445"/>
-        <location filename="../Main/MainWindow.ui" line="8449"/>
+        <location filename="../Main/MainWindow.ui" line="8448"/>
+        <location filename="../Main/MainWindow.ui" line="8452"/>
         <source>Arnoldi</source>
         <translation>Arnoldi</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8454"/>
+        <location filename="../Main/MainWindow.ui" line="8457"/>
         <source>Hybrid Arnoldi</source>
         <translation>Hybrid Arnoldi</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8512"/>
+        <location filename="../Main/MainWindow.ui" line="8515"/>
         <source>Build type</source>
         <translation>Egoera</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8604"/>
+        <location filename="../Main/MainWindow.ui" line="8607"/>
         <source>Target period</source>
         <translation>Periodo iraunkorra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8745"/>
+        <location filename="../Main/MainWindow.ui" line="8748"/>
         <source>EMT Small-Signal</source>
         <translation>EMT Seinale Txikia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8800"/>
+        <location filename="../Main/MainWindow.ui" line="8803"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Period of the periodic orbit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Periodo orbitako periodikoa. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -14174,443 +14709,443 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation type="vanished">Hz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8884"/>
+        <location filename="../Main/MainWindow.ui" line="8887"/>
         <source>Machine-learning related settings</source>
         <translation>Ikaskuntza automatikoari lotutako ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8891"/>
+        <location filename="../Main/MainWindow.ui" line="8894"/>
         <source>ML</source>
         <translation>ML</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8894"/>
+        <location filename="../Main/MainWindow.ui" line="8897"/>
         <source>Machine learning related settings</source>
         <translation>Ikaskuntza automatikoko ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8912"/>
+        <location filename="../Main/MainWindow.ui" line="8915"/>
         <source>Objective function</source>
         <translation>Funtzio objektiboa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9076"/>
+        <location filename="../Main/MainWindow.ui" line="9079"/>
         <source>Minimum form capacity</source>
         <translation>Inprimakiaren gutxieneko edukiera</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9132"/>
+        <location filename="../Main/MainWindow.ui" line="9135"/>
         <source>Node grouping</source>
         <translation>Nodoen taldekatzea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9142"/>
+        <location filename="../Main/MainWindow.ui" line="9145"/>
         <source>In adequecy and simple dispatch indicated the minimum share of total firm capacity of the system to be in desirable, less is penalized</source>
         <translation>Egoki eta bidalketa sinplean sistemaren guztizko ahalmen sendoaren gutxieneko zatia desiragarria den adierazi da, zigorra txikiagoa da.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9161"/>
+        <location filename="../Main/MainWindow.ui" line="9164"/>
         <source>Number of maximum evaluations for the optimization methods</source>
         <translation>Optimizazio-metodoen gehienezko ebaluazio-kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9164"/>
+        <location filename="../Main/MainWindow.ui" line="9167"/>
         <source> x number of investments</source>
         <translation> x inbertsio kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9243"/>
-        <location filename="../Main/MainWindow.ui" line="12239"/>
+        <location filename="../Main/MainWindow.ui" line="9246"/>
+        <location filename="../Main/MainWindow.ui" line="12288"/>
         <source>Clustering</source>
         <translation>Clustering</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9256"/>
+        <location filename="../Main/MainWindow.ui" line="9259"/>
         <source>Nodal distances</source>
         <translation>Distantzia nodalak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9263"/>
+        <location filename="../Main/MainWindow.ui" line="9266"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of clusters, this affects all the simulations that deal with clustering&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kluster kopurua, horrek clustering-a lantzen duten simulazio guztietan eragiten du&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9266"/>
+        <location filename="../Main/MainWindow.ui" line="9269"/>
         <source> Clusters</source>
         <translation> Klusterrak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9282"/>
+        <location filename="../Main/MainWindow.ui" line="9285"/>
         <source>Maximum evaluations</source>
         <translation>Gehienezko ebaluazioak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9316"/>
+        <location filename="../Main/MainWindow.ui" line="9319"/>
         <source>Máximum standard deviation to determine the groups</source>
         <translation>Taldeak zehazteko gehieneko desbideratze estandarra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9319"/>
+        <location filename="../Main/MainWindow.ui" line="9322"/>
         <source> σ</source>
         <translation> σ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9335"/>
+        <location filename="../Main/MainWindow.ui" line="9338"/>
         <source>Min. group size</source>
         <translation>Min. taldearen tamaina</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9342"/>
+        <location filename="../Main/MainWindow.ui" line="9345"/>
         <source>Select the investment evaluation method</source>
         <translation>Aukeratu inbertsioa ebaluatzeko metodoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9349"/>
+        <location filename="../Main/MainWindow.ui" line="9352"/>
         <source>Minimum size of the group</source>
         <translation>Taldearen gutxieneko tamaina</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9355"/>
+        <location filename="../Main/MainWindow.ui" line="9358"/>
         <source> elements</source>
         <translation> elementuak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9413"/>
+        <location filename="../Main/MainWindow.ui" line="9416"/>
         <source>Investment evaluation</source>
         <translation>Inbertsioen ebaluazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9423"/>
+        <location filename="../Main/MainWindow.ui" line="9426"/>
         <source>Number of clusters</source>
         <translation>Kluster kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9529"/>
+        <location filename="../Main/MainWindow.ui" line="9532"/>
         <source>Number of islands produced until the analysis stops</source>
         <translation>Azterketa gelditu arte sortutako uharte kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9570"/>
+        <location filename="../Main/MainWindow.ui" line="9573"/>
         <source>Reliability evaluation method</source>
         <translation>Fidagarritasuna ebaluatzeko metodoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9577"/>
+        <location filename="../Main/MainWindow.ui" line="9580"/>
         <source>Maximum number of samples</source>
         <translation>Gehienezko lagin kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9635"/>
+        <location filename="../Main/MainWindow.ui" line="9638"/>
         <source>Reliability</source>
         <translation>Fidagarritasuna</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9645"/>
-        <location filename="../Main/MainWindow.ui" line="9981"/>
+        <location filename="../Main/MainWindow.ui" line="9648"/>
+        <location filename="../Main/MainWindow.ui" line="9984"/>
         <source>Samples</source>
         <translation>Laginak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9694"/>
+        <location filename="../Main/MainWindow.ui" line="9697"/>
         <source>Cascading</source>
         <translation>Kaskakada</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9891"/>
-        <location filename="../Main/MainWindow.ui" line="11420"/>
+        <location filename="../Main/MainWindow.ui" line="9894"/>
+        <location filename="../Main/MainWindow.ui" line="11469"/>
         <source>Stochastic power flow</source>
         <translation>Potentzia estokastikoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9901"/>
+        <location filename="../Main/MainWindow.ui" line="9904"/>
         <source>Maximum number of Monte Carlo samples</source>
         <translation>Monte Carlo laginen gehienezko kopurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9917"/>
+        <location filename="../Main/MainWindow.ui" line="9920"/>
         <source>Aditional islands until stop</source>
         <translation>Uharte gehigarriak gelditu arte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9924"/>
+        <location filename="../Main/MainWindow.ui" line="9927"/>
         <source>Voltage variance</source>
         <translation>Tentsio bariantza</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9995"/>
+        <location filename="../Main/MainWindow.ui" line="9998"/>
         <source>Stochastic power flow method</source>
         <translation>Potentzia-fluxu estokastikoaren metodoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10027"/>
+        <location filename="../Main/MainWindow.ui" line="10030"/>
         <source>Monte Carlo variance until stop</source>
         <translation>Monte Carloko bariantza gelditu arte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10077"/>
+        <location filename="../Main/MainWindow.ui" line="10080"/>
         <source>Topology settings</source>
         <translation>Topologia ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10084"/>
+        <location filename="../Main/MainWindow.ui" line="10087"/>
         <source>Tplgy</source>
         <translation>Tplgy</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10087"/>
+        <location filename="../Main/MainWindow.ui" line="10090"/>
         <source>Topology related settings</source>
         <translation>Topologiari lotutako ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10206"/>
-        <location filename="../Main/MainWindow.ui" line="12656"/>
+        <location filename="../Main/MainWindow.ui" line="10209"/>
+        <location filename="../Main/MainWindow.ui" line="12705"/>
         <source>Grid reduction</source>
         <translation>Sarearen murrizketa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10269"/>
+        <location filename="../Main/MainWindow.ui" line="10272"/>
         <source>Select branch types to reduce</source>
         <translation>Hautatu murrizteko adar motak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10279"/>
+        <location filename="../Main/MainWindow.ui" line="10282"/>
         <source>Filter by r+x under threshold</source>
         <translation>Iragazi r+x atalasearen azpian</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10289"/>
+        <location filename="../Main/MainWindow.ui" line="10292"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exponent of the threshold to use.&lt;/p&gt;&lt;p&gt;threshold = 1x10^-factor&lt;/p&gt;&lt;p&gt;i.e.&lt;/p&gt;&lt;p&gt;factor=3&lt;/p&gt;&lt;p&gt;threshold = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Erabili beharreko atalasearen adierazlea.&lt;/p&gt;&lt;p&gt;atalasea = 1x10^-faktorea&lt;/p&gt;&lt;p&gt;hau da.&lt;/p&gt;&lt;p&gt;faktorea=3&lt;/p&gt;&lt;p&gt;atalasea = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10418"/>
+        <location filename="../Main/MainWindow.ui" line="10421"/>
         <source>Branch rating</source>
         <translation>Adarraren balorazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10490"/>
+        <location filename="../Main/MainWindow.ui" line="10493"/>
         <source>Branch rating factor</source>
         <translation>Adarren balorazio-faktorea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10497"/>
+        <location filename="../Main/MainWindow.ui" line="10500"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor to aply to the branch calculated power to use as rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kalkulazio gisa erabiltzeko kalkulatutako potentziari aplikatu beharreko faktorea&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10516"/>
+        <location filename="../Main/MainWindow.ui" line="10519"/>
         <source>override values</source>
         <translation>balioak gainidatzi</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10543"/>
+        <location filename="../Main/MainWindow.ui" line="10546"/>
         <source>File settings</source>
         <translation>Fitxategien ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10550"/>
-        <location filename="../Main/MainWindow.ui" line="11002"/>
+        <location filename="../Main/MainWindow.ui" line="10553"/>
+        <location filename="../Main/MainWindow.ui" line="11050"/>
         <source>File</source>
         <translation>Fitxategia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10553"/>
+        <location filename="../Main/MainWindow.ui" line="10556"/>
         <source>File related settings</source>
         <translation>Fitxategiei lotutako ezarpenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10574"/>
+        <location filename="../Main/MainWindow.ui" line="10577"/>
         <source>If checked, the results are stored inside the VeraGrid file in a compressed format.</source>
         <translation>Hautatzen bada, emaitzak VeraGrid fitxategiaren barruan gordetzen dira formatu konprimitu batean.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10577"/>
+        <location filename="../Main/MainWindow.ui" line="10580"/>
         <source>Save results in .veragrid files</source>
         <translation>Gorde emaitzak .veragrid fitxategietan</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10616"/>
+        <location filename="../Main/MainWindow.ui" line="10619"/>
         <source>File path</source>
         <translation>Fitxategiaren bidea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10742"/>
+        <location filename="../Main/MainWindow.ui" line="10745"/>
         <source>File Information</source>
         <translation>Fitxategiaren informazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10790"/>
+        <location filename="../Main/MainWindow.ui" line="10793"/>
         <source>Server</source>
         <translation>Zerbitzaria</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10796"/>
+        <location filename="../Main/MainWindow.ui" line="10799"/>
         <source>Server jobs currently on cue</source>
         <translation>Momentu honetan zerbitzari-lanak dira</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10824"/>
+        <location filename="../Main/MainWindow.ui" line="10827"/>
         <source>Url</source>
         <translation>Url</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10831"/>
+        <location filename="../Main/MainWindow.ui" line="10834"/>
         <source>Type here the VeraGrid server URL (ask your IT team)</source>
         <translation>Idatzi hemen VeraGrid zerbitzariaren URLa (galdetu zure IT taldeari)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10838"/>
+        <location filename="../Main/MainWindow.ui" line="10841"/>
         <source>Port</source>
         <translation>Portua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10845"/>
+        <location filename="../Main/MainWindow.ui" line="10848"/>
         <source>Type here the VeraGrid server Port (ask your IT team)</source>
         <translation>Idatzi hemen VeraGrid zerbitzariaren ataka (galdetu zure IT taldeari)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10858"/>
+        <location filename="../Main/MainWindow.ui" line="10861"/>
         <source>Password</source>
         <translation>Pasahitza</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10865"/>
+        <location filename="../Main/MainWindow.ui" line="10868"/>
         <source>Type here the VeraGrid server password (ask your IT team)</source>
         <translation>Idatzi hemen VeraGrid zerbitzariaren pasahitza (galdetu zure IT taldeari)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10875"/>
+        <location filename="../Main/MainWindow.ui" line="10878"/>
         <source>Secure</source>
         <translation>Segurua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10933"/>
+        <location filename="../Main/MainWindow.ui" line="11015"/>
         <source>Cancel process</source>
         <translation>Utzi prozesua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11006"/>
+        <location filename="../Main/MainWindow.ui" line="11054"/>
         <source>Export grid</source>
         <translation>Esportatu sareta</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11032"/>
+        <location filename="../Main/MainWindow.ui" line="11080"/>
         <source>Import data</source>
         <translation>Inportatu datuak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11053"/>
+        <location filename="../Main/MainWindow.ui" line="11101"/>
         <source>Help</source>
         <translation>Laguntza</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11062"/>
+        <location filename="../Main/MainWindow.ui" line="11110"/>
         <source>Actions</source>
         <translation>Ekintzak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11075"/>
+        <location filename="../Main/MainWindow.ui" line="11123"/>
         <source>Simulations</source>
         <translation>Simulazioak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11151"/>
+        <location filename="../Main/MainWindow.ui" line="11200"/>
         <source>Diagram</source>
         <translation>Diagrama</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11155"/>
+        <location filename="../Main/MainWindow.ui" line="11204"/>
         <source>Branches drawing style</source>
         <translation>Adarrak marrazteko estiloa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11195"/>
+        <location filename="../Main/MainWindow.ui" line="11244"/>
         <source>plugins</source>
         <translation>pluginak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11200"/>
+        <location filename="../Main/MainWindow.ui" line="11249"/>
         <source>Events</source>
         <translation>Gertaerak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11221"/>
+        <location filename="../Main/MainWindow.ui" line="11270"/>
         <source>toolBar</source>
         <translation>toolBar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11288"/>
+        <location filename="../Main/MainWindow.ui" line="11337"/>
         <source>Open file</source>
         <translation>Ireki fitxategia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11294"/>
+        <location filename="../Main/MainWindow.ui" line="11343"/>
         <source>Ctrl+O</source>
         <translation>Ktrl+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11303"/>
+        <location filename="../Main/MainWindow.ui" line="11352"/>
         <source>Save</source>
         <translation>Gorde</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11309"/>
-        <location filename="../Main/MainWindow.ui" line="13125"/>
+        <location filename="../Main/MainWindow.ui" line="11358"/>
+        <location filename="../Main/MainWindow.ui" line="13186"/>
         <source>Ctrl+S</source>
         <translation>Ktrl+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11318"/>
+        <location filename="../Main/MainWindow.ui" line="11367"/>
         <source>Take picture</source>
         <translation>Atera argazkia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11330"/>
+        <location filename="../Main/MainWindow.ui" line="11379"/>
         <source>New project</source>
         <translation>Proiektu berria</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11336"/>
+        <location filename="../Main/MainWindow.ui" line="11385"/>
         <source>Ctrl+N</source>
         <translation>Ktrl+N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11345"/>
+        <location filename="../Main/MainWindow.ui" line="11394"/>
         <source>Power Flow</source>
         <translation>Potentzia Fluxua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11348"/>
+        <location filename="../Main/MainWindow.ui" line="11397"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Potentzia Fluxua&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu potentzia-fluxuaren azterketa&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11354"/>
+        <location filename="../Main/MainWindow.ui" line="11403"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11366"/>
+        <location filename="../Main/MainWindow.ui" line="11415"/>
         <source>Power flow time series</source>
         <translation>Potentzia-fluxuaren denbora-seriea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11369"/>
+        <location filename="../Main/MainWindow.ui" line="11418"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the power flow study with time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Potentzia-fluxua&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu potentzia-fluxuaren azterketa denbora serieko datuekin&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11375"/>
+        <location filename="../Main/MainWindow.ui" line="11424"/>
         <source>Ctrl+F5</source>
         <translation>Ktrl+F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11384"/>
+        <location filename="../Main/MainWindow.ui" line="11433"/>
         <source>Expand</source>
         <translation>Zabaldu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11387"/>
+        <location filename="../Main/MainWindow.ui" line="11436"/>
         <source>Expand distances</source>
         <translation>Distantziak zabaldu</translation>
     </message>
@@ -14619,12 +15154,12 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation type="vanished">Ktrl+Alt++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11402"/>
+        <location filename="../Main/MainWindow.ui" line="11451"/>
         <source>Shrink</source>
         <translation>Txikitu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11405"/>
+        <location filename="../Main/MainWindow.ui" line="11454"/>
         <source>Shrink distances</source>
         <translation>Distantziak txikitu</translation>
     </message>
@@ -14633,282 +15168,282 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation type="vanished">Ktrl+Alt+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11393"/>
+        <location filename="../Main/MainWindow.ui" line="11442"/>
         <source>Ctrl+Shift++</source>
         <translation>Ctrl+Shift++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11411"/>
+        <location filename="../Main/MainWindow.ui" line="11460"/>
         <source>Ctrl+Shift+-</source>
         <translation>Ctrl+Shift+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11423"/>
+        <location filename="../Main/MainWindow.ui" line="11472"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Stochastic power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a stochastic power flow over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Potentzia estokastikoa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin potentzia estokastiko-fluxu bat denbora serieko datuen gainean&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11438"/>
+        <location filename="../Main/MainWindow.ui" line="11487"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Continuation power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a continuation power flow over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Jarraipen-potentzia-fluxua&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu jarraipen-potentzia-fluxu bat argazki-datuen gainean&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11450"/>
+        <location filename="../Main/MainWindow.ui" line="11499"/>
         <source>About</source>
         <translation>Buruz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11462"/>
+        <location filename="../Main/MainWindow.ui" line="11511"/>
         <source>center view</source>
         <translation>erdiko ikuspegia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11465"/>
+        <location filename="../Main/MainWindow.ui" line="11514"/>
         <source>Center view</source>
         <translation>Erdiko ikuspegia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11471"/>
+        <location filename="../Main/MainWindow.ui" line="11520"/>
         <source>Ctrl+E</source>
         <translation>Ktrl+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11480"/>
+        <location filename="../Main/MainWindow.ui" line="11529"/>
         <source>Short Circuit</source>
         <translation>Zirkuitu Laburra</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11483"/>
+        <location filename="../Main/MainWindow.ui" line="11532"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Short Circuit&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a short circuit study over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Zirkuitu Laburra&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin zirkuitu laburren azterketa argazkien datuen gainean&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11495"/>
+        <location filename="../Main/MainWindow.ui" line="11544"/>
         <source>Automatic grid layout</source>
         <translation>Sarearen diseinu automatikoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11498"/>
+        <location filename="../Main/MainWindow.ui" line="11547"/>
         <source>Automatic layout the of the grid</source>
         <translation>Sarearen diseinu automatikoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11513"/>
+        <location filename="../Main/MainWindow.ui" line="11562"/>
         <source>Blackout cascade</source>
         <translation>Iluntze-jauzi</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11516"/>
+        <location filename="../Main/MainWindow.ui" line="11565"/>
         <source>Run a simulation or step by step blackout cascade</source>
         <translation>Exekutatu simulazio bat edo urratsez urrats itzalaldi-jauzi bat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11528"/>
+        <location filename="../Main/MainWindow.ui" line="11577"/>
         <source>Optimal power flow</source>
         <translation>Potentzia-fluxu optimoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11531"/>
+        <location filename="../Main/MainWindow.ui" line="11580"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Potentzia-fluxu optimoa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Honek potentzia-fluxu optimoa exekutatzen du&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11537"/>
+        <location filename="../Main/MainWindow.ui" line="11586"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11546"/>
+        <location filename="../Main/MainWindow.ui" line="11595"/>
         <source>Optimal power flow time series</source>
         <translation>Potentzia-fluxuaren denbora-serie optimoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11549"/>
+        <location filename="../Main/MainWindow.ui" line="11598"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Potentzia-fluxu optimoa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Honek potentzia-fluxu optimoa exekutatzen du denbora serieko datuetarako&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11555"/>
+        <location filename="../Main/MainWindow.ui" line="11604"/>
         <source>Ctrl+F6</source>
         <translation>Ktrl+F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11564"/>
+        <location filename="../Main/MainWindow.ui" line="11613"/>
         <source>Detect transformers</source>
         <translation>Transformadoreak detektatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11567"/>
+        <location filename="../Main/MainWindow.ui" line="11616"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detect transformers.&lt;/p&gt;&lt;p&gt;Use the nodes nominal voltage to determine which branches should be a transformer.&lt;/p&gt;&lt;p&gt;If a branch joins two nodes with different voltage levels, the branch should be a transformer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Transformadoreak detektatu.&lt;/p&gt;&lt;p&gt;Erabili nodoen tentsio nominala zein adar izan behar diren transformadoreak zehazteko.&lt;/p&gt;&lt;p&gt;Adar batek tentsio maila ezberdineko bi nodo batzen baditu, adarrak transformadore bat izan behar du.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11579"/>
+        <location filename="../Main/MainWindow.ui" line="11628"/>
         <source>Auto rate branches</source>
         <translation>Auto tarifa adarrak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11582"/>
+        <location filename="../Main/MainWindow.ui" line="11631"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatic rating of the branches.&lt;/p&gt;&lt;p&gt;Use the branches calculated power to establish a rate, if the branch rate is unknown. A factor is available in the settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Adarren balorazio automatikoa.&lt;/p&gt;&lt;p&gt;Erabili adarrak kalkulatutako potentzia tasa bat ezartzeko, adar tasa ezezaguna bada. Faktore bat eskuragarri dago ezarpenetan.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11597"/>
+        <location filename="../Main/MainWindow.ui" line="11646"/>
         <source>Storage location suggestion</source>
         <translation>Biltegiratzeko kokapena iradokizuna</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11600"/>
+        <location filename="../Main/MainWindow.ui" line="11649"/>
         <source>Suggest places where storage devices are useful</source>
         <translation>Iradoki biltegiratze-gailuak erabilgarriak diren tokiak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11612"/>
+        <location filename="../Main/MainWindow.ui" line="11661"/>
         <source>Launch data analysis tool</source>
         <translation>Abiarazi datuak aztertzeko tresna</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11615"/>
+        <location filename="../Main/MainWindow.ui" line="11664"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Data analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the data analysis tool that finds and tries to repair common grid modelling issues&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Datuen azterketa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Abiarazi sarearen ereduaren ohiko arazoak aurkitzen eta konpontzen saiatzen den datuak aztertzeko tresna&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11621"/>
+        <location filename="../Main/MainWindow.ui" line="11670"/>
         <source>F12</source>
         <translation>F12</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11630"/>
+        <location filename="../Main/MainWindow.ui" line="11679"/>
         <source>Online documentation</source>
         <translation>Sareko dokumentazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11636"/>
+        <location filename="../Main/MainWindow.ui" line="11685"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11645"/>
+        <location filename="../Main/MainWindow.ui" line="11694"/>
         <source>Save as</source>
         <translation>Gorde honela</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11657"/>
+        <location filename="../Main/MainWindow.ui" line="11706"/>
         <source>Delete selected</source>
         <translation>Ezabatu hautatutakoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11660"/>
+        <location filename="../Main/MainWindow.ui" line="11709"/>
         <source>Delete selected objects from the diagrams and optionally from the database</source>
         <translation>Ezabatu hautatutako objektuak diagrametatik eta, aukeran, datu-basetik</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11666"/>
+        <location filename="../Main/MainWindow.ui" line="11715"/>
         <source>Del</source>
         <translation>Del</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11675"/>
+        <location filename="../Main/MainWindow.ui" line="11724"/>
         <source>Linear analysis</source>
         <translation>Analisi lineala</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11678"/>
+        <location filename="../Main/MainWindow.ui" line="11727"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform linear analysis with distribution factors (PTDF, LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Analisi lineala&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin analisi lineala banaketa-faktoreekin (PTDF, LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11684"/>
+        <location filename="../Main/MainWindow.ui" line="11733"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11693"/>
+        <location filename="../Main/MainWindow.ui" line="11742"/>
         <source>Reset console</source>
         <translation>Berrezarri kontsola</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11708"/>
+        <location filename="../Main/MainWindow.ui" line="11757"/>
         <source>Set OPF results to power flow (non destructive)</source>
         <translation>Ezarri OPF emaitzak potentzia-fluxuan (suntsitzailea ez dena)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11711"/>
+        <location filename="../Main/MainWindow.ui" line="11760"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Set the OPF results into the power flow or time series simulations (non destructive)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kopiatu OPF datuak&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ezarri OPF emaitzak potentzia-fluxuan edo denbora serieko simulazioetan (suntsitzaileak ez direnak)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11723"/>
+        <location filename="../Main/MainWindow.ui" line="11772"/>
         <source>Correct buses location</source>
         <translation>Autobusen kokapen zuzena</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11726"/>
+        <location filename="../Main/MainWindow.ui" line="11775"/>
         <source>Set selected buses location closer to their neighbours</source>
         <translation>Ezarri hautatutako autobusen kokapena auzokoengandik gertuago</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11738"/>
+        <location filename="../Main/MainWindow.ui" line="11787"/>
         <source>Copy OPF generation to database (destructive)</source>
         <translation>Kopiatu OPF sorrera datu-basera (suntsitzailea)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11741"/>
+        <location filename="../Main/MainWindow.ui" line="11790"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Destructive copy of the OPF generation results to the input profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kopiatu OPF datuak&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OPF belaunaldiko emaitzen kopia suntsitzailea sarrerako profiletan&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11753"/>
+        <location filename="../Main/MainWindow.ui" line="11802"/>
         <source>Linear analysis time series power flow</source>
         <translation>Analisi lineala denbora serie potentzia-fluxua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11756"/>
+        <location filename="../Main/MainWindow.ui" line="11805"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF based time series power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Analisi lineala&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF oinarritutako denbora serieko potentzia-fluxua&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11762"/>
+        <location filename="../Main/MainWindow.ui" line="11811"/>
         <source>Ctrl+F7</source>
         <translation>Ktrl+F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11771"/>
+        <location filename="../Main/MainWindow.ui" line="11820"/>
         <source>Import circuit</source>
         <translation>Inportazio zirkuitua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11774"/>
+        <location filename="../Main/MainWindow.ui" line="11823"/>
         <source>Add circuit to the current circuit</source>
         <translation>Gehitu zirkuitua uneko zirkuituari</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11780"/>
+        <location filename="../Main/MainWindow.ui" line="11829"/>
         <source>Ctrl+N, Ctrl+O</source>
         <translation>Ktrl+N, Ktrl+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11792"/>
+        <location filename="../Main/MainWindow.ui" line="11841"/>
         <source>Sync</source>
         <translation>Sinkronizatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11795"/>
+        <location filename="../Main/MainWindow.ui" line="11844"/>
         <source>Sync with the file for colaborative editing of the grid</source>
         <translation>Sinkronizatu fitxategiarekin sarearen edizio kolaboratiborako</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11804"/>
+        <location filename="../Main/MainWindow.ui" line="11853"/>
         <source>Draw schematic</source>
         <translation>Marraztu eskema</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11813"/>
+        <location filename="../Main/MainWindow.ui" line="11862"/>
         <source>Sigma analysis</source>
         <translation>Sigma analisia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11816"/>
+        <location filename="../Main/MainWindow.ui" line="11865"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sigma analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform HELM-Sigma analysis over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sigma analisia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin HELM-Sigma analisia argazkien datuen gainean&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -14917,72 +15452,72 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation type="vanished">Garbitu &quot;gauzak oraintxe martxan&quot;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11843"/>
+        <location filename="../Main/MainWindow.ui" line="11892"/>
         <source>Add default catalogue</source>
         <translation>Gehitu katalogo lehenetsia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11858"/>
+        <location filename="../Main/MainWindow.ui" line="11907"/>
         <source>Find node groups</source>
         <translation>Bilatu nodo-taldeak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11861"/>
+        <location filename="../Main/MainWindow.ui" line="11910"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Finds the electrically related nodes by using their electrical distance and the DBSCAN clustering method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Elektrikoki erlazionatutako nodoak aurkitzen ditu haien distantzia elektrikoa eta DBSCAN clustering metodoa erabiliz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11873"/>
+        <location filename="../Main/MainWindow.ui" line="11922"/>
         <source>Grid Generator</source>
         <translation>Sare-sorgailua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11879"/>
+        <location filename="../Main/MainWindow.ui" line="11928"/>
         <source>Ctrl+G</source>
         <translation>Ktrl+G</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11888"/>
+        <location filename="../Main/MainWindow.ui" line="11937"/>
         <source>Node load</source>
         <translation>Nodoaren karga</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11897"/>
+        <location filename="../Main/MainWindow.ui" line="11946"/>
         <source>Generator generation</source>
         <translation>Sorgailua sortzea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11906"/>
+        <location filename="../Main/MainWindow.ui" line="11955"/>
         <source>Contingency analysis time series</source>
         <translation>Kontingentzia-analisiaren denbora-seriea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11909"/>
+        <location filename="../Main/MainWindow.ui" line="11958"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Per form a contingency analysis with the selected method over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kontingentzia-analisia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin kontingentzia-analisi bat aukeratutako metodoarekin denbora serieko datuen gainean&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11915"/>
+        <location filename="../Main/MainWindow.ui" line="11964"/>
         <source>Ctrl+F8</source>
         <translation>Ktrl+F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11924"/>
+        <location filename="../Main/MainWindow.ui" line="11973"/>
         <source>Branch rates</source>
         <translation>Sukurtsalen tarifak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11933"/>
+        <location filename="../Main/MainWindow.ui" line="11982"/>
         <source>Set selected buses&apos; Area</source>
         <translation>Ezarri hautatutako autobusen eremua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11945"/>
+        <location filename="../Main/MainWindow.ui" line="11994"/>
         <source>Set selected buses&apos; Zone</source>
         <translation>Ezarri hautatutako autobusen gunea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11957"/>
+        <location filename="../Main/MainWindow.ui" line="12006"/>
         <source>Set seleted buses&apos; Country</source>
         <translation>Ezarri hautatutako autobusen Herrialdea</translation>
     </message>
@@ -14991,441 +15526,441 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation type="vanished">Inportatu autobus koordenatuak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11828"/>
-        <location filename="../Main/MainWindow.ui" line="11831"/>
+        <location filename="../Main/MainWindow.ui" line="11877"/>
+        <location filename="../Main/MainWindow.ui" line="11880"/>
         <source>Stop &quot;stuff running right now&quot;</source>
         <translation>Galdera &quot;ora aurkitzen ari dena&quot; gelditu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11969"/>
+        <location filename="../Main/MainWindow.ui" line="12018"/>
         <source>Coordinates</source>
         <translation>Koordenatuak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11981"/>
+        <location filename="../Main/MainWindow.ui" line="12030"/>
         <source>Available Transfer Capacity</source>
         <translation>Eskuragarri dagoen transferentzia-gaitasuna</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11984"/>
+        <location filename="../Main/MainWindow.ui" line="12033"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Transferentzia-ahalmen garbia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin transferentzia-ahalmen garbiaren ebaluazio lineala instantziako datuetarako&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11996"/>
+        <location filename="../Main/MainWindow.ui" line="12045"/>
         <source>Available Transfer Capacity Time Series</source>
         <translation>Eskuragarri dagoen Transferentzia Edukiera Denbora Seriea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11999"/>
+        <location filename="../Main/MainWindow.ui" line="12048"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Transferentzia-ahalmen garbia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin transferentzia-ahalmen garbiaren ebaluazio lineala denbora serieko datuetarako&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12011"/>
+        <location filename="../Main/MainWindow.ui" line="12060"/>
         <source>Contingency analysis</source>
         <translation>Kontingentzia-analisia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12014"/>
+        <location filename="../Main/MainWindow.ui" line="12063"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a contingency analysis with the selected method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kontingentzia-analisia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aukeratutako metodoarekin kontingentzia-analisia egitea&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12020"/>
+        <location filename="../Main/MainWindow.ui" line="12069"/>
         <source>F8</source>
         <translation>F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12029"/>
+        <location filename="../Main/MainWindow.ui" line="12078"/>
         <source>Optimal net transfer capacity</source>
         <translation>Transferentzia garbiaren ahalmen optimoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12032"/>
+        <location filename="../Main/MainWindow.ui" line="12081"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an optimal net transfer capacity optimization&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Transferentzia garbiaren ahalmen optimoa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin transferentzia-ahalmen garbiaren optimizazio optimoa&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12044"/>
+        <location filename="../Main/MainWindow.ui" line="12093"/>
         <source>Set schematic (x,y) from (lat,lon)</source>
         <translation>Ezarri eskema (x,y) tik (lat,lon)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12056"/>
+        <location filename="../Main/MainWindow.ui" line="12105"/>
         <source>Inputs analysis</source>
         <translation>Sarrerak aztertzea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12059"/>
+        <location filename="../Main/MainWindow.ui" line="12108"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inputs analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an analysis of the inputs for both the snapshot and time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sarrerak aztertzea&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin sarreren analisia argazkiaren eta denbora-seriearen datuetarako&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12065"/>
+        <location filename="../Main/MainWindow.ui" line="12114"/>
         <source>F11</source>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12074"/>
+        <location filename="../Main/MainWindow.ui" line="12123"/>
         <source>Fuse devices</source>
         <translation>Fusible gailuak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12077"/>
+        <location filename="../Main/MainWindow.ui" line="12126"/>
         <source>Fuse devices into a single device of each category per node</source>
         <translation>Konbinatu gailuak nodo bakoitzeko kategoria bakoitzeko gailu bakar batean</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12089"/>
-        <location filename="../Main/MainWindow.ui" line="12092"/>
+        <location filename="../Main/MainWindow.ui" line="12138"/>
+        <location filename="../Main/MainWindow.ui" line="12141"/>
         <source>Delete inconsistencies</source>
         <translation>Ezabatu inkoherentziak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12104"/>
+        <location filename="../Main/MainWindow.ui" line="12153"/>
         <source>Optimal NTC time series</source>
         <translation>NTC denbora serie optimoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12107"/>
+        <location filename="../Main/MainWindow.ui" line="12156"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a net transfer capacity optimization over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Transferentzia-ahalmen garbia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin transferentzia-ahalmen garbiaren optimizazioa denbora serieko datuen gainean&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12119"/>
+        <location filename="../Main/MainWindow.ui" line="12168"/>
         <source>re-index time</source>
         <translation>berriro indexatu denbora</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12131"/>
+        <location filename="../Main/MainWindow.ui" line="12180"/>
         <source>Fix generators active based on the power</source>
         <translation>Konpondu sorgailu aktiboak potentziaren arabera</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12143"/>
-        <location filename="../Main/MainWindow.ui" line="12146"/>
+        <location filename="../Main/MainWindow.ui" line="12192"/>
+        <location filename="../Main/MainWindow.ui" line="12195"/>
         <source>Fix loads active based on the power</source>
         <translation>Konpondu karga aktibo potentziaren arabera</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12158"/>
+        <location filename="../Main/MainWindow.ui" line="12207"/>
         <source>Initialize contingencies</source>
         <translation>Kontingentziak hasieratu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12161"/>
+        <location filename="../Main/MainWindow.ui" line="12210"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingencies wizard&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the contingencies wizard to automatically set up the contingency objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kontingentzia morroia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Abiarazi kontingentziaren morroia kontingentzia-objektuak automatikoki konfiguratzeko&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12173"/>
+        <location filename="../Main/MainWindow.ui" line="12222"/>
         <source>Add selected as new contingency</source>
         <translation>Gehitu hautatutako kontingentzia berri gisa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12176"/>
+        <location filename="../Main/MainWindow.ui" line="12225"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add contingency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new contingency from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Gehitu kontingentzia&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Sortu kontingentzia berri bat hautaketa eskematikotik&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12182"/>
+        <location filename="../Main/MainWindow.ui" line="12231"/>
         <source>Ctrl+A, Ctrl+C</source>
         <translation>Ktrl+A, Ktrl+C</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12191"/>
+        <location filename="../Main/MainWindow.ui" line="12240"/>
         <source>Add selected as new investment</source>
         <translation>Gehitu hautatutako inbertsio berri gisa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12194"/>
+        <location filename="../Main/MainWindow.ui" line="12243"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create new investment with the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inbertsioak&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Sortu inbertsio berria hautaketa eskematikoarekin&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12200"/>
+        <location filename="../Main/MainWindow.ui" line="12249"/>
         <source>Ctrl+A, Ctrl+I</source>
         <translation>Ktrl+A, Ktrl+I</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12209"/>
+        <location filename="../Main/MainWindow.ui" line="12258"/>
         <source>Zoom in</source>
         <translation>Handitu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12215"/>
+        <location filename="../Main/MainWindow.ui" line="12264"/>
         <source>Ctrl++</source>
         <translation>Ktrl++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12224"/>
+        <location filename="../Main/MainWindow.ui" line="12273"/>
         <source>Zoom out</source>
         <translation>Txikiagotu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12230"/>
+        <location filename="../Main/MainWindow.ui" line="12279"/>
         <source>Ctrl+-</source>
         <translation>Ktrl+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12242"/>
+        <location filename="../Main/MainWindow.ui" line="12291"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a clustering study of the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Denbora-serieen datuen multzokatze-azterketa egin&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12260"/>
+        <location filename="../Main/MainWindow.ui" line="12309"/>
         <source>Use clustering</source>
         <translation>Erabili clustering</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12263"/>
+        <location filename="../Main/MainWindow.ui" line="12312"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If active, the available clustering results are used in all the simulations that handle time series data non-destructivelly&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aktibatuta badago, eskuragarri dauden clustering-emaitzak denbora-serieen datuak suntsitzailerik gabe kudeatzen dituzten simulazio guztietan erabiltzen dira&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12275"/>
+        <location filename="../Main/MainWindow.ui" line="12324"/>
         <source>Investments evaluation</source>
         <translation>Inbertsioen ebaluazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12278"/>
+        <location filename="../Main/MainWindow.ui" line="12327"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform the investments evaluation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inbertsioak&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Inbertsioen ebaluazioa egitea&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12284"/>
+        <location filename="../Main/MainWindow.ui" line="12333"/>
         <source>Ctrl+I, Ctrl+E</source>
         <translation>Ktrl+I, Ktrl+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12293"/>
+        <location filename="../Main/MainWindow.ui" line="12342"/>
         <source>New schematic from selection</source>
         <translation>Hautaketaren eskema berria</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12305"/>
+        <location filename="../Main/MainWindow.ui" line="12354"/>
         <source>New schematic</source>
         <translation>Eskema berria</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12317"/>
+        <location filename="../Main/MainWindow.ui" line="12366"/>
         <source>New map</source>
         <translation>Mapa berria</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12329"/>
+        <location filename="../Main/MainWindow.ui" line="12378"/>
         <source>Remove selected diagram</source>
         <translation>Kendu hautatutako diagrama</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12338"/>
+        <location filename="../Main/MainWindow.ui" line="12387"/>
         <source>Report a bug or feature</source>
         <translation>Eman akats edo eginbide bat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12350"/>
+        <location filename="../Main/MainWindow.ui" line="12399"/>
         <source>Search</source>
         <translation>Bilatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12362"/>
+        <location filename="../Main/MainWindow.ui" line="12411"/>
         <source>Process topology</source>
         <translation>Prozesuaren topologia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12374"/>
+        <location filename="../Main/MainWindow.ui" line="12423"/>
         <source>Edit simulation time limits</source>
         <translation>Editatu simulazioaren denbora-mugak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12377"/>
+        <location filename="../Main/MainWindow.ui" line="12426"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Edit simulation time limits&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Denbora seriea&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Editatu simulazioaren denbora-mugak&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12392"/>
+        <location filename="../Main/MainWindow.ui" line="12441"/>
         <source>activate time series</source>
         <translation>denbora serieak aktibatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12395"/>
+        <location filename="../Main/MainWindow.ui" line="12444"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;When activated, the simulations run their time series version&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Denbora serie modua&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Aktibatzen direnean, simulazioek denbora-seriearen bertsioa exekutatzen dute&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12401"/>
+        <location filename="../Main/MainWindow.ui" line="12450"/>
         <source>Ctrl+T</source>
         <translation>Ktrl+T</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12410"/>
+        <location filename="../Main/MainWindow.ui" line="12459"/>
         <source>Clean database</source>
         <translation>Garbitu datu-basea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12416"/>
+        <location filename="../Main/MainWindow.ui" line="12465"/>
         <source>Ctrl+C, Ctrl+D</source>
         <translation>Ktrl+C, Ktrl+D</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12425"/>
+        <location filename="../Main/MainWindow.ui" line="12474"/>
         <source>Scale</source>
         <translation>Eskala</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12428"/>
+        <location filename="../Main/MainWindow.ui" line="12477"/>
         <source>Scale the system load and or generation</source>
         <translation>Eskalatu sistemaren karga edo sorrera</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12440"/>
+        <location filename="../Main/MainWindow.ui" line="12489"/>
         <source>Disable all results tags</source>
         <translation>Desgaitu emaitzen etiketa guztiak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12452"/>
+        <location filename="../Main/MainWindow.ui" line="12501"/>
         <source>Enable all results tags</source>
         <translation>Gaitu emaitzen etiketa guztiak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12464"/>
+        <location filename="../Main/MainWindow.ui" line="12513"/>
         <source>Detect substations</source>
         <translation>Azpiestazioak detektatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12476"/>
+        <location filename="../Main/MainWindow.ui" line="12525"/>
         <source>Optimal hosting capacity</source>
         <translation>Hosting-ahalmen optimoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12479"/>
+        <location filename="../Main/MainWindow.ui" line="12528"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nodal hosting capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the nodal hosting capacity calculation using the selected optimization method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Ostalaritza-gaitasun nodala&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu ostalaritza-ahalmenaren kalkulua hautatutako optimizazio-metodoa erabiliz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12494"/>
+        <location filename="../Main/MainWindow.ui" line="12543"/>
         <source>Enable server mode</source>
         <translation>Gaitu zerbitzari modua</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12506"/>
+        <location filename="../Main/MainWindow.ui" line="12555"/>
         <source>Record video</source>
         <translation>Grabatu bideoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12509"/>
+        <location filename="../Main/MainWindow.ui" line="12558"/>
         <source>Record video of the schematic</source>
         <translation>Grabatu eskemaren bideoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12521"/>
+        <location filename="../Main/MainWindow.ui" line="12570"/>
         <source>Save  differential</source>
         <translation>Gorde diferentziala</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12533"/>
+        <location filename="../Main/MainWindow.ui" line="12582"/>
         <source>Consolidate coordinates</source>
         <translation>Koordenatuak finkatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12545"/>
+        <location filename="../Main/MainWindow.ui" line="12594"/>
         <source>Add selected as new remedial action</source>
         <translation>Gehitu hautatua konponketa-ekintza berri gisa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12548"/>
+        <location filename="../Main/MainWindow.ui" line="12597"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add remedial action&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new remedial action from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Gehitu konponketa-ekintza&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Sortu konponketa-ekintza berri bat hautapen eskematikotik&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12554"/>
+        <location filename="../Main/MainWindow.ui" line="12603"/>
         <source>Ctrl+A, Ctrl+R</source>
         <translation>Ktrl+A, Ktrl+R</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12563"/>
+        <location filename="../Main/MainWindow.ui" line="12612"/>
         <source>Detect facilities</source>
         <translation>Instalazioak detektatu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12572"/>
+        <location filename="../Main/MainWindow.ui" line="12621"/>
         <source>Rotate</source>
         <translation>Biratu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12584"/>
+        <location filename="../Main/MainWindow.ui" line="12633"/>
         <source>Reset diagram coordinates to database values</source>
         <translation>Berrezarri diagramaren koordenatuak datu-basearen balioetara</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12596"/>
+        <location filename="../Main/MainWindow.ui" line="12645"/>
         <source>Reliability analysis</source>
         <translation>Fidagarritasun-analisia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12599"/>
+        <location filename="../Main/MainWindow.ui" line="12648"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Reliability study&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the reliability calculation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Fidagarritasun azterketa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu fidagarritasunaren kalkulua&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12614"/>
+        <location filename="../Main/MainWindow.ui" line="12663"/>
         <source>Color buses by...</source>
         <translation>Koloreztatu autobusak...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12626"/>
+        <location filename="../Main/MainWindow.ui" line="12675"/>
         <source>Color substations by...</source>
         <translation>Koloreztatu azpiestazioek...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12641"/>
+        <location filename="../Main/MainWindow.ui" line="12690"/>
         <source>Select buses by...</source>
         <translation>Aukeratu autobusak...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12668"/>
+        <location filename="../Main/MainWindow.ui" line="12717"/>
         <source>Substation wizard</source>
         <translation>Azpiestazioen morroia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12671"/>
+        <location filename="../Main/MainWindow.ui" line="12720"/>
         <source>Add substation with a wizard form</source>
         <translation>Gehitu azpiestazioa morroi inprimaki batekin</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12674"/>
+        <location filename="../Main/MainWindow.ui" line="12723"/>
         <source>Ctrl+A, Ctrl+S</source>
         <translation>Ktrl+A, Ktrl+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12686"/>
+        <location filename="../Main/MainWindow.ui" line="12735"/>
         <source>Dynamic RMS Simulation</source>
         <translation>RMS Simulazio dinamikoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12689"/>
+        <location filename="../Main/MainWindow.ui" line="12738"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic RMS simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulazioa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu RMS simulazio dinamiko bat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12701"/>
+        <location filename="../Main/MainWindow.ui" line="12750"/>
         <source>Prepare RMS dynamic plots</source>
         <translation>Prestatu RMS lursail dinamikoak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12704"/>
+        <location filename="../Main/MainWindow.ui" line="12753"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare RMS dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the RMS dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prestatu RMS lursail dinamikoak&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ireki RMS grafikoen editore dinamikoa simulazioa exekutatu aurretik&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12716"/>
-        <location filename="../Main/MainWindow.ui" line="12719"/>
+        <location filename="../Main/MainWindow.ui" line="12765"/>
+        <location filename="../Main/MainWindow.ui" line="12768"/>
         <source>Small-Signal RMS Simulation</source>
         <translation>Seinale txikiko RMS simulazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12722"/>
+        <location filename="../Main/MainWindow.ui" line="12771"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an RMS Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Seinale txikiaren simulazioa (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu RMS Small Signal egonkortasunaren analisiaren simulazioa&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -15438,164 +15973,164 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Gehitu RMS gertaera&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Sortu RMS gertaera berri bat hautapen eskematikorako&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12752"/>
+        <location filename="../Main/MainWindow.ui" line="12801"/>
         <source>Clear highlights</source>
         <translation>Argi nabarmenenak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12767"/>
+        <location filename="../Main/MainWindow.ui" line="12816"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;State estimation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a state estimation analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Estatuaren estimazioa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu egoeraren estimazio-analisia&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12779"/>
+        <location filename="../Main/MainWindow.ui" line="12828"/>
         <source>Add short circuit events</source>
         <translation>Gehitu zirkuitu laburreko gertaerak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12791"/>
+        <location filename="../Main/MainWindow.ui" line="12840"/>
         <source>PSS/e Raw / Rawx</source>
         <translation>PSS/e Raw / Rawx</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12800"/>
+        <location filename="../Main/MainWindow.ui" line="12849"/>
         <source>Power Factory DGS</source>
         <translation>Power Factory DGS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12809"/>
+        <location filename="../Main/MainWindow.ui" line="12858"/>
         <source>Matpower</source>
         <translation>Matpower</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12818"/>
+        <location filename="../Main/MainWindow.ui" line="12867"/>
         <source>UCTE</source>
         <translation>UCTE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12827"/>
+        <location filename="../Main/MainWindow.ui" line="12876"/>
         <source>CGMES</source>
         <translation>CGMES</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12836"/>
+        <location filename="../Main/MainWindow.ui" line="12885"/>
         <source>Power Grid Models</source>
         <translation>Sare elektrikoen ereduak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12845"/>
+        <location filename="../Main/MainWindow.ui" line="12894"/>
         <source>CIM</source>
         <translation>CIM</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12854"/>
+        <location filename="../Main/MainWindow.ui" line="12903"/>
         <source>H5</source>
         <translation>H5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12863"/>
+        <location filename="../Main/MainWindow.ui" line="12912"/>
         <source>JSON</source>
         <translation>JSON</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12872"/>
+        <location filename="../Main/MainWindow.ui" line="12921"/>
         <source>Microsoft Excel</source>
         <translation>Microsoft Excel</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12881"/>
+        <location filename="../Main/MainWindow.ui" line="12930"/>
         <source>SQLite</source>
         <translation>SQLite</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12890"/>
+        <location filename="../Main/MainWindow.ui" line="12939"/>
         <source>Profiles</source>
         <translation>Profilak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12917"/>
-        <location filename="../Main/MainWindow.ui" line="12935"/>
+        <location filename="../Main/MainWindow.ui" line="12966"/>
+        <location filename="../Main/MainWindow.ui" line="12984"/>
         <source>Catalogue</source>
         <translation>Katalogoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12944"/>
+        <location filename="../Main/MainWindow.ui" line="12993"/>
         <source>Clean Room</source>
         <translation>Gela garbia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12947"/>
+        <location filename="../Main/MainWindow.ui" line="12996"/>
         <source>Cleam room utility to produce an machine learning statistical representation of the static time series</source>
         <translation>Garbitu gelaren erabilgarritasuna denbora serie estatikoen ikaskuntza automatikoko irudikapen estatistiko bat sortzeko</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12959"/>
+        <location filename="../Main/MainWindow.ui" line="13020"/>
         <source>Procedural grid expansion</source>
         <translation>Sarearen hedapen prozedurala</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12968"/>
+        <location filename="../Main/MainWindow.ui" line="13029"/>
         <source>Catalogue element optimization</source>
         <translation>Katalogoko elementuen optimizazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12977"/>
+        <location filename="../Main/MainWindow.ui" line="13038"/>
         <source>Dynamic EMT Simulation</source>
         <translation>EMT Simulazio dinamikoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12980"/>
+        <location filename="../Main/MainWindow.ui" line="13041"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic EMT simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulazioa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu EMT simulazio dinamiko bat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12992"/>
+        <location filename="../Main/MainWindow.ui" line="13053"/>
         <source>Prepare EMT dynamic plots</source>
         <translation>Prestatu EMT lursail dinamikoak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12995"/>
+        <location filename="../Main/MainWindow.ui" line="13056"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare EMT dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the EMT dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prestatu EMT lursail dinamikoak&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Ireki EMT grafikoen editore dinamikoa simulazioa exekutatu aurretik&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13007"/>
-        <location filename="../Main/MainWindow.ui" line="13010"/>
+        <location filename="../Main/MainWindow.ui" line="13068"/>
+        <location filename="../Main/MainWindow.ui" line="13071"/>
         <source>Small-Signal EMT Simulation</source>
         <translation>Seinale txikiko EMT simulazioa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13013"/>
+        <location filename="../Main/MainWindow.ui" line="13074"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an EMT Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Seinale txikiaren simulazioa (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Exekutatu EMT Small Signal egonkortasunaren analisiaren simulazioa&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13021"/>
+        <location filename="../Main/MainWindow.ui" line="13082"/>
         <source>Reticular</source>
         <translation>Erretikularrak</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13026"/>
+        <location filename="../Main/MainWindow.ui" line="13087"/>
         <source>Straight</source>
         <translation>Zuzena</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13035"/>
+        <location filename="../Main/MainWindow.ui" line="13096"/>
         <source>ai_chat</source>
         <translation>ai_txat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13038"/>
+        <location filename="../Main/MainWindow.ui" line="13099"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Show the VeraGrid AI chat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Erakutsi VeraGrid AI txata&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13050"/>
+        <location filename="../Main/MainWindow.ui" line="13111"/>
         <source>Power Flow 3-phase</source>
         <translation>Potentzia Fluxua 3 fasekoa</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13053"/>
+        <location filename="../Main/MainWindow.ui" line="13114"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow 3-phase&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an unbalanced 3-phase power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Potentzia Fluxua 3 fasekoa&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Egin 3 faseko potentzia-fluxuaren azterketa desorekatu bat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -15608,32 +16143,32 @@ Ekarri edo sortu ekarri-erakunde bat!</translation>
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Gehitu EMT gertaera&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Sortu EMT gertaera berri bat hautapen eskematikorako&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13080"/>
+        <location filename="../Main/MainWindow.ui" line="13141"/>
         <source>Set model (x,y) based on (lat, lon)</source>
         <translation>Ezarri eredua (x,y) oinarrituta (lat, lon)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13089"/>
+        <location filename="../Main/MainWindow.ui" line="13150"/>
         <source>Restore investments</source>
         <translation>Inbertsioak berreskuratu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13101"/>
+        <location filename="../Main/MainWindow.ui" line="13162"/>
         <source>Veragrid Scenario</source>
         <translation>Veragrid eszenatokia</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13110"/>
+        <location filename="../Main/MainWindow.ui" line="13171"/>
         <source>Show dynamic models editor</source>
         <translation>Erakutsi eredu dinamikoen editorea</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13122"/>
+        <location filename="../Main/MainWindow.ui" line="13183"/>
         <source>Repair diagram</source>
         <translation>Konponketa-diagrama</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13134"/>
+        <location filename="../Main/MainWindow.ui" line="13195"/>
         <source>Clear cache</source>
         <translation>Cache-a garbiaztu</translation>
     </message>

@@ -17,6 +17,7 @@ from VeraGridEngine.IO.fmu.importer.errors import FmuArchiveError, FmuDependency
 from VeraGridEngine.IO.fmu.importer.model_description import (
     FmuInterfaceMode,
     FmuModelDescription,
+    FmuVariableDescription,
     read_fmu_model_description,
 )
 from VeraGridEngine.IO.fmu.importer.native_binary import validate_native_binary
@@ -25,7 +26,7 @@ from VeraGridEngine.IO.fmu.importer.staging import (
     revalidate_fmu_staging_area,
     stage_fmu_source,
 )
-from VeraGridEngine.enumerations import FmiVersion
+from VeraGridEngine.enumerations import FmiVersion, FmuVariableType
 
 try:
     import fmpy
@@ -209,29 +210,127 @@ class FmuRuntimeHost:
         start_time: float = 0.0,
         stop_time: float | None = None,
         start_values: dict[str, float] | None = None,
+        integer_start_variable_names: tuple[str, ...] = tuple(),
+        integer_start_values: tuple[int, ...] = tuple(),
     ) -> None:
         """Initialize the FMI runtime after instantiation.
 
         :param start_time: FMU start time.
         :param stop_time: Optional FMU stop time.
         :param start_values: Optional scalar-variable start values.
+        :param integer_start_variable_names: Ordered FMI 2 Integer variables to
+            initialize.
+        :param integer_start_values: Ordered signed Int32 values paired with
+            ``integer_start_variable_names``.
         :return: None.
         """
 
         tolerance: float | None = self.config.relative_tolerance
+        integer_value_references: tuple[int, ...]
+        validated_integer_values: tuple[int, ...]
+        integer_value_references, validated_integer_values = (
+            self._resolve_integer_initialization(
+                variable_names=integer_start_variable_names,
+                values=integer_start_values,
+            )
+        )
 
         # The FMI initialization phase is where initial parameters and inputs must be injected.
-        self.runtime.setupExperiment(tolerance=tolerance, startTime=start_time, stopTime=stop_time)
-        self.runtime.enterInitializationMode()
-        if start_values is not None:
-            if len(start_values) > 0:
-                self.set_real(start_values)
+        try:
+            self.runtime.setupExperiment(
+                tolerance=tolerance,
+                startTime=start_time,
+                stopTime=stop_time,
+            )
+            self.runtime.enterInitializationMode()
+            if start_values is not None:
+                if len(start_values) > 0:
+                    self.set_real(start_values)
+                else:
+                    pass
             else:
                 pass
-        else:
+            if len(integer_value_references) > 0:
+                self.runtime.setInteger(
+                    list(integer_value_references),
+                    list(validated_integer_values),
+                )
+            else:
+                pass
+            self.runtime.exitInitializationMode()
+            self.initialized = True
+        except Exception:
+            # A partially initialized native instance cannot be reused safely.
+            self.close()
+            raise
+
+    def _resolve_integer_initialization(
+        self,
+        variable_names: tuple[str, ...],
+        values: tuple[int, ...],
+    ) -> tuple[tuple[int, ...], tuple[int, ...]]:
+        """Validate and resolve one complete FMI 2 Integer initialization batch.
+
+        Validation is completed before ``setupExperiment`` so malformed input
+        cannot leave the native lifecycle partially advanced.
+
+        :param variable_names: Ordered FMI 2 Integer variable names.
+        :param values: Ordered signed Int32 values.
+        :return: Ordered value references and normalized integer values.
+        :raises ValueError: If cardinality, uniqueness, or value typing is invalid.
+        :raises FmuModeError: If metadata does not permit initialization writes.
+        """
+
+        if len(variable_names) == len(values):
             pass
-        self.runtime.exitInitializationMode()
-        self.initialized = True
+        else:
+            raise ValueError(
+                "FMI 2 Integer initialization names and values must align"
+            )
+        value_references: list[int] = [0] * len(variable_names)
+        normalized_values: list[int] = [0] * len(values)
+        names_seen: set[str] = set()
+        variable_index: int
+        for variable_index in range(len(variable_names)):
+            variable_name: str = variable_names[variable_index]
+            if variable_name in names_seen:
+                raise ValueError(
+                    f"Duplicate FMI 2 Integer variable {variable_name!r}"
+                )
+            else:
+                names_seen.add(variable_name)
+            value: int = values[variable_index]
+            if type(value) is int:
+                if -2147483648 <= value <= 2147483647:
+                    normalized_values[variable_index] = value
+                else:
+                    raise ValueError("FMI 2 Integer value is outside signed Int32")
+            else:
+                raise ValueError("FMI 2 Integer values must be Python int values")
+            variable: FmuVariableDescription = self.metadata.get_variable(
+                variable_name
+            )
+            if variable.variable_type == FmuVariableType.INTEGER:
+                pass
+            else:
+                raise FmuModeError(
+                    f"FMI 2 variable {variable_name!r} is not Integer"
+                )
+            initialization_writable: bool = (
+                variable.causality == "input"
+                or (
+                    variable.causality == "parameter"
+                    and variable.variability in (None, "fixed", "tunable")
+                )
+            )
+            if initialization_writable:
+                value_references[variable_index] = variable.value_reference
+            else:
+                raise FmuModeError(
+                    f"FMI 2 Integer variable {variable_name!r} is not writable "
+                    "during Initialization Mode"
+                )
+        return tuple(value_references), tuple(normalized_values)
 
     def _get_value_references(self, names: list[str]) -> list[int]:
         """Resolve the FMI value references for the requested variable names.
@@ -279,6 +378,135 @@ class FmuRuntimeHost:
         for index, variable_name in enumerate(names):
             result[variable_name] = float(runtime_values[index])
         return result
+
+    def set_integer(
+        self,
+        variable_names: tuple[str, ...],
+        values: tuple[int, ...],
+    ) -> None:
+        """Write one ordered FMI 2 Integer batch during runtime execution.
+
+        :param variable_names: Ordered input or tunable-parameter names.
+        :param values: Ordered signed Int32 values.
+        :return: None.
+        :raises FmuModeError: If lifecycle or metadata forbids the write.
+        :raises ValueError: If the batch is malformed.
+        """
+
+        access_is_live: bool = (
+            self.initialized
+            and not self.terminated
+            and not self.runtime_released
+            and not self.closed
+        )
+        if access_is_live:
+            pass
+        else:
+            raise FmuModeError("FMI 2 Integer write requires a live initialized runtime")
+        # Runtime execution has a narrower write matrix than Initialization
+        # Mode. Check that matrix first so a rejected output or fixed parameter
+        # is reported against the phase the caller is actually using.
+        variable_index: int
+        for variable_index in range(len(variable_names)):
+            variable: FmuVariableDescription = self.metadata.get_variable(
+                variable_names[variable_index]
+            )
+            operationally_writable: bool = (
+                variable.causality == "input"
+                or (
+                    variable.causality == "parameter"
+                    and variable.variability == "tunable"
+                )
+            )
+            if operationally_writable:
+                pass
+            else:
+                raise FmuModeError(
+                    f"FMI 2 Integer variable {variable.name!r} is not writable "
+                    "during runtime execution"
+                )
+        value_references: tuple[int, ...]
+        normalized_values: tuple[int, ...]
+        value_references, normalized_values = self._resolve_integer_initialization(
+            variable_names=variable_names,
+            values=values,
+        )
+        if len(value_references) > 0:
+            try:
+                self.runtime.setInteger(
+                    list(value_references),
+                    list(normalized_values),
+                )
+            except Exception:
+                self.close()
+                raise
+        else:
+            pass
+
+    def get_integer(
+        self,
+        variable_names: tuple[str, ...],
+    ) -> tuple[int, ...]:
+        """Read one ordered FMI 2 Integer batch from a live runtime.
+
+        :param variable_names: Ordered FMI 2 Integer variable names.
+        :return: Integer values in the same order as ``variable_names``.
+        :raises FmuModeError: If lifecycle or metadata forbids the read.
+        :raises ValueError: If a variable name is duplicated.
+        """
+
+        access_is_live: bool = (
+            self.initialized
+            and not self.terminated
+            and not self.runtime_released
+            and not self.closed
+        )
+        if access_is_live:
+            pass
+        else:
+            raise FmuModeError("FMI 2 Integer read requires a live initialized runtime")
+        value_references: list[int] = [0] * len(variable_names)
+        names_seen: set[str] = set()
+        variable_index: int
+        for variable_index in range(len(variable_names)):
+            variable_name: str = variable_names[variable_index]
+            if variable_name in names_seen:
+                raise ValueError(
+                    f"Duplicate FMI 2 Integer variable {variable_name!r}"
+                )
+            else:
+                names_seen.add(variable_name)
+            variable: FmuVariableDescription = self.metadata.get_variable(
+                variable_name
+            )
+            if variable.variable_type == FmuVariableType.INTEGER:
+                value_references[variable_index] = variable.value_reference
+            else:
+                raise FmuModeError(
+                    f"FMI 2 variable {variable_name!r} is not Integer"
+                )
+        if len(value_references) > 0:
+            try:
+                runtime_values: list[int] = self.runtime.getInteger(
+                    value_references
+                )
+            except Exception:
+                self.close()
+                raise
+            if len(runtime_values) == len(value_references):
+                normalized_values: list[int] = [0] * len(runtime_values)
+                for variable_index in range(len(runtime_values)):
+                    normalized_values[variable_index] = int(
+                        runtime_values[variable_index]
+                    )
+                return tuple(normalized_values)
+            else:
+                self.close()
+                raise FmuModeError(
+                    "FMI 2 Integer runtime returned an invalid cardinality"
+                )
+        else:
+            return tuple()
 
     def do_step(self, current_time: float, step_size: float) -> None:
         """Advance a Co-Simulation FMU by one communication step.

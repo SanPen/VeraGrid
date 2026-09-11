@@ -117,7 +117,6 @@ def write_runtime_state_log(window: "VeraGridMainGUI", title: str) -> None:
         timestamp: str = datetime.now().isoformat(timespec="seconds")
         with open(get_crash_log_path(), "a", encoding="utf-8") as file_pointer:
             file_pointer.write(f"[{timestamp}] {title}\n")
-            file_pointer.write(f"lock_ui={window.lock_ui}\n")
             file_pointer.write(f"stuff_running_now={list(window.stuff_running_now)}\n")
             file_pointer.write(f"session_drivers={list(window.session.drivers.keys())}\n")
             file_pointer.write(f"session_threads={list(window.session.threads.keys())}\n")

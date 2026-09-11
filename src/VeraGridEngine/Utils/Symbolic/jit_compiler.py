@@ -628,7 +628,10 @@ def _compile_to_file(full_source: str, func_name: str) -> Callable:
     full_content = header + full_source
 
     repo_root = Path(__file__).resolve().parents[4]
-    cache_dir = str(repo_root / "__pycache_jit__")
+    cache_dir = os.environ.get(
+        "VERAGRID_JIT_CACHE_DIR",
+        str(repo_root / "__pycache_jit__"),
+    )
     os.makedirs(cache_dir, exist_ok=True)
 
     if cache_dir not in sys.path:

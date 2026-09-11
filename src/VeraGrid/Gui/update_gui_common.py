@@ -145,12 +145,17 @@ def convert_resource_file(source, rcc_cmd='pyside6-rcc'):
             print('Failed with', rcc_cmd)
 
 
-def convert_ui_file(source, uic_cmd='pyside6-uic'):
+def convert_ui_file(source: str,
+                    uic_cmd: str = 'pyside6-uic',
+                    target_file_name: str | None = None) -> bool:
     """
-    Convert UI file to .py with qtpy agnostic imports
-    :param source:
-    :param uic_cmd:
-    :return:
+    Convert a Qt Designer file to a Python module with corrected imports.
+
+    :param source: Source ``.ui`` file passed to the Qt user-interface compiler.
+    :param uic_cmd: User-interface compiler executable name.
+    :param target_file_name: Optional explicit output path. When omitted, the
+        source extension is replaced with ``.py``.
+    :return: Whether one available compiler command generated the target file.
     """
     print(f"Converting {source}...")
     validate_ui_shortcuts_do_not_use_ctrl_alt_prefix(source=source)
@@ -165,14 +170,20 @@ def convert_ui_file(source, uic_cmd='pyside6-uic'):
         else:
             fbase = os.path.join(folder, 'Script')
 
-    # get the target fil name
-    target = source.replace('.ui', '.py')
+    # Keep the conventional same-base output unless a controller module owns
+    # that path and the generated view must be written to a dedicated module.
+    target: str
+    if target_file_name is None:
+        target = source.replace('.ui', '.py')
+    else:
+        target = target_file_name
 
     # define the possible commands
-    possible_cmds = [os.path.join(fbase, uic_cmd),
-                     os.path.join(fbase, uic_cmd + '.exe'),
-                     uic_cmd]
+    possible_cmds: List[str] = [os.path.join(fbase, uic_cmd),
+                                os.path.join(fbase, uic_cmd + '.exe'),
+                                uic_cmd]
 
+    cmd: str
     for cmd in possible_cmds:
 
         try:

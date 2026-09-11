@@ -37,5 +37,8 @@ def test_switched_converter_template_builds_on_bridge_filter_control_stack() -> 
     assert find_name_in_block("v_cmd_d", templ.block) is not None
     assert find_name_in_block("gate_a", templ.block) is not None
     assert find_name_in_block("theta_pll", templ.block) is not None
+    assert find_name_in_block("regulate_vdc_mode", templ.block) is not None
+    assert find_name_in_block("regulate_q_mode", templ.block) is not None
+    assert find_name_in_block("regulate_active_mode", templ.block) is not None
     assert "t_enable_sw" in runtime_parameter_names
     assert "switching_enabled_mode" in mode_names

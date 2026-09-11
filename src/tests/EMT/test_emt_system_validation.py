@@ -23,6 +23,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import (
     EmtTopologyError,
     _build_emt_device_type_disposition_table,
 )
+from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes, ShuntConnectionType, EmtInitializationMethod, \
@@ -762,6 +763,25 @@ def test_switched_vsc_emt_passes_validation_and_switches_gates() -> None:
     assert np.isfinite(float(x0[problem.get_var_idx(i_A_var)]))
     assert np.isfinite(float(x0[problem.get_var_idx(i_B_var)]))
     assert np.isfinite(float(x0[problem.get_var_idx(i_C_var)]))
+
+    solver = JitSymbolicSolver(
+        problem=problem,
+        t0=0.0,
+        t_end=switched_options.simulation_time,
+        h=switched_options.time_step,
+        method=switched_options.integration_method,
+        pred_method=DynamicIntegrationMethod.OdeEuler,
+        dense_threshold=0,
+        verbose=False,
+    )
+    _, trajectory, derivatives, well_initialized, converged = solver.simulate(
+        boundary_updater=problem
+    )
+    assert well_initialized
+    assert converged
+    for variable in (v_dc_var, i_A_var, i_B_var, i_C_var):
+        assert np.all(np.isfinite(trajectory[:, problem.get_var_idx(variable)]))
+    assert np.all(np.isfinite(derivatives))
 
 
 def test_set_emt_model_connects_dc_line_terminal_voltages():

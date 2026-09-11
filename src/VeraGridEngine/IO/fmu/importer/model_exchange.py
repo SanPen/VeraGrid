@@ -31,11 +31,13 @@ from VeraGridEngine.IO.fmu.importer.bindings import (
     FmiThreeFloat64ConfigurationValue,
     FmiThreeFloat64SessionValueSelector,
     FmiThreeUInt64ConfigurationValue,
+    FmuFloat64ParameterValue,
     FmuImportConfig,
     FmuRefBinding,
     _build_fmi_three_configuration_session_values,
     _reject_indexed_fmu_ref_bindings,
     _validate_fmi_three_configuration_values,
+    _validate_fmu_float64_parameter_values,
     resolve_fmi_three_float64_session_value_selectors,
 )
 from VeraGridEngine.IO.fmu.importer.device_config import load_fmu_me_device_config, restore_fmu_me_spec_from_record
@@ -60,8 +62,8 @@ from VeraGridEngine.IO.fmu.importer.runtime_coordinator import (
     FmiThreeModelExchangeCoordinator,
 )
 from VeraGridEngine.IO.fmu.importer.runtime_session import (
-    FmiThreeFloat64Session,
-    open_fmi_three_float64_session,
+    FmiThreeNumericSession,
+    open_fmi_three_numeric_session,
 )
 from VeraGridEngine.IO.fmu.importer.runtime_worker_host import (
     FmiThreeWorkerHostLimits,
@@ -195,6 +197,7 @@ class FmuMeDeviceSpec:
         "output_param_uids",
         "configuration_float64_values",
         "configuration_uint64_values",
+        "parameter_values",
     )
 
     def __init__(
@@ -219,6 +222,7 @@ class FmuMeDeviceSpec:
         configuration_uint64_values: tuple[
             FmiThreeUInt64ConfigurationValue, ...
         ] = tuple(),
+        parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(),
     ) -> None:
         """Store the runtime FMU ME specification.
 
@@ -238,6 +242,7 @@ class FmuMeDeviceSpec:
         :param output_param_uids: Runtime output-parameter identifiers.
         :param configuration_float64_values: Structural Float64 declarations.
         :param configuration_uint64_values: Structural UInt64 declarations.
+        :param parameter_values: Ephemeral values resolved from Block.parameters.
         :return: None.
         """
 
@@ -274,6 +279,10 @@ class FmuMeDeviceSpec:
         self.configuration_uint64_values: tuple[
             FmiThreeUInt64ConfigurationValue, ...
         ] = tuple(configuration_uint64_values)
+        _validate_fmu_float64_parameter_values(parameter_values=parameter_values)
+        self.parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(
+            parameter_values
+        )
 
 
 class FmuMeDeviceAdapter:
@@ -291,6 +300,7 @@ class FmuMeDeviceAdapter:
         "state_vector",
         "pending_time",
         "pending_candidate_state_values",
+        "pending_candidate_input_values",
         "pending_candidate_derivative_values",
         "pending_candidate_readable_values",
         "pending_candidate_event_indicators",
@@ -302,6 +312,7 @@ class FmuMeDeviceAdapter:
         "pending_accepted_event_indicators",
         "localized_state_event_time",
         "fmi_two_next_event_time",
+        "fmi_two_accepted_input_values",
         "fmi_two_accepted_derivative_values",
         "fmi_two_accepted_readable_values",
         "fmi_two_accepted_event_indicators",
@@ -340,6 +351,7 @@ class FmuMeDeviceAdapter:
         self.state_vector: Optional[np.ndarray] = None
         self.pending_time: float | None = None
         self.pending_candidate_state_values: tuple[float, ...] | None = None
+        self.pending_candidate_input_values: tuple[float, ...] | None = None
         self.pending_candidate_derivative_values: tuple[float, ...] | None = None
         self.pending_candidate_readable_values: tuple[float, ...] | None = None
         self.pending_candidate_event_indicators: tuple[float, ...] | None = None
@@ -351,6 +363,7 @@ class FmuMeDeviceAdapter:
         self.pending_accepted_event_indicators: tuple[float, ...] | None = None
         self.localized_state_event_time: float | None = None
         self.fmi_two_next_event_time: float | None = None
+        self.fmi_two_accepted_input_values: tuple[float, ...] | None = None
         self.fmi_two_accepted_derivative_values: tuple[float, ...] | None = None
         self.fmi_two_accepted_readable_values: tuple[float, ...] | None = None
         self.fmi_two_accepted_event_indicators: tuple[float, ...] | None = None
@@ -364,6 +377,7 @@ class FmuMeDeviceAdapter:
 
         self.pending_time = None
         self.pending_candidate_state_values = None
+        self.pending_candidate_input_values = None
         self.pending_candidate_derivative_values = None
         self.pending_candidate_readable_values = None
         self.pending_candidate_event_indicators = None
@@ -373,6 +387,71 @@ class FmuMeDeviceAdapter:
         self.pending_accepted_derivative_values = None
         self.pending_accepted_readable_values = None
         self.pending_accepted_event_indicators = None
+
+    def has_pending_candidate(self) -> bool:
+        """Return whether one complete solver-owned candidate is pending.
+
+        The local snapshot and the FMI 3 coordinator must agree because a
+        disagreement would make acceptance or rollback ambiguous.
+
+        :return: True only when every candidate and accepted-point field is
+            present.
+        :raises FmuModeError: If candidate state is partial or disagrees with
+            the FMI 3 coordinator.
+        """
+
+        local_candidate_present: bool = (
+            self.pending_time is not None
+            or self.pending_candidate_state_values is not None
+            or self.pending_candidate_input_values is not None
+            or self.pending_candidate_derivative_values is not None
+            or self.pending_candidate_readable_values is not None
+            or self.pending_candidate_event_indicators is not None
+            or self.pending_accepted_time is not None
+            or self.pending_accepted_state_values is not None
+            or self.pending_accepted_input_values is not None
+            or self.pending_accepted_derivative_values is not None
+            or self.pending_accepted_readable_values is not None
+            or self.pending_accepted_event_indicators is not None
+        )
+        local_candidate_complete: bool = (
+            self.pending_time is not None
+            and self.pending_candidate_state_values is not None
+            and self.pending_candidate_input_values is not None
+            and self.pending_candidate_derivative_values is not None
+            and self.pending_candidate_readable_values is not None
+            and self.pending_candidate_event_indicators is not None
+            and self.pending_accepted_time is not None
+            and self.pending_accepted_state_values is not None
+            and self.pending_accepted_input_values is not None
+            and self.pending_accepted_derivative_values is not None
+            and self.pending_accepted_readable_values is not None
+            and self.pending_accepted_event_indicators is not None
+        )
+        coordinator: FmiThreeModelExchangeCoordinator | None = (
+            self.fmi_three_coordinator
+        )
+        if coordinator is None:
+            coordinator_candidate_present: bool = False
+        else:
+            coordinator_candidate_present = coordinator.has_pending_candidate()
+        if local_candidate_present:
+            if local_candidate_complete:
+                if coordinator is None or coordinator_candidate_present:
+                    return True
+                else:
+                    raise FmuModeError(
+                        "FMI 3 ME local candidate has no coordinator candidate"
+                    )
+            else:
+                raise FmuModeError("FMI ME pending candidate snapshot is partial")
+        else:
+            if coordinator_candidate_present:
+                raise FmuModeError(
+                    "FMI 3 ME coordinator candidate has no local candidate"
+                )
+            else:
+                return False
 
     def _build_ordered_writable_values(
         self,
@@ -619,12 +698,35 @@ class FmuMeDeviceAdapter:
             active_budget = evaluation_budget
 
         start_values_payload: dict[str, float] = dict()
+        parameter_names: set[str] = set()
+        parameter_value: FmuFloat64ParameterValue
+        for parameter_value in self.spec.parameter_values:
+            start_values_payload[parameter_value.variable_name] = (
+                parameter_value.value
+            )
+            parameter_names.add(parameter_value.variable_name)
         if start_values is not None:
-            start_values_payload.update(start_values)
+            start_value_name: str
+            start_value: float
+            for start_value_name, start_value in start_values.items():
+                if start_value_name in parameter_names:
+                    raise ValueError(
+                        "FMU ME start value cannot override a Block parameter"
+                    )
+                else:
+                    start_values_payload[start_value_name] = start_value
         else:
             pass
         if input_values is not None:
-            start_values_payload.update(input_values)
+            input_value_name: str
+            input_value: float
+            for input_value_name, input_value in input_values.items():
+                if input_value_name in parameter_names:
+                    raise ValueError(
+                        "FMU ME input value cannot override a Block parameter"
+                    )
+                else:
+                    start_values_payload[input_value_name] = input_value
         else:
             pass
 
@@ -665,10 +767,19 @@ class FmuMeDeviceAdapter:
                 dtype=float,
             )
             initial_input_values: dict[str, float] = dict()
-            if input_values is not None:
-                initial_input_values.update(input_values)
-            else:
-                pass
+            initial_input_name: str
+            for initial_input_name in self.spec.input_variable_names:
+                initial_input_value: float | None = start_values_payload.get(
+                    initial_input_name,
+                    None,
+                )
+                if initial_input_value is not None:
+                    initial_input_values[initial_input_name] = initial_input_value
+                else:
+                    pass
+            self.fmi_two_accepted_input_values = (
+                self._build_ordered_writable_values(initial_input_values)
+            )
             initial_derivatives: np.ndarray
             initial_readable_values: tuple[float, ...] | None
             initial_derivatives, initial_readable_values = (
@@ -732,14 +843,50 @@ class FmuMeDeviceAdapter:
                     self.spec.configuration_uint64_values
                 ),
             )
-            initial_writable_values: tuple[float, ...] = (
-                self._build_ordered_writable_values(start_values_payload)
+            initialization_variable_names: list[str] = [""] * (
+                len(self.spec.parameter_values)
+                + len(self.spec.input_variable_names)
             )
-            session: FmiThreeFloat64Session = open_fmi_three_float64_session(
+            initial_values: list[float] = [0.0] * len(
+                initialization_variable_names
+            )
+            parameter_index: int
+            for parameter_index in range(len(self.spec.parameter_values)):
+                parameter_value = self.spec.parameter_values[parameter_index]
+                initialization_variable_names[parameter_index] = (
+                    parameter_value.variable_name
+                )
+                initial_values[parameter_index] = parameter_value.value
+            initial_input_values = dict()
+            initial_input_name: str
+            for initial_input_name, initial_input_value in start_values_payload.items():
+                if initial_input_name in parameter_names:
+                    pass
+                else:
+                    initial_input_values[initial_input_name] = initial_input_value
+            ordered_input_values: tuple[float, ...] = (
+                self._build_ordered_writable_values(initial_input_values)
+            )
+            input_index: int
+            for input_index in range(len(self.spec.input_variable_names)):
+                initialization_index: int = (
+                    len(self.spec.parameter_values) + input_index
+                )
+                initialization_variable_names[initialization_index] = (
+                    self.spec.input_variable_names[input_index]
+                )
+                initial_values[initialization_index] = ordered_input_values[
+                    input_index
+                ]
+            initial_writable_values: tuple[float, ...] = tuple(initial_values)
+            session: FmiThreeNumericSession = open_fmi_three_numeric_session(
                 config=self.spec.config,
                 instance_name="veragrid-fmi-three-me-device",
                 readable_variable_names=readable_variable_names,
                 writable_variable_names=self.spec.input_variable_names,
+                initialization_variable_names=tuple(
+                    initialization_variable_names
+                ),
                 limits=worker_limits,
                 float64_profile=self.spec.float64_profile,
                 configuration_variable_names=(
@@ -1392,14 +1539,43 @@ class FmuMeDeviceAdapter:
         restored_event_indicators: tuple[float, ...] = tuple(
             self.runtime_host.get_event_indicators()
         )
+        # Re-solving algebraic outputs may change the last few binary digits
+        # even when the visible FMI point is identical.  Validate the rebuilt
+        # vectors against the same explicit ME policy that bounded their solve.
+        rollback_relative_tolerance: float = (
+            self.solver_policy.relative_tolerance
+        )
+        rollback_absolute_tolerance: float = self.solver_policy.absolute_tolerance
         derivatives_match: bool = (
-            tuple(restored_derivatives.tolist()) == accepted_derivatives
+            restored_derivatives.size == len(accepted_derivatives)
+            and bool(np.all(np.isfinite(restored_derivatives)))
+            and bool(np.allclose(
+                restored_derivatives,
+                np.asarray(accepted_derivatives, dtype=float),
+                rtol=rollback_relative_tolerance,
+                atol=rollback_absolute_tolerance,
+            ))
         )
         readable_values_match: bool = (
-            restored_readable_values == accepted_readable_values
+            restored_readable_values is not None
+            and len(restored_readable_values) == len(accepted_readable_values)
+            and bool(np.all(np.isfinite(restored_readable_values)))
+            and bool(np.allclose(
+                np.asarray(restored_readable_values, dtype=float),
+                np.asarray(accepted_readable_values, dtype=float),
+                rtol=rollback_relative_tolerance,
+                atol=rollback_absolute_tolerance,
+            ))
         )
         event_indicators_match: bool = (
-            restored_event_indicators == accepted_event_indicators
+            len(restored_event_indicators) == len(accepted_event_indicators)
+            and bool(np.all(np.isfinite(restored_event_indicators)))
+            and bool(np.allclose(
+                np.asarray(restored_event_indicators, dtype=float),
+                np.asarray(accepted_event_indicators, dtype=float),
+                rtol=rollback_relative_tolerance,
+                atol=rollback_absolute_tolerance,
+            ))
         )
         if derivatives_match and readable_values_match and event_indicators_match:
             self.state_vector = restored_state_values
@@ -1488,6 +1664,15 @@ class FmuMeDeviceAdapter:
                     else:
                         active_budget = FmuMeEvaluationBudget(100000)
                     runtime_host: FmuRuntimeHost = self.runtime_host
+                    candidate_input_values: tuple[float, ...] | None = (
+                        self.pending_candidate_input_values
+                    )
+                    if candidate_input_values is not None:
+                        pass
+                    else:
+                        raise FmuModeError(
+                            "FMI 2 acceptance lost its candidate input vector"
+                        )
                     completed_step_requested_event: bool = False
                     if runtime_host.needs_completed_integrator_step():
                         active_budget.consume()
@@ -1537,20 +1722,11 @@ class FmuMeDeviceAdapter:
                             runtime_host.get_continuous_states(),
                             dtype=float,
                         )
-                        accepted_input_values: tuple[float, ...] | None = (
-                            self.pending_accepted_input_values
-                        )
-                        if accepted_input_values is not None:
-                            pass
-                        else:
-                            raise FmuModeError(
-                                "FMI 2 event acceptance lost its input vector"
-                            )
-                        accepted_inputs: dict[str, float] = dict()
+                        candidate_inputs: dict[str, float] = dict()
                         input_index: int
                         for input_index in range(len(self.spec.input_variable_names)):
-                            accepted_inputs[self.spec.input_variable_names[input_index]] = (
-                                accepted_input_values[input_index]
+                            candidate_inputs[self.spec.input_variable_names[input_index]] = (
+                                candidate_input_values[input_index]
                             )
                         post_event_derivatives: np.ndarray
                         post_event_readable_values: tuple[float, ...] | None
@@ -1560,7 +1736,7 @@ class FmuMeDeviceAdapter:
                         ) = self._evaluate_derivatives_for_state(
                             time_value=accepted_event_time,
                             state_values=post_event_states,
-                            input_values=accepted_inputs,
+                            input_values=candidate_inputs,
                             evaluation_budget=active_budget,
                         )
                         active_budget.consume()
@@ -1594,6 +1770,9 @@ class FmuMeDeviceAdapter:
                         raise FmuModeError(
                             "FMI 2 acceptance lost its candidate readable values"
                         )
+                    # Promote inputs only after the complete candidate,
+                    # including Event Mode, is successfully accepted.
+                    self.fmi_two_accepted_input_values = candidate_input_values
                     self.localized_state_event_time = None
                     self._clear_pending_state_event_data()
                     return resolved_readable_values
@@ -1648,6 +1827,9 @@ class FmuMeDeviceAdapter:
         candidate_states: tuple[float, ...] | None = (
             self.pending_candidate_state_values
         )
+        candidate_inputs: tuple[float, ...] | None = (
+            self.pending_candidate_input_values
+        )
         candidate_derivatives: tuple[float, ...] | None = (
             self.pending_candidate_derivative_values
         )
@@ -1670,6 +1852,7 @@ class FmuMeDeviceAdapter:
         if (
             candidate_time is not None
             and candidate_states is not None
+            and candidate_inputs is not None
             and candidate_derivatives is not None
             and candidate_readable_values is not None
             and candidate_indicators is not None
@@ -1692,6 +1875,8 @@ class FmuMeDeviceAdapter:
         if (
             len(accepted_states) == len(candidate_states)
             and len(accepted_indicators) == len(candidate_indicators)
+            and len(accepted_inputs) == len(candidate_inputs)
+            and len(candidate_inputs) == len(self.spec.input_variable_names)
             and math.isfinite(accepted_time)
             and math.isfinite(candidate_time)
             and math.isfinite(interval_width)
@@ -1755,13 +1940,6 @@ class FmuMeDeviceAdapter:
         else:
             pass
 
-        input_values: dict[str, float] = dict()
-        input_index: int
-        for input_index in range(len(self.spec.input_variable_names)):
-            input_values[self.spec.input_variable_names[input_index]] = (
-                accepted_inputs[input_index]
-            )
-
         # Each indicator owns its bracket.  A shortened Backward Euler solve
         # establishes every midpoint so localization uses the same method as
         # the accepted integration path.
@@ -1779,6 +1957,23 @@ class FmuMeDeviceAdapter:
                 bracket_width: float = upper_time - lower_time
                 midpoint_time: float = lower_time + bracket_width * 0.5
                 if lower_time < midpoint_time < upper_time:
+                    raw_fraction: float = (
+                        (midpoint_time - accepted_time) / interval_width
+                    )
+                    interpolation_fraction: float = min(
+                        max(raw_fraction, 0.0),
+                        1.0,
+                    )
+                    midpoint_input_values: dict[str, float] = dict()
+                    input_index: int
+                    for input_index in range(len(self.spec.input_variable_names)):
+                        accepted_input_value: float = accepted_inputs[input_index]
+                        candidate_input_value: float = candidate_inputs[input_index]
+                        midpoint_input_values[
+                            self.spec.input_variable_names[input_index]
+                        ] = accepted_input_value + interpolation_fraction * (
+                            candidate_input_value - accepted_input_value
+                        )
                     midpoint_states: np.ndarray
                     ignored_midpoint_derivatives: np.ndarray
                     ignored_midpoint_readable_values: tuple[float, ...] | None
@@ -1793,7 +1988,7 @@ class FmuMeDeviceAdapter:
                             accepted_states,
                             dtype=float,
                         ),
-                        input_values=input_values,
+                        input_values=midpoint_input_values,
                         evaluation_budget=evaluation_budget,
                     )
                     if self.fmi_three_coordinator is not None:
@@ -1813,6 +2008,13 @@ class FmuMeDeviceAdapter:
                             midpoint_indicators = tuple(
                                 self.runtime_host.get_event_indicators()
                             )
+                            candidate_input_values: dict[str, float] = dict()
+                            for input_index in range(
+                                len(self.spec.input_variable_names)
+                            ):
+                                candidate_input_values[
+                                    self.spec.input_variable_names[input_index]
+                                ] = candidate_inputs[input_index]
                             restored_derivatives: np.ndarray
                             restored_readable_values: tuple[float, ...] | None
                             (
@@ -1824,7 +2026,7 @@ class FmuMeDeviceAdapter:
                                     candidate_states,
                                     dtype=float,
                                 ),
-                                input_values=input_values,
+                                input_values=candidate_input_values,
                                 evaluation_budget=evaluation_budget,
                             )
                             evaluation_budget.consume()
@@ -2042,20 +2244,24 @@ class FmuMeDeviceAdapter:
             active_budget: FmuMeEvaluationBudget = FmuMeEvaluationBudget(100000)
         else:
             active_budget = evaluation_budget
+        candidate_input_values: tuple[float, ...] = (
+            self._build_ordered_writable_values(input_values)
+        )
         accepted_state_values: np.ndarray = self.get_state_vector()
         self.pending_accepted_time = float(current_time)
         self.pending_accepted_state_values = tuple(
             accepted_state_values.tolist()
         )
-        self.pending_accepted_input_values = (
-            self._build_ordered_writable_values(input_values)
-        )
         if self.fmi_three_coordinator is not None:
             accepted_point = self.fmi_three_coordinator.get_accepted_point()
+            self.pending_accepted_input_values = accepted_point[2]
             self.pending_accepted_derivative_values = accepted_point[6]
             self.pending_accepted_readable_values = accepted_point[3]
             self.pending_accepted_event_indicators = accepted_point[4]
         else:
+            self.pending_accepted_input_values = (
+                self.fmi_two_accepted_input_values
+            )
             self.pending_accepted_derivative_values = (
                 self.fmi_two_accepted_derivative_values
             )
@@ -2085,6 +2291,7 @@ class FmuMeDeviceAdapter:
         self.pending_candidate_state_values = tuple(
             candidate_state_values.tolist()
         )
+        self.pending_candidate_input_values = candidate_input_values
         self.pending_candidate_derivative_values = tuple(
             candidate_derivatives.tolist()
         )
@@ -2099,9 +2306,7 @@ class FmuMeDeviceAdapter:
             ] = self.fmi_three_coordinator.evaluate_candidate(
                 time_value=candidate_time,
                 continuous_state_values=tuple(candidate_state_values.tolist()),
-                writable_values=(
-                    self._build_ordered_writable_values(input_values)
-                ),
+                writable_values=candidate_input_values,
                 presented_derivative_values=tuple(
                     candidate_derivatives.tolist()
                 ),
@@ -2177,20 +2382,24 @@ class FmuMeDeviceAdapter:
         :return: Candidate outputs indexed by VeraGrid reference.
         """
 
+        candidate_input_values: tuple[float, ...] = (
+            self._build_ordered_writable_values(input_values)
+        )
         accepted_state_values: np.ndarray = self.get_state_vector()
         self.pending_accepted_time = float(current_time)
         self.pending_accepted_state_values = tuple(
             accepted_state_values.tolist()
         )
-        self.pending_accepted_input_values = (
-            self._build_ordered_writable_values(input_values)
-        )
         if self.fmi_three_coordinator is not None:
             accepted_point = self.fmi_three_coordinator.get_accepted_point()
+            self.pending_accepted_input_values = accepted_point[2]
             self.pending_accepted_derivative_values = accepted_point[6]
             self.pending_accepted_readable_values = accepted_point[3]
             self.pending_accepted_event_indicators = accepted_point[4]
         else:
+            self.pending_accepted_input_values = (
+                self.fmi_two_accepted_input_values
+            )
             self.pending_accepted_derivative_values = (
                 self.fmi_two_accepted_derivative_values
             )
@@ -2220,6 +2429,7 @@ class FmuMeDeviceAdapter:
         self.pending_candidate_state_values = tuple(
             candidate_state_values.tolist()
         )
+        self.pending_candidate_input_values = candidate_input_values
         self.pending_candidate_derivative_values = tuple(
             candidate_derivatives.tolist()
         )
@@ -2234,9 +2444,7 @@ class FmuMeDeviceAdapter:
             ] = self.fmi_three_coordinator.evaluate_candidate(
                 time_value=candidate_time,
                 continuous_state_values=tuple(candidate_state_values.tolist()),
-                writable_values=(
-                    self._build_ordered_writable_values(input_values)
-                ),
+                writable_values=candidate_input_values,
                 presented_derivative_values=tuple(
                     candidate_derivatives.tolist()
                 ),
@@ -2292,6 +2500,7 @@ class FmuMeDeviceAdapter:
         self.initialized = False
         self.localized_state_event_time = None
         self.fmi_two_next_event_time = None
+        self.fmi_two_accepted_input_values = None
         self.fmi_two_accepted_derivative_values = None
         self.fmi_two_accepted_readable_values = None
         self.fmi_two_accepted_event_indicators = None
@@ -2345,6 +2554,7 @@ def build_fmu_me_device_spec(
     configuration_uint64_values: tuple[
         FmiThreeUInt64ConfigurationValue, ...
     ] = tuple(),
+    parameter_values: tuple[FmuFloat64ParameterValue, ...] = tuple(),
 ) -> FmuMeDeviceSpec:
     """Build the validated runtime specification for one FMU ME device.
 
@@ -2361,6 +2571,7 @@ def build_fmu_me_device_spec(
     :param output_param_uids: Optional runtime output-parameter identifiers.
     :param configuration_float64_values: Structural Float64 declarations.
     :param configuration_uint64_values: Structural UInt64 declarations.
+    :param parameter_values: Ephemeral values resolved from Block.parameters.
     :return: Runtime FMU ME device specification.
     """
 
@@ -2447,23 +2658,71 @@ def build_fmu_me_device_spec(
                 f"FMI {metadata.fmi_version} execution is not supported yet"
             )
     if resolved_mode == FmuInterfaceMode.MODEL_EXCHANGE:
+        reserved_parameter_names: list[str] = [""] * (
+            len(input_variable_names)
+            + len(configuration_float64_values)
+            + len(configuration_uint64_values)
+        )
+        reserved_name_index: int = 0
+        reserved_input_name: str
+        for reserved_input_name in input_variable_names:
+            reserved_parameter_names[reserved_name_index] = reserved_input_name
+            reserved_name_index += 1
+        float64_configuration: FmiThreeFloat64ConfigurationValue
+        for float64_configuration in configuration_float64_values:
+            reserved_parameter_names[reserved_name_index] = (
+                float64_configuration.variable_name
+            )
+            reserved_name_index += 1
+        uint64_configuration: FmiThreeUInt64ConfigurationValue
+        for uint64_configuration in configuration_uint64_values:
+            reserved_parameter_names[reserved_name_index] = (
+                uint64_configuration.variable_name
+            )
+            reserved_name_index += 1
+        _validate_fmu_float64_parameter_values(
+            parameter_values=parameter_values,
+            metadata=metadata,
+            reserved_variable_names=tuple(reserved_parameter_names),
+        )
         available_variables: set[str] = set(metadata.get_variable_names())
         input_variable_name: str
         for input_variable_name in input_variable_names:
             if input_variable_name in available_variables:
-                if float64_profile is not None:
-                    input_variable: FmuVariableDescription = metadata.get_variable(
-                        input_variable_name
+                input_variable: FmuVariableDescription = metadata.get_variable(
+                    input_variable_name
+                )
+                input_causality: str = input_variable.causality or "local"
+                if metadata.fmi_version_family == FmiVersion.FMI_2_0:
+                    input_variability: str = (
+                        input_variable.variability or "continuous"
                     )
-                    if len(input_variable.dimensions) == 0:
-                        pass
+                else:
+                    if input_variable.variability is not None:
+                        input_variability = input_variable.variability
                     else:
                         raise FmuModeError(
-                            "FMI 3 ME device array inputs require a complete "
-                            "value provider"
+                            "FMI 3 ME input metadata lost its effective variability"
                         )
-                else:
+                if (
+                    input_causality == "input"
+                    and input_variability == "continuous"
+                ):
                     pass
+                else:
+                    raise FmuModeError(
+                        "FMI ME runtime input must be continuous input "
+                        f"{input_variable_name!r} "
+                        f"(causality={input_causality!r}, "
+                        f"variability={input_variability!r})"
+                    )
+                if len(input_variable.dimensions) == 0:
+                    pass
+                else:
+                    raise FmuModeError(
+                        "FMI 3 ME device array inputs require a complete "
+                        "value provider"
+                    )
             else:
                 raise KeyError(f"FMU variable {input_variable_name!r} was not found in {config.fmu_path}")
         output_variable_name: str
@@ -2523,6 +2782,7 @@ def build_fmu_me_device_spec(
             output_param_uids=resolved_output_param_uids,
             configuration_float64_values=configuration_float64_values,
             configuration_uint64_values=configuration_uint64_values,
+            parameter_values=parameter_values,
         )
     else:
         raise ValueError(f"FMU ME device specs require a Model Exchange FMU, got {resolved_mode.value}")
@@ -3197,7 +3457,7 @@ def initialize_rms_fmu_me_devices(problem: Any, x_snapshot: np.ndarray, time_val
 
 
 def advance_rms_fmu_me_devices(problem: Any, time_value: float, x_snapshot: np.ndarray, step_size: float) -> None:
-    """Advance all imported FMU ME devices for one RMS communication step.
+    """Prepare or replace all FMU ME candidates for one RMS local step.
 
     :param problem: RMS problem instance.
     :param time_value: Current simulation time.
@@ -3212,11 +3472,33 @@ def advance_rms_fmu_me_devices(problem: Any, time_value: float, x_snapshot: np.n
         else:
             initialize_rms_fmu_me_devices(problem=problem, x_snapshot=x_snapshot, time_value=time_value)
 
-        evaluation_budget: FmuMeEvaluationBudget = FmuMeEvaluationBudget(
-            problem.options.fmi_me_max_runtime_evaluations_per_step
+        existing_budget: FmuMeEvaluationBudget | None = (
+            problem._fmu_me_evaluation_budget
         )
-        problem._fmu_me_evaluation_budget = evaluation_budget
+        if existing_budget is None:
+            evaluation_budget: FmuMeEvaluationBudget = FmuMeEvaluationBudget(
+                problem.options.fmi_me_max_runtime_evaluations_per_step
+            )
+            problem._fmu_me_evaluation_budget = evaluation_budget
+        else:
+            evaluation_budget = existing_budget
         adapter: RmsFmuMeDeviceAdapter
+        # First restore every FMU to the common accepted point.  Only then may
+        # the corrected network snapshot replace the complete candidate set.
+        for adapter in problem._fmu_me_adapters:
+            if adapter.runtime_adapter.has_pending_candidate():
+                restored_outputs: dict[VarPowerFlowReferenceType, float] = (
+                    adapter.resolve_step(
+                        accepted=False,
+                        evaluation_budget=evaluation_budget,
+                    )
+                )
+                adapter.apply_outputs(
+                    problem._variable_parameters_values,
+                    restored_outputs,
+                )
+            else:
+                pass
         for adapter in problem._fmu_me_adapters:
             outputs = adapter.advance(
                 current_time=time_value,
@@ -3225,10 +3507,13 @@ def advance_rms_fmu_me_devices(problem: Any, time_value: float, x_snapshot: np.n
                 evaluation_budget=evaluation_budget,
             )
             adapter.apply_outputs(problem._variable_parameters_values, outputs)
-            if problem._variable_parameters_values is None:
-                problem._last_variable_parameters_values = None
-            else:
-                problem._last_variable_parameters_values = np.array(problem._variable_parameters_values, copy=True)
+        if problem._variable_parameters_values is None:
+            problem._last_variable_parameters_values = None
+        else:
+            problem._last_variable_parameters_values = np.array(
+                problem._variable_parameters_values,
+                copy=True,
+            )
     else:
         pass
 

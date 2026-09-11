@@ -52,7 +52,9 @@ from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     FmiThreeWorkerFailureKind,
     FmiThreeWorkerFloat64Values,
     FmiThreeWorkerGetFloat64Request,
+    FmiThreeWorkerGetInt32Request,
     FmiThreeWorkerInitializationRequest,
+    FmiThreeWorkerInt32Values,
     FmiThreeWorkerModelExchangeEvaluationRequest,
     FmiThreeWorkerModelExchangeEvaluationResult,
     FmiThreeWorkerRequest,
@@ -63,6 +65,7 @@ from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     FmiThreeWorkerDoStepResult,
     FmiThreeWorkerDiscreteStatesResult,
     FmiThreeWorkerSetFloat64Request,
+    FmiThreeWorkerSetInt32Request,
     FmiThreeWorkerSetTimeRequest,
     FmiThreeWorkerStartRequest,
     decode_fmi_three_worker_request,
@@ -88,7 +91,7 @@ class _FmiThreeWorkerState(Enum):
     CONFIGURATION_ENTERED = 3
     INITIALIZATION_ENTERED = 4
     INITIALIZED = 5
-    FLOAT64_VALUES_PENDING_STEP = 6
+    INPUT_VALUES_PENDING_STEP = 6
     TERMINATION_REQUESTED = 7
     CONTINUOUS_TIME = 8
     EVENT_MODE_REQUESTED = 9
@@ -106,9 +109,12 @@ def _resolve_fmi_three_worker_access_controls(
     dict[int, int],
     dict[int, int],
     frozenset[int],
+    frozenset[int],
+    frozenset[int],
+    frozenset[int],
     dict[int, FmiThreeFloat64VariableCardinalityPlan],
 ]:
-    """Derive minimal Float64 ACLs with exact serialized cardinalities.
+    """Derive minimal Float64, Int32, and structural UInt64 ACLs.
 
     The worker retains integer reference-to-count lookups and minimal dimension
     plans after START. It does not keep a second metadata graph or resolve names
@@ -117,8 +123,8 @@ def _resolve_fmi_three_worker_access_controls(
     :param metadata: Freshly parsed authoritative FMI 3 metadata.
     :param maximum_serialized_value_count: Maximum values in one native call.
     :return: Float64 readable, Step Mode, Initialization Mode, and Configuration
-        Mode ACLs followed by the scalar UInt64 Configuration Mode ACL and
-        per-variable cardinality plans.
+        Mode ACLs; scalar UInt64 Configuration Mode ACL; scalar Int32 readable,
+        Step Mode, and Initialization Mode ACLs; and Float64 cardinality plans.
     """
 
     readable_value_counts: dict[int, int] = dict()
@@ -126,6 +132,9 @@ def _resolve_fmi_three_worker_access_controls(
     initialization_writable_value_counts: dict[int, int] = dict()
     configuration_writable_value_counts: dict[int, int] = dict()
     configuration_uint64_writable_references: set[int] = set()
+    readable_int32_references: set[int] = set()
+    writable_int32_references: set[int] = set()
+    initialization_writable_int32_references: set[int] = set()
     variable_cardinality_plans: dict[
         int, FmiThreeFloat64VariableCardinalityPlan
     ] = dict()
@@ -191,13 +200,30 @@ def _resolve_fmi_three_worker_access_controls(
                     declared_variable.value_reference
                 )
             else:
-                pass
+                if declared_variable.variable_type == FmuVariableType.INT32:
+                    int32_value_reference: int = declared_variable.value_reference
+                    readable_int32_references.add(int32_value_reference)
+                    if is_fmi_three_input_or_tunable_parameter(declared_variable):
+                        writable_int32_references.add(int32_value_reference)
+                    else:
+                        pass
+                    if is_fmi_three_initialization_mode_writable(declared_variable):
+                        initialization_writable_int32_references.add(
+                            int32_value_reference
+                        )
+                    else:
+                        pass
+                else:
+                    pass
     return (
         readable_value_counts,
         writable_value_counts,
         initialization_writable_value_counts,
         configuration_writable_value_counts,
         frozenset(configuration_uint64_writable_references),
+        frozenset(readable_int32_references),
+        frozenset(writable_int32_references),
+        frozenset(initialization_writable_int32_references),
         variable_cardinality_plans,
     )
 
@@ -298,6 +324,9 @@ class _FmiThreeWorkerSession:
         "initialization_writable_value_counts",
         "configuration_writable_value_counts",
         "configuration_uint64_writable_references",
+        "readable_int32_references",
+        "writable_int32_references",
+        "initialization_writable_int32_references",
         "variable_cardinality_plans",
         "interface_mode",
         "continuous_state_count",
@@ -335,6 +364,11 @@ class _FmiThreeWorkerSession:
         self.initialization_writable_value_counts: dict[int, int] = dict()
         self.configuration_writable_value_counts: dict[int, int] = dict()
         self.configuration_uint64_writable_references: frozenset[int] = (
+            frozenset()
+        )
+        self.readable_int32_references: frozenset[int] = frozenset()
+        self.writable_int32_references: frozenset[int] = frozenset()
+        self.initialization_writable_int32_references: frozenset[int] = (
             frozenset()
         )
         self.variable_cardinality_plans: dict[
@@ -513,6 +547,9 @@ class _FmiThreeWorkerSession:
             initialization_writable_value_counts: dict[int, int]
             configuration_writable_value_counts: dict[int, int]
             configuration_uint64_writable_references: frozenset[int]
+            readable_int32_references: frozenset[int]
+            writable_int32_references: frozenset[int]
+            initialization_writable_int32_references: frozenset[int]
             variable_cardinality_plans: dict[
                 int, FmiThreeFloat64VariableCardinalityPlan
             ]
@@ -522,6 +559,9 @@ class _FmiThreeWorkerSession:
                 initialization_writable_value_counts,
                 configuration_writable_value_counts,
                 configuration_uint64_writable_references,
+                readable_int32_references,
+                writable_int32_references,
+                initialization_writable_int32_references,
                 variable_cardinality_plans,
             ) = _resolve_fmi_three_worker_access_controls(
                 metadata=metadata,
@@ -533,7 +573,7 @@ class _FmiThreeWorkerSession:
             return self._error_response(
                 request.request_id,
                 FmiThreeWorkerFailureKind.LIFECYCLE,
-                "FMI 3 worker could not resolve Float64 variable access",
+                "FMI 3 worker could not resolve numeric variable access",
             )
 
         # Reconcile the independent FMPy parser before trusting its ABI wrapper.
@@ -635,6 +675,11 @@ class _FmiThreeWorkerSession:
         )
         self.configuration_uint64_writable_references = (
             configuration_uint64_writable_references
+        )
+        self.readable_int32_references = readable_int32_references
+        self.writable_int32_references = writable_int32_references
+        self.initialization_writable_int32_references = (
+            initialization_writable_int32_references
         )
         self.variable_cardinality_plans = variable_cardinality_plans
         self.interface_mode = start.interface_mode
@@ -899,8 +944,8 @@ class _FmiThreeWorkerSession:
                 "FMI 3 worker INITIALIZE requires one ready native instance",
             )
         if _serialized_value_count_matches_access(
-            requested_references=initialization.initial_value_references,
-            serialized_value_count=len(initialization.initial_values),
+            requested_references=initialization.initial_float64_value_references,
+            serialized_value_count=len(initialization.initial_float64_values),
             allowed_value_counts=self.initialization_writable_value_counts,
         ):
             pass
@@ -911,6 +956,30 @@ class _FmiThreeWorkerSession:
                 "FMI 3 worker initial Float64 reference or serialized "
                 "cardinality is not writable in Initialization Mode",
             )
+        int32_references_are_allowed: bool = (
+            len(initialization.initial_int32_value_references)
+            == len(initialization.initial_int32_values)
+        )
+        initial_int32_value_reference: int
+        for initial_int32_value_reference in (
+            initialization.initial_int32_value_references
+        ):
+            if (
+                initial_int32_value_reference
+                in self.initialization_writable_int32_references
+            ):
+                pass
+            else:
+                int32_references_are_allowed = False
+        if int32_references_are_allowed:
+            pass
+        else:
+            return self._error_response(
+                request.request_id,
+                FmiThreeWorkerFailureKind.VARIABLE_ACCESS,
+                "FMI 3 worker initial Int32 reference is not writable in "
+                "Initialization Mode",
+            )
         try:
             self.runtime.enterInitializationMode(
                 tolerance=initialization.relative_tolerance,
@@ -918,10 +987,17 @@ class _FmiThreeWorkerSession:
                 stopTime=initialization.stop_time,
             )
             self.state = _FmiThreeWorkerState.INITIALIZATION_ENTERED
-            if len(initialization.initial_value_references) > 0:
+            if len(initialization.initial_float64_value_references) > 0:
                 self.runtime.setFloat64(
-                    list(initialization.initial_value_references),
-                    list(initialization.initial_values),
+                    list(initialization.initial_float64_value_references),
+                    list(initialization.initial_float64_values),
+                )
+            else:
+                pass
+            if len(initialization.initial_int32_value_references) > 0:
+                self.runtime.setInt32(
+                    list(initialization.initial_int32_value_references),
+                    list(initialization.initial_int32_values),
                 )
             else:
                 pass
@@ -981,7 +1057,7 @@ class _FmiThreeWorkerSession:
         if (
             self.state in (
                 _FmiThreeWorkerState.INITIALIZED,
-                _FmiThreeWorkerState.FLOAT64_VALUES_PENDING_STEP,
+                _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP,
                 _FmiThreeWorkerState.CONTINUOUS_TIME,
                 _FmiThreeWorkerState.EVENT_MODE,
             )
@@ -1024,7 +1100,7 @@ class _FmiThreeWorkerSession:
         if self.interface_mode == FmuInterfaceMode.MODEL_EXCHANGE:
             self.state = state_before_write
         else:
-            self.state = _FmiThreeWorkerState.FLOAT64_VALUES_PENDING_STEP
+            self.state = _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP
         return FmiThreeWorkerResponse(
             request_id=request.request_id,
             kind=FmiThreeWorkerResponseKind.FLOAT64_SET,
@@ -1056,16 +1132,15 @@ class _FmiThreeWorkerSession:
             pass
         else:
             if (
-                self.state
-                == _FmiThreeWorkerState.FLOAT64_VALUES_PENDING_STEP
+                self.state == _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP
                 and self.runtime is not None
                 and get_float64 is not None
             ):
                 return self._error_response(
                     request.request_id,
                     FmiThreeWorkerFailureKind.LIFECYCLE,
-                    "FMI 3 worker GET_FLOAT64 must precede SET_FLOAT64 at the "
-                    "current communication point",
+                    "FMI 3 worker GET_FLOAT64 must precede input writes at "
+                    "the current communication point",
                 )
             else:
                 return self._error_response(
@@ -1119,6 +1194,169 @@ class _FmiThreeWorkerSession:
             float64_values=float64_values,
         )
 
+    def _handle_set_int32(
+        self,
+        request: FmiThreeWorkerRequest,
+    ) -> FmiThreeWorkerResponse:
+        """Write scalar Int32 inputs under the active interface lifecycle.
+
+        :param request: Decoded SET_INT32 request envelope.
+        :return: INT32_SET or one typed terminal failure.
+        """
+
+        set_int32: FmiThreeWorkerSetInt32Request | None = request.set_int32
+        co_simulation_state_is_valid: bool = (
+            self.interface_mode == FmuInterfaceMode.CO_SIMULATION
+            and self.state
+            in (
+                _FmiThreeWorkerState.INITIALIZED,
+                _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP,
+            )
+        )
+        model_exchange_state_is_valid: bool = (
+            self.interface_mode == FmuInterfaceMode.MODEL_EXCHANGE
+            and self.state == _FmiThreeWorkerState.EVENT_MODE
+        )
+        if (
+            (co_simulation_state_is_valid or model_exchange_state_is_valid)
+            and self.runtime is not None
+            and set_int32 is not None
+        ):
+            pass
+        else:
+            return self._error_response(
+                request.request_id,
+                FmiThreeWorkerFailureKind.LIFECYCLE,
+                "FMI 3 worker SET_INT32 requires CS Step Mode or ME Event Mode",
+            )
+        references_are_writable: bool = True
+        value_reference: int
+        for value_reference in set_int32.value_references:
+            if value_reference in self.writable_int32_references:
+                pass
+            else:
+                references_are_writable = False
+        if references_are_writable:
+            pass
+        else:
+            return self._error_response(
+                request.request_id,
+                FmiThreeWorkerFailureKind.VARIABLE_ACCESS,
+                "FMI 3 worker SET_INT32 requires an Int32 input or tunable parameter",
+            )
+        state_before_write: _FmiThreeWorkerState = self.state
+        try:
+            self.runtime.setInt32(
+                list(set_int32.value_references),
+                list(set_int32.values),
+            )
+        except Exception:
+            self.state = _FmiThreeWorkerState.NATIVE_FAILED
+            return self._error_response(
+                request.request_id,
+                FmiThreeWorkerFailureKind.NATIVE,
+                "FMI 3 worker native SET_INT32 failed",
+            )
+        if self.interface_mode == FmuInterfaceMode.MODEL_EXCHANGE:
+            self.state = state_before_write
+        else:
+            self.state = _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP
+        return FmiThreeWorkerResponse(
+            request_id=request.request_id,
+            kind=FmiThreeWorkerResponseKind.INT32_SET,
+            failure_kind=None,
+            error_message=None,
+        )
+
+    def _handle_get_int32(
+        self,
+        request: FmiThreeWorkerRequest,
+    ) -> FmiThreeWorkerResponse:
+        """Read scalar Int32 values under CS or ME readable states.
+
+        :param request: Decoded GET_INT32 request envelope.
+        :return: INT32_VALUES or one typed terminal failure.
+        """
+
+        get_int32: FmiThreeWorkerGetInt32Request | None = request.get_int32
+        if (
+            self.state
+            in (
+                _FmiThreeWorkerState.INITIALIZED,
+                _FmiThreeWorkerState.TERMINATION_REQUESTED,
+                _FmiThreeWorkerState.CONTINUOUS_TIME,
+                _FmiThreeWorkerState.EVENT_MODE,
+            )
+            and self.runtime is not None
+            and get_int32 is not None
+        ):
+            pass
+        else:
+            if (
+                self.state == _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP
+                and self.runtime is not None
+                and get_int32 is not None
+            ):
+                return self._error_response(
+                    request.request_id,
+                    FmiThreeWorkerFailureKind.LIFECYCLE,
+                    "FMI 3 worker GET_INT32 must precede input writes at the "
+                    "current communication point",
+                )
+            else:
+                return self._error_response(
+                    request.request_id,
+                    FmiThreeWorkerFailureKind.LIFECYCLE,
+                    "FMI 3 worker GET_INT32 requires a readable runtime state",
+                )
+        references_are_readable: bool = True
+        value_reference: int
+        for value_reference in get_int32.value_references:
+            if value_reference in self.readable_int32_references:
+                pass
+            else:
+                references_are_readable = False
+        if references_are_readable:
+            pass
+        else:
+            return self._error_response(
+                request.request_id,
+                FmiThreeWorkerFailureKind.VARIABLE_ACCESS,
+                "FMI 3 worker GET_INT32 reference is not a declared scalar Int32",
+            )
+        try:
+            native_values: list[int] = self.runtime.getInt32(
+                list(get_int32.value_references)
+            )
+            returned_values: tuple[int, ...] = tuple(native_values)
+            if len(returned_values) == len(get_int32.value_references):
+                int32_values: FmiThreeWorkerInt32Values = (
+                    FmiThreeWorkerInt32Values(
+                        values=returned_values,
+                        maximum_value_count=(
+                            self.maximum_float64_values_per_request
+                        ),
+                    )
+                )
+            else:
+                raise RuntimeError(
+                    "The native FMI 3 GET_INT32 cardinality is inconsistent"
+                )
+        except Exception:
+            self.state = _FmiThreeWorkerState.NATIVE_FAILED
+            return self._error_response(
+                request.request_id,
+                FmiThreeWorkerFailureKind.NATIVE,
+                "FMI 3 worker native GET_INT32 failed or returned invalid values",
+            )
+        return FmiThreeWorkerResponse(
+            request_id=request.request_id,
+            kind=FmiThreeWorkerResponseKind.INT32_VALUES,
+            failure_kind=None,
+            error_message=None,
+            int32_values=int32_values,
+        )
+
     def _handle_do_step(
         self,
         request: FmiThreeWorkerRequest,
@@ -1133,7 +1371,7 @@ class _FmiThreeWorkerSession:
         if (
             self.state in (
                 _FmiThreeWorkerState.INITIALIZED,
-                _FmiThreeWorkerState.FLOAT64_VALUES_PENDING_STEP,
+                _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP,
             )
             and self.runtime is not None
             and isinstance(self.runtime, FMU3Slave)
@@ -1873,7 +2111,7 @@ class _FmiThreeWorkerSession:
             and self.state
             in (
                 _FmiThreeWorkerState.INITIALIZED,
-                _FmiThreeWorkerState.FLOAT64_VALUES_PENDING_STEP,
+                _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP,
                 _FmiThreeWorkerState.TERMINATION_REQUESTED,
             )
         )
@@ -1970,7 +2208,7 @@ class _FmiThreeWorkerSession:
         if self.state in (
             _FmiThreeWorkerState.READY,
             _FmiThreeWorkerState.INITIALIZED,
-            _FmiThreeWorkerState.FLOAT64_VALUES_PENDING_STEP,
+            _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP,
             _FmiThreeWorkerState.TERMINATION_REQUESTED,
             _FmiThreeWorkerState.CONTINUOUS_TIME,
             _FmiThreeWorkerState.EVENT_MODE_REQUESTED,
@@ -2021,6 +2259,10 @@ class _FmiThreeWorkerSession:
             return self._handle_set_float64(request)
         elif request.kind == FmiThreeWorkerRequestKind.GET_FLOAT64:
             return self._handle_get_float64(request)
+        elif request.kind == FmiThreeWorkerRequestKind.SET_INT32:
+            return self._handle_set_int32(request)
+        elif request.kind == FmiThreeWorkerRequestKind.GET_INT32:
+            return self._handle_get_int32(request)
         elif request.kind == FmiThreeWorkerRequestKind.DO_STEP:
             return self._handle_do_step(request)
         elif request.kind == FmiThreeWorkerRequestKind.SET_TIME:
@@ -2077,7 +2319,7 @@ class _FmiThreeWorkerSession:
                 release_succeeded = False
             if self.state in (
                 _FmiThreeWorkerState.INITIALIZED,
-                _FmiThreeWorkerState.FLOAT64_VALUES_PENDING_STEP,
+                _FmiThreeWorkerState.INPUT_VALUES_PENDING_STEP,
                 _FmiThreeWorkerState.TERMINATION_REQUESTED,
                 _FmiThreeWorkerState.CONTINUOUS_TIME,
                 _FmiThreeWorkerState.EVENT_MODE_REQUESTED,

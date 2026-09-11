@@ -330,11 +330,16 @@ class RmsProblemTemplate(ABC):
 
     def get_generator_injection_data(self, i: int, elm: ALL_DEV_TYPES) -> complex:
         if elm.active:
-            if elm.bus.is_slack:
-                bus_index: int = list(self.grid.buses).index(elm.bus)
-                return self.power_flow_results.Sbus[bus_index] / self.grid.Sbase
-            else:
-                return complex(self.power_flow_results.gen_p[i], self.power_flow_results.gen_q[i]) / self.grid.Sbase
+            # The power-flow worker already allocates the solved slack-bus
+            # active and reactive power among its individual generators (and
+            # batteries) in gen_p/gen_q.  Using the aggregate Sbus here would
+            # assign the complete net bus injection to every generator on a
+            # multi-generator slack bus and would also include any load or
+            # shunt connected to that bus.
+            return complex(
+                self.power_flow_results.gen_p[i],
+                self.power_flow_results.gen_q[i],
+            ) / self.grid.Sbase
         else:
             return complex(0.0, 0.0)
 

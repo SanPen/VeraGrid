@@ -14,10 +14,13 @@ from VeraGridEngine.IO.fmu.exporter.build import host_build_capable
 from VeraGridEngine.IO.fmu.exporter.config import ExportConfig as CsExportConfig, detect_target_platform as detect_cs_target_platform
 from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
 from VeraGridEngine.IO.fmu.importer.bindings import (
+    FmuBindingDirection,
     FmiThreeFloat64ConfigurationValue,
     FmiThreeUInt64ConfigurationValue,
+    FmuFloat64ParameterValue,
     FmuImportConfig,
     FmuRefBinding,
+    FmuVariableBinding,
 )
 from VeraGridEngine.IO.fmu.importer.device_config import (
     FmuCsDeviceConfigRecord,
@@ -46,7 +49,16 @@ from VeraGridEngine.IO.fmu.importer.model_exchange import (
     _prepare_rms_fmu_me_state_event_retry,
     resolve_rms_fmu_me_devices,
 )
-from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode
+from VeraGridEngine.IO.fmu.importer.model_description import (
+    FmuInterfaceMode,
+    read_fmu_model_description,
+)
+from VeraGridEngine.IO.fmu.importer.model_description_metadata import (
+    FmuModelDescription,
+)
+from VeraGridEngine.IO.fmu.importer.template_api import (
+    append_fmu_parameter_entries,
+)
 from VeraGridEngine.IO.fmu.importer.user_api import (
     FmuDeviceAttachmentRequest,
     FmuDeviceDomain,
@@ -78,6 +90,125 @@ class FakeGrid:
         self.var_factory = VarFactory(name="UserApiVarFactory")
 
 
+def _create_test_worker_limits() -> FmiThreeWorkerHostLimits:
+    """Create the bounded worker policy shared by parameter API tests.
+
+    :return: Explicit local-test supervision and protocol limits.
+    """
+
+    return FmiThreeWorkerHostLimits(
+        maximum_frame_size=262144,
+        maximum_float64_values_per_request=64,
+        response_timeout_seconds=60.0,
+        graceful_join_timeout_seconds=10.0,
+        terminate_join_timeout_seconds=5.0,
+        kill_join_timeout_seconds=5.0,
+    )
+
+
+def test_fmu_float64_parameter_value_rejects_invalid_source_data() -> None:
+    """Reject empty identity, booleans, and non-finite parameter source data.
+
+    :return: None.
+    """
+
+    with pytest.raises(ValueError, match="name is empty"):
+        FmuFloat64ParameterValue(variable_name="   ", value=1.0)
+    with pytest.raises(ValueError, match="real scalar"):
+        FmuFloat64ParameterValue(variable_name="fixed_gain", value=True)
+    with pytest.raises(ValueError, match="finite"):
+        FmuFloat64ParameterValue(variable_name="fixed_gain", value=math.nan)
+
+
+def test_attach_fmu_parameter_validation_rolls_back_before_device_mutation(
+    compiled_fmi_three_parameterized_configurable_array_fmu: Path,
+    tmp_path: Path,
+) -> None:
+    """Reject an unknown parameter without changing device-owned state.
+
+    :param compiled_fmi_three_parameterized_configurable_array_fmu: Native
+        dual-interface fixture with authoritative parameter metadata.
+    :param tmp_path: Trusted extraction parent supplied by pytest.
+    :return: None.
+    """
+
+    original_block: Block = Block()
+    original_config: str = "preserve-existing-config"
+    device: SimpleNamespace = SimpleNamespace(
+        name="ParameterRollbackLoad",
+        device_type=DeviceType.LoadDevice,
+        rms_model=original_block,
+        rms_fmu_import_config=original_config,
+    )
+    request: FmuDeviceAttachmentRequest = FmuDeviceAttachmentRequest(
+        fmu_path=compiled_fmi_three_parameterized_configurable_array_fmu,
+        domain=FmuDeviceDomain.RMS,
+        mode=FmuInterfaceMode.CO_SIMULATION,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        extraction_root=tmp_path,
+        worker_limits=_create_test_worker_limits(),
+        configuration_uint64_values=(
+            FmiThreeUInt64ConfigurationValue(
+                variable_name="structural_size",
+                value=2,
+            ),
+        ),
+        parameter_values=(
+            FmuFloat64ParameterValue(
+                variable_name="not_a_declared_parameter",
+                value=3.0,
+            ),
+        ),
+    )
+    with pytest.raises(FmuImportError, match="was not found"):
+        attach_fmu_to_device(device, FakeGrid(), request)
+    assert device.rms_model is original_block
+    assert device.rms_fmu_import_config == original_config
+
+
+def test_attach_fmu_parameter_binding_preserves_sanitized_block_identity(
+    compiled_fmi_three_parameterized_configurable_array_fmu: Path,
+) -> None:
+    """Persist the actual collision-free Block name beside the FMU identity.
+
+    :param compiled_fmi_three_parameterized_configurable_array_fmu: Native
+        dual-interface fixture with scalar parameters.
+    :return: None.
+    """
+
+    metadata: FmuModelDescription = read_fmu_model_description(
+        compiled_fmi_three_parameterized_configurable_array_fmu
+    )
+    block: Block = Block()
+    var_factory: VarFactory = VarFactory(name="ParameterIdentityFactory")
+    parameter_bindings: tuple[FmuVariableBinding, ...] = (
+        append_fmu_parameter_entries(
+            block=block,
+            vfactory=var_factory,
+            metadata=metadata,
+            used_names=set(("fixed_gain",)),
+        )
+    )
+    fixed_gain_binding: FmuVariableBinding | None = None
+    parameter_binding: FmuVariableBinding
+    for parameter_binding in parameter_bindings:
+        if parameter_binding.variable_name == "fixed_gain":
+            fixed_gain_binding = parameter_binding
+        else:
+            pass
+    if fixed_gain_binding is not None:
+        pass
+    else:
+        raise AssertionError("The fixture fixed parameter was not mapped")
+    assert fixed_gain_binding.direction == FmuBindingDirection.PARAMETER
+    assert fixed_gain_binding.signal_name != fixed_gain_binding.variable_name
+    parameter_names: tuple[str, ...] = tuple(
+        parameter_var.name for parameter_var in block.parameters
+    )
+    assert fixed_gain_binding.signal_name in parameter_names
+
+
 def _build_test_me_solver_policy() -> FmuMeSolverPolicy:
     """Build the consolidated Backward Euler policy used by FMI ME tests.
 
@@ -91,12 +222,6 @@ def _build_test_me_solver_policy() -> FmuMeSolverPolicy:
         maximum_newton_iterations=20,
         maximum_continuous_states=128,
     )
-
-
-def _tmp_root() -> Path:
-    root = Path(__file__).resolve().parent / ".tmp"
-    root.mkdir(parents=True, exist_ok=True)
-    return root.resolve()
 
 
 def build_cs_output_block() -> Block:
@@ -133,16 +258,161 @@ def build_me_output_block() -> Block:
     )
 
 
+def build_parameterized_output_block() -> Block:
+    """Build one state model whose derivative is a scalar FMU parameter.
+
+    :return: Exportable block with one fixed parameter and one output.
+    """
+
+    state_var: Var = Var("x")
+    derivative_var: Var = Var("dx", base_var=state_var)
+    output_var: Var = Var("y")
+    gain_var: Var = Var("gain")
+    return Block(
+        state_vars=[state_var],
+        state_eqs=[gain_var],
+        algebraic_vars=[output_var],
+        algebraic_eqs=[output_var - state_var],
+        diff_vars=[derivative_var],
+        parameters={gain_var: Const(2.0)},
+        init_values={state_var: Const(0.0), output_var: Const(0.0)},
+        init_eqs={output_var: Const(0.0)},
+        out_vars=[output_var],
+    )
+
+
+@pytest.mark.skipif(
+    not host_build_capable(),
+    reason="No usable host build toolchain available",
+)
+def test_fmi_two_cs_and_me_parameters_are_initialize_only(tmp_path: Path) -> None:
+    """Initialize FMI 2 CS/ME parameters once and retain their native values.
+
+    :param tmp_path: Isolated build and archive directory supplied by pytest.
+    :return: None.
+    """
+
+    pytest.importorskip("fmpy")
+    output_root: Path = tmp_path
+    cs_fmu_path: Path = output_root / "fmi_two_parameter_initialize_only_cs.fmu"
+    me_fmu_path: Path = output_root / "fmi_two_parameter_initialize_only_me.fmu"
+    try:
+        exported_cs_fmu: Path = export_fmu(
+            build_parameterized_output_block(),
+            CsExportConfig(
+                model_name="FmiTwoParameterInitializeOnlyCs",
+                output_path=cs_fmu_path,
+                target_platform=detect_cs_target_platform(),
+                compile_binary=True,
+                keep_build_dir=False,
+            ),
+        )
+        cs_parameter: FmuFloat64ParameterValue = FmuFloat64ParameterValue(
+            variable_name="gain",
+            value=4.0,
+        )
+        cs_spec: FmuCsDeviceSpec = build_fmu_cs_device_spec(
+            domain=FmuCsDomain.RMS,
+            config=FmuImportConfig(
+                fmu_path=exported_cs_fmu,
+                preferred_mode=FmuInterfaceMode.CO_SIMULATION,
+                extraction_root=output_root,
+            ),
+            device_tpe=DeviceType.LoadDevice,
+            input_bindings=tuple(),
+            output_bindings=(
+                FmuRefBinding(
+                    reference=VarPowerFlowReferenceType.P,
+                    fmu_variable_name="y",
+                ),
+            ),
+            parameter_values=(cs_parameter,),
+        )
+        cs_adapter: FmuCsDeviceAdapter = FmuCsDeviceAdapter(
+            problem=SimpleNamespace(),
+            device=SimpleNamespace(),
+            spec=cs_spec,
+            output_param_indices=dict(),
+        )
+        try:
+            cs_adapter.initialize_outputs(
+                time_value=0.0,
+                x_snapshot=np.zeros(0, dtype=float),
+            )
+            cs_parameter.value = 9.0
+            cs_outputs: dict[VarPowerFlowReferenceType, float] = (
+                cs_adapter.advance(
+                    current_time=0.0,
+                    step_size=0.25,
+                    x_snapshot=np.zeros(0, dtype=float),
+                )
+            )
+            assert cs_outputs[VarPowerFlowReferenceType.P] == pytest.approx(1.0)
+        finally:
+            cs_adapter.close()
+
+        exported_me_fmu: Path = export_fmu_me(
+            build_parameterized_output_block(),
+            MeExportConfig(
+                model_name="FmiTwoParameterInitializeOnlyMe",
+                output_path=me_fmu_path,
+                target_platform=detect_me_target_platform(),
+                compile_binary=True,
+                keep_build_dir=False,
+            ),
+        )
+        me_parameter: FmuFloat64ParameterValue = FmuFloat64ParameterValue(
+            variable_name="gain",
+            value=4.0,
+        )
+        me_spec: FmuMeDeviceSpec = build_fmu_me_device_spec(
+            domain=FmuMeDomain.RMS,
+            config=FmuImportConfig(
+                fmu_path=exported_me_fmu,
+                preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE,
+                extraction_root=output_root,
+            ),
+            device_tpe=DeviceType.LoadDevice,
+            input_variable_names=tuple(),
+            output_variable_names=("y",),
+            output_bindings=(
+                FmuRefBinding(
+                    reference=VarPowerFlowReferenceType.P,
+                    fmu_variable_name="y",
+                ),
+            ),
+            parameter_values=(me_parameter,),
+        )
+        me_adapter: FmuMeDeviceAdapter = FmuMeDeviceAdapter(
+            me_spec,
+            _build_test_me_solver_policy(),
+        )
+        try:
+            me_adapter.initialize(start_time=0.0)
+            me_parameter.value = 9.0
+            derivative_values: np.ndarray = me_adapter.evaluate_derivatives(
+                time_value=0.25,
+                input_values=dict(),
+            )
+            assert derivative_values.tolist() == pytest.approx([4.0])
+        finally:
+            me_adapter.close()
+    finally:
+        cs_fmu_path.unlink(missing_ok=True)
+        me_fmu_path.unlink(missing_ok=True)
+
+
 @pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
-def test_user_api_attaches_rms_cs_device() -> None:
+def test_user_api_attaches_rms_cs_device(tmp_path: Path) -> None:
     """Persist one public CS attachment request and its worker policy.
 
+    :param tmp_path: Isolated build and archive directory supplied by pytest.
     :return: None.
     """
 
     pytest.importorskip("fmpy")
 
-    output_root = _tmp_root()
+    output_root: Path = tmp_path
     fmu_path = output_root / "user_api_rms_cs.fmu"
     try:
         exported_fmu = export_fmu(
@@ -227,14 +497,7 @@ def test_user_api_persists_fmi_three_array_declarations(
         rms_model=Block(),
         rms_fmu_import_config="",
     )
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     request: FmuDeviceAttachmentRequest = FmuDeviceAttachmentRequest(
         fmu_path=compiled_fmi_three_configurable_array_co_simulation_fmu,
         domain=FmuDeviceDomain.RMS,
@@ -334,14 +597,7 @@ def test_fmu_device_attachment_preserves_existing_state_on_invalid_configuration
             values=(2.0,),
         )
     )
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     with pytest.raises(
         ValueError,
         match="Duplicate FMI 3 Configuration Mode variable name",
@@ -501,14 +757,7 @@ def test_fmi_three_cs_device_spec_owns_derived_worker_profile(
     :return: None.
     """
 
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     config: FmuImportConfig = FmuImportConfig(
         fmu_path=compiled_fmi_three_scalar_co_simulation_fmu,
         preferred_mode=FmuInterfaceMode.CO_SIMULATION,
@@ -690,14 +939,7 @@ def test_fmi_three_cs_device_adapter_uses_isolated_session(
     """
 
     staging_parent: Path = tmp_path / "cs-device-adapter-session"
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     input_binding: FmuRefBinding = FmuRefBinding(
         reference=VarPowerFlowReferenceType.Vm,
         fmu_variable_name="control_input",
@@ -812,14 +1054,7 @@ def test_fmi_three_me_selects_constant_array_device_outputs(
     :return: None.
     """
 
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     output_bindings: tuple[FmuRefBinding, ...] = (
         FmuRefBinding(
             reference=VarPowerFlowReferenceType.P,
@@ -935,14 +1170,7 @@ def test_fmi_three_me_selects_configurable_array_device_outputs(
     """
 
     staging_parent: Path = tmp_path / "me-configurable-array-session"
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     device: SimpleNamespace = SimpleNamespace(
         name="FmiThreeMeArrayLoad",
         device_type=DeviceType.LoadDevice,
@@ -1048,10 +1276,16 @@ def test_fmi_three_me_selects_configurable_array_device_outputs(
 
 
 @pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
-def test_user_api_attaches_emt_me_device() -> None:
+def test_user_api_attaches_emt_me_device(tmp_path: Path) -> None:
+    """Persist one public EMT ME attachment request.
+
+    :param tmp_path: Isolated build and archive directory supplied by pytest.
+    :return: None.
+    """
+
     pytest.importorskip("fmpy")
 
-    output_root = _tmp_root()
+    output_root: Path = tmp_path
     fmu_path = output_root / "user_api_emt_me.fmu"
     try:
         exported_fmu = export_fmu_me(
@@ -1163,14 +1397,7 @@ def test_fmi_three_me_device_spec_owns_derived_worker_profile(
     :return: None.
     """
 
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     config: FmuImportConfig = FmuImportConfig(
         fmu_path=compiled_fmi_three_scalar_co_simulation_fmu,
         preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE,
@@ -1267,14 +1494,7 @@ def test_fmi_three_me_device_adapter_uses_isolated_session(
     """
 
     staging_parent: Path = tmp_path / "device-adapter-session"
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     device: SimpleNamespace = SimpleNamespace(
         name="FmiThreeLoad",
         device_type=DeviceType.LoadDevice,
@@ -1461,14 +1681,7 @@ def test_fmi_three_me_state_events_use_global_earliest_retry(
     :return: None.
     """
 
-    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
-        maximum_frame_size=262144,
-        maximum_float64_values_per_request=64,
-        response_timeout_seconds=60.0,
-        graceful_join_timeout_seconds=10.0,
-        terminate_join_timeout_seconds=5.0,
-        kill_join_timeout_seconds=5.0,
-    )
+    worker_limits: FmiThreeWorkerHostLimits = _create_test_worker_limits()
     output_binding: FmuRefBinding = FmuRefBinding(
         reference=VarPowerFlowReferenceType.P,
         fmu_variable_name="observed_output",

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
+import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_entries import DynamicEditorEntry
 from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_entries import entry_supports_dynamic_events
@@ -256,34 +257,50 @@ class DynamicDeviceTreeWidget(QtWidgets.QWidget):
         else:
             pass
 
-        menu: QtWidgets.QMenu = QtWidgets.QMenu(self.tree_view)
+        menu: QtWidgets.QMenu = QtWidgets.QMenu(parent=self.tree_view)
         if DynamicSimulationMode.RMS in entry.available_modes:
-            rms_model_action: QtGui.QAction = menu.addAction(self.tr("RMS editor"))
+            rms_model_action: QtGui.QAction = gf.add_menu_entry(
+                menu=menu,
+                text=self.tr("RMS editor"),
+                icon_path=":/Icons/icons/dyn.png",
+                function_ptr=self._open_rms_model_from_action,
+            )
             rms_model_action.setData(QtCore.QPersistentModelIndex(index))
-            rms_model_action.triggered.connect(self._open_rms_model_from_action)
         else:
             pass
 
         if DynamicSimulationMode.EMT in entry.available_modes:
-            emt_model_action: QtGui.QAction = menu.addAction(self.tr("EMT editor"))
+            emt_model_action: QtGui.QAction = gf.add_menu_entry(
+                menu=menu,
+                text=self.tr("EMT editor"),
+                icon_path=":/Icons/icons/dyn_emt.png",
+                function_ptr=self._open_emt_model_from_action,
+            )
             emt_model_action.setData(QtCore.QPersistentModelIndex(index))
-            emt_model_action.triggered.connect(self._open_emt_model_from_action)
         else:
             pass
 
         if entry_supports_dynamic_events(entry):
             menu.addSeparator()
             if DynamicSimulationMode.RMS in entry.available_modes:
-                rms_events_action: QtGui.QAction = menu.addAction(self.tr("RMS events"))
+                rms_events_action: QtGui.QAction = gf.add_menu_entry(
+                    menu=menu,
+                    text=self.tr("RMS events"),
+                    icon_path=":/Icons/icons/dyn_edit.png",
+                    function_ptr=self._open_rms_events_from_action,
+                )
                 rms_events_action.setData(QtCore.QPersistentModelIndex(index))
-                rms_events_action.triggered.connect(self._open_rms_events_from_action)
             else:
                 pass
 
             if DynamicSimulationMode.EMT in entry.available_modes:
-                emt_events_action: QtGui.QAction = menu.addAction(self.tr("EMT events"))
+                emt_events_action: QtGui.QAction = gf.add_menu_entry(
+                    menu=menu,
+                    text=self.tr("EMT events"),
+                    icon_path=":/Icons/icons/dyn_emt_edit.png",
+                    function_ptr=self._open_emt_events_from_action,
+                )
                 emt_events_action.setData(QtCore.QPersistentModelIndex(index))
-                emt_events_action.triggered.connect(self._open_emt_events_from_action)
             else:
                 pass
         else:

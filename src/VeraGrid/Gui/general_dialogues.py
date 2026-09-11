@@ -22,7 +22,7 @@ from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.object_column_filter_dialog import PopupResizeGrip
 from VeraGridEngine.enumerations import (FaultType, MethodShortCircuit, PhasesShortCircuit, FileType, CGMESVersions,
-                                         DeviceType)
+                                         DeviceType, LogSeverity)
 
 
 class CenteredDialog(QDialog):
@@ -138,68 +138,192 @@ class NewProfilesStructureDialogue(CenteredDialog):
         return steps, step_length, step_unit, time_base.toPython()
 
 
-def fill_tree_from_logs(logger: Logger):
+def get_log_severity_parent_brushes(severity: LogSeverity) -> tuple[QtGui.QBrush, QtGui.QBrush]:
+    """
+    Build the background and foreground brushes for one top-level log severity.
+
+    :param severity: Log severity to style.
+    :return: Background and foreground brushes.
+    """
+    # Only the top-level severity rows are highlighted; every child row keeps the default Qt styling.
+
+    if severity == LogSeverity.Error:
+        severity_color: str = "#ff0000"
+
+    elif severity == LogSeverity.Warning:
+        severity_color = "#ff9900"
+
+    elif severity == LogSeverity.Information:
+        severity_color = "#808080"
+
+    else:
+        severity_color = "#00aa00"
+
+    background: QtGui.QBrush = QtGui.QBrush(QtGui.QColor(severity_color))
+    foreground_color: str = "#ffffff"
+    foreground: QtGui.QBrush = QtGui.QBrush(QtGui.QColor(foreground_color))
+
+    return background, foreground
+
+
+def apply_log_severity_parent_style(items: List[QtGui.QStandardItem],
+                                    severity: LogSeverity) -> None:
+    """
+    Apply the severity color to one top-level log row.
+
+    :param items: Row items to color.
+    :param severity: Log severity associated with the row.
+    :return: None.
+    """
+    # White text is used only on these items because they also receive a bright background fill.
+    background: QtGui.QBrush
+    foreground: QtGui.QBrush
+    background, foreground = get_log_severity_parent_brushes(severity=severity)
+
+    item: QtGui.QStandardItem
+    for item in items:
+        item.setBackground(background)
+        item.setForeground(foreground)
+
+
+def fill_tree_from_logs(logger: Logger) -> QtGui.QStandardItemModel:
     """
     Fill logger tree
     :param logger: Logger instance
     :return: QStandardItemModel instance
     """
-    d = logger.to_dict()
-    editable = False
-    model = QtGui.QStandardItemModel()
-    model.setHorizontalHeaderLabels([
+    d: Union[
+        Dict[str, Dict[str, List[tuple[str, str, str, str]]]],
+        Dict[str, Dict[str, List[List[str]]]]
+    ] = logger.to_dict()
+    editable: bool = False
+    model: QtGui.QStandardItemModel = QtGui.QStandardItemModel()
+    model.setHorizontalHeaderLabels(list((
         QtCore.QCoreApplication.translate("LogsDialogue", 'Time'),
         QtCore.QCoreApplication.translate("LogsDialogue", 'Class'),
         QtCore.QCoreApplication.translate("LogsDialogue", 'Property'),
         QtCore.QCoreApplication.translate("LogsDialogue", 'Device'),
         QtCore.QCoreApplication.translate("LogsDialogue", 'Value'),
         QtCore.QCoreApplication.translate("LogsDialogue", 'Expected value'),
-    ])
-    parent = model.invisibleRootItem()
+    )))
+    parent: QtGui.QStandardItem = model.invisibleRootItem()
 
-    for severity, messages_dict in d.items():
-        severity_child = QtGui.QStandardItem(severity)
+    for severity_text, messages_dict in d.items():
+        severity: LogSeverity = LogSeverity(severity_text)
+        severity_child: QtGui.QStandardItem = QtGui.QStandardItem(str(severity))
+        severity_row_items: List[QtGui.QStandardItem] = list((severity_child,
+                                                              QtGui.QStandardItem(""),
+                                                              QtGui.QStandardItem(""),
+                                                              QtGui.QStandardItem(""),
+                                                              QtGui.QStandardItem(""),
+                                                              QtGui.QStandardItem("")))
+        apply_log_severity_parent_style(items=severity_row_items, severity=severity)
 
         # print(severity)
 
         for message, data_list in messages_dict.items():
-            message_child = QtGui.QStandardItem(message)
+            message_child: QtGui.QStandardItem = QtGui.QStandardItem(message)
+            message_row_items: List[QtGui.QStandardItem] = list((message_child,
+                                                                 QtGui.QStandardItem(""),
+                                                                 QtGui.QStandardItem(""),
+                                                                 QtGui.QStandardItem(""),
+                                                                 QtGui.QStandardItem(""),
+                                                                 QtGui.QStandardItem("")))
 
             # print('\t', message)
             try:
                 for time, cls, prop, elm, value, expected_value in data_list:
                     # print('\t', '\t', time, elm, value, expected_value)
 
-                    time_child = QtGui.QStandardItem(time)
+                    time_child: QtGui.QStandardItem = QtGui.QStandardItem(time)
                     time_child.setEditable(editable)
 
-                    elm_cls = QtGui.QStandardItem(cls)
+                    elm_cls: QtGui.QStandardItem = QtGui.QStandardItem(cls)
                     elm_cls.setEditable(editable)
 
-                    elm_prop = QtGui.QStandardItem(prop)
+                    elm_prop: QtGui.QStandardItem = QtGui.QStandardItem(prop)
                     elm_prop.setEditable(editable)
 
-                    elm_child = QtGui.QStandardItem(elm)
+                    elm_child: QtGui.QStandardItem = QtGui.QStandardItem(elm)
                     elm_child.setEditable(editable)
 
-                    value_child = QtGui.QStandardItem(value)
+                    value_child: QtGui.QStandardItem = QtGui.QStandardItem(value)
                     value_child.setEditable(editable)
 
-                    expected_val_child = QtGui.QStandardItem(expected_value)
+                    expected_val_child: QtGui.QStandardItem = QtGui.QStandardItem(expected_value)
                     expected_val_child.setEditable(editable)
 
-                    message_child.appendRow([time_child, elm_cls, elm_prop, elm_child, value_child, expected_val_child])
+                    row_items: List[QtGui.QStandardItem] = list((time_child, elm_cls, elm_prop, elm_child,
+                                                                 value_child, expected_val_child))
+                    message_child.appendRow(row_items)
             except OverflowError as e:
                 print(e)
 
-            message_child.setEditable(editable)
+            group_item: QtGui.QStandardItem
+            for group_item in message_row_items:
+                group_item.setEditable(editable)
 
-            severity_child.appendRow(message_child)
+            severity_child.appendRow(message_row_items)
 
-        severity_child.setEditable(editable)
-        parent.appendRow(severity_child)
+        for group_item in severity_row_items:
+            group_item.setEditable(editable)
+        parent.appendRow(severity_row_items)
 
     return model
+
+
+class LogSeverityItemDelegate(QtWidgets.QStyledItemDelegate):
+    """
+    Paint explicitly colored log rows without theme hover overlays.
+    """
+    __slots__ = tuple()
+
+    def initStyleOption(self,
+                        option: QtWidgets.QStyleOptionViewItem,
+                        index: QtCore.QModelIndex) -> None:
+        """
+        Prepare the style option used to paint one log item.
+
+        :param option: Style option to be modified before painting.
+        :param index: Model index being painted.
+        :return: None.
+        """
+        super(LogSeverityItemDelegate, self).initStyleOption(option, index)
+
+        # Top-level severity cells carry a model background; theme hover fills must not cover it.
+        background: Any = index.data(QtCore.Qt.ItemDataRole.BackgroundRole)
+        if isinstance(background, QtGui.QBrush) and background.style() != QtCore.Qt.BrushStyle.NoBrush:
+            option.state = option.state & ~QtWidgets.QStyle.StateFlag.State_MouseOver
+        else:
+            pass
+
+
+class LogSeverityTreeView(QtWidgets.QTreeView):
+    """
+    Tree view that fills complete severity rows, including the branch gutter.
+    """
+    __slots__ = tuple()
+
+    def drawRow(self,
+                painter: QtGui.QPainter,
+                option: QtWidgets.QStyleOptionViewItem,
+                index: QtCore.QModelIndex) -> None:
+        """
+        Paint one tree row.
+
+        :param painter: Painter used by Qt for the viewport.
+        :param option: Style option containing the row rectangle.
+        :param index: First-column index for the row being painted.
+        :return: None.
+        """
+        # Severity rows store a background brush on column zero; child rows keep the normal theme paint.
+        background: Any = index.data(QtCore.Qt.ItemDataRole.BackgroundRole)
+        if isinstance(background, QtGui.QBrush) and background.style() != QtCore.Qt.BrushStyle.NoBrush:
+            painter.fillRect(option.rect, background)
+        else:
+            pass
+
+        super(LogSeverityTreeView, self).drawRow(painter, option, index)
 
 
 class MTreeExpandHook(QtCore.QObject):
@@ -236,7 +360,14 @@ class LogsDialogue(CenteredDialog):
     New profile dialogue window
     """
 
-    def __init__(self, name: str, logger: Logger, expand_all=True):
+    def __init__(self, name: str, logger: Logger, expand_all=True, modal: bool = True):
+        """
+
+        :param name:
+        :param logger:
+        :param expand_all:
+        :param modal:
+        """
         super(LogsDialogue, self).__init__()
         self.setObjectName("self")
         self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
@@ -244,17 +375,30 @@ class LogsDialogue(CenteredDialog):
 
         self.logger: Logger = logger
 
+        self.setModal(modal)
+
         # logs_list
-        self.logs_table = QtWidgets.QTreeView()
+        self.logs_table = LogSeverityTreeView()
         model = fill_tree_from_logs(logger)
         self.logs_table.setModel(model)
-        self.logs_table.setFirstColumnSpanned(0, QtCore.QModelIndex(), True)
-        self.logs_table.setFirstColumnSpanned(1, QtCore.QModelIndex(), True)
+        self.log_severity_delegate: LogSeverityItemDelegate = LogSeverityItemDelegate(self.logs_table)
+        self.logs_table.setItemDelegate(self.log_severity_delegate)
         self.logs_table.setAnimated(True)
+        self.logs_table.setAlternatingRowColors(True)
+        self.logs_table.setUniformRowHeights(True)
+        self.logs_table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
+        self.logs_table.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+        self.logs_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.logs_table.setAllColumnsShowFocus(True)
+        self.logs_table.header().setStretchLastSection(False)
+        self.logs_table.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Interactive)
+        self.logs_table.setColumnWidth(0, 320)
         # MTreeExpandHook(self.logs_table)
 
         if expand_all:
             self.logs_table.expandAll()
+        else:
+            pass
 
         # accept button
         self.accept_btn = QtWidgets.QPushButton()
@@ -1748,8 +1892,6 @@ class ArrayEditor(CenteredDialog):
 # ----------------------------------------------------
 
 
-
-
 # class ShortCircuitSelector(CenteredDialog):
 #     """
 #     ShortCircuitSelector
@@ -1998,7 +2140,6 @@ class CgmesOptionsSelector(CenteredDialog):
         self.was_accepted = True
         self.close()
 
-
 # if __name__ == "__main__":
 #     import sys
 #
@@ -2007,27 +2148,27 @@ class CgmesOptionsSelector(CenteredDialog):
 #     w.show()
 #     sys.exit(app.exec())
 
-    # from PySide6.QtWidgets import QApplication
-    #
-    # app = QApplication(sys.argv)
-    # # window = InputNumberDialogue(min_value=3,
-    # #                              max_value=10,
-    # #                              default_value=3,
-    # #                              is_int=True,
-    # #                              title="stuff",
-    # #                              text="valor? fsd..xcfh.dfgbhdfbflb.lsdfnblsndf.bnsdf.bn.xdfnb.xdfbñlxdhfn.blxnd",
-    # #                              suffix=' cosas')
-    #
-    # window = CustomQuestionDialogue(title="My question",
-    #                                 question="What do you want " * 10,
-    #                                 answer1="Go home",
-    #                                 answer2="stay here")
-    #
-    # window.show()
-    # sys.exit(app.exec())
+# from PySide6.QtWidgets import QApplication
+#
+# app = QApplication(sys.argv)
+# # window = InputNumberDialogue(min_value=3,
+# #                              max_value=10,
+# #                              default_value=3,
+# #                              is_int=True,
+# #                              title="stuff",
+# #                              text="valor? fsd..xcfh.dfgbhdfbflb.lsdfnblsndf.bnsdf.bn.xdfnb.xdfbñlxdhfn.blxnd",
+# #                              suffix=' cosas')
+#
+# window = CustomQuestionDialogue(title="My question",
+#                                 question="What do you want " * 10,
+#                                 answer1="Go home",
+#                                 answer2="stay here")
+#
+# window.show()
+# sys.exit(app.exec())
 
-    # app = QApplication(sys.argv)
-    # window = ArrayEditor()
-    # window.resize(400, 300)
-    # window.show()
-    # sys.exit(app.exec())
+# app = QApplication(sys.argv)
+# window = ArrayEditor()
+# window.resize(400, 300)
+# window.show()
+# sys.exit(app.exec())

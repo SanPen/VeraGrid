@@ -2312,13 +2312,19 @@ def reset(var: Var | str, rst: Expr | Comparison, val: Expr | Comparison, name: 
     )
 
 
-def startup_handover(mode: Var | str, t_enable: Var | str, name: str = "") -> StartupHandoverLogic:
+def startup_handover(
+        mode: Var | str,
+        t_enable: Var | str,
+        name: str = "",
+        on_value: Var | str | None = None,
+) -> StartupHandoverLogic:
     """
     Build one exact-time startup-handover logic entry.
 
     :param mode: Retained mode variable that becomes ``1`` after the handover time.
     :param t_enable: Runtime parameter storing the switching-enable time.
     :param name: Optional logic name.
+    :param on_value: Optional runtime parameter whose value is copied after handover.
     :return: Startup-handover procedural logic entry.
     """
     mode_name: str = _coerce_var_name(mode)
@@ -2326,6 +2332,7 @@ def startup_handover(mode: Var | str, t_enable: Var | str, name: str = "") -> St
     return StartupHandoverLogic(
         mode_var_name=mode_name,
         enable_time_var_name=enable_name,
+        on_value_var_name=None if on_value is None else _coerce_var_name(on_value),
         name=mode_name if name == "" else name,
     )
 
@@ -2667,8 +2674,10 @@ class StartupHandoverLogic(ProceduralLogicBase):
     __slots__ = [
         "mode_var_name",
         "enable_time_var_name",
+        "on_value_var_name",
         "mode_idx",
         "enable_time_idx",
+        "on_value_idx",
     ]
     logic_tpe = ProceduralLogicType.StartupHandover
 
@@ -2676,6 +2685,7 @@ class StartupHandoverLogic(ProceduralLogicBase):
             self,
             mode_var_name: str,
             enable_time_var_name: str,
+            on_value_var_name: str | None = None,
             name: str = "",
     ) -> None:
         """
@@ -2689,8 +2699,10 @@ class StartupHandoverLogic(ProceduralLogicBase):
         super().__init__(name=name)
         self.mode_var_name = mode_var_name
         self.enable_time_var_name = enable_time_var_name
+        self.on_value_var_name = on_value_var_name
         self.mode_idx = -1
         self.enable_time_idx = -1
+        self.on_value_idx = -1
 
     def bind(self, problem: ProceduralProblem) -> None:
         """
@@ -2707,6 +2719,11 @@ class StartupHandoverLogic(ProceduralLogicBase):
         enable_time_var = _find_var_by_name(problem.sys_block, self.enable_time_var_name)
         self.mode_idx = int(problem.uid2idx_event_params[mode_var.uid])
         self.enable_time_idx = int(problem.uid2idx_event_params[enable_time_var.uid])
+        if self.on_value_var_name is not None:
+            on_value_var = _find_var_by_name(problem.sys_block, self.on_value_var_name)
+            self.on_value_idx = int(problem.uid2idx_event_params[on_value_var.uid])
+        else:
+            self.on_value_idx = -1
 
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
         """
@@ -2742,7 +2759,7 @@ class StartupHandoverLogic(ProceduralLogicBase):
         enable_time: float = float(params[self.enable_time_idx])
 
         if t >= (enable_time - tol):
-            params[self.mode_idx] = 1.0
+            params[self.mode_idx] = 1.0 if self.on_value_idx < 0 else float(params[self.on_value_idx])
         else:
             params[self.mode_idx] = 0.0
 
@@ -2757,6 +2774,8 @@ class StartupHandoverLogic(ProceduralLogicBase):
         return StartupHandoverLogic(
             mode_var_name=name_mapping.get(self.mode_var_name, self.mode_var_name),
             enable_time_var_name=name_mapping.get(self.enable_time_var_name, self.enable_time_var_name),
+            on_value_var_name=(None if self.on_value_var_name is None
+                               else name_mapping.get(self.on_value_var_name, self.on_value_var_name)),
             name=self.name,
         )
 
@@ -3193,6 +3212,7 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         "gate_c_idx",
         "omega_sw_idx",
         "carrier_phase_idx",
+        "last_omega_sw",
         "initialized",
         "interval_end_time",
         "pending_transition_time",
@@ -3245,6 +3265,7 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         self.gate_c_idx = -1
         self.omega_sw_idx = -1
         self.carrier_phase_idx = -1
+        self.last_omega_sw: float | None = None
 
         self.initialized = False
         self.interval_end_time: Optional[float] = None
@@ -3470,6 +3491,7 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         half_period: float
 
         interval_end_time, carrier_rising = self._get_interval_descriptor(sample_time, params)
+        self.last_omega_sw = float(params[self.omega_sw_idx])
         half_period = self._get_half_period(params)
         interval_start_time = interval_end_time - half_period
         modulation_values = self._read_modulation_values(x)
@@ -3532,14 +3554,25 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         :return: None.
         """
         tol: float = 1.0e-12
-        sample_time: float = self._get_sample_time(t)
+        # ``x`` intentionally belongs to the previous accepted state, but gate
+        # scheduling belongs to the boundary currently being prepared.  Using
+        # the previous accepted time here delays every forced PWM transition to
+        # the following solver step and defeats exact event alignment.
+        sample_time: float = float(t)
+        omega_sw_now: float = float(params[self.omega_sw_idx])
         transition_idx: int = 0
 
         if not self.initialized:
             self._rebuild_interval_schedule(sample_time=sample_time, x=x, params=params)
             self.initialized = True
         else:
-            if self.interval_end_time is not None and sample_time >= self.interval_end_time - tol:
+            if self.last_omega_sw is None or abs(omega_sw_now - self.last_omega_sw) > tol:
+                # Hybrid converter startup can change the effective carrier frequency from
+                # zero to its nominal value.  A zero-frequency schedule has an effectively
+                # infinite interval end, so it must be discarded immediately when the
+                # runtime frequency changes.
+                self._rebuild_interval_schedule(sample_time=sample_time, x=x, params=params)
+            elif self.interval_end_time is not None and sample_time >= self.interval_end_time - tol:
                 # A new carrier interval starts here, so the phase schedules are rebuilt from fresh modulation samples.
                 self._rebuild_interval_schedule(sample_time=sample_time, x=x, params=params)
             else:
@@ -3757,7 +3790,9 @@ class ThreePhaseCarrierSampledModulationLogic(ProceduralLogicBase):
         :param params: Runtime parameter vector to mutate.
         :return: None.
         """
-        sample_time: float = self._get_sample_time(t)
+        # The sampled values come from accepted ``x``; the interval clock must
+        # nevertheless advance at the boundary currently being prepared.
+        sample_time: float = float(t)
         if not self.initialized:
             self._sample_modulation(x=x, params=params)
             self.interval_end_time = self._get_interval_end_time(sample_time=sample_time, params=params)
@@ -3998,6 +4033,7 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
         data.update({
             "mode_var_name": entry.mode_var_name,
             "enable_time_var_name": entry.enable_time_var_name,
+            "on_value_var_name": entry.on_value_var_name,
         })
         return data
     elif isinstance(entry, ValveStateLogic):
@@ -4275,6 +4311,8 @@ def _startup_handover_logic_from_dict(data: ProceduralLogicData) -> StartupHando
     return StartupHandoverLogic(
         mode_var_name=str(data["mode_var_name"]),
         enable_time_var_name=str(data["enable_time_var_name"]),
+        on_value_var_name=(None if data.get("on_value_var_name", None) is None
+                           else str(data["on_value_var_name"])),
         name=str(data.get("name", "")),
     )
 

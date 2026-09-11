@@ -119,6 +119,167 @@ def _prepare_compiled_fmi_three_scalar_worker_host(
     )
 
 
+def test_worker_host_int32_round_trip_uses_same_session(
+    compiled_fmi_three_scalar_co_simulation_fmu: Path,
+) -> None:
+    """Round-trip Float64 and Int32 through one worker and native instance.
+
+    :param compiled_fmi_three_scalar_co_simulation_fmu: Generated host-native
+        scalar test FMU.
+    :return: None.
+    """
+
+    host: FmiThreeWorkerHost = _prepare_compiled_fmi_three_scalar_worker_host(
+        compiled_fmu_path=compiled_fmi_three_scalar_co_simulation_fmu,
+        limits=_create_worker_host_limits(60.0, 262144),
+    )
+    staging_root: Path = host.get_staging_root()
+    try:
+        host.start(
+            instance_name="veragrid-fmi-three-int32-one-session",
+            visible=False,
+            debug_logging=False,
+        )
+        process_id: int | None = host.get_process_id()
+        assert process_id is not None
+        host.initialize(
+            start_time=0.0,
+            stop_time=1.0,
+            relative_tolerance=1.0e-6,
+            initial_float64_value_references=(1,),
+            initial_float64_values=(2.0,),
+            initial_int32_value_references=(7,),
+            initial_int32_values=(-2,),
+        )
+        assert host.get_int32((7, 8)) == (-2, 0)
+        step_result: FmiThreeWorkerDoStepResult = (
+            host.set_numeric_values_and_do_step(
+                float64_value_references=(1,),
+                float64_values=(3.0,),
+                current_communication_point=0.0,
+                communication_step_size=0.1,
+                no_set_fmu_state_prior_to_current_point=True,
+                int32_value_references=(7,),
+                int32_values=(-5,),
+            )
+        )
+        assert step_result.last_successful_time == pytest.approx(0.1)
+        assert host.get_int32((8, 7)) == (-5, -5)
+        assert host.get_process_id() == process_id
+    finally:
+        host.close()
+    assert host.get_exit_code() == 0
+    assert not staging_root.exists()
+
+
+def test_worker_host_accepts_both_mixed_numeric_write_orders(
+    compiled_fmi_three_scalar_co_simulation_fmu: Path,
+) -> None:
+    """Allow either typed input order while preserving one pending-step state.
+
+    :param compiled_fmi_three_scalar_co_simulation_fmu: Generated host-native
+        scalar test FMU.
+    :return: None.
+    """
+
+    host: FmiThreeWorkerHost = _prepare_compiled_fmi_three_scalar_worker_host(
+        compiled_fmu_path=compiled_fmi_three_scalar_co_simulation_fmu,
+        limits=_create_worker_host_limits(60.0, 262144),
+    )
+    staging_root: Path = host.get_staging_root()
+    try:
+        host.start(
+            instance_name="veragrid-fmi-three-mixed-write-orders",
+            visible=False,
+            debug_logging=False,
+        )
+        host.initialize(
+            start_time=0.0,
+            stop_time=1.0,
+            relative_tolerance=1.0e-6,
+            initial_float64_value_references=tuple(),
+            initial_float64_values=tuple(),
+            initial_int32_value_references=(7,),
+            initial_int32_values=(-2,),
+        )
+
+        # Both setters share one pending state, so Float64 then Int32 remains valid.
+        host.set_float64(value_references=(1,), values=(2.0,))
+        host.set_int32(value_references=(7,), values=(-3,))
+        host.do_step(
+            current_communication_point=0.0,
+            communication_step_size=0.1,
+            no_set_fmu_state_prior_to_current_point=True,
+        )
+        assert host.get_int32((8,)) == (-3,)
+
+        # The inverse order must use the same state transition and worker.
+        host.set_int32(value_references=(7,), values=(4,))
+        host.set_float64(value_references=(1,), values=(5.0,))
+        host.do_step(
+            current_communication_point=0.1,
+            communication_step_size=0.1,
+            no_set_fmu_state_prior_to_current_point=True,
+        )
+        assert host.get_int32((8,)) == (4,)
+    finally:
+        host.close()
+    assert host.get_exit_code() == 0
+    assert not staging_root.exists()
+
+
+def test_worker_host_restores_int32_and_mixed_pending_checkpoints(
+    compiled_fmi_three_scalar_co_simulation_fmu: Path,
+) -> None:
+    """Restore reusable checkpoints after Int32-only and mixed pending writes.
+
+    :param compiled_fmi_three_scalar_co_simulation_fmu: Generated host-native
+        scalar test FMU with native state support.
+    :return: None.
+    """
+
+    host: FmiThreeWorkerHost = _prepare_compiled_fmi_three_scalar_worker_host(
+        compiled_fmu_path=compiled_fmi_three_scalar_co_simulation_fmu,
+        limits=_create_worker_host_limits(60.0, 262144),
+    )
+    staging_root: Path = host.get_staging_root()
+    try:
+        host.start(
+            instance_name="veragrid-fmi-three-int32-checkpoints",
+            visible=False,
+            debug_logging=False,
+        )
+        host.initialize(
+            start_time=0.0,
+            stop_time=1.0,
+            relative_tolerance=1.0e-6,
+            initial_float64_value_references=(1,),
+            initial_float64_values=(2.0,),
+            initial_int32_value_references=(7,),
+            initial_int32_values=(-2,),
+        )
+
+        host.save_checkpoint()
+        host.set_int32(value_references=(7,), values=(4,))
+        assert host.get_state() == FmiThreeWorkerHostState.INPUT_VALUES_PENDING_STEP
+        host.restore_checkpoint()
+        assert host.get_int32((7,)) == (-2,)
+        host.discard_checkpoint()
+
+        host.save_checkpoint()
+        host.set_float64(value_references=(1,), values=(6.0,))
+        host.set_int32(value_references=(7,), values=(7,))
+        assert host.get_state() == FmiThreeWorkerHostState.INPUT_VALUES_PENDING_STEP
+        host.restore_checkpoint()
+        assert host.get_float64((1,), 1) == pytest.approx((2.0,))
+        assert host.get_int32((7,)) == (-2,)
+        host.discard_checkpoint()
+    finally:
+        host.close()
+    assert host.get_exit_code() == 0
+    assert not staging_root.exists()
+
+
 def test_fmi_three_worker_host_initializes_and_closes_owned_staging(
     compiled_fmi_three_scalar_co_simulation_fmu: Path,
 ) -> None:
@@ -451,33 +612,33 @@ def test_fmi_three_worker_host_rejects_step_before_native_write(
             )
         assert host.get_state() == FmiThreeWorkerHostState.INITIALIZED
         with pytest.raises(FmuModeError, match="not continuous"):
-            host.set_float64_and_do_step(
-                value_references=(1,),
-                values=(9.0,),
+            host.set_numeric_values_and_do_step(
+                float64_value_references=(1,),
+                float64_values=(9.0,),
                 current_communication_point=0.25,
                 communication_step_size=0.25,
                 no_set_fmu_state_prior_to_current_point=True,
             )
         with pytest.raises(ValueError, match="finite and positive"):
-            host.set_float64_and_do_step(
-                value_references=(1,),
-                values=(9.0,),
+            host.set_numeric_values_and_do_step(
+                float64_value_references=(1,),
+                float64_values=(9.0,),
                 current_communication_point=0.0,
                 communication_step_size=float("nan"),
                 no_set_fmu_state_prior_to_current_point=True,
             )
         with pytest.raises(ValueError, match="endpoint must be finite"):
-            host.set_float64_and_do_step(
-                value_references=(1,),
-                values=(9.0,),
+            host.set_numeric_values_and_do_step(
+                float64_value_references=(1,),
+                float64_values=(9.0,),
                 current_communication_point=1.7976931348623157e308,
                 communication_step_size=1.7976931348623157e308,
                 no_set_fmu_state_prior_to_current_point=True,
             )
         with pytest.raises(ValueError, match="endpoint must be finite"):
-            host.set_float64_and_do_step(
-                value_references=(1,),
-                values=(9.0,),
+            host.set_numeric_values_and_do_step(
+                float64_value_references=(1,),
+                float64_values=(9.0,),
                 current_communication_point=1.0e308,
                 communication_step_size=1.0e-308,
                 no_set_fmu_state_prior_to_current_point=True,
@@ -485,9 +646,9 @@ def test_fmi_three_worker_host_rejects_step_before_native_write(
         assert host.get_float64((1,), 1) == pytest.approx((2.0,))
 
         first_result: FmiThreeWorkerDoStepResult = (
-            host.set_float64_and_do_step(
-                value_references=(1,),
-                values=(-1.0,),
+            host.set_numeric_values_and_do_step(
+                float64_value_references=(1,),
+                float64_values=(-1.0,),
                 current_communication_point=0.0,
                 communication_step_size=0.25,
                 no_set_fmu_state_prior_to_current_point=True,
@@ -495,17 +656,17 @@ def test_fmi_three_worker_host_rejects_step_before_native_write(
         )
         assert first_result.last_successful_time == pytest.approx(0.25)
         with pytest.raises(FmuModeError, match="constant communication step size"):
-            host.set_float64_and_do_step(
-                value_references=(1,),
-                values=(9.0,),
+            host.set_numeric_values_and_do_step(
+                float64_value_references=(1,),
+                float64_values=(9.0,),
                 current_communication_point=0.25,
                 communication_step_size=0.5,
                 no_set_fmu_state_prior_to_current_point=True,
             )
         with pytest.raises(FmuModeError, match="not continuous"):
-            host.set_float64_and_do_step(
-                value_references=(1,),
-                values=(9.0,),
+            host.set_numeric_values_and_do_step(
+                float64_value_references=(1,),
+                float64_values=(9.0,),
                 current_communication_point=0.0,
                 communication_step_size=0.25,
                 no_set_fmu_state_prior_to_current_point=False,

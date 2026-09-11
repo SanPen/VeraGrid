@@ -19,5 +19,9 @@ if __name__ == '__main__':
         rcc_cmd += '.exe'
         uic_cmd += '.exe'
 
-    for f in ['dynamic_block_properties.ui']:
-        convert_ui_file(source=f, uic_cmd=uic_cmd)
+    convert_ui_file(
+        source='dynamic_block_properties.ui',
+        uic_cmd=uic_cmd,
+        target_file_name='dynamic_block_properties_gui.py',
+    )
+    convert_ui_file(source='add_symbol_widget.ui', uic_cmd=uic_cmd)

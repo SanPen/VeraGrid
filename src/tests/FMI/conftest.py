@@ -220,3 +220,27 @@ def compiled_fmi_three_configurable_array_co_simulation_fmu(
         fixture_profile=FmiThreeCompiledFixtureProfile.CONFIGURABLE_ARRAY,
         temporary_directory_prefix="fmi-three-native-configurable-array-fixture",
     )
+
+
+@pytest.fixture(scope="session")
+def compiled_fmi_three_parameterized_configurable_array_fmu(
+    tmp_path_factory: pytest.TempPathFactory,
+    pytestconfig: pytest.Config,
+) -> Path:
+    """Build the parameterized configurable-array FMI 3 fixture once.
+
+    :param tmp_path_factory: Session-scoped pytest temporary-directory factory.
+    :param pytestconfig: Active pytest configuration containing the CI build gate.
+    :return: Temporary dual-interface FMU with observable scalar parameters.
+    """
+
+    return _build_compiled_fmi_three_fixture(
+        tmp_path_factory=tmp_path_factory,
+        pytestconfig=pytestconfig,
+        fixture_profile=(
+            FmiThreeCompiledFixtureProfile.PARAMETERIZED_CONFIGURABLE_ARRAY
+        ),
+        temporary_directory_prefix=(
+            "fmi-three-native-parameterized-configurable-array-fixture"
+        ),
+    )

@@ -3,6 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 import zipfile
 
+import pytest
+
+from VeraGridEngine.IO.fmu.exporter.api import export_fmu
+from VeraGridEngine.IO.fmu.exporter.build import host_build_capable
 from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
 from VeraGridEngine.IO.fmu.exporter.config import ExportConfig
 from VeraGridEngine.IO.fmu.exporter.export_ir import build_export_model
@@ -11,6 +15,8 @@ from VeraGridEngine.IO.fmu.exporter.packager import package_fmu, prepare_fmu_sta
 from VeraGridEngine.IO.fmu.exporter.procedural_ir import build_logic_entries
 from VeraGridEngine.IO.fmu.exporter.snapshot import build_model_snapshot, reconstruct_block
 from VeraGridEngine.IO.fmu.exporter.xml_writer import emit_model_description
+from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
+from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig
 
 
 def build_simple_block() -> Block:
@@ -81,3 +87,55 @@ def test_packager_creates_fmu_zip(tmp_path: Path) -> None:
     with zipfile.ZipFile(output) as archive:
         assert "modelDescription.xml" in archive.namelist()
         assert "resources/manifest.json" in archive.namelist()
+
+
+@pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
+def test_cs_export_failure_removes_owned_build_root(tmp_path: Path) -> None:
+    """Remove the automatic CS build root when packaging fails.
+
+    :param tmp_path: Isolated exporter output directory supplied by pytest.
+    :return: None.
+    """
+
+    blocked_output_path: Path = tmp_path / "blocked_cs.fmu"
+    blocked_output_path.mkdir()
+    cfg: ExportConfig = ExportConfig(
+        model_name="CleanupCsModel",
+        output_path=blocked_output_path,
+        compile_binary=True,
+        keep_build_dir=False,
+    )
+
+    with pytest.raises(OSError):
+        export_fmu(model=build_simple_block(), cfg=cfg)
+
+    automatic_build_roots: tuple[Path, ...] = tuple(
+        tmp_path.glob("veragrid_fmu_build_*")
+    )
+    assert automatic_build_roots == tuple()
+
+
+@pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
+def test_me_export_failure_removes_owned_build_root(tmp_path: Path) -> None:
+    """Remove the automatic ME build root when packaging fails.
+
+    :param tmp_path: Isolated exporter output directory supplied by pytest.
+    :return: None.
+    """
+
+    blocked_output_path: Path = tmp_path / "blocked_me.fmu"
+    blocked_output_path.mkdir()
+    cfg: MeExportConfig = MeExportConfig(
+        model_name="CleanupMeModel",
+        output_path=blocked_output_path,
+        compile_binary=True,
+        keep_build_dir=False,
+    )
+
+    with pytest.raises(OSError):
+        export_fmu_me(model=build_simple_block(), cfg=cfg)
+
+    automatic_build_roots: tuple[Path, ...] = tuple(
+        tmp_path.glob("veragrid_fmu_me_build_*")
+    )
+    assert automatic_build_roots == tuple()

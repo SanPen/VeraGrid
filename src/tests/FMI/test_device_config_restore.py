@@ -13,10 +13,12 @@ from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
 from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
 from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig, detect_target_platform as detect_me_target_platform
 from VeraGridEngine.IO.fmu.importer.bindings import (
+    FmuBindingDirection,
     FmiThreeFloat64ConfigurationValue,
     FmiThreeUInt64ConfigurationValue,
     FmuImportConfig,
     FmuRefBinding,
+    FmuVariableBinding,
 )
 from VeraGridEngine.IO.fmu.importer.device_api import (
     attach_emt_fmu_cs_device,
@@ -34,6 +36,7 @@ from VeraGridEngine.IO.fmu.importer.device_config import (
     restore_fmu_cs_spec_from_record,
 )
 from VeraGridEngine.IO.fmu.importer.co_simulation import (
+    FmuCsDeviceSpec,
     FmuCsDomain,
     register_emt_fmu_cs_device,
     register_rms_fmu_cs_device,
@@ -54,12 +57,6 @@ from VeraGridEngine.enumerations import (
     FmuInterfaceMode,
     VarPowerFlowReferenceType,
 )
-
-
-def _tmp_root() -> Path:
-    root = Path(__file__).resolve().parent / ".tmp"
-    root.mkdir(parents=True, exist_ok=True)
-    return root.resolve()
 
 
 def build_simple_output_fmu_block() -> Block:
@@ -265,7 +262,7 @@ def test_fmi_three_worker_limits_roundtrip_in_cs_device_config() -> None:
 
     serialized_record: str = dump_fmu_cs_device_config(record)
     current_payload: dict[str, object] = json.loads(serialized_record)
-    assert current_payload["version"] == 3
+    assert current_payload["version"] == 4
     loaded_record: FmuCsDeviceConfigRecord | None = load_fmu_cs_device_config(
         serialized_record
     )
@@ -366,7 +363,7 @@ def test_fmi_three_worker_limits_roundtrip_in_me_device_config() -> None:
 
     serialized_record: str = dump_fmu_me_device_config(record)
     current_payload: dict[str, object] = json.loads(serialized_record)
-    assert current_payload["version"] == 4
+    assert current_payload["version"] == 5
     loaded_record: FmuMeDeviceConfigRecord | None = load_fmu_me_device_config(
         serialized_record
     )
@@ -514,10 +511,16 @@ def test_fmi_three_v4_me_config_requires_strict_event_iteration_bound() -> None:
 
 
 @pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
-def test_rms_device_config_can_restore_runtime_spec() -> None:
+def test_rms_device_config_can_restore_runtime_spec(tmp_path: Path) -> None:
+    """Restore one RMS CS runtime specification from persisted configuration.
+
+    :param tmp_path: Isolated build and archive directory supplied by pytest.
+    :return: None.
+    """
+
     pytest.importorskip("fmpy")
 
-    output_root = _tmp_root()
+    output_root: Path = tmp_path
     fmu_path = output_root / "restore_rms.fmu"
     try:
         exported_fmu = export_fmu(
@@ -557,11 +560,275 @@ def test_rms_device_config_can_restore_runtime_spec() -> None:
         fmu_path.unlink(missing_ok=True)
 
 
+def test_fmu_parameter_mapping_round_trip_does_not_duplicate_numeric_values() -> None:
+    """Persist parameter identity without creating a second numeric owner.
+
+    :return: None.
+    """
+
+    parameter_binding: FmuVariableBinding = FmuVariableBinding(
+        signal_name="fixed_gain_block",
+        variable_name="fixed_gain",
+        direction=FmuBindingDirection.PARAMETER,
+    )
+    record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=FmuCsDomain.RMS,
+        fmu_path="parameter-identity-only.fmu",
+        preferred_mode=FmuInterfaceMode.CO_SIMULATION.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        parameter_bindings=(parameter_binding,),
+    )
+    serialized_record: str = dump_fmu_cs_device_config(record)
+    payload: dict[str, object] = json.loads(serialized_record)
+    assert payload["parameter_bindings"] == [
+        ["fixed_gain_block", "fixed_gain"]
+    ]
+    assert "parameter_values" not in payload
+    loaded_record: FmuCsDeviceConfigRecord | None = load_fmu_cs_device_config(
+        serialized_record
+    )
+    if loaded_record is not None:
+        pass
+    else:
+        raise AssertionError("Current CS parameter mapping did not reload")
+    assert loaded_record.parameter_bindings[0].signal_name == "fixed_gain_block"
+    assert loaded_record.parameter_bindings[0].variable_name == "fixed_gain"
+
+
+def test_fmu_parameter_restore_uses_current_block_const(
+    compiled_fmi_three_parameterized_configurable_array_fmu: Path,
+) -> None:
+    """Resolve the live Block constant and reject malformed identity mappings.
+
+    :param compiled_fmi_three_parameterized_configurable_array_fmu: Native
+        FMI 3 fixture supplying authoritative parameter metadata.
+    :return: None.
+    """
+
+    fixed_gain_var: Var = Var("fixed_gain_block")
+    block: Block = Block(parameters={fixed_gain_var: Const(9.25)})
+    worker_limits: FmiThreeWorkerHostLimits = FmiThreeWorkerHostLimits(
+        maximum_frame_size=262144,
+        maximum_float64_values_per_request=64,
+        response_timeout_seconds=60.0,
+        graceful_join_timeout_seconds=10.0,
+        terminate_join_timeout_seconds=5.0,
+        kill_join_timeout_seconds=5.0,
+    )
+    valid_binding: FmuVariableBinding = FmuVariableBinding(
+        signal_name="fixed_gain_block",
+        variable_name="fixed_gain",
+        direction=FmuBindingDirection.PARAMETER,
+    )
+    valid_record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=FmuCsDomain.RMS,
+        fmu_path=str(compiled_fmi_three_parameterized_configurable_array_fmu),
+        preferred_mode=FmuInterfaceMode.CO_SIMULATION.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        worker_limits=worker_limits,
+        configuration_uint64_values=(
+            FmiThreeUInt64ConfigurationValue(
+                variable_name="structural_size",
+                value=2,
+            ),
+        ),
+        parameter_bindings=(valid_binding,),
+    )
+    restored_spec: FmuCsDeviceSpec = restore_fmu_cs_spec_from_record(
+        record=valid_record,
+        block=block,
+        device_tpe=DeviceType.LoadDevice,
+    )
+    assert restored_spec.parameter_values[0].value == pytest.approx(9.25)
+    block.parameters[fixed_gain_var] = Const(4.5)
+    edited_spec: FmuCsDeviceSpec = restore_fmu_cs_spec_from_record(
+        record=valid_record,
+        block=block,
+        device_tpe=DeviceType.LoadDevice,
+    )
+    assert edited_spec.parameter_values[0].value == pytest.approx(4.5)
+
+    missing_binding: FmuVariableBinding = FmuVariableBinding(
+        signal_name="missing_block_parameter",
+        variable_name="fixed_gain",
+        direction=FmuBindingDirection.PARAMETER,
+    )
+    missing_record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=valid_record.domain,
+        fmu_path=valid_record.fmu_path,
+        preferred_mode=valid_record.preferred_mode,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        worker_limits=worker_limits,
+        parameter_bindings=(missing_binding,),
+    )
+    with pytest.raises(ValueError, match="exactly one Block"):
+        restore_fmu_cs_spec_from_record(
+            record=missing_record,
+            block=block,
+            device_tpe=DeviceType.LoadDevice,
+        )
+
+    transformed_binding: FmuVariableBinding = FmuVariableBinding(
+        signal_name="fixed_gain_block",
+        variable_name="fixed_gain",
+        direction=FmuBindingDirection.PARAMETER,
+        scale=2.0,
+    )
+    transformed_record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=valid_record.domain,
+        fmu_path=valid_record.fmu_path,
+        preferred_mode=valid_record.preferred_mode,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        worker_limits=worker_limits,
+        parameter_bindings=(valid_binding,),
+    )
+    transformed_record.parameter_bindings = (transformed_binding,)
+    with pytest.raises(ValueError, match="transform must be identity"):
+        restore_fmu_cs_spec_from_record(
+            record=transformed_record,
+            block=block,
+            device_tpe=DeviceType.LoadDevice,
+        )
+
+
+def test_historical_fmu_device_configs_restore_empty_parameter_bindings() -> None:
+    """Treat CS v1-v3 and ME v1-v4 as pre-parameter-mapping schemas.
+
+    :return: None.
+    """
+
+    parameter_binding: FmuVariableBinding = FmuVariableBinding(
+        signal_name="fixed_gain_block",
+        variable_name="fixed_gain",
+        direction=FmuBindingDirection.PARAMETER,
+    )
+    cs_record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=FmuCsDomain.RMS,
+        fmu_path="historical-cs.fmu",
+        preferred_mode=FmuInterfaceMode.CO_SIMULATION.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        parameter_bindings=(parameter_binding,),
+    )
+    cs_payload: dict[str, object] = json.loads(dump_fmu_cs_device_config(cs_record))
+    historical_cs_version: int
+    for historical_cs_version in (3, 2, 1):
+        cs_payload["version"] = historical_cs_version
+        if historical_cs_version in (1, 2):
+            cs_payload.pop("configuration_float64_values", None)
+            cs_payload.pop("configuration_uint64_values", None)
+        else:
+            pass
+        historical_cs: FmuCsDeviceConfigRecord | None = (
+            load_fmu_cs_device_config(json.dumps(cs_payload))
+        )
+        if historical_cs is not None:
+            assert historical_cs.parameter_bindings == tuple()
+        else:
+            raise AssertionError("Historical CS config did not reload")
+
+    me_record: FmuMeDeviceConfigRecord = FmuMeDeviceConfigRecord(
+        domain=FmuMeDomain.RMS,
+        fmu_path="historical-me.fmu",
+        preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        parameter_bindings=(parameter_binding,),
+    )
+    me_payload: dict[str, object] = json.loads(dump_fmu_me_device_config(me_record))
+    historical_me_version: int
+    for historical_me_version in (4, 3, 2, 1):
+        me_payload["version"] = historical_me_version
+        if historical_me_version in (1, 2):
+            me_payload.pop("configuration_float64_values", None)
+            me_payload.pop("configuration_uint64_values", None)
+        else:
+            pass
+        historical_me: FmuMeDeviceConfigRecord | None = (
+            load_fmu_me_device_config(json.dumps(me_payload))
+        )
+        if historical_me is not None:
+            assert historical_me.parameter_bindings == tuple()
+        else:
+            raise AssertionError("Historical ME config did not reload")
+
+
+def test_current_cs_v4_and_me_v5_parameter_mappings_round_trip() -> None:
+    """Round-trip current parameter identity schemas for both import modes.
+
+    :return: None.
+    """
+
+    parameter_binding: FmuVariableBinding = FmuVariableBinding(
+        signal_name="tunable_bias_block",
+        variable_name="tunable_bias",
+        direction=FmuBindingDirection.PARAMETER,
+    )
+    cs_record: FmuCsDeviceConfigRecord = FmuCsDeviceConfigRecord(
+        domain=FmuCsDomain.RMS,
+        fmu_path="current-cs.fmu",
+        preferred_mode=FmuInterfaceMode.CO_SIMULATION.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        parameter_bindings=(parameter_binding,),
+    )
+    me_record: FmuMeDeviceConfigRecord = FmuMeDeviceConfigRecord(
+        domain=FmuMeDomain.RMS,
+        fmu_path="current-me.fmu",
+        preferred_mode=FmuInterfaceMode.MODEL_EXCHANGE.value,
+        input_bindings=tuple(),
+        output_bindings=tuple(),
+        output_defaults=dict(),
+        output_param_names=dict(),
+        parameter_bindings=(parameter_binding,),
+    )
+    cs_payload: dict[str, object] = json.loads(dump_fmu_cs_device_config(cs_record))
+    me_payload: dict[str, object] = json.loads(dump_fmu_me_device_config(me_record))
+    assert cs_payload["version"] == 4
+    assert me_payload["version"] == 5
+    loaded_cs: FmuCsDeviceConfigRecord | None = load_fmu_cs_device_config(
+        json.dumps(cs_payload)
+    )
+    loaded_me: FmuMeDeviceConfigRecord | None = load_fmu_me_device_config(
+        json.dumps(me_payload)
+    )
+    if loaded_cs is not None and loaded_me is not None:
+        pass
+    else:
+        raise AssertionError("Current parameter mappings did not reload")
+    assert loaded_cs.parameter_bindings[0].signal_name == "tunable_bias_block"
+    assert loaded_me.parameter_bindings[0].signal_name == "tunable_bias_block"
+
+
 @pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
-def test_emt_device_config_can_restore_runtime_spec() -> None:
+def test_emt_device_config_can_restore_runtime_spec(tmp_path: Path) -> None:
+    """Restore one EMT CS runtime specification from persisted configuration.
+
+    :param tmp_path: Isolated build and archive directory supplied by pytest.
+    :return: None.
+    """
+
     pytest.importorskip("fmpy")
 
-    output_root = _tmp_root()
+    output_root: Path = tmp_path
     fmu_path = output_root / "restore_emt.fmu"
     try:
         exported_fmu = export_fmu(
@@ -602,10 +869,16 @@ def test_emt_device_config_can_restore_runtime_spec() -> None:
 
 
 @pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
-def test_rms_me_device_config_can_restore_runtime_spec() -> None:
+def test_rms_me_device_config_can_restore_runtime_spec(tmp_path: Path) -> None:
+    """Restore one RMS ME runtime specification from persisted configuration.
+
+    :param tmp_path: Isolated build and archive directory supplied by pytest.
+    :return: None.
+    """
+
     pytest.importorskip("fmpy")
 
-    output_root = _tmp_root()
+    output_root: Path = tmp_path
     fmu_path = output_root / "restore_rms_me.fmu"
     try:
         exported_fmu = export_fmu_me(
@@ -646,10 +919,16 @@ def test_rms_me_device_config_can_restore_runtime_spec() -> None:
 
 
 @pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
-def test_emt_me_device_config_can_restore_runtime_spec() -> None:
+def test_emt_me_device_config_can_restore_runtime_spec(tmp_path: Path) -> None:
+    """Restore one EMT ME runtime specification from persisted configuration.
+
+    :param tmp_path: Isolated build and archive directory supplied by pytest.
+    :return: None.
+    """
+
     pytest.importorskip("fmpy")
 
-    output_root = _tmp_root()
+    output_root: Path = tmp_path
     fmu_path = output_root / "restore_emt_me.fmu"
     try:
         exported_fmu = export_fmu_me(

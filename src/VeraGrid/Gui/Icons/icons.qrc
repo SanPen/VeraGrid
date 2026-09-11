@@ -271,6 +271,9 @@
     <file>icons/pf_ts.png</file>
     <file>icons/owner.png</file>
     <file>icons/matpower.png</file>
+    <file>icons/lock.png</file>
+    <file>icons/unlock.png</file>
+    <file>icons/pdf.png</file>
   </qresource>
   <qresource prefix="Program icon">
     <file>icons/VeraGrid_icon.png</file>

@@ -350,6 +350,10 @@ def _validate_fmi_three_worker_variable_profile(
         if declared_variable.variable_type == FmuVariableType.FLOAT64:
             pass
         else:
+            int32_is_supported: bool = (
+                declared_variable.variable_type == FmuVariableType.INT32
+                and len(declared_variable.dimensions) == 0
+            )
             uint64_is_supported: bool = (
                 declared_variable.variable_type == FmuVariableType.UINT64
                 and len(declared_variable.dimensions) == 0
@@ -364,12 +368,13 @@ def _validate_fmi_three_worker_variable_profile(
                     )
                 )
             )
-            if uint64_is_supported:
+            if int32_is_supported or uint64_is_supported:
                 pass
             else:
                 raise FmuModeError(
-                    "The FMI 3 worker profile supports Float64 variables and "
-                    "scalar structural UInt64 parameters"
+                    "The FMI 3 worker profile supports Float64 variables, "
+                    "scalar Int32 variables, and scalar structural UInt64 "
+                    "parameters"
                 )
 
 

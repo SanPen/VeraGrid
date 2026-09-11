@@ -14,7 +14,7 @@ from VeraGridEngine.IO.fmu.importer.runtime_protocol import (
     FmiThreeWorkerDiscreteStatesResult,
 )
 from VeraGridEngine.IO.fmu.importer.runtime_session import (
-    FmiThreeFloat64Session,
+    FmiThreeNumericSession,
 )
 from VeraGridEngine.IO.fmu.importer.runtime_profile import FmuMeEvaluationBudget
 
@@ -53,7 +53,7 @@ class FmiThreeModelExchangeCoordinator:
 
     def __init__(
         self,
-        session: FmiThreeFloat64Session,
+        session: FmiThreeNumericSession,
         maximum_event_iterations: int,
     ) -> None:
         """Store one session and an explicit finite event-iteration bound.
@@ -73,7 +73,7 @@ class FmiThreeModelExchangeCoordinator:
             raise ValueError(
                 "FMI 3 maximum Event Mode iterations must be an integer between 1 and 1024"
             )
-        self._session: FmiThreeFloat64Session = session
+        self._session: FmiThreeNumericSession = session
         self._maximum_event_iterations: int = maximum_event_iterations
         self._initialized: bool = False
         self._has_checkpoint: bool = False

@@ -164,7 +164,7 @@ def _connect_imported_converter_blocks(
     vsc_q_ki = _find_block_var(vsc_block, "q_ki")
     vsc_i_max = _find_block_var(vsc_block, "i_max")
     vsc_m_max = _find_block_var(vsc_block, "m_max")
-    vsc_P_loss0 = _find_block_var(vsc_block, "P_loss0")
+    vsc_P_loss = _find_block_var(vsc_block, "P_loss")
     vsc_tau_meas = _find_block_var(vsc_block, "tau_meas")
     vsc_aw_gain = _find_block_var(vsc_block, "aw_gain")
     vsc_vdc_floor = _find_block_var(vsc_block, "vdc_floor")
@@ -225,12 +225,12 @@ def _connect_imported_converter_blocks(
         [
             vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_Vdc_ref, vsc_Vpk,
             vsc_i_max, vsc_vdc_kp, vsc_vdc_ki, vsc_q_kp, vsc_q_ki,
-            vsc_P_loss0, vsc_tau_meas, vsc_aw_gain, vsc_regulate_vdc, vsc_regulate_q, vsc_regulate_active,
+            vsc_P_loss, vsc_tau_meas, vsc_aw_gain, vsc_regulate_vdc, vsc_regulate_q, vsc_regulate_active,
         ],
     )
     for offset, out_var in enumerate([vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_Vdc_ref, vsc_Vpk,
                                       vsc_i_max, vsc_vdc_kp, vsc_vdc_ki, vsc_q_kp, vsc_q_ki,
-                                      vsc_P_loss0, vsc_tau_meas, vsc_aw_gain, vsc_regulate_vdc, vsc_regulate_q, vsc_regulate_active]):
+                                      vsc_P_loss, vsc_tau_meas, vsc_aw_gain, vsc_regulate_vdc, vsc_regulate_q, vsc_regulate_active]):
         _tag_connected_pair(vf, out_var, outer_loop_block.in_vars[9 + offset], f"{name}_outer_aux_{offset}")
     vf.add_connections(
         [inner_loop_block.in_vars[6], inner_loop_block.in_vars[7], inner_loop_block.in_vars[8], inner_loop_block.in_vars[9]],
@@ -248,12 +248,12 @@ def _connect_imported_converter_blocks(
         [
             vsc_i_kp, vsc_i_ki, vsc_aw_gain, vsc_m_max,
             vsc_Vdc_ref, vsc_v_dc, vsc_vdc_floor, vsc_sbase,
-            vsc_P_ref, vsc_Q_ref, vsc_P_loss0, vsc_Vpk,
+            vsc_P_ref, vsc_Q_ref, vsc_P_loss, vsc_Vpk,
         ],
     )
     for offset, out_var in enumerate([vsc_i_kp, vsc_i_ki, vsc_aw_gain, vsc_m_max,
                                       vsc_Vdc_ref, vsc_v_dc, vsc_vdc_floor, vsc_sbase,
-                                      vsc_P_ref, vsc_Q_ref, vsc_P_loss0, vsc_Vpk]):
+                                      vsc_P_ref, vsc_Q_ref, vsc_P_loss, vsc_Vpk]):
         _tag_connected_pair(vf, out_var, inner_loop_block.in_vars[13 + offset], f"{name}_inner_aux_{offset}")
 
     vf.add_connections([transformer_block.in_vars[3], transformer_block.in_vars[4]], [pll_theta, pll_omega])
@@ -270,9 +270,9 @@ def _connect_imported_converter_blocks(
         _tag_connected_pair(vf, [inner_v_cmd_d, inner_v_cmd_q, inner_v_cmd_0][idx], transformer_block.in_vars[8 + idx], f"{name}_{shared_name}")
     vf.add_connections(
         transformer_block.in_vars[11:16],
-        [vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_P_loss0, vsc_Vpk],
+        [vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_P_loss, vsc_Vpk],
     )
-    for offset, out_var in enumerate([vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_P_loss0, vsc_Vpk]):
+    for offset, out_var in enumerate([vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_P_loss, vsc_Vpk]):
         _tag_connected_pair(vf, out_var, transformer_block.in_vars[11 + offset], f"{name}_tf_aux_{offset}")
 
 

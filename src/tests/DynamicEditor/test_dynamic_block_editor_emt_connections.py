@@ -1105,11 +1105,12 @@ def test_adding_input_from_properties_rebuilds_the_visible_block_port() -> None:
             var_factory=editor.var_factory,
         )
         dialogue.blockApplied.connect(editor.on_block_properties_applied)
-        dialogue._new_symbol_name.setText("additional_input")
-        dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
+        dialogue._add_symbol_ui.new_symbol_name.setText("additional_input")
+        dialogue._add_symbol_ui.new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
         dialogue.add_staged_symbol()
 
         dialogue.apply_changes()
+        dialogue = None
 
         rebuilt_item: graph.BlockItem | graph.GenericBlockItem | None = (
             editor.get_scene_item_by_block_uid(generic_block_uid)
@@ -1120,6 +1121,12 @@ def test_adding_input_from_properties_rebuilds_the_visible_block_port() -> None:
         assert generic_block.in_vars[-1].name == "additional_input"
 
         added_variable: Var = generic_block.in_vars[-1]
+        dialogue = DynamicBlockPropertiesDialog(
+            block=generic_block,
+            block_type_name=BlockType.PI_CURRENT_CONTROLLER.name,
+            var_factory=editor.var_factory,
+        )
+        dialogue.blockApplied.connect(editor.on_block_properties_applied)
         added_row: int = -1
         row_index: int
         for row_index in range(dialogue._symbol_model.rowCount()):
@@ -1132,6 +1139,7 @@ def test_adding_input_from_properties_rebuilds_the_visible_block_port() -> None:
         assert dialogue._symbol_model.remove_symbol(added_row)
 
         dialogue.apply_changes()
+        dialogue = None
 
         restored_item: graph.BlockItem | graph.GenericBlockItem | None = (
             editor.get_scene_item_by_block_uid(generic_block_uid)

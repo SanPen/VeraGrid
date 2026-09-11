@@ -39,9 +39,6 @@ from VeraGridEngine.enumerations import (
 )
 from VeraGridEngine.basic_structures import Logger, CxVec
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import (
-    get_thevenin_internal_shared_references,
-)
 from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import BergeronHistoryRuntime
 from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime import JMartiHistoryRuntime
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
@@ -2238,7 +2235,25 @@ class EmtProblemDae(EmtProblemTemplate):
             if runtime_idx_promote is None:
                 pass
             else:
-                self._event_params_values[runtime_idx_promote] = float(value)
+                # Promote the PF seed into both the runtime value and its
+                # canonical source equation.  Updating only the flat value is
+                # insufficient because explicit initialization evaluates the
+                # event graph and would immediately restore the old model
+                # default (commonly Vnom=1.0) before resolving dependants.
+                self._set_runtime_parameter_value_by_uid(uid=uid, value=float(value))
+                self.event_params_init_dict[uid] = float(value)
+
+        # PF seeding may change a runtime parameter that is itself an input to
+        # another runtime expression.  A common example is an impedance load:
+        # ``Vnom`` is seeded from the solved bus voltage and ``R``/``L`` are
+        # derived from ``Vnom`` and the scheduled P/Q.  Resolve that dependency
+        # chain before evaluating model init equations; otherwise state seeds
+        # such as an inductor's periodic current are computed with the old
+        # default impedance while the simulation starts with the refreshed one.
+        self._event_params_values = self._initialize_runtime_parameter_values(
+            0.0,
+            seed_values=self._event_params_values,
+        )
         # At this point every PF-derived runtime seed has been applied and the
         # canonical event equations have been refreshed. A remaining null source
         # is therefore either owned by explicit initialization/mode logic or is a
@@ -2273,7 +2288,7 @@ class EmtProblemDae(EmtProblemTemplate):
             self.initialization_report.message = "Explicit initialization completed."
         else:
             self.initialization_report = run_emt_native_initialization(problem=self, options=self.options)
-        self._seed_all_switched_vsc_models()
+        self._reapply_vsc_pf_seeds_after_native_initialization()
         # for diff_uid, diff_value in self._temp_post_diff_init_guess.items():
         #     if diff_uid in self.diff_init_guess:
         #         pass
@@ -2292,6 +2307,7 @@ class EmtProblemDae(EmtProblemTemplate):
         # and break the initial runtime-parameter evaluation.
         self.set_events_group(None)
         self._seed_all_switch_models()
+        self.rebuild_runtime_param_vectors()
         if self.initialization_report is None:
             pass
         else:
@@ -2720,6 +2736,7 @@ class EmtProblemDae(EmtProblemTemplate):
                         uid2idx_event_params=self.uid2idx_event_params,
                         params_array=params_array,
                         compile_single_equation=compile_single_equation,
+                        event_params_array_seed=self._event_params_values,
                         verbose=bool(self.options.verbose > 0),
                     )
 
@@ -2747,8 +2764,6 @@ class EmtProblemDae(EmtProblemTemplate):
                             self._temp_post_diff_init_guess[block_var.uid] = float(self.diff_init_guess[block_var.uid])
                         else:
                             pass
-
-                    self._repair_balanced_zip_load_state_if_needed(mdl)
 
                     for event_var in mdl.event_dict.keys():
                         event_idx: int | None = self.uid2idx_event_params.get(event_var.uid, None)
@@ -2789,17 +2804,34 @@ class EmtProblemDae(EmtProblemTemplate):
             else:
                 pass
 
+        # Explicit initialization may resolve runtime parameters from equations
+        # that depend on PF-seeded algebraic/state values. Promote every resolved
+        # scalar through the canonical runtime setter before rebuilding the flat
+        # vector, so later event setup and solver construction cannot reevaluate
+        # an expression whose initialization-only dependencies are unavailable.
+        runtime_uid: int
+        runtime_value: float | int | complex | None
+        for runtime_uid, runtime_value in self.event_params_init_dict.items():
+            if runtime_value is None or runtime_uid not in self.uid2idx_event_params:
+                pass
+            elif isinstance(runtime_value, complex):
+                if abs(runtime_value.imag) > 1.0e-12:
+                    raise ValueError(
+                        "EMT runtime parameter initialization produced a complex "
+                        + f"value for uid={runtime_uid}: {runtime_value}."
+                    )
+                else:
+                    self._set_runtime_parameter_value_by_uid(
+                        uid=runtime_uid,
+                        value=float(runtime_value.real),
+                    )
+            else:
+                self._set_runtime_parameter_value_by_uid(
+                    uid=runtime_uid,
+                    value=float(runtime_value),
+                )
 
         self._build_runtime_param_vectors()
-
-    def _seed_bess_battery_init_from_converter(self) -> None:
-        """
-        Reserved helper for future coordinated BESS battery/DC initialization.
-
-        :return: None.
-        """
-        return
-
 
     def _validate_dynamic_emt_interfaces(self) -> None:
         """
@@ -6603,6 +6635,16 @@ class EmtProblemDae(EmtProblemTemplate):
             else:
                 voltage_vector = self._get_bus_voltage_vector_3ph(bus_index)
 
+            # Impedance-equivalent EMT loads derive R/L/C from scheduled P/Q.
+            # Use the actual PF voltage so their t=0 component currents agree
+            # with the terminal-current seed.
+            self.set_if_exists(
+                mdl=mdl,
+                key=VarPowerFlowReferenceType.Vm,
+                value=float(np.abs(voltage_vector[1])),
+                persist_after_native_init=True,
+            )
+
             if injection.device_type == DeviceType.GeneratorDevice and generator_count_same_bus <= 1:
                 preserve_generator_current_seed = False
             else:
@@ -6636,7 +6678,11 @@ class EmtProblemDae(EmtProblemTemplate):
                 phase_complex_power: complex = complex(phase_power[phase_index])
 
                 if abs(phase_voltage) > 1.0e-12:
-                    phase_current: complex = np.conj(phase_complex_power / phase_voltage)
+                    # PF3 stores S_A/B/C on the total three-phase Sbase while
+                    # phase currents use the conventional Ibase=Sbase/(sqrt(3)VLL).
+                    # Since each phase power is S3ph/3, restore the factor three.
+                    phase_current: complex = 3.0 * np.conj(
+                        phase_complex_power / phase_voltage)
                 else:
                     phase_current = 0.0 + 0.0j
 
@@ -6700,35 +6746,6 @@ class EmtProblemDae(EmtProblemTemplate):
             self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.P, value=p_total)
             self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.Q, value=q_total)
 
-            # The Thevenin generator templates reconstruct an internal balanced emf
-            # from the PF seed. Those internal variables are not externally mapped,
-            # so they must be preserved explicitly across the later native-init pass.
-            # Multi-generator buses and balanced-PF Thevenin slack sources need
-            # preserved internal seeds so the later native-init pass does not
-            # disturb the PF-consistent operating point.
-            if (
-                    injection.device_type == DeviceType.GeneratorDevice
-                    and (generator_count_same_bus > 1 or self.power_flow_results_3ph is None)
-                    and self._is_thevenin_generator_model(mdl=mdl)
-            ):
-                self._seed_thevenin_internal_emf_from_pf(
-                    injection=injection,
-                    mdl=mdl,
-                    phase_power=phase_power,
-                    voltage_vector=voltage_vector,
-                )
-            else:
-                pass
-
-            if injection.device_type == DeviceType.GeneratorDevice:
-                self._preseed_complete_generator_child_blocks(
-                    mdl=mdl,
-                    phase_power=phase_power,
-                    voltage_vector=voltage_vector,
-                )
-            else:
-                pass
-
             omega_base: float = 2.0 * np.pi * self.grid.fBase
             voltage_derivative_keys: List[VarPowerFlowReferenceType] = list([
                 VarPowerFlowReferenceType.d_v_N,
@@ -6748,260 +6765,6 @@ class EmtProblemDae(EmtProblemTemplate):
                 else:
                     pass
                 phase_index += 1
-
-    @staticmethod
-    def _is_thevenin_generator_model(mdl: Block) -> bool:
-        """
-        Return whether a generator model exposes Thevenin runtime EMF controls.
-        """
-        if "thevenin" in str(mdl.name).lower():
-            return True
-
-        for variable in mdl.event_dict.keys():
-            if variable.name.startswith("E_scale"):
-                return True
-            else:
-                pass
-
-        return False
-
-    def _seed_thevenin_internal_emf_from_pf(
-            self,
-            injection: Any,
-            mdl: Block,
-            phase_power: np.ndarray,
-            voltage_vector: np.ndarray,
-    ) -> None:
-        """
-        Preserve the PF-consistent internal emf initialization of Thevenin generators.
-
-        The Thevenin templates expose ``theta`` and ``e_A/e_B/e_C`` only as internal
-        symbolic variables. The generic native EMT initialization can overwrite those
-        exact explicit-init values with weaker guesses because they are not part of
-        the external PF mapping. This helper reconstructs the same balanced emf from
-        the already available PF seed and stores it as a post-native-init value.
-
-        The helper is intentionally no-op for non-Thevenin generator models because
-        the required internal variable names will simply be absent.
-
-        :param injection: Generator device under initialization.
-        :param mdl: Working EMT model of the generator.
-        :param phase_power: Complex power seed in NABC order.
-        :param voltage_vector: Complex bus-voltage seed in NABC order.
-        :return: None.
-        """
-        c_sqrt_2: float = float(np.sqrt(2.0))
-        phase_a: complex = complex(voltage_vector[1])
-        phase_b: complex = complex(voltage_vector[2])
-        phase_c: complex = complex(voltage_vector[3])
-        power_a: complex = complex(phase_power[1])
-        power_b: complex = complex(phase_power[2])
-        power_c: complex = complex(phase_power[3])
-        a_operator: complex = np.exp(1j * 2.0 * np.pi / 3.0)
-        current_a: complex
-        current_b: complex
-        current_c: complex
-
-        if abs(phase_a) > 1.0e-12:
-            current_a = np.conj(power_a / phase_a)
-        else:
-            current_a = 0.0 + 0.0j
-
-        if abs(phase_b) > 1.0e-12:
-            current_b = np.conj(power_b / phase_b)
-        else:
-            current_b = 0.0 + 0.0j
-
-        if abs(phase_c) > 1.0e-12:
-            current_c = np.conj(power_c / phase_c)
-        else:
-            current_c = 0.0 + 0.0j
-
-        # The positive-sequence phasors define the same operating point used by the
-        # explicit-init equations inside the Thevenin template.
-        voltage_positive_sequence: complex = (
-            phase_a + a_operator * phase_b + (a_operator * a_operator) * phase_c
-        ) / 3.0
-        current_positive_sequence: complex = (
-            current_a + a_operator * current_b + (a_operator * a_operator) * current_c
-        ) / 3.0
-        phi_v: float = float(np.angle(voltage_positive_sequence))
-        phi_i: float = float(np.angle(current_positive_sequence))
-        phi_rel_raw: float = float(phi_i - phi_v)
-        phi_rel: float = float(np.arctan2(np.sin(phi_rel_raw), np.cos(phi_rel_raw)))
-        voltage_peak: float = float(c_sqrt_2 * np.abs(voltage_positive_sequence))
-        current_peak: float = float(c_sqrt_2 * np.abs(current_positive_sequence))
-        resistance_s: float = float(injection.R1)
-        reactance_s: float = float(injection.X1)
-
-        # The internal emf is built in the local frame first and then rotated back
-        # to the absolute electrical angle used by the abc sinusoidal source.
-        e_re_rel: float = float(
-            voltage_peak
-            + resistance_s * current_peak * np.cos(phi_rel)
-            - reactance_s * current_peak * np.sin(phi_rel)
-        )
-        e_im_rel: float = float(
-            resistance_s * current_peak * np.sin(phi_rel)
-            + reactance_s * current_peak * np.cos(phi_rel)
-        )
-        theta_abs: float = float(phi_v + np.arctan2(e_im_rel, e_re_rel))
-        emf_peak: float = float(np.sqrt(e_re_rel * e_re_rel + e_im_rel * e_im_rel))
-        e_a_value: float = float(emf_peak * np.sin(theta_abs))
-        e_b_value: float = float(emf_peak * np.sin(theta_abs - 2.0 * np.pi / 3.0))
-        e_c_value: float = float(emf_peak * np.sin(theta_abs + 2.0 * np.pi / 3.0))
-
-        # The recent Thevenin refactor moved the internal emf reconstruction to
-        # algebraic equations driven by init-only runtime parameters. Explicit
-        # initialization resolves those parameters correctly, but the later
-        # event-group activation rebuilds the runtime-parameter vector from the
-        # model-owned ``event_dict`` definitions. Persisting the PF-derived
-        # positive-sequence values here keeps the first simulation step aligned
-        # with the exact steady-state source used by explicit initialization.
-        self.set_internal_runtime_if_exists(mdl=mdl, var_name="phi_v", value=phi_v)
-        self.set_internal_runtime_if_exists(mdl=mdl, var_name="phi", value=phi_rel)
-        self.set_internal_runtime_if_exists(mdl=mdl, var_name="Vpk", value=voltage_peak)
-        self.set_internal_runtime_if_exists(mdl=mdl, var_name="Ipk", value=current_peak)
-        self.set_external_param(mdl=mdl, key=VarPowerFlowReferenceType.phi_v, value=phi_v)
-        self.set_external_param(mdl=mdl, key=VarPowerFlowReferenceType.phi, value=phi_rel)
-        self.set_external_param(mdl=mdl, key=VarPowerFlowReferenceType.Vpk, value=voltage_peak)
-        self.set_external_param(mdl=mdl, key=VarPowerFlowReferenceType.Ipk, value=current_peak)
-
-        theta_internal_reference: str
-        e_a_internal_reference: str
-        e_b_internal_reference: str
-        e_c_internal_reference: str
-        theta_internal_reference, e_a_internal_reference, e_b_internal_reference, e_c_internal_reference = get_thevenin_internal_shared_references()
-        theta_var: Optional[Var] = _find_internal_var_by_shared_reference(mdl, theta_internal_reference)
-        e_a_var: Optional[Var] = _find_internal_var_by_shared_reference(mdl, e_a_internal_reference)
-        e_b_var: Optional[Var] = _find_internal_var_by_shared_reference(mdl, e_b_internal_reference)
-        e_c_var: Optional[Var] = _find_internal_var_by_shared_reference(mdl, e_c_internal_reference)
-        i_a_var: Optional[Var] = _get_external_mapping_var_if_present(mdl=mdl, key=VarPowerFlowReferenceType.i_A)
-        i_b_var: Optional[Var] = _get_external_mapping_var_if_present(mdl=mdl, key=VarPowerFlowReferenceType.i_B)
-        i_c_var: Optional[Var] = _get_external_mapping_var_if_present(mdl=mdl, key=VarPowerFlowReferenceType.i_C)
-        i_a_value: float = float(c_sqrt_2 * np.imag(current_a))
-        i_b_value: float = float(c_sqrt_2 * np.imag(current_b))
-        i_c_value: float = float(c_sqrt_2 * np.imag(current_c))
-        omega_base: float = 2.0 * np.pi * self.grid.fBase
-        d_i_a_value: float = float(omega_base * (e_a_value - resistance_s * i_a_value - c_sqrt_2 * np.imag(phase_a)) / reactance_s)
-        d_i_b_value: float = float(omega_base * (e_b_value - resistance_s * i_b_value - c_sqrt_2 * np.imag(phase_b)) / reactance_s)
-        d_i_c_value: float = float(omega_base * (e_c_value - resistance_s * i_c_value - c_sqrt_2 * np.imag(phase_c)) / reactance_s)
-
-        # The preserved guesses are written directly into both init dictionaries so
-        # the later native-init pass starts from the PF-consistent emf and the final
-        # post-native state keeps the same values.
-        if theta_var is not None:
-            self._temp_init_guess[theta_var.uid] = theta_abs
-            self._temp_post_init_guess[theta_var.uid] = theta_abs
-        else:
-            pass
-
-        if e_a_var is not None:
-            self._temp_init_guess[e_a_var.uid] = e_a_value
-            self._temp_post_init_guess[e_a_var.uid] = e_a_value
-        else:
-            pass
-
-        if e_b_var is not None:
-            self._temp_init_guess[e_b_var.uid] = e_b_value
-            self._temp_post_init_guess[e_b_var.uid] = e_b_value
-        else:
-            pass
-
-        if e_c_var is not None:
-            self._temp_init_guess[e_c_var.uid] = e_c_value
-            self._temp_post_init_guess[e_c_var.uid] = e_c_value
-        else:
-            pass
-
-        if i_a_var is not None:
-            self._temp_init_guess[i_a_var.uid] = i_a_value
-            self._temp_post_init_guess[i_a_var.uid] = i_a_value
-            if i_a_var.diff_var is not None:
-                self._temp_diff_init_guess[i_a_var.diff_var.uid] = d_i_a_value
-                self._temp_post_diff_init_guess[i_a_var.diff_var.uid] = d_i_a_value
-        else:
-            pass
-
-        if i_b_var is not None:
-            self._temp_init_guess[i_b_var.uid] = i_b_value
-            self._temp_post_init_guess[i_b_var.uid] = i_b_value
-            if i_b_var.diff_var is not None:
-                self._temp_diff_init_guess[i_b_var.diff_var.uid] = d_i_b_value
-                self._temp_post_diff_init_guess[i_b_var.diff_var.uid] = d_i_b_value
-        else:
-            pass
-
-        if i_c_var is not None:
-            self._temp_init_guess[i_c_var.uid] = i_c_value
-            self._temp_post_init_guess[i_c_var.uid] = i_c_value
-            if i_c_var.diff_var is not None:
-                self._temp_diff_init_guess[i_c_var.diff_var.uid] = d_i_c_value
-                self._temp_post_diff_init_guess[i_c_var.diff_var.uid] = d_i_c_value
-        else:
-            pass
-
-        if theta_var is not None and theta_var.diff_var is not None:
-            self._temp_diff_init_guess[theta_var.diff_var.uid] = omega_base
-            self._temp_post_diff_init_guess[theta_var.diff_var.uid] = omega_base
-        else:
-            pass
-
-    def _preseed_complete_generator_child_blocks(
-            self,
-            mdl: Block,
-            phase_power: np.ndarray,
-            voltage_vector: np.ndarray,
-    ) -> None:
-        """
-        Preseed sibling outputs in complete generator wrappers before explicit init.
-
-        :param mdl: Unified complete generator block.
-        :param phase_power: Complex power seed in NABC order.
-        :param voltage_vector: Complex voltage seed in NABC order.
-        :return: None.
-        """
-        phase_a: complex = complex(voltage_vector[1])
-        phase_b: complex = complex(voltage_vector[2])
-        phase_c: complex = complex(voltage_vector[3])
-        power_a: complex = complex(phase_power[1])
-        power_b: complex = complex(phase_power[2])
-        power_c: complex = complex(phase_power[3])
-        current_a: complex
-        current_b: complex
-        current_c: complex
-
-        if abs(phase_a) > 1.0e-12:
-            current_a = np.conj(power_a / phase_a)
-        else:
-            current_a = 0.0 + 0.0j
-        if abs(phase_b) > 1.0e-12:
-            current_b = np.conj(power_b / phase_b)
-        else:
-            current_b = 0.0 + 0.0j
-        if abs(phase_c) > 1.0e-12:
-            current_c = np.conj(power_c / phase_c)
-        else:
-            current_c = 0.0 + 0.0j
-
-        a_operator: complex = np.exp(1j * 2.0 * np.pi / 3.0)
-        voltage_positive_sequence: complex = (phase_a + a_operator * phase_b + (a_operator * a_operator) * phase_c) / 3.0
-        current_positive_sequence: complex = (current_a + a_operator * current_b + (a_operator * a_operator) * current_c) / 3.0
-        vm_value: float = float(np.abs(voltage_positive_sequence))
-        irpu_value: float = float(np.sqrt(2.0) * np.abs(current_positive_sequence))
-        p_total: float = float(np.real(np.sum(phase_power)))
-
-        self.set_internal_init_if_exists(mdl, "V_pss", 0.0)
-        self.set_internal_runtime_if_exists(mdl, "V_pss", 0.0)
-        self.set_internal_init_if_exists(mdl, "Vf", irpu_value)
-        self.set_internal_runtime_if_exists(mdl, "Vf", irpu_value)
-        self.set_internal_init_if_exists(mdl, "Vm", vm_value)
-        self.set_internal_runtime_if_exists(mdl, "UsRefPu", vm_value)
-        self.set_internal_init_if_exists(mdl, "Tm", p_total)
-        self.set_internal_runtime_if_exists(mdl, "Pref", p_total)
-
-
-
 
     def _try_set_bus_pf_init(self, bus: Bus,
                              mdl: Block,
@@ -7154,331 +6917,6 @@ class EmtProblemDae(EmtProblemTemplate):
 
                 self.set_init_guess_and_preserve_post_init(mdl, VarPowerFlowReferenceType.v_C, v_C)
                 self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_C, d_v_C)
-
-    def _repair_balanced_zip_load_state_if_needed(self, mdl: Block) -> None:
-        """
-        Backfill finite balanced ZIP-load states when explicit init leaves ``nan`` values.
-
-        :param mdl: ZIP load EMT model block.
-        :return: None.
-        """
-        if "zip_load_emt" in str(mdl.name).lower():
-            pass
-        else:
-            return
-
-        omega_value: float = 2.0 * np.pi * self.grid.fBase
-        eps_value: float = 1.0e-12
-        v0_value: float = float(np.sqrt(2.0))
-        a1_value: float = 1.0
-        a2_value: float = 0.0
-        a3_value: float = 0.0
-        a4_value: float = 1.0
-        a5_value: float = 0.0
-        a6_value: float = 0.0
-
-        for runtime_name, target_name in [("V0", "v0"), ("eps", "eps"), ("a1", "a1"), ("a2", "a2"), ("a3", "a3"), ("a4", "a4"), ("a5", "a5"), ("a6", "a6")]:
-            runtime_var: Optional[Var] = _find_internal_var_for_init(mdl, runtime_name)
-            if runtime_var is None:
-                pass
-            else:
-                runtime_idx: Optional[int] = self.uid2idx_event_params.get(runtime_var.uid, None)
-                if runtime_idx is None:
-                    pass
-                else:
-                    runtime_value: float = float(self.event_params_values[runtime_idx])
-                    if target_name == "v0":
-                        v0_value = runtime_value
-                    elif target_name == "eps":
-                        eps_value = runtime_value
-                    elif target_name == "a1":
-                        a1_value = runtime_value
-                    elif target_name == "a2":
-                        a2_value = runtime_value
-                    elif target_name == "a3":
-                        a3_value = runtime_value
-                    elif target_name == "a4":
-                        a4_value = runtime_value
-                    elif target_name == "a5":
-                        a5_value = runtime_value
-                    else:
-                        a6_value = runtime_value
-
-        phase_label: str
-
-        for phase_label in ("A", "B", "C"):
-
-            voltage_reference: VarPowerFlowReferenceType
-            voltage_derivative_reference: VarPowerFlowReferenceType
-            current_reference: VarPowerFlowReferenceType
-            p0_reference: ParamPowerFlowReferenceType
-            q0_reference: ParamPowerFlowReferenceType
-
-            # Select explicitly the power-flow references associated with each phase.
-            if phase_label == "A":
-                voltage_reference = VarPowerFlowReferenceType.v_A
-                voltage_derivative_reference = VarPowerFlowReferenceType.d_v_A
-                current_reference = VarPowerFlowReferenceType.i_A
-                p0_reference = ParamPowerFlowReferenceType.Pl0_A
-                q0_reference = ParamPowerFlowReferenceType.Ql0_A
-            elif phase_label == "B":
-                voltage_reference = VarPowerFlowReferenceType.v_B
-                voltage_derivative_reference = VarPowerFlowReferenceType.d_v_B
-                current_reference = VarPowerFlowReferenceType.i_B
-                p0_reference = ParamPowerFlowReferenceType.Pl0_B
-                q0_reference = ParamPowerFlowReferenceType.Ql0_B
-            else:
-                voltage_reference = VarPowerFlowReferenceType.v_C
-                voltage_derivative_reference = VarPowerFlowReferenceType.d_v_C
-                current_reference = VarPowerFlowReferenceType.i_C
-                p0_reference = ParamPowerFlowReferenceType.Pl0_C
-                q0_reference = ParamPowerFlowReferenceType.Ql0_C
-
-            # Retrieve the external variables mapped to the corresponding power-flow references.
-            voltage_var: Optional[Any] = _get_external_mapping_var_if_present(
-                mdl,
-                voltage_reference,
-            )
-            voltage_derivative_var: Optional[Any] = _get_external_mapping_var_if_present(
-                mdl,
-                voltage_derivative_reference,
-            )
-            current_var: Optional[Any] = _get_external_mapping_var_if_present(
-                mdl,
-                current_reference,
-            )
-
-            # Retrieve the internal variables required by the initialization equations.
-            u_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"u_{phase_label}",
-            )
-            q_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"q_{phase_label}",
-            )
-            v2_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"V{phase_label}2",
-            )
-            vm_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"Vm{phase_label}",
-            )
-            ratio_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"r{phase_label}",
-            )
-            p_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"P_{phase_label}",
-            )
-            q_load_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"Q_{phase_label}",
-            )
-            d_u_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"d_u_{phase_label}",
-            )
-            d_q_var: Optional[Var] = _find_internal_var_for_init(
-                mdl,
-                f"d_q_{phase_label}",
-            )
-
-            # Retrieve the phase active and reactive power parameters from the API mapping.
-            # The two calls are intentionally kept separate to preserve the original behavior.
-            p0_var: Optional[Var] = _get_api_obj_mapping_local(
-                self,
-                mdl,
-            ).get(
-                p0_reference,
-                None,
-            )
-            q0_var: Optional[Var] = _get_api_obj_mapping_local(
-                self,
-                mdl,
-            ).get(
-                q0_reference,
-                None,
-            )
-
-            # Only initialize the phase when every variable required by the model is available.
-            if (
-                    voltage_var is not None
-                    and voltage_derivative_var is not None
-                    and current_var is not None
-                    and u_var is not None
-                    and q_var is not None
-                    and v2_var is not None
-                    and vm_var is not None
-                    and ratio_var is not None
-                    and p_var is not None
-                    and q_load_var is not None
-                    and d_u_var is not None
-                    and d_q_var is not None
-                    and p0_var is not None
-                    and q0_var is not None
-            ):
-                # Retrieve the network and power-flow values required to derive
-                # the initialization of the internal model variables.
-                v_value: Optional[float] = self.init_guess.get(
-                    voltage_var.uid,
-                    None,
-                )
-                d_v_value: Optional[float] = self._temp_init_guess.get(
-                    voltage_derivative_var.uid,
-                    None,
-                )
-                p0_value: Optional[float] = self._temp_init_guess.get(
-                    p0_var.uid,
-                    None,
-                )
-                q0_value: Optional[float] = self._temp_init_guess.get(
-                    q0_var.uid,
-                    None,
-                )
-
-                # Only evaluate the initialization equations when all required values exist.
-                if (
-                        v_value is not None
-                        and d_v_value is not None
-                        and p0_value is not None
-                        and q0_value is not None
-                ):
-                    # Recover the internal orthogonal voltage components from the
-                    # instantaneous voltage and its derivative.
-                    u_value: float = float(v_value)
-                    q_value: float = float(-d_v_value / omega_value)
-
-                    # Compute squared voltage magnitude and regularized voltage magnitude.
-                    v2_value: float = float(
-                        u_value * u_value
-                        + q_value * q_value
-                    )
-                    vm_value: float = float(
-                        np.sqrt(
-                            max(
-                                v2_value + eps_value,
-                                0.0,
-                            )
-                        )
-                    )
-
-                    # Normalize the voltage magnitude with respect to the reference voltage.
-                    ratio_value: float = float(
-                        vm_value
-                        / max(
-                            v0_value,
-                            1.0e-12,
-                        )
-                    )
-
-                    # Initialize active power using the voltage-dependent load characteristic.
-                    p_value: float = float(
-                        -(
-                                p0_value
-                                * (
-                                        a1_value * ratio_value * ratio_value
-                                        + a2_value * ratio_value
-                                        + a3_value
-                                )
-                        )
-                    )
-
-                    # Initialize reactive power using the voltage-dependent load characteristic.
-                    q_load_value: float = float(
-                        -(
-                                q0_value
-                                * (
-                                        a4_value * ratio_value * ratio_value
-                                        + a5_value * ratio_value
-                                        + a6_value
-                                )
-                        )
-                    )
-
-                    # Recover the phase current from the initialized voltage and load powers.
-                    i_value: float = float(
-                        -(
-                                2.0
-                                * (
-                                        u_value * (-p_value)
-                                        + q_value * (-q_load_value)
-                                )
-                                / max(
-                            v2_value + eps_value,
-                            1.0e-12,
-                        )
-                        )
-                    )
-
-                    # Initialize the derivatives associated with the orthogonal voltage states.
-                    d_u_value: float = float(d_v_value)
-                    d_q_value: float = float(
-                        omega_value * u_value
-                    )
-
-                    target_var: Any
-                    target_value: float
-
-                    # Initialize algebraic variables only when no finite value has already
-                    # been provided by a previous initialization stage.
-                    for target_var, target_value in (
-                            (u_var, u_value),
-                            (q_var, q_value),
-                            (v2_var, v2_value),
-                            (vm_var, vm_value),
-                            (ratio_var, ratio_value),
-                            (p_var, p_value),
-                            (q_load_var, q_load_value),
-                            (current_var, i_value),
-                    ):
-                        existing_value: Optional[float] = self.init_guess.get(
-                            target_var.uid,
-                            None,
-                        )
-
-                        if (
-                                existing_value is None
-                                or not np.isfinite(existing_value)
-                        ):
-                            self.init_guess[target_var.uid] = float(
-                                target_value
-                            )
-                            self._temp_post_init_guess[target_var.uid] = float(
-                                target_value
-                            )
-                        else:
-                            pass
-
-                    # Initialize differential variables only when no finite derivative
-                    # initialization has already been provided.
-                    for target_var, target_value in (
-                            (d_u_var, d_u_value),
-                            (d_q_var, d_q_value),
-                    ):
-                        existing_diff_value: Optional[float] = self.diff_init_guess.get(
-                            target_var.uid,
-                            None,
-                        )
-
-                        if (
-                                existing_diff_value is None
-                                or not np.isfinite(existing_diff_value)
-                        ):
-                            self.diff_init_guess[target_var.uid] = float(
-                                target_value
-                            )
-                            self._temp_post_diff_init_guess[target_var.uid] = float(
-                                target_value
-                            )
-                        else:
-                            pass
-                else:
-                    pass
-            else:
-                pass
 
     def _get_vsc_terminal_indices(self,
                                   f_bus_idx: int,
@@ -7999,19 +7437,23 @@ class EmtProblemDae(EmtProblemTemplate):
                     persist_after_native_init=True,
                 )
 
-            self._seed_switched_converter_internal_init_balanced(
-                mdl=mdl,
-                VA=complex(VA),
-                VB=complex(VB),
-                VC=complex(VC),
-                IA=IA,
-                IB=IB,
-                IC=IC,
-                v_dc=v_dc,
-            )
-
         self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.P, value=float(np.real(S_ac_total)))
         self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.Q, value=float(np.imag(S_ac_total)))
+        # Voltage-controlled converters still need the solved active-power transfer
+        # as their controller feedforward operating point.  The API object's P0 is
+        # commonly zero in Vm_dc mode, which otherwise initializes i_d/P_f at zero
+        # while the DC load is already drawing the full PF power.
+        if _find_internal_vars_by_name(mdl, "P_loss0"):
+            self.set_internal_runtime_if_exists(
+                mdl=mdl,
+                var_name="P0",
+                value=float(-np.real(S_dc_total) * sbase),
+            )
+            self.set_internal_runtime_if_exists(mdl=mdl, var_name="sbase", value=float(sbase))
+            vsc_device = self.grid.vsc_devices[vsc_index]
+            self.set_internal_runtime_if_exists(mdl=mdl, var_name="P_loss0", value=float(vsc_device.alpha1))
+            self.set_internal_runtime_if_exists(mdl=mdl, var_name="P_loss_i1", value=float(vsc_device.alpha2))
+            self.set_internal_runtime_if_exists(mdl=mdl, var_name="P_loss_i2", value=float(vsc_device.alpha3))
 
         S_from = S_ac_total if ac_is_from else S_dc_total
         S_to = S_dc_total if ac_is_from else S_ac_total
@@ -8225,17 +7667,6 @@ class EmtProblemDae(EmtProblemTemplate):
                 persist_after_native_init=True,
             )
 
-        self._seed_switched_converter_internal_init_balanced(
-            mdl=mdl,
-            VA=complex(VA),
-            VB=complex(VB),
-            VC=complex(VC),
-            IA=IA,
-            IB=IB,
-            IC=IC,
-            v_dc=v_dc,
-        )
-
         if _has_vsc_positive_sequence_pf_contract(mdl):
             pe_value_balanced: float = float(np.real(-S_ac_total))
             qe_value_balanced: float = float(np.imag(-S_ac_total))
@@ -8259,6 +7690,17 @@ class EmtProblemDae(EmtProblemTemplate):
 
         self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.P, value=float(np.real(S_ac_total)))
         self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.Q, value=float(np.imag(S_ac_total)))
+        if _find_internal_vars_by_name(mdl, "P_loss0"):
+            self.set_internal_runtime_if_exists(
+                mdl=mdl,
+                var_name="P0",
+                value=float(-np.real(S_dc_total) * sbase),
+            )
+            self.set_internal_runtime_if_exists(mdl=mdl, var_name="sbase", value=float(sbase))
+            vsc_device = self.grid.vsc_devices[vsc_index]
+            self.set_internal_runtime_if_exists(mdl=mdl, var_name="P_loss0", value=float(vsc_device.alpha1))
+            self.set_internal_runtime_if_exists(mdl=mdl, var_name="P_loss_i1", value=float(vsc_device.alpha2))
+            self.set_internal_runtime_if_exists(mdl=mdl, var_name="P_loss_i2", value=float(vsc_device.alpha3))
 
         S_from = S_ac_total if ac_is_from else S_dc_total
         S_to = S_dc_total if ac_is_from else S_ac_total
@@ -8628,7 +8070,7 @@ class EmtProblemDae(EmtProblemTemplate):
                         i_f = 0.0 + 0.0j
                     else:
                         sf_ph = sf_ph_value / sbase
-                        i_f = np.conj(sf_ph / vf_ph)
+                        i_f = 3.0 * np.conj(sf_ph / vf_ph)
 
                 if st_array is None or voltage_to_array is None:
                     i_t = 0.0 + 0.0j
@@ -8639,7 +8081,7 @@ class EmtProblemDae(EmtProblemTemplate):
                         i_t = 0.0 + 0.0j
                     else:
                         st_ph = st_ph_value / sbase
-                        i_t = np.conj(st_ph / vt_ph)
+                        i_t = 3.0 * np.conj(st_ph / vt_ph)
 
                 i_f0: float = np.sqrt(2.0) * np.imag(i_f)
                 i_t0: float = np.sqrt(2.0) * np.imag(i_t)
@@ -8956,7 +8398,7 @@ class EmtProblemDae(EmtProblemTemplate):
                     if abs(vt_ph) <= 1e-12:
                         i_t = 0.0 + 0.0j
                     else:
-                        i_t = np.conj(st_phase_total / vt_ph)
+                        i_t = 3.0 * np.conj(st_phase_total / vt_ph)
                 else:
                     if abs(z_series) > 1.0e-15:
                         i_ser = (vf_ph - vt_ph) / z_series
@@ -8969,12 +8411,12 @@ class EmtProblemDae(EmtProblemTemplate):
                         if abs(vf_ph) <= 1e-12:
                             i_f = 0.0 + 0.0j
                         else:
-                            i_f = np.conj(sf_phase_total / vf_ph)
+                            i_f = 3.0 * np.conj(sf_phase_total / vf_ph)
 
                         if abs(vt_ph) <= 1e-12:
                             i_t = 0.0 + 0.0j
                         else:
-                            i_t = np.conj(st_phase_total / vt_ph)
+                            i_t = 3.0 * np.conj(st_phase_total / vt_ph)
 
                 i_f0: float = np.sqrt(2.0) * np.imag(i_f)
                 i_t0: float = np.sqrt(2.0) * np.imag(i_t)
@@ -9631,6 +9073,11 @@ class EmtProblemDae(EmtProblemTemplate):
             pass
         else:
             if internal_var in owner_block.event_dict:
+                # Keep the hierarchical source authoritative.  Construction later
+                # refreshes the flattened runtime equations from this dictionary;
+                # updating only the temporary flat buffer would silently restore
+                # the template default before explicit initialization.
+                owner_block.event_dict[internal_var] = Const(float(value))
                 runtime_source_parameters: Any = self.__dict__.get("_runtime_all_parameters_source", None)
                 runtime_source_equations: Any = self.__dict__.get("_runtime_all_eqs_source", None)
                 source_index: int = 0
@@ -9731,341 +9178,12 @@ class EmtProblemDae(EmtProblemTemplate):
 
         self._set_runtime_parameter_value_by_uid(uid=uid, value=value_float)
 
-    def _seed_switched_converter_internal_init_balanced(
-            self,
-            mdl: Block,
-            VA: complex,
-            VB: complex,
-            VC: complex,
-            IA: complex,
-            IB: complex,
-            IC: complex,
-            v_dc: float,
-    ) -> None:
-        """
-        Seed the internal variables of the switched converter from balanced PF data.
-
-        The switched converter contains additional bridge variables that are not
-        part of the external mapping. Seeding them from the PF operating point
-        avoids a poor first Newton guess where all bridge voltages start at zero.
-
-        :param mdl: Root converter block.
-        :param VA: Phase-A bus voltage phasor.
-        :param VB: Phase-B bus voltage phasor.
-        :param VC: Phase-C bus voltage phasor.
-        :param IA: Phase-A current phasor.
-        :param IB: Phase-B current phasor.
-        :param IC: Phase-C current phasor.
-        :param v_dc: DC-bus magnitude in p.u.
-        :return: None.
-        """
-        model_name: str = str(mdl.name)
-        a_operator: complex = np.exp(1j * 2.0 * np.pi / 3.0)
-        V1: complex = (VA + a_operator * VB + (a_operator * a_operator) * VC) / 3.0
-        phi_v: float = float(np.angle(V1))
-        shift: float = 2.0 * np.pi / 3.0
-        theta_b: float = phi_v - shift
-        theta_c: float = phi_v + shift
-        c13: float = 1.0 / 3.0
-        c23: float = 2.0 / 3.0
-        omega_base: float = 2.0 * np.pi * self.grid.fBase
-        i_A0: float = float(np.sqrt(2.0) * np.imag(IA))
-        i_B0: float = float(np.sqrt(2.0) * np.imag(IB))
-        i_C0: float = float(np.sqrt(2.0) * np.imag(IC))
-        i_d0: float = c23 * (np.sin(phi_v) * i_A0 + np.sin(theta_b) * i_B0 + np.sin(theta_c) * i_C0)
-        i_q0: float = -c23 * (np.cos(phi_v) * i_A0 + np.cos(theta_b) * i_B0 + np.cos(theta_c) * i_C0)
-        i_00: float = c13 * (i_A0 + i_B0 + i_C0)
-        Vpk: float = float(np.sqrt(2.0) * np.abs(V1))
-        R_eq: float = _get_internal_runtime_default_local(self, mdl, f"R_eq_{model_name}", 0.02)
-        L_eq: float = _get_internal_runtime_default_local(self, mdl, f"L_eq_{model_name}", 0.08)
-        m_max: float = _get_internal_runtime_default_local(self, mdl, f"m_max_{model_name}", 0.95)
-        vdc_floor: float = _get_internal_runtime_default_local(self, mdl, f"vdc_floor_{model_name}", 0.05)
-        sbase0: float = _get_internal_runtime_default_local(self, mdl, f"sbase_{model_name}", self.grid.Sbase)
-        control1_code: float = _get_internal_runtime_default_local(self, mdl, f"control1_{model_name}", 0.0)
-        control2_code: float = _get_internal_runtime_default_local(self, mdl, f"control2_{model_name}", 0.0)
-        control1_val0: float = _get_internal_runtime_default_local(self, mdl, f"control1_val_{model_name}", 0.0)
-        control2_val0: float = _get_internal_runtime_default_local(self, mdl, f"control2_val_{model_name}", 0.0)
-        i_kp0: float = _get_internal_runtime_default_local(self, mdl, f"i_kp_{model_name}", 0.0)
-        vdc_kp0: float = _get_internal_runtime_default_local(self, mdl, f"vdc_kp_{model_name}", 0.0)
-        q_kp0: float = _get_internal_runtime_default_local(self, mdl, f"q_kp_{model_name}", 0.0)
-        eps: float = 1.0e-10
-        v_dc_eff: float = max(float(v_dc), vdc_floor)
-        P_meas0_pu: float = float(np.real(VA * np.conj(IA) + VB * np.conj(IB) + VC * np.conj(IC)))
-        Q_meas0_pu: float = float(np.imag(VA * np.conj(IA) + VB * np.conj(IB) + VC * np.conj(IC)))
-        P_meas0: float = P_meas0_pu * sbase0
-        i_dc0_conv: float = -P_meas0_pu / max(v_dc_eff, eps)
-        configured_p0_value: float = _get_internal_runtime_default_local(self, mdl, f"P0_{model_name}", P_meas0)
-        P_ref0: float
-        Q_ref0: float
-        Vdc_ref0: float
-        self.set_internal_runtime_if_exists(mdl, f"P0_{model_name}", configured_p0_value)
-        P_ref0, Q_ref0, Vdc_ref0 = _resolve_converter_control_reference_values(
-            control1_code=control1_code,
-            control2_code=control2_code,
-            control1_val=control1_val0,
-            control2_val=control2_val0,
-            p0_value=configured_p0_value,
-        )
-        P_ref_pu0: float = P_ref0 / max(sbase0, eps)
-        Q_ref_pu0: float = Q_ref0 / max(sbase0, eps)
-        i_d_ref0: float = (2.0 / 3.0) * P_ref_pu0 / max(Vpk, eps)
-        i_q_ref0: float = (2.0 / 3.0) * Q_ref_pu0 / max(Vpk, eps)
-        i_0_ref0: float = 0.0
-
-        P_f0: float = P_meas0_pu
-        Q_f0: float = Q_meas0_pu
-        v_cmd_d0: float = Vpk - R_eq * i_d0 + L_eq * i_q0
-        v_cmd_q0: float = -R_eq * i_q0 - L_eq * i_d0
-        v_cmd_00: float = -R_eq * i_00
-        k_v_conv0: float = float(np.sqrt(v_cmd_d0 * v_cmd_d0 + v_cmd_q0 * v_cmd_q0 + eps) / max(m_max * max(Vdc_ref0, vdc_floor), eps))
-        v_ref_a0: float = v_cmd_d0 * np.sin(phi_v) - v_cmd_q0 * np.cos(phi_v) + v_cmd_00
-        v_ref_b0: float = v_cmd_d0 * np.sin(theta_b) - v_cmd_q0 * np.cos(theta_b) + v_cmd_00
-        v_ref_c0: float = v_cmd_d0 * np.sin(theta_c) - v_cmd_q0 * np.cos(theta_c) + v_cmd_00
-        v_mod_scale0: float = max(k_v_conv0 * v_dc_eff, eps)
-        m_a_u0: float = v_ref_a0 / v_mod_scale0
-        m_b_u0: float = v_ref_b0 / v_mod_scale0
-        m_c_u0: float = v_ref_c0 / v_mod_scale0
-        m_a0: float = float(np.clip(m_a_u0, -m_max, m_max))
-        m_b0: float = float(np.clip(m_b_u0, -m_max, m_max))
-        m_c0: float = float(np.clip(m_c_u0, -m_max, m_max))
-        desired_v_abc: np.ndarray = np.array([v_ref_a0, v_ref_b0, v_ref_c0], dtype=float)
-        best_error: Optional[float] = None
-        best_state: np.ndarray = np.zeros(3, dtype=float)
-        state_index_a: int = 0
-        state_index_b: int
-        state_index_c: int
-
-        # The bridge starts from the closest discrete switching state to the desired phase-voltage vector.
-        while state_index_a < 2:
-            state_index_b = 0
-            while state_index_b < 2:
-                state_index_c = 0
-                while state_index_c < 2:
-                    candidate_gate: np.ndarray = np.array([float(state_index_a), float(state_index_b), float(state_index_c)], dtype=float)
-                    candidate_leg: np.ndarray = (2.0 * candidate_gate - 1.0) * 0.5 * v_dc_eff
-                    candidate_common_mode: float = float(np.sum(candidate_leg) / 3.0)
-                    candidate_conv: np.ndarray = candidate_leg - candidate_common_mode
-                    candidate_error: float = float(np.sum((candidate_conv - desired_v_abc) ** 2))
-
-                    if best_error is None or candidate_error < best_error:
-                        best_error = candidate_error
-                        best_state = candidate_gate.copy()
-                    else:
-                        pass
-
-                    state_index_c += 1
-                state_index_b += 1
-            state_index_a += 1
-
-        gate_a0 = float(best_state[0])
-        gate_b0 = float(best_state[1])
-        gate_c0 = float(best_state[2])
-        v_leg_a0: float = (2.0 * gate_a0 - 1.0) * 0.5 * v_dc_eff
-        v_leg_b0: float = (2.0 * gate_b0 - 1.0) * 0.5 * v_dc_eff
-        v_leg_c0: float = (2.0 * gate_c0 - 1.0) * 0.5 * v_dc_eff
-        v_common_mode0: float = (v_leg_a0 + v_leg_b0 + v_leg_c0) / 3.0
-        v_conv_a0: float = v_leg_a0 - v_common_mode0
-        v_conv_b0: float = v_leg_b0 - v_common_mode0
-        v_conv_c0: float = v_leg_c0 - v_common_mode0
-        v_conv_d0: float = c23 * (np.sin(phi_v) * v_conv_a0 + np.sin(theta_b) * v_conv_b0 + np.sin(theta_c) * v_conv_c0)
-        v_conv_q0: float = -c23 * (np.cos(phi_v) * v_conv_a0 + np.cos(theta_b) * v_conv_b0 + np.cos(theta_c) * v_conv_c0)
-        v_conv_00: float = c13 * (v_conv_a0 + v_conv_b0 + v_conv_c0)
-        switching_enabled0: float = _get_internal_mode_default_local(self, mdl, f"switching_enabled_mode_{model_name}", 0.0)
-        v_conv_a_applied0: float = (1.0 - switching_enabled0) * v_ref_a0 + switching_enabled0 * v_conv_a0
-        v_conv_b_applied0: float = (1.0 - switching_enabled0) * v_ref_b0 + switching_enabled0 * v_conv_b0
-        v_conv_c_applied0: float = (1.0 - switching_enabled0) * v_ref_c0 + switching_enabled0 * v_conv_c0
-        v_conv_d_applied0: float = (1.0 - switching_enabled0) * v_cmd_d0 + switching_enabled0 * v_conv_d0
-        v_conv_q_applied0: float = (1.0 - switching_enabled0) * v_cmd_q0 + switching_enabled0 * v_conv_q0
-        v_conv_0_applied0: float = (1.0 - switching_enabled0) * v_cmd_00 + switching_enabled0 * v_conv_00
-        v_A0: float = float(np.sqrt(2.0) * np.imag(VA))
-        v_B0: float = float(np.sqrt(2.0) * np.imag(VB))
-        v_C0: float = float(np.sqrt(2.0) * np.imag(VC))
-        i_A0_plant: float = i_A0
-        i_B0_plant: float = i_B0
-        i_C0_plant: float = i_C0
-        i_d0_plant: float = i_d0
-        i_q0_plant: float = i_q0
-        i_00_plant: float = i_00
-        P_loss00: float = _get_internal_runtime_default_local(self, mdl, f"P_loss0_{model_name}", 0.0)
-        k_v_conv_nom0: float = Vpk / max(m_max * max(Vdc_ref0, vdc_floor), eps)
-        i_d_ff0: float = (2.0 / 3.0) * ((P_ref0 + P_loss00) / max(sbase0, eps)) / max(Vpk, eps)
-        i_q_ff0: float = (2.0 / 3.0) * (Q_ref0 / max(sbase0, eps)) / max(Vpk, eps)
-        xi_vdc0: float = i_d_ref0 - i_d_ff0 - vdc_kp0 * (Vdc_ref0 - v_dc)
-        xi_q0: float = i_q_ref0 - i_q_ff0 - q_kp0 * ((Q_ref0 / max(sbase0, eps)) - (Q_f0 / max(sbase0, eps)))
-        v_pi_d_u0: float = (Vpk - R_eq * i_d0_plant + L_eq * i_q0_plant) - v_cmd_d0
-        v_pi_q_u0: float = (0.0 - R_eq * i_q0_plant - L_eq * i_d0_plant) - v_cmd_q0
-        v_pi_00_u0: float = (0.0 - R_eq * i_00_plant) - v_cmd_00
-        xi_id0: float = v_pi_d_u0 - i_kp0 * (i_d_ref0 - i_d0_plant)
-        xi_iq0: float = v_pi_q_u0 - i_kp0 * (i_q_ref0 - i_q0_plant)
-        xi_i00: float = v_pi_00_u0 - i_kp0 * (i_0_ref0 - i_00_plant)
-        v_lim0: float = k_v_conv0 * m_max * v_dc_eff
-        d_i_d0: float = omega_base * (Vpk - v_conv_d_applied0 - R_eq * i_d0 + L_eq * i_q0) / max(L_eq, eps)
-        d_i_q0: float = omega_base * (0.0 - v_conv_q_applied0 - R_eq * i_q0 - L_eq * i_d0) / max(L_eq, eps)
-        d_i_00: float = omega_base * (0.0 - v_conv_0_applied0 - R_eq * i_00) / max(L_eq, eps)
-        d_i_A0_plant: float = omega_base * (v_conv_a_applied0 - v_A0 - R_eq * i_A0_plant) / max(L_eq, eps)
-        d_i_B0_plant: float = omega_base * (v_conv_b_applied0 - v_B0 - R_eq * i_B0_plant) / max(L_eq, eps)
-        d_i_C0_plant: float = omega_base * (v_conv_c_applied0 - v_C0 - R_eq * i_C0_plant) / max(L_eq, eps)
-        d_xi_id0: float = _get_internal_runtime_default_local(self, mdl, f"i_ki_{model_name}", 0.0) * ((i_d_ref0 - i_d0_plant) + _get_internal_runtime_default_local(self, mdl, f"aw_gain_{model_name}", 0.0) * (v_cmd_d0 - v_cmd_d0))
-        d_xi_iq0: float = _get_internal_runtime_default_local(self, mdl, f"i_ki_{model_name}", 0.0) * ((i_q_ref0 - i_q0_plant) + _get_internal_runtime_default_local(self, mdl, f"aw_gain_{model_name}", 0.0) * (v_cmd_q0 - v_cmd_q0))
-        d_xi_i00: float = _get_internal_runtime_default_local(self, mdl, f"i_ki_{model_name}", 0.0) * ((i_0_ref0 - i_00_plant) + _get_internal_runtime_default_local(self, mdl, f"aw_gain_{model_name}", 0.0) * (v_cmd_00 - v_cmd_00))
-
-        # The switched bridge and its carrier logic need a coherent first operating point before the first accepted EMT step.
-        self.set_internal_init_if_exists(mdl, "v_dc", v_dc)
-        self.set_internal_init_if_exists(mdl, "i_dc", i_dc0_conv)
-        self.set_internal_init_if_exists(mdl, "i_dc_conv", i_dc0_conv)
-        self.set_internal_init_if_exists(mdl, "P_ref", P_ref0)
-        self.set_internal_init_if_exists(mdl, "Q_ref", Q_ref0)
-        self.set_internal_init_if_exists(mdl, "Vdc_ref", Vdc_ref0)
-        self.set_internal_init_if_exists(mdl, "P", P_meas0_pu)
-        self.set_internal_init_if_exists(mdl, "Q", Q_meas0_pu)
-        if _find_internal_var_for_init(mdl, "gate_a") is None:
-            pass
-        else:
-            # Positive-sequence GFM templates already receive PF-consistent ``Pe``
-            # and ``Qe`` seeds through the dedicated VSC operating-point path.
-            # Overwriting them here with the instantaneous measured values can
-            # collapse the intended exported power back to numerical zero.
-            if _has_vsc_positive_sequence_pf_contract(mdl):
-                pass
-            else:
-                self.set_internal_init_if_exists(mdl, "Pe", P_meas0_pu)
-                self.set_internal_init_if_exists(mdl, "Qe", Q_meas0_pu)
-        self.set_internal_init_if_exists(mdl, "P_f", P_f0)
-        self.set_internal_init_if_exists(mdl, "Q_f", Q_f0)
-        self.set_internal_init_if_exists(mdl, "i_d_ref", i_d_ref0)
-        self.set_internal_init_if_exists(mdl, "i_q_ref", i_q_ref0)
-        self.set_internal_init_if_exists(mdl, "i_0_ref", i_0_ref0)
-        self.set_internal_init_if_exists(mdl, "i_d_ref_u", i_d_ref0)
-        self.set_internal_init_if_exists(mdl, "i_q_ref_u", i_q_ref0)
-        self.set_internal_init_if_exists(mdl, "i_0_ref_u", i_0_ref0)
-        self.set_internal_init_if_exists(mdl, "i_d_ff", i_d_ff0)
-        self.set_internal_init_if_exists(mdl, "i_q_ff", i_q_ff0)
-        self.set_internal_init_if_exists(mdl, "v_mag", Vpk)
-        self.set_internal_init_if_exists(mdl, "k_v_conv_nom", k_v_conv_nom0)
-        self.set_internal_init_if_exists(mdl, "xi_vdc", xi_vdc0)
-        self.set_internal_init_if_exists(mdl, "xi_q", xi_q0)
-        self.set_internal_init_if_exists(mdl, "v_pi_d_u", v_pi_d_u0)
-        self.set_internal_init_if_exists(mdl, "v_pi_q_u", v_pi_q_u0)
-        self.set_internal_init_if_exists(mdl, "v_pi_0_u", v_pi_00_u0)
-        self.set_internal_init_if_exists(mdl, "v_cmd_d_u", v_cmd_d0)
-        self.set_internal_init_if_exists(mdl, "v_cmd_q_u", v_cmd_q0)
-        self.set_internal_init_if_exists(mdl, "v_cmd_0_u", v_cmd_00)
-        self.set_internal_init_if_exists(mdl, "v_lim", v_lim0)
-        self.set_internal_init_if_exists(mdl, "i_d", i_d0)
-        self.set_internal_init_if_exists(mdl, "i_q", i_q0)
-        self.set_internal_init_if_exists(mdl, "i_0", i_00)
-        self.set_internal_init_if_exists(mdl, "v_d", Vpk)
-        self.set_internal_init_if_exists(mdl, "v_q", 0.0)
-        self.set_internal_init_if_exists(mdl, "v_0", 0.0)
-        self.set_internal_init_if_exists(mdl, "v_cmd_d", v_cmd_d0)
-        self.set_internal_init_if_exists(mdl, "v_cmd_q", v_cmd_q0)
-        self.set_internal_init_if_exists(mdl, "v_cmd_0", v_cmd_00)
-        self.set_internal_init_if_exists(mdl, "k_v_conv", k_v_conv0)
-        self.set_internal_init_if_exists(mdl, "v_ref_a", v_ref_a0)
-        self.set_internal_init_if_exists(mdl, "v_ref_b", v_ref_b0)
-        self.set_internal_init_if_exists(mdl, "v_ref_c", v_ref_c0)
-        self.set_internal_init_if_exists(mdl, "m_a_u", m_a_u0)
-        self.set_internal_init_if_exists(mdl, "m_b_u", m_b_u0)
-        self.set_internal_init_if_exists(mdl, "m_c_u", m_c_u0)
-        self.set_internal_init_if_exists(mdl, "m_a", m_a0)
-        self.set_internal_init_if_exists(mdl, "m_b", m_b0)
-        self.set_internal_init_if_exists(mdl, "m_c", m_c0)
-        self.set_internal_init_if_exists(mdl, "i_A", i_A0_plant)
-        self.set_internal_init_if_exists(mdl, "i_B", i_B0_plant)
-        self.set_internal_init_if_exists(mdl, "i_C", i_C0_plant)
-        self.set_internal_init_if_exists(mdl, "gate_a", gate_a0)
-        self.set_internal_init_if_exists(mdl, "gate_b", gate_b0)
-        self.set_internal_init_if_exists(mdl, "gate_c", gate_c0)
-        self.set_internal_init_if_exists(mdl, "v_leg_a", v_leg_a0)
-        self.set_internal_init_if_exists(mdl, "v_leg_b", v_leg_b0)
-        self.set_internal_init_if_exists(mdl, "v_leg_c", v_leg_c0)
-        self.set_internal_init_if_exists(mdl, "v_common_mode", v_common_mode0)
-        self.set_internal_init_if_exists(mdl, "v_conv_a", v_conv_a_applied0)
-        self.set_internal_init_if_exists(mdl, "v_conv_b", v_conv_b_applied0)
-        self.set_internal_init_if_exists(mdl, "v_conv_c", v_conv_c_applied0)
-        self.set_internal_init_if_exists(mdl, "v_conv_d", v_conv_d_applied0)
-        self.set_internal_init_if_exists(mdl, "v_conv_q", v_conv_q_applied0)
-        self.set_internal_init_if_exists(mdl, "v_conv_0", v_conv_0_applied0)
-        self.set_internal_init_if_exists(mdl, "xi_id", xi_id0)
-        self.set_internal_init_if_exists(mdl, "xi_iq", xi_iq0)
-        self.set_internal_init_if_exists(mdl, "xi_i0", xi_i00)
-        self.set_internal_mode_if_exists(mdl, "switching_enabled_mode", switching_enabled0)
-        self.set_internal_mode_if_exists(mdl, "gate_a_mode", gate_a0)
-        self.set_internal_mode_if_exists(mdl, "gate_b_mode", gate_b0)
-        self.set_internal_mode_if_exists(mdl, "gate_c_mode", gate_c0)
-        self.set_internal_diff_init_if_exists(mdl, "d_i_d", d_i_d0)
-        self.set_internal_diff_init_if_exists(mdl, "d_i_q", d_i_q0)
-        self.set_internal_diff_init_if_exists(mdl, "d_i_0", d_i_00)
-        self.set_internal_diff_init_if_exists(mdl, "d_theta_pll", omega_base)
-
-        # The incremental switched-converter path uses a nested ``plant`` and ``plant_bridge`` hierarchy.
-        self.set_internal_init_if_exists(mdl, f"i_A_{model_name}_plant", i_A0_plant)
-        self.set_internal_init_if_exists(mdl, f"i_B_{model_name}_plant", i_B0_plant)
-        self.set_internal_init_if_exists(mdl, f"i_C_{model_name}_plant", i_C0_plant)
-        self.set_internal_init_if_exists(mdl, f"i_d_{model_name}_plant", i_d0_plant)
-        self.set_internal_init_if_exists(mdl, f"i_q_{model_name}_plant", i_q0_plant)
-        self.set_internal_init_if_exists(mdl, f"i_0_{model_name}_plant", i_00_plant)
-        self.set_internal_init_if_exists(mdl, f"v_d_{model_name}_plant", Vpk)
-        self.set_internal_init_if_exists(mdl, f"v_q_{model_name}_plant", 0.0)
-        self.set_internal_init_if_exists(mdl, f"v_0_{model_name}_plant", 0.0)
-        self.set_internal_init_if_exists(mdl, "theta_pll", phi_v)
-        self.set_internal_init_if_exists(mdl, "omega_pll", omega_base)
-        self.set_internal_init_if_exists(mdl, "v_cmd_d", v_cmd_d0)
-        self.set_internal_init_if_exists(mdl, "v_cmd_q", v_cmd_q0)
-        self.set_internal_init_if_exists(mdl, "v_cmd_0", v_cmd_00)
-        self.set_internal_diff_init_if_exists(mdl, f"d_i_A_{model_name}_plant", d_i_A0_plant)
-        self.set_internal_diff_init_if_exists(mdl, f"d_i_B_{model_name}_plant", d_i_B0_plant)
-        self.set_internal_diff_init_if_exists(mdl, f"d_i_C_{model_name}_plant", d_i_C0_plant)
-        self.set_internal_diff_init_if_exists(mdl, f"d_xi_id_{model_name}", d_xi_id0)
-        self.set_internal_diff_init_if_exists(mdl, f"d_xi_iq_{model_name}", d_xi_iq0)
-        self.set_internal_diff_init_if_exists(mdl, f"d_xi_i0_{model_name}", d_xi_i00)
-
-        self.set_internal_init_if_exists(mdl, f"m_a_{model_name}_plant_bridge", m_a0)
-        self.set_internal_init_if_exists(mdl, f"m_b_{model_name}_plant_bridge", m_b0)
-        self.set_internal_init_if_exists(mdl, f"m_c_{model_name}_plant_bridge", m_c0)
-        self.set_internal_init_if_exists(mdl, f"m_a_u_{model_name}_plant_bridge", m_a_u0)
-        self.set_internal_init_if_exists(mdl, f"m_b_u_{model_name}_plant_bridge", m_b_u0)
-        self.set_internal_init_if_exists(mdl, f"m_c_u_{model_name}_plant_bridge", m_c_u0)
-
-        self.set_internal_init_if_exists(mdl, f"v_ref_a_{model_name}_plant_bridge", v_ref_a0)
-        self.set_internal_init_if_exists(mdl, f"v_ref_b_{model_name}_plant_bridge", v_ref_b0)
-        self.set_internal_init_if_exists(mdl, f"v_ref_c_{model_name}_plant_bridge", v_ref_c0)
-        self.set_internal_init_if_exists(mdl, f"gate_a_{model_name}_plant_bridge", gate_a0)
-        self.set_internal_init_if_exists(mdl, f"gate_b_{model_name}_plant_bridge", gate_b0)
-        self.set_internal_init_if_exists(mdl, f"gate_c_{model_name}_plant_bridge", gate_c0)
-        self.set_internal_init_if_exists(mdl, f"v_leg_a_{model_name}_plant_bridge", v_leg_a0)
-        self.set_internal_init_if_exists(mdl, f"v_leg_b_{model_name}_plant_bridge", v_leg_b0)
-        self.set_internal_init_if_exists(mdl, f"v_leg_c_{model_name}_plant_bridge", v_leg_c0)
-        self.set_internal_init_if_exists(mdl, f"v_common_mode_{model_name}_plant_bridge", v_common_mode0)
-        self.set_internal_init_if_exists(mdl, f"v_conv_a_{model_name}_plant_bridge", v_conv_a0)
-        self.set_internal_init_if_exists(mdl, f"v_conv_b_{model_name}_plant_bridge", v_conv_b0)
-        self.set_internal_init_if_exists(mdl, f"v_conv_c_{model_name}_plant_bridge", v_conv_c0)
-        self.set_internal_mode_if_exists(mdl, f"gate_a_mode_{model_name}_plant_bridge", gate_a0)
-        self.set_internal_mode_if_exists(mdl, f"gate_b_mode_{model_name}_plant_bridge", gate_b0)
-        self.set_internal_mode_if_exists(mdl, f"gate_c_mode_{model_name}_plant_bridge", gate_c0)
-
-    def _seed_all_switched_vsc_models(self) -> None:
-        """
-        Seed all switched VSC EMT models explicitly from PF results.
-
-        The generic branch initialization path is sufficient for the averaged VSC,
-        but the switched converter contains many additional internal bridge/filter
-        variables. This explicit pass guarantees that all switched VSC instances
-        receive their PF-consistent seeds after the native EMT initialization.
-
-        :return: None.
-        """
-        bus_idx_dict: Dict[Any, int] = self.grid.get_bus_index_dict()
-        vsc_index: int = 0
-        vsc: Any
-        f_bus_idx: int
-        t_bus_idx: int
-
-        while vsc_index < len(self.grid.vsc_devices):
-            vsc = self.grid.vsc_devices[vsc_index]
-            f_bus_idx = bus_idx_dict[vsc.bus_from]
-            t_bus_idx = bus_idx_dict[vsc.bus_to]
-
+    def _reapply_vsc_pf_seeds_after_native_initialization(self) -> None:
+        """Reapply mapped VSC terminal PF values after the native initialization stage."""
+        bus_indices: Dict[Any, int] = self.grid.get_bus_index_dict()
+        for vsc_index, vsc in enumerate(self.grid.vsc_devices):
+            f_bus_idx = bus_indices[vsc.bus_from]
+            t_bus_idx = bus_indices[vsc.bus_to]
             if self.power_flow_results_3ph is not None:
                 self._try_set_vsc_branch_pf_init(
                     mdl=vsc.emt_model,
@@ -10082,8 +9200,6 @@ class EmtProblemDae(EmtProblemTemplate):
                     sbase=self.grid.Sbase,
                     vsc_index=vsc_index,
                 )
-
-            vsc_index += 1
 
     def _seed_all_switch_models(self) -> None:
         """

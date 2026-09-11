@@ -58,14 +58,18 @@ from VeraGrid.Gui.DynamicModelEditor.Editor.block_editor import Ui_BlockEditorWi
 import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_graphics as graph
 from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_entries import DynamicEditorEntry
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import DynamicEditorLibrary, LibraryTreeFilterProxyModel
-from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.measurements_dialog import MeasurementsDialog
+from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.MeasurementsDialog import (
+    is_measurement_reference_input,
+    MeasurementsDialog,
+)
 import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_models as dialog_models
 from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties.dynamic_block_properties import (
     BlockStructuralEditRequest,
     BlockVariableRenameRequest,
     DynamicBlockPropertiesDialog,
-    DynamicBlockPropertiesDockWidget,
+    resolve_block_documentation_url,
 )
+from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, is_dialog_available
 import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_validation as valid
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_utilities import (
     create_block_of_type,
@@ -124,6 +128,10 @@ DynamicBlockGraphicsItem: TypeAlias = (
         | graph.RectBaseArithmeticOpItem
         | graph.UnOpItem
         | graph.PairedItem
+)
+DynamicColorableBlockGraphicsItem: TypeAlias = (
+        DynamicBlockGraphicsItem
+        | graph.MeasurementsItem
 )
 
 
@@ -1706,13 +1714,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self._library_dock: QtWidgets.QDockWidget | None = None
-        self._block_properties_dock: DynamicBlockPropertiesDockWidget | None = None
         self._block_properties_dialogue: DynamicBlockPropertiesDialog | None = None
-        self._properties_dock_normalize_timer: QtCore.QTimer | None = QtCore.QTimer(self)
-        self._properties_dock_normalize_timer.setSingleShot(True)
-        self._properties_dock_normalize_timer.timeout.connect(
-            self.normalize_block_properties_right_dock
-        )
         self.configure_dynamic_editor_docks()
 
         # The editor owns its own toast manager so save notifications are
@@ -1830,6 +1832,17 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         self.ui.libraryTreeView.setModel(self.library_proxy_model)
         self.ui.libraryTreeView.setDragEnabled(True)
         self.ui.libraryTreeView.setHeaderHidden(False)
+        self.ui.libraryTreeView.header().setStretchLastSection(False)
+        self.ui.libraryTreeView.header().setSectionResizeMode(
+            0,
+            QtWidgets.QHeaderView.ResizeMode.Interactive,
+        )
+        self.ui.libraryTreeView.header().setSectionResizeMode(
+            1,
+            QtWidgets.QHeaderView.ResizeMode.Interactive,
+        )
+        self.ui.libraryTreeView.setColumnWidth(0, 190)
+        self.ui.libraryTreeView.setColumnWidth(1, 360)
         self.ui.libraryTreeView.setUniformRowHeights(True)
         self.ui.libraryTreeView.doubleClicked.connect(self.on_library_item_double_clicked)
 
@@ -2140,6 +2153,51 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         else:
             self.colors_palet = graph.EditorGraphicsDefaultsLight()
 
+    def get_diagram_node_for_block_uid(self, block_uid: int) -> BlockDiagramNode | None:
+        """Return the persisted diagram node for one symbolic block UID.
+
+        :param block_uid: Symbolic block UID represented by a scene item.
+        :return: Matching diagram node or ``None``.
+        """
+        diagram_node: BlockDiagramNode | None = self.diagram.node_data.get(block_uid, None)
+        candidate_node: BlockDiagramNode
+
+        if diagram_node is None:
+            for candidate_node in self.diagram.node_data.values():
+                if candidate_node.device_uid == block_uid:
+                    diagram_node = candidate_node
+                    break
+                else:
+                    pass
+        else:
+            pass
+
+        return diagram_node
+
+    def apply_diagram_node_color_to_block_item(self, item: DynamicColorableBlockGraphicsItem) -> None:
+        """Apply a persisted custom fill colour to one rebuilt block item.
+
+        :param item: Scene block item that may have saved presentation state.
+        :return: None.
+        """
+        block: Block | None = item.subsys
+        light_default_color: str = graph.EditorGraphicsDefaultsLight.BLOCK_FILL.name()
+
+        if block is None:
+            pass
+        else:
+            diagram_node: BlockDiagramNode | None = self.get_diagram_node_for_block_uid(block.uid)
+            if diagram_node is None or not isinstance(diagram_node.color, str):
+                pass
+            else:
+                persisted_color: QtGui.QColor = QtGui.QColor(diagram_node.color)
+                if persisted_color.isValid() and persisted_color.name() != light_default_color:
+                    brush: QtGui.QBrush = item.brush()
+                    brush.setColor(persisted_color)
+                    item.setBrush(brush)
+                else:
+                    pass
+
     def set_navigation_delegate(self, delegate: DynamicEditorTab) -> None:
         """
         Register the navigation delegate responsible for opening child blocks.
@@ -2167,6 +2225,266 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         else:
             pass
 
+    def find_bus_by_idtag_or_name(self, buses_list: List[Bus], bus_label: str) -> Bus | None:
+        """
+        Find one bus by stable id tag first and visible name second.
+
+        :param buses_list: Available buses.
+        :param bus_label: Persisted bus id tag or legacy visible name.
+        :return: Matching bus, or ``None``.
+        """
+        selected_bus: Bus | None = None
+        bus: Bus
+        for bus in buses_list:
+            if selected_bus is None:
+                if bus.idtag == bus_label or bus.name == bus_label:
+                    selected_bus = bus
+                else:
+                    pass
+            else:
+                pass
+        return selected_bus
+
+    def infer_measurements_dialog_bus_from_device(self,
+                                                  source_item: graph.MeasurementsItem,
+                                                  buses_list: List[Bus]) -> Bus | None:
+        """
+        Infer the measurement bus for older blocks without persisted bus metadata.
+
+        :param source_item: Measurement graphics item being edited.
+        :param buses_list: Available buses.
+        :return: Inferred bus, or ``None``.
+        """
+        selected_bus: Bus | None = None
+        if source_item.subsys is not None:
+            references: List[VarPowerFlowReferenceType] = self.get_measurements_dialog_refs_from_vars(
+                variables=source_item.subsys.in_vars,
+            )
+            references.extend(
+                self.get_measurements_dialog_refs_from_vars(
+                    variables=source_item.subsys.out_vars,
+                )
+            )
+        else:
+            references = list()
+
+        if isinstance(self.api_object, InjectionParent):
+            selected_bus = self.api_object.bus
+        elif isinstance(self.api_object, BranchParent):
+            from_refs: set[VarPowerFlowReferenceType] = set((
+                VarPowerFlowReferenceType.Vmf,
+                VarPowerFlowReferenceType.Vaf,
+                VarPowerFlowReferenceType.Vf_dc,
+                VarPowerFlowReferenceType.Pf,
+                VarPowerFlowReferenceType.Qf,
+            ))
+            to_refs: set[VarPowerFlowReferenceType] = set((
+                VarPowerFlowReferenceType.Vmt,
+                VarPowerFlowReferenceType.Vat,
+                VarPowerFlowReferenceType.Vt_dc,
+                VarPowerFlowReferenceType.Pt,
+                VarPowerFlowReferenceType.Qt,
+            ))
+            from_match: bool = False
+            to_match: bool = False
+            reference: VarPowerFlowReferenceType
+            for reference in references:
+                if reference in from_refs:
+                    from_match = True
+                else:
+                    pass
+                if reference in to_refs:
+                    to_match = True
+                else:
+                    pass
+            if from_match and not to_match:
+                selected_bus = self.api_object.bus_from
+            elif to_match and not from_match:
+                selected_bus = self.api_object.bus_to
+            else:
+                selected_bus = self.api_object.bus_from
+        else:
+            pass
+
+        if selected_bus in buses_list:
+            return selected_bus
+        else:
+            return None
+
+    def get_measurements_dialog_initial_bus(self,
+                                            source_item: graph.MeasurementsItem,
+                                            buses_list: List[Bus]) -> Bus | None:
+        """
+        Resolve the bus shown when reopening the measurements editor.
+
+        :param source_item: Measurement graphics item being edited.
+        :param buses_list: Available buses.
+        :return: Initial bus, or ``None``.
+        """
+        selected_bus: Bus | None = None
+        if source_item.subsys is not None:
+            node_data: BlockDiagramNode | None = self.diagram.node_data.get(source_item.subsys.uid, None)
+            if node_data is not None and node_data.api_object_name != "":
+                selected_bus = self.find_bus_by_idtag_or_name(
+                    buses_list=buses_list,
+                    bus_label=node_data.api_object_name,
+                )
+            else:
+                pass
+        else:
+            pass
+
+        if selected_bus is None:
+            selected_bus = self.infer_measurements_dialog_bus_from_device(
+                source_item=source_item,
+                buses_list=buses_list,
+            )
+        else:
+            pass
+        return selected_bus
+
+    def get_measurements_dialog_initial_block_type(self,
+                                                  source_item: graph.MeasurementsItem) -> BlockType | None:
+        """
+        Resolve the measurement type shown when reopening the measurements editor.
+
+        :param source_item: Measurement graphics item being edited.
+        :return: Initial measurement block type, or ``None``.
+        """
+        selected_block_type: BlockType | None = None
+        if source_item.subsys is not None:
+            node_data: BlockDiagramNode | None = self.diagram.node_data.get(source_item.subsys.uid, None)
+            if node_data is not None and node_data.tpe in BlockType.__members__:
+                selected_block_type = BlockType[node_data.tpe]
+            elif source_item.subsys.name in BlockType.__members__:
+                selected_block_type = BlockType[source_item.subsys.name]
+            else:
+                pass
+        else:
+            pass
+        return selected_block_type
+
+    def get_measurements_dialog_block_type_for_refs(
+            self,
+            initial_bus: Bus | None,
+            initial_references: List[VarPowerFlowReferenceType],
+            vars_dict: Dict[str, Dict[BlockType, List[VarPowerFlowReferenceType]]],
+    ) -> BlockType | None:
+        """
+        Infer one measurement type from the already exposed measurement refs.
+
+        :param initial_bus: Selected bus defining the AC/DC domain.
+        :param initial_references: Dialog-compatible selected references.
+        :param vars_dict: Measurement types grouped by bus domain.
+        :return: Matching measurement block type, or ``None``.
+        """
+        selected_block_type: BlockType | None = None
+        if initial_bus is None:
+            pass
+        else:
+            if initial_bus.is_dc:
+                bus_domain: str = "dc_bus"
+            else:
+                bus_domain = "a_c_bus"
+
+            domain_measurements: Dict[BlockType, List[VarPowerFlowReferenceType]] | None = vars_dict.get(
+                bus_domain,
+                None,
+            )
+            if domain_measurements is None:
+                pass
+            else:
+                requested_references: set[VarPowerFlowReferenceType] = set(initial_references)
+                block_type: BlockType
+                available_references: List[VarPowerFlowReferenceType]
+                for block_type, available_references in domain_measurements.items():
+                    if selected_block_type is None:
+                        available_reference_set: set[VarPowerFlowReferenceType] = set(available_references)
+                        if requested_references == available_reference_set:
+                            selected_block_type = block_type
+                        elif len(requested_references) > 0 and requested_references.issubset(available_reference_set):
+                            selected_block_type = block_type
+                        else:
+                            pass
+                    else:
+                        pass
+        return selected_block_type
+
+    def is_measurements_dialog_block_type_available(
+            self,
+            initial_bus: Bus | None,
+            block_type: BlockType | None,
+            vars_dict: Dict[str, Dict[BlockType, List[VarPowerFlowReferenceType]]],
+    ) -> bool:
+        """
+        Check if one block type can be shown for the selected bus domain.
+
+        :param initial_bus: Selected bus defining the AC/DC domain.
+        :param block_type: Candidate block type.
+        :param vars_dict: Measurement types grouped by bus domain.
+        :return: ``True`` when the dialog can show that block type.
+        """
+        if initial_bus is None or block_type is None:
+            available: bool = False
+        else:
+            if initial_bus.is_dc:
+                bus_domain: str = "dc_bus"
+            else:
+                bus_domain = "a_c_bus"
+            domain_measurements: Dict[BlockType, List[VarPowerFlowReferenceType]] | None = vars_dict.get(
+                bus_domain,
+                None,
+            )
+            if domain_measurements is not None and block_type in domain_measurements:
+                available = True
+            else:
+                available = False
+        return available
+
+    def coerce_measurements_dialog_reference(
+            self,
+            reference: VarPowerFlowReferenceType,
+    ) -> VarPowerFlowReferenceType:
+        """
+        Convert branch-side root references into the generic dialog references.
+
+        :param reference: Stored symbolic variable reference.
+        :return: Dialog reference.
+        """
+        if reference == VarPowerFlowReferenceType.Vmf or reference == VarPowerFlowReferenceType.Vmt:
+            dialog_reference: VarPowerFlowReferenceType = VarPowerFlowReferenceType.Vm
+        elif reference == VarPowerFlowReferenceType.Vaf or reference == VarPowerFlowReferenceType.Vat:
+            dialog_reference = VarPowerFlowReferenceType.Va
+        elif reference == VarPowerFlowReferenceType.Vf_dc or reference == VarPowerFlowReferenceType.Vt_dc:
+            dialog_reference = VarPowerFlowReferenceType.Vdc
+        elif reference == VarPowerFlowReferenceType.Pf or reference == VarPowerFlowReferenceType.Pt:
+            dialog_reference = VarPowerFlowReferenceType.P
+        elif reference == VarPowerFlowReferenceType.Qf or reference == VarPowerFlowReferenceType.Qt:
+            dialog_reference = VarPowerFlowReferenceType.Q
+        else:
+            dialog_reference = reference
+        return dialog_reference
+
+    def get_measurements_dialog_refs_from_vars(self, variables: List[Var]) -> List[VarPowerFlowReferenceType]:
+        """
+        Read dialog-compatible measurement references from symbolic variables.
+
+        :param variables: Variables attached to one side of the measurement block.
+        :return: Measurement references in port order.
+        """
+        references: List[VarPowerFlowReferenceType] = list()
+        var: Var
+        for var in variables:
+            if isinstance(var.ref, VarPowerFlowReferenceType):
+                dialog_reference: VarPowerFlowReferenceType = self.coerce_measurements_dialog_reference(var.ref)
+                if dialog_reference not in references:
+                    references.append(dialog_reference)
+                else:
+                    pass
+            else:
+                pass
+        return references
+
     def open_measurements_editor(self,
                                  source_item: graph.MeasurementsItem,
                                  x_pos: float,
@@ -2179,13 +2497,63 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         :param y_pos: Scene y coordinate of the double-clicked measurement item.
         :return: None.
         """
+        # Editing replaces the measurement block and would invalidate any
+        # connections attached to its current ports. Require users to remove
+        # those connections explicitly before changing the block structure.
+        if source_item.has_connections():
+            QtWidgets.QMessageBox.warning(
+                self,
+                self.tr("Measurement block"),
+                self.tr("Remove item's connections to edit"),
+            )
+            return
+        else:
+            pass
+
         # The circuit owns the authoritative bus objects that the generated
         # measurement block must reference after the modal selection is accepted.
         buses_list: List[Bus] = list(self.circuit.buses)
         vars_dict: Dict[str, Dict[BlockType, List[VarPowerFlowReferenceType]]] = measurement_vars_dict
+        initial_bus: Bus | None = self.get_measurements_dialog_initial_bus(
+            source_item=source_item,
+            buses_list=buses_list,
+        )
+        if source_item.subsys is not None:
+            initial_input_references: List[VarPowerFlowReferenceType] = self.get_measurements_dialog_refs_from_vars(
+                variables=source_item.subsys.in_vars,
+            )
+            initial_output_references: List[VarPowerFlowReferenceType] = self.get_measurements_dialog_refs_from_vars(
+                variables=source_item.subsys.out_vars,
+            )
+        else:
+            initial_input_references = list()
+            initial_output_references = list()
+
+        initial_block_type: BlockType | None = self.get_measurements_dialog_initial_block_type(
+            source_item=source_item,
+        )
+        if self.is_measurements_dialog_block_type_available(
+                initial_bus=initial_bus,
+                block_type=initial_block_type,
+                vars_dict=vars_dict,
+        ):
+            pass
+        else:
+            all_initial_references: List[VarPowerFlowReferenceType] = list(initial_input_references)
+            all_initial_references.extend(initial_output_references)
+            initial_block_type = self.get_measurements_dialog_block_type_for_refs(
+                initial_bus=initial_bus,
+                initial_references=all_initial_references,
+                vars_dict=vars_dict,
+            )
+
         dialogue: MeasurementsDialog = MeasurementsDialog(
             buses=buses_list,
             measurement_vars_dict=vars_dict,
+            initial_bus=initial_bus,
+            initial_block_type=initial_block_type,
+            initial_input_references=initial_input_references,
+            initial_output_references=initial_output_references,
             parent=self,
         )
 
@@ -2194,11 +2562,23 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             block_type: BlockType
             inputs_list: List[VarPowerFlowReferenceType]
             outputs_list: List[VarPowerFlowReferenceType]
+            preserved_color: str | None = None
             bus, block_type, inputs_list, outputs_list = dialogue.get_user_info()
+            if source_item.subsys is not None:
+                diagram_node: BlockDiagramNode | None = self.get_diagram_node_for_block_uid(
+                    source_item.subsys.uid,
+                )
+                if diagram_node is not None:
+                    preserved_color = diagram_node.color
+                else:
+                    pass
+            else:
+                pass
+
             # The accepted configuration replaces the provisional graphics item,
-            # so remove that exact item through the editor-owned scene first.
-            if source_item.scene() is self.scene and source_item.subsys is not None:
-                self.scene.remove_block_item(block_uid=source_item.subsys.uid, item=source_item)
+            # so remove its scene, diagram, and symbolic model state together.
+            if source_item.scene() is self.scene:
+                self.remove_block_item(source_item)
             else:
                 pass
             self.create_measurements_block_item(
@@ -2208,13 +2588,52 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 block_type=block_type,
                 ref_inputs=inputs_list,
                 ref_outputs=outputs_list,
+                color=preserved_color,
             )
         else:
             pass
 
+    def request_open_block_documentation(self, block: Block) -> None:
+        """
+        Open the online catalogue documentation for one diagram block.
+
+        Documentation is a canvas context-menu action because it describes the
+        original library block, not one editable field in Block properties.
+
+        :param block: Symbolic block represented by the context-menu item.
+        :return: None.
+        """
+        diagram_node: BlockDiagramNode | None = self.diagram.node_data.get(block.uid, None)
+        if diagram_node is not None:
+            block_type_name: str = diagram_node.tpe
+        else:
+            block_type_name = "CUSTOM"
+
+        documentation_url: str | None = resolve_block_documentation_url(
+            block_type_name=block_type_name,
+            block_name=block.name,
+            block=block,
+        )
+        if documentation_url is None:
+            QtWidgets.QMessageBox.information(
+                self,
+                self.tr("Block info"),
+                self.tr("No online catalogue documentation is available for this custom block."),
+            )
+        else:
+            opened: bool = QtGui.QDesktopServices.openUrl(QtCore.QUrl(documentation_url))
+            if opened:
+                pass
+            else:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr("Block info"),
+                    self.tr("The online block documentation could not be opened."),
+                )
+
     def request_open_block_properties(self, block: Block) -> None:
         """
-        Open the modal properties editor for one ordinary symbolic block.
+        Open the properties editor for one ordinary symbolic block.
 
         Root interface wrappers and connection/tool nodes are editor infrastructure,
         not user-authored equation blocks, so they do not expose this dialogue.
@@ -2337,7 +2756,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             pass
 
         if can_open:
-            previous_properties_closed: bool = self.close_block_properties_dock()
+            previous_properties_closed: bool = self.close_block_properties_dialogue()
             if not previous_properties_closed:
                 # The existing editor owns an unapplied transaction and its
                 # discard confirmation was cancelled. Do not replace it with
@@ -2360,42 +2779,13 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             dialogue.variableRenameRequested.connect(self.on_variable_rename_requested)
             dialogue.outputExportChangesRequested.connect(self.on_output_export_changes_requested)
             dialogue.symbolRemovalsRequested.connect(self.on_symbol_removals_requested)
-            properties_dock: DynamicBlockPropertiesDockWidget = DynamicBlockPropertiesDockWidget(
-                properties_widget=dialogue,
-                parent=self,
-            )
-            allowed_areas: Qt.DockWidgetArea = (
-                    Qt.DockWidgetArea.LeftDockWidgetArea
-                    | Qt.DockWidgetArea.RightDockWidgetArea
-                    | Qt.DockWidgetArea.BottomDockWidgetArea
-            )
-            properties_dock.setAllowedAreas(allowed_areas)
-            properties_dock.closed.connect(self.on_block_properties_dock_closed)
-            properties_dock.dockLocationChanged.connect(
-                self.on_block_properties_dock_location_changed
-            )
-            properties_dock.topLevelChanged.connect(
-                self.on_block_properties_dock_top_level_changed
-            )
+            dialogue.closed.connect(self.on_block_properties_dialogue_closed)
             self._block_properties_dialogue = dialogue
-            self._block_properties_dock = properties_dock
-
-            # Register a legal right-side slot so the freely movable editor can
-            # be docked back into the Dynamic Editor whenever the user chooses.
-            self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, properties_dock)
-            if self._library_dock is not None:
-                self.splitDockWidget(
-                    self._library_dock,
-                    properties_dock,
-                    Qt.Orientation.Vertical,
-                )
-            else:
-                pass
-            properties_dock.setFloating(True)
-            properties_dock.resize(1200, 700)
-            self.center_floating_block_properties_dock(properties_dock)
-            properties_dock.show()
-            properties_dock.raise_()
+            dialogue.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
+            dialogue.resize(720, 420)
+            self.center_block_properties_dialogue(dialogue)
+            dialogue.show()
+            dialogue.raise_()
         else:
             pass
 
@@ -2496,182 +2886,48 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         """
         return self._library_dock
 
-    def get_block_properties_dock_widget(self) -> DynamicBlockPropertiesDockWidget | None:
-        """Return the currently open block-properties dock.
-
-        :return: Active properties dock, or ``None`` when closed.
-        """
-        return self._block_properties_dock
-
-    def center_floating_block_properties_dock(
+    def center_block_properties_dialogue(
             self,
-            properties_dock: DynamicBlockPropertiesDockWidget,
+            properties_dialogue: DynamicBlockPropertiesDialog,
     ) -> None:
-        """Center a new floating properties dock over the Dynamic Editor.
+        """Center a new properties dialogue over the Dynamic Editor.
 
-        :param properties_dock: Floating dock to position.
+        :param properties_dialogue: Properties dialogue to position.
         :return: None.
         """
         editor_top_left: QtCore.QPoint = self.mapToGlobal(QtCore.QPoint(0, 0))
-        target_x: int = editor_top_left.x() + max(0, (self.width() - properties_dock.width()) // 2)
-        target_y: int = editor_top_left.y() + max(0, (self.height() - properties_dock.height()) // 2)
+        target_x: int = editor_top_left.x() + max(0, (self.width() - properties_dialogue.width()) // 2)
+        target_y: int = editor_top_left.y() + max(0, (self.height() - properties_dialogue.height()) // 2)
         screen: QtGui.QScreen | None = self.screen()
         if screen is not None:
             available_geometry: QtCore.QRect = screen.availableGeometry()
-            maximum_x: int = available_geometry.right() - properties_dock.width() + 1
-            maximum_y: int = available_geometry.bottom() - properties_dock.height() + 1
+            maximum_x: int = available_geometry.right() - properties_dialogue.width() + 1
+            maximum_y: int = available_geometry.bottom() - properties_dialogue.height() + 1
             target_x = max(available_geometry.left(), min(target_x, maximum_x))
             target_y = max(available_geometry.top(), min(target_y, maximum_y))
         else:
             pass
-        properties_dock.move(target_x, target_y)
+        properties_dialogue.move(target_x, target_y)
 
-    @QtCore.Slot(Qt.DockWidgetArea)
-    def on_block_properties_dock_location_changed(
-            self,
-            area: Qt.DockWidgetArea,
-    ) -> None:
-        """Normalize right-side drops into a vertical Library stack.
+    def close_block_properties_dialogue(self) -> bool:
+        """Close the active property dialogue before opening another one.
 
-        :param area: New main-window dock area reported by Qt.
-        :return: None.
+        :return: Whether no dialogue remains or its close request was accepted.
         """
-        properties_dock: DynamicBlockPropertiesDockWidget | None = self._block_properties_dock
-        normalize_timer: QtCore.QTimer | None = self._properties_dock_normalize_timer
-        if properties_dock is not None and not properties_dock.isFloating():
-            self.resize_block_properties_dock_for_area(area)
-            if (normalize_timer is not None
-                    and area == Qt.DockWidgetArea.RightDockWidgetArea):
-                normalize_timer.start(0)
-            else:
-                pass
+        properties_dialogue: DynamicBlockPropertiesDialog | None = self._block_properties_dialogue
+        if is_dialog_available(properties_dialogue):
+            closed: bool = properties_dialogue.close()
         else:
-            pass
-
-    @QtCore.Slot(bool)
-    def on_block_properties_dock_top_level_changed(self, floating: bool) -> None:
-        """Schedule right-side normalization after a floating dock is attached.
-
-        :param floating: Whether the properties dock is currently floating.
-        :return: None.
-        """
-        properties_dock: DynamicBlockPropertiesDockWidget | None = self._block_properties_dock
-        if properties_dock is not None and not floating:
-            area: Qt.DockWidgetArea = self.dockWidgetArea(properties_dock)
-            self.on_block_properties_dock_location_changed(area)
-        else:
-            pass
-
-    def resize_block_properties_dock_for_area(
-            self,
-            area: Qt.DockWidgetArea,
-    ) -> None:
-        """Give each legal dock area a useful initial share of the editor.
-
-        Users retain the native splitter and can resize the dock afterwards.
-
-        :param area: Main-window area containing Block properties.
-        :return: None.
-        """
-        properties_dock: DynamicBlockPropertiesDockWidget | None = self._block_properties_dock
-        library_dock: QtWidgets.QDockWidget | None = self._library_dock
-        if properties_dock is not None:
-            if area == Qt.DockWidgetArea.BottomDockWidgetArea:
-                bottom_height: int = max(280, min(500, int(self.height() * 0.45)))
-                self.resizeDocks(
-                    list((properties_dock,)),
-                    list((bottom_height,)),
-                    Qt.Orientation.Vertical,
-                )
-            elif area == Qt.DockWidgetArea.LeftDockWidgetArea:
-                left_width: int = max(420, min(720, int(self.width() * 0.40)))
-                self.resizeDocks(
-                    list((properties_dock,)),
-                    list((left_width,)),
-                    Qt.Orientation.Horizontal,
-                )
-            elif area == Qt.DockWidgetArea.RightDockWidgetArea:
-                right_width: int = max(420, min(720, int(self.width() * 0.40)))
-                if library_dock is not None:
-                    self.resizeDocks(
-                        list((library_dock, properties_dock,)),
-                        list((right_width, right_width,)),
-                        Qt.Orientation.Horizontal,
-                    )
-                else:
-                    self.resizeDocks(
-                        list((properties_dock,)),
-                        list((right_width,)),
-                        Qt.Orientation.Horizontal,
-                    )
-            else:
-                pass
-        else:
-            pass
-
-    @QtCore.Slot()
-    def normalize_block_properties_right_dock(self) -> None:
-        """Force a right-side properties dock above or below the Library.
-
-        Qt nesting can otherwise place two docks side by side within the right
-        area. The user's vertical drop position selects whether Block
-        properties stays above or below the fixed Library.
-
-        :return: None.
-        """
-        properties_dock: DynamicBlockPropertiesDockWidget | None = self._block_properties_dock
-        library_dock: QtWidgets.QDockWidget | None = self._library_dock
-        if (properties_dock is not None
-                and library_dock is not None
-                and not properties_dock.isFloating()
-                and self.dockWidgetArea(properties_dock) == Qt.DockWidgetArea.RightDockWidgetArea):
-            properties_geometry: QtCore.QRect = properties_dock.geometry()
-            library_geometry: QtCore.QRect = library_dock.geometry()
-            same_horizontal_span: bool = (
-                    abs(properties_geometry.left() - library_geometry.left()) <= 2
-                    and abs(properties_geometry.right() - library_geometry.right()) <= 2
-            )
-            if same_horizontal_span:
-                pass
-            elif properties_geometry.center().y() < library_geometry.center().y():
-                self.splitDockWidget(
-                    properties_dock,
-                    library_dock,
-                    Qt.Orientation.Vertical,
-                )
-            else:
-                self.splitDockWidget(
-                    library_dock,
-                    properties_dock,
-                    Qt.Orientation.Vertical,
-                )
-        else:
-            pass
-
-    def close_block_properties_dock(self) -> bool:
-        """Close the active property dock before opening another one.
-
-        :return: Whether no dock remains or its close request was accepted.
-        """
-        properties_dock: DynamicBlockPropertiesDockWidget | None = self._block_properties_dock
-        if properties_dock is not None:
-            closed: bool = properties_dock.close()
-        else:
+            self._block_properties_dialogue = None
             closed = True
         return closed
 
     @QtCore.Slot()
-    def on_block_properties_dock_closed(self) -> None:
-        """Forget a property dock after either Close control is used.
+    def on_block_properties_dialogue_closed(self) -> None:
+        """Forget a property dialogue after its Close control is used.
 
         :return: None.
         """
-        normalize_timer: QtCore.QTimer | None = self._properties_dock_normalize_timer
-        if normalize_timer is not None:
-            normalize_timer.stop()
-        else:
-            pass
-        self._block_properties_dock = None
         self._block_properties_dialogue = None
 
     def reset_library_tree_expansion(self) -> None:
@@ -3457,7 +3713,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 x=x_pos,
                 y=y_pos,
                 tpe=block_type.name,
-                device_uid=block_model.uid
+                device_uid=block_model.uid,
             )
 
         elif block_type in self.UNARY_MATH_BLOCK_TYPES:
@@ -3910,12 +4166,23 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         block: Block = Block()
         vars_list: List[Var] = list()
         nominal_frequency = Const(self.circuit.fBase)
+        requested_references: List[VarPowerFlowReferenceType] = list()
 
         # get bus variables
         bus_vars = self.add_connection_vars(bus)
 
-        # get p and q variables
-        pq_vars = self.get_p_q_vars(bus)
+        reference: VarPowerFlowReferenceType
+        for reference in ref_inputs:
+            if reference in requested_references:
+                pass
+            else:
+                requested_references.append(reference)
+
+        for reference in ref_outputs:
+            if reference in requested_references:
+                pass
+            else:
+                requested_references.append(reference)
 
         # build measurement block
 
@@ -3930,9 +4197,11 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             block, vars_list = build_rms_voltage_meter_outputs_from_dc(self.var_factory, bus_vars[0],
                                                                        nominal_frequency)
         elif block_type == BlockType.MEASUREMENTS_CURRENT_FROM_PQ:
+            pq_vars = self.get_p_q_vars(bus)
             block, vars_list = build_rms_current_meter_outputs_from_pq(self.var_factory, bus_vars[0], bus_vars[1],
                                                                        pq_vars[0], pq_vars[1])
         elif block_type == BlockType.MEASUREMENTS_CURRENT_FROM_DC:
+            pq_vars = self.get_p_q_vars(bus)
             block, vars_list = build_rms_current_meter_outputs_from_dc(self.var_factory, bus_vars[0],
                                                                        pq_vars[0])
         elif block_type == BlockType.MEASUREMENTS_VOLTAGE_ANGLE:
@@ -3940,22 +4209,61 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             vars_list = bus_vars
 
         elif block_type == BlockType.MEASUREMENTS_P_Q:
+            pq_vars = self.get_p_q_vars(bus)
             block = Block()
             vars_list = pq_vars
 
-        for var in vars_list:
-            if var.ref in ref_inputs:
-                block.in_vars.append(var)
+        var: Var | None
+        for var in bus_vars:
+            if var is not None and isinstance(var.ref, VarPowerFlowReferenceType):
+                dialog_reference = self.coerce_measurements_dialog_reference(var.ref)
+                if dialog_reference in requested_references and var not in vars_list:
+                    vars_list.append(var)
+                else:
+                    pass
             else:
-                block.out_vars.append(var)
+                pass
 
+        if (
+                VarPowerFlowReferenceType.P in requested_references
+                or VarPowerFlowReferenceType.Q in requested_references
+        ):
+            pq_vars = self.get_p_q_vars(bus)
+            for var in pq_vars:
+                if var is not None and isinstance(var.ref, VarPowerFlowReferenceType):
+                    dialog_reference = self.coerce_measurements_dialog_reference(var.ref)
+                    if dialog_reference in requested_references and var not in vars_list:
+                        vars_list.append(var)
+                    else:
+                        pass
+                else:
+                    pass
+        else:
+            pass
+
+        for var in vars_list:
+            if var is not None and isinstance(var.ref, VarPowerFlowReferenceType):
+                dialog_reference: VarPowerFlowReferenceType = self.coerce_measurements_dialog_reference(var.ref)
+            else:
+                dialog_reference = VarPowerFlowReferenceType.NOTHING
+            if dialog_reference in requested_references and is_measurement_reference_input(dialog_reference):
+                block.in_vars.append(var)
+            elif dialog_reference in requested_references:
+                block.out_vars.append(var)
+            else:
+                pass
+
+        block.name = block_type.name
         return block
 
-    def create_measurements_block_item(self, x_pos: float, y_pos: float, bus: ALL_DEV_TYPES | None = None,
+    def create_measurements_block_item(self,
+                                       x_pos: float,
+                                       y_pos: float,
+                                       bus: ALL_DEV_TYPES | None = None,
                                        block_type: BlockType = BlockType.INPUT_CONN,
                                        ref_inputs: List[VarPowerFlowReferenceType] | None = None,
-                                       ref_outputs: List[
-                                                        VarPowerFlowReferenceType] | None = None) -> graph.MeasurementsItem | None:
+                                       ref_outputs: List[VarPowerFlowReferenceType] | None = None,
+                                       color: str | None = None) -> graph.MeasurementsItem | None:
         """
         Create and place a measurements block item in the canvas scene.
 
@@ -3963,6 +4271,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         :param block_type:
         :param ref_inputs:
         :param ref_outputs:
+        :param color: Optional persisted fill colour to apply to the diagram node.
         :return:
         """
 
@@ -3984,6 +4293,10 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         count: int = self.block_counters.get(block_type, 0) + 1
 
         item_name: str = f"{block_type.name}"
+        if isinstance(bus, Bus):
+            api_object_name: str = bus.idtag
+        else:
+            api_object_name = ""
         measurements_item: graph.MeasurementsItem = graph.MeasurementsItem(editor=self,
                                                                            var_factory=self.var_factory,
                                                                            name=item_name,
@@ -3997,6 +4310,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             measurements_item.set_subsystem(block_model)
             measurements_item.position_changed_callback = self.build_position_changed_callback(block_model.uid)
             measurements_item.build_item()
+            measurements_item.recolour()
 
             # The editor block is the authoritative model container for later save/rebuild steps.
             self.main_block.add(block_model)
@@ -4012,8 +4326,11 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 x=x_pos,
                 y=y_pos,
                 tpe=block_type.name,
-                device_uid=block_model.uid
+                api_object_name=api_object_name,
+                device_uid=block_model.uid,
+                color=color,
             )
+            self.apply_diagram_node_color_to_block_item(measurements_item)
 
             return measurements_item
         else:
@@ -6150,8 +6467,11 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         else:
             return False
 
-    def remove_block_item(self,
-                          item: graph.BlockItem | graph.GenericBlockItem | graph.RoundBaseArithmeticOpItem | graph.RectBaseArithmeticOpItem | graph.PairedItem) -> None:
+    def remove_block_item(
+            self,
+            item: graph.BlockItem | graph.MeasurementsItem | graph.GenericBlockItem |
+                  graph.RoundBaseArithmeticOpItem | graph.RectBaseArithmeticOpItem | graph.PairedItem,
+    ) -> None:
         """
         Remove a block and all of its attached connections.
 
@@ -6253,8 +6573,11 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         for conn in connections_to_remove:
             self.remove_connection_item(conn)
 
-    def _remove_connection_interface_for_block(self,
-                                               item: graph.BlockItem | graph.GenericBlockItem | graph.RoundBaseArithmeticOpItem | graph.RectBaseArithmeticOpItem | graph.PairedItem) -> None:
+    def _remove_connection_interface_for_block(
+            self,
+            item: graph.BlockItem | graph.MeasurementsItem | graph.GenericBlockItem |
+                  graph.RoundBaseArithmeticOpItem | graph.RectBaseArithmeticOpItem | graph.PairedItem,
+    ) -> None:
         """
         Remove the saved top-level connection variable for one editor port block.
 
@@ -6352,7 +6675,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
 
         if isinstance(self.api_object, BranchParent):
             if bus.is_dc:
-                if bus.idtag == self.api_object.bus_from:
+                if bus is self.api_object.bus_from or bus.idtag == self.api_object.bus_from.idtag:
                     P = self.main_block.external_mapping[VarPowerFlowReferenceType.Pf]
                     pq_vars.append(P)
                     return pq_vars
@@ -6362,7 +6685,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     return pq_vars
 
             else:
-                if bus.idtag == self.api_object.bus_from:
+                if bus is self.api_object.bus_from or bus.idtag == self.api_object.bus_from.idtag:
                     P = self.main_block.external_mapping[VarPowerFlowReferenceType.Pf]
                     Q = self.main_block.external_mapping[VarPowerFlowReferenceType.Qf]
                     pq_vars.append(P)
@@ -8217,6 +8540,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                         block_item.position_changed_callback = self.build_position_changed_callback(node_uid)
                         block_item.build_item()
                         block_item.recolour()
+                        self.apply_diagram_node_color_to_block_item(block_item)
                         self.scene.add_block_item(block_uid=block_model.uid, item=block_item)
                         block_item.setPos(QPointF(node.x, node.y))
                         uid_to_blockitem[node_uid] = block_item
@@ -9496,13 +9820,12 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         if device_uid in self.diagram.node_data:
             self.diagram.node_data[device_uid].x = x
             self.diagram.node_data[device_uid].y = y
-            print("")
         else:
             pass
 
     def center_view_on_items(self) -> None:
         """
-        Center the graphics view on the current selection or, if none exists, on all items.
+        Center and zoom the graphics view so every diagram block is visible.
 
         :return:
         """
@@ -12024,6 +12347,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                         protected_item.position_changed_callback = self.build_position_changed_callback(uid)
                         protected_item.build_item()
                         protected_item.recolour()
+                        self.apply_diagram_node_color_to_block_item(protected_item)
                         self.scene.add_block_item(block_uid=block_model.uid, item=protected_item)
                         protected_item.setPos(QPointF(node.x, node.y))
                         uid_to_blockitem[uid] = protected_item
@@ -12047,6 +12371,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                         measurements_item.position_changed_callback = self.build_position_changed_callback(uid)
                         measurements_item.build_item()
                         measurements_item.recolour()
+                        self.apply_diagram_node_color_to_block_item(measurements_item)
                         self.scene.add_block_item(block_uid=block_model.uid, item=measurements_item)
                         measurements_item.setPos(QPointF(node.x, node.y))
                         uid_to_blockitem[node.device_uid] = measurements_item
@@ -12127,6 +12452,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 item.recolour()
 
             if item is not None:
+                self.apply_diagram_node_color_to_block_item(item)
                 self.scene.add_block_item(block_uid=block_model.uid, item=item)
                 item.setPos(QPointF(node.x, node.y))
                 uid_to_blockitem[uid] = item
@@ -12328,27 +12654,13 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         _dispose_qobject(scene)
         self.scene = None
 
-    def _dispose_block_properties_dock(self) -> None:
-        """Destroy the active block-properties dock before editor teardown.
+    def _dispose_block_properties_dialogue(self) -> None:
+        """Destroy the active block-properties dialogue before editor teardown.
 
         :return: None.
         """
-        normalize_timer: QtCore.QTimer | None = self._properties_dock_normalize_timer
-        if normalize_timer is not None:
-            normalize_timer.stop()
-            try:
-                normalize_timer.timeout.disconnect(
-                    self.normalize_block_properties_right_dock
-                )
-            except (RuntimeError, TypeError):
-                pass
-            normalize_timer.deleteLater()
-            self._properties_dock_normalize_timer = None
-        else:
-            pass
-
         properties_dialogue: DynamicBlockPropertiesDialog | None = self._block_properties_dialogue
-        if properties_dialogue is not None:
+        if is_dialog_available(properties_dialogue):
             # The dialogue can outlive its editor until DeferredDelete is
             # processed. Disconnect every Python receiver first so no queued
             # properties signal can call into the dismantled editor.
@@ -12382,37 +12694,18 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 )
             except (RuntimeError, TypeError):
                 pass
+            try:
+                properties_dialogue.closed.disconnect(
+                    self.on_block_properties_dialogue_closed
+                )
+            except (RuntimeError, TypeError):
+                pass
+            properties_dialogue.prepare_to_delete()
+            properties_dialogue.setParent(None)
+            delete_dialog_safely(dialog=properties_dialogue)
         else:
             pass
-
-        properties_dock: DynamicBlockPropertiesDockWidget | None = self._block_properties_dock
-        if properties_dock is not None:
-            try:
-                properties_dock.closed.disconnect(
-                    self.on_block_properties_dock_closed
-                )
-            except (RuntimeError, TypeError):
-                pass
-            try:
-                properties_dock.dockLocationChanged.disconnect(
-                    self.on_block_properties_dock_location_changed
-                )
-            except (RuntimeError, TypeError):
-                pass
-            try:
-                properties_dock.topLevelChanged.disconnect(
-                    self.on_block_properties_dock_top_level_changed
-                )
-            except (RuntimeError, TypeError):
-                pass
-            properties_dock.prepare_to_delete()
-            self.removeDockWidget(properties_dock)
-            properties_dock.setParent(None)
-            properties_dock.deleteLater()
-            self._block_properties_dock = None
-            self._block_properties_dialogue = None
-        else:
-            pass
+        self._block_properties_dialogue = None
 
     def _dispose_library_dock(self) -> None:
         """Detach and delete the fixed Library dock after its models are gone.
@@ -12449,7 +12742,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         self._prepared_to_delete = True
         # Close property tooling before any of the model or scene
         # objects referenced by its signals are dismantled.
-        self._dispose_block_properties_dock()
+        self._dispose_block_properties_dialogue()
 
         # Tear down the library model before its dock starts disappearing.
         self._dispose_table_models()

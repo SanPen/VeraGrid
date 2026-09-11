@@ -36,6 +36,7 @@ class EmtOptions(OptionsTemplate):
         GCProp(key="init_ptc_dtau_max", tpe=float),
         GCProp(key="init_ptc_max_iter", tpe=int),
         GCProp(key="init_allow_state_equilibrium", tpe=bool),
+        GCProp(key="init_fix_pf_bus_voltages", tpe=bool),
         GCProp(key="newton_compute_dense_cond", tpe=bool),
         GCProp(key="newton_enable_fallback", tpe=bool),
         GCProp(key="newton_enable_index1_check", tpe=bool),
@@ -81,6 +82,7 @@ class EmtOptions(OptionsTemplate):
                  init_ptc_dtau_max: float = 1e1,
                  init_ptc_max_iter: int = 60,
                  init_allow_state_equilibrium: bool = True,
+                 init_fix_pf_bus_voltages: bool = False,
                  newton_compute_dense_cond: bool = False,
                  newton_enable_fallback: bool = False,
                  newton_enable_index1_check: bool = False,
@@ -141,6 +143,7 @@ class EmtOptions(OptionsTemplate):
         self.init_ptc_dtau_max: float = init_ptc_dtau_max
         self.init_ptc_max_iter: int = init_ptc_max_iter
         self.init_allow_state_equilibrium: bool = init_allow_state_equilibrium
+        self.init_fix_pf_bus_voltages: bool = init_fix_pf_bus_voltages
         self.newton_compute_dense_cond = newton_compute_dense_cond
         self.newton_enable_fallback = newton_enable_fallback
         self.newton_enable_index1_check = newton_enable_index1_check

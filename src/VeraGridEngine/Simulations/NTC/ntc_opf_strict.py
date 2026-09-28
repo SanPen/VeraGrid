@@ -1162,10 +1162,6 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
     """
     f_obj = 0.0
 
-    # con_loading is used by the corrective path to skip already-overloaded branches; the strict
-    # formulation does not pre-compute it, so use zeros (no pre-skip; slacks still capture overloads).
-    con_loading_zeros = np.zeros(branch_data_t.nelm)
-
     # Branches that could possibly receive a post-contingency limit
     monitorable: BoolVec = get_contingency_monitorable_branches(
         branch_data_t=branch_data_t,
@@ -1209,8 +1205,8 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                 t_idx=t_idx, c=c, Sbase=Sbase, contingency=contingency,
                 contingency_flows=contingency_flows, changed_idx=changed_idx,
                 branch_data_t=branch_data_t, branch_vars=branch_vars,
-                vsc_vars=vsc_vars, hvdc_vars=hvdc_vars, con_loading=con_loading_zeros,
-                prob=prob, logger=Logger(), corrective_rows=corrective_rows,
+                vsc_vars=vsc_vars, hvdc_vars=hvdc_vars,
+                prob=prob, corrective_rows=corrective_rows,
                 vsc_active=vsc_active, hvdc_active=hvdc_active,
                 vsc_delta_vars=vsc_deltas_c, hvdc_delta_vars=hvdc_deltas_c)
         else:
@@ -1881,8 +1877,12 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
     # solve the model
     status = lp_model.solve(robust=robust, show_logs=verbose > 0, progress_text=progress_text)
     if controlled_states is not None:
+        # The shared screening loop certifies the strict physical states. Its
+        # strict=True formulation admits hard limits and never adds thermal slacks.
         status = controlled_states.solve(f_obj, status, robust=robust, show_logs=verbose > 0,
                                          progress=SolverProgress(progress_text))
+    else:
+        pass  # Other control modes already have their contingency constraints.
 
     # gather the results
     logger.add_info(msg="Status", value=lp_model.status2string(status))

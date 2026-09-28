@@ -342,7 +342,7 @@ class InitializationStateRhsVector:
         exec(source_code, namespace)
 
         if use_jit:
-            compiled_func = nb.njit(
+            compiled_func = nb.jit(
                 nb.void(nb.float64[:], nb.float64[:], nb.float64[:], nb.float64[:], nb.float64[:]),
                 fastmath=True,
                 cache=False,

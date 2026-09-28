@@ -63,7 +63,8 @@ def optimal_linear_contingency_analysis(grid: MultiCircuit,
 
     linear_analysis = LinearAnalysis(nc=nc,
                                      distributed_slack=options.lin_options.distribute_slack,
-                                     correct_values=options.lin_options.correct_values)
+                                     correct_values=options.lin_options.correct_values,
+                                     use_jacobian_ptdf=options.lin_options.use_jacobian_ptdf)
 
     linear_multiple_contingencies.compute(lin=linear_analysis,
                                           ptdf_threshold=options.lin_options.ptdf_threshold,

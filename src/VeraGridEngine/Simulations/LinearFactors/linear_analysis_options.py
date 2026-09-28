@@ -17,6 +17,7 @@ class LinearAnalysisOptions(OptionsTemplate):
     __slots__ = (
         "distribute_slack",
         "correct_values",
+        "use_jacobian_ptdf",
         "ptdf_threshold",
         "lodf_threshold",
     )
@@ -24,6 +25,7 @@ class LinearAnalysisOptions(OptionsTemplate):
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
         GCProp(key="distribute_slack", tpe=bool),
         GCProp(key="correct_values", tpe=bool),
+        GCProp(key="use_jacobian_ptdf", tpe=bool),
         GCProp(key="ptdf_threshold", tpe=float),
         GCProp(key="lodf_threshold", tpe=float),
     )
@@ -32,11 +34,13 @@ class LinearAnalysisOptions(OptionsTemplate):
                  distribute_slack=False,
                  correct_values=True,
                  ptdf_threshold: float = 1e-3,
-                 lodf_threshold: float = 1e-3):
+                 lodf_threshold: float = 1e-3,
+                 use_jacobian_ptdf: bool = False):
         """
         Power Transfer Distribution Factors' options
         :param distribute_slack: Distribute the slack effect?
         :param correct_values: correct out of bounds values?
+        :param use_jacobian_ptdf: use the AC Jacobian PTDF implementation?
         :param ptdf_threshold: threshold for PTDF's to be converted to sparse
         :param lodf_threshold: threshold for LODF's to be converted to sparse
         """
@@ -46,7 +50,8 @@ class LinearAnalysisOptions(OptionsTemplate):
 
         self.correct_values = correct_values
 
+        self.use_jacobian_ptdf = use_jacobian_ptdf
+
         self.ptdf_threshold = ptdf_threshold
 
         self.lodf_threshold = lodf_threshold
-

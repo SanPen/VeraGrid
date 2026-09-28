@@ -1053,6 +1053,63 @@ class GraphsWidget(QtWidgets.QWidget):
         else:
             return False
 
+    def set_scatter_series(self,
+                           x_values: Sequence[float] | np.ndarray,
+                           series_names: Sequence[str],
+                           series_values: Sequence[Sequence[float] | np.ndarray],
+                           colors: Sequence[str | None] | None = None,
+                           point_tooltips: Sequence[Sequence[str] | None] | None = None) -> bool:
+        """Replace the chart with one or more unconnected XY point series.
+
+        :param x_values: Horizontal numeric coordinates shared by every series.
+        :param series_names: Visible legend name for each point series.
+        :param series_values: Vertical values paired with each series name.
+        :param colors: Optional Qt colour for each series.
+        :param point_tooltips: Optional hover text for each series point.
+        :return: Whether every input buffer had a compatible finite shape.
+        """
+        series_count: int = len(series_names)
+        x_data: np.ndarray = np.asarray(x_values, dtype=float)
+        if not self._can_mutate() or series_count == 0 or len(series_values) != series_count:
+            return False
+        else:
+            pass
+        if len(x_data) == 0 or not bool(np.any(np.isfinite(x_data))):
+            return False
+        else:
+            pass
+        if colors is None:
+            color_values: list[str | None] = [None] * series_count
+        elif len(colors) == series_count:
+            color_values = list(colors)
+        else:
+            return False
+        if point_tooltips is None:
+            tooltip_values: list[Sequence[str] | None] = [None] * series_count
+        elif len(point_tooltips) == series_count:
+            tooltip_values = list(point_tooltips)
+        else:
+            return False
+        series_index: int
+        for series_index in range(series_count):
+            y_data: np.ndarray = np.asarray(series_values[series_index], dtype=float)
+            if len(y_data) != len(x_data) or not bool(np.any(np.isfinite(y_data))):
+                return False
+            else:
+                pass
+
+        # Validate the complete input before replacing the visible chart.
+        self.clear()
+        for series_index in range(series_count):
+            self.add_scatter_series(
+                name=str(series_names[series_index]),
+                x_values=x_data,
+                y_values=np.asarray(series_values[series_index], dtype=float),
+                color=color_values[series_index],
+                point_tooltips=tooltip_values[series_index],
+            )
+        return self.get_series_count() == series_count
+
     def set_cumulative_area_series(
             self,
             x_values: Sequence[float] | np.ndarray,

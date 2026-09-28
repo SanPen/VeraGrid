@@ -83,6 +83,46 @@ def get_result_table_series(table: ResultsTable,
         return None
 
 
+def get_result_table_xy(table: ResultsTable,
+                        selected_rows: np.ndarray | None = None,
+                        selected_y_columns: np.ndarray | None = None) -> tuple[
+                            np.ndarray, list[str], list[np.ndarray]] | None:
+    """Extract the first table column as X and selected later columns as Y.
+
+    :param table: Results table whose first column stores horizontal coordinates.
+    :param selected_rows: Optional row positions to retain.
+    :param selected_y_columns: Optional Y-column positions.
+    :return: X coordinates, Y labels, and Y buffers, or ``None`` when invalid.
+    """
+    data_matrix: np.ndarray = np.asarray(table.data_c, dtype=float)
+    if data_matrix.ndim == 2 and data_matrix.shape[1] > 1:
+        row_count: int = data_matrix.shape[0]
+        if selected_rows is None:
+            row_indices: np.ndarray = np.arange(row_count, dtype=np.int64)
+        else:
+            row_indices = np.unique(np.asarray(selected_rows, dtype=np.int64))
+        if selected_y_columns is None:
+            y_indices: np.ndarray = np.arange(1, data_matrix.shape[1], dtype=np.int64)
+        else:
+            y_indices = np.unique(np.asarray(selected_y_columns, dtype=np.int64))
+            y_indices = y_indices[y_indices > 0]
+        valid_rows: bool = len(row_indices) > 0 and int(np.min(row_indices)) >= 0 and int(np.max(row_indices)) < row_count
+        valid_columns: bool = len(y_indices) > 0 and int(np.min(y_indices)) > 0 and int(np.max(y_indices)) < data_matrix.shape[1]
+        if valid_rows and valid_columns:
+            x_values: np.ndarray = np.ascontiguousarray(data_matrix[row_indices, 0], dtype=float)
+            y_names: list[str] = list()
+            y_values: list[np.ndarray] = list()
+            y_index: int
+            for y_index in y_indices:
+                y_names.append(str(table.cols_c[int(y_index)]))
+                y_values.append(np.ascontiguousarray(data_matrix[row_indices, int(y_index)], dtype=float))
+            return x_values, y_names, y_values
+        else:
+            return None
+    else:
+        return None
+
+
 def append_result_table_column(chart: GraphsWidget,
                                table: ResultsTable,
                                column_index: int,

@@ -79,14 +79,14 @@ class EmtEvent(PointerDeviceParent):
 
     def __init__(self,
                  device: EditableDevice | None = None,
-                 parameter: Var = None,
-                 time: float = None,
+                 parameter: Var| None = None,
+                 time: float | None = None,
                  end_time: float | None = None,
-                 value: float = None,
-                 group: EmtEventsGroup = None,
+                 value: float| None = None,
+                 group: EmtEventsGroup| None = None,
                  force_step_alignment: bool = False,
                  transition_type: DynamicEventTransitionType = DynamicEventTransitionType.Step,
-                 idtag: Union[str, None] = None,
+                 idtag: str | None = None,
                  name="EmtEvent",
                  code='',
 
@@ -113,10 +113,13 @@ class EmtEvent(PointerDeviceParent):
                                      code=code,
                                      name=name,
                                      device_type=DeviceType.EmtEventDevice,
-                                     comment=comment)
+                                     comment=comment,
+                                     pointer_dev_tpes=[
+                                         DeviceType.PhysicalDeviceType  # Signifies all physical devices
+                                     ])
 
 
-        self._group: EmtEventsGroup = group
+        self._group: EmtEventsGroup | None = group
         self.parameter: Any = parameter
         self.time: float = float(time) if time is not None else 0.0
         self.end_time: float = float(end_time) if end_time is not None else self.time+1e-20
@@ -126,7 +129,7 @@ class EmtEvent(PointerDeviceParent):
 
 
     @property
-    def group(self) -> EmtEventsGroup:
+    def group(self) -> EmtEventsGroup | None:
         """
         Group of events
         :return:

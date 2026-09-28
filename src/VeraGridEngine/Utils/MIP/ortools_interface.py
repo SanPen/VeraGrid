@@ -163,6 +163,8 @@ class OrToolsLpModel(AbstractLpModel):
     )
 
     OPTIMAL = SolveStatus.OPTIMAL
+    INFEASIBLE: SolveStatus = SolveStatus.INFEASIBLE
+    NOT_SOLVED: SolveStatus = SolveStatus.NOT_SOLVED
     INFINITY = 1e20
 
     def __init__(self, solver_type: MIPSolvers):

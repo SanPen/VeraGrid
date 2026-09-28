@@ -86,6 +86,7 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
         lin_ts = LinearAnalysisTs(grid=self.grid,
                                   distributed_slack=self.options.distribute_slack,
                                   correct_values=self.options.correct_values,
+                                  use_jacobian_ptdf=self.options.use_jacobian_ptdf,
                                   time_indices=self.time_indices)
 
         self.report_text('Computing flows...')
@@ -118,6 +119,7 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
                     nc=nc,
                     distributed_slack=self.options.distribute_slack,
                     correct_values=self.options.correct_values,
+                    use_jacobian_ptdf=self.options.use_jacobian_ptdf,
                 )
 
                 Sbus = nc.get_power_injections_pu().real

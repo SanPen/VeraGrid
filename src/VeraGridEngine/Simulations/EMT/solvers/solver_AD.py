@@ -46,9 +46,9 @@ def _safe_njit(py_func: Callable[..., Any], fastmath: bool = True, cache: bool =
     :rtype: Callable[..., Any]
     """
     if signature is not None:
-        compiled_kernel: Callable[..., Any] = nb.njit(signature, fastmath=fastmath, cache=cache)(py_func)
+        compiled_kernel: Callable[..., Any] = nb.jit(signature, fastmath=fastmath, cache=cache)(py_func)
     else:
-        compiled_kernel = nb.njit(fastmath=fastmath, cache=cache)(py_func)
+        compiled_kernel = nb.jit(fastmath=fastmath, cache=cache)(py_func)
 
     return compiled_kernel
 
@@ -56,7 +56,7 @@ def _safe_njit(py_func: Callable[..., Any], fastmath: bool = True, cache: bool =
 # Sparse Forward-Mode AD Jacobian with Graph Coloring (JVP-based)
 # ==============================================================================
 
-@nb.njit(cache=True, fastmath=True)
+@nb.jit(cache=True, fastmath=True)
 def _scatter_color_jvp_to_csc_data(jvp: np.ndarray,
                                    data: np.ndarray,
                                    color_ptr: np.ndarray,

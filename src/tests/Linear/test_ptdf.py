@@ -71,6 +71,28 @@ def test_ptdf():
     assert (np.max(np.abs(simulation.results.PTDF - test_PTDF)) < 1e-3)
     assert (np.max(np.abs(simulation.results.LODF - test_LODF)) < 1e-3)
 
+
+def test_jacobian_ptdf_is_opt_in():
+    """The Jacobian PTDF path is opt-in and produces a usable matrix."""
+    fname = os.path.join('data', 'grids', 'PGOC_6bus.gridcal')
+    main_circuit = gce.FileOpen(fname).open()
+    nc = gce.compile_numerical_circuit_at(main_circuit)
+
+    legacy = LinearAnalysis(nc=nc)
+    explicit_legacy = LinearAnalysis(nc=nc, use_jacobian_ptdf=False)
+    jacobian = LinearAnalysis(nc=nc, use_jacobian_ptdf=True)
+
+    assert np.array_equal(legacy.PTDF, explicit_legacy.PTDF)
+    assert jacobian.PTDF.shape == legacy.PTDF.shape
+    assert np.all(np.isfinite(jacobian.PTDF))
+
+    driver = gce.LinearAnalysisDriver(
+        grid=main_circuit,
+        options=gce.LinearAnalysisOptions(use_jacobian_ptdf=True),
+    )
+    driver.run()
+    assert np.all(np.isfinite(driver.results.PTDF))
+
 def test_ptdf_ieee14_definition():
     """
     Compare the PSSE LODF and the VeraGrid LODF for the IEEE14

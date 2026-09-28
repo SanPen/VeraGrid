@@ -198,7 +198,8 @@ def linear_contingency_analysis_old(nc: NumericalCircuit,
 
     linear_analysis = LinearAnalysis(nc=nc,
                                      distributed_slack=options.lin_options.distribute_slack,
-                                     correct_values=options.lin_options.correct_values)
+                                     correct_values=options.lin_options.correct_values,
+                                     use_jacobian_ptdf=options.lin_options.use_jacobian_ptdf)
 
     linear_multiple_contingencies.compute(lin=linear_analysis,
                                           ptdf_threshold=options.lin_options.ptdf_threshold,
@@ -292,7 +293,7 @@ def linear_contingency_analysis_old(nc: NumericalCircuit,
 
 
 
-@nb.njit()
+@nb.jit()
 def linear_contingency_scan_numba(nbr: int,
                                   n_con_groups: int,
                                   Pbus: Vec,

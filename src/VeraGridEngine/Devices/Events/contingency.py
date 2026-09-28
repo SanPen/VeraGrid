@@ -71,7 +71,14 @@ class Contingency(PointerDeviceParent):
                                      code=code,
                                      name=name,
                                      device_type=DeviceType.ContingencyDevice,
-                                     comment=comment)
+                                     comment=comment,
+                                     pointer_dev_tpes=[
+                                         DeviceType.LineDevice,
+                                         DeviceType.Transformer2WDevice,
+                                         DeviceType.WindingDevice,
+                                         DeviceType.GeneratorDevice,
+                                         DeviceType.BatteryDevice
+                                     ])
 
         # Contingency type
         self._prop: ContingencyOperationTypes = prop

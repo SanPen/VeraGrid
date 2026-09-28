@@ -65,8 +65,30 @@ def test_market_unit_groups_assets():
 
     template_mu, deps_mu = a.get_dictionary_of_lists(DeviceType.MarketUnitDevice)
     assert template_mu.device_type == DeviceType.MarketUnitDevice
+    assert DeviceType.FacilityDevice in deps_mu
+    assert deps_mu[DeviceType.FacilityDevice] == []
     assert DeviceType.MarketUnitsGroupDevice in deps_mu
     assert deps_mu[DeviceType.MarketUnitsGroupDevice] == [grp3]
+
+    template_investment, deps_investment = a.get_dictionary_of_lists(DeviceType.InvestmentDevice)
+    assert template_investment.device_type == DeviceType.InvestmentDevice
+    assert DeviceType.BusDevice in deps_investment
+    for branch_device_type in [
+            DeviceType.LineDevice,
+            DeviceType.DCLineDevice,
+            DeviceType.Transformer2WDevice,
+            DeviceType.Transformer3WDevice,
+            DeviceType.TransformerNwDevice,
+            DeviceType.WindingDevice,
+            DeviceType.HVDCLineDevice,
+            DeviceType.VscDevice,
+            DeviceType.UpfcDevice,
+            DeviceType.SeriesReactanceDevice,
+            DeviceType.SwitchDevice,
+    ]:
+        assert branch_device_type in deps_investment
+    for injection_device_type in a.get_injections_device_types():
+        assert injection_device_type in deps_investment
 
     # template_objects_dict
     assert any(isinstance(x, dev.MarketUnitsGroup) for x in a.template_objects_dict["Market"])

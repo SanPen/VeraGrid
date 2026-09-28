@@ -700,7 +700,7 @@ def spsolve_csc(A: CSC, x: Vec) -> Vec:
         return factor.solve(x), True
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def pack_4_by_4(A: CSC, B: CSC, C: CSC, D: CSC) -> CSC:
     """
     Stack 4 CSC matrices in a 2 by 2 structure
@@ -755,7 +755,7 @@ def pack_4_by_4(A: CSC, B: CSC, C: CSC, D: CSC) -> CSC:
     return res
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def pack_3_by_4(A: CSC, B: CSC, C: CSC) -> CSC:
     """
     Stack 3 CSC matrices in a 2 by 2 structure
@@ -802,7 +802,7 @@ def pack_3_by_4(A: CSC, B: CSC, C: CSC) -> CSC:
     return res
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_cumsum_i(p, c, n):
     """
     p [0..n] = cumulative sum of c [0..n-1], and then copy p [0..n-1] into c
@@ -824,7 +824,7 @@ def csc_cumsum_i(p, c, n):
     return int(nz2)  # return sum (c [0..n-1])
 
 
-@nb.njit(cache=False)
+@nb.jit(cache=False)
 def sp_transpose(A: CSC) -> CSC:
     """
     Actual CSC transpose unlike scipy's
@@ -850,7 +850,7 @@ def sp_transpose(A: CSC) -> CSC:
     return C
 
 
-@nb.njit(cache=False)
+@nb.jit(cache=False)
 def sp_slice_cols(A: CSC, cols: IntMat) -> CSC:
     """
     Slice columns
@@ -884,7 +884,7 @@ def sp_slice_cols(A: CSC, cols: IntMat) -> CSC:
     return res
 
 
-@nb.njit(cache=False)
+@nb.jit(cache=False)
 def sp_slice_rows(mat: CSC, rows: np.ndarray) -> CSC:
     """
     Slice rows
@@ -897,7 +897,7 @@ def sp_slice_rows(mat: CSC, rows: np.ndarray) -> CSC:
     return sp_transpose(A)
 
 
-@nb.njit()
+@nb.jit()
 def sp_slice(A: CSC, rows: IntVec, cols: IntVec):
     """
     /*
@@ -948,7 +948,7 @@ def sp_slice(A: CSC, rows: IntVec, cols: IntVec):
     return B
 
 
-@nb.njit()
+@nb.jit()
 def csc_stack_2d_ff(mats: List[CSC], n_rows: int = 1, n_cols: int = 1) -> CSC:
     """
     Assemble matrix from a list of matrices representing a "super matrix"
@@ -1015,7 +1015,7 @@ def csc_stack_2d_ff(mats: List[CSC], n_rows: int = 1, n_cols: int = 1) -> CSC:
     return res
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def diags(array: Vec) -> CSC:
     """
     Get diagonal sparse matrix from array
@@ -1035,7 +1035,7 @@ def diags(array: Vec) -> CSC:
     return res
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def diagc(m: int, value: float = 1.0) -> CSC:
     """
     Get diagonal sparse matrix from value
@@ -1055,7 +1055,7 @@ def diagc(m: int, value: float = 1.0) -> CSC:
     return res
 
 
-@nb.njit(cache=False)
+@nb.jit(cache=False)
 def extend(A: CSC, last_col: Vec, last_row: Vec, corner_val: float) -> CSC:
     """
     B = |   A       last_col |
@@ -1122,7 +1122,7 @@ def extend(A: CSC, last_col: Vec, last_row: Vec, corner_val: float) -> CSC:
     return B
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_multiply_ff(A: CSC, B: CSC) -> CSC:
     """
     Sparse matrix multiplication, C = A*B where A and B are CSC sparse matrices
@@ -1200,7 +1200,7 @@ def csc_multiply_ff(A: CSC, B: CSC) -> CSC:
     return C
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_multiply_ff2(Am, An, Ap, Ai, Ax,
                      Bm, Bn, Bp, Bi, Bx):
     """
@@ -1285,7 +1285,7 @@ def csc_multiply_ff2(Am, An, Ap, Ai, Ax,
     return Cm, Cn, Cp, Cinew, Cxnew, Cnzmax
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_multiply_cx(A: CxCSC, B: CSC) -> CxCSC:
     """
     Sparse matrix multiplication, C = A*B where A and B are CSC sparse matrices
@@ -1363,7 +1363,7 @@ def csc_multiply_cx(A: CxCSC, B: CSC) -> CxCSC:
     return C
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_matvec_ff(A: CSC, x: np.ndarray) -> np.ndarray:
     """
 
@@ -1391,7 +1391,7 @@ def csc_matvec_ff(A: CSC, x: np.ndarray) -> np.ndarray:
         raise Exception("Wrong number of dimensions")
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_matvec_cx(A: CxCSC, x: np.ndarray) -> np.ndarray:
     """
 
@@ -1419,8 +1419,8 @@ def csc_matvec_cx(A: CxCSC, x: np.ndarray) -> np.ndarray:
         raise Exception("Wrong number of dimensions")
 
 
-# @nb.njit("i8(i4[:], i4[:], f8[:], i8, f8, i4[:], f8[:], i8, i4[:], i8)")
-@nb.njit(cache=True)
+# @nb.jit("i8(i4[:], i4[:], f8[:], i8, f8, i4[:], f8[:], i8, i4[:], i8)")
+@nb.jit(cache=True)
 def csc_scatter_f(Ap, Ai, Ax, j, beta, w, x, mark, Ci, nz):
     """
     Scatters and sums a sparse vector A(:,j) into a dense vector, x = x + beta * A(:,j)
@@ -1449,7 +1449,7 @@ def csc_scatter_f(Ap, Ai, Ax, j, beta, w, x, mark, Ci, nz):
     return nz
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_scatter_cx(Ap, Ai, Ax, j, beta, w, x, mark, Ci, nz):
     """
     Scatters and sums a sparse vector A(:,j) into a dense vector, x = x + beta * A(:,j)
@@ -1477,7 +1477,7 @@ def csc_scatter_cx(Ap, Ai, Ax, j, beta, w, x, mark, Ci, nz):
             x[i] += beta * Ax[p]  # i exists in C(:,j) already
     return nz
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_spalloc_f(m, n, nzmax):
     """
     Allocate a sparse matrix (triplet form or compressed-column form).
@@ -1494,7 +1494,7 @@ def csc_spalloc_f(m, n, nzmax):
     return m, n, Aindptr, Aindices, Adata, Anzmax
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_spalloc_cx(m, n, nzmax):
     """
     Allocate a sparse matrix (triplet form or compressed-column form).
@@ -1510,7 +1510,7 @@ def csc_spalloc_cx(m, n, nzmax):
     Adata = np.zeros(Anzmax, dtype=np.complex128)
     return m, n, Aindptr, Aindices, Adata, Anzmax
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_add_ff(A: CSC, B: CSC, alpha = 1.0, beta = 1.0) -> CSC:
     """
     C = alpha*A + beta*B
@@ -1548,7 +1548,7 @@ def csc_add_ff(A: CSC, B: CSC, alpha = 1.0, beta = 1.0) -> CSC:
     return C  # success; free workspace, return C
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_add_ff2(Am, An, Aindptr, Aindices, Adata, Bn, Bindptr, Bindices, Bdata):
     """
     C = A + B
@@ -1584,7 +1584,7 @@ def csc_add_ff2(Am, An, Aindptr, Aindices, Adata, Bn, Bindptr, Bindices, Bdata):
     return Cm, Cn, Cp, Ci, Cx, nz  # success; free workspace, return C
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def csc_add_cx2(Am, An, Aindptr, Aindices, Adata, Bn, Bindptr, Bindices, Bdata):
     """
     C = A + B

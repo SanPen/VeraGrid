@@ -15,6 +15,7 @@ import VeraGridEngine.Devices as dev
 import VeraGridEngine.Templates as tem
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, BRANCH_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES
 from VeraGridEngine.Devices.Parents.editable_device import GCPROP_TYPES
+from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Dynamic.template_classification import (
     classify_dynamic_template_block,
 )
@@ -9546,6 +9547,64 @@ class Assets:
 
         else:
             raise Exception(f'elm_type not understood: {elm_type.value}')
+
+        # Collect dependency types from the property declarations and explicit
+        # pointer targets so new device relationships need no branch here.
+        dependency_types: List[DeviceType] = list()
+        for property_definition in elm.registered_properties.values():
+            if isinstance(property_definition.tpe, DeviceType):
+                dependency_types.append(property_definition.tpe)
+            else:
+                pass
+
+        if isinstance(elm, PointerDeviceParent):
+            for pointer_device_type in elm.pointer_dev_tpes:
+                dependency_types.append(pointer_device_type)
+        else:
+            pass
+
+        # Resolve every dependency to the corresponding circuit list while
+        # retaining specialized lists assembled above for aggregate types.
+        for dependency_type in dependency_types:
+            if dependency_type == DeviceType.PhysicalDeviceType:
+                # A generic pointer targets network objects, not catalogue,
+                # event, grouping, or other metadata objects.
+                if DeviceType.BusDevice not in dictionary_of_lists:
+                    dictionary_of_lists[DeviceType.BusDevice] = self.buses
+                else:
+                    pass
+
+                for injection_device_type in self.get_injections_device_types():
+                    if injection_device_type not in dictionary_of_lists:
+                        dictionary_of_lists[injection_device_type] = self.get_elements_by_type(
+                            injection_device_type)
+                    else:
+                        pass
+
+                branch_device_types: List[DeviceType] = [
+                    DeviceType.LineDevice,
+                    DeviceType.DCLineDevice,
+                    DeviceType.Transformer2WDevice,
+                    DeviceType.Transformer3WDevice,
+                    DeviceType.TransformerNwDevice,
+                    DeviceType.WindingDevice,
+                    DeviceType.HVDCLineDevice,
+                    DeviceType.VscDevice,
+                    DeviceType.UpfcDevice,
+                    DeviceType.SeriesReactanceDevice,
+                    DeviceType.SwitchDevice,
+                ]
+                for branch_device_type in branch_device_types:
+                    if branch_device_type not in dictionary_of_lists:
+                        dictionary_of_lists[branch_device_type] = self.get_elements_by_type(
+                            branch_device_type)
+                    else:
+                        pass
+            else:
+                if dependency_type not in dictionary_of_lists:
+                    dictionary_of_lists[dependency_type] = self.get_elements_by_type(dependency_type)
+                else:
+                    pass
 
         if (DeviceType.RmsModelTemplateDevice in dictionary_of_lists) or (
                 DeviceType.EmtModelTemplateDevice in dictionary_of_lists):

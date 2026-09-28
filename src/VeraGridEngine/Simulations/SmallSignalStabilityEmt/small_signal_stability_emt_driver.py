@@ -22,8 +22,7 @@ from VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_e
     SmallSignalStabilityEmtOptions
 from VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_results import \
     SmallSignalStabilityEmtResults
-from VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels import NUMBA_AVAILABLE, \
-    bmgs_twice_numba
+from VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels import bmgs_twice_numba
 from VeraGridEngine.basic_structures import Vec, CxVec, Mat, CxMat
 from VeraGridEngine.enumerations import SmallSignalEmtBuildTypes
 
@@ -127,7 +126,7 @@ class RobustBlockArnoldiEngine:
             return W, np.zeros((0, self.p_active), dtype=np.float64)
 
         # Numba path (real-valued, cache-friendly)
-        if NUMBA_AVAILABLE and bmgs_twice_numba is not None:
+        if bmgs_twice_numba is not None:
             starts = np.asarray(self.block_indices[:j + 1], dtype=np.int64)
             ends = np.asarray(self.block_indices[1:j + 2], dtype=np.int64)
             V_prev = np.ascontiguousarray(self.V[:, :end_j], dtype=np.float64)
@@ -563,8 +562,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
             # self.report_progress2()
             print(
                 f'Executing Hybrid Block-Arnoldi (Block Size: {p_seed}, Iters: {m_iters}, Restarts: {max_restarts})...')
-            if NUMBA_AVAILABLE and bmgs_twice_numba is not None:
-                print('   [BIRAM] Numba BMGS kernel: ON')
+            print('   [BIRAM] Numba BMGS kernel: ON')
 
         rng = np.random.default_rng(42)
         V_seed, _ = np.linalg.qr(rng.standard_normal((n_states, p_seed)))

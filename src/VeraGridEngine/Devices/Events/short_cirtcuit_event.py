@@ -114,7 +114,10 @@ class ShortCircuitEvent(PointerDeviceParent):
                                      code=code,
                                      name=name,
                                      device_type=DeviceType.ShortCircuitEvent,
-                                     comment=comment)
+                                     comment=comment,
+                                     pointer_dev_tpes=[
+                                         DeviceType.BusDevice
+                                     ])
 
         self._fault_type: FaultType = fault_type
         self._method: MethodShortCircuit = method

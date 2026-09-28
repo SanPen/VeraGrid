@@ -76,7 +76,8 @@ class MarketUnit(PointerDeviceParent):
                                      code=code,
                                      name=name,
                                      device_type=DeviceType.MarketUnitDevice,
-                                     comment=comment)
+                                     comment=comment,
+                                     pointer_dev_tpes=[DeviceType.FacilityDevice])
 
         self.color = color if color is not None else self.rnd_color()
 

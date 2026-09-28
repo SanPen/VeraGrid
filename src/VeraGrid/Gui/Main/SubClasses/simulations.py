@@ -1965,7 +1965,8 @@ class SimulationsMain(TimeEventsMain):
             distribute_slack=self.ui.ptdf_distributed_slack_checkBox.isChecked(),
             correct_values=self.ui.ptdf_correct_nonsense_values_checkBox.isChecked(),
             ptdf_threshold=self.ui.ptdf_threshold_doubleSpinBox.value(),
-            lodf_threshold=self.ui.lodf_threshold_doubleSpinBox.value()
+            lodf_threshold=self.ui.lodf_threshold_doubleSpinBox.value(),
+            use_jacobian_ptdf=self.ui.ptdf_use_jacobian_checkBox.isChecked()
         )
 
         return options

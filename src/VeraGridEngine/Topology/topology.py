@@ -12,7 +12,7 @@ from scipy.sparse import csc_matrix, diags, csr_matrix
 from VeraGridEngine.basic_structures import IntVec, Vec, BoolVec, CxVec, IntMat
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def find_islands_numba(node_number: int, indptr: IntVec, indices: IntVec, active: IntVec) -> List[IntVec]:
     """
     Method to get the islands of a graph
@@ -93,7 +93,7 @@ def find_islands_numba(node_number: int, indptr: IntVec, indices: IntVec, active
     return islands
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_elements_of_the_island_numba(n_rows: int,
                                      indptr: IntVec,
                                      indices: IntVec,
@@ -173,7 +173,7 @@ def get_elements_of_the_island(C_element_bus: csc_matrix, island: IntVec, active
     return indices
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_island_monopole_indices(bus_map: IntVec, elm_active: BoolVec, elm_bus: IntVec) -> IntVec:
     """
 
@@ -194,7 +194,7 @@ def get_island_monopole_indices(bus_map: IntVec, elm_active: BoolVec, elm_bus: I
     return indices[:ii]
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_island_branch_indices(bus_map: IntVec,
                               elm_active: BoolVec,
                               F: IntVec,
@@ -227,7 +227,7 @@ def get_island_branch_indices(bus_map: IntVec,
     return indices[:ii]
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def build_reducible_branches_C_coo(F: IntVec, T: IntVec, reducible: IntVec, active: IntVec):
     """
     Build the COO coordinates of the C matrix
@@ -281,7 +281,7 @@ def build_reducible_branches_C_coo(F: IntVec, T: IntVec, reducible: IntVec, acti
     return i[:ii], j[:ii], data[:ii], n_red
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def build_branches_C_coo_2(bus_active: IntVec,
                            F1: IntVec, T1: IntVec, active1: BoolVec,
                            F2: IntVec, T2: IntVec, FN2: IntVec, active2: BoolVec):
@@ -374,7 +374,7 @@ def build_branches_C_coo_2(bus_active: IntVec,
     return i[:ii], j[:ii], data[:ii], nelm
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def build_branches_C_coo_3(bus_active: IntVec,
                            F1: IntVec, T1: IntVec, active1: BoolVec,
                            F2: IntVec, T2: IntVec, FN2: IntVec, active2: BoolVec,
@@ -715,7 +715,7 @@ def compute_connectivity_flexible(branch_active: IntVec | None = None,
     return ConnectivityMatrices(Cf=Cf.tocsc(), Ct=Ct.tocsc())
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def sum_per_bus(nbus: int, bus_indices: IntVec, magnitude: Vec) -> Vec:
     """
     Summation of magnitudes per bus (real)
@@ -731,7 +731,7 @@ def sum_per_bus(nbus: int, bus_indices: IntVec, magnitude: Vec) -> Vec:
     return res
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def sum_per_bus_cx(nbus: int, bus_indices: IntVec, magnitude: CxVec) -> CxVec:
     """
     Summation of magnitudes per bus (complex)
@@ -747,7 +747,7 @@ def sum_per_bus_cx(nbus: int, bus_indices: IntVec, magnitude: CxVec) -> CxVec:
     return res
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def sum_per_bus_bool(nbus: int, bus_indices: IntVec, magnitude: BoolVec) -> BoolVec:
     """
     Summation of magnitudes per bus (bool)
@@ -763,7 +763,7 @@ def sum_per_bus_bool(nbus: int, bus_indices: IntVec, magnitude: BoolVec) -> Bool
     return res
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def dev_per_bus(nbus: int, bus_indices: IntVec) -> IntVec:
     """
     Summation of magnitudes per bus (bool)

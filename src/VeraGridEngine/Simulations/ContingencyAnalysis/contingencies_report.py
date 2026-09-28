@@ -15,7 +15,7 @@ from VeraGridEngine.Simulations.ContingencyAnalysis.Methods.srap import BusesFor
 from VeraGridEngine.Utils.Sparse.csc_numba import get_sparse_array_numba
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_ptdf_comp_numba(data: Vec, indices: IntVec, indptr: IntVec, PTDF: Mat, m: int, bd_indices: IntVec):
     """
     This computes the compensatd PTDF for a single branch

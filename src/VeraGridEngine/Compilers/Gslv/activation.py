@@ -21,9 +21,10 @@ from VeraGridEngine.enumerations import (
     ContingencyOperationTypes,
     BuildStatus,
     BranchGroupTypes,
-    ConverterControlType
+    ConverterControlType,
+    GeneratorControlMode
 )
-GSLV_RECOMMENDED_VERSION: str = "0.8.10"
+GSLV_RECOMMENDED_VERSION: str = "0.9.3"
 GSLV_VERSION: str = ''
 GSLV_AVAILABLE: bool = False
 
@@ -73,6 +74,12 @@ try:
         TapPhaseControl.fixed: pg.TapPhaseControl.fixed,
         TapPhaseControl.Pf: pg.TapPhaseControl.Pf,
         TapPhaseControl.Pt: pg.TapPhaseControl.Pt,
+    }
+
+    generator_control_mode_dict = {
+        GeneratorControlMode.Q: pg.GeneratorControlMode.Q,
+        GeneratorControlMode.V: pg.GeneratorControlMode.V,
+        GeneratorControlMode.QVDroop: pg.GeneratorControlMode.QVDroop,
     }
 
     hvdc_control_mode_dict = {

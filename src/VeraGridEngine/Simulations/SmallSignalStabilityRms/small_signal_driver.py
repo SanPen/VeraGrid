@@ -110,7 +110,7 @@ def compute_state_matrix(problem: RmsProblemTemplate, x: Vec, dx: Vec) -> tuple[
     return A_bal, A
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def compute_participation_factors(v: np.ndarray,
                                   w: np.ndarray) -> np.ndarray:
     """
@@ -232,7 +232,7 @@ def select_eigs_without_conjugates(eigenvalues: Vec) -> Vec:
     return np.array(eig_list)
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def compute_damping_ratios_and_frequencies(eigenvalues: Vec,
                                            eig_no_conjugates: Vec) -> tuple[Vec, Vec]:
     """

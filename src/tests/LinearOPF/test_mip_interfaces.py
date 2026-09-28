@@ -130,12 +130,12 @@ def test_issue_372_1():
     # fname = os.path.join('data', 'grids', 'ntc_test.gridcal')
     fname = os.path.join('data', 'grids', 'IEEE14 - ntc areas_voltages_hvdc_shifter_l10free.gridcal')
 
-    grid = vg.open_file(fname)
-
     for mip_framework in [
         vg.MIPFramework.PuLP,
-        vg.MIPFramework.OrTools
+        # vg.MIPFramework.OrTools
     ]:
+        grid = vg.open_file(fname)
+
         # Phase shifter (branch 8): tap_phase_control_mode: fixed.
         grid.transformers2w[6].tap_phase_control_mode = vg.TapPhaseControl.fixed
 

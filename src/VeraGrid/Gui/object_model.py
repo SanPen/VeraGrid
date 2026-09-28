@@ -8,7 +8,7 @@ import datetime
 import math
 
 import numpy as np
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Tuple
 from PySide6 import QtCore, QtWidgets, QtGui
 from typing import Callable
 from enum import EnumMeta
@@ -19,6 +19,7 @@ from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 from VeraGridEngine.Devices import Bus, ContingencyGroup
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp, GCPROP_TYPES
+from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType, PrpCat, SubObjectType
@@ -211,7 +212,7 @@ class ObjectsModel(WrappableTableModel):
                  editable=False,
                  transposed=False,
                  check_unique: Union[None, List[str]] = None,
-                 dictionary_of_lists: Union[None, Dict[Any, List[ALL_DEV_TYPES]]] = None,
+                 dictionary_of_lists: Dict[DeviceType, List[ALL_DEV_TYPES]] | None = None,
                  properties_filter: PrpCat = PrpCat.All,
                  error_msg_ptr: Callable[[str], None] = None):
         """
@@ -277,6 +278,11 @@ class ObjectsModel(WrappableTableModel):
 
         self.error_msg_ptr: Callable[[str], None] | None = error_msg_ptr
 
+        self.is_pointer_object = False
+        if len(self.objects) > 0:
+            if isinstance(self.objects[0], PointerDeviceParent):
+                self.is_pointer_object = True
+
         self.set_delegates()
 
     def report_error(self, msg: str):
@@ -338,7 +344,7 @@ class ObjectsModel(WrappableTableModel):
                     delegate = BoolCheckboxDelegate(self.parent)
                     F(i, delegate)
 
-                elif tpe is str:
+                elif tpe is str and not (self.is_pointer_object and self.attributes[i] == "device"):
                     delegate = TextDelegate(self.parent)
                     F(i, delegate)
 
@@ -372,7 +378,7 @@ class ObjectsModel(WrappableTableModel):
                 elif tpe == SubObjectType.VarType:
                     # Symbolic event parameters are supplied by the owning dynamic model because
                     # they are not circuit devices and therefore cannot use DeviceSelectorDelegate.
-                    parameter_objects: List[Any] | None = self._get_delegate_objects(i)
+                    parameter_objects: List[Any] | None = self._get_delegate_objects_single_type(i)
                     if parameter_objects is not None:
                         parameter_names: List[str] = [parameter.name for parameter in parameter_objects]
                         delegate = ComboDelegate(self.parent, parameter_objects, parameter_names)
@@ -380,25 +386,27 @@ class ObjectsModel(WrappableTableModel):
                     else:
                         F(i, None)
 
-                elif self._get_delegate_objects(i) is not None:
-                    # Foreign key object references use the searchable device selector.
-                    objs = self._get_delegate_objects(i)
-                    if isinstance(tpe, DeviceType):
-                        device_type: DeviceType = tpe
-                    else:
-                        if len(objs) > 0:
-                            device_type: DeviceType = objs[0].device_type
-                        else:
-                            device_type: DeviceType = DeviceType.NoDevice
-
-                    delegate = DeviceSelectorDelegate(
-                        parent=self.parent,
-                        devices_by_type={device_type: objs},
-                    )
-                    F(i, delegate)
-
                 else:
-                    F(i, None)
+
+                    # Foreign key object references use the searchable device selector.
+                    empty, objs = self._get_delegate_objects_dict(i)
+
+                    if not empty:
+                        # if isinstance(tpe, DeviceType):
+                        #     device_type: DeviceType = tpe
+                        # else:
+                        #     if len(objs) > 0:
+                        #         device_type: DeviceType = objs[0].device_type
+                        #     else:
+                        #         device_type: DeviceType = DeviceType.NoDevice
+
+                        delegate = DeviceSelectorDelegate(
+                            parent=self.parent,
+                            devices_by_type=objs,
+                        )
+                        F(i, delegate)
+                    else:
+                        F(i, None)
 
     @staticmethod
     def _is_bus_property_type(tpe: GCPROP_TYPES) -> bool:
@@ -416,7 +424,7 @@ class ObjectsModel(WrappableTableModel):
             else:
                 return False
 
-    def _get_delegate_objects(self, attr_idx: int) -> List[ALL_DEV_TYPES] | None:
+    def _get_delegate_objects_single_type(self, attr_idx: int) -> List[ALL_DEV_TYPES] | None:
         """
         Return the object list used by one foreign-key delegate.
 
@@ -424,7 +432,7 @@ class ObjectsModel(WrappableTableModel):
         generic list keyed by the registered property type.
 
         :param attr_idx: Property index inside the visible table model.
-        :return: Delegate object list when available.
+        :return: empty, dictionary of lists of objects
         """
 
         prop_name = self.attributes[attr_idx]
@@ -444,6 +452,83 @@ class ObjectsModel(WrappableTableModel):
                         return self.dictionary_of_lists[DeviceType.BusDevice]
                     else:
                         return None
+
+    def _get_delegate_objects_dict(self, attr_idx: int) -> Tuple[bool, Dict[DeviceType, List[ALL_DEV_TYPES]]]:
+        """
+        Return the object list used by one foreign-key delegate.
+
+        The GUI first looks for a property-specific list and then falls back to the
+        generic list keyed by the registered property type.
+
+        :param attr_idx: Property index inside the visible table model.
+        :return: empty, dictionary of lists of objects
+        """
+
+        prop_name = self.attributes[attr_idx]
+        tpe = self.attribute_types[attr_idx]
+        specific_key = (prop_name, tpe)
+
+        if self.is_pointer_object and prop_name == "device":
+            tpes = self.objects[0].pointer_dev_tpes
+            devices_by_type: Dict[DeviceType, List[ALL_DEV_TYPES]] = dict()
+            for device_type in tpes:
+                if device_type == DeviceType.PhysicalDeviceType:
+                    # PhysicalDeviceType is the broad-pointer sentinel, so expose
+                    # only physical network lists and not unrelated dependencies.
+                    physical_device_types: List[DeviceType] = [
+                        DeviceType.BusDevice,
+                        DeviceType.LineDevice,
+                        DeviceType.DCLineDevice,
+                        DeviceType.Transformer2WDevice,
+                        DeviceType.Transformer3WDevice,
+                        DeviceType.TransformerNwDevice,
+                        DeviceType.WindingDevice,
+                        DeviceType.HVDCLineDevice,
+                        DeviceType.VscDevice,
+                        DeviceType.UpfcDevice,
+                        DeviceType.SeriesReactanceDevice,
+                        DeviceType.SwitchDevice,
+                    ]
+                    physical_device_types.extend([
+                        DeviceType.GeneratorDevice,
+                        DeviceType.BatteryDevice,
+                        DeviceType.LoadDevice,
+                        DeviceType.ExternalGridDevice,
+                        DeviceType.StaticGeneratorDevice,
+                        DeviceType.ShuntDevice,
+                        DeviceType.ControllableShuntDevice,
+                        DeviceType.CurrentInjectionDevice,
+                    ])
+
+                    for available_type, devices in self.dictionary_of_lists.items():
+                        if available_type in physical_device_types:
+                            devices_by_type[available_type] = devices
+                        else:
+                            pass
+                else:
+                    devices: List[ALL_DEV_TYPES] | None = self.dictionary_of_lists.get(device_type, None)
+                    if devices is not None:
+                        devices_by_type[device_type] = devices
+                    else:
+                        pass
+
+            return False, devices_by_type
+
+        else:
+
+            if specific_key in self.dictionary_of_lists:
+                return False, {specific_key: self.dictionary_of_lists[specific_key]}
+            else:
+                if prop_name in self.dictionary_of_lists:
+                    return False, {prop_name: self.dictionary_of_lists[prop_name]}
+                else:
+                    if tpe in self.dictionary_of_lists:
+                        return False, {tpe: self.dictionary_of_lists[tpe]}
+                    else:
+                        if self._is_bus_property_type(tpe=tpe) and DeviceType.BusDevice in self.dictionary_of_lists:
+                            return False, {DeviceType.BusDevice: self.dictionary_of_lists[DeviceType.BusDevice]}
+                        else:
+                            return True, dict()
 
     def update(self):
         """
@@ -476,9 +561,9 @@ class ObjectsModel(WrappableTableModel):
 
         if self.editable and (self.attributes[attr_idx] not in self.non_editable_attributes or is_empty_bus_reference):
             flags: QtCore.Qt.ItemFlag = (
-                QtCore.Qt.ItemFlag.ItemIsEditable
-                | QtCore.Qt.ItemFlag.ItemIsEnabled
-                | QtCore.Qt.ItemFlag.ItemIsSelectable
+                    QtCore.Qt.ItemFlag.ItemIsEditable
+                    | QtCore.Qt.ItemFlag.ItemIsEnabled
+                    | QtCore.Qt.ItemFlag.ItemIsSelectable
             )
 
             if self.attribute_types[attr_idx] is bool:
@@ -687,7 +772,7 @@ class ObjectsModel(WrappableTableModel):
 
             elif role == QtCore.Qt.ItemDataRole.DecorationRole:
 
-                delegate_objects: List[ALL_DEV_TYPES] | None = self._get_delegate_objects(attr_idx)
+                delegate_objects: List[ALL_DEV_TYPES] | None = self._get_delegate_objects_single_type(attr_idx)
                 has_selector_data: bool = delegate_objects is not None
                 is_editable_cell: bool = bool(self.flags(index) & QtCore.Qt.ItemFlag.ItemIsEditable)
 

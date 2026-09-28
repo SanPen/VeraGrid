@@ -76,12 +76,14 @@ class EmtModelTemplate(PointerDeviceParent):
                          code="",
                          device=None,
                          comment="",
-                         device_type=DeviceType.EmtModelTemplateDevice)
+                         device_type=DeviceType.EmtModelTemplateDevice,
+                         pointer_dev_tpes=[
+                             DeviceType.PhysicalDeviceType  # Signifies all physical devices
+                         ])
 
         self._tpe: DeviceType = DeviceType.NoDevice
         self._block: Block = Block()
         self._lazy_builder: EmtLazyTemplateBuilder | None = None
-
 
     def __deepcopy__(self, memo):
         cls = self.__class__

@@ -75,6 +75,10 @@ from VeraGridEngine.basic_structures import Logger
 from VeraGrid.Gui.results_model import ResultsModel
 
 
+# Qt threads must have at least 16 MB, or they'll crash on some systems like OSX
+QT_WORKER_STACK_SIZE_BYTES: int = 16 * 1024 * 1024
+
+
 class GcThread(QThread):
     """
     Generic VeraGrid Thread
@@ -85,6 +89,7 @@ class GcThread(QThread):
 
     def __init__(self, driver: DriverTemplate):
         QThread.__init__(self)
+        self.setStackSize(QT_WORKER_STACK_SIZE_BYTES)
 
         # assign the driver and set the driver's reporting functions
         self.driver: DriverTemplate = driver

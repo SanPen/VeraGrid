@@ -1909,6 +1909,8 @@ class DeviceType(Enum):
     Device types
     """
     NoDevice = 'NoDevice'
+    PhysicalDeviceType = 'PhysicalDeviceType'
+
     TimeDevice = 'Time'
     CircuitDevice = 'Circuit'
     BusDevice = 'Bus'
@@ -4691,6 +4693,7 @@ class ResultTablePlotType(Enum):
     """
 
     SERIES = "SERIES"
+    XY = "XY"
     POLAR = "POLAR"
     COMPLEX_POINTS = "COMPLEX_POINTS"
     COMPLEX_VECTORS = "COMPLEX_VECTORS"

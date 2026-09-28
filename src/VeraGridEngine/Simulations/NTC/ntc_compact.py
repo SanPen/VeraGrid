@@ -1008,114 +1008,123 @@ class CompactContingencies:
     def solve(self: CompactContingencies,
               objective: float | LpVar | LpExp,
               status: int,
-              max_iterations: int = 50,
+              batch_size: int = 8,
               robust: bool = False,
               show_logs: bool = False,
               progress: SolverProgress | None = None) -> int:
-        """Certify the selected contingency set through bounded constraint admission.
+        """Admit constraints until every selected contingency is certified.
+
+        Each pass that requires another solve must add a new block or limit.
+        Per group, at most two blocks (balance and exact control), one bound
+        pair per bus and one limit pair per monitored branch can be admitted.
+        This gives a finite pass bound, including a final pass
+        to certify the last solution. Already admitted components stay in place.
 
         :param objective: Base-case optimization objective.
         :param status: Status of the preceding base-case solve.
-        :param max_iterations: Maximum number of screening passes; must be positive.
+        :param batch_size: Positive number of pending groups to admit per solve.
         :param robust: Enable the backend's existing robust solution mode.
         :param show_logs: Display backend optimization logs.
         :param progress: Optional typed adapter for GUI progress messages.
-        :return: Solver status, or zero when physical certification fails.
+        :return: Solver status, or NOT_SOLVED when certification fails.
         """
-        admitted: CompactState | None
         c: int
-        iteration: int
-        if max_iterations <= 0:
-            self.logger.add_error('Compact contingency screening requires a positive iteration limit')
-            return 0
+        selected_index: int
+        self.complete = False
+        self.final_base = None
+        self.witnesses.fill(None)
+        if batch_size <= 0:
+            status = self.prob.NOT_SOLVED
         else:
-            for iteration in range(max_iterations):
+            components_per_group: int = 2 + self.nc.nbus + int(np.count_nonzero(self.monitor))
+            max_screening_passes: int = len(self.states) * components_per_group + 1
+            screening_pass: int = 0
+            # A bounded counter guarantees termination
+            while (screening_pass < max_screening_passes
+                   and status == self.prob.OPTIMAL and not self.complete):
+                screening_pass += 1
+                base: OperatingPoint = self.symbolic_base.evaluate(self.prob)
+                # Fixed size work arrays avoid growing per contingency records.
+                scores: Vec = np.full(len(self.states), -np.inf, dtype=float)
+                pending_buses: ObjVec = np.empty(len(self.states), dtype=object)
+                pending_rows: ObjVec = np.empty(len(self.states), dtype=object)
+                witnesses: ObjVec = np.empty(len(self.states), dtype=object)
+                witnesses.fill(None)
+                c = 0
+                while c < len(self.states) and status == self.prob.OPTIMAL:
+                    state: CompactState | None = cast(CompactState | None, self.states[c])
+                    if state is None:
+                        state = CompactState(self, c)
+                    else:
+                        pass  # Reuse the admitted compact state for this contingency.
+                    value: Vec | None = state.numeric(base)
+                    if value is None:
+                        if state.exact:
+                            status = self.prob.NOT_SOLVED
+                        else:
+                            scores[c] = np.inf
+                            pending_buses[c] = np.empty(0, dtype=int)
+                            pending_rows[c] = np.flatnonzero(self.monitor)
+                    else:
+                        evaluated_state: tuple[Vec, Vec] = state.evaluate(base, value)
+                        potential: Vec = evaluated_state[0]
+                        flow: Vec = evaluated_state[1]
+                        violations: tuple[IntVec, IntVec] = state.violations(potential, flow)
+                        buses: IntVec = violations[0]
+                        rows: IntVec = violations[1]
+                        # Admitted thermal rows may have explicit penalized slacks.
+                        rows = rows[~state.rows[rows]]
+                        buses = buses[~state.bus_rows[buses]]
+                        if len(buses) or len(rows):
+                            score: float = max(np.max((np.abs(flow[rows]) - self.rates[rows])
+                                               / np.maximum(self.rates[rows], 1e-6), initial=0.),
+                                        np.max(np.maximum(potential[buses] - self.net.upper[buses],
+                                                          self.net.lower[buses] - potential[buses]), initial=0.))
+                            scores[c] = float(score)
+                            pending_buses[c] = buses
+                            pending_rows[c] = rows
+                        else:
+                            pass  # The witness already satisfies all unrepresented limits.
+                        witnesses[c] = value
+                    c += 1
+
                 if status != self.prob.OPTIMAL:
-                    return status
+                    pass  # A failed physical check cannot certify the partial pass.
                 else:
-                    base: OperatingPoint = self.symbolic_base.evaluate(self.prob)
-                    # Fixed-size work arrays avoid growing per-contingency records.
-                    scores: Vec = np.full(len(self.states), -np.inf, dtype=float)
-                    pending_buses: ObjVec = np.empty(len(self.states), dtype=object)
-                    pending_rows: ObjVec = np.empty(len(self.states), dtype=object)
-                    witnesses: ObjVec = np.empty(len(self.states), dtype=object)
-                    witnesses.fill(None)
-                    for c in range(len(self.contingencies.multi_contingencies)):
-                        state: CompactState | None = cast(CompactState | None, self.states[c])
-                        if state is None:
-                            state = CompactState(self, c)
-                        else:
-                            pass  # Reuse the admitted compact state for this contingency.
-                        value: Vec | None = state.numeric(base)
-                        if value is None:
-                            if state.exact:
-                                return 0
-                            else:
-                                scores[c] = np.inf
-                                pending_buses[c] = np.empty(0, dtype=int)
-                                pending_rows[c] = np.flatnonzero(self.monitor)
-                        else:
-                            evaluated_state: tuple[Vec, Vec] = state.evaluate(base, value)
-                            potential: Vec = evaluated_state[0]
-                            flow: Vec = evaluated_state[1]
-                            violations: tuple[IntVec, IntVec] = state.violations(potential, flow)
-                            buses: IntVec = violations[0]
-                            rows: IntVec = violations[1]
-                            # Admitted thermal rows may have explicit penalized slacks.
-                            rows = rows[~state.rows[rows]]
-                            buses = buses[~state.bus_rows[buses]]
-                            if len(buses) or len(rows):
-                                score: float = max(np.max((np.abs(flow[rows]) - self.rates[rows])
-                                                   / np.maximum(self.rates[rows], 1e-6), initial=0.),
-                                            np.max(np.maximum(potential[buses] - self.net.upper[buses],
-                                                              self.net.lower[buses] - potential[buses]), initial=0.))
-                                scores[c] = float(score)
-                                pending_buses[c] = buses
-                                pending_rows[c] = rows
-                            else:
-                                pass  # The witness already satisfies all unrepresented limits.
-                            witnesses[c] = value
                     pending_indices: IntVec = np.flatnonzero(scores > -np.inf)
                     if len(pending_indices) == 0:
                         self.complete = True
                         self.final_base = base
                         self.witnesses = witnesses
-                        group_count: int = 0
-                        row_count: int = 0
-                        for admitted in self.states:
-                            if admitted is not None:
-                                group_count += 1
-                                row_count += int(np.count_nonzero(admitted.rows))
-                            else:
-                                pass  # A numerical witness needs no optimization block.
-                        self.logger.add_info('Compact physical contingencies: groups/rows added',
-                                             value=f'{group_count} groups, {row_count} rows '
-                                                   f'of {len(self.states)} groups; {iteration + 1} screening passes')
-                        return status
                     else:
-                        # At a capacity optimum thousands of outages can slightly overload
-                        # the same binding line. Admit the worst few first.
                         order: IntVec = np.argsort(-scores[pending_indices], kind='stable')
-                        selected: IntVec = pending_indices[order[:8]]
-                        for c in selected:
+                        selected: IntVec = pending_indices[order[:batch_size]]
+                        added: int = 0
+                        for selected_index in range(len(selected)):
+                            c = int(selected[selected_index])
                             state = cast(CompactState | None, self.states[c])
                             if state is None:
                                 state = CompactState(self, c)
                                 self.states[c] = state
                             else:
                                 pass  # Add new limits to the existing compact block.
-                            state.admit(pending_buses[c], pending_rows[c])
-                        self.prob.minimize(objective + self.objective)
-                        if progress is not None:
-                            progress.report('Solving compact corrective NTC constraints...')
+                            added += state.admit(pending_buses[c], pending_rows[c])
+                        if added <= 0:
+                            status = self.prob.NOT_SOLVED
                         else:
-                            pass  # The numerical solve also supports headless callers.
-                        status = self.prob.solve(robust=robust, show_logs=show_logs)
-                        if iteration + 1 == max_iterations:
-                            self.logger.add_error('Compact contingency screening did not certify every group')
-                            return 0
-                        else:
-                            pass  # Check the updated solution in the next screening iteration.
+                            self.prob.minimize(objective + self.objective)
+                            if progress is not None:
+                                progress.report('Solving compact corrective NTC constraints...')
+                            else:
+                                pass  # The numerical solve also supports headless callers.
+                            status = self.prob.solve(robust=robust, show_logs=show_logs)
+
+            if status == self.prob.OPTIMAL and not self.complete:
+                # Even an exhausted safety bound cannot accept an unchecked solution.
+                status = self.prob.NOT_SOLVED
+            else:
+                pass  # Preserve a certified solution or the backend failure status.
+        return status
 
     def numeric_state(self: CompactContingencies, c: int) -> tuple[Vec, Vec, Vec]:
         """Reconstruct an audited state without storing a groups-by-buses array.

@@ -147,7 +147,7 @@ def _scenario_remove_non_active_diagram(tmp_path: Path) -> None:
     assert shown_widget is gui.diagram_widgets_list[0]
     assert shown_widget is not gui.diagram_widgets_list[1]
 
-    _select_view_row(gui.ui.diagramsListView, 1)
+    _select_view_row(gui.ui.diagramsTreeView, 1)
     _accept_next_yes_message_box()
     gui.remove_diagram()
     QtWidgets.QApplication.processEvents()
@@ -207,7 +207,7 @@ def _scenario_activate_scenario_without_diagrams() -> None:
 
     assert len(gui.circuit.diagrams) == 0
     assert len(gui.diagram_widgets_list) == 0
-    assert gui.ui.diagramsListView.model() is None
+    assert gui.ui.diagramsTreeView.model() is None
 
     root = gui.multiverse.root_nodes[0]
     child = gui.multiverse.create_node(
@@ -237,7 +237,7 @@ def _scenario_activate_scenario_without_diagrams() -> None:
     assert gui.circuit.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True) == 1
     assert len(gui.circuit.diagrams) == 0
     assert len(gui.diagram_widgets_list) == 0
-    assert gui.ui.diagramsListView.model() is None
+    assert gui.ui.diagramsTreeView.model() is None
 
 
 def main() -> None:

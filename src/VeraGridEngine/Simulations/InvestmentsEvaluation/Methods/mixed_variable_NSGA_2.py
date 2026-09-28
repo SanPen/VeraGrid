@@ -3,6 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from typing import Callable, List, Dict, Union
+import numpy as np
 from pymoo.core.mixed import MixedVariableGA
 from pymoo.algorithms.moo.nsga2 import RankAndCrowding
 # from pymoo.decomposition.asf import ASF

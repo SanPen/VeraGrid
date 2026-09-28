@@ -52,7 +52,7 @@ ALL_STRUCTS = Union[
 ]
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def build_q_limits(nbus: int, Sbase: float,
                    gen_idx, q_min_gen, q_max_gen, active_gen, control_mode_int_gen,
                    batt_idx, q_min_batt, q_max_batt, active_batt, control_mode_int_batt,
@@ -218,7 +218,7 @@ def check_arr(arr: Vec | IntVec | BoolVec | CxVec,
         return 1
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def correct_bus_types(gen_idx: IntVec,
                       control_mode_int: IntVec,
                       gen_controllable_bus_idx: IntVec,

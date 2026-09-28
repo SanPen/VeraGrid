@@ -7,7 +7,7 @@ import numpy as np
 from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, Mat
-from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
+from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType, ResultTablePlotType
 from VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto import non_dominated_sorting
 
 
@@ -298,21 +298,6 @@ class InvestmentsEvaluationResults(ResultsTemplate):
             y_vals = self.f[:, self.plot_y_idx]
 
 
-            # Match magnitude of technical score with investment score
-            color_score = y_vals * 10 ** -2
-
-            # Plot 1: Technical vs investment
-            cbar1.set_label('Objective function', fontsize=10)
-
-            fig.suptitle(result_type.value)
-
-
-
-
-
-            fig.canvas.mpl_connect("motion_notify_event", hover)
-            fig.canvas.mpl_connect('button_press_event', click_solution)
-
             return ResultsTable(data=np.c_[x_vals, y_vals],
                                 index=np.array(index),
                                 idx_device_type=DeviceType.NoDevice,
@@ -322,28 +307,25 @@ class InvestmentsEvaluationResults(ResultsTemplate):
                                 title="Pareto plot",
                                 ylabel=self.f_names[self.plot_y_idx],
                                 xlabel=self.f_names[self.plot_x_idx],
-                                units="")
+                                units="",
+                                plot_type=ResultTablePlotType.XY)
 
         elif result_type == ResultTypes.InvestmentsIterationsPlot:
 
-            columns = ["Iteration", "Objectives summation"]
+            columns: list[str] = ["Iteration", "Objectives summation"]
             x = np.arange(self.max_eval)
-            y = self.f.sum(axis=1)
-            data = np.c_[x, y]
-            y_label = ''
-            title = ''
-
-            fig.suptitle(str(result_type.value))
+            y: np.ndarray = self.f.sum(axis=1)
+            data: np.ndarray = np.c_[x, y]
 
             return ResultsTable(data=data,
                                 index=np.array(index),
                                 idx_device_type=DeviceType.NoDevice,
                                 columns=np.array(columns),
                                 cols_device_type=DeviceType.NoDevice.NoDevice,
-                                title=title,
-                                ylabel=y_label,
-                                xlabel='',
-                                units=y_label)
+                                title=str(result_type.value),
+                                ylabel="Objectives summation",
+                                xlabel="Iteration",
+                                units="")
 
         elif result_type == ResultTypes.InvestmentsWhenToMakePlot:
 
@@ -352,22 +334,23 @@ class InvestmentsEvaluationResults(ResultsTemplate):
             # _x is (max_eval, n_investments)
             # X is (pareto solutions, n_investments)
 
-            X = self._x[self.sorting_indices, :].astype(int)
-
-            max_years = np.max(X)
-            mat = np.zeros((X.shape[1], max_years))
-            for i in range(X.shape[0]):  # evaluation index
-                for j in range(X.shape[1]):  # investment index
-                    year = X[i, j]
+            X: np.ndarray = self._x[self.sorting_indices, :].astype(int)
+            max_years: int = max(1, int(np.max(X))) if X.size > 0 else 1
+            mat: np.ndarray = np.zeros((X.shape[1], max_years))
+            evaluation_index: int
+            investment_index: int
+            for evaluation_index in range(X.shape[0]):
+                for investment_index in range(X.shape[1]):
+                    year: int = int(X[evaluation_index, investment_index])
                     if year > 0:
-                        mat[j, year - 1] += 1
-
-            fig.tight_layout()
+                        mat[investment_index, year - 1] += 1
+                    else:
+                        pass
 
             return ResultsTable(data=mat,
                                 index=self.x_names,
                                 idx_device_type=DeviceType.NoDevice,
-                                columns=np.array([str(y) for y in range(max_years)]),
+                                columns=np.array([str(year) for year in range(1, max_years + 1)]),
                                 cols_device_type=DeviceType.NoDevice.NoDevice,
                                 title=str(result_type.value),
                                 ylabel="",

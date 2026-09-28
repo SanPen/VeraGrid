@@ -8,7 +8,7 @@ from typing import Tuple
 from VeraGridEngine.basic_structures import Vec, IntVec, Mat
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_valid_negatives(sensitivities: Vec, p_available: Vec):
     """
 
@@ -32,7 +32,7 @@ def get_valid_negatives(sensitivities: Vec, p_available: Vec):
     return idx
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_valid_positives(sensitivities: Vec, p_available: Vec):
     """
 
@@ -55,7 +55,7 @@ def get_valid_positives(sensitivities: Vec, p_available: Vec):
     return idx
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def vector_sum_used_power_srap(p_available3: Vec, sensitivities3: Vec, max_srap_power: float):
     """
 
@@ -87,7 +87,7 @@ def vector_sum_used_power_srap(p_available3: Vec, sensitivities3: Vec, max_srap_
     return p_used
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def vector_sum_srap(p_available3: Vec, sensitivities3: Vec, srap_pmax_mw: float):
     """
 

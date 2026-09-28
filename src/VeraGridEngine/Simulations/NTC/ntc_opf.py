@@ -26,7 +26,7 @@ from VeraGridEngine.DataStructures.hvdc_data import HvdcData
 from VeraGridEngine.DataStructures.vsc_data import VscData
 from VeraGridEngine.DataStructures.bus_data import BusData
 from VeraGridEngine.basic_structures import Logger, Vec, IntVec, BoolVec, CxMat, Mat, ObjVec
-from VeraGridEngine.Utils.MIP.selected_interface import LpExp, LpVar, LpModel, join, get_model_instance
+from VeraGridEngine.Utils.MIP.selected_interface import LpExp, LpVar, LpModel, join, get_model_instance, is_infeasible
 from VeraGridEngine.enumerations import TapPhaseControl, HvdcControlType, AvailableTransferMode, ConverterControlType
 from scipy.sparse import csc_matrix, coo_matrix
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import (LinearAnalysis, LinearMultiContingencies,
@@ -1507,9 +1507,7 @@ def add_corrective_contingency_formulation(t_idx: int,
                                            branch_vars: BranchNtcVars,
                                            vsc_vars: VscNtcVars,
                                            hvdc_vars: HvdcNtcVars,
-                                           con_loading: Vec,
                                            prob: LpModel,
-                                           logger: Logger,
                                            corrective_rows: BoolVec,
                                            vsc_active: Union[BoolVec, None] = None,
                                            hvdc_active: Union[BoolVec, None] = None,
@@ -1541,9 +1539,7 @@ def add_corrective_contingency_formulation(t_idx: int,
     :param branch_vars: branch LP variable container
     :param vsc_vars: VSC LP variable container
     :param hvdc_vars: HVDC LP variable container
-    :param con_loading: branch loading w.r.t. the contingency ratings
     :param prob: linear problem the variables and constraints are added to
-    :param logger: logger used for the pre-existing-overload reports
     :param corrective_rows: per-branch flag, True for the branches whose corrective term is read back
     :param vsc_active: in-service flag per VSC, or None to treat every VSC as in service
     :param hvdc_active: in-service flag per HVDC, or None to treat every HVDC as in service
@@ -1633,17 +1629,9 @@ def add_corrective_contingency_formulation(t_idx: int,
         # a branch is enforced if it is a DC branch (always monitored) or it is flagged for monitoring
         is_monitored: bool = bool(branch_data_t.dc[m]) or bool(branch_vars.monitor_logic[t_idx, m])
 
-        # a branch that is already beyond its contingency rating in the base loading cannot be limited here
-        is_already_overloaded: bool = con_loading[m] >= 1.0
-
         if not is_monitored:
             # not monitored under this contingency: no limit is enforced on this branch
             pass
-        elif is_already_overloaded:
-            # report the pre-existing overload and skip its limit (matches the preventive formulation)
-            logger.add_error("Contingency overload on sensitive branch, contingency skipped",
-                             device=branch_data_t.names[m],
-                             value=str(con_loading[m] * 100.0) + " %")
         else:
             # post-contingency flow = preventive redistribution + corrective converter contribution (if any)
             flow_expr: Union[float, LpExp] = contingency_flows[m]
@@ -1654,7 +1642,7 @@ def add_corrective_contingency_formulation(t_idx: int,
                 pass
 
             if isinstance(flow_expr, LpExp):
-                # Slack to relax the rates, not the other way around as before
+                # Initial overloads still need a limit so slack accounts for any remaining excess.
                 rate_pu: float = branch_data_t.contingency_rates[m] / Sbase
                 pos_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_pos_sl_", [t_idx, m, c], "_"))
                 neg_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_neg_sl_", [t_idx, m, c], "_"))
@@ -1691,10 +1679,7 @@ def add_preventive_contingency_formulation(t_idx: int,
                                            ntc_load_rule: float,
                                            alpha_threshold: float,
                                            alpha_n1: Mat,
-                                           base_loading: Vec,
-                                           con_loading: Vec,
-                                           prob: LpModel,
-                                           logger: Logger) -> Union[float, LpExp]:
+                                           prob: LpModel) -> Union[float, LpExp]:
     """
     Formulate a single contingency with the preventive N-1 rule 
     :param t_idx: time index being formulated
@@ -1711,10 +1696,7 @@ def add_preventive_contingency_formulation(t_idx: int,
     :param ntc_load_rule: fraction of the rating reserved to the exchange (ACER rule)
     :param alpha_threshold: minimum N-1 exchange sensitivity for a branch to be monitored
     :param alpha_n1: N-1 exchange-sensitivity matrix indexed as (branch, outaged-branch)
-    :param base_loading: branch loading w.r.t. the normal ratings
-    :param con_loading: branch loading w.r.t. the contingency ratings
     :param prob: linear problem the variables and constraints are added to
-    :param logger: logger used for the pre-existing-overload reports
     :return: objective contribution (sum of the contingency overload slacks)
     """
     f_obj: Union[float, LpExp] = 0.0
@@ -1748,36 +1730,30 @@ def add_preventive_contingency_formulation(t_idx: int,
             # DC branches are always monitored because their AC-PTDF sensitivity is structurally zero
             if branch_data_t.dc[m] or (monitor_by_load_rule_n1 and monitor_by_sensitivity_n1):
 
-                if con_loading[m] < 1.0:
-                    # symmetric rating limits with slacks; occ keeps the names unique when changed_idx repeats
-                    pos_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_pos_sl_", [t_idx, m, c, occ]))
-                    neg_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_neg_sl_", [t_idx, m, c, occ]))
+                # Initial overloads still need symmetric limits with explicit relaxation.
+                pos_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_pos_sl_", [t_idx, m, c, occ]))
+                neg_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_neg_sl_", [t_idx, m, c, occ]))
 
-                    # record the flow so the result extraction can evaluate the post-contingency loading later
-                    branch_vars.add_contingency_flow(t=t_idx, m=m, c=c,
-                                                     flow_var=contingency_flows[m],
-                                                     neg_slack=neg_slack,
-                                                     pos_slack=pos_slack)
+                # record the flow so the result extraction can evaluate the post-contingency loading later
+                branch_vars.add_contingency_flow(t=t_idx, m=m, c=c,
+                                                 flow_var=contingency_flows[m],
+                                                 neg_slack=neg_slack,
+                                                 pos_slack=pos_slack)
 
-                    # Ensure the slacks relax
-                    prob.add_cst(
-                        cst=contingency_flows[m] - pos_slack <= branch_data_t.contingency_rates[m] / Sbase,
-                        name=join("br_cst_flow_upper_lim_", [t_idx, m, c, occ])
-                    )
+                # Ensure the slacks relax
+                prob.add_cst(
+                    cst=contingency_flows[m] - pos_slack <= branch_data_t.contingency_rates[m] / Sbase,
+                    name=join("br_cst_flow_upper_lim_", [t_idx, m, c, occ])
+                )
 
-                    # lower rate constraint
-                    prob.add_cst(
-                        cst=contingency_flows[m] + neg_slack >= -branch_data_t.contingency_rates[m] / Sbase,
-                        name=join("br_cst_flow_lower_lim_", [t_idx, m, c, occ])
-                    )
+                # lower rate constraint
+                prob.add_cst(
+                    cst=contingency_flows[m] + neg_slack >= -branch_data_t.contingency_rates[m] / Sbase,
+                    name=join("br_cst_flow_lower_lim_", [t_idx, m, c, occ])
+                )
 
-                    # Penalty for the slacks which is arbitrary
-                    f_obj += 1e4 * (pos_slack + neg_slack)
-                else:
-                    # the branch is already overloaded at the base contingency loading: report and skip its limit
-                    logger.add_error("Contingency overload on sensitive branch, contingency skipped",
-                                     device=branch_data_t.names[m],
-                                     value=str(base_loading[m] * 100.0) + " %")
+                # Penalty for the slacks which is arbitrary
+                f_obj += 1e4 * (pos_slack + neg_slack)
             else:
                 # the branch is not monitored under this contingency: nothing to enforce
                 pass
@@ -1920,7 +1896,6 @@ def screen_contingency_violations(multi_contingencies: List[LinearMultiContingen
                                   inj0: Vec,
                                   monitorable: BoolVec,
                                   con_rates_pu: Vec,
-                                  con_loading: Vec,
                                   tol_pu: float,
                                   at_risk_fraction: float,
                                   delta_flow_addons: Union[Dict[int, Vec], None] = None) -> List[Tuple[int, IntVec]]:
@@ -1937,7 +1912,6 @@ def screen_contingency_violations(multi_contingencies: List[LinearMultiContingen
     :param inj0: solved bus injections (p.u.)
     :param monitorable: per-branch flag of branches that may get a post-contingency limit
     :param con_rates_pu: branch contingency ratings (p.u.)
-    :param con_loading: base loading w.r.t. the contingency ratings (skip rows >= 1)
     :param tol_pu: feasibility tolerance (p.u.) added to the rating before flagging
     :param at_risk_fraction: fraction of the rating above which a row of a violated group
                              is admitted preventively along with the violated rows
@@ -1945,8 +1919,7 @@ def screen_contingency_violations(multi_contingencies: List[LinearMultiContingen
                               group's solved corrective Δ set-points (compensated DF · Δ)
     :return: list of (group index, row indices to admit)
     """
-    # rows the formulation would actually constrain: monitorable and not pre-overloaded
-    checkable: BoolVec = monitorable & (con_loading < 1.0)
+    # Check every monitorable row at the solved operating point, regardless of initial loading.
     limits: Vec = con_rates_pu + tol_pu
 
     admissions: List[Tuple[int, IntVec]] = list()
@@ -1955,9 +1928,9 @@ def screen_contingency_violations(multi_contingencies: List[LinearMultiContingen
         # rows of this group that are not yet enforced by the LP
         already: Union[BoolVec, None] = admitted_rows.get(c, None)
         if already is None:
-            pending: BoolVec = checkable
+            pending: BoolVec = monitorable
         else:
-            pending = checkable & (~already)
+            pending = monitorable & (~already)
 
         if np.any(pending):
             fc: Vec = f0.copy()
@@ -2153,9 +2126,6 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                                                   ntc_load_rule: float,
                                                   alpha_threshold: float,
                                                   alpha_n1: Mat,
-                                                  base_loading: Vec,
-                                                  con_loading: Vec,
-                                                  logger: Logger,
                                                   corrective_contingencies: bool = False,
                                                   vsc_active: BoolVec | None = None,
                                                   hvdc_active: BoolVec | None = None,
@@ -2181,9 +2151,6 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
     :param ntc_load_rule:
     :param alpha_threshold:
     :param alpha_n1:
-    :param base_loading: loading w.r.t the normal ratings
-    :param con_loading: Loading w.r.t the contingency rates
-    :param logger
     :param corrective_contingencies: if True, allow corrective re-dispatch of the VSC/HVDC
     :param group_indices: subset of multi-contingency indices to formulate (None = all)
     :param group_rows: per group index, the row indices to enforce
@@ -2260,8 +2227,8 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                 t_idx=t_idx, c=c, Sbase=Sbase, contingency=contingency,
                 contingency_flows=contingency_flows, changed_idx=changed_idx,
                 branch_data_t=branch_data_t, branch_vars=branch_vars,
-                vsc_vars=vsc_vars, hvdc_vars=hvdc_vars, con_loading=con_loading,
-                prob=prob, logger=logger, corrective_rows=corrective_rows,
+                vsc_vars=vsc_vars, hvdc_vars=hvdc_vars,
+                prob=prob, corrective_rows=corrective_rows,
                 vsc_active=vsc_active, hvdc_active=hvdc_active,
                 vsc_delta_vars=vsc_deltas_c, hvdc_delta_vars=hvdc_deltas_c,
                 add_exchange_preservation=add_preservation_c,
@@ -2275,8 +2242,7 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                 monitor_only_ntc_load_rule_branches=monitor_only_ntc_load_rule_branches,
                 monitor_only_sensitive_branches=monitor_only_sensitive_branches,
                 structural_ntc=structural_ntc, ntc_load_rule=ntc_load_rule,
-                alpha_threshold=alpha_threshold, alpha_n1=alpha_n1,
-                base_loading=base_loading, con_loading=con_loading, prob=prob, logger=logger)
+                alpha_threshold=alpha_threshold, alpha_n1=alpha_n1, prob=prob)
 
     # copy the contingency rates
     branch_vars.contingency_rates[t_idx, :] = branch_data_t.contingency_rates
@@ -2896,7 +2862,6 @@ def run_linear_ntc_opf(grid: MultiCircuit,
     report_mctg: LinearMultiContingencies | None = None
     lazy_mctg: Union[LinearMultiContingencies, None] = None
     lazy_alpha_n1: Union[Mat, None] = None
-    lazy_con_loading: Union[Vec, None] = None
 
     if zonal_grouping == ZonalGrouping.NoGrouping:
 
@@ -2993,9 +2958,6 @@ def run_linear_ntc_opf(grid: MultiCircuit,
                     dT=1.0
                 )
 
-                branch_loading_con = np.abs(
-                    branch_flows / (nc.passive_branch_data.contingency_rates / nc.Sbase + 1e-20))
-
                 # Pmode3 needs physical states even when fixed-power screening is clean.
                 # Other control modes retain the existing lazy flow-factor formulation.
                 report_mctg = mctg
@@ -3006,7 +2968,6 @@ def run_linear_ntc_opf(grid: MultiCircuit,
                 else:
                     lazy_mctg = mctg
                     lazy_alpha_n1 = alpha_n1
-                    lazy_con_loading = branch_loading_con
 
             else:
                 print("Contingencies enabled, but no contingency groups provided")
@@ -3085,7 +3046,6 @@ def run_linear_ntc_opf(grid: MultiCircuit,
                 f0=f0_num, hvdc0=hvdc0_num, vsc0=vsc0_num, inj0=inj0_num,
                 monitorable=monitorable_lazy,
                 con_rates_pu=con_rates_pu_lazy,
-                con_loading=lazy_con_loading,
                 tol_pu=1e-4,
                 at_risk_fraction=0.9,
                 delta_flow_addons=delta_addons
@@ -3116,9 +3076,6 @@ def run_linear_ntc_opf(grid: MultiCircuit,
                     ntc_load_rule=ntc_load_rule,
                     alpha_threshold=alpha_threshold,
                     alpha_n1=lazy_alpha_n1,
-                    base_loading=np.abs(f0_num) / (nc.passive_branch_data.rates / nc.Sbase + 1e-20),
-                    con_loading=lazy_con_loading,
-                    logger=logger,
                     corrective_contingencies=corrective_contingencies,
                     vsc_active=nc.vsc_data.active,
                     hvdc_active=nc.hvdc_data.active,
@@ -3155,10 +3112,10 @@ def run_linear_ntc_opf(grid: MultiCircuit,
     else:
         pass  # no lazy formulation was used
 
-    if status != lp_model.OPTIMAL and not slack_all_limits:
+    if is_infeasible(model=lp_model, status=status) and not slack_all_limits:
         # Feasibility retry. Rebuild once with the penalized slack for every 
         # monitored limit so the answer is reported as slack instead of a failure. 
-        logger.add_warning("Not optimal with hard branch limits, retrying with all "
+        logger.add_warning("Infeasible with hard branch limits, retrying with all "
                            "monitored limits slacked",
                            value=lp_model.status2string(status))
         return run_linear_ntc_opf(grid=grid, t=t, solver_type=solver_type,

@@ -178,7 +178,7 @@ def control_q_direct(V, Vm, Vset, Q, Qmax, Qmin, types, original_types, verbose=
     return Vnew, Qnew, types_new, any_control_issue
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def control_q_inside_method(Scalc: CxVec, S0: CxVec,
                             pv: IntVec, pq: IntVec, pqv: IntVec, p: IntVec,
                             Qmin: Vec, Qmax: Vec):
@@ -217,7 +217,7 @@ def control_q_inside_method(Scalc: CxVec, S0: CxVec,
     return changed, pv, pq, pqv, p
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def control_discrete_shunts(Vm: Vec,
                             shunt_discrete_ctrl_idx: IntVec,
                             shunt_discrete_bus_idx: IntVec,
@@ -285,7 +285,7 @@ def control_discrete_shunts(Vm: Vec,
     return changed_bus_idx, changed_delta_y, n_changed
 
 
-@nb.njit()
+@nb.jit()
 def control_q_for_generalized_method(Scalc: CxVec, S0: CxVec,
                                      pv: IntVec, i_u_vm: IntVec, i_k_q: IntVec,
                                      Qmin: Vec, Qmax: Vec):
@@ -324,7 +324,7 @@ def control_q_for_generalized_method(Scalc: CxVec, S0: CxVec,
     return changed, i_u_vm, i_k_q
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def update_qv_droop_generators(S0: CxVec,
                                Q0: Vec,
                                generator_q: Vec,

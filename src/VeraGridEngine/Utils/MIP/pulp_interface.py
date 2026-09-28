@@ -18,7 +18,7 @@ import pulp
 from pulp import LpVariable as LpVar, LpConstraint as LpCst, LpAffineExpression as LpExp
 from pulp import (HiGHS,
                   CPLEX_CMD, CPLEX_PY,
-                  PULP_CBC_CMD,
+                  COIN_CMD,
                   COPT, COPT_CMD,
                   CUOPT,
                   GUROBI_CMD, GUROBI,
@@ -47,6 +47,81 @@ def make_highs_solver(mip: bool, show_logs: bool) -> HiGHS:
         )
     else:
         return HiGHS(mip=mip, msg=show_logs)
+
+
+def get_optimal_status():
+    """
+    Return PuLP's optimal solve status for the installed API version.
+    """
+    solve_status = getattr(pulp, "LpSolveStatus", None)
+    if solve_status is not None:
+        return solve_status.Optimal
+
+    return pulp.LpStatusOptimal
+
+
+def get_infeasible_status():
+    """
+    Return PuLP's infeasible solve status for the installed API version.
+    """
+    solve_status = getattr(pulp, "LpSolveStatus", None)
+    if solve_status is not None:
+        return solve_status.Infeasible
+
+    return pulp.LpStatusInfeasible
+
+
+def get_not_solved_status():
+    """
+    Return PuLP's not-solved status for the installed API version.
+    """
+    solve_status = getattr(pulp, "LpSolveStatus", None)
+    if solve_status is not None:
+        return solve_status.NotSolved
+
+    return pulp.LpStatusNotSolved
+
+
+def normalize_solve_status(result: Any):
+    """
+    Convert PuLP 4 LpSolveStats results to their status enum.
+    PuLP 3 already returns the integer status directly.
+    """
+    return getattr(result, "status", result)
+
+
+def get_model_constraint_items(model: pulp.LpProblem) -> List[tuple[str, LpCst]]:
+    """
+    Return named constraints for both PuLP 3 and PuLP 4.
+    """
+    constraints = model.constraints
+    if callable(constraints):
+        return [(cst.name, cst) for cst in constraints()]
+
+    return list(constraints.items())
+
+
+def get_model_constraint_by_name(model: pulp.LpProblem, name: str) -> LpCst | None:
+    """
+    Return a constraint by name for both PuLP 3 and PuLP 4.
+    """
+    if hasattr(model, "get_constraint_by_name"):
+        return model.get_constraint_by_name(name)
+
+    return model.constraints.get(name)
+
+
+def make_pulp_expression(value: LpExp | Real) -> LpExp:
+    """
+    Build an affine expression using the API supported by the installed PuLP.
+    """
+    if isinstance(value, Real):
+        if hasattr(pulp.LpAffineExpression, "from_constant"):
+            return pulp.LpAffineExpression.from_constant(value)
+
+        return pulp.LpAffineExpression(value)
+
+    return value
 
 
 def get_lp_var_value(x: Union[float, LpVar]) -> float:
@@ -84,7 +159,7 @@ def get_pulp_available_mip_solvers() -> List[str]:
             solvers2.append(MIPSolvers.XPRESS.value)
         elif slv == 'HiGHS':
             solvers2.append(MIPSolvers.HIGHS.value)
-        elif slv == 'PULP_CBC_CMD':
+        elif slv == 'PULP_CBC_CMD' or slv == 'COIN_CMD':
             solvers2.append(MIPSolvers.CBC.value)
         elif slv == 'CUOPT':
             solvers2.append(MIPSolvers.CUOPT.value)
@@ -132,7 +207,9 @@ class PulpLpModel(AbstractLpModel):
     """
     __slots__ = ("model",)
 
-    OPTIMAL = pulp.LpStatusOptimal
+    OPTIMAL = get_optimal_status()
+    INFEASIBLE = get_infeasible_status()
+    NOT_SOLVED = get_not_solved_status()
     INFINITY = 1e20
 
     def __init__(self, solver_type: MIPSolvers):
@@ -220,7 +297,9 @@ class PulpLpModel(AbstractLpModel):
             return 0
         else:
             self.model.addConstraint(constraint=cst, name=name)
-            return cst
+            cst_name = name or getattr(cst, "name", "")
+            added_cst = get_model_constraint_by_name(self.model, cst_name) if cst_name else None
+            return added_cst if added_cst is not None else cst
 
     @staticmethod
     def sum(cst) -> LpExp:
@@ -237,14 +316,7 @@ class PulpLpModel(AbstractLpModel):
         :param obj_function: expression to minimize
         :return: None
         """
-        if isinstance(obj_function, Real):
-            # Some formulations legitimately collapse to a constant objective
-            # when all modeled costs are zero. PuLP needs an affine expression.
-            objective: LpExp = pulp.LpAffineExpression(obj_function)
-        else:
-            objective = obj_function
-
-        self.model.setObjective(obj=objective)
+        self.model.setObjective(obj=make_pulp_expression(obj_function))
 
     def get_solver(self, show_logs: bool = False):
         """
@@ -266,8 +338,19 @@ class PulpLpModel(AbstractLpModel):
             return solver
 
         elif self.solver_type == MIPSolvers.CBC:
-            # CBC comes with PuLP, so it is always available and needs no extra dependency
-            return PULP_CBC_CMD(mip=self.model.isMIP(), msg=show_logs)
+            bundled_cbc = getattr(pulp, "PULP_CBC_CMD", None)
+            if bundled_cbc is not None:
+                solver = bundled_cbc(mip=self.model.isMIP(), msg=show_logs)
+                if solver.available() is not None:
+                    return solver
+                else:
+                    pass
+
+            solver = COIN_CMD(mip=self.model.isMIP(), msg=show_logs)
+            if solver.available() is not None:
+                return solver
+            else:
+                raise pulp.PulpSolverError("CBC was selected, but no CBC executable is available")
 
         elif self.solver_type == MIPSolvers.CUOPT:
             return CUOPT(mip=self.model.isMIP(), msg=show_logs)
@@ -325,16 +408,16 @@ class PulpLpModel(AbstractLpModel):
 
         # solve the model
         try:
-            status = self.model.solve(solver=self.get_solver(show_logs=show_logs))
+            solver = self.get_solver(show_logs=show_logs)
+            self.logger.add_info(msg="PuLP solver", value=solver.__class__.__name__)
+            status = normalize_solve_status(self.model.solve(solver=solver))
         except pulp.PulpSolverError as e:
             self.logger.add_error(msg=str(e), )
-            # Retry with Highs
-            status = self.model.solve(solver=make_highs_solver(mip=self.model.isMIP(), show_logs=show_logs))
+            status = self.NOT_SOLVED
 
         except subprocess.CalledProcessError as e:
             self.logger.add_error(msg=str(e), )
-            # Retry with Highs
-            status = self.model.solve(solver=make_highs_solver(mip=self.model.isMIP(), show_logs=show_logs))
+            status = self.NOT_SOLVED
         except IndexError as e:
             print("Index error:")
             print(e)
@@ -365,7 +448,7 @@ class PulpLpModel(AbstractLpModel):
                 # modify the original to detect the bad constraints
                 slacks = list()
                 debugging_f_obj = 0
-                for i, (cst_name, cst) in enumerate(debug_model.constraints.items()):
+                for i, (cst_name, cst) in enumerate(get_model_constraint_items(debug_model)):
                     # create a new slack var in the problem
                     sl = add_pulp_variable(
                         model=debug_model,
@@ -396,7 +479,7 @@ class PulpLpModel(AbstractLpModel):
                     progress_text(f"Solving debug model with {self.solver_type.value}...")
 
                 # solve the debug model
-                status_d = debug_model.solve(solver=self.get_solver(show_logs=show_logs))
+                status_d = normalize_solve_status(debug_model.solve(solver=self.get_solver(show_logs=show_logs)))
 
                 # clear the relaxed slacks list
                 self.relaxed_slacks = list()
@@ -425,7 +508,9 @@ class PulpLpModel(AbstractLpModel):
                             self.model.objective += sl2
 
                             # alter the matching constraint
-                            self.model.constraints[cst_name] += sl2
+                            cst = get_model_constraint_by_name(self.model, cst_name)
+                            if cst is not None:
+                                cst += sl2
 
                         # register the relation for later
                         cst_slack_map.append(cst_name)
@@ -440,7 +525,7 @@ class PulpLpModel(AbstractLpModel):
                         progress_text(f"Solving relaxed model with {self.solver_type.value}...")
 
                     # solve the modified (original) model
-                    status = self.model.solve(solver=self.get_solver(show_logs=show_logs))
+                    status = normalize_solve_status(self.model.solve(solver=self.get_solver(show_logs=show_logs)))
 
                     if status == PulpLpModel.OPTIMAL:
 
@@ -451,9 +536,10 @@ class PulpLpModel(AbstractLpModel):
 
                             # logg this
                             if abs(val) > 1e-10:
+                                relaxed_cst = get_model_constraint_by_name(self.model, cst_slack_map[i])
                                 self.logger.add_warning(
                                     msg="Relaxed problem",
-                                    device=self.model.constraints[cst_slack_map[i]].name,
+                                    device=relaxed_cst.name if relaxed_cst is not None else cst_slack_map[i],
                                     value=val
                                 )
 
@@ -525,7 +611,18 @@ class PulpLpModel(AbstractLpModel):
         :param stat:
         :return:
         """
-        return pulp.LpStatus[stat]
+        if hasattr(stat, "status_str"):
+            return stat.status_str
+
+        stat = normalize_solve_status(stat)
+        if hasattr(stat, "name"):
+            return stat.name
+
+        lp_status = getattr(pulp, "LpStatus", None)
+        if lp_status is not None:
+            return lp_status[stat]
+
+        return pulp.LpSolveStatus(stat).name
 
     def model_as_string(self) -> str:
         """
@@ -550,11 +647,11 @@ class PulpLpModel(AbstractLpModel):
             objName = "OBJ"
         f += lp.objective.asCplexLpAffineExpression(objName, include_constant=False)
         f += "Subject To\n"
-        ks = list(lp.constraints.keys())
-        ks.sort()
+        constraints = dict(get_model_constraint_items(lp))
+        ks = sorted(constraints.keys())
         dummyWritten = False
         for k in ks:
-            constraint = lp.constraints[k]
+            constraint = constraints[k]
             if not list(constraint.keys()):
                 # empty constraint add the dummyVar
                 dummyVar = lp.get_dummyVar()
@@ -598,15 +695,17 @@ class PulpLpModel(AbstractLpModel):
                 for v in vg:
                     f += f"{v.name}\n"
         # Special Ordered Sets
-        if writeSOS and (lp.sos1 or lp.sos2):
+        sos1 = getattr(lp, "sos1", None)
+        sos2 = getattr(lp, "sos2", None)
+        if writeSOS and (sos1 or sos2):
             f += "SOS\n"
-            if lp.sos1:
-                for sos in lp.sos1.values():
+            if sos1:
+                for sos in sos1.values():
                     f += "S1:: \n"
                     for v, val in sos.items():
                         f += f" {v.name}: {val:.12g}\n"
-            if lp.sos2:
-                for sos in lp.sos2.values():
+            if sos2:
+                for sos in sos2.values():
                     f += "S2:: \n"
                     for v, val in sos.items():
                         f += f" {v.name}: {val:.12g}\n"

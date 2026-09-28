@@ -643,11 +643,15 @@ class Line(BranchParent):
     @property
     def ys(self) -> AdmittanceMatrix:
         """
+        Return series admittance, using current sequence data without a template.
 
-        :return:
+        :return: Series admittance in NABC coordinates.
         """
-        if self._ys.size <= 0 and self.auto_update_enabled:
+        # Stored matrices may predate sequence edits; only templates define independent phase data.
+        if self.auto_update_enabled and (self.template is None or self._ys.size <= 0):
             self.fill_3_phase_from_sequence()
+        else:
+            pass
 
         return self._ys
 
@@ -661,11 +665,15 @@ class Line(BranchParent):
     @property
     def ysh(self) -> AdmittanceMatrix:
         """
+        Return shunt admittance, using current sequence data without a template.
 
-        :return:
+        :return: Shunt admittance in NABC coordinates, scaled by 1e6 for compilation.
         """
-        if self._ysh.size <= 0 and self.auto_update_enabled:
+        # Respect disabled updates while loading, before all sequence values have been restored.
+        if self.auto_update_enabled and (self.template is None or self._ysh.size <= 0):
             self.fill_3_phase_from_sequence()
+        else:
+            pass
 
         return self._ysh
 
@@ -980,16 +988,40 @@ class Line(BranchParent):
 
     def fill_3_phase_from_sequence(self) -> None:
         """
-        Fill the 3x3 from the sequence values
+        Rebuild phase admittances from Z0 and Z1, assuming Z2 equals Z1.
+
+        Preserve connected phases without a template and use Z1 when Z0 is absent.
+
+        :return: None.
         """
-        if self.R0 > 1e-10 and self.X0 > 1e-10:
-            obj = SequenceLineType(R=self.R, R0=self.R0, X=self.X, X0=self.X0, B=self.B, B0=self.B0)
+        # A purely resistive or reactive Z0 is valid; both components need not be positive.
+        if abs(self.R0) > 1e-10 or abs(self.X0) > 1e-10:
+            r0: float = self.R0
+            x0: float = self.X0
+            b0: float = self.B0
         else:
-            obj = SequenceLineType(R=self.R, R0=2.0 * self.R, X=self.X, X0=2.0 * self.X, B=self.B * 1e6,
-                                   B0=self.B * 1e6)
-            obj = SequenceLineType(R=self.R, R0=self.R, X=self.X, X0=self.X, B=self.B * 1e6, B0=self.B * 1e6)
-        self.ys = obj.get_ys_nabc()
-        self.ysh = obj.get_ysh_nabc()
+            r0 = self.R
+            x0 = self.X
+            b0 = self.B
+
+        # Line impedances are already in p.u.; the compiler converts stored shunts by 1e-6.
+        obj: SequenceLineType = SequenceLineType(R=self.R, R0=r0, X=self.X, X0=x0,
+                                                 B=self.B * 1e6, B0=b0 * 1e6)
+        stored: AdmittanceMatrix
+        rebuilt: AdmittanceMatrix
+        for stored, rebuilt in ((self._ys, obj.get_ys_nabc()), (self._ysh, obj.get_ysh_nabc())):
+            # Automatic refresh keeps phase selections; explicit template conversion starts with ABC.
+            if stored.size <= 0 or self.template is not None:
+                stored.phN = rebuilt.phN
+                stored.phA = rebuilt.phA
+                stored.phB = rebuilt.phB
+                stored.phC = rebuilt.phC
+            else:
+                pass
+            active_phases: np.ndarray = np.array((stored.phN, stored.phA, stored.phB, stored.phC))
+            rebuilt.values[~active_phases, :] = 0.0
+            rebuilt.values[:, ~active_phases] = 0.0
+            stored.values = rebuilt.values
 
     # Scalar property accessors coerce assignments to the declared schema types.
 

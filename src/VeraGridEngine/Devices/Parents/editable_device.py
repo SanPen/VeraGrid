@@ -26,7 +26,7 @@ from VeraGridEngine.enumerations import (DeviceType, PrpCat, TimeFrame, BuildSta
                                          EraSvdSolverType, ShuntControlMode, RmsProblemTypes, FmuTemplateDomain,
                                          FmuTemplateMode, RmsInitializationMethod, EmtSolverTypes, PlotSimulationType,
                                          DynamicEventTransitionType, DynamicPlotEntryKind, DynamicPlotEntryRole,
-                                         ParamPowerFlowReferenceType)
+                                         ParamPowerFlowReferenceType, GeneratorControlMode)
 # types that can be assigned to a VeraGrid property
 GCPROP_TYPES = Union[
     Type[int],
@@ -49,6 +49,7 @@ GCPROP_TYPES = Union[
     Type[InvestmentsEvaluationObjectives],
     Type[NodalCapacityMethod],
     Type[ShuntControlMode],
+    Type[GeneratorControlMode],
     Type[SolverType],
     Type[TimeGrouping],
     Type[ZonalGrouping],
@@ -205,10 +206,9 @@ class GCProp:
         self._is_color: bool = is_color
         self._is_date: bool = is_date
         self.dyn_ref = dyn_ref
-        if old_names is None:
-            self._old_names: Tuple[str, ...] = tuple()
-        else:
-            self._old_names = tuple(old_names)
+
+        self._old_names: Tuple[str, ...] = tuple() if old_names is None else tuple(old_names)
+
         self._category: List[PrpCat] = [PrpCat.All] if cat is None else cat
 
     @property
@@ -314,16 +314,18 @@ class GCProp:
         tpe_name = str(self.tpe)
         if '.' in tpe_name:
             chunks = tpe_name.split('.')
-            return chunks[-1].replace("'", "") \
-                .replace("<", "") \
-                .replace(">", "").strip()
+            return (chunks[-1]
+                    .replace("'", "")
+                    .replace("<", "")
+                    .replace(">", "").strip())
         else:
-            return tpe_name.replace('class', '') \
-                .replace("'", "") \
-                .replace("<", "") \
-                .replace(">", "").strip()
+            return (tpe_name
+                    .replace('class', '')
+                    .replace("'", "")
+                    .replace("<", "")
+                    .replace(">", "").strip())
 
-    def get_dict(self) -> Dict[str, str]:
+    def get_dict(self) -> Dict[str, str | bool]:
         """
         Get the values of this property as a dictionary
         :return: Dict[name, value]

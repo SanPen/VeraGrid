@@ -21,8 +21,7 @@ import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
 from typing import Any, Optional
-from VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels import (NUMBA_AVAILABLE,
-                                                                                          apply_ak_stack_block_numba)
+from VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels import apply_ak_stack_block_numba
 from VeraGridEngine.basic_structures import Mat, Vec
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 
@@ -412,7 +411,7 @@ class AkStackBlockEmtFloquetOperator(spla.LinearOperator):
         self.n_states = int(Ak.shape[1])
         self.Ak_stack = Ak
         self.n_steps = int(Ak.shape[0])
-        self.use_numba = bool(use_numba and NUMBA_AVAILABLE and apply_ak_stack_block_numba is not None)
+        self.use_numba = bool(use_numba)
         super().__init__(dtype=np.float64, shape=(self.n_states, self.n_states), **kwargs)
 
     def _matvec(self, x: Vec) -> Vec:

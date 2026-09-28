@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
 from typing import Union, Tuple, List
 
 from VeraGridEngine.basic_structures import Logger, CxVec
@@ -17,7 +16,7 @@ from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Associations.fuel import Fuel
 from VeraGridEngine.Devices.Associations.emission_gas import EmissionGas
 from VeraGridEngine.Devices.Injections.generator_q_curve import GeneratorQCurve
-from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat, ProfileDevice
+from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat, ProfileEnum
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 
@@ -85,6 +84,7 @@ class Generator(InjectionParent):
         '_Pf',
         '_Pf_prof',
         '_control_mode',
+        '_control_mode_prof',
         '_Snom',
         '_Vset',
         '_Vset_prof',
@@ -173,6 +173,7 @@ class Generator(InjectionParent):
             prop_name='control_mode',
             units='',
             tpe=GeneratorControlMode,
+            profile_name="control_mode_prof",
             definition='Generator control mode',
             cat=[PrpCat.PF],
             old_names=("is_controlled",),
@@ -635,6 +636,7 @@ class Generator(InjectionParent):
 
         # If this generator is voltage controlled it produces a PV node, otherwise the node remains as PQ
         self._control_mode: GeneratorControlMode = control_mode
+        self._control_mode_prof = ProfileEnum(default_value=self._control_mode, enum_type=GeneratorControlMode)
 
         # Nominal power in MVA (also the machine base)
         self._Snom = float(Snom)
@@ -1222,6 +1224,30 @@ class Generator(InjectionParent):
                     return
 
         raise TypeError(f"Unsupported generator control mode: {val!r}")
+
+    @property
+    def control_mode_prof(self) -> ProfileEnum:
+        """
+        Cost profile
+        :return: Profile
+        """
+        return self._control_mode_prof
+
+    @control_mode_prof.setter
+    def control_mode_prof(self, val: Union[ProfileEnum, np.ndarray]):
+        if isinstance(val, ProfileEnum):
+            self._control_mode_prof = val
+        elif isinstance(val, np.ndarray):
+            self._control_mode_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a control_mode_prof')
+
+    def get_control_mode_prof_at(self, t: int | None) -> GeneratorControlMode:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.control_mode, self.control_mode_prof, t)
 
     @property
     def Pf(self) -> float:

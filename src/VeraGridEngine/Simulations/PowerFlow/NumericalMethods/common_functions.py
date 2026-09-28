@@ -345,7 +345,7 @@ def voltage_pdc_droop_neg(ut: complex,
     return Pdc / S_base
 
 
-@nb.njit(cache=True, fastmath=True)
+@nb.jit(cache=True, fastmath=True)
 def polar_to_rect(Vm: Vec, Va: Vec) -> CxVec:
     """
     Convert polar to rectangular coordinates
@@ -371,7 +371,7 @@ def expand(n, arr: Vec, idx: IntVec, default: float) -> Vec:
     return x
 
 
-@nb.njit(cache=True, fastmath=True)
+@nb.jit(cache=True, fastmath=True)
 def compute_zip_power(S0: CxVec, I0: CxVec, Y0: CxVec, Vm: Vec) -> CxVec:
     """
     Compute the equivalent power injection
@@ -435,7 +435,7 @@ def fortescue_012_to_abc(z0: complex, z1: complex, z2: complex) -> CxMat:
     return Zabc
 
 
-@nb.njit(cache=True, fastmath=True)
+@nb.jit(cache=True, fastmath=True)
 def compute_fx(Scalc: CxVec, Sbus: CxVec, idx_dP: IntVec, idx_dQ: IntVec) -> Vec:
     """
     Compute the NR-like error function
@@ -479,7 +479,7 @@ def compute_fx_error(fx: Vec) -> float:
     return np.linalg.norm(fx, np.inf)
 
 
-@nb.njit()
+@nb.jit()
 def get_Sf(k: IntVec, Vm: Vec, V: CxVec, yff: CxVec, yft: CxVec, F: IntVec, T: IntVec):
     """
 
@@ -497,7 +497,7 @@ def get_Sf(k: IntVec, Vm: Vec, V: CxVec, yff: CxVec, yft: CxVec, F: IntVec, T: I
     return np.power(Vm[f], 2.0) * np.conj(yff[k]) + V[f] * np.conj(V[t]) * np.conj(yft[k])
 
 
-@nb.njit()
+@nb.jit()
 def get_St(k: IntVec, Vm: Vec, V: CxVec, ytf: CxVec, ytt: CxVec, F: IntVec, T: IntVec):
     """
 
@@ -515,7 +515,7 @@ def get_St(k: IntVec, Vm: Vec, V: CxVec, ytf: CxVec, ytt: CxVec, F: IntVec, T: I
     return np.power(Vm[t], 2.0) * np.conj(ytt[k]) + V[t] * np.conj(V[f]) * np.conj(ytf[k])
 
 
-@nb.njit()
+@nb.jit()
 def get_If(k: IntVec, V: CxVec, yff: CxVec, yft: CxVec, F: IntVec, T: IntVec):
     """
 
@@ -532,7 +532,7 @@ def get_If(k: IntVec, V: CxVec, yff: CxVec, yft: CxVec, F: IntVec, T: IntVec):
     return np.conj(V[f]) * np.conj(yff[k]) + np.conj(V[t]) * np.conj(yft[k])
 
 
-@nb.njit()
+@nb.jit()
 def get_It(k: IntVec, V: CxVec, ytf: CxVec, ytt: CxVec, F: IntVec, T: IntVec):
     """
 
@@ -566,7 +566,7 @@ def expand_magnitudes(magnitude: CxVec, lookup: IntVec):
     return magnitude_expanded
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[complex, complex, complex, complex]:
     """
     Given the phase voltages and currents of a floating star connected current load,
@@ -591,7 +591,7 @@ def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[
     iteration = 0
     max_iterations = 25
 
-    # Remove @nb.njit decorator - nested functions can't be decorated
+    # Remove @nb.jit decorator - nested functions can't be decorated
     def Iphase(U, Istar):
         Umag = abs(U)
         if Umag < 1e-12:  # guard
@@ -733,7 +733,7 @@ def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[
     return Ia, Ib, Ic, Vn
 
 
-# @nb.njit(cache=True)
+# @nb.jit(cache=True)
 def floating_star_powers(Ua,
                          Ub,
                          Uc,
@@ -987,7 +987,7 @@ def power_flow_post_process_linear(Sbus: CxVec, V: CxVec,
     return Sfb, Stb, If, It, Vbranch, loading, losses, Sbus
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def split_bus_quantity(
         Qbus: Vec,
         gen_bus_idx: IntVec,

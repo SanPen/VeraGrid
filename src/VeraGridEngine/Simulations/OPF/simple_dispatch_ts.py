@@ -57,7 +57,7 @@ def run_simple_dispatch(grid: MultiCircuit,
 
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def greedy_dispatch(
         load_profile: Mat,
 
@@ -204,7 +204,7 @@ def greedy_dispatch(
     return dispatch_gen, dispatch_batt, batt_energy[1::, :], total_cost, load_not_supplied, load_shedding
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def greedy_dispatch2(
         load_profile: Mat,
 

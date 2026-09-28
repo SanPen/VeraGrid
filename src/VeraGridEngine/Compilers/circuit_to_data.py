@@ -650,15 +650,26 @@ def get_load_data(data: LoadData,
             data.shift_key[ii] = elm.get_shift_key_at(t_idx)
 
             if fill_three_phase:
+                # Distribute missing P and Q independently, preserving explicit phase values.
+                phase_power: np.ndarray = np.array((elm.get_Sa_at(t_idx),
+                                                    elm.get_Sb_at(t_idx),
+                                                    elm.get_Sc_at(t_idx)), dtype=complex)
+                if not np.any(phase_power.real):
+                    phase_power.real = elm.get_P_at(t_idx) / 3.0
+                else:
+                    pass
+
+                if not np.any(phase_power.imag):
+                    phase_power.imag = elm.get_Q_at(t_idx) / 3.0
+                else:
+                    pass
+
+                # Each device occupies N, A, B, C; generation has the negative load sign.
                 if elm.conn == ShuntConnectionType.GroundedStar:
-                    data.S3_star[3 * ii + 1] -= elm.get_Sa_at(t_idx)
-                    data.S3_star[3 * ii + 2] -= elm.get_Sb_at(t_idx)
-                    data.S3_star[3 * ii + 3] -= elm.get_Sc_at(t_idx)
+                    data.S3_star[4 * ii + 1:4 * ii + 4] -= phase_power
 
                 elif elm.conn == ShuntConnectionType.Delta:
-                    data.S3_delta[3 * ii + 1] -= elm.get_Sa_at(t_idx)
-                    data.S3_delta[3 * ii + 2] -= elm.get_Sb_at(t_idx)
-                    data.S3_delta[3 * ii + 3] -= elm.get_Sc_at(t_idx)
+                    data.S3_delta[4 * ii + 1:4 * ii + 4] -= phase_power
 
                 else:
                     raise Exception(f"Unhandled connection type {elm.conn}")
@@ -1069,6 +1080,7 @@ def fill_generator_parent(
     :param logger:
     :param bus_data:
     :param t_idx:
+    :param use_stored_guess:
     :param control_remote_voltage:
     :param fill_three_phase:
     :return:
@@ -1087,7 +1099,8 @@ def fill_generator_parent(
     data.mttf[k] = elm.mttf
     data.mttr[k] = elm.mttr
 
-    data.control_mode_int[k] = elm.control_mode.idx()
+    control_mode: GeneratorControlMode = elm.get_control_mode_prof_at(t_idx)
+    data.control_mode_int[k] = control_mode.idx()
     data.installed_p[k] = elm.Snom
     bus_data.installed_power[i] += elm.Snom
 
@@ -1159,7 +1172,7 @@ def fill_generator_parent(
         if elm.get_srap_enabled_at(t_idx) and data.p[k] > 0.0:
             bus_data.srap_available_power[i] += data.p[k]
 
-        if elm.control_mode == GeneratorControlMode.V:
+        if control_mode == GeneratorControlMode.V:
             if elm.control_bus is not None:
                 remote_control = True
                 j = bus_dict[elm.control_bus]
@@ -1180,10 +1193,10 @@ def fill_generator_parent(
                                     logger=logger)
             data.q[k] = 0.0
 
-        elif elm.control_mode == GeneratorControlMode.Q:
+        elif control_mode == GeneratorControlMode.Q:
             data.q[k] = elm.get_Q_at(t_idx)
 
-        elif elm.control_mode == GeneratorControlMode.QVDroop:
+        elif control_mode == GeneratorControlMode.QVDroop:
             # Q will be computed by the droop
             data.q[k] = 0.0
         else:
@@ -1304,7 +1317,6 @@ def get_battery_data(
     :param opf_results:
     :param t_idx:
     :param time_series:
-    :param use_stored_guess:
     :param control_remote_voltage:
     :param fill_three_phase:
     :return:

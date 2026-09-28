@@ -167,6 +167,7 @@ class ContingencyAnalysisDriver(DriverTemplate):
                     nc=nc,
                     distributed_slack=self.options.lin_options.distribute_slack,
                     correct_values=self.options.lin_options.correct_values,
+                    use_jacobian_ptdf=self.options.lin_options.use_jacobian_ptdf,
                     logger=self.logger
                 )
 

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 
 
-@nb.njit()
+@nb.jit()
 def get_proportional_deltas_sensed(P, idx, dP=1.0):
     """
 
@@ -66,7 +66,7 @@ def get_proportional_deltas_sensed(P, idx, dP=1.0):
     return deltaP
 
 
-@nb.njit()
+@nb.jit()
 def scale_proportional_sensed(P, idx1, idx2, dT=1.0):
     """
 
@@ -85,7 +85,7 @@ def scale_proportional_sensed(P, idx1, idx2, dT=1.0):
     return P + dP
 
 
-@nb.njit()
+@nb.jit()
 def compute_dP(P0: Vec,
                Pgen: Vec,
                P_installed: Vec,
@@ -135,7 +135,7 @@ def compute_dP(P0: Vec,
     return dP
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def compute_alpha(ptdf: Mat, dP: Vec, dT: float = 1.0) -> Vec:
     """
     Compute line sensitivity to power transfer
@@ -154,7 +154,7 @@ def compute_alpha(ptdf: Mat, dP: Vec, dT: float = 1.0) -> Vec:
     return alpha
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def compute_alpha_n1(ptdf: Mat, lodf: Mat, dP: Vec, alpha: Vec, dT=1.0) -> Mat:
     """
 
@@ -179,7 +179,7 @@ def compute_alpha_n1(ptdf: Mat, lodf: Mat, dP: Vec, alpha: Vec, dT=1.0) -> Mat:
     return alpha_n1
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def compute_atc_list(br_idx: IntVec, contingency_br_idx: IntVec, lodf: Mat, alpha: Vec, flows: Vec, rates: Vec,
                      contingency_rates: Vec, base_exchange: float, threshold: float,
                      time_idx: int) -> List[

@@ -4,7 +4,9 @@ from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Injections.shunt import ShuntParent
 from VeraGridEngine.Devices.Profiles.profile_device import ProfileDevice
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, HvdcControlType, TapPhaseControl, TapModuleControl
+from VeraGridEngine.Devices.Profiles.profile_enum import ProfileEnum
+from VeraGridEngine.enumerations import (DeviceType, BuildStatus, HvdcControlType, TapPhaseControl,
+                                         TapModuleControl, GeneratorControlMode)
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.controllable_branch_parent import ControllableBranchParent
@@ -95,7 +97,9 @@ def test_generator_getters_match_profiles():
     # Fill all profile arrays with linearly increasing data
     for name, attr in inspect.getmembers(gen):
         if name.endswith("_prof") and hasattr(attr, "set"):
-            if isinstance(attr, ProfileDevice):
+            if isinstance(attr, ProfileEnum):
+                attr.set(arr=np.full(n_steps, GeneratorControlMode.V, dtype=object))
+            elif isinstance(attr, ProfileDevice):
                 attr.set(arr=np.full(n_steps, None, dtype=object))
             else:
                 attr.set(arr=np.linspace(1.0, 10.0, n_steps))

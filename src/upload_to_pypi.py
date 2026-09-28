@@ -130,8 +130,9 @@ if __name__ == "__main__":
         'from trunk',
         'import trunk',
         'from tests',
+        'from matplotlib',
+        'import matplotlib',
         'import tests',
-        'plt.plot()',  # This produces crashes
     ]
 
     search_text_in_python_files(directory="VeraGrid", search_terms=forbidden_text)

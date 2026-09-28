@@ -103,7 +103,7 @@ def _safe_njit(py_func: Callable[..., Any], fastmath: bool = True, cache: bool =
     else:
         return cached_kernel
 
-    compiled_kernel: Callable[..., Any] = nb.njit(cache=cache, fastmath=fastmath)(py_func)
+    compiled_kernel: Callable[..., Any] = nb.jit(cache=cache, fastmath=fastmath)(py_func)
     SYMBOLIC_NUMBA_KERNEL_CACHE.set(cache_key, compiled_kernel)
     return compiled_kernel
 

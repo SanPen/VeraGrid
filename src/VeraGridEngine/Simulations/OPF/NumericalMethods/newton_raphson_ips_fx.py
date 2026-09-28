@@ -34,7 +34,7 @@ def step_calculation(v: Vec, dv: Vec, tau: float = 0.99995):
     return alpha
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def split(sol: Vec, n: int):
     """
     Split the solution vector in two
@@ -45,7 +45,7 @@ def split(sol: Vec, n: int):
     return sol[:n], sol[n:]
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def calc_error(dx: Vec, dz: Vec, dmu: Vec, dlmbda: Vec) -> float:
     """
     Calculate the error of the process
@@ -66,7 +66,7 @@ def calc_error(dx: Vec, dz: Vec, dmu: Vec, dlmbda: Vec) -> float:
     return err
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def max_abs(x: Vec) -> float:
     """
     Compute max abs efficiently

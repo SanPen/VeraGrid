@@ -7,7 +7,7 @@ import numba as nb
 from VeraGridEngine.basic_structures import Mat, Vec
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def update(i: int, new_value: Vec, count: Mat, mean: Mat, M2: Mat):
     """
 
@@ -31,7 +31,7 @@ def update(i: int, new_value: Vec, count: Mat, mean: Mat, M2: Mat):
             M2[i, j] += delta * delta2
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def finalize(count: Mat, variance: Mat, M2: Mat, std_dev: Mat, sample_variance: Mat):
     """
 

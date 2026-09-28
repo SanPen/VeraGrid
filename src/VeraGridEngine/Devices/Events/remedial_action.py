@@ -66,12 +66,19 @@ class RemedialAction(PointerDeviceParent):
                                      code=code,
                                      name=name,
                                      device_type=DeviceType.RemedialActionDevice,
-                                     comment=comment)
+                                     comment=comment,
+                                     pointer_dev_tpes=[
+                                         DeviceType.LineDevice,
+                                         DeviceType.Transformer2WDevice,
+                                         DeviceType.WindingDevice,
+                                         DeviceType.GeneratorDevice,
+                                         DeviceType.BatteryDevice
+                                     ])
 
         # Contingency type
         self._prop: ContingencyOperationTypes = prop
         self._value = value
-        self._group: RemedialActionGroup = group
+        self._group: RemedialActionGroup | None = group
 
 
     @property

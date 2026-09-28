@@ -40,7 +40,7 @@ def worst_contingency_report_table(time_array: Union[DateVec, None],
                                    alpha_n1: np.ndarray,
                                    monitor_logic: np.ndarray,
                                    flow_n: np.ndarray,
-                                   ntc: np.ndarray,
+                                   ttc: np.ndarray,
                                    contingency_rates: Vec,
                                    loading_threshold_pct: float,
                                    total_slack_mw: Vec | None = None,
@@ -52,7 +52,8 @@ def worst_contingency_report_table(time_array: Union[DateVec, None],
                                    hvdc_names: StrVec | None = None,
                                    hvdc_power: np.ndarray | None = None,
                                    phase_shifter_indices: IntVec | None = None,
-                                   phase_shift: np.ndarray | None = None) -> ResultsTable:
+                                   phase_shift: np.ndarray | None = None,
+                                   transmission_reliability_margin: float = 0.0) -> ResultsTable:
     """
     Build the long form worst-contingency table with one row per kept (time, branch).
 
@@ -72,7 +73,8 @@ def worst_contingency_report_table(time_array: Union[DateVec, None],
     :param alpha_n1: N-1 exchange sensitivity of the worst group
     :param monitor_logic: N-state monitor flag
     :param flow_n: N-state branch flow (MW)
-    :param ntc: NTC of each time index (MW)
+    :param ttc: Optimized total transfer capacity of each time index (MW).
+    :param transmission_reliability_margin: Margin subtracted from TTC to report NTC (MW).
     :param contingency_rates: branch contingency ratings (MW)
     :param loading_threshold_pct: keep rows whose N-1 loading is at least this percent
     :param total_slack_mw: optional total thermal slack per displayed operating point
@@ -89,6 +91,8 @@ def worst_contingency_report_table(time_array: Union[DateVec, None],
     """
     n_g: int = len(group_names)
     n_dev: int = len(group_device_names)
+    # The saved-results reader can restore scalar properties as one-element arrays.
+    margin_mw: float = float(np.asarray(transmission_reliability_margin).item())
 
     if time_array is None:
         include_time: bool = False
@@ -104,22 +108,22 @@ def worst_contingency_report_table(time_array: Union[DateVec, None],
     n_rows: int = int(kept.shape[0])
 
     if include_time:
-        n_cols: int = 12
-        columns = [
+        n_cols: int = 13
+        columns: List[str] = list((
             'Time index', 'Time',
             'Branch', 'Monitored',
             'Contingency group', 'Contingency devices',
-            'NTC (MW)', 'Alpha', 'Alpha N-1',
+            'TTC (MW)', 'NTC (MW)', 'Alpha', 'Alpha N-1',
             'Flow N (MW)', 'Flow N-1 (MW)', 'Loading N-1 (%)'
-        ]
+        ))
     else:
-        n_cols = 10
-        columns = [
+        n_cols = 11
+        columns = list((
             'Branch', 'Monitored',
             'Contingency group', 'Contingency devices',
-            'NTC (MW)', 'Alpha', 'Alpha N-1',
+            'TTC (MW)', 'NTC (MW)', 'Alpha', 'Alpha N-1',
             'Flow N (MW)', 'Flow N-1 (MW)', 'Loading N-1 (%)'
-        ]
+        ))
 
     # Slack is useful for snapshots too. Probability exists only for clusters.
     detail_column: int = columns.index('NTC (MW)') + 1
@@ -164,7 +168,9 @@ def worst_contingency_report_table(time_array: Union[DateVec, None],
             time_val: str = str(time_array[h])
         else:
             time_val = ""
-        ntc_h: float = float(ntc[h])
+        ttc_h: float = float(ttc[h])
+        # Apply the study margin to capacity reporting, preserving the solved flows.
+        ntc_h: float = ttc_h - margin_mw
         c_star: int = int(worst_idx[h, m])
         flow_n_m: float = float(np.real(flow_n[h, m]))
         if c_star >= 0 and c_star < n_g:
@@ -199,8 +205,9 @@ def worst_contingency_report_table(time_array: Union[DateVec, None],
         data[row_i, col0 + 1] = mon_flag
         data[row_i, col0 + 2] = c_name
         data[row_i, col0 + 3] = c_dev
-        data[row_i, col0 + 4] = np.round(ntc_h, 4)
-        next_col: int = col0 + 5
+        data[row_i, col0 + 4] = np.round(ttc_h, 4)
+        data[row_i, col0 + 5] = np.round(ntc_h, 4)
+        next_col: int = col0 + 6
         if total_slack_mw is not None:
             data[row_i, next_col] = np.round(float(total_slack_mw[h]), 4)
             next_col += 1
@@ -295,6 +302,7 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         ResultsProperty(name='vsc_losses', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='converged', tpe=bool, old_names=list(), expandable=False),
         ResultsProperty(name='inter_area_flows', tpe=float, old_names=list(), expandable=False),
+        ResultsProperty(name='transmission_reliability_margin', tpe=float, old_names=list(), expandable=False),
         ResultsProperty(name='structural_inter_area_flows', tpe=float, old_names=list(), expandable=False),
         ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
         ResultsProperty(name='strict_formulation', tpe=bool, old_names=list(), expandable=False),
@@ -350,6 +358,7 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         "strict_formulation",
         "converged",
         "inter_area_flows",
+        "transmission_reliability_margin",
         "structural_inter_area_flows",
         "contingency_group_device_names",
         "worst_contingency_idx",
@@ -364,12 +373,14 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
                  branch_names: StrVec,
                  hvdc_names: StrVec,
                  vsc_names: StrVec,
-                 contingency_group_names: StrVec, ):
+                 contingency_group_names: StrVec,
+                 transmission_reliability_margin: float = 0.0):
         """
 
         :param bus_names:
         :param branch_names:
         :param hvdc_names:
+        :param transmission_reliability_margin: Study TRM in MW; zero when absent from older saved results.
         """
 
         ResultsTemplate.__init__(self,
@@ -463,6 +474,8 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         self.converged = False
 
         self.inter_area_flows = 0
+        # Store the study margin with the results so saved reports remain reproducible.
+        self.transmission_reliability_margin: float = transmission_reliability_margin
         self.structural_inter_area_flows = 0
 
         n_g: int = len(contingency_group_names)
@@ -477,20 +490,27 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         self.loading_threshold_to_report: float = 98.0
 
 
-    def get_total_slack_mw(self) -> float:
+    def get_total_slack_mw(self: "OptimalNetTransferCapacityResults") -> float:
         """
         Total limit-relaxation slack of the solution in MW, with the base case overload
-        slacks plus the post-contingency relaxation slacks.
+        slacks plus the post-contingency relaxation slacks. Strict contingency
+        records contain no slack fields and do not contribute to the total.
 
         :return: total slack in MW
         """
         total: float = float(np.sum(np.abs(self.overloads)))
-        for item in self.contingency_flows_list:
-            t_i, m_i, c_i, flow_i, neg_i, pos_i = item
-            if isinstance(neg_i, float) and isinstance(pos_i, float):
-                total += abs(neg_i) + abs(pos_i)
-            else:
-                pass  # slack not evaluated to a number, nothing to add
+        if self.strict_formulation:
+            pass  # Strict limits have no slacks; their four-field rows contain only flows.
+        else:
+            # Only the regular formulation appends negative and positive slack values.
+            item: tuple[int, int, int, float, object, object]
+            for item in self.contingency_flows_list:
+                neg_i: object = item[4]
+                pos_i: object = item[5]
+                if isinstance(neg_i, float) and isinstance(pos_i, float):
+                    total += abs(neg_i) + abs(pos_i)
+                else:
+                    pass  # Slack not evaluated to a number, nothing to add.
         return total
 
     def get_solution_state(self, slack_tol_mw: float = 0.1) -> SolutionState:
@@ -784,7 +804,8 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
                 alpha_n1=self.alpha_n1_worst.reshape(1, n_br),
                 monitor_logic=self.monitor_logic.reshape(1, n_br),
                 flow_n=flow_n,
-                ntc=np.array([self.inter_area_flows], dtype=float),
+                ttc=np.array([self.inter_area_flows], dtype=float),
+                transmission_reliability_margin=self.transmission_reliability_margin,
                 contingency_rates=self.contingency_rates,
                 loading_threshold_pct=self.loading_threshold_to_report,
                 vsc_names=self.vsc_names,

@@ -10,7 +10,7 @@ from VeraGridEngine.enumerations import BusMode
 from VeraGridEngine.Utils.compare import compare_arr
 
 
-@nb.njit(cache=True, inline="always")
+@nb.jit(cache=True, inline="always")
 def _control_priority(is_p: bool,
                       is_q: bool,
                       is_vm: bool,
@@ -34,7 +34,7 @@ def _control_priority(is_p: bool,
         return 1
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def propagate_controls(chosen_idx: int,
                        other_idx: IntVec,
                        bus_types: IntVec,

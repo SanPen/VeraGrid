@@ -16,7 +16,7 @@ from VeraGridEngine.Simulations.Reliability.reliability import reliability_simul
 from VeraGridEngine.Simulations.OPF.simple_dispatch_ts import GreedyDispatchInputs, greedy_dispatch2
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def correct_x(x, lb, ub):
     """
     Correct x in place to the given boundaries
@@ -32,7 +32,7 @@ def correct_x(x, lb, ub):
             x[i] = ub[i]
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def apply_actives_mask(original_active: IntMat, mask_indices: IntVec, mask: IntVec, years_starts_indices: IntVec):
     """
 

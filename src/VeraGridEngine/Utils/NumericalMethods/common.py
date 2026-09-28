@@ -22,7 +22,7 @@ def check_function_and_args(func: Callable, args: Tuple, n_used_for_solver: int)
     return n_args == n_used_for_solver + len(args)
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def max_abs(x: Vec) -> float:
     """
     Compute max abs efficiently
@@ -38,7 +38,7 @@ def max_abs(x: Vec) -> float:
     return max_val
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def norm(x: Vec) -> float:
     """
     Compute max abs efficiently
@@ -105,7 +105,7 @@ class ConvexMethodResult:
         print("Elapsed:\t", self.elapsed, 's')
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def find_closest_number(arr: Vec, target: float) -> Tuple[int, float]:
     """
     Find the closest number that exists in array
@@ -153,7 +153,7 @@ def find_closest_number(arr: Vec, target: float) -> Tuple[int, float]:
     return 0, arr[0]
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def make_lookup(size: int, indices: IntVec) -> IntVec:
     """
     Create a lookup array
@@ -166,7 +166,7 @@ def make_lookup(size: int, indices: IntVec) -> IntVec:
     return lookup
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def make_complex(r: Vec, i: Vec) -> CxVec:
     """
     Fastest way to create complex arrays

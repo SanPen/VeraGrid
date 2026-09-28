@@ -30,7 +30,7 @@ ASAI = (8760 - SAIDI) / 8760
 """
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def compose_states(mttf: float, mttr: float, horizon: int, initially_working: bool = True):
     """
     Compose random states vector (on -> off -> on -> ...)
@@ -89,7 +89,7 @@ def compose_states(mttf: float, mttr: float, horizon: int, initially_working: bo
     return active, n_failures
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def generate_states_matrix(mttf: Vec, mttr: Vec, horizon: int, initially_working: bool = True):
     """
     Generate random states vector (on -> off -> on -> ...)
@@ -112,7 +112,7 @@ def generate_states_matrix(mttf: Vec, mttr: Vec, horizon: int, initially_working
     return states, n_failures
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def find_different_states(mat1: IntMat, mat2: IntMat):
     """
     Find different states
@@ -146,7 +146,7 @@ def find_different_states(mat1: IntMat, mat2: IntMat):
     return states
 
 
-@nb.njit()
+@nb.jit()
 def find_time_blocks(horizon: int, all_actives: IntMat):
     """
     Get the contigous time blocks of failure
@@ -171,7 +171,7 @@ def find_time_blocks(horizon: int, all_actives: IntMat):
     return blocks
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def compute_loss_of_load_because_of_lack_of_generation(gen_pmax: Mat, load: Mat, dt: Vec):
     """
     Compute the loss of load because of lack of generation
@@ -194,7 +194,7 @@ def compute_loss_of_load_because_of_lack_of_generation(gen_pmax: Mat, load: Mat,
     return load_lost
 
 
-@nb.njit(cache=True, parallel=True)
+@nb.jit(cache=True, parallel=True)
 def reliability_simulation(n_sim: int,
                            load_profile: Mat,
 
@@ -297,7 +297,7 @@ def reliability_simulation(n_sim: int,
     return lole_arr, total_cost_arr, curtailment_arr
 
 
-@nb.njit(cache=True, parallel=True)
+@nb.jit(cache=True, parallel=True)
 def reliability_grid_simulation(nc,
                                 grid,
                                 n_sim: int,

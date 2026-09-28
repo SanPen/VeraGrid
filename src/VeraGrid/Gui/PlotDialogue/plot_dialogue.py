@@ -415,6 +415,43 @@ class PlotDialogue(QtWidgets.QMainWindow):
             y_axis_title=y_axis_title,
         )
 
+    def set_scatter_series(self,
+                           x_values: Sequence[float] | np.ndarray,
+                           series_names: Sequence[str],
+                           series_values: Sequence[Sequence[float] | np.ndarray],
+                           colors: Sequence[str | None] | None = None,
+                           point_tooltips: Sequence[Sequence[str] | None] | None = None,
+                           title: str = '',
+                           x_axis_title: str = '',
+                           y_axis_title: str = '') -> bool:
+        """Replace the selected tab with unconnected XY point series.
+
+        :param x_values: Horizontal numeric coordinates shared by every series.
+        :param series_names: Visible legend name for each point series.
+        :param series_values: Vertical values paired with each series name.
+        :param colors: Optional Qt colour for each series.
+        :param point_tooltips: Optional hover text for each series point.
+        :param title: Visible plot title.
+        :param x_axis_title: Horizontal axis caption.
+        :param y_axis_title: Vertical axis caption.
+        :return: Whether every input buffer was accepted.
+        """
+        chart: GraphsWidget = self.get_current_chart()
+        accepted: bool = chart.set_scatter_series(
+            x_values=x_values,
+            series_names=series_names,
+            series_values=series_values,
+            colors=colors,
+            point_tooltips=point_tooltips,
+        )
+        if accepted:
+            chart.setTitle(title)
+            chart.set_axis_titles(x_axis_title, y_axis_title)
+            self._refresh_series_selector()
+        else:
+            pass
+        return accepted
+
     def set_cumulative_area_series(self,
                                    x_values: Sequence[float] | np.ndarray,
                                    series_names: Sequence[str],

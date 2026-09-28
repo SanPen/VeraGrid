@@ -56,6 +56,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         ResultsProperty(name='inter_space_vsc', tpe=list, old_names=list(), expandable=False),
         ResultsProperty(name='converged', tpe=BoolVec, old_names=list(), expandable=True),
         ResultsProperty(name='inter_area_flows', tpe=Vec, old_names=list(), expandable=True),
+        ResultsProperty(name='transmission_reliability_margin', tpe=float, old_names=list(), expandable=False),
         ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
         ResultsProperty(name='strict_formulation', tpe=bool, old_names=list(), expandable=False),
         ResultsProperty(name='contingency_group_device_names', tpe=ObjVec, old_names=list(), expandable=False),
@@ -105,6 +106,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         "strict_formulation",
         "converged",
         "inter_area_flows",
+        "transmission_reliability_margin",
         "contingency_group_device_names",
         "worst_contingency_idx",
         "worst_contingency_flow",
@@ -121,7 +123,8 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
                  contingency_group_names: StrVec,
                  time_array: DateVec,
                  time_indices: IntVec,
-                 clustering_results: Union[ClusteringResults, None] = None):
+                 clustering_results: Union[ClusteringResults, None] = None,
+                 transmission_reliability_margin: float = 0.0):
 
         """
 
@@ -133,6 +136,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         :param time_array:
         :param time_indices:
         :param clustering_results:
+        :param transmission_reliability_margin: Study TRM in MW; zero when absent from older saved results.
         """
         ResultsTemplate.__init__(
             self,
@@ -240,6 +244,8 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
 
         self.converged = np.zeros(nt, dtype=bool)
         self.inter_area_flows = np.zeros(nt, dtype=float)
+        # A scalar study margin is shared by original and representative hours.
+        self.transmission_reliability_margin: float = transmission_reliability_margin
 
         n_g: int = len(contingency_group_names)
         self.contingency_group_device_names = np.empty(n_g, dtype=object)
@@ -546,10 +552,12 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
             )
 
         elif result_type == ResultTypes.NetTransferCapacity:
+            # The optimizer returns TTC; subtract TRM only in the capacity report.
             return ResultsTable(
-                data=self.inter_area_flows.reshape(-1, 1),
+                data=np.column_stack((self.inter_area_flows,
+                                      self.inter_area_flows - self.transmission_reliability_margin)),
                 index=self.time_array,
-                columns=np.array(['NTC (MW)']),
+                columns=np.array(('TTC (MW)', 'NTC (MW)')),
                 title=str(result_type.value),
                 ylabel='(MW)',
                 cols_device_type=DeviceType.NoDevice,
@@ -599,7 +607,8 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
                 alpha_n1=self.alpha_n1_worst,
                 monitor_logic=self.monitor_logic,
                 flow_n=np.real(self.Sf),
-                ntc=self.inter_area_flows,
+                ttc=self.inter_area_flows,
+                transmission_reliability_margin=self.transmission_reliability_margin,
                 contingency_rates=self.contingency_rates,
                 loading_threshold_pct=self.loading_threshold_to_report,
                 vsc_names=self.vsc_names,
@@ -632,7 +641,8 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
                 alpha_n1=self.alpha_n1_worst[selected_rows],
                 monitor_logic=self.monitor_logic[selected_rows],
                 flow_n=np.real(self.Sf[selected_rows]),
-                ntc=self.inter_area_flows[selected_rows],
+                ttc=self.inter_area_flows[selected_rows],
+                transmission_reliability_margin=self.transmission_reliability_margin,
                 contingency_rates=self.contingency_rates,
                 loading_threshold_pct=self.loading_threshold_to_report,
                 total_slack_mw=total_slack[selected_rows],

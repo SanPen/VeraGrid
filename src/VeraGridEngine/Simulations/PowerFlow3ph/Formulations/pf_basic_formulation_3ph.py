@@ -27,7 +27,7 @@ from VeraGridEngine.Utils.Sparse.csc2 import (CSC, scipy_to_mat)
 from VeraGridEngine.enumerations import BusMode, WindingType
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def lookup_from_mask(mask: BoolVec) -> IntVec:
     """
     This function builds the lookup vector based on the information provided by the mask vector.
@@ -285,7 +285,7 @@ def compute_generators(bus_idx: IntVec,
     return Igen
 
 
-# @nb.njit(cache=True)
+# @nb.jit(cache=True)
 def compute_current_loads(bus_idx: IntVec,
                           bus_lookup: IntVec,
                           V: CxVec,
@@ -572,7 +572,7 @@ def compute_current_loads(bus_idx: IntVec,
     return I, Y_current_linear, Un_floating
 
 
-# @nb.njit(cache=True)
+# @nb.jit(cache=True)
 def compute_power_loads(bus_idx: IntVec,
                         bus_lookup: IntVec,
                         V: CxVec,
@@ -878,7 +878,7 @@ def calc_autodiff_jacobian(func: Callable[[Vec], Vec], x: Vec, h: float = 1e-6) 
     return scipy_to_mat(jac.tocsc())
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def expand3ph(x: np.ndarray) -> np.ndarray:
     """
     Expands a numpy array to 3-pase copying the same values
@@ -894,7 +894,7 @@ def expand3ph(x: np.ndarray) -> np.ndarray:
     return x4
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def slice_indices(pq: IntVec, bus_lookup: IntVec) -> IntVec:
     """
     Slice the indices based on the bus_lookup
@@ -915,7 +915,7 @@ def slice_indices(pq: IntVec, bus_lookup: IntVec) -> IntVec:
     return vec[:counter]
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def expand_indices_3ph(x: np.ndarray) -> np.ndarray:
     """
     Expands a numpy array to 3-pase copying the same values
@@ -932,7 +932,7 @@ def expand_indices_3ph(x: np.ndarray) -> np.ndarray:
     return x4
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def expand_slice_indices_3ph(x: np.ndarray, bus_lookup: IntVec) -> np.ndarray:
     """
     Expands and slices a numpy array to 3-phase copying the same values
@@ -946,7 +946,7 @@ def expand_slice_indices_3ph(x: np.ndarray, bus_lookup: IntVec) -> np.ndarray:
     return np.sort(x3_final)
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def expandVoltage3ph(V0: CxVec) -> CxVec:
     """
     Expands a numpy array to 3-pase copying the same values
@@ -969,7 +969,7 @@ def expandVoltage3ph(V0: CxVec) -> CxVec:
     return x4
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def expand_magnitudes(magnitude: CxVec, lookup: IntVec) -> CxVec:
     """
     Expands the masked magnitude using the lookup saving zeros where the lookup is -1,
@@ -989,7 +989,7 @@ def expand_magnitudes(magnitude: CxVec, lookup: IntVec) -> CxVec:
     return magnitude_expanded
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def expand_matrix(magnitude: np.ndarray, lookup: IntVec) -> CxMat:
     """
     Expands a matrix by adding zero rows and columns based on the lookup indices.

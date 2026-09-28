@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Dict, TYPE_CHECKING
 
-from VeraGridEngine.Compilers.Gslv.activation import build_status_dict, pg
+from VeraGridEngine.Compilers.Gslv.activation import build_status_dict, generator_control_mode_dict, pg
 from VeraGridEngine.Compilers.Gslv.common import fill_profile, fill_profile_with_array, set_generator_associations
 from VeraGridEngine.Devices.Aggregation.facility import Facility
 from VeraGridEngine.Devices.Aggregation.market_unit import MarketUnit
@@ -49,7 +49,7 @@ def generator_control_mode(elm: Generator) -> "pg.GeneratorControlMode":
     :param elm: VeraGrid generator.
     :return: Equivalent pygslv control mode.
     """
-    return pg.GeneratorControlMode.__members__[elm.control_mode.name]
+    return generator_control_mode_dict[elm.control_mode]
 
 
 def convert_generator(k: int,
@@ -207,6 +207,7 @@ def convert_generator(k: int,
     fill_profile(gen.cost, elm.Cost_prof, use_time_series, time_indices, n_time, elm.Cost)
     fill_profile(gen.Cost0, elm.Cost0_prof, use_time_series, time_indices, n_time, elm.Cost0)
     fill_profile(gen.Cost2, elm.Cost2_prof, use_time_series, time_indices, n_time, elm.Cost2)
+    fill_profile(gen.control_mode, elm.control_mode_prof, use_time_series, time_indices, n_time, elm.control_mode)
 
     return gen
 

@@ -9,7 +9,7 @@ from typing import Union
 from VeraGridEngine.basic_structures import Vec, CxVec, CxMat
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_overload_score(loading: Union[CxMat, CxVec], branches_cost: Vec, threshold=1.0) -> float:
     """
     Compute overload score by multiplying the loadings above 100% by the associated branch cost.
@@ -37,7 +37,7 @@ def get_overload_score(loading: Union[CxMat, CxVec], branches_cost: Vec, thresho
     return cost_
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_voltage_module_score(voltage: Union[CxVec, CxMat], vm_cost: Vec, vm_max: Vec, vm_min: Vec) -> float:
     """
     Compute voltage module score by multiplying the voltages outside limits by the associated bus costs.
@@ -68,7 +68,7 @@ def get_voltage_module_score(voltage: Union[CxVec, CxMat], vm_cost: Vec, vm_max:
     return cost_
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def get_voltage_phase_score(voltage: Union[CxMat, CxVec], va_cost: Vec, va_max: Vec, va_min: Vec) -> float:
     """
     Compute voltage phase score by multiplying the phases outside limits by the associated bus costs.

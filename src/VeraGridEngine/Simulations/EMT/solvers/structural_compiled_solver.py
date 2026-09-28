@@ -876,7 +876,7 @@ def _greedy_color_columns(col_rows: List[List[int]], n_rows: int) -> Tuple[Int32
     return colors, int(max_color + 1), color_groups
 
 
-@nb.njit(_build_scatter_color_signature(), cache=True, fastmath=True)
+@nb.jit(_build_scatter_color_signature(), cache=True, fastmath=True)
 def _scatter_color_jvp_to_csc_data(
         jvp: Float64Vector,
         data: Float64Vector,
@@ -922,7 +922,7 @@ def _scatter_color_jvp_to_csc_data(
         k += 1
 
 
-@nb.njit(_build_max_abs_signature(), cache=True, fastmath=True)
+@nb.jit(_build_max_abs_signature(), cache=True, fastmath=True)
 def _max_abs_value(values: Float64Vector) -> float:
     """
     Compute the infinity norm without allocating temporary arrays.
@@ -954,7 +954,7 @@ def _max_abs_value(values: Float64Vector) -> float:
     return max_value
 
 
-@nb.njit(_build_copy_negated_signature(), cache=True, fastmath=True)
+@nb.jit(_build_copy_negated_signature(), cache=True, fastmath=True)
 def _copy_negated_vector(values: Float64Vector, out: Float64Vector) -> None:
     """
     Write the negated vector into a preallocated buffer.
@@ -973,7 +973,7 @@ def _copy_negated_vector(values: Float64Vector, out: Float64Vector) -> None:
         index += 1
 
 
-@nb.njit(_build_fill_full_parameter_signature(), cache=True, fastmath=True)
+@nb.jit(_build_fill_full_parameter_signature(), cache=True, fastmath=True)
 def _fill_full_parameter_buffer(
         runtime_params: Float64Vector,
         static_params: Float64Vector,
@@ -1005,7 +1005,7 @@ def _fill_full_parameter_buffer(
         index += 1
 
 
-@nb.njit(cache=True, fastmath=True)
+@nb.jit(cache=True, fastmath=True)
 def _max_abs_diff_vectors(left_values: Float64Vector, right_values: Float64Vector) -> float:
     """
     Return the maximum absolute difference between two vectors.
@@ -1040,7 +1040,7 @@ def _max_abs_diff_vectors(left_values: Float64Vector, right_values: Float64Vecto
 
 
 
-@nb.njit(_build_permute_csc_signature(), cache=True, fastmath=True)
+@nb.jit(_build_permute_csc_signature(), cache=True, fastmath=True)
 def _permute_csc_data_by_columns(
         source_data: Float64Vector,
         source_indptr: Int32Vector,
@@ -1080,7 +1080,7 @@ def _permute_csc_data_by_columns(
         dst_col += 1
 
 
-@nb.njit(_build_scatter_permuted_solution_signature(), cache=True, fastmath=True)
+@nb.jit(_build_scatter_permuted_solution_signature(), cache=True, fastmath=True)
 def _scatter_permuted_solution_to_original_order(
         permuted_solution: Float64Vector,
         inverse_column_perm: Int32Vector,

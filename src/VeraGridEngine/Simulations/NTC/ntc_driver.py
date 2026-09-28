@@ -6,6 +6,7 @@
 from typing import List
 import numpy as np
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Simulations.NTC.ntc_opf import run_linear_ntc_opf
 from VeraGridEngine.Simulations.NTC.ntc_opf_strict import run_linear_ntc_opf_strict
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
@@ -14,7 +15,28 @@ from VeraGridEngine.Simulations.NTC.ntc_results import OptimalNetTransferCapacit
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import SimulationTypes, TapPhaseControl
 from VeraGridEngine.Devices.Parents.controllable_branch_parent import ControllableBranchParent
-from VeraGridEngine.basic_structures import ObjVec, IntVec
+from VeraGridEngine.basic_structures import ObjVec, IntVec, BoolVec
+
+
+def select_ntc_contingency_groups(grid: MultiCircuit,
+                                  selected: List[ContingencyGroup]) -> List[ContingencyGroup]:
+    """Resolve the same active contingency selection for both NTC drivers.
+
+    :param grid: Circuit supplying the default contingency groups.
+    :param selected: Explicit selection; an empty list selects all active groups.
+    :return: Active groups in their original selection order.
+    """
+    candidates: List[ContingencyGroup]
+    if len(selected) > 0:
+        candidates = selected
+    else:
+        candidates = grid.get_contingency_groups()
+
+    # Allocate once, filter by activity, and convert to the formulation's list API.
+    group: ContingencyGroup
+    active: BoolVec = np.fromiter((group.active for group in candidates), dtype=bool, count=len(candidates))
+    groups: ObjVec = np.asarray(candidates, dtype=object)
+    return list(groups[active])
 
 
 def collect_phase_shifter_indices(grid: MultiCircuit, time_indices: IntVec | None = None) -> IntVec:
@@ -109,11 +131,8 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
 
         self.report_text('Compiling...')
 
-        # Make sure contingency groups are used. Otherwise a large grid takes hours
-        if len(self.options.opf_options.contingency_groups_used) > 0:
-            contingency_groups_used = [e for e in self.options.opf_options.contingency_groups_used if e.active]
-        else:
-            contingency_groups_used = self.grid.get_contingency_groups_active()
+        contingency_groups_used: List[ContingencyGroup] = select_ntc_contingency_groups(
+            self.grid, self.options.opf_options.contingency_groups_used)
 
         if self.options.consider_contingencies:
             self.report_text(f'Formulating NTC OPF ({len(contingency_groups_used)} contingency groups)...')
@@ -177,7 +196,8 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
             branch_names=self.grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True),
             hvdc_names=self.grid.get_hvdc_names(),
             vsc_names=self.grid.get_vsc_names(),
-            contingency_group_names=self.grid.get_contingency_group_names()
+            contingency_group_names=self.grid.get_contingency_group_names(),
+            transmission_reliability_margin=self.options.transmission_reliability_margin,
         )
 
         self.results.phase_shifter_indices = collect_phase_shifter_indices(self.grid)

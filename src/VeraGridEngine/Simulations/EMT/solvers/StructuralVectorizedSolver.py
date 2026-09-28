@@ -297,9 +297,9 @@ Callable[..., Any]:
     :rtype: Callable[..., Any]
     """
     if signature is not None:
-        return nb.njit(signature, fastmath=fastmath, cache=cache)(py_func)
+        return nb.jit(signature, fastmath=fastmath, cache=cache)(py_func)
     else:
-        return nb.njit(fastmath=fastmath, cache=cache)(py_func)
+        return nb.jit(fastmath=fastmath, cache=cache)(py_func)
 
 
 def _canonicalize_node(
@@ -758,7 +758,7 @@ class DirectResidualDispatcher:
 
         self.evaluate(states, params, history, d_history, h, history2, out)
 
-@nb.njit(cache=True, fastmath=True)
+@nb.jit(cache=True, fastmath=True)
 def _scatter_color_jvp_to_csc_data(
         jvp: np.ndarray, data: np.ndarray, color_ptr: np.ndarray,col_ptr: np.ndarray,
         row_idx: np.ndarray, data_idx: np.ndarray, color_id: int) -> None:

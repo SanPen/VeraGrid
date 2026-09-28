@@ -51,7 +51,7 @@ def csc_equal(A: sp.csc_matrix,
         return (abs(A - B) > tol).nnz == 0  # :contentReference[oaicite:1]{index=1}
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def _prepare_branch_maps(nbus: int, nbranch: int, F: IntVec, T: IntVec,
                          Yf_indices: IntVec, Yf_indptr: IntVec,
                          Ybus_indices: IntVec, Ybus_indptr: IntVec):
@@ -118,7 +118,7 @@ def _prepare_branch_maps(nbus: int, nbranch: int, F: IntVec, T: IntVec,
     return pos_yff, pos_yft, pos_ytf, pos_ytt, pos_b_ii, pos_b_ij, pos_b_ji, pos_b_jj
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def update_branch_admittances(idx: IntVec,
                               new_yff: CxVec, new_yft: CxVec, new_ytf: CxVec, new_ytt: CxVec,
                               Yf_data: CxVec, Yt_data: CxVec, Ybus_data: CxVec,
@@ -423,7 +423,7 @@ def compute_admittances(R: Vec,
                               yff, yft, ytf, ytt, Yshunt_bus)
 
 
-@nb.njit(cache=True, inline="always")
+@nb.jit(cache=True, inline="always")
 def _sum_in_place(arr):
     """
     exclusive prefix-sum in-place
@@ -438,7 +438,7 @@ def _sum_in_place(arr):
     return s
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def _build_Yf_Yt(nbus, nbr: int, F: IntVec, T: IntVec, yff: CxVec, yft: CxVec, ytf: CxVec, ytt: CxVec):
     """
     branch matrices (identical pattern ⇒ share indices/indptr)
@@ -492,7 +492,7 @@ def _build_Yf_Yt(nbus, nbr: int, F: IntVec, T: IntVec, yff: CxVec, yft: CxVec, y
     return data_F, data_T, indices, indptr  # <- length nb+1
 
 
-@nb.njit(cache=True)
+@nb.jit(cache=True)
 def _build_Ybus(nbus: int, nbr: int, F: IntVec, T: IntVec,
                 yff: CxVec, yft: CxVec, ytf: CxVec, ytt: CxVec, Ysh: CxVec) -> Tuple[CxVec, IntVec, IntVec]:
     """

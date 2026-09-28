@@ -78,14 +78,14 @@ class RmsEvent(PointerDeviceParent):
 
     def __init__(self,
                  device: EditableDevice | None = None,
-                 parameter: Var = None,
-                 time: float = None,
+                 parameter: Var| None = None,
+                 time: float| None = None,
                  end_time: float | None = None,
-                 value: float = None,
-                 group: RmsEventsGroup = None,
+                 value: float| None = None,
+                 group: RmsEventsGroup| None = None,
                  force_step_alignment: bool = False,
                  transition_type: DynamicEventTransitionType = DynamicEventTransitionType.Step,
-                 idtag: Union[str, None] = None,
+                 idtag: str | None = None,
                  name="RmsEvent",
                  code='',
 
@@ -112,10 +112,13 @@ class RmsEvent(PointerDeviceParent):
                                      code=code,
                                      name=name,
                                      device_type=DeviceType.RmsEventDevice,
-                                     comment=comment)
+                                     comment=comment,
+                                     pointer_dev_tpes=[
+                                         DeviceType.PhysicalDeviceType  # Signifies all physical devices
+                                     ])
 
 
-        self._group: RmsEventsGroup = group
+        self._group: RmsEventsGroup | None = group
         self.parameter: Any = parameter
         self.time: float = float(time) if time is not None else 0.0
         self.end_time: float | None = float(end_time) if end_time is not None else self.time+1e-20

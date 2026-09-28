@@ -377,8 +377,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>382</width>
-                            <height>360</height>
+                            <width>262</width>
+                            <height>362</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -772,8 +772,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>396</width>
-                            <height>316</height>
+                            <width>174</width>
+                            <height>240</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -923,8 +923,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>396</width>
-                            <height>316</height>
+                            <width>124</width>
+                            <height>188</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -2444,8 +2444,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>274</width>
-                 <height>520</height>
+                 <width>226</width>
+                 <height>85</height>
                 </rect>
                </property>
                <attribute name="icon">
@@ -2500,8 +2500,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>274</width>
-                 <height>520</height>
+                 <width>86</width>
+                 <height>88</height>
                 </rect>
                </property>
                <attribute name="icon">
@@ -4402,6 +4402,19 @@
                 <widget class="QLabel" name="label_124">
                  <property name="text">
                   <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" colspan="2">
+                <widget class="QCheckBox" name="ptdf_use_jacobian_checkBox">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, the PTDF will be computed using the Jacobian matricex instead of the Susceptance matrices, hence taking into account the initial voltage&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Use Jacobian based PTDF</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>

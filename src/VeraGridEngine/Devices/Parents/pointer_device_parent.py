@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union, Tuple, TYPE_CHECKING
+from typing import Union, Tuple, List, TYPE_CHECKING
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp, PrpCat
 from VeraGridEngine.enumerations import DeviceType
 
@@ -23,7 +23,8 @@ class PointerDeviceParent(EditableDevice):
         '_device_idtag',
         '_device_name',
         '_tpe',
-        '_device'
+        '_device',
+        '_pointer_dev_tpes'
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -33,6 +34,7 @@ class PointerDeviceParent(EditableDevice):
             tpe=str,
             definition='Unique ID',
             editable=False,
+            display=False,
             cat=list([PrpCat.TP]),
         ),
         GCProp(
@@ -41,6 +43,7 @@ class PointerDeviceParent(EditableDevice):
             tpe=DeviceType,
             definition='Device type',
             editable=False,
+            display=False,
             cat=list([PrpCat.TP]),
         ),
         GCProp(
@@ -49,6 +52,16 @@ class PointerDeviceParent(EditableDevice):
             tpe=str,
             definition='Device name',
             editable=False,
+            display=False,
+            cat=list([PrpCat.TP]),
+        ),
+        GCProp(
+            prop_name='device',
+            units='',
+            tpe=DeviceType.PhysicalDeviceType,
+            definition='Device name',
+            editable=True,
+            display=True,
             cat=list([PrpCat.TP]),
         ),
     )
@@ -59,7 +72,8 @@ class PointerDeviceParent(EditableDevice):
                  name: str,
                  code: str,
                  comment: str,
-                 device_type: DeviceType):
+                 device_type: DeviceType,
+                 pointer_dev_tpes: List[DeviceType]):
         """
         Investment
         :param idtag: String. Element unique identifier
@@ -80,6 +94,7 @@ class PointerDeviceParent(EditableDevice):
         self._tpe: DeviceType = device.device_type if device is not None else DeviceType.NoDevice
         self._device_name: str = device.name if device is not None else "No device"
         self._device: InjectionParent | BranchParent | Facility | None = device
+        self._pointer_dev_tpes: List[DeviceType] = pointer_dev_tpes if pointer_dev_tpes is not None else list()
 
     @property
     def device_idtag(self) -> str:
@@ -146,6 +161,14 @@ class PointerDeviceParent(EditableDevice):
                 raise ValueError(f"device cannot be None")
         else:
             raise ValueError(f"tpe must be a EditableDevice not {val}")
+
+    @property
+    def pointer_dev_tpes(self) -> List[DeviceType]:
+        """
+        List of pointer device types
+        :return:
+        """
+        return self._pointer_dev_tpes
 
     def set_device(self, elm: InjectionParent | BranchParent | Facility | None):
         """

@@ -1,10 +1,9 @@
-
-
 import numpy as np
 
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.measurement import MeasurementTemplate
 from VeraGridEngine.enumerations import DeviceType
+
 
 class PseudoMeasurement(MeasurementTemplate):
     """
@@ -13,12 +12,12 @@ class PseudoMeasurement(MeasurementTemplate):
     __slots__ = ("bus",)
 
     def __init__(
-        self,
-        value: float,
-        sigma: float,
-        api_obj: Bus,
-        name: str = "",
-        idtag: str | None = None,
+            self,
+            value: float,
+            sigma: float,
+            api_obj: Bus,
+            name: str = "",
+            idtag: str | None = None,
     ) -> None:
         """
         PseudoMeasurement constructor.
@@ -37,6 +36,9 @@ class PseudoMeasurement(MeasurementTemplate):
             name=name,
             idtag=idtag,
             device_type=DeviceType.NoDevice,
+            pointer_dev_tpes=[
+                DeviceType.PhysicalDeviceType  # Signifies all physical devices
+            ]
         )
         self.value = value
         self.sigma = sigma
@@ -80,6 +82,8 @@ def build_neighbors(Cf, Ct):
             neighbors[j].append(i)
 
     return neighbors
+
+
 def compute_power_injection(bus, V, Ybus, neighbors):
     """
     Compute AC active and reactive power injection for a bus using neighbors.
@@ -108,8 +112,8 @@ def compute_power_injection(bus, V, Ybus, neighbors):
     return Pi, Qi
 
 
-def add_pseudo_measurements(se_input, unobservable_buses, V, Ybus, neighbors,bus_dict,
-                            sigma_pseudo=1.0,Sbase=100,logger=None, ):
+def add_pseudo_measurements(se_input, unobservable_buses, V, Ybus, neighbors, bus_dict,
+                            sigma_pseudo=1.0, Sbase=100, logger=None, ):
     """
     Extend se_input with pseudo-measurements for unobservable buses.
     neighbors: prebuilt neighbor list per bus
@@ -121,7 +125,8 @@ def add_pseudo_measurements(se_input, unobservable_buses, V, Ybus, neighbors,bus
         if abs(Pi) < 1e-6:
             # Use average of neighboring line flows (approximation)
             if neighbors[bus_idx]:
-                Pi = sum(abs(Ybus[bus_idx, nb]) * abs(V[bus_idx]) * abs(V[nb]) for nb in neighbors[bus_idx]) / len(neighbors[bus_idx])
+                Pi = sum(abs(Ybus[bus_idx, nb]) * abs(V[bus_idx]) * abs(V[nb]) for nb in neighbors[bus_idx]) / len(
+                    neighbors[bus_idx])
             else:
                 Pi = 0.1  # small default non-zero value
 
@@ -130,8 +135,9 @@ def add_pseudo_measurements(se_input, unobservable_buses, V, Ybus, neighbors,bus
 
         # Get the Bus object for this bus_idx
         bus_obj = bus_dict[bus_idx]
-        pm_p = PseudoMeasurement(Pi*Sbase, sigma_pseudo, bus_obj,"pseudo")
-        pm_q = PseudoMeasurement(Qi*Sbase, sigma_pseudo, bus_obj, "pseudo",)# converted later to pu in get_measurements
+        pm_p = PseudoMeasurement(Pi * Sbase, sigma_pseudo, bus_obj, "pseudo")
+        pm_q = PseudoMeasurement(Qi * Sbase, sigma_pseudo, bus_obj,
+                                 "pseudo", )  # converted later to pu in get_measurements
         se_input.p_idx.append(bus_idx)  # or appropriate index mapping
         se_input.p_inj.append(pm_p)
 

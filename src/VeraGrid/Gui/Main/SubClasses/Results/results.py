@@ -16,7 +16,7 @@ from VeraGrid.Gui.results_model import ResultsModel
 from VeraGrid.Gui.general_dialogues import fill_tree_from_logs
 from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, exec_dialog_safely
 from VeraGrid.Gui.PlotDialogue.plot_dialogue import PlotDialogue
-from VeraGrid.Gui.PlotDialogue.result_table_data import get_result_table_series
+from VeraGrid.Gui.PlotDialogue.result_table_data import get_result_table_series, get_result_table_xy
 from VeraGrid.Gui.PlotDialogue.qt_chart_widget import GraphsWidget, PolarAngleUnit
 import VeraGridEngine.Utils.Filtering as flt
 from VeraGridEngine.basic_structures import Logger
@@ -938,6 +938,12 @@ class ResultsMain(SimulationsMain):
                 selected_rows=selected_rows,
                 stacked=stacked,
             )
+        elif plot_type == ResultTablePlotType.XY:
+            self.open_native_xy_results_plot(
+                mdl=mdl,
+                selected_columns=selected_columns,
+                selected_rows=selected_rows,
+            )
         elif plot_type == ResultTablePlotType.POLAR:
             self.open_native_polar_results_plot(
                 mdl=mdl,
@@ -959,6 +965,45 @@ class ResultsMain(SimulationsMain):
         else:
             error_msg(text=self.tr("This results table has no supported native plot mode."),
                       title=self.tr("Plotting error"))
+
+    def open_native_xy_results_plot(self,
+                                    mdl: ResultsModel,
+                                    selected_columns: np.ndarray | None,
+                                    selected_rows: np.ndarray | None) -> None:
+        """Open a generic scatter plot whose first table column is X.
+
+        :param mdl: Filtered table model currently displayed in the results view.
+        :param selected_columns: Optional visible columns, with column zero as X.
+        :param selected_rows: Optional selected visible rows.
+        :return: None.
+        """
+        plot_data: tuple[np.ndarray, list[str], list[np.ndarray]] | None = get_result_table_xy(
+            table=mdl.table,
+            selected_rows=selected_rows,
+            selected_y_columns=selected_columns,
+        )
+        if plot_data is not None:
+            x_values: np.ndarray
+            series_names: list[str]
+            series_values: list[np.ndarray]
+            x_values, series_names, series_values = plot_data
+            plot_dialogue: PlotDialogue = PlotDialogue(title=self.tr("Results plot"), parent=self)
+            accepted: bool = plot_dialogue.set_scatter_series(
+                x_values=x_values,
+                series_names=series_names,
+                series_values=series_values,
+                title=mdl.table.plot_title or mdl.table.title,
+                x_axis_title=mdl.table.x_label,
+                y_axis_title=mdl.table.y_label,
+            )
+            if accepted:
+                self.register_open_plot_dialog(plot_dialogue)
+                plot_dialogue.show()
+            else:
+                plot_dialogue.reject()
+                error_msg(text=self.tr("The selected values cannot be plotted."), title=self.tr("Plotting error"))
+        else:
+            error_msg(text=self.tr("Select at least one valid X and Y column."), title=self.tr("Plotting error"))
 
     def open_native_polar_results_plot(self,
                                        mdl: ResultsModel,

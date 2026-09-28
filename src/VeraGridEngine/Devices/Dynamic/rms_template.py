@@ -43,13 +43,20 @@ class RmsModelTemplate(PointerDeviceParent):
                          code="",
                          device=None,
                          comment="",
-                         device_type=DeviceType.RmsModelTemplateDevice)
+                         device_type=DeviceType.RmsModelTemplateDevice,
+                         pointer_dev_tpes=[
+                             DeviceType.PhysicalDeviceType  # Signifies all physical devices
+                         ])
 
         self.tpe: DeviceType = DeviceType.NoDevice
         self._block: Block = Block()
 
-
     def __deepcopy__(self, memo):
+        """
+
+        :param memo:
+        :return:
+        """
         cls = self.__class__
         result = cls.__new__(cls)
         memo[id(self)] = result

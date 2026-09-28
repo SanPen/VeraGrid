@@ -161,6 +161,7 @@ except ImportError:
     build_status_dict = dict()
     tap_module_control_mode_dict = dict()
     tap_phase_control_mode_dict = dict()
+    generator_control_mode_dict = dict()
     hvdc_control_mode_dict = dict()
     group_type_dict = dict()
     contingency_ops_type_dict = dict()

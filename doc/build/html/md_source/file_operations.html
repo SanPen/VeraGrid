@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>💾 File loading and saving &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>💾 File loading and saving &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -65,29 +65,34 @@
 <li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#dgs">DGS</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#anarede-pwf">ANAREDE PWF</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1">Import assumptions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">Export assumptions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dgs">DGS</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Example</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#ucte">UCTE</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id4">Import assumptions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">Export assumptions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id6">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Example</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#matpower">Matpower</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id7">Import assumptions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id8">Export assumptions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id9">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Example</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#cgmes">CGMES</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id10">Import assumptions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id11">Export assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Import assumptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Export assumptions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#supported-profiles">Supported profiles</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id12">Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">Example</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#export-the-results">Export the results</a></li>
@@ -162,60 +167,139 @@ From there you may further edit or export in any of the supported formats.</p>
 <tr class="row-odd"><th class="head"><p></p></th>
 <th class="head"><p>read</p></th>
 <th class="head"><p>write</p></th>
+<th class="head"><p>Comments</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>VeraGrid</p></td>
 <td><p>✅</p></td>
 <td><p>✅</p></td>
+<td><p>Native <code class="docutils literal notranslate"><span class="pre">.veragrid</span></code> format.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Json</p></td>
+<tr class="row-odd"><td><p>VeraGrid scenario</p></td>
 <td><p>✅</p></td>
 <td><p>✅</p></td>
+<td><p>Scenario/profile data.</p></td>
 </tr>
-<tr class="row-even"><td><p>CIM 16</p></td>
-<td><p>✅</p></td>
-<td><p>✅</p></td>
-</tr>
-<tr class="row-odd"><td><p>CGMES 2.4.15</p></td>
-<td><p>✅</p></td>
-<td><p>✅</p></td>
-</tr>
-<tr class="row-even"><td><p>CGMES 3.0</p></td>
-<td><p>✅</p></td>
-<td><p>✅</p></td>
-</tr>
-<tr class="row-odd"><td><p>raw/rawx (PSS/e)</p></td>
-<td><p>✅</p></td>
-<td><p>✅</p></td>
-</tr>
-<tr class="row-even"><td><p>dgs (PowerFactory)</p></td>
-<td><p>✅</p></td>
-<td><p>✅</p></td>
-</tr>
-<tr class="row-odd"><td><p>ucte (UCTE)</p></td>
-<td><p>✅</p></td>
-<td><p>✅</p></td>
-</tr>
-<tr class="row-even"><td><p>m (Matpower)</p></td>
-<td><p>✅</p></td>
-<td><p>✅</p></td>
-</tr>
-<tr class="row-odd"><td><p>p (PandaPower)*</p></td>
+<tr class="row-even"><td><p>VeraGrid delta</p></td>
 <td><p>✅</p></td>
 <td><p></p></td>
+<td><p>Differential model format.</p></td>
 </tr>
-<tr class="row-even"><td><p>nc (PyPSA)*</p></td>
+<tr class="row-odd"><td><p>VeraGrid SQLite</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>Native SQLite storage.</p></td>
+</tr>
+<tr class="row-even"><td><p>VeraGrid HDF5</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>Native HDF5 storage.</p></td>
+</tr>
+<tr class="row-odd"><td><p>VeraGrid Excel</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>VeraGrid workbook variants.</p></td>
+</tr>
+<tr class="row-even"><td><p>Json</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>Native JSON model format.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CIM 16</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>CIM XML/ZIP exchange.</p></td>
+</tr>
+<tr class="row-even"><td><p>CGMES 2.4.15</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>CGMES version-specific exchange.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CGMES 3.0</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>CGMES version-specific exchange.</p></td>
+</tr>
+<tr class="row-even"><td><p>raw/rawx (PSS/e)</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>PSS/e versions 29–35.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dgs (PowerFactory)</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>PowerFactory exchange; not fully lossless.</p></td>
+</tr>
+<tr class="row-even"><td><p>ucte (UCTE)</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>UCTE network exchange.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m (Matpower)</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>Matpower case files.</p></td>
+</tr>
+<tr class="row-even"><td><p>p (PandaPower)*</p></td>
 <td><p>✅</p></td>
 <td><p></p></td>
+<td><p>Requires optional <code class="docutils literal notranslate"><span class="pre">pandapower</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>nc (PyPSA)*</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>Requires optional <code class="docutils literal notranslate"><span class="pre">pypsa</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>hdf5 (PyPSA)*</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>PyPSA HDF5; requires optional <code class="docutils literal notranslate"><span class="pre">pypsa</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>epc (PSLF)</p></td>
 <td><p>✅</p></td>
 <td><p></p></td>
+<td><p>PSLF exchange; not fully lossless.</p></td>
 </tr>
-<tr class="row-even"><td><p>Power grid models</p></td>
+<tr class="row-even"><td><p>pwf (ANAREDE)</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>ANAREDE fixed-width import.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dpx</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>Read-only DPX import.</p></td>
+</tr>
+<tr class="row-even"><td><p>ech/dta (Eurostag)</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>Eurostag multi-file import.</p></td>
+</tr>
+<tr class="row-odd"><td><p>iidm</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>IIDM XML/compressed XML import.</p></td>
+</tr>
+<tr class="row-even"><td><p>RTE XML</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>RTE-specific XML import.</p></td>
+</tr>
+<tr class="row-odd"><td><p>IPA</p></td>
+<td><p>✅</p></td>
+<td><p></p></td>
+<td><p>Read-only IPA import.</p></td>
+</tr>
+<tr class="row-even"><td><p>Generic Excel</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>Generic workbook import/export.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Power grid models</p></td>
 <td><p></p></td>
 <td><p>✅</p></td>
+<td><p>VeraGrid power-grid model export.</p></td>
 </tr>
 </tbody>
 </table>
@@ -234,7 +318,7 @@ From there you may further edit or export in any of the supported formats.</p>
 <h3>Loading a grid<a class="headerlink" href="#loading-a-grid" title="Link to this heading"></a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
 
-<span class="c1"># load a grid (.veragrid, .m (Matpower), .raw (PSS/e) .rawx (PSS/e), .epc (PSLF), .dgs (PowerFactory)</span>
+<span class="c1"># load a grid (.veragrid, .m (Matpower), .raw (PSS/e), .rawx (PSS/e), .epc (PSLF), .dgs (PowerFactory), .pwf (ANAREDE))</span>
 <span class="n">my_grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;my_file.veragrid&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -403,10 +487,40 @@ bus-branch steady-state case and you want to preserve most of the transmission-m
 </div>
 </section>
 </section>
-<section id="dgs">
-<h3>DGS<a class="headerlink" href="#dgs" title="Link to this heading"></a></h3>
+<section id="anarede-pwf">
+<h3>ANAREDE PWF<a class="headerlink" href="#anarede-pwf" title="Link to this heading"></a></h3>
 <section id="id1">
 <h4>Import assumptions<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<p>ANAREDE <code class="docutils literal notranslate"><span class="pre">.pwf</span></code> files are read-only imports. They are converted into the native
+<code class="docutils literal notranslate"><span class="pre">MultiCircuit</span></code> model; the original fixed-width PWF structure is not retained
+as the working grid format.</p>
+<p>The importer supports the main ANAREDE steady-state records, including:</p>
+<ul class="simple">
+<li><p>AC buses, loads, generators, lines, transformers and shunts;</p></li>
+<li><p>switched shunts, static var compensators and series compensation;</p></li>
+<li><p>areas, zones, voltage-limit groups and transformer tap settings;</p></li>
+<li><p>classical HVDC links assembled from <code class="docutils literal notranslate"><span class="pre">DELO</span></code>, <code class="docutils literal notranslate"><span class="pre">DCBA</span></code>, <code class="docutils literal notranslate"><span class="pre">DCLI</span></code>, <code class="docutils literal notranslate"><span class="pre">DCNV</span></code> and <code class="docutils literal notranslate"><span class="pre">DCCV</span></code>;</p></li>
+<li><p>VSC links from <code class="docutils literal notranslate"><span class="pre">DVSC</span></code>.</p></li>
+</ul>
+<p>ANAREDE study-control sections such as solver options, measurements and
+incremental-control records are preserved as parser study records when they do
+not correspond to native electrical devices. Latin-1 is the default text
+encoding, with detector-assisted recovery for files containing other encoding
+patterns.</p>
+</section>
+<section id="id2">
+<h4>Example<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="s2">&quot;network.pwf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="dgs">
+<h3>DGS<a class="headerlink" href="#dgs" title="Link to this heading"></a></h3>
+<section id="id3">
+<h4>Import assumptions<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
 <p>DGS import maps a PowerFactory-oriented database exchange into VeraGrid steady-state objects.
 This is useful, but it is not a lossless import of the full PowerFactory project semantics.</p>
 <p>Typical assumptions are:</p>
@@ -419,8 +533,8 @@ This is useful, but it is not a lossless import of the full PowerFactory project
 <p>So DGS import is best understood as “bring the electrical model into VeraGrid”, not “reproduce the full
 PowerFactory project database exactly”.</p>
 </section>
-<section id="id2">
-<h4>Export assumptions<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<section id="id4">
+<h4>Export assumptions<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
 <p>The DGS exporter maps VeraGrid devices into a PowerFactory-oriented steady-state network:</p>
 <ul class="simple">
 <li><p>the export is static and evaluated at the selected <code class="docutils literal notranslate"><span class="pre">t_idx</span></code>;</p></li>
@@ -439,8 +553,8 @@ PowerFactory project database exactly”.</p>
 <li><p>technology-specific PowerFactory constructs that must be flattened into standard electrical elements.</p></li>
 </ul>
 </section>
-<section id="id3">
-<h4>Example<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<section id="id5">
+<h4>Example<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
 <p>Loading:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
 
@@ -478,8 +592,8 @@ PowerFactory project database exactly”.</p>
 </section>
 <section id="ucte">
 <h3>UCTE<a class="headerlink" href="#ucte" title="Link to this heading"></a></h3>
-<section id="id4">
-<h4>Import assumptions<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<section id="id6">
+<h4>Import assumptions<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
 <p>UCTE import is more heuristic than RAW import because UCTE files are more aggregated and more tolerant of
 non-canonical real-world variants.</p>
 <p>The main import assumptions are:</p>
@@ -492,8 +606,8 @@ non-canonical real-world variants.</p>
 </ul>
 <p>This means that UCTE import aims to recover a working electrical model, not to preserve every textual oddity of the source file.</p>
 </section>
-<section id="id5">
-<h4>Export assumptions<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<section id="id7">
+<h4>Export assumptions<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
 <p>UCTE is more aggregated than VeraGrid, so the export makes stronger assumptions:</p>
 <ul class="simple">
 <li><p>the export is node-oriented rather than device-oriented at the injection level;</p></li>
@@ -517,8 +631,8 @@ non-canonical real-world variants.</p>
 <li><p>omission of unsupported device categories that have no UCTE counterpart.</p></li>
 </ul>
 </section>
-<section id="id6">
-<h4>Example<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<section id="id8">
+<h4>Example<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
 <p>Loading:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
 
@@ -556,8 +670,8 @@ non-canonical real-world variants.</p>
 </section>
 <section id="matpower">
 <h3>Matpower<a class="headerlink" href="#matpower" title="Link to this heading"></a></h3>
-<section id="id7">
-<h4>Import assumptions<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<section id="id9">
+<h4>Import assumptions<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
 <p>MATPOWER import maps the classical MATPOWER case tables into VeraGrid devices:</p>
 <ul class="simple">
 <li><p>bus, generator and branch tables are converted into buses, controllable injections and branch elements;</p></li>
@@ -568,8 +682,8 @@ non-canonical real-world variants.</p>
 <p>So MATPOWER import is a very good fit for conventional AC transmission cases, but not for preserving every
 MATLAB-side modeling pattern surrounding them.</p>
 </section>
-<section id="id8">
-<h4>Export assumptions<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<section id="id10">
+<h4>Export assumptions<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
 <p>MATPOWER uses a bus/generator/branch table model, so VeraGrid has to collapse some device detail:</p>
 <ul class="simple">
 <li><p>the export is one steady-state MATPOWER case for the selected <code class="docutils literal notranslate"><span class="pre">t_idx</span></code>;</p></li>
@@ -589,8 +703,8 @@ MATLAB-side modeling pattern surrounding them.</p>
 <li><p>omission of unsupported non-AC or converter-specific devices from the standard AC case export path.</p></li>
 </ul>
 </section>
-<section id="id9">
-<h4>Example<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<section id="id11">
+<h4>Example<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
 <p>Loading:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
 
@@ -628,8 +742,8 @@ MATLAB-side modeling pattern surrounding them.</p>
 </section>
 <section id="cgmes">
 <h3>CGMES<a class="headerlink" href="#cgmes" title="Link to this heading"></a></h3>
-<section id="id10">
-<h4>Import assumptions<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<section id="id12">
+<h4>Import assumptions<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
 <p>CGMES is the richest exchange format supported by VeraGrid, but it is also the most model-driven.
 Import therefore depends not only on the XML content, but also on the selected interpretation strategy.</p>
 <p>Important assumptions are:</p>
@@ -642,8 +756,8 @@ Import therefore depends not only on the XML content, but also on the selected i
 </ul>
 <p>When you need direct access to the raw CGMES asset model, use <code class="docutils literal notranslate"><span class="pre">CgmesDataParser</span></code> and <code class="docutils literal notranslate"><span class="pre">CgmesCircuit</span></code> explicitly before conversion.</p>
 </section>
-<section id="id11">
-<h4>Export assumptions<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<section id="id13">
+<h4>Export assumptions<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
 <p>CGMES export is the richest VeraGrid exporter, but it still requires explicit assumptions:</p>
 <ul class="simple">
 <li><p>export is built from the selected <code class="docutils literal notranslate"><span class="pre">t_idx</span></code>;</p></li>
@@ -782,8 +896,8 @@ The exporter exposes the following profile registries today.</p>
 <li><p>and what schedule or NCP objects are actually available in the model at export time.</p></li>
 </ul>
 </section>
-<section id="id12">
-<h4>Example<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<section id="id14">
+<h4>Example<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
 <p>Loading a CGMES package:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
 

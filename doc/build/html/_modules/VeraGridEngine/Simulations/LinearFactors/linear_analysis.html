@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.LinearFactors.linear_analysis &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Simulations.LinearFactors.linear_analysis &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -137,7 +137,7 @@
 
 <div class="viewcode-block" id="make_contingency_flows">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis.make_contingency_flows">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_contingency_flows</span><span class="p">(</span><span class="n">base_flow</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
                            <span class="n">lodf_factors</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span>
                            <span class="n">ptdf_factors</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">,</span>
@@ -254,7 +254,7 @@
 
 <div class="viewcode-block" id="make_dP_from_bus_types">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis.make_dP_from_bus_types">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_dP_from_bus_types</span><span class="p">(</span><span class="n">bus_types</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">distribute_slack</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build the dP / Dij matrix used to modify the PTDF.</span>
@@ -316,7 +316,7 @@
 
 <div class="viewcode-block" id="make_corrected_injections">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis.make_corrected_injections">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_corrected_injections</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">bus_types</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">distribute_slack</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the effective active-power injection vector used for KCL checks.</span>
@@ -370,7 +370,7 @@
 
 <div class="viewcode-block" id="make_corrected_injections_2d">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis.make_corrected_injections_2d">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_corrected_injections_2d</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">bus_types</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">distribute_slack</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the effective active-power injection vector used for KCL checks.</span>
@@ -647,7 +647,7 @@
 
 <div class="viewcode-block" id="make_transfer_limits">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis.make_transfer_limits">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_transfer_limits</span><span class="p">(</span><span class="n">ptdf</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span>
                          <span class="n">flows</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
                          <span class="n">rates</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
@@ -678,7 +678,7 @@
 
 <div class="viewcode-block" id="create_M_numba">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis.create_M_numba">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_M_numba</span><span class="p">(</span><span class="n">lodf</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">branch_contingency_indices</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -770,7 +770,8 @@
                  <span class="n">distributed_slack</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">correct_values</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">converters_as_setpoint</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()):</span>
+                 <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(),</span>
+                 <span class="n">use_jacobian_ptdf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Linear Analysis constructor</span>
 <span class="sd">        :param nc: numerical circuit instance</span>
@@ -778,6 +779,7 @@
 <span class="sd">        :param correct_values: boolean to fix out layer values</span>
 <span class="sd">        :param converters_as_setpoint: build the AC-DC PTDF with every converter treated</span>
 <span class="sd">            as a set-point device regardless of its control mode</span>
+<span class="sd">        :param use_jacobian_ptdf: use the AC Jacobian PTDF for AC islands</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span>
@@ -828,18 +830,32 @@
                             <span class="p">)</span>
 
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">adml</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_linear_admittance_matrices</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">use_jacobian_ptdf</span><span class="p">:</span>
+                                <span class="c1"># Use the nonlinear operating-point derivatives only when explicitly requested.</span>
+                                <span class="n">adm</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_admittance_matrices</span><span class="p">()</span>
+                                <span class="n">ptdf_island</span> <span class="o">=</span> <span class="n">make_jacobian_ptdf</span><span class="p">(</span>
+                                    <span class="n">Ybus</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Ybus</span><span class="p">,</span>
+                                    <span class="n">Yf</span><span class="o">=</span><span class="n">adm</span><span class="o">.</span><span class="n">Yf</span><span class="p">,</span>
+                                    <span class="n">F</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">F</span><span class="p">,</span>
+                                    <span class="n">T</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                                    <span class="n">V</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">Vbus</span><span class="p">,</span>
+                                    <span class="n">pq</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pq</span><span class="p">,</span>
+                                    <span class="n">pv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">pv</span><span class="p">,</span>
+                                    <span class="n">bus_types</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span><span class="p">,</span>
+                                    <span class="n">distribute_slack</span><span class="o">=</span><span class="n">distributed_slack</span>
+                                <span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">adml</span> <span class="o">=</span> <span class="n">island</span><span class="o">.</span><span class="n">get_linear_admittance_matrices</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">)</span>
+                                <span class="n">Bpqpv</span> <span class="o">=</span> <span class="n">adml</span><span class="o">.</span><span class="n">get_Bred</span><span class="p">(</span><span class="n">pqpv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">)</span>
 
-                            <span class="n">Bpqpv</span> <span class="o">=</span> <span class="n">adml</span><span class="o">.</span><span class="n">get_Bred</span><span class="p">(</span><span class="n">pqpv</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">)</span>
-
-                            <span class="c1"># compute the PTDF of the island</span>
-                            <span class="n">ptdf_island</span> <span class="o">=</span> <span class="n">make_ptdf</span><span class="p">(</span>
-                                <span class="n">Bpqpv</span><span class="o">=</span><span class="n">Bpqpv</span><span class="p">,</span>
-                                <span class="n">Bf</span><span class="o">=</span><span class="n">adml</span><span class="o">.</span><span class="n">Bf</span><span class="p">,</span>
-                                <span class="n">no_slack</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">,</span>
-                                <span class="n">bus_types</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span><span class="p">,</span>
-                                <span class="n">distribute_slack</span><span class="o">=</span><span class="n">distributed_slack</span>
-                            <span class="p">)</span>
+                                <span class="c1"># Keep the established DC PTDF implementation as the default path.</span>
+                                <span class="n">ptdf_island</span> <span class="o">=</span> <span class="n">make_ptdf</span><span class="p">(</span>
+                                    <span class="n">Bpqpv</span><span class="o">=</span><span class="n">Bpqpv</span><span class="p">,</span>
+                                    <span class="n">Bf</span><span class="o">=</span><span class="n">adml</span><span class="o">.</span><span class="n">Bf</span><span class="p">,</span>
+                                    <span class="n">no_slack</span><span class="o">=</span><span class="n">indices</span><span class="o">.</span><span class="n">no_slack</span><span class="p">,</span>
+                                    <span class="n">bus_types</span><span class="o">=</span><span class="n">island</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">bus_types</span><span class="p">,</span>
+                                    <span class="n">distribute_slack</span><span class="o">=</span><span class="n">distributed_slack</span>
+                                <span class="p">)</span>
 
                         <span class="c1"># store maybe for later</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">PTDF_by_island</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ptdf_island</span><span class="p">)</span>
@@ -1673,7 +1689,8 @@
                  <span class="n">contingency_groups_used</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ContingencyGroup</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">ptdf_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span>
                  <span class="n">lodf_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span>
-                 <span class="n">compute_multi_contingencies</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+                 <span class="n">compute_multi_contingencies</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">use_jacobian_ptdf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 <span class="sd">        :param grid: MultiCircuit instance</span>
@@ -1684,6 +1701,7 @@
 <span class="sd">        :param ptdf_threshold: threshold for PTDF&#39;s to be converted to sparse</span>
 <span class="sd">        :param lodf_threshold: threshold for LODF&#39;s to be converted to sparse</span>
 <span class="sd">        :param compute_multi_contingencies: also pre-compute the LinearMultiContingencies</span>
+<span class="sd">        :param use_jacobian_ptdf: use the AC Jacobian PTDF implementation?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">grid</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
@@ -1710,7 +1728,8 @@
             <span class="c1"># Linear analysis (PTDF &amp; LODF)</span>
             <span class="n">lin</span> <span class="o">=</span> <span class="n">LinearAnalysis</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
                                  <span class="n">distributed_slack</span><span class="o">=</span><span class="n">distributed_slack</span><span class="p">,</span>
-                                 <span class="n">correct_values</span><span class="o">=</span><span class="n">correct_values</span><span class="p">)</span>
+                                 <span class="n">correct_values</span><span class="o">=</span><span class="n">correct_values</span><span class="p">,</span>
+                                 <span class="n">use_jacobian_ptdf</span><span class="o">=</span><span class="n">use_jacobian_ptdf</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_linear_analysis</span><span class="p">[</span><span class="n">t_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">lin</span>
 

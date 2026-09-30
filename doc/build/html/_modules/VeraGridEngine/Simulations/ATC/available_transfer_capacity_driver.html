@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver &mdash; VeraGrid 6.5.26 documentation</title>
+  <title>VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -129,7 +129,7 @@
 
 <div class="viewcode-block" id="get_proportional_deltas_sensed">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ATC.html#VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver.get_proportional_deltas_sensed">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_proportional_deltas_sensed</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dP</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -175,7 +175,7 @@
 
 <div class="viewcode-block" id="scale_proportional_sensed">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ATC.html#VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver.scale_proportional_sensed">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">scale_proportional_sensed</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">idx1</span><span class="p">,</span> <span class="n">idx2</span><span class="p">,</span> <span class="n">dT</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -197,7 +197,7 @@
 
 <div class="viewcode-block" id="compute_dP">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ATC.html#VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver.compute_dP">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_dP</span><span class="p">(</span><span class="n">P0</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
                <span class="n">Pgen</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
                <span class="n">P_installed</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
@@ -250,7 +250,7 @@
 
 <div class="viewcode-block" id="compute_alpha">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ATC.html#VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver.compute_alpha">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_alpha</span><span class="p">(</span><span class="n">ptdf</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">dP</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">dT</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Vec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute line sensitivity to power transfer</span>
@@ -272,7 +272,7 @@
 
 <div class="viewcode-block" id="compute_alpha_n1">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ATC.html#VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver.compute_alpha_n1">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_alpha_n1</span><span class="p">(</span><span class="n">ptdf</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">lodf</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">dP</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">dT</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -300,7 +300,7 @@
 
 <div class="viewcode-block" id="compute_atc_list">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Simulations.ATC.html#VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver.compute_atc_list">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_atc_list</span><span class="p">(</span><span class="n">br_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">contingency_br_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">lodf</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">flows</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">rates</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
                      <span class="n">contingency_rates</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">base_exchange</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                      <span class="n">time_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span>

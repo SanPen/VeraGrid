@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Aggregation.investment &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Devices.Aggregation.investment &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -216,7 +216,10 @@
                                      <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
                                      <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
                                      <span class="n">device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">InvestmentDevice</span><span class="p">,</span>
-                                     <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+                                     <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span>
+                                     <span class="n">pointer_dev_tpes</span><span class="o">=</span><span class="p">[</span>
+                                         <span class="n">DeviceType</span><span class="o">.</span><span class="n">PhysicalDeviceType</span>  <span class="c1"># Signifies all physical devices</span>
+                                     <span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">CAPEX</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">CAPEX</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_group</span><span class="p">:</span> <span class="n">InvestmentsGroup</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">group</span>

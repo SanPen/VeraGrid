@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -133,7 +133,7 @@
 
 <div class="viewcode-block" id="lookup_from_mask">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.lookup_from_mask">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">lookup_from_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">:</span> <span class="n">BoolVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function builds the lookup vector based on the information provided by the mask vector.</span>
@@ -401,7 +401,7 @@
 
 
 
-<span class="c1"># @nb.njit(cache=True)</span>
+<span class="c1"># @nb.jit(cache=True)</span>
 <div class="viewcode-block" id="compute_current_loads">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.compute_current_loads">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_current_loads</span><span class="p">(</span><span class="n">bus_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
@@ -691,7 +691,7 @@
 
 
 
-<span class="c1"># @nb.njit(cache=True)</span>
+<span class="c1"># @nb.jit(cache=True)</span>
 <div class="viewcode-block" id="compute_power_loads">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.compute_power_loads">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_power_loads</span><span class="p">(</span><span class="n">bus_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
@@ -1005,7 +1005,7 @@
 
 <div class="viewcode-block" id="expand3ph">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.expand3ph">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">expand3ph</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expands a numpy array to 3-pase copying the same values</span>
@@ -1024,7 +1024,7 @@
 
 <div class="viewcode-block" id="slice_indices">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.slice_indices">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">slice_indices</span><span class="p">(</span><span class="n">pq</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">bus_lookup</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IntVec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Slice the indices based on the bus_lookup</span>
@@ -1048,7 +1048,7 @@
 
 <div class="viewcode-block" id="expand_indices_3ph">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.expand_indices_3ph">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">expand_indices_3ph</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expands a numpy array to 3-pase copying the same values</span>
@@ -1068,7 +1068,7 @@
 
 <div class="viewcode-block" id="expand_slice_indices_3ph">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.expand_slice_indices_3ph">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">expand_slice_indices_3ph</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">bus_lookup</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expands and slices a numpy array to 3-phase copying the same values</span>
@@ -1085,7 +1085,7 @@
 
 <div class="viewcode-block" id="expandVoltage3ph">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.expandVoltage3ph">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">expandVoltage3ph</span><span class="p">(</span><span class="n">V0</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CxVec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expands a numpy array to 3-pase copying the same values</span>
@@ -1111,7 +1111,7 @@
 
 <div class="viewcode-block" id="expand_magnitudes">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.expand_magnitudes">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">expand_magnitudes</span><span class="p">(</span><span class="n">magnitude</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">lookup</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CxVec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expands the masked magnitude using the lookup saving zeros where the lookup is -1,</span>
@@ -1134,7 +1134,7 @@
 
 <div class="viewcode-block" id="expand_matrix">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.PowerFlow3ph.Formulations.html#VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph.expand_matrix">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">expand_matrix</span><span class="p">(</span><span class="n">magnitude</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">lookup</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CxMat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expands a matrix by adding zero rows and columns based on the lookup indices.</span>

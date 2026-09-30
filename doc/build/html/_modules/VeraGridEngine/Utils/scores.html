@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.scores &mdash; VeraGrid 6.5.26 documentation</title>
+  <title>VeraGridEngine.Utils.scores &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -115,7 +115,7 @@
 
 <div class="viewcode-block" id="get_overload_score">
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Utils.html#VeraGridEngine.Utils.scores.get_overload_score">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_overload_score</span><span class="p">(</span><span class="n">loading</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CxMat</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">],</span> <span class="n">branches_cost</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute overload score by multiplying the loadings above 100% by the associated branch cost.</span>
@@ -146,7 +146,7 @@
 
 <div class="viewcode-block" id="get_voltage_module_score">
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Utils.html#VeraGridEngine.Utils.scores.get_voltage_module_score">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_voltage_module_score</span><span class="p">(</span><span class="n">voltage</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CxVec</span><span class="p">,</span> <span class="n">CxMat</span><span class="p">],</span> <span class="n">vm_cost</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">vm_max</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">vm_min</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute voltage module score by multiplying the voltages outside limits by the associated bus costs.</span>
@@ -180,7 +180,7 @@
 
 <div class="viewcode-block" id="get_voltage_phase_score">
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Utils.html#VeraGridEngine.Utils.scores.get_voltage_phase_score">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_voltage_phase_score</span><span class="p">(</span><span class="n">voltage</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">CxMat</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">],</span> <span class="n">va_cost</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">va_max</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">va_min</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute voltage phase score by multiplying the phases outside limits by the associated bus costs.</span>

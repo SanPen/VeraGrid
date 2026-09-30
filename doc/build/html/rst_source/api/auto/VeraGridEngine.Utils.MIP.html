@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.MIP package &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Utils.MIP package &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -531,8 +531,18 @@ other solver interface easily</p>
 <dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel" title="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractLpModel</span></code></a></p>
 <p>LPModel implementation for ORTOOLS</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.INFEASIBLE">
+<span class="sig-name descname"><span class="pre">INFEASIBLE</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">SolveStatus</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SolveStatus.INFEASIBLE:</span> <span class="pre">2&gt;</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.INFEASIBLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.INFINITY">
 <span class="sig-name descname"><span class="pre">INFINITY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e+20</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.INFINITY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.NOT_SOLVED">
+<span class="sig-name descname"><span class="pre">NOT_SOLVED</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">SolveStatus</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SolveStatus.NOT_SOLVED:</span> <span class="pre">5&gt;</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.NOT_SOLVED" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -722,8 +732,18 @@ other solver interface easily</p>
 <dd><p>Bases: <a class="reference internal" href="#VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel" title="VeraGridEngine.Utils.MIP.mip_interface_template.AbstractLpModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractLpModel</span></code></a></p>
 <p>LPModel implementation for PuLP</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.INFEASIBLE">
+<span class="sig-name descname"><span class="pre">INFEASIBLE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-1</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.INFEASIBLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.INFINITY">
 <span class="sig-name descname"><span class="pre">INFINITY</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e+20</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.INFINITY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.NOT_SOLVED">
+<span class="sig-name descname"><span class="pre">NOT_SOLVED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.NOT_SOLVED" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -896,11 +916,41 @@ other solver interface easily</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.get_infeasible_status">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">get_infeasible_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#get_infeasible_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.get_infeasible_status" title="Link to this definition"></a></dt>
+<dd><p>Return PuLP’s infeasible solve status for the installed API version.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.get_lp_var_value">
 <span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">get_lp_var_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">LpVariable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#get_lp_var_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.get_lp_var_value" title="Link to this definition"></a></dt>
 <dd><p>Get the value of a variable stored in a numpy array of objects
 :param x: soe object (it may be a LP var or a number)
 :return: result or previous numeric value</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.get_model_constraint_by_name">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">get_model_constraint_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpProblem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpConstraint</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#get_model_constraint_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.get_model_constraint_by_name" title="Link to this definition"></a></dt>
+<dd><p>Return a constraint by name for both PuLP 3 and PuLP 4.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.get_model_constraint_items">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">get_model_constraint_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpProblem</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">LpConstraint</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#get_model_constraint_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.get_model_constraint_items" title="Link to this definition"></a></dt>
+<dd><p>Return named constraints for both PuLP 3 and PuLP 4.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.get_not_solved_status">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">get_not_solved_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#get_not_solved_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.get_not_solved_status" title="Link to this definition"></a></dt>
+<dd><p>Return PuLP’s not-solved status for the installed API version.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.get_optimal_status">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">get_optimal_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#get_optimal_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.get_optimal_status" title="Link to this definition"></a></dt>
+<dd><p>Return PuLP’s optimal solve status for the installed API version.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -916,6 +966,19 @@ other solver interface easily</p>
 <dd><p>Build a PuLP HiGHS solver with conservative macOS settings.</p>
 <p>The macOS highspy wheel can crash in HiGHS worker/IPM code paths under
 Python 3.14. Linux keeps the default HiGHS settings.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.make_pulp_expression">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">make_pulp_expression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpAffineExpression</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Real</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LpAffineExpression</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#make_pulp_expression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.make_pulp_expression" title="Link to this definition"></a></dt>
+<dd><p>Build an affine expression using the API supported by the installed PuLP.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.pulp_interface.normalize_solve_status">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.pulp_interface.</span></span><span class="sig-name descname"><span class="pre">normalize_solve_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/pulp_interface.html#normalize_solve_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.pulp_interface.normalize_solve_status" title="Link to this definition"></a></dt>
+<dd><p>Convert PuLP 4 LpSolveStats results to their status enum.
+PuLP 3 already returns the integer status directly.</p>
 </dd></dl>
 
 </section>
@@ -944,6 +1007,23 @@ Python 3.14. Linux keeps the default HiGHS settings.</p>
 :param tpe: MIPInterface framework
 :param solver_type: MIPSolvers
 :return: OrToolsLpModel or PulpLpModel</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.MIP.selected_interface.is_infeasible">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.MIP.selected_interface.</span></span><span class="sig-name descname"><span class="pre">is_infeasible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel" title="VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel"><span class="pre">PulpLpModel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel" title="VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel"><span class="pre">OrToolsLpModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/MIP/selected_interface.html#is_infeasible"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.MIP.selected_interface.is_infeasible" title="Link to this definition"></a></dt>
+<dd><p>Check whether a solve established infeasibility before relaxing limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Solver interface owning the solved model.</p></li>
+<li><p><strong>status</strong> – Status returned by the solver interface.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True only when the available solver status confirms infeasibility.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

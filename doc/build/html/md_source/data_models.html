@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Models &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>Data Models &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -1343,7 +1343,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 <td><p>Generator control mode</p></td>
-<td><p>False</p></td>
+<td><p>True</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>control_bus</p></td>
@@ -3137,7 +3137,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>prop</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>prop</p></td>
 <td><p>enum ContingencyOperationTypes</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -3146,7 +3155,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>value</p></td>
+<tr class="row-odd"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -3155,7 +3164,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>group</p></td>
+<tr class="row-even"><td><p>group</p></td>
 <td><p>Contingency Group</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -6035,7 +6044,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>parameter</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>parameter</p></td>
 <td><p>VarType</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -6044,7 +6062,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>time</p></td>
+<tr class="row-odd"><td><p>time</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -6053,7 +6071,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>end_time</p></td>
+<tr class="row-even"><td><p>end_time</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -6062,7 +6080,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>value</p></td>
+<tr class="row-odd"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -6071,7 +6089,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>group</p></td>
+<tr class="row-even"><td><p>group</p></td>
 <td><p>Emt Events Group</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -6080,7 +6098,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>force_step_alignment</p></td>
+<tr class="row-odd"><td><p>force_step_alignment</p></td>
 <td><p>bool</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -6089,7 +6107,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>transition_type</p></td>
+<tr class="row-even"><td><p>transition_type</p></td>
 <td><p>enum DynamicEventTransitionType</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -6314,7 +6332,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>block</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>block</p></td>
 <td><p>DaeBlock</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -8051,7 +8078,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>block</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>block</p></td>
 <td><p>DaeBlock</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -8060,7 +8096,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>domain</p></td>
+<tr class="row-odd"><td><p>domain</p></td>
 <td><p>enum FmuTemplateDomain</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -8069,7 +8105,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>mode</p></td>
+<tr class="row-even"><td><p>mode</p></td>
 <td><p>enum FmuTemplateMode</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -8078,7 +8114,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>fmu_relative_path</p></td>
+<tr class="row-odd"><td><p>fmu_relative_path</p></td>
 <td><p>str</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -8087,7 +8123,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>serialized_config</p></td>
+<tr class="row-even"><td><p>serialized_config</p></td>
 <td><p>str</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -8678,7 +8714,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 <td><p>Generator control mode</p></td>
-<td><p>False</p></td>
+<td><p>True</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>control_bus</p></td>
@@ -9644,7 +9680,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -9653,7 +9698,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -9779,7 +9824,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>CAPEX</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>CAPEX</p></td>
 <td><p>float</p></td>
 <td><p>M€</p></td>
 <td><p>False</p></td>
@@ -9788,7 +9842,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>status</p></td>
+<tr class="row-odd"><td><p>status</p></td>
 <td><p>bool</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -9797,7 +9851,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>group</p></td>
+<tr class="row-even"><td><p>group</p></td>
 <td><p>Investments Group</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -9806,7 +9860,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>commissioning_date</p></td>
+<tr class="row-odd"><td><p>commissioning_date</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -9815,7 +9869,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>decommissioning_date</p></td>
+<tr class="row-even"><td><p>decommissioning_date</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -9824,7 +9878,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>prop</p></td>
+<tr class="row-odd"><td><p>prop</p></td>
 <td><p>str</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -9833,7 +9887,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -10085,7 +10139,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -10094,7 +10157,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -11480,7 +11543,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>group</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>group</p></td>
 <td><p>Market units group</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -11489,7 +11561,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>commissioning_date</p></td>
+<tr class="row-odd"><td><p>commissioning_date</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -11498,7 +11570,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>decommissioning_date</p></td>
+<tr class="row-even"><td><p>decommissioning_date</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -11507,7 +11579,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>color</p></td>
+<tr class="row-odd"><td><p>color</p></td>
 <td><p>str</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12236,7 +12308,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12245,7 +12326,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12371,7 +12452,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12380,7 +12470,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12506,7 +12596,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12515,7 +12614,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12641,7 +12740,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12650,7 +12758,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12776,7 +12884,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12785,7 +12902,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12911,7 +13028,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -12920,7 +13046,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13046,7 +13172,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13055,7 +13190,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13181,7 +13316,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13190,7 +13334,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13442,7 +13586,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>prop</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>prop</p></td>
 <td><p>enum ContingencyOperationTypes</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13451,7 +13604,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>value</p></td>
+<tr class="row-odd"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13460,7 +13613,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>group</p></td>
+<tr class="row-even"><td><p>group</p></td>
 <td><p>Remedial action Group</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13694,7 +13847,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>parameter</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>parameter</p></td>
 <td><p>VarType</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13703,7 +13865,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>time</p></td>
+<tr class="row-odd"><td><p>time</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13712,7 +13874,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>end_time</p></td>
+<tr class="row-even"><td><p>end_time</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13721,7 +13883,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>value</p></td>
+<tr class="row-odd"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13730,7 +13892,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>group</p></td>
+<tr class="row-even"><td><p>group</p></td>
 <td><p>Rms Events Group</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13739,7 +13901,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>force_step_alignment</p></td>
+<tr class="row-odd"><td><p>force_step_alignment</p></td>
 <td><p>bool</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13748,7 +13910,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>transition_type</p></td>
+<tr class="row-even"><td><p>transition_type</p></td>
 <td><p>enum DynamicEventTransitionType</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -13973,7 +14135,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>block</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>block</p></td>
 <td><p>DaeBlock</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -14945,7 +15116,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>fault_type</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>fault_type</p></td>
 <td><p>enum FaultType</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -14954,7 +15134,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>method</p></td>
+<tr class="row-odd"><td><p>method</p></td>
 <td><p>enum MethodShortCircuit</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -14963,7 +15143,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>phases</p></td>
+<tr class="row-even"><td><p>phases</p></td>
 <td><p>enum PhasesShortCircuit</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -14972,7 +15152,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>active</p></td>
+<tr class="row-odd"><td><p>active</p></td>
 <td><p>bool</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -14981,7 +15161,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>constz</p></td>
+<tr class="row-even"><td><p>constz</p></td>
 <td><p>bool</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -14990,7 +15170,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>r_fault</p></td>
+<tr class="row-odd"><td><p>r_fault</p></td>
 <td><p>float</p></td>
 <td><p>p.u.</p></td>
 <td><p>False</p></td>
@@ -14999,7 +15179,7 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>x_fault</p></td>
+<tr class="row-even"><td><p>x_fault</p></td>
 <td><p>float</p></td>
 <td><p>p.u.</p></td>
 <td><p>False</p></td>
@@ -20795,7 +20975,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -20804,7 +20993,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -20930,7 +21119,16 @@
 <td><p>False</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>value</p></td>
+<tr class="row-odd"><td><p>device</p></td>
+<td><p>PhysicalDeviceType</p></td>
+<td><p></p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+<td><p>Device name</p></td>
+<td><p>False</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>
@@ -20939,7 +21137,7 @@
 <td><p>True</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>sigma</p></td>
+<tr class="row-odd"><td><p>sigma</p></td>
 <td><p>float</p></td>
 <td><p></p></td>
 <td><p>False</p></td>

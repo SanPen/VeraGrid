@@ -1,0 +1,26 @@
+TITU
+Rede sintetica de 4 barras para testes do pwf2raw
+DGBT
+(G ( kV)
+ V  138.  0
+ F  138.  0
+ H   69.  0
+99999
+DBAR
+(Num)OETGb(   nome   )Gl( V)( A)( Pg)( Qg)( Qn)( Qm)(Bc  )( Pl)( Ql)( Sh)Are(Vf)M(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1 L2 VSLACK         1000  0.                                           1
+    2 L1 FPV BUS        1020 -5.  50.  10. -20.  40.                       1
+    3 L0 FLOAD A        1000 -8.                            30.  15.       1
+    4 L0 HLOAD B         990-10.                            20.   8.   5.  1
+99999
+DGER
+(No ) O (Pmn ) (Pmx ) ( Fp) (FpR) (FPn) (Fa) (Fr) (Ag) ( Xq) (Sno) (Est)
+    1       0.   120.
+    2       0.    80.
+99999
+DLIN
+(De )d O d(Pa )NcEPM( R% )( X% )(Mvar)(Tap)(Tmn)(Tmx)(Phs)(Bc  )(Cn)(Ce)Ns(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10 (U) Uop
+    1         3 1L     1.5    8.   0.4                           80. 90.  100.
+    2         4 1L           12.       0.98                      60. 70.   80.
+99999
+FIM

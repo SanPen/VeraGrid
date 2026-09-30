@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Topology.admittance_matrices &mdash; VeraGrid 6.5.26 documentation</title>
+  <title>VeraGridEngine.Topology.admittance_matrices &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=c62e3d9e"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -158,7 +158,7 @@
 
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_branch_maps</span><span class="p">(</span><span class="n">nbus</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nbranch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">F</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
                          <span class="n">Yf_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Yf_indptr</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
                          <span class="n">Ybus_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Ybus_indptr</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">):</span>
@@ -227,7 +227,7 @@
 
 <div class="viewcode-block" id="update_branch_admittances">
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Topology.html#VeraGridEngine.Topology.admittance_matrices.update_branch_admittances">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_branch_admittances</span><span class="p">(</span><span class="n">idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
                               <span class="n">new_yff</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">new_yft</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">new_ytf</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">new_ytt</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
                               <span class="n">Yf_data</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Yt_data</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Ybus_data</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
@@ -548,7 +548,7 @@
 
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="s2">&quot;always&quot;</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="s2">&quot;always&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_sum_in_place</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    exclusive prefix-sum in-place</span>
@@ -563,7 +563,7 @@
     <span class="k">return</span> <span class="n">s</span>
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_Yf_Yt</span><span class="p">(</span><span class="n">nbus</span><span class="p">,</span> <span class="n">nbr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">F</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">yff</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">yft</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">ytf</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">ytt</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    branch matrices (identical pattern ⇒ share indices/indptr)</span>
@@ -617,7 +617,7 @@
     <span class="k">return</span> <span class="n">data_F</span><span class="p">,</span> <span class="n">data_T</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">indptr</span>  <span class="c1"># &lt;- length nb+1</span>
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_Ybus</span><span class="p">(</span><span class="n">nbus</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">nbr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">F</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
                 <span class="n">yff</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">yft</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">ytf</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">ytt</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">Ysh</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">CxVec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>

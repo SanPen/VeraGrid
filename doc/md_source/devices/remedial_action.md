@@ -22,6 +22,7 @@ Profile-enabled properties: none.
 |device_idtag     |str                           |    |False    |         |Unique ID                                               |False      |       |
 |tpe              |enum DeviceType               |    |False    |         |Device type                                             |False      |       |
 |device_name      |str                           |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType            |    |False    |         |Device name                                             |False      |       |
 |prop             |enum ContingencyOperationTypes|    |False    |         |Object property to change                               |False      |       |
 |value            |float                         |    |False    |         |Property value                                          |False      |       |
 |group            |Remedial action Group         |    |False    |         |Remedial action group                                   |False      |       |

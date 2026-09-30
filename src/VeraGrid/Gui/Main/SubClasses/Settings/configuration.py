@@ -252,7 +252,6 @@ class ConfigurationMain(ResultsMain):
             [
                 ApplicationLanguage.SYSTEM,
                 ApplicationLanguage.ENGLISH,
-                ApplicationLanguage.KOREAN,
                 ApplicationLanguage.SPANISH,
                 ApplicationLanguage.CATALAN,
                 ApplicationLanguage.BASQUE,
@@ -266,9 +265,11 @@ class ConfigurationMain(ResultsMain):
                 ApplicationLanguage.CHINESE,
                 ApplicationLanguage.CANTONESE,
                 ApplicationLanguage.JAPANESE,
+                ApplicationLanguage.KOREAN,
                 ApplicationLanguage.HINDI,
                 ApplicationLanguage.POLISH,
                 ApplicationLanguage.ARABIC,
+                ApplicationLanguage.TURKISH,
             ]
         )
 

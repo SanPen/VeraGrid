@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import ast
 import json
 import re
@@ -401,6 +402,7 @@ def _get_language_name(locale_code: str) -> str:
     language_names["nl"] = "Dutch"
     language_names["pl"] = "Polish"
     language_names["pt"] = "Portuguese (Portugal)"
+    language_names["tr"] = "Turkish"
     language_names["yue"] = "Cantonese written in Traditional Chinese"
     language_names["zh"] = "Simplified Chinese"
 
@@ -416,6 +418,45 @@ def _get_translation_source_files(translations_dir: Path) -> list[Path]:
     """
     ts_files: list[Path] = sorted(translations_dir.glob("*.ts"))
     return ts_files
+
+
+def create_blank_translation(locale_code: str) -> Path:
+    """
+    Create one new Qt Linguist catalog with all messages unfinished.
+
+    :param locale_code: Locale suffix used in the catalog filename.
+    :returns: Path to the newly created ``.ts`` catalog.
+    :raises ValueError: If the locale code is not a simple Qt locale suffix.
+    :raises FileExistsError: If the target catalog already exists.
+    """
+    if re.fullmatch(r"[a-z]{2}(?:_[A-Z]{2})?", locale_code) is None:
+        raise ValueError("locale_code must use the form 'll' or 'll_CC'")
+    else:
+        pass
+
+    translations_dir: Path = Path(__file__).resolve().parent / "translations"
+    target_file: Path = translations_dir / f"veragrid_{locale_code}.ts"
+
+    # Refusing an existing file protects translator work from an accidental reset.
+    if target_file.exists():
+        raise FileExistsError(f"Translation catalog already exists: {target_file}")
+    else:
+        pass
+
+    translations_dir.mkdir(parents=True, exist_ok=True)
+
+    # lupdate creates every source message as an unfinished translation, which is
+    # the required starting point for a human or later AI-assisted translation pass.
+    gui_root: Path = Path(__file__).resolve().parent
+    _run_command(
+        [
+            _find_tool("pyside6-lupdate"),
+            str(gui_root),
+            "-ts",
+            str(target_file),
+        ]
+    )
+    return target_file
 
 
 def _get_catalog_locale_code(ts_file: Path) -> str:
@@ -1297,11 +1338,23 @@ def update_translations(ai_config: LocalAiTranslationConfig | None = None) -> No
 
 def main() -> None:
     """
-    Run the complete translation update pipeline.
+    Run the requested translation catalog operation.
 
     :returns: Nothing.
     """
-    update_translations()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--create-blank",
+        metavar="LOCALE",
+        help="Create a new unfinished Qt catalog, for example 'tr'.",
+    )
+    arguments: argparse.Namespace = parser.parse_args()
+
+    if arguments.create_blank is None:
+        update_translations()
+    else:
+        target_file: Path = create_blank_translation(locale_code=arguments.create_blank)
+        print(f"Created blank translation catalog: {target_file}")
 
 
 if __name__ == "__main__":

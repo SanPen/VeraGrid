@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.NTC.ntc_opf_strict &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Simulations.NTC.ntc_opf_strict &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -1331,10 +1331,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">f_obj</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-    <span class="c1"># con_loading is used by the corrective path to skip already-overloaded branches; the strict</span>
-    <span class="c1"># formulation does not pre-compute it, so use zeros (no pre-skip; slacks still capture overloads).</span>
-    <span class="n">con_loading_zeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">branch_data_t</span><span class="o">.</span><span class="n">nelm</span><span class="p">)</span>
-
     <span class="c1"># Branches that could possibly receive a post-contingency limit</span>
     <span class="n">monitorable</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">=</span> <span class="n">get_contingency_monitorable_branches</span><span class="p">(</span>
         <span class="n">branch_data_t</span><span class="o">=</span><span class="n">branch_data_t</span><span class="p">,</span>
@@ -1378,8 +1374,8 @@
                 <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">contingency</span><span class="o">=</span><span class="n">contingency</span><span class="p">,</span>
                 <span class="n">contingency_flows</span><span class="o">=</span><span class="n">contingency_flows</span><span class="p">,</span> <span class="n">changed_idx</span><span class="o">=</span><span class="n">changed_idx</span><span class="p">,</span>
                 <span class="n">branch_data_t</span><span class="o">=</span><span class="n">branch_data_t</span><span class="p">,</span> <span class="n">branch_vars</span><span class="o">=</span><span class="n">branch_vars</span><span class="p">,</span>
-                <span class="n">vsc_vars</span><span class="o">=</span><span class="n">vsc_vars</span><span class="p">,</span> <span class="n">hvdc_vars</span><span class="o">=</span><span class="n">hvdc_vars</span><span class="p">,</span> <span class="n">con_loading</span><span class="o">=</span><span class="n">con_loading_zeros</span><span class="p">,</span>
-                <span class="n">prob</span><span class="o">=</span><span class="n">prob</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">(),</span> <span class="n">corrective_rows</span><span class="o">=</span><span class="n">corrective_rows</span><span class="p">,</span>
+                <span class="n">vsc_vars</span><span class="o">=</span><span class="n">vsc_vars</span><span class="p">,</span> <span class="n">hvdc_vars</span><span class="o">=</span><span class="n">hvdc_vars</span><span class="p">,</span>
+                <span class="n">prob</span><span class="o">=</span><span class="n">prob</span><span class="p">,</span> <span class="n">corrective_rows</span><span class="o">=</span><span class="n">corrective_rows</span><span class="p">,</span>
                 <span class="n">vsc_active</span><span class="o">=</span><span class="n">vsc_active</span><span class="p">,</span> <span class="n">hvdc_active</span><span class="o">=</span><span class="n">hvdc_active</span><span class="p">,</span>
                 <span class="n">vsc_delta_vars</span><span class="o">=</span><span class="n">vsc_deltas_c</span><span class="p">,</span> <span class="n">hvdc_delta_vars</span><span class="o">=</span><span class="n">hvdc_deltas_c</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2062,8 +2058,12 @@
     <span class="c1"># solve the model</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">lp_model</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="n">robust</span><span class="p">,</span> <span class="n">show_logs</span><span class="o">=</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">progress_text</span><span class="o">=</span><span class="n">progress_text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">controlled_states</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># The shared screening loop certifies the strict physical states. Its</span>
+        <span class="c1"># strict=True formulation admits hard limits and never adds thermal slacks.</span>
         <span class="n">status</span> <span class="o">=</span> <span class="n">controlled_states</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">f_obj</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="n">robust</span><span class="p">,</span> <span class="n">show_logs</span><span class="o">=</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
                                          <span class="n">progress</span><span class="o">=</span><span class="n">SolverProgress</span><span class="p">(</span><span class="n">progress_text</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># Other control modes already have their contingency constraints.</span>
 
     <span class="c1"># gather the results</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">lp_model</span><span class="o">.</span><span class="n">status2string</span><span class="p">(</span><span class="n">status</span><span class="p">))</span>

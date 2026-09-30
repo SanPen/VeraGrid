@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.NTC.ntc_opf &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Simulations.NTC.ntc_opf &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -130,7 +130,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.vsc_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">VscData</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.DataStructures.bus_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">BusData</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">BoolVec</span><span class="p">,</span> <span class="n">CxMat</span><span class="p">,</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">ObjVec</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.MIP.selected_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">LpExp</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="n">LpModel</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">get_model_instance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.MIP.selected_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">LpExp</span><span class="p">,</span> <span class="n">LpVar</span><span class="p">,</span> <span class="n">LpModel</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">get_model_instance</span><span class="p">,</span> <span class="n">is_infeasible</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">HvdcControlType</span><span class="p">,</span> <span class="n">AvailableTransferMode</span><span class="p">,</span> <span class="n">ConverterControlType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csc_matrix</span><span class="p">,</span> <span class="n">coo_matrix</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.LinearFactors.linear_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">LinearAnalysis</span><span class="p">,</span> <span class="n">LinearMultiContingencies</span><span class="p">,</span>
@@ -1700,9 +1700,7 @@
                                            <span class="n">branch_vars</span><span class="p">:</span> <span class="n">BranchNtcVars</span><span class="p">,</span>
                                            <span class="n">vsc_vars</span><span class="p">:</span> <span class="n">VscNtcVars</span><span class="p">,</span>
                                            <span class="n">hvdc_vars</span><span class="p">:</span> <span class="n">HvdcNtcVars</span><span class="p">,</span>
-                                           <span class="n">con_loading</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
                                            <span class="n">prob</span><span class="p">:</span> <span class="n">LpModel</span><span class="p">,</span>
-                                           <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
                                            <span class="n">corrective_rows</span><span class="p">:</span> <span class="n">BoolVec</span><span class="p">,</span>
                                            <span class="n">vsc_active</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BoolVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                            <span class="n">hvdc_active</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BoolVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1734,9 +1732,7 @@
 <span class="sd">    :param branch_vars: branch LP variable container</span>
 <span class="sd">    :param vsc_vars: VSC LP variable container</span>
 <span class="sd">    :param hvdc_vars: HVDC LP variable container</span>
-<span class="sd">    :param con_loading: branch loading w.r.t. the contingency ratings</span>
 <span class="sd">    :param prob: linear problem the variables and constraints are added to</span>
-<span class="sd">    :param logger: logger used for the pre-existing-overload reports</span>
 <span class="sd">    :param corrective_rows: per-branch flag, True for the branches whose corrective term is read back</span>
 <span class="sd">    :param vsc_active: in-service flag per VSC, or None to treat every VSC as in service</span>
 <span class="sd">    :param hvdc_active: in-service flag per HVDC, or None to treat every HVDC as in service</span>
@@ -1826,17 +1822,9 @@
         <span class="c1"># a branch is enforced if it is a DC branch (always monitored) or it is flagged for monitoring</span>
         <span class="n">is_monitored</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">branch_data_t</span><span class="o">.</span><span class="n">dc</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="ow">or</span> <span class="nb">bool</span><span class="p">(</span><span class="n">branch_vars</span><span class="o">.</span><span class="n">monitor_logic</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">])</span>
 
-        <span class="c1"># a branch that is already beyond its contingency rating in the base loading cannot be limited here</span>
-        <span class="n">is_already_overloaded</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">con_loading</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">1.0</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_monitored</span><span class="p">:</span>
             <span class="c1"># not monitored under this contingency: no limit is enforced on this branch</span>
             <span class="k">pass</span>
-        <span class="k">elif</span> <span class="n">is_already_overloaded</span><span class="p">:</span>
-            <span class="c1"># report the pre-existing overload and skip its limit (matches the preventive formulation)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Contingency overload on sensitive branch, contingency skipped&quot;</span><span class="p">,</span>
-                             <span class="n">device</span><span class="o">=</span><span class="n">branch_data_t</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">m</span><span class="p">],</span>
-                             <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">con_loading</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; %&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># post-contingency flow = preventive redistribution + corrective converter contribution (if any)</span>
             <span class="n">flow_expr</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_flows</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
@@ -1847,7 +1835,7 @@
                 <span class="k">pass</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">flow_expr</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">):</span>
-                <span class="c1"># Slack to relax the rates, not the other way around as before</span>
+                <span class="c1"># Initial overloads still need a limit so slack accounts for any remaining excess.</span>
                 <span class="n">rate_pu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">branch_data_t</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">/</span> <span class="n">Sbase</span>
                 <span class="n">pos_slack</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_pos_sl_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
                 <span class="n">neg_slack</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_neg_sl_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">],</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
@@ -1887,10 +1875,7 @@
                                            <span class="n">ntc_load_rule</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                                            <span class="n">alpha_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                                            <span class="n">alpha_n1</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span>
-                                           <span class="n">base_loading</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
-                                           <span class="n">con_loading</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
-                                           <span class="n">prob</span><span class="p">:</span> <span class="n">LpModel</span><span class="p">,</span>
-                                           <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">]:</span>
+                                           <span class="n">prob</span><span class="p">:</span> <span class="n">LpModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Formulate a single contingency with the preventive N-1 rule </span>
 <span class="sd">    :param t_idx: time index being formulated</span>
@@ -1907,10 +1892,7 @@
 <span class="sd">    :param ntc_load_rule: fraction of the rating reserved to the exchange (ACER rule)</span>
 <span class="sd">    :param alpha_threshold: minimum N-1 exchange sensitivity for a branch to be monitored</span>
 <span class="sd">    :param alpha_n1: N-1 exchange-sensitivity matrix indexed as (branch, outaged-branch)</span>
-<span class="sd">    :param base_loading: branch loading w.r.t. the normal ratings</span>
-<span class="sd">    :param con_loading: branch loading w.r.t. the contingency ratings</span>
 <span class="sd">    :param prob: linear problem the variables and constraints are added to</span>
-<span class="sd">    :param logger: logger used for the pre-existing-overload reports</span>
 <span class="sd">    :return: objective contribution (sum of the contingency overload slacks)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">f_obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">LpExp</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -1944,36 +1926,30 @@
             <span class="c1"># DC branches are always monitored because their AC-PTDF sensitivity is structurally zero</span>
             <span class="k">if</span> <span class="n">branch_data_t</span><span class="o">.</span><span class="n">dc</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="ow">or</span> <span class="p">(</span><span class="n">monitor_by_load_rule_n1</span> <span class="ow">and</span> <span class="n">monitor_by_sensitivity_n1</span><span class="p">):</span>
 
-                <span class="k">if</span> <span class="n">con_loading</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-                    <span class="c1"># symmetric rating limits with slacks; occ keeps the names unique when changed_idx repeats</span>
-                    <span class="n">pos_slack</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_pos_sl_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">occ</span><span class="p">]))</span>
-                    <span class="n">neg_slack</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_neg_sl_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">occ</span><span class="p">]))</span>
+                <span class="c1"># Initial overloads still need symmetric limits with explicit relaxation.</span>
+                <span class="n">pos_slack</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_pos_sl_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">occ</span><span class="p">]))</span>
+                <span class="n">neg_slack</span><span class="p">:</span> <span class="n">LpVar</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e20</span><span class="p">,</span> <span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_neg_sl_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">occ</span><span class="p">]))</span>
 
-                    <span class="c1"># record the flow so the result extraction can evaluate the post-contingency loading later</span>
-                    <span class="n">branch_vars</span><span class="o">.</span><span class="n">add_contingency_flow</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span>
-                                                     <span class="n">flow_var</span><span class="o">=</span><span class="n">contingency_flows</span><span class="p">[</span><span class="n">m</span><span class="p">],</span>
-                                                     <span class="n">neg_slack</span><span class="o">=</span><span class="n">neg_slack</span><span class="p">,</span>
-                                                     <span class="n">pos_slack</span><span class="o">=</span><span class="n">pos_slack</span><span class="p">)</span>
+                <span class="c1"># record the flow so the result extraction can evaluate the post-contingency loading later</span>
+                <span class="n">branch_vars</span><span class="o">.</span><span class="n">add_contingency_flow</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span>
+                                                 <span class="n">flow_var</span><span class="o">=</span><span class="n">contingency_flows</span><span class="p">[</span><span class="n">m</span><span class="p">],</span>
+                                                 <span class="n">neg_slack</span><span class="o">=</span><span class="n">neg_slack</span><span class="p">,</span>
+                                                 <span class="n">pos_slack</span><span class="o">=</span><span class="n">pos_slack</span><span class="p">)</span>
 
-                    <span class="c1"># Ensure the slacks relax</span>
-                    <span class="n">prob</span><span class="o">.</span><span class="n">add_cst</span><span class="p">(</span>
-                        <span class="n">cst</span><span class="o">=</span><span class="n">contingency_flows</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_slack</span> <span class="o">&lt;=</span> <span class="n">branch_data_t</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">/</span> <span class="n">Sbase</span><span class="p">,</span>
-                        <span class="n">name</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_upper_lim_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">occ</span><span class="p">])</span>
-                    <span class="p">)</span>
+                <span class="c1"># Ensure the slacks relax</span>
+                <span class="n">prob</span><span class="o">.</span><span class="n">add_cst</span><span class="p">(</span>
+                    <span class="n">cst</span><span class="o">=</span><span class="n">contingency_flows</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_slack</span> <span class="o">&lt;=</span> <span class="n">branch_data_t</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">/</span> <span class="n">Sbase</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_upper_lim_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">occ</span><span class="p">])</span>
+                <span class="p">)</span>
 
-                    <span class="c1"># lower rate constraint</span>
-                    <span class="n">prob</span><span class="o">.</span><span class="n">add_cst</span><span class="p">(</span>
-                        <span class="n">cst</span><span class="o">=</span><span class="n">contingency_flows</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">neg_slack</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">branch_data_t</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">/</span> <span class="n">Sbase</span><span class="p">,</span>
-                        <span class="n">name</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_lower_lim_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">occ</span><span class="p">])</span>
-                    <span class="p">)</span>
+                <span class="c1"># lower rate constraint</span>
+                <span class="n">prob</span><span class="o">.</span><span class="n">add_cst</span><span class="p">(</span>
+                    <span class="n">cst</span><span class="o">=</span><span class="n">contingency_flows</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">+</span> <span class="n">neg_slack</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">branch_data_t</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">/</span> <span class="n">Sbase</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;br_cst_flow_lower_lim_&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">occ</span><span class="p">])</span>
+                <span class="p">)</span>
 
-                    <span class="c1"># Penalty for the slacks which is arbitrary</span>
-                    <span class="n">f_obj</span> <span class="o">+=</span> <span class="mf">1e4</span> <span class="o">*</span> <span class="p">(</span><span class="n">pos_slack</span> <span class="o">+</span> <span class="n">neg_slack</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># the branch is already overloaded at the base contingency loading: report and skip its limit</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Contingency overload on sensitive branch, contingency skipped&quot;</span><span class="p">,</span>
-                                     <span class="n">device</span><span class="o">=</span><span class="n">branch_data_t</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">m</span><span class="p">],</span>
-                                     <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">base_loading</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; %&quot;</span><span class="p">)</span>
+                <span class="c1"># Penalty for the slacks which is arbitrary</span>
+                <span class="n">f_obj</span> <span class="o">+=</span> <span class="mf">1e4</span> <span class="o">*</span> <span class="p">(</span><span class="n">pos_slack</span> <span class="o">+</span> <span class="n">neg_slack</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># the branch is not monitored under this contingency: nothing to enforce</span>
                 <span class="k">pass</span>
@@ -2125,7 +2101,6 @@
                                   <span class="n">inj0</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
                                   <span class="n">monitorable</span><span class="p">:</span> <span class="n">BoolVec</span><span class="p">,</span>
                                   <span class="n">con_rates_pu</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
-                                  <span class="n">con_loading</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
                                   <span class="n">tol_pu</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                                   <span class="n">at_risk_fraction</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                                   <span class="n">delta_flow_addons</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Vec</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">]]:</span>
@@ -2142,7 +2117,6 @@
 <span class="sd">    :param inj0: solved bus injections (p.u.)</span>
 <span class="sd">    :param monitorable: per-branch flag of branches that may get a post-contingency limit</span>
 <span class="sd">    :param con_rates_pu: branch contingency ratings (p.u.)</span>
-<span class="sd">    :param con_loading: base loading w.r.t. the contingency ratings (skip rows &gt;= 1)</span>
 <span class="sd">    :param tol_pu: feasibility tolerance (p.u.) added to the rating before flagging</span>
 <span class="sd">    :param at_risk_fraction: fraction of the rating above which a row of a violated group</span>
 <span class="sd">                             is admitted preventively along with the violated rows</span>
@@ -2150,8 +2124,7 @@
 <span class="sd">                              group&#39;s solved corrective Δ set-points (compensated DF · Δ)</span>
 <span class="sd">    :return: list of (group index, row indices to admit)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># rows the formulation would actually constrain: monitorable and not pre-overloaded</span>
-    <span class="n">checkable</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">=</span> <span class="n">monitorable</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">con_loading</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="c1"># Check every monitorable row at the solved operating point, regardless of initial loading.</span>
     <span class="n">limits</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">con_rates_pu</span> <span class="o">+</span> <span class="n">tol_pu</span>
 
     <span class="n">admissions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -2160,9 +2133,9 @@
         <span class="c1"># rows of this group that are not yet enforced by the LP</span>
         <span class="n">already</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BoolVec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">admitted_rows</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">already</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">pending</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">=</span> <span class="n">checkable</span>
+            <span class="n">pending</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">=</span> <span class="n">monitorable</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">pending</span> <span class="o">=</span> <span class="n">checkable</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">already</span><span class="p">)</span>
+            <span class="n">pending</span> <span class="o">=</span> <span class="n">monitorable</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">already</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">pending</span><span class="p">):</span>
             <span class="n">fc</span><span class="p">:</span> <span class="n">Vec</span> <span class="o">=</span> <span class="n">f0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -2364,9 +2337,6 @@
                                                   <span class="n">ntc_load_rule</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                                                   <span class="n">alpha_threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                                                   <span class="n">alpha_n1</span><span class="p">:</span> <span class="n">Mat</span><span class="p">,</span>
-                                                  <span class="n">base_loading</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
-                                                  <span class="n">con_loading</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
-                                                  <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
                                                   <span class="n">corrective_contingencies</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                                                   <span class="n">vsc_active</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                                   <span class="n">hvdc_active</span><span class="p">:</span> <span class="n">BoolVec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2392,9 +2362,6 @@
 <span class="sd">    :param ntc_load_rule:</span>
 <span class="sd">    :param alpha_threshold:</span>
 <span class="sd">    :param alpha_n1:</span>
-<span class="sd">    :param base_loading: loading w.r.t the normal ratings</span>
-<span class="sd">    :param con_loading: Loading w.r.t the contingency rates</span>
-<span class="sd">    :param logger</span>
 <span class="sd">    :param corrective_contingencies: if True, allow corrective re-dispatch of the VSC/HVDC</span>
 <span class="sd">    :param group_indices: subset of multi-contingency indices to formulate (None = all)</span>
 <span class="sd">    :param group_rows: per group index, the row indices to enforce</span>
@@ -2471,8 +2438,8 @@
                 <span class="n">t_idx</span><span class="o">=</span><span class="n">t_idx</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">,</span> <span class="n">contingency</span><span class="o">=</span><span class="n">contingency</span><span class="p">,</span>
                 <span class="n">contingency_flows</span><span class="o">=</span><span class="n">contingency_flows</span><span class="p">,</span> <span class="n">changed_idx</span><span class="o">=</span><span class="n">changed_idx</span><span class="p">,</span>
                 <span class="n">branch_data_t</span><span class="o">=</span><span class="n">branch_data_t</span><span class="p">,</span> <span class="n">branch_vars</span><span class="o">=</span><span class="n">branch_vars</span><span class="p">,</span>
-                <span class="n">vsc_vars</span><span class="o">=</span><span class="n">vsc_vars</span><span class="p">,</span> <span class="n">hvdc_vars</span><span class="o">=</span><span class="n">hvdc_vars</span><span class="p">,</span> <span class="n">con_loading</span><span class="o">=</span><span class="n">con_loading</span><span class="p">,</span>
-                <span class="n">prob</span><span class="o">=</span><span class="n">prob</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">corrective_rows</span><span class="o">=</span><span class="n">corrective_rows</span><span class="p">,</span>
+                <span class="n">vsc_vars</span><span class="o">=</span><span class="n">vsc_vars</span><span class="p">,</span> <span class="n">hvdc_vars</span><span class="o">=</span><span class="n">hvdc_vars</span><span class="p">,</span>
+                <span class="n">prob</span><span class="o">=</span><span class="n">prob</span><span class="p">,</span> <span class="n">corrective_rows</span><span class="o">=</span><span class="n">corrective_rows</span><span class="p">,</span>
                 <span class="n">vsc_active</span><span class="o">=</span><span class="n">vsc_active</span><span class="p">,</span> <span class="n">hvdc_active</span><span class="o">=</span><span class="n">hvdc_active</span><span class="p">,</span>
                 <span class="n">vsc_delta_vars</span><span class="o">=</span><span class="n">vsc_deltas_c</span><span class="p">,</span> <span class="n">hvdc_delta_vars</span><span class="o">=</span><span class="n">hvdc_deltas_c</span><span class="p">,</span>
                 <span class="n">add_exchange_preservation</span><span class="o">=</span><span class="n">add_preservation_c</span><span class="p">,</span>
@@ -2486,8 +2453,7 @@
                 <span class="n">monitor_only_ntc_load_rule_branches</span><span class="o">=</span><span class="n">monitor_only_ntc_load_rule_branches</span><span class="p">,</span>
                 <span class="n">monitor_only_sensitive_branches</span><span class="o">=</span><span class="n">monitor_only_sensitive_branches</span><span class="p">,</span>
                 <span class="n">structural_ntc</span><span class="o">=</span><span class="n">structural_ntc</span><span class="p">,</span> <span class="n">ntc_load_rule</span><span class="o">=</span><span class="n">ntc_load_rule</span><span class="p">,</span>
-                <span class="n">alpha_threshold</span><span class="o">=</span><span class="n">alpha_threshold</span><span class="p">,</span> <span class="n">alpha_n1</span><span class="o">=</span><span class="n">alpha_n1</span><span class="p">,</span>
-                <span class="n">base_loading</span><span class="o">=</span><span class="n">base_loading</span><span class="p">,</span> <span class="n">con_loading</span><span class="o">=</span><span class="n">con_loading</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="n">prob</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                <span class="n">alpha_threshold</span><span class="o">=</span><span class="n">alpha_threshold</span><span class="p">,</span> <span class="n">alpha_n1</span><span class="o">=</span><span class="n">alpha_n1</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="n">prob</span><span class="p">)</span>
 
     <span class="c1"># copy the contingency rates</span>
     <span class="n">branch_vars</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">[</span><span class="n">t_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">branch_data_t</span><span class="o">.</span><span class="n">contingency_rates</span>
@@ -3125,7 +3091,6 @@
     <span class="n">report_mctg</span><span class="p">:</span> <span class="n">LinearMultiContingencies</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">lazy_mctg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">LinearMultiContingencies</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">lazy_alpha_n1</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mat</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">lazy_con_loading</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Vec</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">zonal_grouping</span> <span class="o">==</span> <span class="n">ZonalGrouping</span><span class="o">.</span><span class="n">NoGrouping</span><span class="p">:</span>
 
@@ -3222,9 +3187,6 @@
                     <span class="n">dT</span><span class="o">=</span><span class="mf">1.0</span>
                 <span class="p">)</span>
 
-                <span class="n">branch_loading_con</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span>
-                    <span class="n">branch_flows</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">contingency_rates</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">))</span>
-
                 <span class="c1"># Pmode3 needs physical states even when fixed-power screening is clean.</span>
                 <span class="c1"># Other control modes retain the existing lazy flow-factor formulation.</span>
                 <span class="n">report_mctg</span> <span class="o">=</span> <span class="n">mctg</span>
@@ -3235,7 +3197,6 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">lazy_mctg</span> <span class="o">=</span> <span class="n">mctg</span>
                     <span class="n">lazy_alpha_n1</span> <span class="o">=</span> <span class="n">alpha_n1</span>
-                    <span class="n">lazy_con_loading</span> <span class="o">=</span> <span class="n">branch_loading_con</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Contingencies enabled, but no contingency groups provided&quot;</span><span class="p">)</span>
@@ -3314,7 +3275,6 @@
                 <span class="n">f0</span><span class="o">=</span><span class="n">f0_num</span><span class="p">,</span> <span class="n">hvdc0</span><span class="o">=</span><span class="n">hvdc0_num</span><span class="p">,</span> <span class="n">vsc0</span><span class="o">=</span><span class="n">vsc0_num</span><span class="p">,</span> <span class="n">inj0</span><span class="o">=</span><span class="n">inj0_num</span><span class="p">,</span>
                 <span class="n">monitorable</span><span class="o">=</span><span class="n">monitorable_lazy</span><span class="p">,</span>
                 <span class="n">con_rates_pu</span><span class="o">=</span><span class="n">con_rates_pu_lazy</span><span class="p">,</span>
-                <span class="n">con_loading</span><span class="o">=</span><span class="n">lazy_con_loading</span><span class="p">,</span>
                 <span class="n">tol_pu</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
                 <span class="n">at_risk_fraction</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
                 <span class="n">delta_flow_addons</span><span class="o">=</span><span class="n">delta_addons</span>
@@ -3345,9 +3305,6 @@
                     <span class="n">ntc_load_rule</span><span class="o">=</span><span class="n">ntc_load_rule</span><span class="p">,</span>
                     <span class="n">alpha_threshold</span><span class="o">=</span><span class="n">alpha_threshold</span><span class="p">,</span>
                     <span class="n">alpha_n1</span><span class="o">=</span><span class="n">lazy_alpha_n1</span><span class="p">,</span>
-                    <span class="n">base_loading</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">f0_num</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">rates</span> <span class="o">/</span> <span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">),</span>
-                    <span class="n">con_loading</span><span class="o">=</span><span class="n">lazy_con_loading</span><span class="p">,</span>
-                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
                     <span class="n">corrective_contingencies</span><span class="o">=</span><span class="n">corrective_contingencies</span><span class="p">,</span>
                     <span class="n">vsc_active</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
                     <span class="n">hvdc_active</span><span class="o">=</span><span class="n">nc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">active</span><span class="p">,</span>
@@ -3384,10 +3341,10 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">pass</span>  <span class="c1"># no lazy formulation was used</span>
 
-    <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="n">lp_model</span><span class="o">.</span><span class="n">OPTIMAL</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">slack_all_limits</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">is_infeasible</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">lp_model</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">slack_all_limits</span><span class="p">:</span>
         <span class="c1"># Feasibility retry. Rebuild once with the penalized slack for every </span>
         <span class="c1"># monitored limit so the answer is reported as slack instead of a failure. </span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Not optimal with hard branch limits, retrying with all &quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Infeasible with hard branch limits, retrying with all &quot;</span>
                            <span class="s2">&quot;monitored limits slacked&quot;</span><span class="p">,</span>
                            <span class="n">value</span><span class="o">=</span><span class="n">lp_model</span><span class="o">.</span><span class="n">status2string</span><span class="p">(</span><span class="n">status</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">run_linear_ntc_opf</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">solver_type</span><span class="o">=</span><span class="n">solver_type</span><span class="p">,</span>

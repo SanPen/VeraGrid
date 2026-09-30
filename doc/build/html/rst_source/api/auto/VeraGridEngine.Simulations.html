@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations package &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Simulations package &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -1446,6 +1446,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis_options.LinearAnalysisOptions.distribute_slack"><code class="docutils literal notranslate"><span class="pre">LinearAnalysisOptions.distribute_slack</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis_options.LinearAnalysisOptions.lodf_threshold"><code class="docutils literal notranslate"><span class="pre">LinearAnalysisOptions.lodf_threshold</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis_options.LinearAnalysisOptions.ptdf_threshold"><code class="docutils literal notranslate"><span class="pre">LinearAnalysisOptions.ptdf_threshold</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.LinearFactors.html#VeraGridEngine.Simulations.LinearFactors.linear_analysis_options.LinearAnalysisOptions.use_jacobian_ptdf"><code class="docutils literal notranslate"><span class="pre">LinearAnalysisOptions.use_jacobian_ptdf</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1529,6 +1530,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_driver.collect_contingency_group_device_names"><code class="docutils literal notranslate"><span class="pre">collect_contingency_group_device_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_driver.collect_phase_shifter_indices"><code class="docutils literal notranslate"><span class="pre">collect_phase_shifter_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_driver.select_ntc_contingency_groups"><code class="docutils literal notranslate"><span class="pre">select_ntc_contingency_groups()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#module-VeraGridEngine.Simulations.NTC.ntc_opf">VeraGridEngine.Simulations.NTC.ntc_opf module</a><ul>
@@ -1835,6 +1837,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_results.OptimalNetTransferCapacityResults.sending_bus_idx"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults.sending_bus_idx</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_results.OptimalNetTransferCapacityResults.strict_formulation"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults.strict_formulation</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_results.OptimalNetTransferCapacityResults.structural_inter_area_flows"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults.structural_inter_area_flows</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_results.OptimalNetTransferCapacityResults.transmission_reliability_margin"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults.transmission_reliability_margin</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_results.OptimalNetTransferCapacityResults.voltage"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults.voltage</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_results.OptimalNetTransferCapacityResults.vsc_Pf"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults.vsc_Pf</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_results.OptimalNetTransferCapacityResults.vsc_loading"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityResults.vsc_loading</span></code></a></li>
@@ -1906,6 +1909,7 @@
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.receiving_bus_idx"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults.receiving_bus_idx</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.sending_bus_idx"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults.sending_bus_idx</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.strict_formulation"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults.strict_formulation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.transmission_reliability_margin"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults.transmission_reliability_margin</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.voltage"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults.voltage</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.vsc_Pf"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults.vsc_Pf</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.NTC.html#VeraGridEngine.Simulations.NTC.ntc_ts_results.OptimalNetTransferCapacityTimeSeriesResults.vsc_loading"><code class="docutils literal notranslate"><span class="pre">OptimalNetTransferCapacityTimeSeriesResults.vsc_loading</span></code></a></li>
@@ -3457,7 +3461,6 @@
 <li class="toctree-l1"><a class="reference internal" href="VeraGridEngine.Simulations.SmallSignalStabilityEmt.html">VeraGridEngine.Simulations.SmallSignalStabilityEmt package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#module-VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels">VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#notes">Notes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels.apply_ak_stack_block_numba"><code class="docutils literal notranslate"><span class="pre">apply_ak_stack_block_numba()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels.bmgs_twice_numba"><code class="docutils literal notranslate"><span class="pre">bmgs_twice_numba()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Simulations.SmallSignalStabilityEmt.html#VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels.solve_lu_dense_block_numba"><code class="docutils literal notranslate"><span class="pre">solve_lu_dense_block_numba()</span></code></a></li>

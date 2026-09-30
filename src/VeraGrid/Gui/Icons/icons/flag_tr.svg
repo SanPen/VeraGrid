@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 64 64"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="flag_tr.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   inkscape:export-filename="flag_tr.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="12.578125"
+     inkscape:cx="32"
+     inkscape:cy="32"
+     inkscape:window-width="2510"
+     inkscape:window-height="1014"
+     inkscape:window-x="50"
+     inkscape:window-y="29"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <rect
+     x="8"
+     y="12"
+     width="48"
+     height="40"
+     rx="4"
+     fill="#e30a17"
+     id="rect1" />
+  <circle
+     cx="29"
+     cy="32"
+     r="11"
+     fill="#fff"
+     id="circle1" />
+  <circle
+     cx="33"
+     cy="32"
+     r="8.5"
+     fill="#e30a17"
+     id="circle2" />
+  <path
+     fill="#ffffff"
+     d="m 39.159173,27.905569 1.852665,3.130137 3.291796,-1.240694 -2.125577,2.597135 2.031095,3.174909 -3.402748,-1.407298 -2.582276,2.831171 0.749824,-3.546675 -3.487074,-1.184972 3.6601,-0.754371 z"
+     id="path2"
+     sodipodi:nodetypes="ccccccccccc" />
+</svg>

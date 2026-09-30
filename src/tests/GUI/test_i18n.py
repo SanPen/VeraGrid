@@ -333,6 +333,7 @@ def test_install_translators_load_additional_catalogs(
         ApplicationLanguage.FRENCH,
         ApplicationLanguage.PORTUGUESE,
         ApplicationLanguage.SPANISH,
+        ApplicationLanguage.TURKISH,
     ],
 )
 def test_language_flag_icons_are_registered(language: ApplicationLanguage) -> None:

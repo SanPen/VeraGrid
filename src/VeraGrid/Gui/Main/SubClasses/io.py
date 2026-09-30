@@ -171,12 +171,14 @@ class IoMain(ScenariosMain):
 
     def check_extension(self, path: str) -> bool:
         """
-        Check the accepted extensions
-        :param path:
-        :return:
+        Check whether a path has an accepted extension.
+
+        :param path: File path received from the GUI or drag-and-drop event.
+        :return: ``True`` when the path extension is accepted.
         """
+        normalized_path: str = path.casefold()
         for ext in self.accepted_extensions:
-            if path.endswith(ext):
+            if normalized_path.endswith(ext.casefold()):
                 return True
 
         return False

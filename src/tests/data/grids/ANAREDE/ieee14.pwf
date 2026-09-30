@@ -1,0 +1,82 @@
+TITU
+****   Sistema teste de 14 maquinas - IEEE  ****
+DOPC
+(Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E (Op) E
+FILE L
+RBAR L RTOT L RINT L
+NEWT L
+99999
+DCTE
+(Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) (Mn) ( Val) 
+BASE   100. DASE   100. TEPA   1e-8 EXST    .04 TETP     5. TBPA     5.
+TLPP     1. TEPR   1e-8 QLST    .04 TLPR   1e-8 TLPQ     2. TSBZ    .01
+TSBA     5. ASTP    .05 VSTP     5. TLVC    .05 TLTC    .01 TSFR  .1E-7
+ZMAX   500. TLPV     .5 VDVM   200. VDVN    40. TUDC   .001 TADC    .01
+PGER    30. TPST    .02 VFLD    70. ZMIN   .001 HIST    470 LFIT     10
+ACIT    30  LFCV      1 DCIT     10 VSIT     10 LPIT     50 LFLP     10
+PDIT     10 LCRT    200 LPRT     60 CSTP     5. ASDC     1.
+ICIT   9999 DMAX   9999 FDIV     2. ICMN   1e-3 VART   .001 TSTP     32
+ICMV     .5 APAS    90. CPAR    70. VAVT     2. VAVF     5. VMVF    15.
+VPVT     2. VPVF     5. VPMF    10. VSVF    20. VINF     1. VSUP     1.
+TLSI     0. NDIR    20. STTR     5. TRPT   100. STIR     1. BFPO     1.
+LFPO     .1 TLMT     0. TLMF     0. TLMG     0. PARS    10.            
+(FULL     0  
+(SIGK   1E8  SIGV  1E-8  SIGQ  1E-8  CTOL  1E-7
+99999
+DBAR
+(Num)OETGb(   nome   )Gl( V)( A)( Pg)( Qg)( Qn)( Qm)(Bc  )( Pl)( Ql)( Sh)Are(Vf)M(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1  2  BARRA-1       1060   0          -999999999         .0   .0       11000                               
+    2  1  BARRA-2       1045    40.00     -40.0 50.0      21.70 12.7       11000                               
+    3  1  BARRA-3       1010    0.0   0.0   0.0 40.0      94.20 19.0       11000                               
+    4  0  BARRA-4       1000                              47.80 -3.9       11000                               
+    5  0  BARRA-5       1000                              7.60  1.60       11000                               
+    6  1  BARRA-6       1070    0.0   0.0 -6.0  24.0      11.20 7.50       11000                               
+    7  0  BARRA-7       1000                               0.0  0.0        11000                               
+    8  1  BARRA-8       1090    0.0   0.0 -6.0  10.0       0.0  0.0        11000                               
+    9  0  BARRA-9       1000                              29.50 16.6 19.0  11000                               
+   10  0  BARRA-10      1000                              9.00  5.80       11000                               
+   11  0  BARRA-11      1000                              3.50  1.80       11000                               
+   12  0  BARRA-12      1000                              6.10  1.60       11000                               
+   13  0  BARRA-13      1000                              13.50 5.80       11000                               
+   14  0  BARRA-14      1000                              14.90 5.00       11000                               
+99999
+DLIN
+(De )d O d(Pa )NcEP ( R% )( X% )(Mvar)(Tap)(Tmn)(Tmx)(Phs)(Bc  )(Cn)(Ce)Ns(Cq)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10
+    1         2     1.93805.91705.2800                                         
+    1         5     5.403022.3044.9200                                        
+    2         3     4.699019.7974.3800                                       
+    2         4     5.811017.6323.7400
+    2         5     5.695017.3883.4000
+    3         4     6.701017.1033.4600
+    4         5     1.33504.21101.2800     
+    4         7           20.912      0.978  0.8 1.2
+    4         9           55.618      0.969  0.8 1.2
+    5         6           25.202      0.932  0.8 1.2
+    6        11     9.498019.890
+    6        12     12.29125.581
+    6        13     6.615013.027
+    7         8           17.615      
+    7         9           11.001
+    9        10     3.18108.4500
+    9        14     12.71127.038
+   10        11     8.205019.207
+   12        13     22.09219.988
+   13        14     17.09334.802 
+99999
+DGER
+(No ) O (Pmn ) (Pmx ) ( Fp) (FpR) (FPn) (Fa) (Fr) (Ag) ( Xq) (Sno) (Est)
+    1 A -9999  9999.    0.0                                        1.67
+    2 A -9999  9999.  100.0                                        1.67
+    3 A -9999  9999.    0.0                                        1.67
+    6 A -9999  9999.    0.0                                        1.67
+    8 A -9999  9999.    0.0                                        1.67
+99999
+DMET
+(tp) (no ) C (tp) (no ) C (tp) (no ) C (tp) (no ) O
+AREA     1                                          
+99999
+DINC
+(tp) (no ) C (tp) (no ) C (tp) (no ) C (tp) (no ) O ( P ) ( Q ) (Pmx) (Qmx)
+AREA     1                                            1.   1.   99999 99999
+99999
+FIM

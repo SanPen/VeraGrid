@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Parents.pointer_device_parent &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Devices.Parents.pointer_device_parent &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -108,7 +108,7 @@
 <span class="c1"># SPDX-License-Identifier: MPL-2.0</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">EditableDevice</span><span class="p">,</span> <span class="n">GCProp</span><span class="p">,</span> <span class="n">PrpCat</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceType</span>
 
@@ -129,7 +129,8 @@
         <span class="s1">&#39;_device_idtag&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_device_name&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_tpe&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;_device&#39;</span>
+        <span class="s1">&#39;_device&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_pointer_dev_tpes&#39;</span>
     <span class="p">)</span>
 
     <span class="n">LOCAL_PROPERTY_DECLARATIONS</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GCProp</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
@@ -139,6 +140,7 @@
             <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
             <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Unique ID&#39;</span><span class="p">,</span>
             <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">cat</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">]),</span>
         <span class="p">),</span>
         <span class="n">GCProp</span><span class="p">(</span>
@@ -147,6 +149,7 @@
             <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="p">,</span>
             <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Device type&#39;</span><span class="p">,</span>
             <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">cat</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">]),</span>
         <span class="p">),</span>
         <span class="n">GCProp</span><span class="p">(</span>
@@ -155,6 +158,16 @@
             <span class="n">tpe</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
             <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Device name&#39;</span><span class="p">,</span>
             <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">]),</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;device&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">PhysicalDeviceType</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Device name&#39;</span><span class="p">,</span>
+            <span class="n">editable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">cat</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">]),</span>
         <span class="p">),</span>
     <span class="p">)</span>
@@ -165,7 +178,8 @@
                  <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">device_type</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">):</span>
+                 <span class="n">device_type</span><span class="p">:</span> <span class="n">DeviceType</span><span class="p">,</span>
+                 <span class="n">pointer_dev_tpes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceType</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Investment</span>
 <span class="sd">        :param idtag: String. Element unique identifier</span>
@@ -186,6 +200,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_tpe</span><span class="p">:</span> <span class="n">DeviceType</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">device_type</span> <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;No device&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">:</span> <span class="n">InjectionParent</span> <span class="o">|</span> <span class="n">BranchParent</span> <span class="o">|</span> <span class="n">Facility</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_dev_tpes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceType</span><span class="p">]</span> <span class="o">=</span> <span class="n">pointer_dev_tpes</span> <span class="k">if</span> <span class="n">pointer_dev_tpes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">device_idtag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -252,6 +267,14 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;device cannot be None&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tpe must be a EditableDevice not </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pointer_dev_tpes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List of pointer device types</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_dev_tpes</span>
 
 <div class="viewcode-block" id="PointerDeviceParent.set_device">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Parents.html#VeraGridEngine.Devices.Parents.pointer_device_parent.PointerDeviceParent.set_device">[docs]</a>

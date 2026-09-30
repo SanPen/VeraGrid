@@ -9,23 +9,24 @@ This device is used by expansion-planning and candidate-investment workflows.
 ### Registered properties
 Profile-enabled properties: none.
 
-|        name        |   class_type    |unit|mandatory|max_chars|                                               descriptions                                                |has_profile|comment|
-|--------------------|-----------------|----|---------|---------|-----------------------------------------------------------------------------------------------------------|-----------|-------|
-|idtag               |str              |    |False    |         |Unique ID                                                                                                  |False      |       |
-|name                |str              |    |False    |         |Name of the device.                                                                                        |False      |       |
-|code                |str              |    |False    |         |Secondary ID                                                                                               |False      |       |
-|rdfid               |str              |    |False    |         |RDF ID for further compatibility                                                                           |False      |       |
-|action              |enum ActionType  |    |False    |         |Object action to perform. Only used for model merging.                                                     |False      |       |
-|selected_to_merge   |bool             |    |False    |         |Whether this object should be applied during diff merge.                                                   |False      |       |
-|comment             |str              |    |False    |         |User comment                                                                                               |False      |       |
-|diff_changes        |MergeInformation |    |False    |         |                                                                                                           |False      |       |
-|device_idtag        |str              |    |False    |         |Unique ID                                                                                                  |False      |       |
-|tpe                 |enum DeviceType  |    |False    |         |Device type                                                                                                |False      |       |
-|device_name         |str              |    |False    |         |Device name                                                                                                |False      |       |
-|CAPEX               |float            |M€  |False    |         |Capital expenditures. This is the investment value, it overrides the CAPEX value of the device if it exits.|False      |       |
-|status              |bool             |    |False    |         |If true the investment activates when applied, otherwise is deactivated.                                   |False      |       |
-|group               |Investments Group|    |False    |         |Investment group                                                                                           |False      |       |
-|commissioning_date  |float            |    |False    |         |Date when the investment is commissioned                                                                   |False      |       |
-|decommissioning_date|float            |    |False    |         |Date when the investment is decommissioned                                                                 |False      |       |
-|prop                |str              |    |False    |         |device property                                                                                            |False      |       |
-|value               |float            |    |False    |         |value status                                                                                               |False      |       |
+|        name        |    class_type    |unit|mandatory|max_chars|                                               descriptions                                                |has_profile|comment|
+|--------------------|------------------|----|---------|---------|-----------------------------------------------------------------------------------------------------------|-----------|-------|
+|idtag               |str               |    |False    |         |Unique ID                                                                                                  |False      |       |
+|name                |str               |    |False    |         |Name of the device.                                                                                        |False      |       |
+|code                |str               |    |False    |         |Secondary ID                                                                                               |False      |       |
+|rdfid               |str               |    |False    |         |RDF ID for further compatibility                                                                           |False      |       |
+|action              |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.                                                     |False      |       |
+|selected_to_merge   |bool              |    |False    |         |Whether this object should be applied during diff merge.                                                   |False      |       |
+|comment             |str               |    |False    |         |User comment                                                                                               |False      |       |
+|diff_changes        |MergeInformation  |    |False    |         |                                                                                                           |False      |       |
+|device_idtag        |str               |    |False    |         |Unique ID                                                                                                  |False      |       |
+|tpe                 |enum DeviceType   |    |False    |         |Device type                                                                                                |False      |       |
+|device_name         |str               |    |False    |         |Device name                                                                                                |False      |       |
+|device              |PhysicalDeviceType|    |False    |         |Device name                                                                                                |False      |       |
+|CAPEX               |float             |M€  |False    |         |Capital expenditures. This is the investment value, it overrides the CAPEX value of the device if it exits.|False      |       |
+|status              |bool              |    |False    |         |If true the investment activates when applied, otherwise is deactivated.                                   |False      |       |
+|group               |Investments Group |    |False    |         |Investment group                                                                                           |False      |       |
+|commissioning_date  |float             |    |False    |         |Date when the investment is commissioned                                                                   |False      |       |
+|decommissioning_date|float             |    |False    |         |Date when the investment is decommissioned                                                                 |False      |       |
+|prop                |str               |    |False    |         |device property                                                                                            |False      |       |
+|value               |float             |    |False    |         |value status                                                                                               |False      |       |

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.Sparse.csc2 &mdash; VeraGrid 6.5.26 documentation</title>
+  <title>VeraGridEngine.Utils.Sparse.csc2 &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -830,7 +830,7 @@
 
 <div class="viewcode-block" id="pack_4_by_4">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.pack_4_by_4">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">pack_4_by_4</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">D</span><span class="p">:</span> <span class="n">CSC</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stack 4 CSC matrices in a 2 by 2 structure</span>
@@ -888,7 +888,7 @@
 
 <div class="viewcode-block" id="pack_3_by_4">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.pack_3_by_4">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">pack_3_by_4</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="n">CSC</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stack 3 CSC matrices in a 2 by 2 structure</span>
@@ -938,7 +938,7 @@
 
 <div class="viewcode-block" id="csc_cumsum_i">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_cumsum_i">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_cumsum_i</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    p [0..n] = cumulative sum of c [0..n-1], and then copy p [0..n-1] into c</span>
@@ -963,7 +963,7 @@
 
 <div class="viewcode-block" id="sp_transpose">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.sp_transpose">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sp_transpose</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Actual CSC transpose unlike scipy&#39;s</span>
@@ -992,7 +992,7 @@
 
 <div class="viewcode-block" id="sp_slice_cols">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.sp_slice_cols">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sp_slice_cols</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">IntMat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Slice columns</span>
@@ -1029,7 +1029,7 @@
 
 <div class="viewcode-block" id="sp_slice_rows">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.sp_slice_rows">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sp_slice_rows</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">rows</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Slice rows</span>
@@ -1045,7 +1045,7 @@
 
 <div class="viewcode-block" id="sp_slice">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.sp_slice">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">sp_slice</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">rows</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    /*</span>
@@ -1099,7 +1099,7 @@
 
 <div class="viewcode-block" id="csc_stack_2d_ff">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_stack_2d_ff">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_stack_2d_ff</span><span class="p">(</span><span class="n">mats</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CSC</span><span class="p">],</span> <span class="n">n_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assemble matrix from a list of matrices representing a &quot;super matrix&quot;</span>
@@ -1169,7 +1169,7 @@
 
 <div class="viewcode-block" id="diags">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.diags">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">diags</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">Vec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get diagonal sparse matrix from array</span>
@@ -1192,7 +1192,7 @@
 
 <div class="viewcode-block" id="diagc">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.diagc">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">diagc</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get diagonal sparse matrix from value</span>
@@ -1215,7 +1215,7 @@
 
 <div class="viewcode-block" id="extend">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.extend">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">extend</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">last_col</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">last_row</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">corner_val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    B = |   A       last_col |</span>
@@ -1285,7 +1285,7 @@
 
 <div class="viewcode-block" id="csc_multiply_ff">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_multiply_ff">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_multiply_ff</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">CSC</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sparse matrix multiplication, C = A*B where A and B are CSC sparse matrices</span>
@@ -1366,7 +1366,7 @@
 
 <div class="viewcode-block" id="csc_multiply_ff2">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_multiply_ff2">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_multiply_ff2</span><span class="p">(</span><span class="n">Am</span><span class="p">,</span> <span class="n">An</span><span class="p">,</span> <span class="n">Ap</span><span class="p">,</span> <span class="n">Ai</span><span class="p">,</span> <span class="n">Ax</span><span class="p">,</span>
                      <span class="n">Bm</span><span class="p">,</span> <span class="n">Bn</span><span class="p">,</span> <span class="n">Bp</span><span class="p">,</span> <span class="n">Bi</span><span class="p">,</span> <span class="n">Bx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1454,7 +1454,7 @@
 
 <div class="viewcode-block" id="csc_multiply_cx">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_multiply_cx">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_multiply_cx</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CxCSC</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">CSC</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CxCSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sparse matrix multiplication, C = A*B where A and B are CSC sparse matrices</span>
@@ -1535,7 +1535,7 @@
 
 <div class="viewcode-block" id="csc_matvec_ff">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_matvec_ff">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_matvec_ff</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -1566,7 +1566,7 @@
 
 <div class="viewcode-block" id="csc_matvec_cx">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_matvec_cx">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_matvec_cx</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CxCSC</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -1595,10 +1595,10 @@
 
 
 
-<span class="c1"># @nb.njit(&quot;i8(i4[:], i4[:], f8[:], i8, f8, i4[:], f8[:], i8, i4[:], i8)&quot;)</span>
+<span class="c1"># @nb.jit(&quot;i8(i4[:], i4[:], f8[:], i8, f8, i4[:], f8[:], i8, i4[:], i8)&quot;)</span>
 <div class="viewcode-block" id="csc_scatter_f">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_scatter_f">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_scatter_f</span><span class="p">(</span><span class="n">Ap</span><span class="p">,</span> <span class="n">Ai</span><span class="p">,</span> <span class="n">Ax</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mark</span><span class="p">,</span> <span class="n">Ci</span><span class="p">,</span> <span class="n">nz</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Scatters and sums a sparse vector A(:,j) into a dense vector, x = x + beta * A(:,j)</span>
@@ -1630,7 +1630,7 @@
 
 <div class="viewcode-block" id="csc_scatter_cx">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_scatter_cx">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_scatter_cx</span><span class="p">(</span><span class="n">Ap</span><span class="p">,</span> <span class="n">Ai</span><span class="p">,</span> <span class="n">Ax</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mark</span><span class="p">,</span> <span class="n">Ci</span><span class="p">,</span> <span class="n">nz</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Scatters and sums a sparse vector A(:,j) into a dense vector, x = x + beta * A(:,j)</span>
@@ -1661,7 +1661,7 @@
 
 <div class="viewcode-block" id="csc_spalloc_f">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_spalloc_f">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_spalloc_f</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">nzmax</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Allocate a sparse matrix (triplet form or compressed-column form).</span>
@@ -1681,7 +1681,7 @@
 
 <div class="viewcode-block" id="csc_spalloc_cx">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_spalloc_cx">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_spalloc_cx</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">nzmax</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Allocate a sparse matrix (triplet form or compressed-column form).</span>
@@ -1700,7 +1700,7 @@
 
 <div class="viewcode-block" id="csc_add_ff">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_add_ff">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_add_ff</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">CSC</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CSC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    C = alpha*A + beta*B</span>
@@ -1741,7 +1741,7 @@
 
 <div class="viewcode-block" id="csc_add_ff2">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_add_ff2">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_add_ff2</span><span class="p">(</span><span class="n">Am</span><span class="p">,</span> <span class="n">An</span><span class="p">,</span> <span class="n">Aindptr</span><span class="p">,</span> <span class="n">Aindices</span><span class="p">,</span> <span class="n">Adata</span><span class="p">,</span> <span class="n">Bn</span><span class="p">,</span> <span class="n">Bindptr</span><span class="p">,</span> <span class="n">Bindices</span><span class="p">,</span> <span class="n">Bdata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    C = A + B</span>
@@ -1780,7 +1780,7 @@
 
 <div class="viewcode-block" id="csc_add_cx2">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.Sparse.html#VeraGridEngine.Utils.Sparse.csc2.csc_add_cx2">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">csc_add_cx2</span><span class="p">(</span><span class="n">Am</span><span class="p">,</span> <span class="n">An</span><span class="p">,</span> <span class="n">Aindptr</span><span class="p">,</span> <span class="n">Aindices</span><span class="p">,</span> <span class="n">Adata</span><span class="p">,</span> <span class="n">Bn</span><span class="p">,</span> <span class="n">Bindptr</span><span class="p">,</span> <span class="n">Bindices</span><span class="p">,</span> <span class="n">Bdata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    C = A + B</span>

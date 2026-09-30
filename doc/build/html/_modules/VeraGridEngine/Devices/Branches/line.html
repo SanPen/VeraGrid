@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Branches.line &mdash; VeraGrid 6.5.37 documentation</title>
+  <title>VeraGridEngine.Devices.Branches.line &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=069969c3"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -758,11 +758,15 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdmittanceMatrix</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return series admittance, using current sequence data without a template.</span>
 
-<span class="sd">        :return:</span>
+<span class="sd">        :return: Series admittance in NABC coordinates.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ys</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span><span class="p">:</span>
+        <span class="c1"># Stored matrices may predate sequence edits; only templates define independent phase data.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ys</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fill_3_phase_from_sequence</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ys</span>
 
@@ -776,11 +780,15 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ysh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdmittanceMatrix</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return shunt admittance, using current sequence data without a template.</span>
 
-<span class="sd">        :return:</span>
+<span class="sd">        :return: Shunt admittance in NABC coordinates, scaled by 1e6 for compilation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ysh</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span><span class="p">:</span>
+        <span class="c1"># Respect disabled updates while loading, before all sequence values have been restored.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_update_enabled</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ysh</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fill_3_phase_from_sequence</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ysh</span>
 
@@ -1121,16 +1129,40 @@
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.line.Line.fill_3_phase_from_sequence">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fill_3_phase_from_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fill the 3x3 from the sequence values</span>
+<span class="sd">        Rebuild phase admittances from Z0 and Z1, assuming Z2 equals Z1.</span>
+
+<span class="sd">        Preserve connected phases without a template and use Z1 when Z0 is absent.</span>
+
+<span class="sd">        :return: None.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span> <span class="o">&gt;</span> <span class="mf">1e-10</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">X0</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="n">SequenceLineType</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X0</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">B0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B0</span><span class="p">)</span>
+        <span class="c1"># A purely resistive or reactive Z0 is valid; both components need not be positive.</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-10</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">r0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span>
+            <span class="n">x0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X0</span>
+            <span class="n">b0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B0</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="n">SequenceLineType</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>
-                                   <span class="n">B0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">)</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="n">SequenceLineType</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">B0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ys</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ys_nabc</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ysh</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ysh_nabc</span><span class="p">()</span></div>
+            <span class="n">r0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
+            <span class="n">b0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span>
+
+        <span class="c1"># Line impedances are already in p.u.; the compiler converts stored shunts by 1e-6.</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">SequenceLineType</span> <span class="o">=</span> <span class="n">SequenceLineType</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="n">r0</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                                                 <span class="n">B</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span> <span class="n">B0</span><span class="o">=</span><span class="n">b0</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">)</span>
+        <span class="n">stored</span><span class="p">:</span> <span class="n">AdmittanceMatrix</span>
+        <span class="n">rebuilt</span><span class="p">:</span> <span class="n">AdmittanceMatrix</span>
+        <span class="k">for</span> <span class="n">stored</span><span class="p">,</span> <span class="n">rebuilt</span> <span class="ow">in</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_ys</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ys_nabc</span><span class="p">()),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ysh</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_ysh_nabc</span><span class="p">())):</span>
+            <span class="c1"># Automatic refresh keeps phase selections; explicit template conversion starts with ABC.</span>
+            <span class="k">if</span> <span class="n">stored</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">stored</span><span class="o">.</span><span class="n">phN</span> <span class="o">=</span> <span class="n">rebuilt</span><span class="o">.</span><span class="n">phN</span>
+                <span class="n">stored</span><span class="o">.</span><span class="n">phA</span> <span class="o">=</span> <span class="n">rebuilt</span><span class="o">.</span><span class="n">phA</span>
+                <span class="n">stored</span><span class="o">.</span><span class="n">phB</span> <span class="o">=</span> <span class="n">rebuilt</span><span class="o">.</span><span class="n">phB</span>
+                <span class="n">stored</span><span class="o">.</span><span class="n">phC</span> <span class="o">=</span> <span class="n">rebuilt</span><span class="o">.</span><span class="n">phC</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">active_phases</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">stored</span><span class="o">.</span><span class="n">phN</span><span class="p">,</span> <span class="n">stored</span><span class="o">.</span><span class="n">phA</span><span class="p">,</span> <span class="n">stored</span><span class="o">.</span><span class="n">phB</span><span class="p">,</span> <span class="n">stored</span><span class="o">.</span><span class="n">phC</span><span class="p">))</span>
+            <span class="n">rebuilt</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="o">~</span><span class="n">active_phases</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">rebuilt</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="o">~</span><span class="n">active_phases</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">stored</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">rebuilt</span><span class="o">.</span><span class="n">values</span></div>
 
 
     <span class="c1"># Scalar property accessors coerce assignments to the declared schema types.</span>

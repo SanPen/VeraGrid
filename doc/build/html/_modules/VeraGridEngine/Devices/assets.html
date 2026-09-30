@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.assets &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Devices.assets &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -119,6 +119,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span><span class="p">,</span> <span class="n">BRANCH_TYPES</span><span class="p">,</span> <span class="n">INJECTION_DEVICE_TYPES</span><span class="p">,</span> <span class="n">FLUID_TYPES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCPROP_TYPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.pointer_device_parent</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointerDeviceParent</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.template_classification</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">classify_dynamic_template_block</span><span class="p">,</span>
 <span class="p">)</span>
@@ -11139,6 +11140,64 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;elm_type not understood: </span><span class="si">{</span><span class="n">elm_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Collect dependency types from the property declarations and explicit</span>
+        <span class="c1"># pointer targets so new device relationships need no branch here.</span>
+        <span class="n">dependency_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceType</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">property_definition</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">registered_properties</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">property_definition</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">):</span>
+                <span class="n">dependency_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">property_definition</span><span class="o">.</span><span class="n">tpe</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elm</span><span class="p">,</span> <span class="n">PointerDeviceParent</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">pointer_device_type</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">pointer_dev_tpes</span><span class="p">:</span>
+                <span class="n">dependency_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pointer_device_type</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Resolve every dependency to the corresponding circuit list while</span>
+        <span class="c1"># retaining specialized lists assembled above for aggregate types.</span>
+        <span class="k">for</span> <span class="n">dependency_type</span> <span class="ow">in</span> <span class="n">dependency_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dependency_type</span> <span class="o">==</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">PhysicalDeviceType</span><span class="p">:</span>
+                <span class="c1"># A generic pointer targets network objects, not catalogue,</span>
+                <span class="c1"># event, grouping, or other metadata objects.</span>
+                <span class="k">if</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dictionary_of_lists</span><span class="p">:</span>
+                    <span class="n">dictionary_of_lists</span><span class="p">[</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">BusDevice</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buses</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">for</span> <span class="n">injection_device_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_injections_device_types</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">injection_device_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dictionary_of_lists</span><span class="p">:</span>
+                        <span class="n">dictionary_of_lists</span><span class="p">[</span><span class="n">injection_device_type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_elements_by_type</span><span class="p">(</span>
+                            <span class="n">injection_device_type</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+                <span class="n">branch_device_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeviceType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">LineDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">DCLineDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer2WDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">Transformer3WDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">TransformerNwDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">WindingDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">HVDCLineDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">VscDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">UpfcDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">SeriesReactanceDevice</span><span class="p">,</span>
+                    <span class="n">DeviceType</span><span class="o">.</span><span class="n">SwitchDevice</span><span class="p">,</span>
+                <span class="p">]</span>
+                <span class="k">for</span> <span class="n">branch_device_type</span> <span class="ow">in</span> <span class="n">branch_device_types</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">branch_device_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dictionary_of_lists</span><span class="p">:</span>
+                        <span class="n">dictionary_of_lists</span><span class="p">[</span><span class="n">branch_device_type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_elements_by_type</span><span class="p">(</span>
+                            <span class="n">branch_device_type</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dependency_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dictionary_of_lists</span><span class="p">:</span>
+                    <span class="n">dictionary_of_lists</span><span class="p">[</span><span class="n">dependency_type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_elements_by_type</span><span class="p">(</span><span class="n">dependency_type</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">RmsModelTemplateDevice</span> <span class="ow">in</span> <span class="n">dictionary_of_lists</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
                 <span class="n">DeviceType</span><span class="o">.</span><span class="n">EmtModelTemplateDevice</span> <span class="ow">in</span> <span class="n">dictionary_of_lists</span><span class="p">):</span>

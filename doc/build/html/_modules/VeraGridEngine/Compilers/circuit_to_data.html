@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Compilers.circuit_to_data &mdash; VeraGrid 6.5.37 documentation</title>
+  <title>VeraGridEngine.Compilers.circuit_to_data &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=069969c3"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -777,15 +777,26 @@
             <span class="n">data</span><span class="o">.</span><span class="n">shift_key</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_shift_key_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">fill_three_phase</span><span class="p">:</span>
+                <span class="c1"># Distribute missing P and Q independently, preserving explicit phase values.</span>
+                <span class="n">phase_power</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">elm</span><span class="o">.</span><span class="n">get_Sa_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">),</span>
+                                                    <span class="n">elm</span><span class="o">.</span><span class="n">get_Sb_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">),</span>
+                                                    <span class="n">elm</span><span class="o">.</span><span class="n">get_Sc_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">phase_power</span><span class="o">.</span><span class="n">real</span><span class="p">):</span>
+                    <span class="n">phase_power</span><span class="o">.</span><span class="n">real</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_P_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">phase_power</span><span class="o">.</span><span class="n">imag</span><span class="p">):</span>
+                    <span class="n">phase_power</span><span class="o">.</span><span class="n">imag</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="c1"># Each device occupies N, A, B, C; generation has the negative load sign.</span>
                 <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">conn</span> <span class="o">==</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">GroundedStar</span><span class="p">:</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">S3_star</span><span class="p">[</span><span class="mi">3</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Sa_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">S3_star</span><span class="p">[</span><span class="mi">3</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Sb_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">S3_star</span><span class="p">[</span><span class="mi">3</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Sc_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">S3_star</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span> <span class="o">-=</span> <span class="n">phase_power</span>
 
                 <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">conn</span> <span class="o">==</span> <span class="n">ShuntConnectionType</span><span class="o">.</span><span class="n">Delta</span><span class="p">:</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">S3_delta</span><span class="p">[</span><span class="mi">3</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Sa_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">S3_delta</span><span class="p">[</span><span class="mi">3</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Sb_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">S3_delta</span><span class="p">[</span><span class="mi">3</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Sc_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">S3_delta</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span> <span class="o">-=</span> <span class="n">phase_power</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhandled connection type </span><span class="si">{</span><span class="n">elm</span><span class="o">.</span><span class="n">conn</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1202,6 +1213,7 @@
 <span class="sd">    :param logger:</span>
 <span class="sd">    :param bus_data:</span>
 <span class="sd">    :param t_idx:</span>
+<span class="sd">    :param use_stored_guess:</span>
 <span class="sd">    :param control_remote_voltage:</span>
 <span class="sd">    :param fill_three_phase:</span>
 <span class="sd">    :return:</span>
@@ -1220,7 +1232,8 @@
     <span class="n">data</span><span class="o">.</span><span class="n">mttf</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">mttf</span>
     <span class="n">data</span><span class="o">.</span><span class="n">mttr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">mttr</span>
 
-    <span class="n">data</span><span class="o">.</span><span class="n">control_mode_int</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">control_mode</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
+    <span class="n">control_mode</span><span class="p">:</span> <span class="n">GeneratorControlMode</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_control_mode_prof_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">control_mode_int</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">control_mode</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span>
     <span class="n">data</span><span class="o">.</span><span class="n">installed_p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Snom</span>
     <span class="n">bus_data</span><span class="o">.</span><span class="n">installed_power</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">elm</span><span class="o">.</span><span class="n">Snom</span>
 
@@ -1292,7 +1305,7 @@
         <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_srap_enabled_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="n">bus_data</span><span class="o">.</span><span class="n">srap_available_power</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">data</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">elm</span><span class="o">.</span><span class="n">control_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">remote_control</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">j</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">control_bus</span><span class="p">]</span>
@@ -1313,10 +1326,10 @@
                                     <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
             <span class="n">data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_Q_at</span><span class="p">(</span><span class="n">t_idx</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">elm</span><span class="o">.</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">QVDroop</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">QVDroop</span><span class="p">:</span>
             <span class="c1"># Q will be computed by the droop</span>
             <span class="n">data</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1443,7 +1456,6 @@
 <span class="sd">    :param opf_results:</span>
 <span class="sd">    :param t_idx:</span>
 <span class="sd">    :param time_series:</span>
-<span class="sd">    :param use_stored_guess:</span>
 <span class="sd">    :param control_remote_voltage:</span>
 <span class="sd">    :param fill_three_phase:</span>
 <span class="sd">    :return:</span>

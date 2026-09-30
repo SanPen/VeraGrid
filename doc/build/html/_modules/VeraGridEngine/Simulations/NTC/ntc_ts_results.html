@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.NTC.ntc_ts_results &mdash; VeraGrid 6.5.37 documentation</title>
+  <title>VeraGridEngine.Simulations.NTC.ntc_ts_results &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=069969c3"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -162,6 +162,7 @@
         <span class="n">ResultsProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;inter_space_vsc&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">expandable</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="n">ResultsProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;converged&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="n">BoolVec</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">expandable</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="n">ResultsProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;inter_area_flows&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="n">Vec</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">expandable</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">ResultsProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;transmission_reliability_margin&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">expandable</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="n">ResultsProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;contingency_flows_list&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">expandable</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="n">ResultsProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;strict_formulation&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">expandable</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="n">ResultsProperty</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;contingency_group_device_names&#39;</span><span class="p">,</span> <span class="n">tpe</span><span class="o">=</span><span class="n">ObjVec</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">expandable</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
@@ -211,6 +212,7 @@
         <span class="s2">&quot;strict_formulation&quot;</span><span class="p">,</span>
         <span class="s2">&quot;converged&quot;</span><span class="p">,</span>
         <span class="s2">&quot;inter_area_flows&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;transmission_reliability_margin&quot;</span><span class="p">,</span>
         <span class="s2">&quot;contingency_group_device_names&quot;</span><span class="p">,</span>
         <span class="s2">&quot;worst_contingency_idx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;worst_contingency_flow&quot;</span><span class="p">,</span>
@@ -227,7 +229,8 @@
                  <span class="n">contingency_group_names</span><span class="p">:</span> <span class="n">StrVec</span><span class="p">,</span>
                  <span class="n">time_array</span><span class="p">:</span> <span class="n">DateVec</span><span class="p">,</span>
                  <span class="n">time_indices</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
-                 <span class="n">clustering_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ClusteringResults</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                 <span class="n">clustering_results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ClusteringResults</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">transmission_reliability_margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -239,6 +242,7 @@
 <span class="sd">        :param time_array:</span>
 <span class="sd">        :param time_indices:</span>
 <span class="sd">        :param clustering_results:</span>
+<span class="sd">        :param transmission_reliability_margin: Study TRM in MW; zero when absent from older saved results.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ResultsTemplate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -346,6 +350,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">converged</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="c1"># A scalar study margin is shared by original and representative hours.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transmission_reliability_margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">transmission_reliability_margin</span>
 
         <span class="n">n_g</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">contingency_group_names</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contingency_group_device_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_g</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
@@ -660,10 +666,12 @@
             <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">result_type</span> <span class="o">==</span> <span class="n">ResultTypes</span><span class="o">.</span><span class="n">NetTransferCapacity</span><span class="p">:</span>
+            <span class="c1"># The optimizer returns TTC; subtract TRM only in the capacity report.</span>
             <span class="k">return</span> <span class="n">ResultsTable</span><span class="p">(</span>
-                <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">transmission_reliability_margin</span><span class="p">)),</span>
                 <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span>
-                <span class="n">columns</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;NTC (MW)&#39;</span><span class="p">]),</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="s1">&#39;TTC (MW)&#39;</span><span class="p">,</span> <span class="s1">&#39;NTC (MW)&#39;</span><span class="p">)),</span>
                 <span class="n">title</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">result_type</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
                 <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;(MW)&#39;</span><span class="p">,</span>
                 <span class="n">cols_device_type</span><span class="o">=</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">NoDevice</span><span class="p">,</span>
@@ -713,7 +721,8 @@
                 <span class="n">alpha_n1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha_n1_worst</span><span class="p">,</span>
                 <span class="n">monitor_logic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor_logic</span><span class="p">,</span>
                 <span class="n">flow_n</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sf</span><span class="p">),</span>
-                <span class="n">ntc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span><span class="p">,</span>
+                <span class="n">ttc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span><span class="p">,</span>
+                <span class="n">transmission_reliability_margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transmission_reliability_margin</span><span class="p">,</span>
                 <span class="n">contingency_rates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">,</span>
                 <span class="n">loading_threshold_pct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loading_threshold_to_report</span><span class="p">,</span>
                 <span class="n">vsc_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vsc_names</span><span class="p">,</span>
@@ -746,7 +755,8 @@
                 <span class="n">alpha_n1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha_n1_worst</span><span class="p">[</span><span class="n">selected_rows</span><span class="p">],</span>
                 <span class="n">monitor_logic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor_logic</span><span class="p">[</span><span class="n">selected_rows</span><span class="p">],</span>
                 <span class="n">flow_n</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sf</span><span class="p">[</span><span class="n">selected_rows</span><span class="p">]),</span>
-                <span class="n">ntc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span><span class="p">[</span><span class="n">selected_rows</span><span class="p">],</span>
+                <span class="n">ttc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inter_area_flows</span><span class="p">[</span><span class="n">selected_rows</span><span class="p">],</span>
+                <span class="n">transmission_reliability_margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transmission_reliability_margin</span><span class="p">,</span>
                 <span class="n">contingency_rates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contingency_rates</span><span class="p">,</span>
                 <span class="n">loading_threshold_pct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loading_threshold_to_report</span><span class="p">,</span>
                 <span class="n">total_slack_mw</span><span class="o">=</span><span class="n">total_slack</span><span class="p">[</span><span class="n">selected_rows</span><span class="p">],</span>

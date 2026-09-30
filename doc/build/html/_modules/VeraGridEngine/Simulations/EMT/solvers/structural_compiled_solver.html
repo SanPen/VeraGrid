@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver &mdash; VeraGrid 6.5.37 documentation</title>
+  <title>VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=069969c3"></script>
+      <script src="../../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -995,7 +995,7 @@
     <span class="k">return</span> <span class="n">colors</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_color</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">color_groups</span>
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">_build_scatter_color_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">_build_scatter_color_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_scatter_color_jvp_to_csc_data</span><span class="p">(</span>
         <span class="n">jvp</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">,</span>
@@ -1041,7 +1041,7 @@
         <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">_build_max_abs_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">_build_max_abs_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_max_abs_value</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the infinity norm without allocating temporary arrays.</span>
@@ -1073,7 +1073,7 @@
     <span class="k">return</span> <span class="n">max_value</span>
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">_build_copy_negated_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">_build_copy_negated_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_copy_negated_vector</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the negated vector into a preallocated buffer.</span>
@@ -1092,7 +1092,7 @@
         <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">_build_fill_full_parameter_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">_build_fill_full_parameter_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_fill_full_parameter_buffer</span><span class="p">(</span>
         <span class="n">runtime_params</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">,</span>
         <span class="n">static_params</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">,</span>
@@ -1124,7 +1124,7 @@
         <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_max_abs_diff_vectors</span><span class="p">(</span><span class="n">left_values</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">,</span> <span class="n">right_values</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the maximum absolute difference between two vectors.</span>
@@ -1159,7 +1159,7 @@
 
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">_build_permute_csc_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">_build_permute_csc_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_permute_csc_data_by_columns</span><span class="p">(</span>
         <span class="n">source_data</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">,</span>
         <span class="n">source_indptr</span><span class="p">:</span> <span class="n">Int32Vector</span><span class="p">,</span>
@@ -1199,7 +1199,7 @@
         <span class="n">dst_col</span> <span class="o">+=</span> <span class="mi">1</span>
 
 
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">_build_scatter_permuted_solution_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">_build_scatter_permuted_solution_signature</span><span class="p">(),</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_scatter_permuted_solution_to_original_order</span><span class="p">(</span>
         <span class="n">permuted_solution</span><span class="p">:</span> <span class="n">Float64Vector</span><span class="p">,</span>
         <span class="n">inverse_column_perm</span><span class="p">:</span> <span class="n">Int32Vector</span><span class="p">,</span>

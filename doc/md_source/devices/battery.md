@@ -7,7 +7,7 @@ A `Battery` extends generator-style injection modelling with energy-capacity and
 This device connects to a bus and contributes power, current, or admittance to the solved network model.
 
 ### Registered properties
-Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, `Q`, `Qmin`, `Qmax`, `Pf`, `Vset`, `Cost2`, `Cost0`, `enabled_dispatch`, `must_run`, `srap_enabled`.
+Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, `Q`, `Qmin`, `Qmax`, `control_mode`, `Pf`, `Vset`, `Cost2`, `Cost0`, `enabled_dispatch`, `must_run`, `srap_enabled`.
 
 |          name          |       class_type        | unit  |mandatory|max_chars|                                  descriptions                                  |has_profile|comment|
 |------------------------|-------------------------|-------|---------|---------|--------------------------------------------------------------------------------|-----------|-------|
@@ -61,7 +61,7 @@ Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, 
 |Q                       |float                    |MVAr   |False    |         |Reactive power                                                                  |True       |       |
 |Qmin                    |float                    |MVAr   |False    |         |Minimum reactive power.                                                         |True       |       |
 |Qmax                    |float                    |MVAr   |False    |         |Maximum reactive power.                                                         |True       |       |
-|control_mode            |enum GeneratorControlMode|       |False    |         |Generator control mode                                                          |False      |       |
+|control_mode            |enum GeneratorControlMode|       |False    |         |Generator control mode                                                          |True       |       |
 |control_bus             |Bus                      |       |False    |         |Control bus                                                                     |False      |       |
 |Pf                      |float                    |       |False    |         |Power factor (cos(phi)). This is used for non-controlled generators.            |True       |       |
 |Vset                    |float                    |p.u.   |False    |         |Set voltage. This is used for controlled generators.                            |True       |       |

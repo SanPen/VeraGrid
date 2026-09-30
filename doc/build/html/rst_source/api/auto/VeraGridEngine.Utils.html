@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils package &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Utils package &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -314,7 +314,9 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#module-VeraGridEngine.Utils.MIP.ortools_interface">VeraGridEngine.Utils.MIP.ortools_interface module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel"><code class="docutils literal notranslate"><span class="pre">OrToolsLpModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.INFEASIBLE"><code class="docutils literal notranslate"><span class="pre">OrToolsLpModel.INFEASIBLE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.INFINITY"><code class="docutils literal notranslate"><span class="pre">OrToolsLpModel.INFINITY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.NOT_SOLVED"><code class="docutils literal notranslate"><span class="pre">OrToolsLpModel.NOT_SOLVED</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.OPTIMAL"><code class="docutils literal notranslate"><span class="pre">OrToolsLpModel.OPTIMAL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_bin"><code class="docutils literal notranslate"><span class="pre">OrToolsLpModel.add_bin()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.ortools_interface.OrToolsLpModel.add_cst"><code class="docutils literal notranslate"><span class="pre">OrToolsLpModel.add_cst()</span></code></a></li>
@@ -342,7 +344,9 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#module-VeraGridEngine.Utils.MIP.pulp_interface">VeraGridEngine.Utils.MIP.pulp_interface module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel"><code class="docutils literal notranslate"><span class="pre">PulpLpModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.INFEASIBLE"><code class="docutils literal notranslate"><span class="pre">PulpLpModel.INFEASIBLE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.INFINITY"><code class="docutils literal notranslate"><span class="pre">PulpLpModel.INFINITY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.NOT_SOLVED"><code class="docutils literal notranslate"><span class="pre">PulpLpModel.NOT_SOLVED</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.OPTIMAL"><code class="docutils literal notranslate"><span class="pre">PulpLpModel.OPTIMAL</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_bin"><code class="docutils literal notranslate"><span class="pre">PulpLpModel.add_bin()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.PulpLpModel.add_cst"><code class="docutils literal notranslate"><span class="pre">PulpLpModel.add_cst()</span></code></a></li>
@@ -364,15 +368,23 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.add_pulp_variable"><code class="docutils literal notranslate"><span class="pre">add_pulp_variable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.get_infeasible_status"><code class="docutils literal notranslate"><span class="pre">get_infeasible_status()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.get_lp_var_value"><code class="docutils literal notranslate"><span class="pre">get_lp_var_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.get_model_constraint_by_name"><code class="docutils literal notranslate"><span class="pre">get_model_constraint_by_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.get_model_constraint_items"><code class="docutils literal notranslate"><span class="pre">get_model_constraint_items()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.get_not_solved_status"><code class="docutils literal notranslate"><span class="pre">get_not_solved_status()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.get_optimal_status"><code class="docutils literal notranslate"><span class="pre">get_optimal_status()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.get_pulp_available_mip_solvers"><code class="docutils literal notranslate"><span class="pre">get_pulp_available_mip_solvers()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.make_highs_solver"><code class="docutils literal notranslate"><span class="pre">make_highs_solver()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.make_pulp_expression"><code class="docutils literal notranslate"><span class="pre">make_pulp_expression()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.pulp_interface.normalize_solve_status"><code class="docutils literal notranslate"><span class="pre">normalize_solve_status()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#module-VeraGridEngine.Utils.MIP.selected_interface">VeraGridEngine.Utils.MIP.selected_interface module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.selected_interface.get_available_mip_frameworks"><code class="docutils literal notranslate"><span class="pre">get_available_mip_frameworks()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.selected_interface.get_available_mip_solvers"><code class="docutils literal notranslate"><span class="pre">get_available_mip_solvers()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.selected_interface.get_model_instance"><code class="docutils literal notranslate"><span class="pre">get_model_instance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.selected_interface.is_infeasible"><code class="docutils literal notranslate"><span class="pre">is_infeasible()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.selected_interface.join"><code class="docutils literal notranslate"><span class="pre">join()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.selected_interface.lpDot"><code class="docutils literal notranslate"><span class="pre">lpDot()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.selected_interface.lpDot1D_changes"><code class="docutils literal notranslate"><span class="pre">lpDot1D_changes()</span></code></a></li>

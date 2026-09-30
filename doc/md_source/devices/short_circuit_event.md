@@ -22,6 +22,7 @@ Profile-enabled properties: none.
 |device_idtag     |str                    |    |False    |         |Unique ID                                                                     |False      |       |
 |tpe              |enum DeviceType        |    |False    |         |Device type                                                                   |False      |       |
 |device_name      |str                    |    |False    |         |Device name                                                                   |False      |       |
+|device           |PhysicalDeviceType     |    |False    |         |Device name                                                                   |False      |       |
 |fault_type       |enum FaultType         |    |False    |         |Type of short circuit                                                         |False      |       |
 |method           |enum MethodShortCircuit|    |False    |         |Method of short circuit                                                       |False      |       |
 |phases           |enum PhasesShortCircuit|    |False    |         |Phases involved                                                               |False      |       |

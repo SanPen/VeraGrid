@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.DataStructures.numerical_circuit &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.DataStructures.numerical_circuit &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -158,7 +158,7 @@
 
 <div class="viewcode-block" id="build_q_limits">
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.numerical_circuit.build_q_limits">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_q_limits</span><span class="p">(</span><span class="n">nbus</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                    <span class="n">gen_idx</span><span class="p">,</span> <span class="n">q_min_gen</span><span class="p">,</span> <span class="n">q_max_gen</span><span class="p">,</span> <span class="n">active_gen</span><span class="p">,</span> <span class="n">control_mode_int_gen</span><span class="p">,</span>
                    <span class="n">batt_idx</span><span class="p">,</span> <span class="n">q_min_batt</span><span class="p">,</span> <span class="n">q_max_batt</span><span class="p">,</span> <span class="n">active_batt</span><span class="p">,</span> <span class="n">control_mode_int_batt</span><span class="p">,</span>
@@ -330,7 +330,7 @@
 
 <div class="viewcode-block" id="correct_bus_types">
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.DataStructures.html#VeraGridEngine.DataStructures.numerical_circuit.correct_bus_types">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">correct_bus_types</span><span class="p">(</span><span class="n">gen_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
                       <span class="n">control_mode_int</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
                       <span class="n">gen_controllable_bus_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>

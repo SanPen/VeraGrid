@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Branches package &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Devices.Branches package &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -15,7 +15,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -1331,7 +1331,13 @@ NFPA 70-2005, National Electrical Code, Table 8, footnote #2; and
 <dl class="py method">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Branches.line.Line.fill_3_phase_from_sequence">
 <span class="sig-name descname"><span class="pre">fill_3_phase_from_sequence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Devices/Branches/line.html#Line.fill_3_phase_from_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Devices.Branches.line.Line.fill_3_phase_from_sequence" title="Link to this definition"></a></dt>
-<dd><p>Fill the 3x3 from the sequence values</p>
+<dd><p>Rebuild phase admittances from Z0 and Z1, assuming Z2 equals Z1.</p>
+<p>Preserve connected phases without a template and use Z1 when Z0 is absent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1484,9 +1490,10 @@ the weight is the impedance module (sqrt(r^2 + x^2))
 <dl class="py property">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Branches.line.Line.ys">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ys</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.admittance_matrix.AdmittanceMatrix" title="VeraGridEngine.Devices.admittance_matrix.AdmittanceMatrix"><span class="pre">AdmittanceMatrix</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Branches.line.Line.ys" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return series admittance, using current sequence data without a template.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dd class="field-odd"><p>Series admittance in NABC coordinates.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1494,9 +1501,10 @@ the weight is the impedance module (sqrt(r^2 + x^2))
 <dl class="py property">
 <dt class="sig sig-object py" id="VeraGridEngine.Devices.Branches.line.Line.ysh">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ysh</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.admittance_matrix.AdmittanceMatrix" title="VeraGridEngine.Devices.admittance_matrix.AdmittanceMatrix"><span class="pre">AdmittanceMatrix</span></a></span><a class="headerlink" href="#VeraGridEngine.Devices.Branches.line.Line.ysh" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Return shunt admittance, using current sequence data without a template.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dd class="field-odd"><p>Shunt admittance in NABC coordinates, scaled by 1e6 for compilation.</p>
 </dd>
 </dl>
 </dd></dl>

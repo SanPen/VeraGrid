@@ -22,6 +22,7 @@ Profile-enabled properties: none.
 |device_idtag     |str                   |    |False    |         |Unique ID                                                    |False      |       |
 |tpe              |enum DeviceType       |    |False    |         |Device type supported by this FMU template                   |False      |       |
 |device_name      |str                   |    |False    |         |Device name                                                  |False      |       |
+|device           |PhysicalDeviceType    |    |False    |         |Device name                                                  |False      |       |
 |block            |DaeBlock              |    |False    |         |Symbolic wrapper block used by the FMU template              |False      |       |
 |domain           |enum FmuTemplateDomain|    |False    |         |Simulation domain where the FMU template can be used         |False      |       |
 |mode             |enum FmuTemplateMode  |    |False    |         |FMI 2.0 execution mode stored by the template                |False      |       |

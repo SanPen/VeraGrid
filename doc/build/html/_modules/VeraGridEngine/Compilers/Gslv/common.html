@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Compilers.Gslv.common &mdash; VeraGrid 6.5.26 documentation</title>
+  <title>VeraGridEngine.Compilers.Gslv.common &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -120,12 +120,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.activation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">pg</span><span class="p">,</span> <span class="n">tap_module_control_mode_dict</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Compilers.Gslv.activation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">pg</span><span class="p">,</span> <span class="n">generator_control_mode_dict</span><span class="p">,</span>
+                                                           <span class="n">tap_module_control_mode_dict</span><span class="p">,</span>
                                                            <span class="n">tap_phase_control_mode_dict</span><span class="p">,</span> <span class="n">shunt_connection_type_dict</span><span class="p">,</span>
                                                            <span class="n">GSLV_AVAILABLE</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">Vec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyProfile</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">GeneratorControlMode</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># Only imports the below statements during type checking</span>
     <span class="k">pass</span>
@@ -227,6 +228,12 @@
                     <span class="c1"># we pick all the profile</span>
                     <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">],</span>
                                              <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">GeneratorControlMode</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">generator_control_mode_dict</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+                            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">sparse_array</span><span class="o">.</span><span class="n">get_map</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                    <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">generator_control_mode_dict</span><span class="p">[</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">],</span>
+                                             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">sparse_array</span><span class="o">.</span><span class="n">get_map</span><span class="p">()</span>
 
@@ -249,6 +256,11 @@
                     <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">],</span>
                                              <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">GeneratorControlMode</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">generator_control_mode_dict</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sp_arr2</span><span class="o">.</span><span class="n">get_map</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                    <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">generator_control_mode_dict</span><span class="p">[</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">],</span>
+                                             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">sp_arr2</span><span class="o">.</span><span class="n">get_map</span><span class="p">()</span>
                     <span class="n">gslv_profile</span><span class="o">.</span><span class="n">init_sparse</span><span class="p">(</span><span class="n">default_value</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">default_value</span><span class="p">,</span>
@@ -262,6 +274,8 @@
                     <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_phase_control_mode_lst</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">):</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_module_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">GeneratorControlMode</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">generator_control_mode_dict</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span>
 
@@ -274,6 +288,8 @@
                     <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_phase_control_mode_lst</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">[</span><span class="n">time_indices</span><span class="p">])</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">):</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">convert_tap_module_control_mode_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">[</span><span class="n">time_indices</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">GeneratorControlMode</span><span class="p">):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">generator_control_mode_dict</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">[</span><span class="n">time_indices</span><span class="p">]]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">gc_profile</span><span class="o">.</span><span class="n">dense_array</span><span class="p">[</span><span class="n">time_indices</span><span class="p">]</span>
 
@@ -285,6 +301,9 @@
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">):</span>
             <span class="n">gslv_profile</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">tap_module_control_mode_dict</span><span class="p">[</span><span class="n">default_val</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_val</span><span class="p">,</span> <span class="n">GeneratorControlMode</span><span class="p">):</span>
+            <span class="n">gslv_profile</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">generator_control_mode_dict</span><span class="p">[</span><span class="n">default_val</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">gslv_profile</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">default_val</span><span class="p">)</span>

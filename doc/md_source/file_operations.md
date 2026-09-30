@@ -11,21 +11,34 @@ From there you may further edit or export in any of the supported formats.
 
 VeraGrid supports a great deal of file formats. 
 
-|                    |read | write |
-|--------------------|-----|-------|
-| VeraGrid           |✅    | ✅     |
-| Json               |✅    | ✅     |
-| CIM 16             |✅    | ✅     |
-| CGMES 2.4.15       |✅    | ✅     |
-| CGMES 3.0          |✅    | ✅     |
-| raw/rawx (PSS/e)   |✅    | ✅     |
-| dgs (PowerFactory) |✅    | ✅     |
-| ucte (UCTE)        |✅    | ✅     |
-| m (Matpower)       |✅    | ✅     |
-| p (PandaPower)*    |✅    |       |
-| nc (PyPSA)*        |✅    |       |
-| epc (PSLF)         |✅    |       |
-| Power grid models  |     | ✅     |
+|                    | read | write | Comments |
+|--------------------|------|-------|----------|
+| VeraGrid           | ✅   | ✅    | Native `.veragrid` format. |
+| VeraGrid scenario  | ✅   | ✅    | Scenario/profile data. |
+| VeraGrid delta     | ✅   |       | Differential model format. |
+| VeraGrid SQLite    | ✅   | ✅    | Native SQLite storage. |
+| VeraGrid HDF5      | ✅   | ✅    | Native HDF5 storage. |
+| VeraGrid Excel     | ✅   | ✅    | VeraGrid workbook variants. |
+| Json               | ✅   | ✅    | Native JSON model format. |
+| CIM 16             | ✅   | ✅    | CIM XML/ZIP exchange. |
+| CGMES 2.4.15       | ✅   | ✅    | CGMES version-specific exchange. |
+| CGMES 3.0          | ✅   | ✅    | CGMES version-specific exchange. |
+| raw/rawx (PSS/e)   | ✅   | ✅    | PSS/e versions 29–35. |
+| dgs (PowerFactory) | ✅   | ✅    | PowerFactory exchange; not fully lossless. |
+| ucte (UCTE)        | ✅   | ✅    | UCTE network exchange. |
+| m (Matpower)       | ✅   | ✅    | Matpower case files. |
+| p (PandaPower)*    | ✅   |       | Requires optional `pandapower`. |
+| nc (PyPSA)*        | ✅   |       | Requires optional `pypsa`. |
+| hdf5 (PyPSA)*      | ✅   |       | PyPSA HDF5; requires optional `pypsa`. |
+| epc (PSLF)         | ✅   |       | PSLF exchange; not fully lossless. |
+| pwf (ANAREDE)      | ✅   |       | ANAREDE fixed-width import. |
+| dpx                | ✅   |       | Read-only DPX import. |
+| ech/dta (Eurostag) | ✅   |       | Eurostag multi-file import. |
+| iidm               | ✅   |       | IIDM XML/compressed XML import. |
+| RTE XML            | ✅   |       | RTE-specific XML import. |
+| IPA                | ✅   |       | Read-only IPA import. |
+| Generic Excel      | ✅   | ✅    | Generic workbook import/export. |
+| Power grid models  |      | ✅    | VeraGrid power-grid model export. |
 
 
 **Compatibility caveat**
@@ -50,7 +63,7 @@ These are specially relevant for CGMES and raw/rawx formats.
 ```python
 import VeraGridEngine as gce
 
-# load a grid (.veragrid, .m (Matpower), .raw (PSS/e) .rawx (PSS/e), .epc (PSLF), .dgs (PowerFactory)
+# load a grid (.veragrid, .m (Matpower), .raw (PSS/e), .rawx (PSS/e), .epc (PSLF), .dgs (PowerFactory), .pwf (ANAREDE))
 my_grid = gce.open_file("my_file.veragrid")
 ```
 
@@ -226,6 +239,36 @@ batch_options = gce.FileSavingOptions(
 )
 
 gce.FileSave(circuit=grid, file_name="network_profiles.zip", options=batch_options).save()
+```
+
+### ANAREDE PWF
+
+#### Import assumptions
+
+ANAREDE `.pwf` files are read-only imports. They are converted into the native
+`MultiCircuit` model; the original fixed-width PWF structure is not retained
+as the working grid format.
+
+The importer supports the main ANAREDE steady-state records, including:
+
+- AC buses, loads, generators, lines, transformers and shunts;
+- switched shunts, static var compensators and series compensation;
+- areas, zones, voltage-limit groups and transformer tap settings;
+- classical HVDC links assembled from `DELO`, `DCBA`, `DCLI`, `DCNV` and `DCCV`;
+- VSC links from `DVSC`.
+
+ANAREDE study-control sections such as solver options, measurements and
+incremental-control records are preserved as parser study records when they do
+not correspond to native electrical devices. Latin-1 is the default text
+encoding, with detector-assisted recovery for files containing other encoding
+patterns.
+
+#### Example
+
+```python
+import VeraGridEngine as gce
+
+grid = gce.open_file("network.pwf")
 ```
 
 ### DGS

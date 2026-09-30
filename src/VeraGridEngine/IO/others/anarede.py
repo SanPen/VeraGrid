@@ -3,18 +3,54 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+import math
+from typing import Dict, List, Type, overload
 import chardet
-from typing import List, Type, Dict
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import Logger
 
 
-def _parse_fixed(line: str,
-                 start: int,
-                 end: int,
-                 dtype: Type[str] | Type[int] | Type[float] = str,
-                 implicit_decimals: int = 0):
+@overload
+def _parse_fixed(
+    line: str,
+    start: int,
+    end: int,
+    dtype: Type[int],
+    implicit_decimals: int = 0,
+) -> int:
+    ...
+
+
+@overload
+def _parse_fixed(
+    line: str,
+    start: int,
+    end: int,
+    dtype: Type[float],
+    implicit_decimals: int = 0,
+) -> float:
+    ...
+
+
+@overload
+def _parse_fixed(
+    line: str,
+    start: int,
+    end: int,
+    dtype: Type[str] = str,
+    implicit_decimals: int = 0,
+) -> str:
+    ...
+
+
+def _parse_fixed(
+    line: str,
+    start: int,
+    end: int,
+    dtype: Type[str] | Type[int] | Type[float] = str,
+    implicit_decimals: int = 0,
+) -> str | int | float:
     """
     Extract substring by fixed columns and convert to the desired dtype.
     :param line:
@@ -85,6 +121,7 @@ class PwfBus:
     __slots__ = (
         "number",
         "operation",
+        "status",
         "type",
         "base_voltage_group",
         "voltage_limit_group",
@@ -110,6 +147,7 @@ class PwfBus:
         """
         self.number: int = 0
         self.operation: str = "A"
+        self.status: str = "L"
         self.type: int = 1
         self.base_voltage_group: str = ""
         self.voltage_limit_group: str = ""
@@ -134,29 +172,30 @@ class PwfBus:
         :param line:
         :return:
         """
-        self.number = _parse_fixed(line, 1, 2, int)
-        self.operation = _parse_fixed(line, 6, 7, str)
+        self.number = _parse_fixed(line, 1, 5, int)
+        self.operation = _parse_fixed(line, 6, 6, str)
+        self.status = _parse_fixed(line, 7, 7, str)
         self.type = _parse_fixed(line, 8, 8, int)
         self.base_voltage_group = _parse_fixed(line, 9, 10, str)
         self.voltage_limit_group = _parse_fixed(line, 23, 24, str)
         self.name = _parse_fixed(line, 11, 22, str)
-        self.voltage = _parse_fixed(line, 25, 29, float, 2)
-        self.angle = _parse_fixed(line, 30, 34, float, 2)
-        self.pg = _parse_fixed(line, 35, 40, float, 1)
-        self.qg = _parse_fixed(line, 41, 46, float, 1)
-        self.qmin = _parse_fixed(line, 47, 52, float, 1)
-        self.qmax = _parse_fixed(line, 53, 58, float, 1)
-        self.controlled_bus = _parse_fixed(line, 59, 63, int)
-        self.pl = _parse_fixed(line, 64, 69, float, 1)
-        self.ql = _parse_fixed(line, 70, 75, float, 1)
-        self.area = _parse_fixed(line, 76, 78, int)
-        self.v_charge = _parse_fixed(line, 79, 83, float, 2)
-        self.zone = _parse_fixed(line, 84, 86, int)
+        self.voltage = _parse_fixed(line, 25, 28, float, 3)
+        self.angle = _parse_fixed(line, 29, 32, float, 2)
+        self.pg = _parse_fixed(line, 33, 37, float, 0)
+        self.qg = _parse_fixed(line, 38, 42, float, 0)
+        self.qmin = _parse_fixed(line, 43, 47, float, 0)
+        self.qmax = _parse_fixed(line, 48, 52, float, 0)
+        self.controlled_bus = _parse_fixed(line, 53, 58, int)
+        self.pl = _parse_fixed(line, 59, 63, float, 0)
+        self.ql = _parse_fixed(line, 64, 68, float, 0)
+        self.area = _parse_fixed(line, 74, 76, int)
+        self.v_charge = _parse_fixed(line, 77, 80, float, 0)
+        self.zone = _parse_fixed(line, 81, 81, int)
 
         # Aggregators (10x)
         agg_cols = [
-            (87, 91), (92, 96), (97, 101), (102, 106), (107, 111),
-            (112, 116), (117, 121), (122, 126), (127, 131), (132, 136)
+            (82, 86), (87, 91), (92, 96), (97, 101), (102, 106),
+            (107, 111), (112, 116), (117, 121), (122, 126), (127, 131)
         ]
         self.aggregators = [
             _parse_fixed(line, s, e, int) for (s, e) in agg_cols
@@ -165,25 +204,42 @@ class PwfBus:
         if self.controlled_bus == 0:
             self.controlled_bus = self.number
 
-    def to_veragrid(self, vg_dict: Dict[str, "PwfVoltageGroup"]) -> dev.Bus:
+    def to_veragrid(
+        self,
+        vg_dict: Dict[str, "PwfVoltageGroup"],
+        voltage_limits: Dict[str, "PwfVoltageLimitGroup"] | None,
+        area_dict: Dict[int, dev.Area],
+        zone_dict: Dict[int, dev.Zone],
+    ) -> dev.Bus:
         """
 
+        :param zone_dict:
+        :param area_dict:
+        :param voltage_limits:
         :param vg_dict:
         :return:
         """
         vg = vg_dict.get(self.base_voltage_group, None)
         Vnom = vg.voltage if vg else 1.0
-
-        area_obj = dev.Area(name=f"Area_{self.area}") if isinstance(self.area, int) else self.area
-        zone_obj = dev.Zone(name=f"Zone_{self.zone}") if isinstance(self.zone, int) else self.zone
+        vmin: float = 0.9
+        vmax: float = 1.1
+        if voltage_limits is not None:
+            limit_group = voltage_limits.get(self.voltage_limit_group, None)
+            if limit_group is not None:
+                vmin = limit_group.lower_bound
+                vmax = limit_group.upper_bound
 
         bus = dev.Bus(
             name=self.name.strip() or f"Bus_{self.number}",
             Vnom=Vnom,
+            vmin=vmin,
+            vmax=vmax,
+            active=self.status != "D",
+            is_slack=self.type == 2,
             Vm0=self.voltage if self.voltage != 0.0 else 1.0,
             Va0=self.angle,
-            area=area_obj,
-            zone=zone_obj
+            area=area_dict.get(self.area, None),
+            zone=zone_dict.get(self.zone, None),
         )
         return bus
 
@@ -246,27 +302,27 @@ class PwfLine:
         :param line:
         :return:
         """
-        self.from_bus = _parse_fixed(line, 1, 5, int)
-        self.to_bus = _parse_fixed(line, 5, 12, int)
-        self.circuit = _parse_fixed(line, 11, 12, str)
-        self.status = _parse_fixed(line, 13, 13, str)
-        self.owner = _parse_fixed(line, 14, 15, str)
-        self.r = _parse_fixed(line, 16, 22, float, 5)
-        self.x = _parse_fixed(line, 23, 29, float, 5)
-        self.b = _parse_fixed(line, 30, 36, float, 5)
-        self.tap = _parse_fixed(line, 37, 41, float, 3)
-        self.tap_min = _parse_fixed(line, 42, 46, float, 3)
-        self.tap_max = _parse_fixed(line, 47, 51, float, 3)
-        self.tap_lag = _parse_fixed(line, 52, 56, float, 2)
-        self.controlled_bus = _parse_fixed(line, 57, 61, int)
-        self.normal_capacity = _parse_fixed(line, 62, 67, float, 1)
-        self.emergency_capacity = _parse_fixed(line, 68, 73, float, 1)
-        self.ntaps = _parse_fixed(line, 74, 77, int)
-        self.equipment_capacity = _parse_fixed(line, 78, 83, float, 1)
+        self.from_bus: int = _parse_fixed(line, 1, 5, int)
+        self.to_bus = _parse_fixed(line, 11, 15, int)
+        self.circuit = _parse_fixed(line, 16, 17, str)
+        self.status = _parse_fixed(line, 18, 18, str)
+        self.owner = _parse_fixed(line, 19, 19, str)
+        self.r = _parse_fixed(line, 21, 26, float, 0) / 100.0
+        self.x = _parse_fixed(line, 27, 32, float, 0) / 100.0
+        self.b = _parse_fixed(line, 33, 38, float, 0) / 100.0
+        self.tap = _parse_fixed(line, 39, 43, float, 0)
+        self.tap_min = _parse_fixed(line, 44, 48, float, 0)
+        self.tap_max = _parse_fixed(line, 49, 53, float, 0)
+        self.tap_lag = _parse_fixed(line, 54, 58, float, 0)
+        self.controlled_bus = _parse_fixed(line, 59, 64, int)
+        self.normal_capacity = _parse_fixed(line, 65, 68, float, 0)
+        self.emergency_capacity = _parse_fixed(line, 69, 72, float, 0)
+        self.ntaps = _parse_fixed(line, 73, 74, int)
+        self.equipment_capacity = _parse_fixed(line, 75, 78, float, 0)
 
         agg_cols = [
-            (84, 88), (89, 93), (94, 98), (99, 103), (104, 108),
-            (109, 113), (114, 118), (119, 123), (124, 128), (129, 133)
+            (79, 83), (84, 88), (89, 93), (94, 98), (99, 103),
+            (104, 108), (109, 113), (114, 118), (119, 123), (124, 128)
         ]
         self.aggregators = [
             _parse_fixed(line, s, e, int) for (s, e) in agg_cols
@@ -294,7 +350,7 @@ class PwfLine:
             x=self.x,
             b=self.b,
             rate=self.normal_capacity,
-            active=self.status == 'A'
+            active=self.status != 'D'
         )
 
         return elm
@@ -314,6 +370,11 @@ class PwfGenerator:
     __slots__ = (
         "number",
         "operation",
+        "active_generation",
+        "reactive_generation",
+        "min_reactive_generation",
+        "max_reactive_generation",
+        "voltage",
         "min_active_gen",
         "max_active_gen",
         "participation_factor",
@@ -329,6 +390,11 @@ class PwfGenerator:
     def __init__(self) -> None:
         self.number: int = 0
         self.operation: str = "A"
+        self.active_generation: float = 0.0
+        self.reactive_generation: float = 0.0
+        self.min_reactive_generation: float = -9999.0
+        self.max_reactive_generation: float = 9999.0
+        self.voltage: float = 1.0
         self.min_active_gen: float = 0.0
         self.max_active_gen: float = 9999.0
         self.participation_factor: float = 0.0
@@ -346,8 +412,8 @@ class PwfGenerator:
         :param line:
         :return:
         """
-        self.number = _parse_fixed(line, 1, 2, int)
-        self.operation = _parse_fixed(line, 6, 6, str)
+        self.number = _parse_fixed(line, 1, 5, int)
+        self.operation = _parse_fixed(line, 7, 7, str)
         self.min_active_gen = _parse_fixed(line, 9, 14, float, 1)
         self.max_active_gen = _parse_fixed(line, 16, 21, float, 1)
         self.participation_factor = _parse_fixed(line, 23, 27, float, 2)
@@ -370,9 +436,13 @@ class PwfGenerator:
         gen.Snom = float(self.nominal_apparent_power)
         gen.Pmin = float(self.min_active_gen)
         gen.Pmax = float(self.max_active_gen)
-        gen.P = 0.0  #
-        # gen.bus =
-        gen.Pf = float(self.nominal_power_factor)
+        gen.P = float(self.active_generation)
+        gen.Q = float(self.reactive_generation)
+        gen.Qmin = float(self.min_reactive_generation)
+        gen.Qmax = float(self.max_reactive_generation)
+        gen.Vset = float(self.voltage)
+        if self.nominal_power_factor > 0.0:
+            gen.Pf = float(self.nominal_power_factor)
         gen.active = (self.operation == 'A')
         return gen
 
@@ -452,6 +522,10 @@ class PwfTransformer:
         "x",
         "tap",
         "shift",
+        "tap_min",
+        "tap_max",
+        "controlled_bus",
+        "active",
     )
 
     def __init__(self):
@@ -462,6 +536,10 @@ class PwfTransformer:
         self.x: float = 0.0
         self.tap: float = 1.0
         self.shift: float = 0.0
+        self.tap_min: float = 0.9
+        self.tap_max: float = 1.1
+        self.controlled_bus: int = 0
+        self.active: bool = True
 
     def parse(self, line: str) -> None:
         """
@@ -494,6 +572,9 @@ class PwfTransformer:
             tap_module=self.tap,
             tap_phase=self.shift
         )
+        elm.tap_module_min = self.tap_min
+        elm.tap_module_max = self.tap_max
+        elm.active = self.active and from_bus is not None and to_bus is not None
         return elm
 
     def __repr__(self):
@@ -534,12 +615,12 @@ class PwfShunt:
         :return:
         """
         self.number = _parse_fixed(line, 1, 5, int)
-        self.from_bus = _parse_fixed(line, 6, 10, int)
-        self.to_bus = _parse_fixed(line, 11, 15, int)
-        self.status_from = _parse_fixed(line, 16, 17, str)
-        self.status_to = _parse_fixed(line, 18, 19, str)
-        self.shunt_from = _parse_fixed(line, 20, 24, float, 2)
-        self.shunt_to = _parse_fixed(line, 25, 29, float, 2)
+        self.from_bus = self.number
+        self.to_bus = _parse_fixed(line, 10, 14, int)
+        self.status_from = _parse_fixed(line, 31, 32, str)
+        self.status_to = _parse_fixed(line, 34, 35, str)
+        self.shunt_from = _parse_fixed(line, 18, 23, float, 0)
+        self.shunt_to = _parse_fixed(line, 24, 29, float, 0)
 
     def to_veragrid(self, bus_dict: Dict[int, dev.Bus]) -> list[tuple[int, dev.Shunt]]:
         """
@@ -622,6 +703,95 @@ class PwfStaticCompensator:
         return f"<StaticCompensator {self.number} {self.from_bus} -> {self.to_bus} Status={self.status}>"
 
 
+class PwfControllableShunt:
+    """Switched shunt or SVC record from DBSH/DCER."""
+
+    __slots__ = (
+        "bus", "controlled_bus", "v_min", "v_max", "q_initial",
+        "q_min", "q_max", "mode", "status", "blocks",
+    )
+
+    def __init__(self) -> None:
+        """Initialize one controllable shunt."""
+        self.bus: int = 0
+        self.controlled_bus: int = 0
+        self.v_min: float = 0.9
+        self.v_max: float = 1.1
+        self.q_initial: float = 0.0
+        self.q_min: float = 0.0
+        self.q_max: float = 0.0
+        self.mode: str = "C"
+        self.status: str = "L"
+        self.blocks: List[tuple[int, float]] = list()
+
+    def to_veragrid(self, bus_dict: Dict[int, dev.Bus]) -> tuple[int, dev.ControllableShunt]:
+        """Create the native VeraGrid controllable shunt.
+
+        :param bus_dict: Parsed AC buses indexed by ANAREDE number.
+        :return: Target bus number and native shunt object.
+        """
+        number_of_steps: int = len(self.blocks)
+        shunt = dev.ControllableShunt(
+            name=f"Shunt_{self.bus}",
+            number_of_steps=number_of_steps,
+            Bmin=self.q_min,
+            Bmax=self.q_max,
+            B=self.q_initial,
+            vmin=self.v_min,
+            vmax=self.v_max,
+            active=self.status != "D",
+            control_bus=bus_dict.get(self.controlled_bus, None),
+        )
+        if self.blocks:
+            units: List[int] = [block[0] for block in self.blocks]
+            values: List[float] = [block[1] for block in self.blocks]
+            shunt.set_blocks(units, values)
+        return self.bus, shunt
+
+
+class PwfVscLink:
+    """VSC link from the ANAREDE DVSC section."""
+
+    __slots__ = (
+        "number", "name", "from_bus", "to_bus", "power", "power_base",
+        "voltage", "resistance", "active",
+    )
+
+    def __init__(self) -> None:
+        """Initialize one VSC link."""
+        self.number: int = 0
+        self.name: str = ""
+        self.from_bus: int = 0
+        self.to_bus: int = 0
+        self.power: float = 0.0
+        self.power_base: float = 0.0
+        self.voltage: float = 0.0
+        self.resistance: float = 0.0
+        self.active: bool = True
+
+    def to_veragrid(self, bus_dict: Dict[int, dev.Bus]) -> dev.HvdcLine | None:
+        """Represent the VSC link with VeraGrid's native HVDC object.
+
+        :param bus_dict: Parsed AC buses indexed by ANAREDE number.
+        :return: Native HVDC object, or ``None`` for missing endpoints.
+        """
+        bus_from: dev.Bus | None = bus_dict.get(self.from_bus, None)
+        bus_to: dev.Bus | None = bus_dict.get(self.to_bus, None)
+        if bus_from is None or bus_to is None:
+            return None
+        rate: float = max(abs(self.power), self.power_base)
+        return dev.HvdcLine(
+            bus_from=bus_from,
+            bus_to=bus_to,
+            name=self.name.strip() or f"VSC{self.number}",
+            active=self.active and bus_from.active and bus_to.active,
+            Pset=abs(self.power),
+            rate=rate,
+            r=self.resistance,
+            dc_link_voltage=self.voltage,
+        )
+
+
 # -------------------------------------------------------------------------
 #  DCLine (DCLI)
 # -------------------------------------------------------------------------
@@ -634,14 +804,16 @@ class PwfDCLine:
         "number",
         "from_bus",
         "to_bus",
-        "vdc",
+        "resistance",
+        "capacity",
     )
 
     def __init__(self):
         self.number: int = 0
         self.from_bus: int = 0
         self.to_bus: int = 0
-        self.vdc: float = 0.0
+        self.resistance: float = 0.0
+        self.capacity: float = 0.0
 
     def parse(self, line: str) -> None:
         """
@@ -649,10 +821,11 @@ class PwfDCLine:
         :param line:
         :return:
         """
-        self.number = _parse_fixed(line, 1, 5, int)
-        self.from_bus = _parse_fixed(line, 6, 10, int)
-        self.to_bus = _parse_fixed(line, 11, 15, int)
-        self.vdc = _parse_fixed(line, 16, 20, float, 2)
+        self.number = _parse_fixed(line, 1, 4, int)
+        self.from_bus = self.number
+        self.to_bus = _parse_fixed(line, 9, 12, int)
+        self.resistance = _parse_fixed(line, 18, 23, float, 0)
+        self.capacity = _parse_fixed(line, 61, 64, float, 0)
 
     def to_veragrid(self, bus_dict: Dict[int, dev.Bus]) -> dev.HvdcLine:
         """
@@ -666,14 +839,95 @@ class PwfDCLine:
             name=f"HVDC{self.number}_{self.from_bus}-{self.to_bus}",
             bus_from=from_bus,
             bus_to=to_bus,
-            r=0.0,
+            r=self.resistance,
             # rate=self.vdc,
             active=True
         )
         return elm
 
     def __repr__(self):
-        return f"<DCLine {self.number} {self.from_bus} -> {self.to_bus} Vdc={self.vdc:.2f}>"
+        return f"<DCLine {self.from_bus} {self.to_bus} R={self.resistance:.2f}>"
+
+
+class PwfHvdcConverter:
+    """Converter data joined from DCNV and DCCV records."""
+
+    __slots__ = (
+        "number", "ac_bus", "dc_bus", "kind", "nominal_power",
+        "control_type", "setpoint", "angle_min", "angle_max",
+    )
+
+    def __init__(self) -> None:
+        """Initialize one converter record."""
+        self.number: int = 0
+        self.ac_bus: int = 0
+        self.dc_bus: int = 0
+        self.kind: str = "R"
+        self.nominal_power: float = 0.0
+        self.control_type: str = ""
+        self.setpoint: float = 0.0
+        self.angle_min: float = 5.0
+        self.angle_max: float = 90.0
+
+
+class PwfHvdcLink:
+    """Classical ANAREDE HVDC link assembled into a VeraGrid line."""
+
+    __slots__ = (
+        "number", "name", "voltage", "active", "dc_buses",
+        "dc_lines", "converters",
+    )
+
+    def __init__(self) -> None:
+        """Initialize one link and its records awaiting association."""
+        self.number: int = 0
+        self.name: str = ""
+        self.voltage: float = 0.0
+        self.active: bool = True
+        self.dc_buses: List[int] = list()
+        self.dc_lines: List[PwfDCLine] = list()
+        self.converters: List[PwfHvdcConverter] = list()
+
+    def to_veragrid(self, bus_dict: Dict[int, dev.Bus]) -> dev.HvdcLine | None:
+        """Create the existing VeraGrid HVDC line from joined records.
+
+        :param bus_dict: Parsed AC buses indexed by ANAREDE number.
+        :return: VeraGrid HVDC line, or ``None`` when the converter pair is incomplete.
+        """
+        rectifier: PwfHvdcConverter | None = None
+        inverter: PwfHvdcConverter | None = None
+        for converter in self.converters:
+            if converter.kind == "R":
+                rectifier = converter
+            elif converter.kind == "I":
+                inverter = converter
+
+        if rectifier is None or inverter is None:
+            return None
+
+        bus_from: dev.Bus | None = bus_dict.get(rectifier.ac_bus, None)
+        bus_to: dev.Bus | None = bus_dict.get(inverter.ac_bus, None)
+        if bus_from is None or bus_to is None:
+            return None
+
+        resistance: float = sum(line.resistance for line in self.dc_lines)
+        setpoint: float = abs(rectifier.setpoint)
+        rate: float = max(setpoint, rectifier.nominal_power, inverter.nominal_power)
+        active: bool = self.active and bus_from.active and bus_to.active
+        return dev.HvdcLine(
+            bus_from=bus_from,
+            bus_to=bus_to,
+            name=self.name.strip() or f"HVDC{self.number}",
+            active=active,
+            Pset=setpoint,
+            rate=rate,
+            r=resistance,
+            dc_link_voltage=self.voltage,
+            min_firing_angle_f=math.radians(rectifier.angle_min),
+            max_firing_angle_f=math.radians(rectifier.angle_max),
+            min_firing_angle_t=math.radians(inverter.angle_min),
+            max_firing_angle_t=math.radians(inverter.angle_max),
+        )
 
 
 # -------------------------------------------------------------------------
@@ -893,6 +1147,21 @@ class PwfTransformerSettings:
         return f"<TransformerSettings {self.from_bus} -> {self.to_bus} Control={self.control_mode}>"
 
 
+class PwfStudyRecord:
+    """Preserved non-topological ANAREDE study record."""
+
+    __slots__ = ("section", "values")
+
+    def __init__(self, section: str, values: List[str]) -> None:
+        """Initialize one study-control record.
+
+        :param section: ANAREDE section code.
+        :param values: Tokenized record values in file order.
+        """
+        self.section: str = section
+        self.values: List[str] = values
+
+
 # -------------------------------------------------------------------------
 #  DGEI — Generator Identifiers
 # -------------------------------------------------------------------------
@@ -1096,6 +1365,8 @@ class PwfNetwork:
         "transformers",
         "shunts",
         "static_compensators",
+        "controllable_shunts",
+        "vsc_links",
         "dc_lines",
         "loads",
         "comments",
@@ -1104,24 +1375,30 @@ class PwfNetwork:
         "voltage_limit_groups",
         "voltage_groups",
         "generator_identifications",
+        "transformer_settings",
+        "study_records",
     )
 
     def __init__(self):
         # Store devices by type (e.g., buses, lines, generators, etc.)
-        self.buses = []
-        self.lines = []
-        self.generators = []
-        self.transformers = []
-        self.shunts = []
-        self.static_compensators = []
-        self.dc_lines = []
-        self.loads = []
-        self.comments = []
-        self.injections = []
-        self.generator_reactances = []
-        self.voltage_limit_groups = []
-        self.voltage_groups = []
-        self.generator_identifications = []
+        self.buses: List[PwfBus] = list()
+        self.lines: List[PwfLine] = list()
+        self.generators: List[PwfGenerator] = list()
+        self.transformers: List[PwfTransformer] = list()
+        self.shunts: List[PwfShunt] = list()
+        self.static_compensators: List[PwfStaticCompensator] = list()
+        self.controllable_shunts: List[PwfControllableShunt] = list()
+        self.vsc_links: List[PwfVscLink] = list()
+        self.dc_lines: List[PwfDCLine] = list()
+        self.loads: List[PwfLoad] = list()
+        self.comments: List[PwfComment] = list()
+        self.injections: List[PwfInjection] = list()
+        self.generator_reactances: List[PwfGeneratorReactance] = list()
+        self.voltage_limit_groups: List[PwfVoltageLimitGroup] = list()
+        self.voltage_groups: List[PwfVoltageGroup] = list()
+        self.generator_identifications: List[PwfGeneratorIdentification] = list()
+        self.transformer_settings: List[PwfTransformerSettings] = list()
+        self.study_records: List[PwfStudyRecord] = list()
 
     def add_device(self, device):
         """
@@ -1140,6 +1417,10 @@ class PwfNetwork:
             self.generators.append(device)
         elif isinstance(device, PwfTransformer):
             self.transformers.append(device)
+        elif isinstance(device, PwfControllableShunt):
+            self.controllable_shunts.append(device)
+        elif isinstance(device, PwfVscLink):
+            self.vsc_links.append(device)
         elif isinstance(device, PwfShunt):
             self.shunts.append(device)
         elif isinstance(device, PwfStaticCompensator):
@@ -1158,54 +1439,13 @@ class PwfNetwork:
             self.voltage_limit_groups.append(device)
         elif isinstance(device, PwfGeneratorIdentification):
             self.generator_identifications.append(device)
+        elif isinstance(device, PwfTransformerSettings):
+            self.transformer_settings.append(device)
+        elif isinstance(device, PwfStudyRecord):
+            self.study_records.append(device)
 
         else:
             raise ValueError(f"Unknown device type: {type(device)}")
-
-    def to_veragrid(self) -> MultiCircuit:
-        """
-        
-        :return: 
-        """
-        mc = MultiCircuit(name="Anarede_Network")
-
-        vg_dict = {vg.char: vg for vg in self.voltage_groups}
-        bus_dict = {b.number: b.to_veragrid(vg_dict) for b in self.buses}
-
-        #  BUSES 
-        for bus in bus_dict.values():
-            mc.add_device(bus)
-
-        #  LINES 
-        for line in self.lines:
-            mc.add_device(line.to_veragrid(bus_dict))
-
-        #  GENERATORS 
-        gen_to_bus = {g.group: g.number for g in self.generator_identifications}
-        for g in self.generators:
-            elm = g.to_veragrid(bus_dict)
-            if elm:
-                bus_id = gen_to_bus.get(g.number, g.number)
-                bus = bus_dict.get(bus_id)
-                mc.add_generator(bus=bus, api_obj=elm)
-
-        #  LOADS 
-        for load in self.loads:
-            elm = load.to_veragrid(bus_dict)
-            if elm:
-                bus = bus_dict.get(load.bus)
-                mc.add_load(bus=bus, api_obj=elm)
-
-        #  TRANSFORMERS 
-        for trafo in self.transformers:
-            mc.add_device(trafo.to_veragrid(bus_dict))
-
-        #  SHUNTS 
-        for shunt in self.shunts:
-            for bus_id, s in shunt.to_veragrid(bus_dict):
-                mc.add_shunt(bus=bus_dict.get(bus_id), api_obj=s)
-
-        return mc
 
     def __repr__(self):
         return (f"<PWFNetwork: {len(self.buses)} buses, "
@@ -1218,42 +1458,81 @@ class PwfNetwork:
 #  Parser
 # -------------------------------------------------------------------------
 
-def _split_sections(file_name: str):
+def _decode_pwf(data: bytes) -> str:
+    """Decode PWF bytes using Latin-1 first and detector-assisted recovery.
+
+    :param data: Raw PWF file contents.
+    :return: Decoded PWF text.
+    """
+    latin1_text: str
+    try:
+        latin1_text = data.decode("latin-1")
+    except UnicodeDecodeError:
+        detection: dict[str, object] = chardet.detect(data)
+        detected_encoding: object = detection.get("encoding", None)
+        if isinstance(detected_encoding, str) and detected_encoding != "":
+            try:
+                return data.decode(detected_encoding)
+            except (LookupError, UnicodeDecodeError):
+                return data.decode("latin-1")
+        else:
+            return data.decode("latin-1")
+
+    detection = chardet.detect(data)
+    detected_encoding = detection.get("encoding", None)
+    confidence: object = detection.get("confidence", 0.0)
+    mojibake_markers: bool = "Ã" in latin1_text or "Â" in latin1_text
+    if (
+        mojibake_markers
+        and isinstance(detected_encoding, str)
+        and detected_encoding.casefold() not in ("", "latin-1", "iso-8859-1")
+        and isinstance(confidence, float)
+        and confidence >= 0.5
+    ):
+        try:
+            return data.decode(detected_encoding)
+        except (LookupError, UnicodeDecodeError):
+            return latin1_text
+    else:
+        return latin1_text
+
+
+def _split_sections(
+    file_name: str,
+    section_definitions: Dict[str, str],
+) -> tuple[List[str], Dict[str, List[str]]]:
     """
     Splits a PWF file into sections based on the delimiter "99999".
     Each section is stored in a dictionary with the section name as the key
     and the line indices as the value.
     """
-    # make a guess of the file encoding
-    detection = chardet.detect(open(file_name, "rb").read())
+    with open(file_name, "rb") as io:
+        file_data: bytes = io.read()
+    decoded_text: str = _decode_pwf(file_data)
+    file_lines: List[str] = [line.rstrip("\r\n") for line in decoded_text.splitlines()]
 
-    # read and split by blocks
-    with open(file_name, 'r', encoding=detection['encoding']) as io:
-        file_lines = io.readlines()
-        file_lines = [line.strip() for line in file_lines]  # Remove extra spaces and newlines
+    sections = dict()
+    section_name = ""
+    for line in file_lines:
+        stripped_line = line.strip()
+        is_section_name: bool = (
+            len(stripped_line) == 4
+            and stripped_line.isalpha()
+            and stripped_line.isupper()
+        )
+        if stripped_line == "99999":
+            pass
+        elif stripped_line in section_definitions or is_section_name:
+            section_name = stripped_line
+            sections[section_name] = [line]
+        elif section_name != "":
+            sections[section_name].append(line)
+        else:
+            # The title text before the first data section is not electrical
+            # data and therefore does not belong to a parser object.
+            pass
 
-        # Initialize a dictionary to store section titles and their line indices
-        sections = {}
-
-        # Look for section titles and delimiters
-        section_titles_idx = [i for i, line in enumerate(file_lines) if line == "99999"]
-
-        # If section titles are found, add to sections dictionary
-        if section_titles_idx:
-            sections["title_identifier"] = section_titles_idx
-
-        # Split the file lines based on section delimiters (99999)
-        section_delim = [0] + section_titles_idx + [len(file_lines)]
-
-        # Iterate through the sections and capture their lines
-        for i in range(len(section_delim) - 1):
-            section_name_idx = section_delim[i] + 1
-            section_name = file_lines[section_name_idx]  # Extract section name
-            section_lines = file_lines[section_delim[i] + 1: section_delim[i + 1]]
-
-            sections[section_name] = section_lines
-
-        return file_lines, sections
+    return file_lines, sections
 
 
 class PWFParser:
@@ -1265,6 +1544,8 @@ class PWFParser:
         "network",
         "logger",
         "voltage_group_dict",
+        "hvdc_records",
+        "area_records",
     )
 
     def __init__(self, filepath: str):
@@ -1273,8 +1554,48 @@ class PWFParser:
         self.logger = Logger()
 
         self.voltage_group_dict: Dict[str, PwfVoltageGroup] = dict()
+        self.hvdc_records: Dict[str, List[object]] = dict()
+        self.area_records: Dict[int, str] = dict()
 
-        file_lines, sections = _split_sections(self.filepath)
+        section_definitions: Dict[str, str] = {
+            "TITU": "case title",                  # Textual case title.
+            "DGBT": "voltage groups",             # Base voltage group table.
+            "DBAR": "AC buses",                    # AC bus operating data.
+            "DGER": "generator limits",           # Generator technical limits.
+            "DLIN": "AC lines and transformers",  # AC branch data.
+            "DGEI": "generator identification",   # Generator/unit grouping.
+            "DTRA": "transformers",                # Transformer data records.
+            "DSHL": "line-end shunts",             # Shunts at line terminals.
+            "DCSC": "series compensators",         # Controllable series compensation.
+            "DCLI": "DC line segments",            # Classical HVDC conductor data.
+            "DELO": "HVDC links",                  # Classical HVDC link headers.
+            "DBRE": "comments",                    # Free-form case comments.
+            "DINJ": "equivalent injections",       # Equivalent network injections.
+            "DGBR": "generator reactances",        # Generator subtransient data.
+            "DGLT": "voltage limit groups",        # Bus voltage-limit groups.
+            "DBSH": "switched shunts",             # Switched shunt-bank data.
+            "DCER": "static var compensators",     # SVC data.
+            "DCBA": "HVDC buses",                  # DC bus-to-link associations.
+            "DCNV": "HVDC converters",             # Converter terminal data.
+            "DCCV": "HVDC converter controls",     # Converter control setpoints.
+            "DVSC": "VSC HVDC links",              # Voltage-source-converter links.
+            "DARE": "areas",                       # Area names and exchanges.
+            "DCMT": "additional comments",         # Additional free-form comments.
+            "DCTR": "transformer controls",        # LTC/tap-control settings.
+            "DCTE": "solver constants",             # ANAREDE flow-solver constants.
+            "DCAR": "load curve data",              # Optional load ZIP/time curves.
+            "DOPC": "execution options",            # ANAREDE run/report options.
+            "DMET": "measurement data",             # Measurement and monitoring data.
+            "DINC": "incremental controls",         # Incremental/control study data.
+            "FIM": "end of file",                  # PWF end marker.
+        }
+        file_lines, sections = _split_sections(self.filepath, section_definitions)
+
+        for section_name in sections:
+            if section_name.startswith("D") and section_name not in section_definitions:
+                self.logger.add_warning(
+                    f"ANAREDE section {section_name} is present but is not interpreted."
+                )
 
         for section_name, txt_lines in sections.items():
 
@@ -1285,8 +1606,17 @@ class PWFParser:
                         bus = PwfBus()
                         bus.parse(txt_line)
                         self.network.add_device(bus)
+                        if bus.pl != 0.0 or bus.ql != 0.0:
+                            load = PwfLoad()
+                            load.number = bus.number
+                            load.operation = "A" if bus.status != "D" else "D"
+                            load.bus = bus.number
+                            load.active_power = bus.pl
+                            load.reactive_power = bus.ql
+                            load.status = bus.status
+                            self.network.add_device(load)
 
-                if section_name == "DBGT":  # Voltage Group
+                if section_name == "DGBT":  # Voltage Group
                     for txt_line in txt_lines[2:]:
                         vg = PwfVoltageGroup()
                         vg.parse(txt_line)
@@ -1297,7 +1627,22 @@ class PWFParser:
                     for txt_line in txt_lines[2:]:
                         line = PwfLine()
                         line.parse(txt_line)
-                        self.network.add_device(line)
+                        if line.tap != 0.0 and line.tap != 1.0:
+                            transformer = PwfTransformer()
+                            transformer.number = line.from_bus
+                            transformer.from_bus = line.from_bus
+                            transformer.to_bus = line.to_bus
+                            transformer.r = line.r
+                            transformer.x = line.x
+                            transformer.tap = line.tap
+                            transformer.shift = line.tap_lag
+                            transformer.tap_min = line.tap_min
+                            transformer.tap_max = line.tap_max
+                            transformer.controlled_bus = line.controlled_bus
+                            transformer.active = line.status != "D"
+                            self.network.add_device(transformer)
+                        else:
+                            self.network.add_device(line)
 
                 elif section_name == "DGER":  # Generator
                     for txt_line in txt_lines[2:]:
@@ -1317,29 +1662,149 @@ class PWFParser:
                         transformer.parse(txt_line)
                         self.network.add_device(transformer)
 
+                elif section_name == "DCTR":  # Transformer tap settings
+                    for txt_line in txt_lines[2:]:
+                        settings = PwfTransformerSettings()
+                        settings.parse(txt_line)
+                        self.network.add_device(settings)
+
+                elif section_name in ("DOPC", "DCTE", "DMET", "DINC"):
+                    for txt_line in txt_lines[2:]:
+                        values: List[str] = txt_line.split()
+                        if values:
+                            self.network.add_device(
+                                PwfStudyRecord(section_name, values)
+                            )
+
                 elif section_name == "DSHL":  # Shunt
                     for txt_line in txt_lines[2:]:
                         shunt = PwfShunt()
                         shunt.parse(txt_line)
                         self.network.add_device(shunt)
 
+                elif section_name == "DBSH":  # Switched shunt bank
+                    current_shunt: PwfControllableShunt | None = None
+                    for txt_line in txt_lines[2:]:
+                        if txt_line.strip().upper() == "FBAN":
+                            current_shunt = None
+                        elif current_shunt is not None and txt_line[2:5].strip() == "":
+                            units: int = _parse_fixed(txt_line, 13, 15, int)
+                            if units == 0:
+                                units = _parse_fixed(txt_line, 9, 11, int)
+                            value: float = _parse_fixed(txt_line, 17, 22, float, 0)
+                            current_shunt.blocks.append((units, value))
+                        elif txt_line.strip().startswith("("):
+                            pass
+                        else:
+                            current_shunt = PwfControllableShunt()
+                            current_shunt.bus = _parse_fixed(txt_line, 1, 5, int)
+                            current_shunt.v_min = _parse_fixed(txt_line, 20, 23, float, 3)
+                            current_shunt.v_max = _parse_fixed(txt_line, 25, 28, float, 3)
+                            current_shunt.controlled_bus = _parse_fixed(txt_line, 30, 35, int)
+                            current_shunt.q_initial = _parse_fixed(txt_line, 36, 42, float, 0)
+                            current_shunt.mode = _parse_fixed(txt_line, 43, 43, str) or "C"
+                            current_shunt.status = _parse_fixed(txt_line, 45, 45, str) or "L"
+                            self.network.add_device(current_shunt)
+
+                elif section_name == "DCER":  # Static var compensator
+                    for txt_line in txt_lines[2:]:
+                        shunt = PwfControllableShunt()
+                        shunt.bus = _parse_fixed(txt_line, 1, 5, int)
+                        shunt.controlled_bus = _parse_fixed(txt_line, 15, 19, int)
+                        shunt.q_initial = _parse_fixed(txt_line, 28, 32, float, 0)
+                        shunt.q_min = _parse_fixed(txt_line, 33, 37, float, 0)
+                        shunt.q_max = _parse_fixed(txt_line, 38, 42, float, 0)
+                        shunt.mode = "C"
+                        shunt.status = _parse_fixed(txt_line, 46, 46, str) or "L"
+                        self.network.add_device(shunt)
+
                 elif section_name == "DCSC":  # Static Compensator
                     for txt_line in txt_lines[2:]:
-                        static_compensator = PwfStaticCompensator()
-                        static_compensator.parse(txt_line)
-                        self.network.add_device(static_compensator)
+                        series_line = PwfLine()
+                        series_line.from_bus = _parse_fixed(txt_line, 1, 5, int)
+                        series_line.to_bus = _parse_fixed(txt_line, 10, 14, int)
+                        series_line.circuit = _parse_fixed(txt_line, 15, 16, str)
+                        series_line.status = _parse_fixed(txt_line, 17, 17, str) or "L"
+                        series_line.x = _parse_fixed(txt_line, 38, 43, float, 0) / 100.0
+                        series_line.normal_capacity = _parse_fixed(txt_line, 61, 64, float, 0)
+                        self.network.add_device(series_line)
 
-                elif section_name == "DCLI":  # DC Line
+                elif section_name == "DVSC":  # VSC HVDC link
+                    for txt_line in txt_lines[2:]:
+                        link = PwfVscLink()
+                        link.number = _parse_fixed(txt_line, 1, 4, int)
+                        link.active = _parse_fixed(txt_line, 8, 8, str) != "D"
+                        link.from_bus = _parse_fixed(txt_line, 10, 14, int)
+                        link.to_bus = _parse_fixed(txt_line, 16, 20, int)
+                        link.power = _parse_fixed(txt_line, 22, 28, float, 0)
+                        link.power_base = _parse_fixed(txt_line, 30, 36, float, 0)
+                        link.voltage = _parse_fixed(txt_line, 38, 46, float, 0)
+                        link.resistance = _parse_fixed(txt_line, 58, 65, float, 0)
+                        link.name = _parse_fixed(txt_line, 67, 86, str)
+                        self.network.add_device(link)
+
+                elif section_name == "DARE":  # Area definitions
+                    for txt_line in txt_lines[2:]:
+                        number: int = _parse_fixed(txt_line, 1, 3, int)
+                        name: str = _parse_fixed(txt_line, 12, 47, str)
+                        self.area_records[number] = name
+
+                elif section_name == "DCLI":  # DC line segment
                     for txt_line in txt_lines[2:]:
                         dc_line = PwfDCLine()
                         dc_line.parse(txt_line)
-                        self.network.add_device(dc_line)
+                        self.hvdc_records.setdefault("dc_lines", list()).append(dc_line)
 
-                elif section_name == "DELO":  # Load
+                elif section_name == "DELO":  # HVDC link definition
                     for txt_line in txt_lines[2:]:
-                        load = PwfLoad()
-                        load.parse(txt_line)
-                        self.network.add_device(load)
+                        link = PwfHvdcLink()
+                        link.number = _parse_fixed(txt_line, 1, 4, int)
+                        link.voltage = _parse_fixed(txt_line, 8, 12, float, 0)
+                        link.name = _parse_fixed(txt_line, 20, 39, str)
+                        state: str = _parse_fixed(txt_line, 43, 43, str)
+                        link.active = state != "D"
+                        self.hvdc_records.setdefault("links", list()).append(link)
+
+                elif section_name == "DCBA":  # DC bus to link association
+                    for txt_line in txt_lines[2:]:
+                        dc_bus: int = _parse_fixed(txt_line, 1, 4, int)
+                        link_number: int = _parse_fixed(txt_line, 72, 75, int)
+                        self.hvdc_records.setdefault("dc_bus_links", list()).append(
+                            (dc_bus, link_number)
+                        )
+
+                elif section_name == "DCNV":  # Converter records
+                    for txt_line in txt_lines[2:]:
+                        converter = PwfHvdcConverter()
+                        converter.number = _parse_fixed(txt_line, 1, 4, int)
+                        converter.ac_bus = _parse_fixed(txt_line, 8, 12, int)
+                        converter.dc_bus = _parse_fixed(txt_line, 14, 17, int)
+                        converter.kind = _parse_fixed(txt_line, 24, 24, str) or "R"
+                        converter.nominal_power = _parse_fixed(
+                            txt_line, 46, 50, float, 0
+                        )
+                        self.hvdc_records.setdefault("converters", list()).append(
+                            converter
+                        )
+
+                elif section_name == "DCCV":  # Converter controls
+                    for txt_line in txt_lines[2:]:
+                        number: int = _parse_fixed(txt_line, 1, 4, int)
+                        for item in self.hvdc_records.get("converters", list()):
+                            converter = item
+                            if isinstance(converter, PwfHvdcConverter) and converter.number == number:
+                                converter.control_type = _parse_fixed(
+                                    txt_line, 10, 10, str
+                                )
+                                converter.setpoint = _parse_fixed(
+                                    txt_line, 12, 16, float, 0
+                                )
+                                converter.angle_min = _parse_fixed(
+                                    txt_line, 36, 40, float, 0
+                                )
+                                converter.angle_max = _parse_fixed(
+                                    txt_line, 42, 46, float, 0
+                                )
 
                 elif section_name == "DBRE":  # Comment
                     for txt_line in txt_lines[2:]:
@@ -1369,6 +1834,49 @@ class PWFParser:
                 # not enough data values
                 pass
 
+        for generator in self.network.generators:
+            for bus in self.network.buses:
+                if generator.number == bus.number:
+                    generator.operation = "A" if bus.status != "D" else "D"
+                    generator.active_generation = bus.pg
+                    generator.reactive_generation = bus.qg
+                    generator.min_reactive_generation = bus.qmin
+                    generator.max_reactive_generation = bus.qmax
+                    generator.voltage = bus.voltage
+
+        self._assemble_hvdc()
+
+    def _assemble_hvdc(self) -> None:
+        """Join DELO, DCBA, DCLI, DCNV, and DCCV into link objects."""
+        links: List[PwfHvdcLink] = list()
+        for item in self.hvdc_records.get("links", list()):
+            if isinstance(item, PwfHvdcLink):
+                links.append(item)
+
+        dc_bus_links: List[tuple[int, int]] = list()
+        for item in self.hvdc_records.get("dc_bus_links", list()):
+            if isinstance(item, tuple) and len(item) == 2:
+                dc_bus_links.append((int(item[0]), int(item[1])))
+
+        for dc_bus, link_number in dc_bus_links:
+            for link in links:
+                if link.number == link_number:
+                    link.dc_buses.append(dc_bus)
+
+        for item in self.hvdc_records.get("dc_lines", list()):
+            if isinstance(item, PwfDCLine):
+                for link in links:
+                    if item.from_bus in link.dc_buses or item.to_bus in link.dc_buses:
+                        link.dc_lines.append(item)
+
+        for item in self.hvdc_records.get("converters", list()):
+            if isinstance(item, PwfHvdcConverter):
+                for link in links:
+                    if item.dc_bus in link.dc_buses:
+                        link.converters.append(item)
+
+        self.hvdc_records["assembled_links"] = links
+
     def to_veragrid(self) -> MultiCircuit:
         """
         Convert Anarede grid to VeraGrid
@@ -1377,11 +1885,38 @@ class PWFParser:
         grid = MultiCircuit(name="Anarede_Network")
 
         vg_dict = {vg.char: vg for vg in self.network.voltage_groups}
+        voltage_limits = {
+            str(limit.group): limit for limit in self.network.voltage_limit_groups
+        }
+
+        #  Create one native area and zone per ANAREDE identifier before buses
+        #  are converted, so every bus receives the canonical circuit object.
+        area_names: Dict[int, str] = dict(self.area_records)
+        for bus_record in self.network.buses:
+            if bus_record.area not in area_names:
+                area_names[bus_record.area] = f"Area_{bus_record.area}"
+        area_dict: Dict[int, dev.Area] = dict()
+        for number, name in area_names.items():
+            area: dev.Area = dev.Area(name=name.strip() or f"Area_{number}")
+            area_dict[number] = area
+            grid.add_area(area)
+
+        zone_dict: Dict[int, dev.Zone] = dict()
+        for bus_record in self.network.buses:
+            if bus_record.zone not in zone_dict:
+                zone: dev.Zone = dev.Zone(name=f"Zone_{bus_record.zone}")
+                zone_dict[bus_record.zone] = zone
+                grid.add_zone(zone)
 
         #  BUSES 
         bus_dict: Dict[int, dev.Bus] = {}
         for b in self.network.buses:
-            bus = b.to_veragrid(vg_dict)
+            bus = b.to_veragrid(
+                vg_dict,
+                voltage_limits,
+                area_dict,
+                zone_dict,
+            )
             grid.add_bus(bus)
             bus_dict[b.number] = bus
 
@@ -1393,6 +1928,11 @@ class PWFParser:
         #  TRANSFORMERS 
         for t in self.network.transformers:
             elm = t.to_veragrid(bus_dict)
+            for settings in self.network.transformer_settings:
+                if settings.from_bus == t.from_bus and settings.to_bus == t.to_bus:
+                    elm.tap_module_min = settings.minimum_voltage
+                    elm.tap_module_max = settings.maximum_voltage
+                    break
             grid.add_transformer2w(elm)
 
         #  GENERATORS 
@@ -1411,21 +1951,36 @@ class PWFParser:
 
         #  SHUNTS 
         for sh in self.network.shunts:
-            elm = sh.to_veragrid(bus_dict)
-            bus = bus_dict.get(sh.bus)
-            if bus is not None:
-                grid.add_shunt(bus=bus, api_obj=elm)
+            for bus_id, elm in sh.to_veragrid(bus_dict):
+                bus = bus_dict.get(bus_id)
+                if bus is not None:
+                    grid.add_shunt(bus=bus, api_obj=elm)
 
         #  STATIC COMPENSATORS 
         for sc in self.network.static_compensators:
-            elm = sc.to_veragrid(bus_dict)
-            bus = bus_dict.get(sc.bus)
+            bus_id, elm = sc.to_veragrid(bus_dict)
+            bus = bus_dict.get(bus_id)
+            if bus is not None:
+                grid.add_controllable_shunt(bus=bus, api_obj=elm)
+
+        #  SWITCHED SHUNTS AND SVCS
+        for shunt in self.network.controllable_shunts:
+            bus_id, elm = shunt.to_veragrid(bus_dict)
+            bus = bus_dict.get(bus_id, None)
             if bus is not None:
                 grid.add_controllable_shunt(bus=bus, api_obj=elm)
 
         #  DC LINES 
-        for d in self.network.dc_lines:
-            elm = d.to_veragrid(bus_dict)
-            grid.add_hvdc(elm)
+        for item in self.hvdc_records.get("assembled_links", list()):
+            if isinstance(item, PwfHvdcLink):
+                elm = item.to_veragrid(bus_dict)
+                if elm is not None:
+                    grid.add_hvdc(elm)
+
+        #  VSC HVDC LINKS
+        for link in self.network.vsc_links:
+            elm = link.to_veragrid(bus_dict)
+            if elm is not None:
+                grid.add_hvdc(elm)
 
         return grid

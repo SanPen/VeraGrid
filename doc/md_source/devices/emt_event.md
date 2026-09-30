@@ -22,6 +22,7 @@ Profile-enabled properties: none.
 |device_idtag        |str                            |    |False    |         |Unique ID                                               |False      |       |
 |tpe                 |enum DeviceType                |    |False    |         |Device type                                             |False      |       |
 |device_name         |str                            |    |False    |         |Device name                                             |False      |       |
+|device              |PhysicalDeviceType             |    |False    |         |Device name                                             |False      |       |
 |parameter           |VarType                        |    |False    |         |parameter that the event changes                        |False      |       |
 |time                |float                          |    |False    |         |Time when the event occurs                              |False      |       |
 |end_time            |float                          |    |False    |         |End time used by ramp events                            |False      |       |

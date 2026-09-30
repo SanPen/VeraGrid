@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.ContingencyAnalysis.Methods.linear_contingency_analysis &mdash; VeraGrid 6.5.26 documentation</title>
+  <title>VeraGridEngine.Simulations.ContingencyAnalysis.Methods.linear_contingency_analysis &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=c62e3d9e"></script>
+      <script src="../../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -307,7 +307,8 @@
 
     <span class="n">linear_analysis</span> <span class="o">=</span> <span class="n">LinearAnalysis</span><span class="p">(</span><span class="n">nc</span><span class="o">=</span><span class="n">nc</span><span class="p">,</span>
                                      <span class="n">distributed_slack</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">distribute_slack</span><span class="p">,</span>
-                                     <span class="n">correct_values</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">correct_values</span><span class="p">)</span>
+                                     <span class="n">correct_values</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">correct_values</span><span class="p">,</span>
+                                     <span class="n">use_jacobian_ptdf</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">use_jacobian_ptdf</span><span class="p">)</span>
 
     <span class="n">linear_multiple_contingencies</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">lin</span><span class="o">=</span><span class="n">linear_analysis</span><span class="p">,</span>
                                           <span class="n">ptdf_threshold</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">lin_options</span><span class="o">.</span><span class="n">ptdf_threshold</span><span class="p">,</span>
@@ -404,7 +405,7 @@
 
 <div class="viewcode-block" id="linear_contingency_scan_numba">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.linear_contingency_analysis.linear_contingency_scan_numba">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">linear_contingency_scan_numba</span><span class="p">(</span><span class="n">nbr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                                   <span class="n">n_con_groups</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                                   <span class="n">Pbus</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>

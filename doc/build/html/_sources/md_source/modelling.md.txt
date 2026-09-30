@@ -382,7 +382,7 @@ grid.add_generator(bus=bus, api_obj=gen)
 ```
 
 ### Registered properties
-Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, `Q`, `Qmin`, `Qmax`, `Pf`, `Vset`, `Cost2`, `Cost0`, `enabled_dispatch`, `must_run`, `srap_enabled`.
+Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, `Q`, `Qmin`, `Qmax`, `control_mode`, `Pf`, `Vset`, `Cost2`, `Cost0`, `enabled_dispatch`, `must_run`, `srap_enabled`.
 
 |          name          |       class_type        | unit  |mandatory|max_chars|                                  descriptions                                  |has_profile|comment|
 |------------------------|-------------------------|-------|---------|---------|--------------------------------------------------------------------------------|-----------|-------|
@@ -436,7 +436,7 @@ Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, 
 |Q                       |float                    |MVAr   |False    |         |Reactive power                                                                  |True       |       |
 |Qmin                    |float                    |MVAr   |False    |         |Minimum reactive power.                                                         |True       |       |
 |Qmax                    |float                    |MVAr   |False    |         |Maximum reactive power.                                                         |True       |       |
-|control_mode            |enum GeneratorControlMode|       |False    |         |Generator control mode                                                          |False      |       |
+|control_mode            |enum GeneratorControlMode|       |False    |         |Generator control mode                                                          |True       |       |
 |control_bus             |Bus                      |       |False    |         |Control bus                                                                     |False      |       |
 |Pf                      |float                    |       |False    |         |Power factor (cos(phi)). This is used for non-controlled generators.            |True       |       |
 |Vset                    |float                    |p.u.   |False    |         |Set voltage. This is used for controlled generators.                            |True       |       |
@@ -479,7 +479,7 @@ A `Battery` extends generator-style injection modelling with energy-capacity and
 This device connects to a bus and contributes power, current, or admittance to the solved network model.
 
 ### Registered properties
-Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, `Q`, `Qmin`, `Qmax`, `Pf`, `Vset`, `Cost2`, `Cost0`, `enabled_dispatch`, `must_run`, `srap_enabled`.
+Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, `Q`, `Qmin`, `Qmax`, `control_mode`, `Pf`, `Vset`, `Cost2`, `Cost0`, `enabled_dispatch`, `must_run`, `srap_enabled`.
 
 |          name          |       class_type        | unit  |mandatory|max_chars|                                  descriptions                                  |has_profile|comment|
 |------------------------|-------------------------|-------|---------|---------|--------------------------------------------------------------------------------|-----------|-------|
@@ -533,7 +533,7 @@ Profile-enabled properties: `active`, `Cost`, `shift_key`, `P`, `Pmin`, `Pmax`, 
 |Q                       |float                    |MVAr   |False    |         |Reactive power                                                                  |True       |       |
 |Qmin                    |float                    |MVAr   |False    |         |Minimum reactive power.                                                         |True       |       |
 |Qmax                    |float                    |MVAr   |False    |         |Maximum reactive power.                                                         |True       |       |
-|control_mode            |enum GeneratorControlMode|       |False    |         |Generator control mode                                                          |False      |       |
+|control_mode            |enum GeneratorControlMode|       |False    |         |Generator control mode                                                          |True       |       |
 |control_bus             |Bus                      |       |False    |         |Control bus                                                                     |False      |       |
 |Pf                      |float                    |       |False    |         |Power factor (cos(phi)). This is used for non-controlled generators.            |True       |       |
 |Vset                    |float                    |p.u.   |False    |         |Set voltage. This is used for controlled generators.                            |True       |       |
@@ -4223,6 +4223,7 @@ Profile-enabled properties: none.
 |device_idtag     |str                           |    |False    |         |Unique ID                                               |False      |       |
 |tpe              |enum DeviceType               |    |False    |         |Device type                                             |False      |       |
 |device_name      |str                           |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType            |    |False    |         |Device name                                             |False      |       |
 |prop             |enum ContingencyOperationTypes|    |False    |         |Object property to change                               |False      |       |
 |value            |float                         |    |False    |         |Property value                                          |False      |       |
 |group            |Contingency Group             |    |False    |         |Contingency group                                       |False      |       |
@@ -4271,6 +4272,7 @@ Profile-enabled properties: none.
 |device_idtag     |str                           |    |False    |         |Unique ID                                               |False      |       |
 |tpe              |enum DeviceType               |    |False    |         |Device type                                             |False      |       |
 |device_name      |str                           |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType            |    |False    |         |Device name                                             |False      |       |
 |prop             |enum ContingencyOperationTypes|    |False    |         |Object property to change                               |False      |       |
 |value            |float                         |    |False    |         |Property value                                          |False      |       |
 |group            |Remedial action Group         |    |False    |         |Remedial action group                                   |False      |       |
@@ -4297,6 +4299,7 @@ Profile-enabled properties: none.
 |device_idtag     |str                    |    |False    |         |Unique ID                                                                     |False      |       |
 |tpe              |enum DeviceType        |    |False    |         |Device type                                                                   |False      |       |
 |device_name      |str                    |    |False    |         |Device name                                                                   |False      |       |
+|device           |PhysicalDeviceType     |    |False    |         |Device name                                                                   |False      |       |
 |fault_type       |enum FaultType         |    |False    |         |Type of short circuit                                                         |False      |       |
 |method           |enum MethodShortCircuit|    |False    |         |Method of short circuit                                                       |False      |       |
 |phases           |enum PhasesShortCircuit|    |False    |         |Phases involved                                                               |False      |       |
@@ -4338,26 +4341,27 @@ This device is used by expansion-planning and candidate-investment workflows.
 ### Registered properties
 Profile-enabled properties: none.
 
-|        name        |   class_type    |unit|mandatory|max_chars|                                               descriptions                                                |has_profile|comment|
-|--------------------|-----------------|----|---------|---------|-----------------------------------------------------------------------------------------------------------|-----------|-------|
-|idtag               |str              |    |False    |         |Unique ID                                                                                                  |False      |       |
-|name                |str              |    |False    |         |Name of the device.                                                                                        |False      |       |
-|code                |str              |    |False    |         |Secondary ID                                                                                               |False      |       |
-|rdfid               |str              |    |False    |         |RDF ID for further compatibility                                                                           |False      |       |
-|action              |enum ActionType  |    |False    |         |Object action to perform. Only used for model merging.                                                     |False      |       |
-|selected_to_merge   |bool             |    |False    |         |Whether this object should be applied during diff merge.                                                   |False      |       |
-|comment             |str              |    |False    |         |User comment                                                                                               |False      |       |
-|diff_changes        |MergeInformation |    |False    |         |                                                                                                           |False      |       |
-|device_idtag        |str              |    |False    |         |Unique ID                                                                                                  |False      |       |
-|tpe                 |enum DeviceType  |    |False    |         |Device type                                                                                                |False      |       |
-|device_name         |str              |    |False    |         |Device name                                                                                                |False      |       |
-|CAPEX               |float            |M€  |False    |         |Capital expenditures. This is the investment value, it overrides the CAPEX value of the device if it exits.|False      |       |
-|status              |bool             |    |False    |         |If true the investment activates when applied, otherwise is deactivated.                                   |False      |       |
-|group               |Investments Group|    |False    |         |Investment group                                                                                           |False      |       |
-|commissioning_date  |float            |    |False    |         |Date when the investment is commissioned                                                                   |False      |       |
-|decommissioning_date|float            |    |False    |         |Date when the investment is decommissioned                                                                 |False      |       |
-|prop                |str              |    |False    |         |device property                                                                                            |False      |       |
-|value               |float            |    |False    |         |value status                                                                                               |False      |       |
+|        name        |    class_type    |unit|mandatory|max_chars|                                               descriptions                                                |has_profile|comment|
+|--------------------|------------------|----|---------|---------|-----------------------------------------------------------------------------------------------------------|-----------|-------|
+|idtag               |str               |    |False    |         |Unique ID                                                                                                  |False      |       |
+|name                |str               |    |False    |         |Name of the device.                                                                                        |False      |       |
+|code                |str               |    |False    |         |Secondary ID                                                                                               |False      |       |
+|rdfid               |str               |    |False    |         |RDF ID for further compatibility                                                                           |False      |       |
+|action              |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.                                                     |False      |       |
+|selected_to_merge   |bool              |    |False    |         |Whether this object should be applied during diff merge.                                                   |False      |       |
+|comment             |str               |    |False    |         |User comment                                                                                               |False      |       |
+|diff_changes        |MergeInformation  |    |False    |         |                                                                                                           |False      |       |
+|device_idtag        |str               |    |False    |         |Unique ID                                                                                                  |False      |       |
+|tpe                 |enum DeviceType   |    |False    |         |Device type                                                                                                |False      |       |
+|device_name         |str               |    |False    |         |Device name                                                                                                |False      |       |
+|device              |PhysicalDeviceType|    |False    |         |Device name                                                                                                |False      |       |
+|CAPEX               |float             |M€  |False    |         |Capital expenditures. This is the investment value, it overrides the CAPEX value of the device if it exits.|False      |       |
+|status              |bool              |    |False    |         |If true the investment activates when applied, otherwise is deactivated.                                   |False      |       |
+|group               |Investments Group |    |False    |         |Investment group                                                                                           |False      |       |
+|commissioning_date  |float             |    |False    |         |Date when the investment is commissioned                                                                   |False      |       |
+|decommissioning_date|float             |    |False    |         |Date when the investment is decommissioned                                                                 |False      |       |
+|prop                |str               |    |False    |         |device property                                                                                            |False      |       |
+|value               |float             |    |False    |         |value status                                                                                               |False      |       |
 
 ## FluidNode
 
@@ -4560,6 +4564,7 @@ Profile-enabled properties: none.
 |device_idtag        |str                            |    |False    |         |Unique ID                                               |False      |       |
 |tpe                 |enum DeviceType                |    |False    |         |Device type                                             |False      |       |
 |device_name         |str                            |    |False    |         |Device name                                             |False      |       |
+|device              |PhysicalDeviceType             |    |False    |         |Device name                                             |False      |       |
 |parameter           |VarType                        |    |False    |         |parameter that the event changes                        |False      |       |
 |time                |float                          |    |False    |         |Time when the event occurs                              |False      |       |
 |end_time            |float                          |    |False    |         |End time used by ramp events                            |False      |       |
@@ -4611,6 +4616,7 @@ Profile-enabled properties: none.
 |device_idtag        |str                            |    |False    |         |Unique ID                                               |False      |       |
 |tpe                 |enum DeviceType                |    |False    |         |Device type                                             |False      |       |
 |device_name         |str                            |    |False    |         |Device name                                             |False      |       |
+|device              |PhysicalDeviceType             |    |False    |         |Device name                                             |False      |       |
 |parameter           |VarType                        |    |False    |         |parameter that the event changes                        |False      |       |
 |time                |float                          |    |False    |         |Time when the event occurs                              |False      |       |
 |end_time            |float                          |    |False    |         |End time used by ramp events                            |False      |       |
@@ -4628,20 +4634,21 @@ This device stores reusable native or FMU-backed dynamic model templates.
 ### Registered properties
 Profile-enabled properties: none.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|block            |DaeBlock        |    |False    |         |DAE block                                               |False      |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|block            |DaeBlock          |    |False    |         |DAE block                                               |False      |       |
 
 ## EmtModelTemplate
 
@@ -4652,20 +4659,21 @@ This device stores reusable native or FMU-backed dynamic model templates.
 ### Registered properties
 Profile-enabled properties: none.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|block            |DaeBlock        |    |False    |         |DAE block                                               |False      |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|block            |DaeBlock          |    |False    |         |DAE block                                               |False      |       |
 
 ## FmuTemplate
 
@@ -4689,6 +4697,7 @@ Profile-enabled properties: none.
 |device_idtag     |str                   |    |False    |         |Unique ID                                                    |False      |       |
 |tpe              |enum DeviceType       |    |False    |         |Device type supported by this FMU template                   |False      |       |
 |device_name      |str                   |    |False    |         |Device name                                                  |False      |       |
+|device           |PhysicalDeviceType    |    |False    |         |Device name                                                  |False      |       |
 |block            |DaeBlock              |    |False    |         |Symbolic wrapper block used by the FMU template              |False      |       |
 |domain           |enum FmuTemplateDomain|    |False    |         |Simulation domain where the FMU template can be used         |False      |       |
 |mode             |enum FmuTemplateMode  |    |False    |         |FMI 2.0 execution mode stored by the template                |False      |       |
@@ -4704,21 +4713,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## QiMeasurement
 
@@ -4729,21 +4739,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## PfMeasurement
 
@@ -4754,21 +4765,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## QfMeasurement
 
@@ -4779,21 +4791,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## IfMeasurement
 
@@ -4804,21 +4817,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## PtMeasurement
 
@@ -4829,21 +4843,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## QtMeasurement
 
@@ -4854,21 +4869,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## ItMeasurement
 
@@ -4879,21 +4895,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## VmMeasurement
 
@@ -4904,21 +4921,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## VaMeasurement
 
@@ -4929,21 +4947,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## PgMeasurement
 
@@ -4954,21 +4973,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## QgMeasurement
 
@@ -4979,21 +4999,22 @@ This device stores measurement data used by observability and state-estimation w
 ### Registered properties
 Profile-enabled properties: `value`, `sigma`.
 
-|      name       |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
-|-----------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
-|idtag            |str             |    |False    |         |Unique ID                                               |False      |       |
-|name             |str             |    |False    |         |Name of the device.                                     |False      |       |
-|code             |str             |    |False    |         |Secondary ID                                            |False      |       |
-|rdfid            |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
-|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
-|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
-|comment          |str             |    |False    |         |User comment                                            |False      |       |
-|diff_changes     |MergeInformation|    |False    |         |                                                        |False      |       |
-|device_idtag     |str             |    |False    |         |Unique ID                                               |False      |       |
-|tpe              |enum DeviceType |    |False    |         |Device type                                             |False      |       |
-|device_name      |str             |    |False    |         |Device name                                             |False      |       |
-|value            |float           |    |False    |         |Value of the measurement                                |True       |       |
-|sigma            |float           |    |False    |         |Uncertainty of the measurement                          |True       |       |
+|      name       |    class_type    |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str               |    |False    |         |Unique ID                                               |False      |       |
+|name             |str               |    |False    |         |Name of the device.                                     |False      |       |
+|code             |str               |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str               |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType   |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool              |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str               |    |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation  |    |False    |         |                                                        |False      |       |
+|device_idtag     |str               |    |False    |         |Unique ID                                               |False      |       |
+|tpe              |enum DeviceType   |    |False    |         |Device type                                             |False      |       |
+|device_name      |str               |    |False    |         |Device name                                             |False      |       |
+|device           |PhysicalDeviceType|    |False    |         |Device name                                             |False      |       |
+|value            |float             |    |False    |         |Value of the measurement                                |True       |       |
+|sigma            |float             |    |False    |         |Uncertainty of the measurement                          |True       |       |
 
 ## Distribution Grid Example in the Sequence Reference Frame
 

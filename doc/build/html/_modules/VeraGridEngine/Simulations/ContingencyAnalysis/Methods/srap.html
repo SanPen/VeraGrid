@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.ContingencyAnalysis.Methods.srap &mdash; VeraGrid 6.7.0 documentation</title>
+  <title>VeraGridEngine.Simulations.ContingencyAnalysis.Methods.srap &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=9cce70e7"></script>
+      <script src="../../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -114,7 +114,7 @@
 
 <div class="viewcode-block" id="get_valid_negatives">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.srap.get_valid_negatives">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_valid_negatives</span><span class="p">(</span><span class="n">sensitivities</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">p_available</span><span class="p">:</span> <span class="n">Vec</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -141,7 +141,7 @@
 
 <div class="viewcode-block" id="get_valid_positives">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.srap.get_valid_positives">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_valid_positives</span><span class="p">(</span><span class="n">sensitivities</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">p_available</span><span class="p">:</span> <span class="n">Vec</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -167,7 +167,7 @@
 
 <div class="viewcode-block" id="vector_sum_used_power_srap">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.srap.vector_sum_used_power_srap">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">vector_sum_used_power_srap</span><span class="p">(</span><span class="n">p_available3</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">sensitivities3</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">max_srap_power</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -202,7 +202,7 @@
 
 <div class="viewcode-block" id="vector_sum_srap">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.Simulations.ContingencyAnalysis.Methods.html#VeraGridEngine.Simulations.ContingencyAnalysis.Methods.srap.vector_sum_srap">[docs]</a>
-<span class="nd">@nb</span><span class="o">.</span><span class="n">njit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">vector_sum_srap</span><span class="p">(</span><span class="n">p_available3</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">sensitivities3</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">srap_pmax_mw</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 

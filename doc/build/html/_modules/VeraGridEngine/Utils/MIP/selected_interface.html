@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Utils.MIP.selected_interface &mdash; VeraGrid 6.5.26 documentation</title>
+  <title>VeraGridEngine.Utils.MIP.selected_interface &mdash; VeraGrid 6.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=c62e3d9e"></script>
+      <script src="../../../../_static/documentation_options.js?v=ab36fa8d"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -112,6 +112,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">highspy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Highs</span><span class="p">,</span> <span class="n">HighsModelStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pulp</span><span class="w"> </span><span class="kn">import</span> <span class="n">HiGHS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csc_matrix</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObjVec</span><span class="p">,</span> <span class="n">ObjMat</span><span class="p">,</span> <span class="n">BoolVec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIPFramework</span><span class="p">,</span> <span class="n">MIPSolvers</span>
@@ -149,6 +151,29 @@
 <span class="n">LpExp</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">PulpLpExp</span><span class="p">,</span> <span class="n">OrToolsLpExp</span><span class="p">]</span>
 <span class="n">LpVar</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">PulpLpVar</span><span class="p">,</span> <span class="n">OrToolsLpVar</span><span class="p">]</span>
 <span class="n">LpModel</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">PulpLpModel</span><span class="p">,</span> <span class="n">OrToolsLpModel</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="is_infeasible">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Utils.MIP.html#VeraGridEngine.Utils.MIP.selected_interface.is_infeasible">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_infeasible</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">LpModel</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether a solve established infeasibility before relaxing limits.</span>
+
+<span class="sd">    :param model: Solver interface owning the solved model.</span>
+<span class="sd">    :param status: Status returned by the solver interface.</span>
+<span class="sd">    :return: True only when the available solver status confirms infeasibility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">infeasible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">status</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">INFEASIBLE</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">infeasible</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">PulpLpModel</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">solver</span><span class="p">,</span> <span class="n">HiGHS</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">solverModel</span><span class="p">,</span> <span class="n">Highs</span><span class="p">)):</span>
+        <span class="c1"># PuLP maps both infeasible and unbounded-or-infeasible here. Only the</span>
+        <span class="c1"># first justifies rebuilding NTC with additional thermal slacks.</span>
+        <span class="n">native_status</span><span class="p">:</span> <span class="n">HighsModelStatus</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">solverModel</span><span class="o">.</span><span class="n">getModelStatus</span><span class="p">()</span>
+        <span class="n">infeasible</span> <span class="o">=</span> <span class="n">native_status</span> <span class="o">==</span> <span class="n">HighsModelStatus</span><span class="o">.</span><span class="n">kInfeasible</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># Other backends retain their own explicit infeasibility status.</span>
+    <span class="k">return</span> <span class="n">infeasible</span></div>
+
 
 
 <div class="viewcode-block" id="get_available_mip_frameworks">

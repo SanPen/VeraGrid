@@ -12,7 +12,7 @@ Thank you for contributing to **VeraGrid**.
 
 All code contributions are submitted through pull requests.
 
-- Base branch: `devel` for normal development work.
+- Base branch: `master` for normal development work.
 - Source branch: a feature branch in your fork is preferred.
 - Small fixes should still start from an issue so the change has context and a review trail.
 

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Legacy MON grammar. The local 34.1 manual documents RAW ratings and nodes, not MON syntax: expanded MON support stays unverified."""
 from VeraGridEngine.IO.raw.psse_auxiliary import PsseVersion, BusInputMode

@@ -25,13 +25,11 @@ import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.Parents.editable_device import GCProp, EditableDevice
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Profiles import AnyProfile
-from VeraGridEngine.Utils.Symbolic.symbolic_io import (BlockSaver, BlockParser, Block,
-                                                       normalize_persisted_block_uid,
-                                                       normalize_persisted_blocks)
+from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockSaver, BlockParser, Block
 from VeraGridEngine.Utils.procedural_logic import ProceduralLogicCodec
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, VERAGRID_FILE_TYPE
 from VeraGridEngine.Devices.Diagrams.base_diagram import copy_diagrams
-from VeraGridEngine.enumerations import (DiagramType, DeviceType, SubObjectType, TapPhaseControl, TapModuleControl,
+from VeraGridEngine.enumerations import (DiagramType, DeviceType, SubObjectType,
                                          ContingencyOperationTypes)
 
 ProfileDictionary = Dict[str, bool | int | str | dict[str, dict[int, Any | None] | dict[Any, Any]] | Any]
@@ -72,6 +70,7 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
 
         'facility': dev.Facility(),
 
+        'market_units_group': dev.MarketUnitsGroup(),
         'market_unit': dev.MarketUnit(),
 
         'manufacturer_native_model': dev.ManufacturerNativeModel(),
@@ -388,6 +387,7 @@ def gather_model_as_data_frames(circuit: MultiCircuit,
         # configuration ################################################################################################
         obj = list()
         obj.append(['BaseMVA', circuit.Sbase])
+        obj.append(['BaseFrequency', circuit.fBase])
         obj.append(['Version', 5])
         obj.append(['Name', str(circuit.name)])
         obj.append(['Comments', str(circuit.comments)])
@@ -739,7 +739,7 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
             data[name] = obj.to_dict()
 
         elif prop.tpe == SubObjectType.DaeBlockType:
-            block_saver.save_block(blk=obj, main=True)
+            block_saver.save_block(blk=obj)
             if isinstance(obj, Block):
                 data[name] = obj.uid
             else:
@@ -875,7 +875,6 @@ def gather_model_as_jsons(circuit: MultiCircuit,
             "shared_references": block_saver.get_shared_references_to_save(),
             "connections": block_saver.get_connections_to_save(),
             "blocks": block_saver.get_blocks(),
-            "main_block_uids": block_saver.main_block_uids,
         }
     }
 
@@ -1121,7 +1120,9 @@ def parse_object_type_from_dataframe(
             property_name = str(property_name_)
 
             if property_name != 'idtag':  # idtag was set already
-                gc_prop: GCProp = look_for_property(elm=elm, property_name=property_name)
+
+                gc_prop: GCProp | None = look_for_property(elm=elm, property_name=property_name)
+
                 if gc_prop is not None:
 
                     if valid_value(property_value):
@@ -1296,32 +1297,25 @@ def parse_object_type_from_dataframe(
                 else:
                     # The property exists under neither its current nor legacy name.
                     skip = False
+                    if property_name == 'conn' and isinstance(elm, (dev.Transformer2W, dev.Winding)):
+                        if not elm.set_legacy_connection(str(property_value)):
+                            logger.add_warning('Unknown legacy transformer connection',
+                                               device=elm.idtag,
+                                               value=property_value)
+                        else:
+                            pass
+                        skip = True
+                    else:
+                        pass
+
                     if template_elm.device_type == DeviceType.ShuntDevice:
                         if property_name in ['is_controlled', 'Bmin', 'Bmax', 'Vset']:
                             skip = True
 
-                    if template_elm.device_type == DeviceType.Transformer2WDevice:
-                        if property_name == 'control_mode':
-                            if "Pf" in property_value:
-                                elm.tap_phase_control_mode = TapPhaseControl.Pf
-                                skip = True
-                            if "Pt" in property_value:
-                                elm.tap_phase_control_mode = TapPhaseControl.Pt
-                                skip = True
-                            if "V" in property_value:
-                                elm.tap_module_control_mode = TapModuleControl.Vm
-                                elm.regulation_bus = elm.bus_to
-                                skip = True
-                            if "Qf" in property_value:
-                                elm.tap_module_control_mode = TapModuleControl.Qf
-                                skip = True
-                            if "Qt" in property_value:
-                                elm.tap_module_control_mode = TapModuleControl.Qt
-                                skip = True
-                            if "fixed" in property_value:
-                                elm.tap_module_control_mode = TapModuleControl.fixed
-                                elm.tap_phase_control_mode = TapPhaseControl.fixed
-                                skip = True
+                    if property_name == 'control_mode' and isinstance(elm, dev.Transformer2W):
+                        skip = elm.set_legacy_control_mode(str(property_value))
+                    else:
+                        pass
 
                     if property_name == 'contingency_enabled':
                         # this is a branch with the legacy property "contingency_enabled", hence, create a contingency
@@ -1788,6 +1782,19 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                 # The object property was not present in the JSON entry.
                 pass
 
+        if 'conn' in json_entry and 'conn' not in template_elm.registered_properties:
+            if isinstance(elm, (dev.Transformer2W, dev.Winding)):
+                if not elm.set_legacy_connection(str(json_entry['conn'])):
+                    logger.add_warning('Unknown legacy transformer connection',
+                                       device=elm.idtag,
+                                       value=json_entry['conn'])
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+
         if template_elm.device_type == DeviceType.Transformer3WDevice:
             for property_name in ('r12', 'r23', 'r31', 'x12', 'x23', 'x31', 'rate1', 'rate2', 'rate3'):
                 gc_prop = template_elm.registered_properties[property_name]
@@ -1954,14 +1961,18 @@ def normalize_dynamic_legacy(data: VERAGRID_FILE_TYPE,
 
     if symbolic_data is not None:
         if len(symbolic_data) > 0:
-            # Every historical symbolic container is first converted to the flat
-            # UID-indexed representation consumed by the current BlockParser. The
-            # compatibility branches below can then inspect one stable structure
-            # instead of repeating the list, dictionary and inline-child cases.
-            blocks_data = normalize_persisted_blocks(
-                blocks_data=symbolic_data.get("blocks", dict())
+            # The record UID is the persistent identity. Build the local lookup
+            # required by the semantic migrations without rewriting the original
+            # JSON-keyed table consumed later by BlockParser.
+            persisted_blocks_data: Dict[int | str, Dict[str, Any]] = symbolic_data.get(
+                "blocks",
+                dict(),
             )
-            symbolic_data["blocks"] = blocks_data
+            blocks_data: Dict[int, Dict[str, Any]] = dict()
+            block_data: Dict[str, Any]
+            for block_data in persisted_blocks_data.values():
+                block_uid: int = block_data["uid"]
+                blocks_data[block_uid] = block_data
 
             # Transformer static mappings written by the first dynamic editor used
             # transformer-specific names. Those enum members were later replaced by
@@ -1972,8 +1983,6 @@ def normalize_dynamic_legacy(data: VERAGRID_FILE_TYPE,
             legacy_mapping_names.append(("transformer_tap_phase", "tap_phase"))
             converted_mapping_count: int = 0
 
-            block_uid: int
-            block_data: Dict[str, Any]
             for block_uid, block_data in blocks_data.items():
                 raw_api_obj_mapping: Any = block_data.get("api_obj_mapping", dict())
                 if isinstance(raw_api_obj_mapping, dict):
@@ -2048,19 +2057,9 @@ def normalize_dynamic_legacy(data: VERAGRID_FILE_TYPE,
                     descendant_parameter_uids: set[int] = set()
                     pending_child_uids: List[int] = list()
                     visited_child_uids: set[int] = set()
-                    child_entry: Any
-                    for child_entry in block_data.get("children", list()):
-                        if isinstance(child_entry, dict):
-                            child_uid: int | None = normalize_persisted_block_uid(
-                                child_entry.get("uid", None)
-                            )
-                        else:
-                            child_uid = normalize_persisted_block_uid(child_entry)
-
-                        if child_uid is not None:
-                            pending_child_uids.append(child_uid)
-                        else:
-                            pass
+                    child_uid: int
+                    for child_uid in block_data.get("children", list()):
+                        pending_child_uids.append(child_uid)
 
                     while len(pending_child_uids) > 0:
                         child_uid = pending_child_uids.pop()
@@ -2073,8 +2072,9 @@ def normalize_dynamic_legacy(data: VERAGRID_FILE_TYPE,
                                     child_parameter_entry: Any
                                     for child_parameter_entry in raw_child_parameters:
                                         if isinstance(child_parameter_entry, dict):
-                                            child_parameter_uid: int | None = normalize_persisted_block_uid(
-                                                child_parameter_entry.get("var", None)
+                                            child_parameter_uid: int | None = child_parameter_entry.get(
+                                                "var",
+                                                None,
                                             )
                                             if child_parameter_uid is not None:
                                                 descendant_parameter_uids.add(child_parameter_uid)
@@ -2085,20 +2085,10 @@ def normalize_dynamic_legacy(data: VERAGRID_FILE_TYPE,
                                 else:
                                     pass
 
-                                grandchild_entry: Any
-                                for grandchild_entry in child_block_data.get("children", list()):
-                                    if isinstance(grandchild_entry, dict):
-                                        grandchild_uid: int | None = normalize_persisted_block_uid(
-                                            grandchild_entry.get("uid", None)
-                                        )
-                                    else:
-                                        grandchild_uid = normalize_persisted_block_uid(grandchild_entry)
-
-                                    if grandchild_uid is not None:
-                                        if grandchild_uid not in visited_child_uids:
-                                            pending_child_uids.append(grandchild_uid)
-                                        else:
-                                            pass
+                                grandchild_uid: int
+                                for grandchild_uid in child_block_data.get("children", list()):
+                                    if grandchild_uid not in visited_child_uids:
+                                        pending_child_uids.append(grandchild_uid)
                                     else:
                                         pass
                             else:
@@ -2110,9 +2100,7 @@ def normalize_dynamic_legacy(data: VERAGRID_FILE_TYPE,
                     static_mapping_name: str
                     for static_mapping_name in legacy_static_mapping_names:
                         if static_mapping_name in api_obj_mapping:
-                            mapped_parameter_uid: int | None = normalize_persisted_block_uid(
-                                api_obj_mapping[static_mapping_name]
-                            )
+                            mapped_parameter_uid: int | None = api_obj_mapping[static_mapping_name]
                             if mapped_parameter_uid is not None:
                                 if mapped_parameter_uid in descendant_parameter_uids:
                                     duplicate_wrapper_parameter_uids.add(mapped_parameter_uid)
@@ -2128,9 +2116,7 @@ def normalize_dynamic_legacy(data: VERAGRID_FILE_TYPE,
                         root_parameter_entry: Any
                         for root_parameter_entry in root_parameters:
                             if isinstance(root_parameter_entry, dict):
-                                root_parameter_uid: int | None = normalize_persisted_block_uid(
-                                    root_parameter_entry.get("var", None)
-                                )
+                                root_parameter_uid: int | None = root_parameter_entry.get("var", None)
                                 if root_parameter_uid in duplicate_wrapper_parameter_uids:
                                     removed_wrapper_parameter_count += 1
                                 else:
@@ -2289,6 +2275,8 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     # set the base magnitudes
     if 'baseMVA' in data.keys():
         circuit.Sbase = data['baseMVA']
+    if 'baseFrequency' in data.keys():
+        circuit.fBase = data['baseFrequency']
 
     # Set comments
     if 'Comments' in data.keys():
@@ -2405,11 +2393,6 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     # Allow compatibility with old VeraGrid versions
     symbolic_data = normalize_dynamic_legacy(data=data, logger=logger)
 
-    if symbolic_data is not None:
-        blocks_data = symbolic_data.get("blocks", dict())
-    else:
-        blocks_data = dict()
-
     block_parser = BlockParser(
         var_factory=circuit.var_factory,
         logger=logger,
@@ -2417,23 +2400,9 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     )
     if symbolic_data is not None:
         if len(symbolic_data) > 0:
-            if "shared_references" in symbolic_data:
-                block_parser.parse_references(symbolic_data["shared_references"])
-            else:
-                pass
-            block_parser.parse_consts(symbolic_data["consts"])
-            block_parser.parse_vars(symbolic_data["vars"])
-            block_parser.parse_diff_vars(symbolic_data["diff_vars"])
-
-            if "connections" in symbolic_data:
-                block_parser.parse_connections(symbolic_data["connections"])
-            else:
-                pass
-            # BlockParser owns compatibility with all historical dynamics
-            # containers, including list-based tables, inline children and
-            # archives created before main_block_uids existed.
-            block_parser.parse_blocks(blocks_data=blocks_data,
-                                      main_block_uids=symbolic_data.get("main_block_uids", None))
+            # BlockParser owns symbolic dependency ordering and compatibility
+            # with historical dynamics containers.
+            block_parser.parse(data=symbolic_data)
         else:
             pass  # the symbolic data is empty
     else:
@@ -2648,7 +2617,17 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     # search contingencies, investments and remedial actions pointed devices
     # and remove those that point nowhere
     if refine_pointers:
-        circuit.refine_pointer_objects(logger=logger)
+        pointer_elements_dict: Dict[str, ALL_DEV_TYPES]
+        pointer_elements_dict, _ = circuit.get_all_elements_dict(logger=logger)
+        if previous_circuit is not None:
+            # A differential can reference an unchanged device that exists only in its base circuit.
+            previous_elements_dict: Dict[str, ALL_DEV_TYPES]
+            previous_elements_dict, _ = previous_circuit.get_all_elements_dict(logger=logger)
+            previous_elements_dict.update(pointer_elements_dict)
+            pointer_elements_dict = previous_elements_dict
+        else:
+            pass
+        circuit.refine_pointer_objects(logger=logger, all_elements_dict=pointer_elements_dict)
 
     if circuit.has_time_series:
         circuit.ensure_profiles_exist()

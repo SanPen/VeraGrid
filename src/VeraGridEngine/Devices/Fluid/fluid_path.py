@@ -10,6 +10,8 @@ from VeraGridEngine.enumerations import DeviceType, SubObjectType, BuildStatus, 
 from VeraGridEngine.Devices.Fluid.fluid_node import FluidNode
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
+from VeraGridEngine.Devices.Profiles import ProfileFloat
+from VeraGridEngine.Devices.Parents.editable_device import get_at
 
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.types import CONNECTION_TYPE
@@ -22,6 +24,10 @@ class FluidPath(PhysicalDevice):
         'target',
         '_min_flow',
         '_max_flow',
+        '_min_flow_prof',
+        '_max_flow_prof',
+        '_loss_factor',
+        '_loss_factor_prof',
         'color',
         '_locations',
     )
@@ -46,6 +52,7 @@ class FluidPath(PhysicalDevice):
             units="m3/s",
             tpe=float,
             definition="Minimum flow",
+            profile_name='min_flow_prof',
             cat=[PrpCat.TP],
         ),
         GCProp(
@@ -53,7 +60,16 @@ class FluidPath(PhysicalDevice):
             units="m3/s",
             tpe=float,
             definition="Maximum flow",
+            profile_name='max_flow_prof',
             cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='loss_factor',
+            units='p.u.',
+            tpe=float,
+            definition='Fraction of forward fluid flow lost during transfer.',
+            profile_name='loss_factor_prof',
+            cat=[PrpCat.OPF],
         ),
         GCProp(
             prop_name='locations',
@@ -81,6 +97,7 @@ class FluidPath(PhysicalDevice):
                  target: FluidNode = None,
                  min_flow: float = 0.0,
                  max_flow: float = 0.0,
+                 loss_factor: float = 0.0,
                  color: str | None = None,
                  build_status: BuildStatus = BuildStatus.Commissioned ):
         """
@@ -105,6 +122,10 @@ class FluidPath(PhysicalDevice):
         self.target = target
         self.min_flow = float(min_flow)
         self.max_flow = float(max_flow)
+        self._min_flow_prof = ProfileFloat(default_value=self.min_flow)
+        self._max_flow_prof = ProfileFloat(default_value=self.max_flow)
+        self.loss_factor = float(loss_factor)
+        self._loss_factor_prof = ProfileFloat(default_value=self.loss_factor)
 
         self.color = color if color is not None else "#00aad4"  # nice blue color
 
@@ -125,8 +146,59 @@ class FluidPath(PhysicalDevice):
         fluid_path.target = self.target
         fluid_path.min_flow = self.min_flow
         fluid_path.max_flow = self.max_flow
+        fluid_path.loss_factor = self.loss_factor
+        fluid_path.min_flow_prof = self.min_flow_prof
+        fluid_path.max_flow_prof = self.max_flow_prof
+        fluid_path.loss_factor_prof = self.loss_factor_prof
 
         return fluid_path
+
+    @property
+    def loss_factor(self) -> float:
+        """Get forward-flow loss factor.
+
+        :return: Fraction of forward flow lost during transfer.
+        """
+        return self._loss_factor
+
+    @loss_factor.setter
+    def loss_factor(self, val: float) -> None:
+        """Set forward-flow loss factor.
+
+        :param val: Fraction of forward flow lost during transfer.
+        :return: None.
+        """
+        self._loss_factor = float(val)
+
+    @property
+    def loss_factor_prof(self) -> ProfileFloat:
+        """Get the forward-flow loss profile.
+
+        :return: Snapshot-aligned loss factors.
+        """
+        return self._loss_factor_prof
+
+    @loss_factor_prof.setter
+    def loss_factor_prof(self, val: Union[ProfileFloat, np.ndarray]) -> None:
+        """Set the forward-flow loss profile.
+
+        :param val: Native profile or snapshot-aligned values.
+        :return: None.
+        """
+        if isinstance(val, ProfileFloat):
+            self._loss_factor_prof = val
+        elif isinstance(val, np.ndarray):
+            self._loss_factor_prof.set(arr=val)
+        else:
+            raise TypeError(f"Unsupported fluid-path loss-factor profile: {type(val)!r}")
+
+    def get_loss_factor_at(self, t: int | None) -> float:
+        """Get forward-flow loss at one snapshot.
+
+        :param t: Snapshot index, or ``None`` for the scalar value.
+        :return: Fraction of forward flow lost during transfer.
+        """
+        return get_at(self.loss_factor, self.loss_factor_prof, t)
 
     @property
     def locations(self) -> LineLocations:
@@ -218,6 +290,36 @@ class FluidPath(PhysicalDevice):
         self._min_flow = float(val)
 
     @property
+    def min_flow_prof(self) -> ProfileFloat:
+        """Get the minimum-flow profile.
+
+        :return: Snapshot-aligned minimum flow.
+        """
+        return self._min_flow_prof
+
+    @min_flow_prof.setter
+    def min_flow_prof(self, val: Union[ProfileFloat, np.ndarray]) -> None:
+        """Set the minimum-flow profile.
+
+        :param val: Native profile or snapshot-aligned values.
+        :return: None.
+        """
+        if isinstance(val, ProfileFloat):
+            self._min_flow_prof = val
+        elif isinstance(val, np.ndarray):
+            self._min_flow_prof.set(arr=val)
+        else:
+            raise TypeError(f"Unsupported fluid-path minimum-flow profile: {type(val)!r}")
+
+    def get_min_flow_at(self, t: int | None) -> float:
+        """Get minimum flow at one snapshot.
+
+        :param t: Snapshot index, or ``None`` for the scalar value.
+        :return: Minimum flow in m3/s.
+        """
+        return get_at(self.min_flow, self.min_flow_prof, t)
+
+    @property
     def max_flow(self) -> float:
         """
         Get ``max_flow``.
@@ -235,3 +337,33 @@ class FluidPath(PhysicalDevice):
         :return: None
         """
         self._max_flow = float(val)
+
+    @property
+    def max_flow_prof(self) -> ProfileFloat:
+        """Get the maximum-flow profile.
+
+        :return: Snapshot-aligned maximum flow.
+        """
+        return self._max_flow_prof
+
+    @max_flow_prof.setter
+    def max_flow_prof(self, val: Union[ProfileFloat, np.ndarray]) -> None:
+        """Set the maximum-flow profile.
+
+        :param val: Native profile or snapshot-aligned values.
+        :return: None.
+        """
+        if isinstance(val, ProfileFloat):
+            self._max_flow_prof = val
+        elif isinstance(val, np.ndarray):
+            self._max_flow_prof.set(arr=val)
+        else:
+            raise TypeError(f"Unsupported fluid-path maximum-flow profile: {type(val)!r}")
+
+    def get_max_flow_at(self, t: int | None) -> float:
+        """Get maximum flow at one snapshot.
+
+        :param t: Snapshot index, or ``None`` for the scalar value.
+        :return: Maximum flow in m3/s.
+        """
+        return get_at(self.max_flow, self.max_flow_prof, t)

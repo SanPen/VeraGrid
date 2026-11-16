@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from pathlib import Path
@@ -14,7 +18,7 @@ from VeraGridEngine.IO.fmu.worker_host import (
 )
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
-from VeraGridEngine.enumerations import FmiVersion, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DynamicIntegrationMethod, FmiVersion, VarPowerFlowReferenceType
 from tests.FMI.fmi_test_support import execute_test_rms_fmu_case
 
 
@@ -145,7 +149,9 @@ def test_rms_fmu_co_simulation_runs_end_to_end(tmp_path: Path) -> None:
 
 
 @pytest.mark.skipif(not host_build_capable(), reason="No usable host build toolchain available")
-def test_rms_fmu_model_exchange_runs_end_to_end(tmp_path: Path) -> None:
+@pytest.mark.parametrize("integration_method", [DynamicIntegrationMethod.DaeBackEuler,
+                                               DynamicIntegrationMethod.DaeAdaptiveBdf15])
+def test_rms_fmu_model_exchange_runs_end_to_end(tmp_path: Path, integration_method) -> None:
     """Compare FMI 1 and FMI 2 ME through the complete RMS product path.
 
     :param tmp_path: Isolated FMU and native staging directory supplied by pytest.
@@ -176,6 +182,8 @@ def test_rms_fmu_model_exchange_runs_end_to_end(tmp_path: Path) -> None:
         driver, load, fmu_path = execute_test_rms_fmu_case(
             output_dir=run_directory,
             mode=FmuInterfaceMode.MODEL_EXCHANGE,
+            integration_method=integration_method,
+            semi_explicit_grid=integration_method == DynamicIntegrationMethod.DaeAdaptiveBdf15,
             fmi_version=fmi_version,
         )
 
@@ -289,7 +297,10 @@ def test_rms_fmu_model_exchange_runs_end_to_end(tmp_path: Path) -> None:
         raise AssertionError("The RMS ME FMI 1/2 matrix is incomplete")
 
 
+@pytest.mark.parametrize("integration_method", [DynamicIntegrationMethod.DaeBackEuler,
+                                               DynamicIntegrationMethod.DaeAdaptiveBdf15])
 def test_rms_fmi_three_me_runs_end_to_end(
+    integration_method,
     compiled_fmi_three_scalar_co_simulation_fmu: Path,
     tmp_path: Path,
 ) -> None:
@@ -316,6 +327,8 @@ def test_rms_fmi_three_me_runs_end_to_end(
     driver, load, fmu_path = execute_test_rms_fmu_case(
         output_dir=tmp_path,
         mode=FmuInterfaceMode.MODEL_EXCHANGE,
+        integration_method=integration_method,
+        semi_explicit_grid=integration_method == DynamicIntegrationMethod.DaeAdaptiveBdf15,
         source_fmu_path=compiled_fmi_three_scalar_co_simulation_fmu,
         me_input_variable_name="control_input",
         active_power_output_name="observed_output",

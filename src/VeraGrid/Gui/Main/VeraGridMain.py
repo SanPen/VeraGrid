@@ -21,11 +21,13 @@ from PySide6.QtSvg import QSvgRenderer
 from VeraGrid.Gui.i18n import ApplicationTranslator, read_saved_language
 from VeraGrid.Gui.update_gui_all import update_all_icons
 from VeraGrid.Gui.Main.SubClasses.Scripting.scripting import ScriptingMain
+from VeraGrid.Gui.OperatorsView.operator_view import OperatorView
 from VeraGrid.Gui.messages import yes_no_question
 import VeraGrid.ThirdParty.qdarktheme as qdarktheme
 from VeraGrid.__version__ import __VeraGrid_VERSION__
 from VeraGridEngine.IO.file_system import get_create_veragrid_folder
 from VeraGridEngine.Utils.cache import clean_pycache_folders
+from VeraGridEngine.enumerations import DeviceType
 
 __author__ = 'Santiago Peñate Vera'
 
@@ -211,6 +213,63 @@ class VeraGridMainGUI(ScriptingMain):
         # global delete function
         self.ui.actionDelete_selected.triggered.connect(self.global_delete)
         self.ui.actionClear_cache.triggered.connect(self.clear_cache)
+        self.ui.actionOperator_View.toggled.connect(self.set_operator_view_visible)
+
+    @QtCore.Slot(bool)
+    def set_operator_view_visible(self, is_visible: bool) -> None:
+        """Create once, then show or hide the managed Operator View from its toggle action.
+
+        :return: None.
+        """
+        operator_view_key: str = 'operator_view'
+        existing_window: QtWidgets.QMainWindow | QtWidgets.QDialog | None = self.window_manager.get(
+            key=operator_view_key,
+        )
+        if is_visible and existing_window is None:
+            device_types: list[DeviceType] = [
+                DeviceType.SubstationDevice,
+                DeviceType.BusDevice,
+                DeviceType.LineDevice,
+                DeviceType.HVDCLineDevice,
+                DeviceType.DCLineDevice,
+                DeviceType.Transformer2WDevice,
+                DeviceType.Transformer3WDevice,
+                DeviceType.TransformerNwDevice,
+            ]
+            operator_view: OperatorView = OperatorView(
+                device_types=device_types,
+                main_gui=self,
+                parent=self,
+            )
+            operator_view.setEnabled(self.ui.mainTabWidget.isEnabled())
+            self.show_dialogue(
+                win=operator_view,
+                key=operator_view_key,
+                delete_on_close=False,
+            )
+        elif is_visible and isinstance(existing_window, OperatorView):
+            # WindowManager retains this valid instance until Qt emits destroyed on close.
+            self.show_dialogue(
+                win=existing_window,
+                key=operator_view_key,
+                delete_on_close=False,
+            )
+        elif not is_visible and isinstance(existing_window, OperatorView):
+            existing_window.hide()
+        else:
+            # This key is private to OperatorView and cannot safely be reused by another window type.
+            return
+
+    def set_operator_view_action_checked(self, is_checked: bool) -> None:
+        """Synchronize the toggle action with the Operator View's visibility.
+
+        :param is_checked: Whether the managed Operator View is visible.
+        :return: None.
+        """
+        action = self.ui.actionOperator_View
+        signals_were_blocked: bool = action.blockSignals(True)
+        action.setChecked(is_checked)
+        action.blockSignals(signals_were_blocked)
 
     def clear_cache(self) -> None:
         """

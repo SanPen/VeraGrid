@@ -35,6 +35,8 @@ class ShuntData:
         "qmin",
         "qmax",
         "q_share",
+        "q_droop",
+        "q_droop_snom",
         "cost",
         "taps",
         "mttf",
@@ -81,6 +83,9 @@ class ShuntData:
         self.qmin: Vec = np.zeros(nelm, dtype=float)
         self.qmax: Vec = np.zeros(nelm, dtype=float)
         self.q_share: Vec = np.zeros(nelm, dtype=float)
+        # MVAr/p.u. for Qdroop, or percent when a legacy rating is set.
+        self.q_droop: Vec = np.zeros(nelm, dtype=float)
+        self.q_droop_snom: Vec = np.zeros(nelm, dtype=float)
 
         self.cost: Vec = np.zeros(nelm, dtype=float)
 
@@ -143,6 +148,8 @@ class ShuntData:
         data.qmax = self.qmax[elm_idx]
         data.qmin = self.qmin[elm_idx]
         data.q_share = self.q_share[elm_idx]
+        data.q_droop = self.q_droop[elm_idx]
+        data.q_droop_snom = self.q_droop_snom[elm_idx]
 
         data.cost = self.cost[elm_idx]
 
@@ -214,6 +221,8 @@ class ShuntData:
         data.qmax = self.qmax.copy()
         data.qmin = self.qmin.copy()
         data.q_share = self.q_share.copy()
+        data.q_droop = self.q_droop.copy()
+        data.q_droop_snom = self.q_droop_snom.copy()
 
         data.cost = self.cost.copy()
 

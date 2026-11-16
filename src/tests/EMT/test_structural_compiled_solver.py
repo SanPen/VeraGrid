@@ -116,7 +116,8 @@ def test_bdf2_effective_startup_jacobian(
     if isinstance(solver, StructuralCompiledSolver):
         stats: Dict[str, float] = solver.get_last_runtime_stats()
         assert stats["sparse_numeric_factorizations"] == 2.0
-        assert stats["sparse_solve_calls"] == 3.0
+        # One Newton correction and one confirming correction per accepted substep.
+        assert stats["sparse_solve_calls"] == 6.0
     else:
         pass
 

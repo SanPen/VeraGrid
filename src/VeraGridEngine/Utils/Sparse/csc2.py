@@ -1527,7 +1527,7 @@ def csc_add_ff(A: CSC, B: CSC, alpha = 1.0, beta = 1.0) -> CSC:
 
     w = np.zeros(m, dtype=np.int32)
 
-    x = np.zeros(n, dtype=np.float64)  # get workspace
+    x = np.zeros(m, dtype=np.float64)  # get workspace, indexed by row
 
     C = CSC(m, n, A.nnz + B.nnz, False)  # allocate result
 
@@ -1544,6 +1544,9 @@ def csc_add_ff(A: CSC, B: CSC, alpha = 1.0, beta = 1.0) -> CSC:
             C.data[p] = x[C.indices[p]]
 
     C.indptr[n] = nz  # finalize the last column of C
+
+    # overlapping entries leave unused room; trim it so nnz, len(data) and indptr[-1] agree
+    C.resize(nz)
 
     return C  # success; free workspace, return C
 

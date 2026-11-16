@@ -5,6 +5,8 @@
 
 import numpy as np
 
+from VeraGridEngine.IO.matpower.matpower_utils import normalize_matpower_float
+
 
 class MatpowerGenerator:
     """
@@ -94,79 +96,79 @@ class MatpowerGenerator:
 
         # Assign values explicitly
         self.gen_bus = int(row[0])           # Bus number
-        self.pg = float(row[1])             # Real power output (MW)
-        self.qg = float(row[2])             # Reactive power output (MVAr)
-        self.qmax = float(row[3])           # Maximum reactive power output
-        self.qmin = float(row[4])           # Minimum reactive power output
-        self.vg = float(row[5])             # Voltage magnitude setpoint
-        self.mbase = float(row[6])          # Machine MVA base
+        self.pg = normalize_matpower_float(row[1])             # Real power output (MW)
+        self.qg = normalize_matpower_float(row[2])             # Reactive power output (MVAr)
+        self.qmax = normalize_matpower_float(row[3])           # Maximum reactive power output
+        self.qmin = normalize_matpower_float(row[4])           # Minimum reactive power output
+        self.vg = normalize_matpower_float(row[5])             # Voltage magnitude setpoint
+        self.mbase = normalize_matpower_float(row[6])          # Machine MVA base
         self.gen_status = int(row[7])       # Generator status
-        self.pmax = float(row[8])           # Maximum real power output
-        self.pmin = float(row[9])           # Minimum real power output
+        self.pmax = normalize_matpower_float(row[8])           # Maximum real power output
+        self.pmin = normalize_matpower_float(row[9])           # Minimum real power output
 
         # MATPOWER expects columns through APF, but some external case files
         # omit trailing generator columns. Preserve constructor defaults for
         # any missing tail fields instead of indexing past the row.
         if row_size > 10:
-            self.pc1 = float(row[10])           # Lower real power output of PQ capability curve
+            self.pc1 = normalize_matpower_float(row[10])       # Lower real power output of PQ capability curve
         else:
             pass
 
         if row_size > 11:
-            self.pc2 = float(row[11])           # Upper real power output of PQ capability curve
+            self.pc2 = normalize_matpower_float(row[11])       # Upper real power output of PQ capability curve
         else:
             pass
 
         if row_size > 12:
-            self.qc1min = float(row[12])        # Minimum reactive power at Pc1
+            self.qc1min = normalize_matpower_float(row[12])    # Minimum reactive power at Pc1
         else:
             pass
 
         if row_size > 13:
-            self.qc1max = float(row[13])        # Maximum reactive power at Pc1
+            self.qc1max = normalize_matpower_float(row[13])    # Maximum reactive power at Pc1
         else:
             pass
 
         if row_size > 14:
-            self.qc2min = float(row[14])        # Minimum reactive power at Pc2
+            self.qc2min = normalize_matpower_float(row[14])    # Minimum reactive power at Pc2
         else:
             pass
 
         if row_size > 15:
-            self.qc2max = float(row[15])        # Maximum reactive power at Pc2
+            self.qc2max = normalize_matpower_float(row[15])    # Maximum reactive power at Pc2
         else:
             pass
 
         if row_size > 16:
-            self.ramp_agc = float(row[16])      # Ramp rate for load following/AGC
+            self.ramp_agc = normalize_matpower_float(row[16])  # Ramp rate for load following/AGC
         else:
             pass
 
         if row_size > 17:
-            self.ramp_10 = float(row[17])       # Ramp rate for 10-minute reserves
+            self.ramp_10 = normalize_matpower_float(row[17])   # Ramp rate for 10-minute reserves
         else:
             pass
 
         if row_size > 18:
-            self.ramp_30 = float(row[18])       # Ramp rate for 30-minute reserves
+            self.ramp_30 = normalize_matpower_float(row[18])   # Ramp rate for 30-minute reserves
         else:
             pass
 
         if row_size > 19:
-            self.ramp_q = float(row[19])        # Ramp rate for reactive power
+            self.ramp_q = normalize_matpower_float(row[19])    # Ramp rate for reactive power
         else:
             pass
 
         if row_size > 20:
-            self.apf = float(row[20])           # Area participation factor
+            self.apf = normalize_matpower_float(row[20])       # Area participation factor
         else:
             pass
 
         if row_size > 21:
-            self.mu_pmax = float(row[21])       # Kuhn-Tucker multiplier on upper Pg limit
-            self.mu_pmin = float(row[22])       # Kuhn-Tucker multiplier on lower Pg limit
-            self.mu_qmax = float(row[23])       # Kuhn-Tucker multiplier on upper Qg limit
-            self.mu_qmin = float(row[24])       # Kuhn-Tucker multiplier on lower Qg limit
+            self.mu_pmax = normalize_matpower_float(row[21])   # Kuhn-Tucker multiplier on upper Pg limit
+            self.mu_pmin = normalize_matpower_float(row[22])   # Kuhn-Tucker multiplier on lower Pg limit
+            self.mu_qmax = normalize_matpower_float(row[23])   # Kuhn-Tucker multiplier on upper Qg limit
+            self.mu_qmin = normalize_matpower_float(row[24])   # Kuhn-Tucker multiplier on lower Qg limit
         else:
             pass
 

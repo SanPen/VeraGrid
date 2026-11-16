@@ -17,7 +17,6 @@ from VeraGridEngine.Devices import *
 from VeraGridEngine.DataStructures import *
 from VeraGridEngine.Topology import *
 from VeraGridEngine.Compilers import *
-from VeraGridEngine.Templates import *
 from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
 from VeraGridEngine.IO.file_save import FileSave, FileSavingOptions, save_veragrid_multiverse
 from VeraGridEngine.IO.veragrid.remote import (gather_model_as_jsons_for_communication, RemoteInstruction,

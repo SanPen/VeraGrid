@@ -20,6 +20,8 @@ class LoadData:
         "names",
         "idtag",
         "active",
+        "fixed_voltage",
+        "grounds_neutral",
         "is_static_generator",
         "q_droop", "q_droop_snom", "q_droop_vset", "q_droop_vmin", "q_droop_vmax",
         "S",
@@ -59,6 +61,9 @@ class LoadData:
         self.idtag: StrVec = np.empty(nelm, dtype=object)
 
         self.active: BoolVec = np.zeros(nelm, dtype=bool)
+        # Only ABC compilation needs to distinguish ideal external voltage sources.
+        self.fixed_voltage: BoolVec | None = None
+        self.grounds_neutral: BoolVec = np.zeros(nelm, dtype=bool)
         self.is_static_generator: BoolVec = np.zeros(nelm, dtype=bool)
         # Zero droop marks ordinary fixed-power devices; only controlled static injections populate these arrays.
         self.q_droop: Vec = np.zeros(nelm)
@@ -123,6 +128,8 @@ class LoadData:
         data.idtag = self.idtag[elm_idx]
 
         data.active = self.active[elm_idx]
+        data.fixed_voltage = self.fixed_voltage[elm_idx] if self.fixed_voltage is not None else None
+        data.grounds_neutral = self.grounds_neutral[elm_idx]
         data.is_static_generator = self.is_static_generator[elm_idx]
         data.q_droop = self.q_droop[elm_idx]
         data.q_droop_snom = self.q_droop_snom[elm_idx]
@@ -194,6 +201,8 @@ class LoadData:
         data.idtag = self.idtag.copy()
 
         data.active = self.active.copy()
+        data.fixed_voltage = self.fixed_voltage.copy() if self.fixed_voltage is not None else None
+        data.grounds_neutral = self.grounds_neutral.copy()
         data.is_static_generator = self.is_static_generator.copy()
         data.q_droop = self.q_droop.copy()
         data.q_droop_snom = self.q_droop_snom.copy()
@@ -334,6 +343,7 @@ class LoadData:
         Compare load fields used by NumericalCircuit.compare().
         """
         compare_arr(self.active, other.active, tol, 'LoadData', 'active', logger)
+        compare_arr(self.grounds_neutral, other.grounds_neutral, tol, 'LoadData', 'grounds_neutral', logger)
         compare_arr(self.S, other.S, tol, 'LoadData', 'S', logger)
         compare_arr(self.I, other.I, tol, 'LoadData', 'I', logger)
         compare_arr(self.Y, other.Y, tol, 'LoadData', 'Y', logger)

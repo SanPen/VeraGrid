@@ -11,14 +11,23 @@ import math
 import time
 import scipy.sparse as sp
 
-from typing import Union, Any
+from typing import Union, Any, NamedTuple
 
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
+from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options import RmsSmallSignalStabilityOptions
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_results import SmallSignalStabilityRmsResults
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.island_filter import exclude_single_node_islands
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.rms_port_analysis import (
+    DevicePortResponse,
+    PortLinearization,
+    compute_device_admittance,
+    compute_grid_impedance_at_device_port,
+    prepare_port,
+)
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.basic_structures import Vec, Mat
@@ -26,7 +35,7 @@ from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDa
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
 from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
-from VeraGridEngine.Utils.NumericalMethods.sparse_lu_selection import resolve_sparse_lu_provider
+from VeraGridEngine.Utils.Sparse.sparse_solve import resolve_sparse_lu_provider
 
 
 def compute_state_matrix(problem: RmsProblemTemplate, x: Vec, dx: Vec) -> tuple[Mat, Mat]:
@@ -38,6 +47,12 @@ def compute_state_matrix(problem: RmsProblemTemplate, x: Vec, dx: Vec) -> tuple[
     :param dx: Vec. Derivatives value at assessment time
     :return
     """
+    if problem.get_states_number() == 0:
+        raise ValueError(
+            "Small-signal analysis requires at least one differential RMS state; "
+            "the compiled RMS problem contains only algebraic equations"
+        )
+
     h = problem.get_dt_value()
     # h = 0.001
     fx: sp.csc_matrix = problem.get_j11(x, dx, h).tocsc()  # ∂f/∂x
@@ -703,7 +718,12 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         :param engine: EngineType (i.e., EngineType.VeraGrid) (optional)
         """
 
+        grid, pf_results, excluded_buses = exclude_single_node_islands(grid, pf_results)
         DriverTemplate.__init__(self, grid=grid, engine=engine)
+        if excluded_buses:
+            self.logger.add_info(
+                f"RMS small-signal analysis excluded {excluded_buses} buses in single-node islands"
+            )
 
         # Normalize optional configurations before the RMS problem consumes
         # them.  This keeps direct API construction consistent with the GUI,
@@ -750,6 +770,74 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         # Run the dynamic simulation
         self.run_small_signal_stability()
 
+    def prepare_device_port(self, device: InjectionParent) -> PortLinearization:
+        """
+        Prepare the linearized electrical boundary between an RMS injection
+        device and its bus.
+
+        :param device: Injection device with an assigned RMS model.
+        :return: Device port extracted from this driver's initialized RMS problem.
+        """
+        return prepare_port(driver=self, device=device)
+
+    def compute_device_admittance(self,
+                                  device: InjectionParent,
+                                  frequencies_hz: Vec) -> np.ndarray:
+        """
+        Compute the selected device's injected qd current response to qd bus
+        voltage perturbations.
+
+        :param device: Injection device to isolate from the RMS problem.
+        :param frequencies_hz: Frequencies in hertz.
+        :return: Complex response matrices ordered by frequency.
+        """
+        port: PortLinearization = self.prepare_device_port(device=device)
+        return compute_device_admittance(port=port, frequencies_hz=frequencies_hz)
+
+    def compute_grid_impedance_at_device(self,
+                                         device: InjectionParent,
+                                         frequencies_hz: Vec) -> np.ndarray:
+        """
+        Compute the remaining grid's qd bus-voltage response to injected qd
+        current after removing the selected device.
+
+        :param device: Injection device whose bus connection defines the port.
+        :param frequencies_hz: Frequencies in hertz.
+        :return: Complex response matrices ordered by frequency.
+        """
+        port: PortLinearization = self.prepare_device_port(device=device)
+        return compute_grid_impedance_at_device_port(
+            port=port,
+            frequencies_hz=frequencies_hz,
+        )
+
+    def compute_device_port_response(self,
+                                     device: InjectionParent,
+                                     frequencies_hz: Vec) -> DevicePortResponse:
+        """
+        Compute device admittance and remaining-grid impedance at one shared
+        device-to-bus boundary.
+
+        :param device: Injection device whose bus connection defines the port.
+        :param frequencies_hz: Frequencies in hertz.
+        :return: Both port responses and their VeraGrid device and bus.
+        """
+        port: PortLinearization = self.prepare_device_port(device=device)
+        return DevicePortResponse(
+            frequencies_hz=frequencies_hz,
+            device_admittance=compute_device_admittance(
+                port=port,
+                frequencies_hz=frequencies_hz,
+            ),
+            grid_impedance=compute_grid_impedance_at_device_port(
+                port=port,
+                frequencies_hz=frequencies_hz,
+            ),
+            device=device,
+            bus=device.bus,
+        )
+
+
     def run_small_signal_stability(self) -> None:
         """
         Performs the numerical integration using the chosen method and the small signal stability assessment.
@@ -774,10 +862,16 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
                 f"Simulating the RMS model up to the assessment time ({self.assessment_time:g} s)..."
             )
 
-            sparse_solver_backend_provider: SparseLinearSolverBackendProvider = resolve_sparse_lu_provider(
-                self.rms_options.sparse_solver,
-                self.logger,
-            )
+            sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = self.problem.get_sparse_solver_backend_provider()
+            if sparse_solver_backend_provider is None:
+                # Direct callers without a binding retain the existing resolver.
+                sparse_solver_backend_provider = resolve_sparse_lu_provider(
+                    self.rms_options.sparse_solver,
+                    self.logger,
+                )
+            else:
+                # Initialization already resolved this execution's LU selection.
+                pass
             solver = self.integration_methods_dict[self.rms_options.integration_method](
                 problem=self.problem,
                 t0=0,

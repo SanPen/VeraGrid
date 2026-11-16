@@ -4,13 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import List, Tuple, Dict, Union
+from typing import List, Tuple, Dict, Union, TYPE_CHECKING
 from enum import Enum
 import numba as nb
 import numpy as np
 import scipy.sparse as sp
 
-from VeraGridEngine.Devices import RemedialAction
+from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Topology.simulation_indices import SimulationIndices
 from VeraGridEngine.Topology.topology import find_islands
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, BoolVec, Mat, CxMat, StrVec, Logger
@@ -32,9 +32,13 @@ from VeraGridEngine.DataStructures.fluid_turbine_data import FluidTurbineData
 from VeraGridEngine.DataStructures.fluid_pump_data import FluidPumpData
 from VeraGridEngine.DataStructures.fluid_p2x_data import FluidP2XData
 from VeraGridEngine.DataStructures.fluid_path_data import FluidPathData
-from VeraGridEngine.Devices.Aggregation.investment import Investment
-from VeraGridEngine.Devices.Events.contingency import Contingency
 from VeraGridEngine.Utils.compare import compare_arr
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Devices.Aggregation.investment import Investment
+    from VeraGridEngine.Devices.Events.contingency import Contingency
+    from VeraGridEngine.Devices.Events.remedial_action import RemedialAction
+    from VeraGridEngine.Devices.Substation.bus import Bus
 
 ALL_STRUCTS = Union[
     BusData,
@@ -112,7 +116,7 @@ def build_q_limits(nbus: int, Sbase: float,
             min_mask[i] += 1
 
     for i, qmin, qmax, active, ctrl_mode in zip(batt_idx, q_min_batt, q_max_batt, active_batt,
-                                                   control_mode_int_batt):
+                                                control_mode_int_batt):
 
         if active and ctrl_mode == v_ctrl_val_gen:
             if max_mask[i] == 0:
@@ -297,13 +301,13 @@ def select_ac_phase_reference_buses(
         from_index: int = int(branch_from[branch_index])
         to_index: int = int(branch_to[branch_index])
         connects_active_ac_buses: bool = (
-            bool(branch_active[branch_index])
-            and from_index >= 0
-            and to_index >= 0
-            and bool(bus_active[from_index])
-            and bool(bus_active[to_index])
-            and not bool(is_dc_bus[from_index])
-            and not bool(is_dc_bus[to_index])
+                bool(branch_active[branch_index])
+                and from_index >= 0
+                and to_index >= 0
+                and bool(bus_active[from_index])
+                and bool(bus_active[to_index])
+                and not bool(is_dc_bus[from_index])
+                and not bool(is_dc_bus[to_index])
         )
         if connects_active_ac_buses:
             row_indices[entry_count] = from_index
@@ -333,15 +337,13 @@ def select_ac_phase_reference_buses(
 
     for phase_region in phase_regions:
         region_modes: IntVec = bus_types[phase_region]
-        has_reference: bool = bool(
-            np.any(region_modes == BusMode.Slack_tpe.value)
-        )
+        has_reference: bool = bool(np.any(region_modes == BusMode.Slack_tpe.value))
         if has_reference:
             pass
         else:
             pv_candidates: IntVec = phase_region[
                 region_modes == BusMode.PV_tpe.value
-            ]
+                ]
             if len(pv_candidates) == 0:
                 pass
             else:
@@ -487,7 +489,7 @@ class NumericalCircuit:
         # used during contingency analysis to modify the structures active, etc...
         # based on the device idtag
         self.structs_idtag_dict: Dict[str, Tuple[DataStructType, int]] = dict()
-        self.bus_dict: Dict[Any, int] | None = None
+        self.bus_dict: Dict[Bus, int] | None = None
 
     def propagate_bus_result(self, bus_magnitude: Vec | CxVec):
         """
@@ -970,12 +972,10 @@ class NumericalCircuit:
             tap_module=self.active_branch_data.tap_module,
             vtap_f=self.passive_branch_data.virtual_tap_f,
             vtap_t=self.passive_branch_data.virtual_tap_t,
-            tap_angle=self.active_branch_data.tap_angle,
+            tap_angle=self.active_branch_data.tap_angle + np.pi / 6.0 * self.passive_branch_data.vector_group_number,
             Cf=self.passive_branch_data.Cf.tocsc(),
             Ct=self.passive_branch_data.Ct.tocsc(),
             Yshunt_bus=self.get_Yshunt_bus_pu(),
-            conn=self.passive_branch_data.conn,
-            seq=1
         )
 
     def get_series_admittance_matrices(self) -> ycalc.SeriesAdmittanceMatrices:
@@ -992,7 +992,7 @@ class NumericalCircuit:
             tap_module=self.active_branch_data.tap_module,
             vtap_f=self.passive_branch_data.virtual_tap_f,
             vtap_t=self.passive_branch_data.virtual_tap_t,
-            tap_angle=self.active_branch_data.tap_angle,
+            tap_angle=self.active_branch_data.tap_angle + np.pi / 6.0 * self.passive_branch_data.vector_group_number,
             Cf=self.passive_branch_data.Cf.tocsc(),
             Ct=self.passive_branch_data.Ct.tocsc(),
             Yshunt_bus=self.get_Yshunt_bus_pu(),
@@ -1098,7 +1098,7 @@ class NumericalCircuit:
             active_hvdc=self.hvdc_data.active,
 
             v_ctrl_val_gen=GeneratorControlMode.V.idx(),
-            v_ctrl_val_sh = ShuntControlMode.Continuous.idx()
+            v_ctrl_val_sh=ShuntControlMode.Continuous.idx()
         )
         return Qmax_bus, Qmin_bus
 

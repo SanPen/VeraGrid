@@ -10,7 +10,6 @@ from typing import Dict, List
 import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import (
-    StaticParameterMappingDiagnostics,
     assign_static_api_object_mapping_for_device,
 )
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -118,10 +117,6 @@ def collect_declared_dynamic_parameter_values(grid: MultiCircuit,
         else:
             raise ValueError("Unsupported dynamic simulation type")
 
-    mapping_diagnostics: StaticParameterMappingDiagnostics = StaticParameterMappingDiagnostics(
-        logger=logger,
-        simulation_mode=simulation_mode,
-    )
     device: ALL_DEV_TYPES
 
     for device in grid.get_all_elements_iter():
@@ -144,7 +139,7 @@ def collect_declared_dynamic_parameter_values(grid: MultiCircuit,
                 device=device,
                 mdl=model,
                 problem_mapping=mapped_values,
-                logger=mapping_diagnostics,
+                logger=logger,
             )
 
             # API-mapped targets can exist without a mirrored ``parameters``

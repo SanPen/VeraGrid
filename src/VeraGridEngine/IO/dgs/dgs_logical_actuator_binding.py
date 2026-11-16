@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import math
@@ -24,7 +28,18 @@ from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, heaviside
 from VeraGridEngine.Utils.Symbolic.symbolic_io import duplicate_block
 from VeraGridEngine.Utils.procedural_logic import sampled_value
-from VeraGridEngine.enumerations import ParamPowerFlowReferenceType
+from VeraGridEngine.enumerations import (
+    ParamPowerFlowReferenceType,
+    DgsImportField,
+)
+
+
+from VeraGridEngine.IO.dgs.dgs_import_metadata import (
+    DgsImportMetadata,
+    get_import_field,
+    set_import_field,
+    assign_import_template,
+)
 
 
 def _entry_slot_sort_key(entry: ElmCompInstanceEntry) -> int:
@@ -261,6 +276,7 @@ def prepare_dgs_logical_actuator_topology(
         dgs_circuit: DgsCircuit,
         templates_by_root_dgs_id: Dict[str, RmsModelTemplate],
         logger: Logger,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> int:
     """Reconstruct zero-impedance valve placement for logical composites.
 
@@ -274,6 +290,7 @@ def prepare_dgs_logical_actuator_topology(
     :param dgs_circuit: Parsed source DGS tables.
     :param templates_by_root_dgs_id: Registered RMS templates by exact root FID.
     :param logger: Import diagnostic sink.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Number of passive actuator branches prepared for RMS.
     """
     dgs_element_by_id: Dict[str, DGSElement] = _build_dgs_element_index(
@@ -502,6 +519,7 @@ def prepare_dgs_logical_actuator_topology(
                                     line=passive_line,
                                     circuit=circuit,
                                     voltage_base_kv=future_voltage_base_kv,
+                                    import_metadata=import_metadata,
                                 )
                             )
                             if branch_plan is None:
@@ -565,7 +583,7 @@ def prepare_dgs_logical_actuator_topology(
                             # The first shell was connected to the source's
                             # valve-side placeholder bus. Reassigning the same
                             # template reconnects it to the resolved rail.
-                            passive_line.rms_template = existing_template
+                            assign_import_template(passive_line, existing_template)
 
                             # The retained impedance is only one part of the
                             # PowerFactory valve-plus-impedance assembly. An
@@ -578,16 +596,21 @@ def prepare_dgs_logical_actuator_topology(
                             # logical controller.
                             passive_line.active = False
                             passive_line.active_prof.fill(False)
-                            passive_line.rms_model.dynamic_model_contract.dgs_logical_actuator_root_id = root_id
+                            set_import_field(
+                                passive_line.rms_model,
+                                DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID,
+                                root_id,
+                                import_metadata,
+                            )
                             pair_resistance_ohm: float | None = (
                                 open_resistance_by_pair[pair_index]
                             )
-                            if pair_resistance_ohm is not None:
-                                passive_line.rms_model.dynamic_model_contract.dgs_open_resistance_ohm = float(
-                                    pair_resistance_ohm
-                                )
-                            else:
-                                pass
+                            set_import_field(
+                                passive_line.rms_model,
+                                DgsImportField.DGS_OPEN_RESISTANCE_OHM,
+                                pair_resistance_ohm,
+                                import_metadata,
+                            )
                             prepared_count += 1
                         else:
                             pass
@@ -653,55 +676,67 @@ def _build_logical_actuator_branch_plan(
         line: Line | SeriesReactance,
         circuit: MultiCircuit,
         voltage_base_kv: float | None = None,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> _DgsLogicalActuatorBranchBindingPlan | None:
     """Resolve one complete branch plan without changing the circuit.
 
     :param line: Prepared physical actuator branch.
     :param circuit: Circuit providing RMS system bases.
     :param voltage_base_kv: Optional post-topology voltage base.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Complete transient plan or ``None`` when evidence is incomplete.
     """
-    status_uid: int | None = (
-        line.rms_model.dynamic_model_contract.rms_conduction_status_var_uid
-    )
+    branch_model: Block = line.rms_model
     status_owners: List[Block] = list()
     status_vars: List[Var] = list()
     child_block: Block
     event_var: Var
-    if status_uid is None:
-        pass
-    else:
-        for child_block in line.rms_model.get_all_blocks():
-            for event_var in child_block.event_dict.keys():
-                if event_var.uid == status_uid:
-                    status_owners.append(child_block)
-                    status_vars.append(event_var)
-                else:
-                    pass
+    for child_block in branch_model.get_all_blocks():
+        for event_var in child_block.event_dict:
+            if event_var.name == "u":
+                status_owners.append(child_block)
+                status_vars.append(event_var)
+            else:
+                pass
 
-    resistance_parameter: Var | None = line.rms_model.api_obj_mapping.get(
-        ParamPowerFlowReferenceType.r,
-        None,
+    # Template parameters belong to their declaring child, before attachment
+    # has normalized any root mappings. Resolve the exact typed mapping there.
+    resistance_parameters: Dict[int, Var] = dict()
+    inductance_parameters: Dict[int, Var] = dict()
+    for child_block in branch_model.get_all_blocks():
+        mapped_resistance: Var | None = child_block.api_obj_mapping.get(ParamPowerFlowReferenceType.r, None)
+        mapped_inductance: Var | None = child_block.api_obj_mapping.get(
+            ParamPowerFlowReferenceType.dc_line_l_pu_seconds, None,
+        )
+        if mapped_resistance is not None:
+            resistance_parameters[mapped_resistance.uid] = mapped_resistance
+        else:
+            pass
+        if mapped_inductance is not None:
+            inductance_parameters[mapped_inductance.uid] = mapped_inductance
+        else:
+            pass
+    resistance_parameter: Var | None = (
+        next(iter(resistance_parameters.values())) if len(resistance_parameters) == 1 else None
     )
     resistance_owners: List[Block] = list()
     if resistance_parameter is None:
         pass
     else:
-        for child_block in line.rms_model.get_all_blocks():
+        for child_block in branch_model.get_all_blocks():
             if resistance_parameter in child_block.parameters:
                 resistance_owners.append(child_block)
             else:
                 pass
 
-    inductance_parameter: Var | None = line.rms_model.api_obj_mapping.get(
-        ParamPowerFlowReferenceType.dc_line_l_pu_seconds,
-        None,
+    inductance_parameter: Var | None = (
+        next(iter(inductance_parameters.values())) if len(inductance_parameters) == 1 else None
     )
     inductance_owners: List[Block] = list()
     if inductance_parameter is None:
         pass
     else:
-        for child_block in line.rms_model.get_all_blocks():
+        for child_block in branch_model.get_all_blocks():
             if inductance_parameter in child_block.parameters:
                 inductance_owners.append(child_block)
             else:
@@ -747,7 +782,7 @@ def _build_logical_actuator_branch_plan(
             inductance_is_complete = False
 
     if (
-            not line.rms_model.empty()
+            not branch_model.empty()
             and len(status_owners) == 1
             and len(status_vars) == 1
             and resistance_parameter is not None
@@ -774,12 +809,14 @@ def bind_dgs_logical_actuator_runtime(
         circuit: MultiCircuit,
         templates_by_root_dgs_id: Dict[str, RmsModelTemplate],
         logger: Logger,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> int:
     """Bind each complete logical actuator group as one atomic operation.
 
     :param circuit: Imported circuit after standard RMS shell preparation.
     :param templates_by_root_dgs_id: Registered RMS templates by exact root FID.
     :param logger: Import diagnostic sink.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Number of passive actuator RMS models bound.
     """
     branches_by_root_id: Dict[str, List[Line | SeriesReactance]] = dict()
@@ -791,12 +828,23 @@ def bind_dgs_logical_actuator_runtime(
             add_hvdc=False,
             add_switch=False,
     ):
-        if isinstance(candidate_branch, (Line, SeriesReactance)):
+        if (isinstance(candidate_branch, (Line, SeriesReactance))
+                and import_metadata is not None
+                and candidate_branch.rms_model.uid in import_metadata.blocks
+                and DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID.value in import_metadata.blocks[candidate_branch.rms_model.uid]):
             root_id: str | None = (
-                candidate_branch.rms_model.dynamic_model_contract.dgs_logical_actuator_root_id
+                get_import_field(
+                    candidate_branch.rms_model,
+                    DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID,
+                    import_metadata,
+                )
             )
             resistance_ohm: float | None = (
-                candidate_branch.rms_model.dynamic_model_contract.dgs_open_resistance_ohm
+                get_import_field(
+                    candidate_branch.rms_model,
+                    DgsImportField.DGS_OPEN_RESISTANCE_OHM,
+                    import_metadata,
+                )
             )
             if root_id is None:
                 pass
@@ -865,6 +913,7 @@ def bind_dgs_logical_actuator_runtime(
                 _build_logical_actuator_branch_plan(
                     line=branch,
                     circuit=circuit,
+                    import_metadata=import_metadata,
                 )
             )
             if branch_plan is None:
@@ -888,10 +937,7 @@ def bind_dgs_logical_actuator_runtime(
                 expected_value=len(branches_by_root_id[root_id]),
             )
         else:
-            controller_block: Block = duplicate_block(
-                block=root_template.block,
-                var_factory=circuit.var_factory,
-            )
+            controller_block: Block = duplicate_block(block=root_template.block, var_factory=circuit.var_factory)
             seed_applied: bool = _seed_open_resistive_actuator(
                 block=controller_block,
                 open_resistance_ohm=open_resistance_by_root_id.get(root_id, None),
@@ -978,6 +1024,7 @@ def bind_dgs_logical_actuator_runtime(
 
 def release_dgs_logical_actuator_import_context(
         circuit: MultiCircuit,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> int:
     """Discard source-only actuator identity after exact RMS binding.
 
@@ -987,6 +1034,7 @@ def release_dgs_logical_actuator_import_context(
     ``MultiCircuit`` blocks.
 
     :param circuit: Circuit whose logical actuators have completed binding.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Number of branch blocks whose import context was released.
     """
     released_count: int = 0
@@ -998,15 +1046,20 @@ def release_dgs_logical_actuator_import_context(
     ):
         if isinstance(candidate_branch, (Line, SeriesReactance)):
             block: Block = candidate_branch.rms_model
-            if (
-                    block.dynamic_model_contract.dgs_logical_actuator_root_id
-                    is not None
-                    or block.dynamic_model_contract.dgs_open_resistance_ohm
-                    is not None
-            ):
-                block.dynamic_model_contract.dgs_logical_actuator_root_id = None
-                block.dynamic_model_contract.dgs_open_resistance_ohm = None
-                released_count += 1
+            if (import_metadata is not None and block.uid in import_metadata.blocks
+                    and DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID.value in import_metadata.blocks[block.uid]):
+                root_id: str | None = get_import_field(
+                    block, DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID, import_metadata,
+                )
+                resistance: float | None = get_import_field(
+                    block, DgsImportField.DGS_OPEN_RESISTANCE_OHM, import_metadata,
+                )
+                if root_id is not None or resistance is not None:
+                    set_import_field(block, DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID, None, import_metadata)
+                    set_import_field(block, DgsImportField.DGS_OPEN_RESISTANCE_OHM, None, import_metadata)
+                    released_count += 1
+                else:
+                    pass
             else:
                 pass
         else:

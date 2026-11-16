@@ -4,13 +4,20 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import numpy as np
+from VeraGridEngine.Utils.NumericalMethods.newton_factor_reuse import (
+    get_adaptive_recompute_threshold, needs_confirming_correction,
+    confirms_with_fresh_factors, factorization_inputs_changed, needs_factor_refresh,
+)
 import numba as nb
-import scipy.sparse as sp
 import cProfile as profile
 import time
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
+from VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend import SuperLUSparseBackendProvider
+from VeraGridEngine.Utils.Sparse.sparse_solve import SparseProviderLinearSolver, solve_sparse_system_once
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, BinOp, UnOp, Func
 
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
+    BoundaryUpdaterCapabilities,
     EmtBoundaryUpdateProtocol,
     EmtProblemTemplate,
     get_solver_forced_event_time,
@@ -681,7 +688,8 @@ class JitAdSolver:
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer',
         '_residual_buffer', '_trial_state_buffer', '_trial_residual_buffer',
         '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time', '_cancel_checker', '_progress_signal',
-        '_newton_tolerance', '_use_compiled_runtime_parameters'
+        '_newton_tolerance', '_use_compiled_runtime_parameters',
+        '_sparse_solver_backend_provider', '_sparse_linear_solver'
     ]
     def __init__(self,
                  problem: EmtProblemTemplate,
@@ -697,7 +705,7 @@ class JitAdSolver:
                  progress_signal: DummySignal | None = None,
                  cancel_checker: Callable[[], bool] | None = None,
                  newton_tolerance: float = 1.0e-6,
-                 use_compiled_runtime_parameters: bool = True)-> None:
+                 use_compiled_runtime_parameters: bool = True, sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None)-> None:
         """
         Initializes the JIT AD Solver.
 
@@ -720,6 +728,7 @@ class JitAdSolver:
         :param newton_max_iter: Maximum Newton corrections per local EMT substep.
             The final corrected candidate is checked without another correction.
         :type newton_max_iter: int
+        :param sparse_solver_backend_provider: Available LU phase factory, or inherit the configured problem.
         :param newton_tolerance: Absolute infinity-norm tolerance for Newton residual convergence.
         :type newton_tolerance: float
         :param progress_signal: Optional progress signal updated during the simulation loop.
@@ -729,6 +738,18 @@ class JitAdSolver:
         :type use_compiled_runtime_parameters: bool
         """
         self.problem = problem
+        # Direct construction inherits a configured problem; a generic problem
+        # without options retains the historical SuperLU default.
+        self._sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = sparse_solver_backend_provider
+        if self._sparse_solver_backend_provider is None and isinstance(problem, EmtProblemTemplate):
+            self._sparse_solver_backend_provider = problem.get_sparse_solver_backend_provider()
+        else:
+            pass
+        if self._sparse_solver_backend_provider is None:
+            self._sparse_solver_backend_provider = SuperLUSparseBackendProvider()
+        else:
+            pass
+        self._sparse_linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(self._sparse_solver_backend_provider)
         self.t0 = t0
         self.h = h
         self.method = method
@@ -957,6 +978,8 @@ class JitAdSolver:
             pass
 
         active_boundary_updater = resolve_solver_boundary_updater(self.problem, boundary_updater, float(self.t0))
+        # Optional updater APIs are resolved once instead of on every substep.
+        boundary_capabilities: BoundaryUpdaterCapabilities = BoundaryUpdaterCapabilities(active_boundary_updater)
 
         self.y[0, :] = x0.copy()
         self.dy[0, :] = dx0.copy()
@@ -965,19 +988,39 @@ class JitAdSolver:
         dx_prev = dx0.copy()
         x_prev2 = x0.copy()
         # AD kernels use runtime-variable history; public derivatives use UID order.
-        base_slopes: Vec = np.zeros(x_prev.size if bdf2_startup_pending else 0, dtype=np.float64)
-        diff_base_indices: np.ndarray = np.full(dx_prev.size if bdf2_startup_pending else 0, -1, dtype=np.int64)
+        n_diff: int = self.problem.get_diff_var_number()
+        base_slopes: Vec = np.zeros(x_prev.size, dtype=np.float64)
+        diff_base_indices: np.ndarray = np.full(dx_prev.size, -1, dtype=np.int64)
+        differential: Var
+        for differential in self.problem.get_diff_vars():
+            if differential.base_var is not None:
+                diff_index: int = self.problem.uid2idx_diff[differential.uid]
+                diff_base_indices[diff_index] = self.problem.uid2idx_vars.get(differential.base_var.uid, -1)
+            else:
+                pass
+        # Differentials with a base variable and their base rows, so the history update needs no per-element loop.
+        diff_rows_with_base: np.ndarray = np.flatnonzero(diff_base_indices >= 0)
+        diff_base_rows: np.ndarray = diff_base_indices[diff_rows_with_base]
+        kernel_derivatives: Vec = base_slopes
         if bdf2_startup_pending:
-            differential: Var
-            for differential in self.problem.get_diff_vars():
-                if differential.base_var is not None:
-                    diff_index: int = self.problem.uid2idx_diff[differential.uid]
-                    diff_base_indices[diff_index] = self.problem.uid2idx_vars.get(differential.base_var.uid, -1)
-                else:
-                    pass
-            kernel_derivatives: Vec = base_slopes
-        else:
+            pass
+        elif n_diff == 0:
+            # Without declared differentials the caller's vector already is the history in runtime-variable order.
             kernel_derivatives = dx_prev
+        else:
+            kernel_derivatives[diff_base_rows] = dx_prev[diff_rows_with_base]
+        # Trapezoidal kernels read a history for every state: a state without a declared differential would keep zero.
+        if method == DynamicIntegrationMethod.DaeTrapezoidal and n_diff > 0:
+            missing_states: np.ndarray = np.setdiff1d(np.arange(n_states), diff_base_rows)
+            if missing_states.size > 0:
+                raise ValueError(
+                    "The trapezoidal rule needs a declared differential for every state once any is declared; "
+                    f"missing for {list([self.state_vars[i].name for i in missing_states])}"
+                )
+            else:
+                pass
+        else:
+            pass
         x_iter = x0.copy()
         trial_x = self._trial_state_buffer
         trial_res = self._trial_residual_buffer
@@ -1024,7 +1067,7 @@ class JitAdSolver:
                 solver_name="dense",
             )
             sparse_solve = with_newton_diagnostics(
-                sp.linalg.spsolve,
+                self._sparse_linear_solver.solve,
                 fallback_solve=sparse_lsqr_fallback,
                 collector=trace_collector,
                 config=diag_cfg,
@@ -1045,6 +1088,19 @@ class JitAdSolver:
         loop_start: float = time.perf_counter()
         total_newton_iterations: int = 0
         jacobian_evaluation_count: int = 0
+        # A new run never inherits the preceding run's numerical eligibility.
+        self._sparse_linear_solver.invalidate()
+        cached_jacobian: csc_matrix | None = None
+        factorization_parameters: Vec = np.empty_like(full_params)
+        factorization_step: float = 0.0
+        factorization_method: DynamicIntegrationMethod = method
+        last_macro_iterations: int = 0
+        factorization_reuse_hits: int = 0
+        forced_factorization_invalidations: int = 0
+        inherited_factor_retries: int = 0
+        confirming_corrections: int = 0
+        confirming_state: Vec = np.empty_like(x_iter)
+        attempt_seed: Vec = np.empty_like(x_iter)
         aligned_substep_count: int = 0
 
         for i in range(self.steps):
@@ -1055,7 +1111,8 @@ class JitAdSolver:
                 pass
 
             if self._cancel_checker is not None and self._cancel_checker():
-                return t[:i + 1].copy(), self.y[:i + 1, :].copy(), self.dy[:i + 1, :].copy(), well_initialized, converged
+                self._sparse_linear_solver.invalidate()
+                break
 
             t_step_start = float(t[i])
             t_step_target = float(t[i + 1])
@@ -1069,6 +1126,7 @@ class JitAdSolver:
                     active_boundary_updater,
                     float(t_local_prev),
                     float(t_step_target),
+                    capabilities=boundary_capabilities,
                 )
 
                 if forced_event_time is None:
@@ -1125,113 +1183,242 @@ class JitAdSolver:
                     self._predictor.predict(
                         x_iter=x_iter,
                         x_prev=x_prev,
-                        dx_prev=dx_prev,
+                        dx_prev=kernel_derivatives,
                         h=h_eff,
                         pred_method=self.pred_method,
                     )
                 else:
                     pass
 
-                substep_converged: bool = state_event_retry_time is not None
-                newton_iteration_count: int
-                if state_event_retry_time is None:
-                    newton_iteration_count = self.newton_max_iter + 1
+                if cached_jacobian is not None:
+                    inputs_changed: bool = factorization_inputs_changed(
+                        True, is_aligned_substep, full_params, factorization_parameters,
+                        h_eff, factorization_step)
+                    if inputs_changed or effective_method != factorization_method:
+                        cached_jacobian = None
+                        self._sparse_linear_solver.invalidate()
+                        forced_factorization_invalidations += 1
+                    else:
+                        pass
                 else:
-                    newton_iteration_count = 0
-                for k in range(newton_iteration_count):
-                    # Check in Python, outside fastmath, before assembling a candidate.
-                    if not np.all(np.isfinite(x_iter)):
-                        break
+                    pass
+                attempt_seed[:] = x_iter
+                substep_converged: bool = state_event_retry_time is not None
+                attempt: int
+                for attempt in range(2):
+                    attempt_reused_jacobian: bool = False
+                    confirming_done: bool = False
+                    confirming_pending: bool = False
+                    confirming_fresh: bool = False
+                    last_residual: float = 1.0
+                    if state_event_retry_time is None:
+                        newton_iteration_count: int = self.newton_max_iter + 1
                     else:
-                        pass
-                    total_newton_iterations += 1
-                    ctx = NewtonSolveContext(
-                        t=float(t_curr),
-                        step_idx=int(i),
-                        newton_iter=int(k),
-                        phase="jit_ad",
-                        method=str(effective_method),
-                    )
-
-                    # The residual buffer is reused across Newton iterations so
-                    # the hot loop does not allocate one full residual vector.
-                    res = residual_buffer
-                    res_norm_inf = evaluate_batched_residual(
-                        kernel_list=kernel_list,
-                        x_iter=x_iter,
-                        full_params=full_params,
-                        x_prev=x_prev,
-                        dx_prev=kernel_derivatives,
-                        h_eff=h_eff,
-                        x_prev2=x_prev2,
-                        residual_out=res,
-                    )
-
-                    # The compiled norm may hide NaN entries; inspect the full buffer.
-                    if not np.all(np.isfinite(res)):
-                        break
-                    else:
-                        pass
-
-                    if res_norm_inf < self._newton_tolerance:
-                        substep_converged = True
-                        break
-                    else:
-                        pass
-
-                    # Validate the last iterate even when the correction budget is exhausted.
-                    if k >= self.newton_max_iter:
-                        break
-                    else:
-                        pass
-
-                    # Evaluate AD Jacobian
-                    J = current_jacobian(
-                        states=x_iter,
-                        params=full_params,
-                        history=x_prev,
-                        d_history=kernel_derivatives,
-                        h=h_eff,
-                        history2=x_prev2,
-                    )
-                    jacobian_evaluation_count += 1
-
-                    if diagnostics_enabled:
-                        maybe_check_index1(J, n_states, ctx=ctx, config=diag_cfg)
-
-                    if use_dense_solver:
-                        dense_J = J.toarray()
-                        if diagnostics_enabled:
-                            delta = dense_solve(dense_J, -res, ctx)
+                        newton_iteration_count = 0
+                    for k in range(newton_iteration_count):
+                        # Discard a non-finite confirming trial before it can reach the boundary.
+                        if confirming_pending and not np.all(np.isfinite(x_iter)):
+                            x_iter[:] = confirming_state
+                            substep_converged = True
+                            cached_jacobian = None
+                            self._sparse_linear_solver.invalidate()
+                            break
                         else:
-                            delta = np.linalg.solve(dense_J, -res)
-                    else:
-                        if diagnostics_enabled:
-                            delta = sparse_solve(J, -res, ctx)
+                            pass
+                        # Check in Python, outside fastmath, before assembling a candidate.
+                        if not np.all(np.isfinite(x_iter)):
+                            break
                         else:
-                            delta = sp.linalg.spsolve(J, -res)
+                            pass
+                        total_newton_iterations += 1
+                        ctx = NewtonSolveContext(
+                            t=float(t_curr),
+                            step_idx=int(i),
+                            newton_iter=int(k),
+                            phase="jit_ad",
+                            method=str(effective_method),
+                        )
 
-                    if diag_cfg.enable_backtracking:
-                        backtracking_residual_evaluator.set_context(
+                        # The residual buffer is reused across Newton iterations so
+                        # the hot loop does not allocate one full residual vector.
+                        res = residual_buffer
+                        res_norm_inf = evaluate_batched_residual(
                             kernel_list=kernel_list,
+                            x_iter=x_iter,
                             full_params=full_params,
                             x_prev=x_prev,
                             dx_prev=kernel_derivatives,
                             h_eff=h_eff,
                             x_prev2=x_prev2,
+                            residual_out=res,
                         )
 
-                        maybe_apply_backtracking(
-                            x_iter,
-                            delta,
-                            res_norm_inf,
-                            trial_x,
-                            trial_res,
-                            evaluate_residual=backtracking_residual_evaluator.evaluate,
-                            config=diag_cfg,
-                        )
+                        # The compiled norm may hide NaN entries; inspect the full buffer.
+                        if confirming_pending and not np.all(np.isfinite(res)):
+                            x_iter[:] = confirming_state
+                            substep_converged = True
+                            cached_jacobian = None
+                            self._sparse_linear_solver.invalidate()
+                            break
+                        else:
+                            pass
+                        if not np.all(np.isfinite(res)):
+                            break
+                        else:
+                            pass
+
+                        if res_norm_inf < self._newton_tolerance:
+                            if attempt == 0 and needs_confirming_correction(use_dense_solver, confirming_done, k, self.newton_max_iter):
+                                confirming_done = True
+                                confirming_pending = True
+                                confirming_fresh = confirms_with_fresh_factors(res_norm_inf, last_residual)
+                                confirming_state[:] = x_iter
+                                confirming_corrections += 1
+                            else:
+                                substep_converged = True
+                                break
+                        elif confirming_pending:
+                            x_iter[:] = confirming_state
+                            substep_converged = True
+                            cached_jacobian = None
+                            self._sparse_linear_solver.invalidate()
+                            break
+                        else:
+                            pass
+
+                        # Validate the last iterate even when the correction budget is exhausted.
+                        if k >= self.newton_max_iter:
+                            break
+                        else:
+                            pass
+
+                        refresh_factors: bool = (
+                                attempt > 0 or use_dense_solver or diagnostics_enabled or cached_jacobian is None
+                                or needs_factor_refresh(k, res_norm_inf, last_residual,
+                                                        get_adaptive_recompute_threshold(last_macro_iterations),
+                                                        self._newton_tolerance, self.newton_max_iter - k)
+                                or (confirming_pending and confirming_fresh))
+                        J: csc_matrix
+                        if refresh_factors:
+                            # Evaluate AD Jacobian
+                            J = current_jacobian(
+                                states=x_iter,
+                                params=full_params,
+                                history=x_prev,
+                                d_history=kernel_derivatives,
+                                h=h_eff,
+                                history2=x_prev2,
+                            )
+                            jacobian_evaluation_count += 1
+
+                            if not use_dense_solver:
+                                cached_jacobian = J.copy()
+                                J = cached_jacobian
+                                factorization_parameters[:] = full_params
+                                factorization_step = h_eff
+                                factorization_method = effective_method
+                                if confirming_pending and confirming_fresh:
+                                    self._sparse_linear_solver.invalidate()
+                                else:
+                                    pass
+                            else:
+                                pass
+                        elif cached_jacobian is not None:
+                            J = cached_jacobian
+                            attempt_reused_jacobian = True
+                            factorization_reuse_hits += 1
+                        else:
+                            raise RuntimeError("JitAd chord Newton has no retained Jacobian to reuse")
+
+                        # Diagnostics always see a fresh Jacobian (refresh is forced above).
+                        if diagnostics_enabled:
+                            maybe_check_index1(J, n_states, ctx=ctx, config=diag_cfg)
+                        else:
+                            pass
+
+                        try:
+                            if use_dense_solver:
+                                dense_J = J.toarray()
+                                if diagnostics_enabled:
+                                    delta = dense_solve(dense_J, -res, ctx)
+                                else:
+                                    delta = np.linalg.solve(dense_J, -res)
+                            else:
+                                if diagnostics_enabled:
+                                    delta = sparse_solve(J, -res, ctx)
+                                elif refresh_factors:
+                                    delta = solve_sparse_system_once(
+                                        J, -res, self._sparse_solver_backend_provider, self._sparse_linear_solver)
+                                else:
+                                    delta = self._sparse_linear_solver.solve_retained(-res)
+                        except (RuntimeError, np.linalg.LinAlgError, FloatingPointError):
+                            if use_dense_solver or refresh_factors:
+                                # Fresh-Jacobian and dense solves keep the original exception contract;
+                                # only a failure on retained factors is turned into a fresh-Jacobian retry.
+                                raise
+                            else:
+                                pass
+                            cached_jacobian = None
+                            self._sparse_linear_solver.invalidate()
+                            if confirming_pending:
+                                x_iter[:] = confirming_state
+                                substep_converged = True
+                            else:
+                                pass
+                            break
+                        else:
+                            if not use_dense_solver and not np.all(np.isfinite(delta)):
+                                cached_jacobian = None
+                                self._sparse_linear_solver.invalidate()
+                                if confirming_pending:
+                                    x_iter[:] = confirming_state
+                                    substep_converged = True
+                                else:
+                                    pass
+                                break
+                            else:
+                                pass
+                            if diagnostics_enabled and not use_dense_solver and ctx.used_fallback:
+                                # A finite diagnostic fallback is not retained-LU eligibility.
+                                cached_jacobian = None
+                                self._sparse_linear_solver.invalidate()
+                            else:
+                                pass
+
+                        if diag_cfg.enable_backtracking:
+                            backtracking_residual_evaluator.set_context(
+                                kernel_list=kernel_list,
+                                full_params=full_params,
+                                x_prev=x_prev,
+                                dx_prev=kernel_derivatives,
+                                h_eff=h_eff,
+                                x_prev2=x_prev2,
+                            )
+
+                            maybe_apply_backtracking(
+                                x_iter,
+                                delta,
+                                res_norm_inf,
+                                trial_x,
+                                trial_res,
+                                evaluate_residual=backtracking_residual_evaluator.evaluate,
+                                config=diag_cfg,
+                            )
+                        else:
+                            x_iter += delta
+                        last_residual = float(res_norm_inf)
+                    if substep_converged or not attempt_reused_jacobian or attempt > 0 or state_event_retry_time is not None:
+                        break
                     else:
-                        x_iter += delta
+                        x_iter[:] = attempt_seed
+                        cached_jacobian = None
+                        self._sparse_linear_solver.invalidate()
+                        inherited_factor_retries += 1
+                if substep_converged and state_event_retry_time is None:
+                    last_macro_iterations = k
+                else:
+                    cached_jacobian = None
+                    self._sparse_linear_solver.invalidate()
 
                 if not substep_converged:
                     converged = False
@@ -1249,6 +1436,7 @@ class JitAdSolver:
                         params=full_params,
                         committed_time=float(t_curr),
                         committed_state=x_iter,
+                        capabilities=boundary_capabilities,
                     )
                 else:
                     pass
@@ -1284,13 +1472,25 @@ class JitAdSolver:
                                 pass
                         bdf2_startup_pending = False
                     elif method == DynamicIntegrationMethod.DaeTrapezoidal:
-                        dx_prev[:n_states] = (
-                                (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states]) - dx_prev[:n_states]
-                        )
-                    else:
+                        if n_diff == 0:
+                            dx_prev[:n_states] = (
+                                    (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states]) - dx_prev[:n_states]
+                            )
+                        else:
+                            kernel_derivatives[diff_base_rows] = (
+                                    (2.0 / h_eff) * (x_iter[diff_base_rows] - x_prev[diff_base_rows])
+                                    - kernel_derivatives[diff_base_rows]
+                            )
+                            dx_prev[diff_rows_with_base] = kernel_derivatives[diff_base_rows]
+                    elif n_diff == 0:
                         dx_prev[:n_states] = (
                                 (x_iter[:n_states] - x_prev[:n_states]) / h_eff
                         )
+                    else:
+                        kernel_derivatives[diff_base_rows] = (
+                                (x_iter[diff_base_rows] - x_prev[diff_base_rows]) / h_eff
+                        )
+                        dx_prev[diff_rows_with_base] = kernel_derivatives[diff_base_rows]
 
                     x_prev2[:] = x_prev
 
@@ -1314,6 +1514,10 @@ class JitAdSolver:
             sim_loop_s=self._last_sim_loop_time,
             total_newton_iterations=float(total_newton_iterations),
             jacobian_evaluations=float(jacobian_evaluation_count),
+            factorization_reuse_hits=float(factorization_reuse_hits),
+            forced_factorization_invalidations=float(forced_factorization_invalidations),
+            inherited_factor_retries=float(inherited_factor_retries),
+            confirming_corrections=float(confirming_corrections),
             aligned_substeps=float(aligned_substep_count),
             macro_steps=float(completed_samples - 1),
         )

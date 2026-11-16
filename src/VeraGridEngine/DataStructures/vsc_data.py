@@ -41,6 +41,7 @@ class VscData(BranchParentData):
         "control2_bus_idx",
         "control1_branch_idx",
         "control2_branch_idx",
+        "remote_q_branch_original_idx",
         "min_ac_voltage",
         "ysvs",
     )
@@ -83,6 +84,8 @@ class VscData(BranchParentData):
         self.control2_bus_idx: IntVec = np.full(nelm, -1, dtype=int)
         self.control1_branch_idx: IntVec = np.full(nelm, -1, dtype=int)
         self.control2_branch_idx: IntVec = np.full(nelm, -1, dtype=int)
+        # Passive-branch references retain original indices across island slicing.
+        self.remote_q_branch_original_idx: IntVec = np.full(nelm, -1, dtype=int)
 
         self.min_ac_voltage: Vec = np.full(self.nelm, 0.1, dtype=float)
 
@@ -103,6 +106,9 @@ class VscData(BranchParentData):
 
         # data.F_dcp = self.F_dcp[elm_idx]
         data.F_dcn = self.F_dcn[elm_idx]
+        # The return pole must follow the same island map as the other terminals.
+        has_return: np.ndarray = data.F_dcn > -1
+        data.F_dcn[has_return] = bus_map[data.F_dcn[has_return]]
         # data.T_ac = self.T_ac[elm_idx]
 
         data.alpha1 = self.alpha1[elm_idx]
@@ -135,6 +141,7 @@ class VscData(BranchParentData):
         # TODO: think about how to re-map this stuff
         data.control1_branch_idx = self.control1_branch_idx[elm_idx]
         data.control2_branch_idx = self.control2_branch_idx[elm_idx]
+        data.remote_q_branch_original_idx = self.remote_q_branch_original_idx[elm_idx]
 
         data.min_ac_voltage = self.min_ac_voltage[elm_idx]
 
@@ -196,12 +203,24 @@ class VscData(BranchParentData):
         data.control2_bus_idx = self.control2_bus_idx.copy()
         data.control1_branch_idx = self.control1_branch_idx.copy()
         data.control2_branch_idx = self.control2_branch_idx.copy()
+        data.remote_q_branch_original_idx = self.remote_q_branch_original_idx.copy()
 
         data.min_ac_voltage = self.min_ac_voltage.copy()
 
         data.ysvs = self.ysvs.copy()
 
         return data
+
+    def remap(self, bus_map_arr: IntVec) -> None:
+        """Remap all three electrical terminals after ideal-switch reduction.
+
+        :param bus_map_arr: Original bus indices mapped to surviving buses.
+        :return: None.
+        """
+        super().remap(bus_map_arr)
+        # A missing return remains -1 rather than indexing the last bus.
+        has_return: np.ndarray = self.F_dcn > -1
+        self.F_dcn[has_return] = bus_map_arr[self.F_dcn[has_return]]
 
     def __len__(self) -> int:
         """

@@ -99,10 +99,10 @@ def get_ncp_contingency_objects(cgmes_model: CgmesCircuit) -> List[CGMES_ASSETS]
     contingency_by_uuid: Dict[str, CGMES_ASSETS] = dict()
     contingency_lists: List[List[CGMES_ASSETS]] = list()
 
-    contingency_lists.append(cgmes_model.cgmes_assets.Contingency_list)
-    contingency_lists.append(cgmes_model.cgmes_assets.OrdinaryContingency_list)
-    contingency_lists.append(cgmes_model.cgmes_assets.ExceptionalContingency_list)
-    contingency_lists.append(cgmes_model.cgmes_assets.OutOfRangeContingency_list)
+    contingency_lists.append(cgmes_model.ncp_assets.Contingency_list)
+    contingency_lists.append(cgmes_model.ncp_assets.OrdinaryContingency_list)
+    contingency_lists.append(cgmes_model.ncp_assets.ExceptionalContingency_list)
+    contingency_lists.append(cgmes_model.ncp_assets.OutOfRangeContingency_list)
 
     for contingency_list in contingency_lists:
         for contingency_obj in contingency_list:
@@ -191,7 +191,7 @@ def get_gcdev_contingencies(cgmes_model: CgmesCircuit,
     :return: Nothing.
     """
     contingency_objects: List[CGMES_ASSETS] = get_ncp_contingency_objects(cgmes_model=cgmes_model)
-    contingency_equipment_list: List[CGMES_ASSETS] = cgmes_model.cgmes_assets.ContingencyEquipment_list
+    contingency_equipment_list: List[CGMES_ASSETS] = cgmes_model.ncp_assets.ContingencyEquipment_list
 
     if len(contingency_objects) == 0:
         return

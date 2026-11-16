@@ -12,6 +12,9 @@ import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.linalg import MatrixRankWarning
 
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
+from VeraGridEngine.Utils.Sparse.sparse_solve import SparseProviderLinearSolver, solve_sparse_system_once
+from VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend import SuperLUSparseBackendProvider
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicVector, SymbolicParamsVector, SymbolicDerivative, SymbolicJacobian
 from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import build_explicit_init_graph
 from VeraGridEngine.Utils.Symbolic.symbolic import eval_uid as eval_expr_uid, get_expression_vars
@@ -1349,7 +1352,7 @@ def init_pseudo_transient(mdl: Block,
                           max_iter: int = 100,
                           tol: float = 1e-6,
                           verbose: bool = False,
-                          pseudo_transient_options: object | None = None) -> Dict[int, float | int | complex | None]:
+                          pseudo_transient_options: object | None = None, sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None) -> Dict[int, float | int | complex | None]:
     """
     Initialize a private model copy from supplied seeds before random retries.
 
@@ -1379,9 +1382,15 @@ def init_pseudo_transient(mdl: Block,
     :param tol: Requested residual tolerance, subject to existing acceptance floors.
     :param verbose: Enable existing solver diagnostics and optional plots.
     :param pseudo_transient_options: Existing local solver and equilibrium policies.
+    :param sparse_solver_backend_provider: Resolved parent selection for private local phases.
     :return: Global UID lookup with solved local values and other supplied entries retained.
     :raises RuntimeError: If attempts fail the residual guard and best effort is disabled.
     """
+    local_provider: SparseLinearSolverBackendProvider = (
+        SuperLUSparseBackendProvider() if sparse_solver_backend_provider is None
+        else sparse_solver_backend_provider)
+    # Newton polish cannot borrow pseudo-transient factors or another device's state.
+    polish_linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(local_provider)
     # Import here to avoid circular imports
     from VeraGridEngine.Simulations.Rms.numerical.pseudo_transient import PseudoTransient, PseudoTransientOptions
 
@@ -1661,7 +1670,7 @@ def init_pseudo_transient(mdl: Block,
         reference_error_tol=-1,
         fixed_var_uids=list(fixed_pf_var_uids),
         options=pseudo_transient_options,
-    )
+        sparse_solver_backend_provider=local_provider)
 
     # Start rotor angles close to the network reference for pseudo-transient.
     # This is only a seed; delta remains a solved state afterwards.
@@ -1780,7 +1789,7 @@ def init_pseudo_transient(mdl: Block,
             try:
                 with warnings.catch_warnings(record=True) as w:
                     warnings.simplefilter("always", MatrixRankWarning)
-                    delta = sp.linalg.spsolve(J_nr, rhs_nr)
+                    delta: Vec = solve_sparse_system_once(J_nr, rhs_nr, local_provider, polish_linear_solver)
                     if any(issubclass(wi.category, MatrixRankWarning) for wi in w):
                         use_lsqr = True
                     else:

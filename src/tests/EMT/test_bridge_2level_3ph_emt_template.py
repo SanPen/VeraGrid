@@ -6,10 +6,11 @@
 from typing import Dict, List, Tuple
 
 import numpy as np
+import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
-from VeraGridEngine.Templates.Emt.bridge_2level_3ph_emt_template import get_bridge_2level_3ph_emt_template
+from VeraGridEngine.Templates.Emt.converters.bridge_2level_3ph_emt_template import get_bridge_2level_3ph_emt_template
 from VeraGridEngine.Utils.procedural_logic import build_boundary_updater_from_block
 from VeraGridEngine.Utils.Symbolic.block import Block, find_name_in_block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
@@ -38,7 +39,7 @@ def _build_constant_algebraic_var(vf: VarFactory, name: str, value: float) -> Tu
     return variable, equation
 
 
-def _build_bridge_standalone_problem() -> Tuple[GenericEmtProblem, Dict[str, Var]]:
+def _build_bridge_standalone_problem(carrier_phase_value: float = 0.0) -> Tuple[GenericEmtProblem, Dict[str, Var]]:
     """
     Build one standalone 2-level bridge EMT problem for fast PWM/gate validation.
 
@@ -68,6 +69,7 @@ def _build_bridge_standalone_problem() -> Tuple[GenericEmtProblem, Dict[str, Var
     vdc_floor: Var
     vdc_floor_eq: Expr
     omega_sw: Var = vf.add_var(name="omega_sw_test")
+    omega_base: Var = vf.add_var(name="omega_base_test")
     carrier_phase: Var = vf.add_var(name="carrier_phase_test")
     bridge_block: Block = get_bridge_2level_3ph_emt_template(vf=vf, name=bridge_name).block
     root_block: Block
@@ -91,6 +93,7 @@ def _build_bridge_standalone_problem() -> Tuple[GenericEmtProblem, Dict[str, Var
         bridge_block.in_vars,
         list([
             theta_pll,
+            omega_base,
             v_cmd_d,
             v_cmd_q,
             v_cmd_0,
@@ -118,8 +121,9 @@ def _build_bridge_standalone_problem() -> Tuple[GenericEmtProblem, Dict[str, Var
             vdc_floor_eq,
         ]),
         event_dict=dict([
+            (omega_base, Const(2.0 * np.pi * 50.0)),
             (omega_sw, Const(2.0 * np.pi * 1000.0)),
-            (carrier_phase, Const(0.0)),
+            (carrier_phase, Const(carrier_phase_value)),
         ]),
         init_eqs=dict([
             (theta_pll, Const(0.0)),
@@ -166,6 +170,22 @@ def _build_bridge_standalone_problem() -> Tuple[GenericEmtProblem, Dict[str, Var
             pass
 
     return problem, tracked_vars
+
+
+@pytest.mark.parametrize("carrier_phase", [0.0, -0.5 * np.pi, 0.5 * np.pi, 0.3 * np.pi])
+def test_bridge_initial_gate_modes_match_pwm_schedule(carrier_phase: float) -> None:
+    """The first scheduler update must preserve the gates used by init equations."""
+    problem, tracked = _build_bridge_standalone_problem(carrier_phase)
+    for name, value in (("m_a", 0.2), ("m_b", -0.4), ("m_c", 0.6)):
+        problem.init_guess[tracked[name].uid] = value
+    problem.reset_boundary_update_state()
+    gate_indices = [problem.uid2idx_event_params[var.uid]
+                    for var in problem.get_runtime_mode_parameters()
+                    if var.name in {"gate_a_mode", "gate_b_mode", "gate_c_mode"}]
+    initial_gates = problem.event_params_values[gate_indices].copy()
+    updater = build_boundary_updater_from_block(problem)
+    updater.update(0.0, problem.get_x0(), problem.event_params_values)
+    np.testing.assert_array_equal(problem.event_params_values[gate_indices], initial_gates)
 
 
 def test_bridge_2level_3ph_pwm_logic_switches_all_phases() -> None:
@@ -225,3 +245,34 @@ def test_bridge_2level_3ph_pwm_logic_switches_all_phases() -> None:
     assert float(np.max(gate_a_hist)) <= 1.0
     assert float(np.max(gate_b_hist)) <= 1.0
     assert float(np.max(gate_c_hist)) <= 1.0
+
+
+def test_bridge_2level_3ph_pwm_duty_matches_held_modulation() -> None:
+    """Check the retained gates' time average over a complete carrier period."""
+    problem, tracked_vars = _build_bridge_standalone_problem()
+    boundary_updater = build_boundary_updater_from_block(problem)
+    x = problem.get_x0().copy()
+    params = problem.event_params_values.copy()
+    held_modulation = {"m_a": 0.3, "m_b": -0.6, "m_c": 0.6}
+    for name, value in held_modulation.items():
+        x[problem.get_var_idx(tracked_vars[name])] = value
+
+    mode_indices = {
+        phase: problem.uid2idx_event_params[next(
+            var.uid for var in problem.get_runtime_mode_parameters()
+            if var.name == f"gate_{phase}_mode"
+        )]
+        for phase in ("a", "b", "c")
+    }
+    sample_step = 1e-6
+    samples = np.arange(0.0, 1.251e-3, sample_step)
+    gate_samples = {phase: [] for phase in mode_indices}
+    for time_s in samples:
+        boundary_updater.update(float(time_s), x, params)
+        if 0.25e-3 <= time_s < 1.25e-3:
+            for phase, mode_idx in mode_indices.items():
+                gate_samples[phase].append(float(params[mode_idx]))
+
+    for phase, name in zip(("a", "b", "c"), held_modulation):
+        expected_duty = 0.5 * (1.0 + held_modulation[name])
+        assert abs(np.mean(gate_samples[phase]) - expected_duty) < 0.002

@@ -43,12 +43,15 @@ from VeraGridEngine.Simulations.Rms.problems.rms_terminal_power_assembly import 
     resolve_rms_mapped_power_references,
 )
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.Simulations.Rms.problems.rms_vectorized_nodal_balance import RmsVectorizedNodalBalanceLayout
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler, ProceduralExpressionCompiler, RMSCompilerVec
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import (
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import (
+    RmsBusVoltageBoundary,
+    build_isolated_bus_voltage_boundaries,
     build_dc_bus_nodal_power_equation,
     dc_bus_rms_model_has_capacitive_state,
     get_bus_rms_algebraic_vars,
@@ -74,7 +77,6 @@ from VeraGridEngine.IO.fmu.model_exchange import (
 from VeraGridEngine.IO.fmu.profile import FmuMeEvaluationBudget
 
 from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import (
-    StaticParameterMappingDiagnostics,
     assign_static_api_object_mapping_for_device,
     get_api_parameter_initial_value_by_uid,
     resolve_constant_parameter_initial_value,
@@ -265,106 +267,6 @@ class RmsVectorizedMappedPowerBalanceLayout:
             reactive_index += 1
 
 
-class RmsVectorizedNodalBalanceLayout:
-    """Store the exact compiled nodal rows shared by RHS and Jacobians.
-
-    Each entry records its physical bus and evaluation rule at equation-build
-    time. Capacitive DC rows additionally retain the UID of their bus-local
-    power variable; other row kinds must not own one.
-    """
-
-    __slots__ = (
-        "_kinds",
-        "_bus_indices",
-        "_local_power_variable_uids",
-    )
-
-    def __init__(self) -> None:
-        """Create an initially empty nodal layout.
-
-        :return: None.
-        """
-        self._kinds: List[RmsVectorizedNodalBalanceKind] = list()
-        self._bus_indices: List[int] = list()
-        self._local_power_variable_uids: List[int | None] = list()
-
-    def add_row(
-            self,
-            kind: RmsVectorizedNodalBalanceKind,
-            bus_index: int,
-            local_power_variable_uid: int | None,
-    ) -> None:
-        """Register one row at the same time its equation is compiled.
-
-        :param kind: Runtime evaluation rule of the row.
-        :param bus_index: Physical bus owning the balance.
-        :param local_power_variable_uid: Bus-local P variable for capacitive DC.
-        :return: None.
-        """
-        if kind is RmsVectorizedNodalBalanceKind.CAPACITIVE_DC_POWER:
-            if local_power_variable_uid is None:
-                raise ValueError("Capacitive DC nodal row lacks its local power variable")
-            else:
-                pass
-        else:
-            if local_power_variable_uid is None:
-                pass
-            else:
-                raise ValueError("Non-capacitive nodal row cannot own a local power variable")
-        self._kinds.append(kind)
-        self._bus_indices.append(bus_index)
-        self._local_power_variable_uids.append(local_power_variable_uid)
-
-    def evaluate(
-            self,
-            variables: Vec,
-            variable_index_by_uid: Dict[int, int],
-            active_power_balance: ObjVec,
-            reactive_power_balance: ObjVec,
-    ) -> np.ndarray:
-        """Evaluate exactly the nodal rows registered during construction.
-
-        :param variables: Current global state and algebraic variable vector.
-        :param variable_index_by_uid: Global variable UID-to-index mapping.
-        :param active_power_balance: Runtime active-power accumulator.
-        :param reactive_power_balance: Runtime reactive-power accumulator.
-        :return: Nodal residual values in compiled row order.
-        """
-        values: np.ndarray = np.empty(len(self._kinds))
-        row_index: int = 0
-        while row_index < len(self._kinds):
-            kind: RmsVectorizedNodalBalanceKind = self._kinds[row_index]
-            bus_index: int = self._bus_indices[row_index]
-            if kind is RmsVectorizedNodalBalanceKind.ACTIVE_POWER:
-                values[row_index] = active_power_balance[bus_index]
-            else:
-                if kind is RmsVectorizedNodalBalanceKind.REACTIVE_POWER:
-                    values[row_index] = reactive_power_balance[bus_index]
-                else:
-                    if kind is RmsVectorizedNodalBalanceKind.CAPACITIVE_DC_POWER:
-                        local_power_uid: int | None = (
-                            self._local_power_variable_uids[row_index]
-                        )
-                        if local_power_uid is None:
-                            raise ValueError("Capacitive DC row lost its local power variable")
-                        else:
-                            local_power_index: int | None = variable_index_by_uid.get(
-                                local_power_uid,
-                                None,
-                            )
-                            if local_power_index is None:
-                                raise ValueError(
-                                    "Capacitive DC local power variable is not compiled"
-                                )
-                            else:
-                                values[row_index] = (
-                                    variables[local_power_index]
-                                    - active_power_balance[bus_index]
-                                )
-                    else:
-                        raise ValueError("Unsupported RMS vectorized nodal balance kind")
-            row_index += 1
-        return values
 
 def assign_static_parameters(elm:Any, parameter_reference: ParamPowerFlowReferenceType) -> Const:
     if elm.device_type == DeviceType.LineDevice:
@@ -643,7 +545,6 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         "_constant_parameters_equiv_class_dict",
         "_parameters_values",
         "_static_parameters_values_mapping",
-        "_static_parameter_mapping_diagnostics",
         "_runtime_all_parameters_source",
         "_runtime_all_eqs_source",
         "_runtime_continuous_parameters",
@@ -672,8 +573,10 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         "_rhs_algeb_energy_balance_fn",
         "_j11_fn_by_types",
         "_j12_fn_by_types",
+        "_j13_fn_by_types",
         "_j21_fn_by_types",
         "_j22_fn_by_types",
+        "_j23_fn_by_types",
         "_jbalance_fn",
         "_jbalance_state_fn",
         "_balance_equations",
@@ -718,11 +621,15 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         "_vp_gather_idx",
         "_cp_gather_idx",
         "_input_matrices_by_model",
+        "_implicit_gather_x",
+        "_implicit_gather_dx",
         "_model_algebraic_eq_start_idx",
         "_model_state_eq_start_idx",
         "_jac_algeb_col_off",
         "_jac_state_col_off",
         "_jac_global_data",
+        "_raw_partial_fns_by_type",
+        "_raw_balance_fns",
         "_prof_timings",
         "block_composition_dict",
         "equivalence_dict",
@@ -777,15 +684,11 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         :return: None.
         """
         super().__init__(progress_signal=progress_signal,
-                         progress_text=progress_text)
+                         progress_text=progress_text,
+                         sparse_solver=options.sparse_solver,
+                         logger=logger)
 
         self.logger: Logger | None = logger
-        self._static_parameter_mapping_diagnostics: StaticParameterMappingDiagnostics = (
-            StaticParameterMappingDiagnostics(
-                logger=self.logger,
-                simulation_mode=DynamicSimulationMode.RMS,
-            )
-        )
         self.grid: MultiCircuit = grid
         self.power_flow_results: PowerFlowResults = pf_results
         self.Sf = self.power_flow_results.Sf / self.grid.Sbase
@@ -818,6 +721,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
         # imput matrices by model for vectorization
         self._input_matrices_by_model: Dict[int, List[Vec]] = dict()
+        self._implicit_gather_x = None
+        self._implicit_gather_dx = None
 
         # precomputed gather indices for vectorized input assembly
         self._x_gather_idx: Dict[int, np.ndarray] = dict()
@@ -837,6 +742,10 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         # Each entry: (csc_template, scatter_map)
         # scatter_map[model_type] -> array (nnz_type, n_inst) of global data indices
         self._jac_global_data: Dict[str, Tuple[sp.csc_matrix, Dict[int, np.ndarray]]] = dict()
+        self._raw_partial_fns_by_type = {}
+        self._j13_fn_by_types = {}
+        self._j23_fn_by_types = {}
+        self._raw_balance_fns = None
 
         # mapping from model uid â†’ global start index of its state equations
         self._model_state_eq_start_idx: Dict[int, int] = dict()
@@ -1049,7 +958,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                                                             device=elm,
                                                             mdl=elm.rms_model,
                                                             problem_mapping=self._static_parameters_values_mapping,
-                                                            logger=self._static_parameter_mapping_diagnostics)
+                                                            logger=self.logger)
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
@@ -1155,7 +1064,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                             max_iter=max(500, int(self.options.max_iter)),
                             tol=min(1e-8, self.options.tolerance),
                             verbose=bool(self.options.verbose > 0),
-                        )
+                            sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
                 # add model to system block
                 self.sys_block.add(elm.rms_model)
 
@@ -1190,7 +1099,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                                                             device=elm,
                                                             mdl=mdl,
                                                             problem_mapping=self._static_parameters_values_mapping,
-                                                            logger=self._static_parameter_mapping_diagnostics)
+                                                            logger=self.logger)
 
 
                 St_vsc = self.power_flow_results.St_vsc / self.grid.Sbase
@@ -1377,7 +1286,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                         max_iter=max(500, int(self.options.max_iter)),
                         tol=min(1e-8, self.options.tolerance),
                         verbose=bool(self.options.verbose > 0),
-                    )
+                        sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
 
                 else:
                     raise ValueError("Not implemented initialization method")
@@ -1407,7 +1316,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                     device=elm,
                     mdl=elm.rms_model,
                     problem_mapping=self._static_parameters_values_mapping,
-                    logger=self._static_parameter_mapping_diagnostics,
+                    logger=self.logger,
                 )
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
@@ -1536,7 +1445,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                         max_iter=100,
                         tol=min(1e-5, self.options.tolerance),
                         verbose=bool(self.options.verbose > 0),
-                    )
+                        sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
 
                 else:
                     raise ValueError("Not implemented initialization method")
@@ -1587,8 +1496,43 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         # add the nodal balance equations
         for i, elm in enumerate(self.grid.buses):
             if not P_used[i] and not Q_used[i]:
-                raise ValueError("Isolated RMS bus has no nodal balance equation")
+                if elm.active:
+                    raise ValueError(
+                        f"Isolated RMS bus has no nodal balance equation: "
+                        f"{elm.name} (active=True, index={i}, idtag={elm.idtag})"
+                    )
+                else:
+                    pass
+                if elm.is_dc and dc_bus_rms_model_has_capacitive_state(elm.rms_model):
+                    # Retain the capacitive state and close its power bridge at zero.
+                    P[i] = Const(0.0)
+                    P_used[i] = True
+                else:
+                    boundaries: List[RmsBusVoltageBoundary] = build_isolated_bus_voltage_boundaries(
+                        bus=elm, init_guess=self.init_guess,
+                    )
+                    if len(boundaries) == 0:
+                        raise ValueError(f"Invalid RMS voltage model for inactive isolated bus: {elm.name}")
+                    else:
+                        pass
+                    boundary: RmsBusVoltageBoundary
+                    for boundary in boundaries:
+                        self._algebraic_eqs.append(boundary.equation)
+                        self._balance_equations.append(boundary.equation)
+                        self._nodal_balance_layout.add_row(
+                            kind=RmsVectorizedNodalBalanceKind.FIXED_VOLTAGE,
+                            bus_index=i, local_power_variable_uid=None,
+                            fixed_voltage_variable_uid=boundary.variable.uid,
+                            fixed_voltage_initial_value=boundary.initial_value,
+                        )
+                if self.logger is not None:
+                    self.logger.add_info("Inactive isolated RMS bus retained at its initial voltage",
+                                         device=elm.name, value=i)
+                else:
+                    pass
             else:
+                pass
+            if P_used[i] or Q_used[i]:
                 if elm.is_dc:
                     dc_balance_equation: Expr | Const = build_dc_bus_nodal_power_equation(
                         bus_rms_model=elm.rms_model,
@@ -1638,6 +1582,9 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                         bus_index=i,
                         local_power_variable_uid=None,
                     )
+
+            else:
+                pass
 
         # Imported time inputs retain their source UIDs but share one typed
         # runtime value slot. Register it before dt/delta so the established
@@ -1971,8 +1918,14 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
         t0 = _tic()
         # here we iterate throurgh equivalence_dict and fill the self._rhs_by_types
+        raw_names = ("j11_raw", "j12_raw", "j13_raw",
+                     "j21_raw", "j22_raw", "j23_raw")
+        self._raw_partial_fns_by_type = {name: {} for name in raw_names}
+        self._j13_fn_by_types = self._raw_partial_fns_by_type["j13_raw"]
+        self._j23_fn_by_types = self._raw_partial_fns_by_type["j23_raw"]
         for model_type in self.equivalence_dict.keys():
-            if  self._algebraic_eqs_equiv_class_dict[model_type] or self._state_eqs_equiv_class_dict[model_type]:
+            if (self._algebraic_eqs_equiv_class_dict.get(model_type)
+                    or self._state_eqs_equiv_class_dict.get(model_type)):
 
                 rms_compiler = RMSCompilerVec(
                     variables=self._state_vars_equiv_class_dict[model_type] + self._algebraic_vars_equiv_class_dict[model_type],
@@ -1999,24 +1952,24 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                     timings["RHS state"] = _toc(t0)
 
                     t0 = _tic()
-                    j11_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j11_" + str(model_type))
+                    j11_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j11_" + str(model_type), independent_partials=True)
                     timings["J11 (dF/dx)"] = _toc(t0)
 
                     t0 = _tic()
-                    j12_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j12_" + str(model_type))
+                    j12_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j12_" + str(model_type), independent_partials=True)
                     timings["J12 (dF/dy)"] = _toc(t0)
 
                     t0 = _tic()
-                    j21_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._state_vars_equiv_class_dict[model_type], "j21_" + str(model_type))
+                    j21_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._state_vars_equiv_class_dict[model_type], "j21_" + str(model_type), independent_partials=True)
                     timings["J21 (dG/dx)"] = _toc(t0)
 
                     t0 = _tic()
-                    j22_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
+                    j22_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type), independent_partials=True)
                     timings["J22 (dG/dy)"] = _toc(t0)
 
                 else:
                     t0 = _tic()
-                    j22_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
+                    j22_fn = rms_compiler.compile_sparse_jacobian(device_algebraic_equations, self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type), independent_partials=True)
                     timings["J22 only (no states)"] = _toc(t0)
 
                     rhs_state_fn = None
@@ -2032,14 +1985,38 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                 self._j21_fn_by_types[model_type] = j21_fn
                 self._j22_fn_by_types[model_type] = j22_fn
 
+                if self._diff_vars:
+                    state_eqs = self._state_eqs_equiv_class_dict[model_type]
+                    state_vars = self._state_vars_equiv_class_dict[model_type]
+                    algebraic_vars = self._algebraic_vars_equiv_class_dict[model_type]
+                    diff_vars = self._diff_vars_equiv_class_dict[model_type]
+                    for name, fn in (("j11_raw", j11_fn), ("j12_raw", j12_fn),
+                                     ("j21_raw", j21_fn), ("j22_raw", j22_fn)):
+                        self._raw_partial_fns_by_type[name][model_type] = fn
+                    raw_specs = ()
+                    if diff_vars:
+                        raw_specs += (("j13_raw", state_eqs, diff_vars),
+                                      ("j23_raw", device_algebraic_equations, diff_vars))
+                    for name, equations, variables in raw_specs:
+                        self._raw_partial_fns_by_type[name][model_type] = (
+                            rms_compiler.compile_sparse_jacobian(
+                                equations, variables, name + "_" + str(model_type),
+                                independent_partials=True))
+
         self._jbalance_state_fn = rms_compiler_all_models.compile_sparse_jacobian(
-            self._balance_equations, self._state_vars, "j_balance_state"
+            self._balance_equations, self._state_vars, "j_balance_state", independent_partials=True
         )
         if len(self._balance_equations) > 0:
             self._jbalance_fn = rms_compiler_all_models.compile_sparse_jacobian(
-                self._balance_equations, self._algebraic_vars, "j_balance"
+                self._balance_equations, self._algebraic_vars, "j_balance", independent_partials=True
             )
-
+        self._raw_balance_fns = None
+        if self._diff_vars and self._balance_equations:
+            self._raw_balance_fns = (
+                self._jbalance_state_fn, self._jbalance_fn,
+                rms_compiler_all_models.compile_sparse_jacobian(
+                    self._balance_equations, self._diff_vars, "j_balance_diff_raw",
+                    independent_partials=True))
         if self.options.verbose > 0:
             print(f"Model compiled with {self._n_vars} variables")
             print("\nCompilation timing summary:")
@@ -2051,9 +2028,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
         variable_parameters_init = np.ones(self.get_variable_parameter_number())
 
-        # TODO: think about this thing of calling twice here
         self._variable_parameters_values = self._event_params_fn(variable_parameters_init, 0.0)
-        self._variable_parameters_values = self._event_params_fn(self._variable_parameters_values, 0.0)
         self._mode_runtime_initialized_uids = set()
         if self.get_all_vars_number() > 0 and self.get_variable_parameter_number() > 0:
             self._initialize_latched_mode_defaults(t=0.0, x=self.get_x0())
@@ -2079,7 +2054,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             for initial_parameter in self._variable_parameters:
                 self.event_params_init_dict[initial_parameter.uid] = float(
                     self._variable_parameters_values[self._uid2idx_event_params[initial_parameter.uid]])
-            consistency_converged: bool = run_rms_consistent_initialization(problem=self, options=self.options, logger=self.logger)
+            consistency_converged: bool = run_rms_consistent_initialization(problem=self, options=self.options, logger=self.logger, sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
             if consistency_converged:
                 pass
             else:
@@ -2101,11 +2076,18 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         # index mapping per (local_col, instance) from _x_gather_idx instead
         # of using a single offset per instance.
         block_specs = [
-            ("j11", "_j11_fn_by_types", "_model_state_eq_start_idx", False, False),
-            ("j12", "_j12_fn_by_types", "_model_state_eq_start_idx", False, True),
-            ("j21", "_j21_fn_by_types", "_model_algebraic_eq_start_idx", True, False),
-            ("j22", "_j22_fn_by_types", "_model_algebraic_eq_start_idx", True, True),
+            ("j11", "_j11_fn_by_types", "_model_state_eq_start_idx", False, False, False),
+            ("j12", "_j12_fn_by_types", "_model_state_eq_start_idx", False, True, False),
+            ("j21", "_j21_fn_by_types", "_model_algebraic_eq_start_idx", True, False, False),
+            ("j22", "_j22_fn_by_types", "_model_algebraic_eq_start_idx", True, True, False),
         ]
+        if self._diff_vars:
+            block_specs.extend((name, None,
+                                "_model_algebraic_eq_start_idx" if name.startswith("j2")
+                                else "_model_state_eq_start_idx",
+                                name.startswith("j2"), name in ("j12_raw", "j22_raw"),
+                                name in ("j13_raw", "j23_raw"))
+                               for name in self._raw_partial_fns_by_type)
 
         # Map block to the wrk_vars list used during compilation
         wrt_vars_key = {
@@ -2114,9 +2096,19 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             "j21": "_state_vars_equiv_class_dict",
             "j22": "_algebraic_vars_equiv_class_dict",
         }
+        if self._diff_vars:
+            wrt_vars_key.update({
+                "j11_raw": "_state_vars_equiv_class_dict",
+                "j12_raw": "_algebraic_vars_equiv_class_dict",
+                "j13_raw": "_diff_vars_equiv_class_dict",
+                "j21_raw": "_state_vars_equiv_class_dict",
+                "j22_raw": "_algebraic_vars_equiv_class_dict",
+                "j23_raw": "_diff_vars_equiv_class_dict",
+            })
 
-        for block_name, fn_key, row_key, algeb_rows, algeb_cols in block_specs:
-            fn_dict = getattr(self, fn_key)
+        for block_name, fn_key, row_key, algeb_rows, algeb_cols, diff_cols in block_specs:
+            fn_dict = (self._raw_partial_fns_by_type[block_name] if fn_key is None
+                       else getattr(self, fn_key))
             row_off_dict = getattr(self, row_key)
 
             entries = []
@@ -2140,8 +2132,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
 
                 # Build column index map: (lc, inst) -> global column index
                 wrt_vars_list = getattr(self, wrt_vars_key[block_name]).get(model_type, [])
-                uid2pos = self._uid2idx_vars_vec.get(model_type, {})
-                x_gather = self._x_gather_idx.get(model_type)
+                uid2pos = (self._uid2idx_diff_vec if diff_cols else self._uid2idx_vars_vec).get(model_type, {})
+                x_gather = (self._dx_gather_idx if diff_cols else self._x_gather_idx).get(model_type)
                 if x_gather is None:
                     continue
                 col_idx = np.zeros((n_cols_type, n_inst), dtype=np.intp)
@@ -2166,7 +2158,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             # (row, col) entries, which would shrink the data array and break
             # the scatter-map indexing.  Entries are already sorted by (col, row).
             n_rows_global = n_algebraic if algeb_rows else n_states
-            n_cols_global = n_algebraic if algeb_cols else n_states
+            n_cols_global = (self.get_diff_var_number() if diff_cols else
+                             (n_algebraic if algeb_cols else n_states))
 
             if entries:
                 nnz_total = len(entries)
@@ -2227,6 +2220,12 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                     (data, rows, np.concatenate(([0], np.cumsum(col_counts, dtype=np.int32)))),
                     shape=(n_algebraic, n_algebraic),
                 )
+
+    def get_forced_event_times(self) -> list[float]:
+        """Include aligned symbolic parameter events from the active group."""
+        return sorted({float(event.time) for event in
+                       self._get_rms_events_for_group(self._active_events_group)
+                       if event.force_step_alignment})
 
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
         t_mode = _get_next_forced_mode_event_time(self._scheduled_mode_events, t_prev, t_target)
@@ -2343,7 +2342,7 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
     def resolve_manufacturer_native_boundary(self, t: float, x: Vec) -> None:
         """Commit manufacturer model outputs after an accepted RMS step."""
         updater: BlockProceduralLogicUpdater | None = self._block_boundary_updater
-        if updater is not None and self._manufacturer_native_runtime_session is not None:
+        if updater is not None:
             if self._constant_params is None:
                 constant_params: Vec = np.zeros(0, dtype=float)
             else:
@@ -2708,7 +2707,6 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
             mode_snapshot = ev_param[runtime_mode_slice].copy()
 
         updated = self._event_params_fn(ev_param, t)
-        updated = self._event_params_fn(updated, t)
 
         if runtime_mode_slice.start == runtime_mode_slice.stop:
             return updated
@@ -3846,6 +3844,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
                 pass
 
     def update_input_matrices_by_model(self, x: Vec, dx: Vec):
+        self._implicit_gather_x = None
+        self._implicit_gather_dx = None
         _t0 = time.time()
         for model_type in self._rhs_algeb_fn_by_types.keys():
             self._input_matrices_by_model[model_type][0] = x[self._x_gather_idx[model_type]]
@@ -3964,7 +3964,8 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         csc_template.data[:] = 0.0
 
         _t0 = time.time()
-        fn_dict = getattr(self, fn_key)
+        fn_dict = (self._raw_partial_fns_by_type[fn_key] if fn_key.endswith("_raw")
+                   else getattr(self, fn_key))
         for model_type, fn in fn_dict.items():
             if fn is None:
                 continue
@@ -4049,6 +4050,50 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         # Reuse the supported full-vectorized assembly without duplicating equations.
         return self.rhs_algebraic_vec(x=x, dx=dx)
 
+    def evaluate_rhs(self, x: Vec, dx: Vec):
+        """Gather once for both RHS blocks and record the Newton trial."""
+        self.update_input_matrices_by_model(x, dx)
+        self._implicit_gather_x = x
+        self._implicit_gather_dx = dx
+        algebraic = self.rhs_algebraic_vec(x, dx)
+        state = self.rhs_state_vec() if self.get_states_number() else None
+        return state, algebraic
+
+    def evaluate_jacobian_blocks(self, x: Vec, dx: Vec, h: float):
+        """Evaluate equation Jacobian blocks, reusing an identical RHS gather."""
+        reuse = x is self._implicit_gather_x and dx is self._implicit_gather_dx
+        self._implicit_gather_x = None
+        self._implicit_gather_dx = None
+        if not reuse:
+            self.update_input_matrices_by_model(x, dx)
+        if not self.get_states_number():
+            return None, None, None, self.get_j22_vec(x, dx, h)
+        return (self.get_j11_vec(h), self.get_j12_vec(h),
+                self.get_j21_vec(x, dx, h), self.get_j22_vec(x, dx, h))
+
+    def supports_derivative_jacobian_partials(self) -> bool:
+        return True
+
+    def evaluate_jacobian_partials(self, x: Vec, dx: Vec,
+                                   derivative_base_indices: np.ndarray | None = None):
+        if not self.get_diff_var_number():
+            return super().evaluate_jacobian_partials(x, dx, derivative_base_indices)
+        self.update_input_matrices_by_model(x, dx)
+        blocks = [self._fill_jacobian_block(name, name, 0.0).copy()
+                  for name in ("j11_raw", "j12_raw", "j13_raw",
+                               "j21_raw", "j22_raw", "j23_raw")]
+        if self._raw_balance_fns is not None:
+            n_model_rows = self._n_algebraic - len(self._balance_equations)
+            for block_index, balance_fn in ((3, self._raw_balance_fns[0]),
+                                            (4, self._raw_balance_fns[1]),
+                                            (5, self._raw_balance_fns[2])):
+                balance = balance_fn(x, dx, self._variable_parameters_values,
+                                     self._constant_params, 0.0)
+                top = sp.csc_matrix((n_model_rows, blocks[block_index].shape[1]))
+                blocks[block_index] = (blocks[block_index]
+                                       + sp.vstack((top, balance), format="csc")).tocsc()
+        return tuple(blocks)
+
     def get_j22(self, x: Vec, dx: Vec, h: float) -> sp.csc_matrix:
         """Evaluate the algebraic Jacobian through the full-vectorized owner.
 
@@ -4092,7 +4137,6 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         )
 
         n_states = self.get_states_number()
-        n_diff = self.get_diff_var_number()
         vp = self._variable_parameters_values
         cp = self._constant_params
 
@@ -4100,7 +4144,9 @@ class RmsProblemDaeFullVec(RmsProblemTemplate):
         E_value = np.zeros((n_vars, n_vars))
         E_partial = E_call(x, dx, vp, cp, h=0).toarray()
 
-        E_value[:, :n_diff] = E_partial
+        for j, dvar in enumerate(xdot):
+            col_idx = self._uid2idx_vars[dvar.base_var.uid]
+            E_value[:, col_idx] += E_partial[:, j]
         E_value[:n_states, :n_states] -= np.eye(n_states, dtype=E_value.dtype)
 
         return E_value

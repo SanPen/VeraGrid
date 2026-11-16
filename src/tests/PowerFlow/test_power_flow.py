@@ -7,6 +7,7 @@ import os
 import pandas as pd
 import numpy as np
 
+from VeraGridEngine import Facility
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (
     split_reactive_power_between_generators_and_batteries,
@@ -1376,21 +1377,21 @@ def test_bipolar_with_load() -> None:
 
     grid = gce.MultiCircuit(name="Bipolar_with_load", Sbase=Sb)
 
-    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True);
+    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True)
     grid.add_bus(bus1)
-    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True);
+    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True)
     grid.add_bus(bus2)
-    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True);
+    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True)
     grid.add_bus(bus3)
-    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14);
+    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14)
     grid.add_bus(bus4)
-    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14);
+    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14)
     grid.add_bus(bus5)
-    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9, Va0=1e-9);
+    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9, Va0=1e-9)
     grid.add_bus(bus6)
-    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01);
+    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01)
     grid.add_bus(bus7)
-    bus8 = gce.Bus(name="Bus8", Vnom=Ub);
+    bus8 = gce.Bus(name="Bus8", Vnom=Ub)
     grid.add_bus(bus8)
 
     grid.add_generator(bus1, gce.Generator(name='g1', vset=1.0))
@@ -1439,6 +1440,69 @@ def test_bipolar_with_load() -> None:
     p_gen = res.Sbus[0].real
     losses = res.losses_vsc.sum() + res.losses[:3].real.sum()
     assert np.isclose(p_gen, 80.0 + losses, atol=1e-2)
+
+
+def test_facility_controlling_voltage():
+    """
+
+    :return:
+    """
+    options = PowerFlowOptions(SolverType.NR,
+                               verbose=0,
+                               control_q=False,
+                               retry_with_other_methods=False)
+
+    fname = os.path.join('data', 'grids', 'RAW', 'IEEE 14 bus.raw')
+    main_circuit = FileOpen(fname).open()
+    if main_circuit is not None:
+
+        # Bus i=7 has one generator k=4 controlling at 1.09
+        # first test, we add a plant controlling at 1.02 and we check that the voltage module is exactly that
+
+        fac = Facility(Vset=1.02)
+        main_circuit.add_facility(fac)
+
+        main_circuit.generators[4].facility = fac
+        main_circuit.generators[4].use_facility_control = True
+
+        power_flow = PowerFlowDriver(main_circuit, options)
+        power_flow.run()
+
+        assert np.isclose(abs(power_flow.results.voltage[7]), fac.Vset)
+
+        # Check is false
+        main_circuit.generators[4].facility = fac
+        main_circuit.generators[4].use_facility_control = False
+
+        power_flow = PowerFlowDriver(main_circuit, options)
+        power_flow.run()
+
+        assert not np.isclose(abs(power_flow.results.voltage[7]), fac.Vset)
+
+        # All false
+        main_circuit.generators[4].facility = None
+        main_circuit.generators[4].use_facility_control = True
+
+        power_flow = PowerFlowDriver(main_circuit, options)
+        power_flow.run()
+
+        assert not np.isclose(abs(power_flow.results.voltage[7]), fac.Vset)
+
+        # Add conflicting generator governed by the  same facility
+        g5 = main_circuit.generators[4].copy(forced_new_idtag=True)
+        main_circuit.add_generator(bus=main_circuit.buses[7], api_obj=g5)
+
+        main_circuit.generators[4].facility = fac
+        main_circuit.generators[4].use_facility_control = True
+
+        main_circuit.generators[5].Vset = 1.05
+        main_circuit.generators[5].facility = fac
+        main_circuit.generators[5].use_facility_control = True
+
+        power_flow = PowerFlowDriver(main_circuit, options)
+        power_flow.run()
+
+        assert np.isclose(abs(power_flow.results.voltage[7]), fac.Vset)
 
 
 if __name__ == "__main__":

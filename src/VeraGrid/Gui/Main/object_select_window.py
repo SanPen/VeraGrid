@@ -44,7 +44,6 @@ class ObjectSelectWindow(QtWidgets.QDialog):
         """
         idx = self.list_widget.currentIndex().row()
         if idx > -1:
-            print(self.object_list[idx])
             self.selected_object = self.object_list[idx]
             self.close()
 
@@ -77,7 +76,6 @@ class ListSelectWindow(QtWidgets.QDialog):
         """
         idx = self.list_widget.currentIndex().row()
         if idx > -1:
-            print(self.object_list[idx])
             self.selected_object = self.object_list[idx]
             self.close()
 

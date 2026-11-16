@@ -28,6 +28,7 @@ from VeraGridEngine.IO.dgs.dgs_objects import (
     ElmBranch,
     ElmComp,
     ElmCoup,
+    ElmDcibi,
     ElmDsl,
     ElmFeeder,
     ElmGenstat,
@@ -51,15 +52,18 @@ from VeraGridEngine.IO.dgs.dgs_objects import (
     ElmTerm,
     ElmTow,
     ElmTr2,
+    IntQlim,
     ElmTr3,
     ElmTr4,
     ElmVac,
+    ElmValve,
     ElmXnet,
     ElmZone,
     ElmZpu,
     General,
     IntFolder,
     IntGrf,
+    IntMat,
     IntGrfcon,
     IntGrfgroup,
     IntGrfnet,
@@ -185,6 +189,8 @@ class DgsCircuit:
         "chavecs",
         "elmasms",
         "elmcoups",
+        "elmdcibis",
+        "elmvalves",
         "elmfeeders",
         "elmgenstats",
         "elmvscs",
@@ -208,6 +214,7 @@ class DgsCircuit:
         "elmsyms",
         "elmterms",
         "elmtr2s",
+        "intqlims",
         "elmtr3s",
         "elmtr4s",
         "elmxnets",
@@ -217,6 +224,7 @@ class DgsCircuit:
         "intrefs",
         "inttemplates",
         "intgrfs",
+        "intmats",
         "intgrfcons",
         "intgrfgroups",
         "intgrfnets",
@@ -270,6 +278,8 @@ class DgsCircuit:
         ElmBranch,
         ElmAsm,
         ElmCoup,
+        ElmDcibi,
+        ElmValve,
         ElmFeeder,
         ElmGenstat,
         # Alex review required: recognize both VSC formats as declarative DGS elements.
@@ -294,6 +304,7 @@ class DgsCircuit:
         ElmSym,
         ElmTerm,
         ElmTr2,
+        IntQlim,
         ElmTr3,
         ElmTr4,
         ElmXnet,
@@ -304,6 +315,7 @@ class DgsCircuit:
         IntRef,
         IntTemplate,
         IntGrf,
+        IntMat,
         IntGrfcon,
         IntGrfgroup,
         IntGrfnet,
@@ -364,6 +376,8 @@ class DgsCircuit:
         self.chavecs: List[ChaVec] = list()
         self.elmasms: List[ElmAsm] = list()
         self.elmcoups: List[ElmCoup] = list()
+        self.elmdcibis: List[ElmDcibi] = list()
+        self.elmvalves: List[ElmValve] = list()
         self.elmfeeders: List[ElmFeeder] = list()
         self.elmgenstats: List[ElmGenstat] = list()
         # Alex review required: discard transient collections after creating the final VSC devices.
@@ -388,6 +402,7 @@ class DgsCircuit:
         self.elmsyms: List[ElmSym] = list()
         self.elmterms: List[ElmTerm] = list()
         self.elmtr2s: List[ElmTr2] = list()
+        self.intqlims: List[IntQlim] = list()
         self.elmtr3s: List[ElmTr3] = list()
         self.elmtr4s: List[ElmTr4] = list()
         self.elmxnets: List[ElmXnet] = list()
@@ -397,6 +412,7 @@ class DgsCircuit:
         self.intrefs: List[IntRef] = list()
         self.inttemplates: List[IntTemplate] = list()
         self.intgrfs: List[IntGrf] = list()
+        self.intmats: List[IntMat] = list()
         self.intgrfcons: List[IntGrfcon] = list()
         self.intgrfgroups: List[IntGrfgroup] = list()
         self.intgrfnets: List[IntGrfnet] = list()
@@ -447,6 +463,8 @@ class DgsCircuit:
             ElmBranch: self.elmbranches,
             ElmAsm: self.elmasms,
             ElmCoup: self.elmcoups,
+            ElmDcibi: self.elmdcibis,
+            ElmValve: self.elmvalves,
             ElmFeeder: self.elmfeeders,
             ElmGenstat: self.elmgenstats,
             # Alex review required: route each VSC table into its typed import collection.
@@ -471,6 +489,7 @@ class DgsCircuit:
             ElmSym: self.elmsyms,
             ElmTerm: self.elmterms,
             ElmTr2: self.elmtr2s,
+            IntQlim: self.intqlims,
             ElmTr3: self.elmtr3s,
             ElmTr4: self.elmtr4s,
             ElmXnet: self.elmxnets,
@@ -480,6 +499,7 @@ class DgsCircuit:
             IntRef: self.intrefs,
             IntTemplate: self.inttemplates,
             IntGrf: self.intgrfs,
+            IntMat: self.intmats,
             IntGrfcon: self.intgrfcons,
             IntGrfgroup: self.intgrfgroups,
             IntGrfnet: self.intgrfnets,
@@ -689,3 +709,19 @@ class DgsCircuit:
                             f.write(serialized_line + "\n")
 
                     f.write("\n")
+
+    def build_dgs_element_index(self) -> Dict[str, DGSElement]:
+        """
+        Build an exact FID lookup over every parsed DGS class.
+
+        :return: DGS element lookup keyed by FID.
+        """
+        element_by_id: Dict[str, DGSElement] = dict()
+        element: DGSElement
+
+        for element in self.get_all_elements_iter():
+            if element.ID == "":
+                pass
+            else:
+                element_by_id[element.ID] = element
+        return element_by_id

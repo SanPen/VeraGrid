@@ -83,7 +83,7 @@ def collect_ncp_availability_timestamps(cgmes_model: CgmesCircuit,
     :return: List of parsed UTC timestamps.
     """
     collected_timestamps: List[pd.Timestamp] = list()
-    for event_time_point in cgmes_model.cgmes_assets.EventTimePoint_list:
+    for event_time_point in cgmes_model.ncp_assets.EventTimePoint_list:
         parsed_time: pd.Timestamp | None = parse_time_to_utc_timestamp(
             event_time_point.atTime,
             logger,
@@ -117,7 +117,7 @@ def build_event_schedule_timepoints_lookup(
     :return: Dictionary keyed by EventSchedule UUID.
     """
     schedule_timepoints_lookup: Dict[str, List[CGMES_ASSETS]] = dict()
-    for event_time_point in cgmes_model.cgmes_assets.EventTimePoint_list:
+    for event_time_point in cgmes_model.ncp_assets.EventTimePoint_list:
         schedule_reference: object = event_time_point.EventSchedule
         resolved_schedule: object | None = get_first_resolved_reference(schedule_reference)
         if resolved_schedule is None:
@@ -215,7 +215,7 @@ def apply_ncp_availability_profiles(
     )
     assignment_count: int = 0
 
-    for availability_equipment in cgmes_model.cgmes_assets.AvailabilityEquipment_list:
+    for availability_equipment in cgmes_model.ncp_assets.AvailabilityEquipment_list:
         equipment_references: List[object] = get_resolved_cgmes_reference_list(availability_equipment.Equipment)
         if len(equipment_references) == 0:
             logger.add_warning(

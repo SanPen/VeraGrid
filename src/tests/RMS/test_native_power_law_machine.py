@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Two-axis power-law saturation and its zero-flux symbolic derivative."""
 from __future__ import annotations
@@ -6,7 +10,7 @@ import math
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.synchronous_machines.genroe import build_genroe_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genroe import build_genroe_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, Const
 

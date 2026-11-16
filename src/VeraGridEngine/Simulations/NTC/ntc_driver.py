@@ -8,7 +8,6 @@ import numpy as np
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Simulations.NTC.ntc_opf import run_linear_ntc_opf
-from VeraGridEngine.Simulations.NTC.ntc_opf_strict import run_linear_ntc_opf_strict
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Simulations.NTC.ntc_options import OptimalNetTransferCapacityOptions
 from VeraGridEngine.Simulations.NTC.ntc_results import OptimalNetTransferCapacityResults
@@ -249,56 +248,31 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
         else:
             self.report_text('Formulating NTC OPF...')
 
-        if self.options.strict_formulation:
-            opf_vars, model = run_linear_ntc_opf_strict(
-                grid=self.grid,
-                t=None,
-                solver_type=self.options.opf_options.mip_solver,
-                zonal_grouping=self.options.opf_options.zonal_grouping,
-                skip_generation_limits=self.options.skip_generation_limits,
-                consider_contingencies=self.options.consider_contingencies,
-                corrective_contingencies=self.options.corrective_contingencies,
-                contingency_groups_used=contingency_groups_used,
-                lodf_threshold=self.options.lin_options.lodf_threshold,
-                bus_a1_idx=self.options.sending_bus_idx,
-                bus_a2_idx=self.options.receiving_bus_idx,
-                transfer_method=self.options.transfer_method,
-                monitor_only_ntc_load_rule_branches=self.options.monitor_only_ntc_load_rule_branches,
-                alpha_threshold=self.options.branch_exchange_sensitivity,
-                monitor_only_sensitive_branches=self.options.use_branch_exchange_sensitivity,
-                ntc_load_rule=self.options.branch_rating_contribution,
-                logger=self.logger,
-                progress_text=self.report_text,
-                progress_func=self.report_progress,
-                verbose=self.options.opf_options.verbose,
-                robust=self.options.opf_options.robust,
-                mip_framework=self.options.opf_options.mip_framework
-            )
-        else:
-            opf_vars, model = run_linear_ntc_opf(
-                grid=self.grid,
-                t=None,
-                solver_type=self.options.opf_options.mip_solver,
-                zonal_grouping=self.options.opf_options.zonal_grouping,
-                skip_generation_limits=self.options.skip_generation_limits,
-                consider_contingencies=self.options.consider_contingencies,
-                corrective_contingencies=self.options.corrective_contingencies,
-                contingency_groups_used=contingency_groups_used,
-                lodf_threshold=self.options.lin_options.lodf_threshold,
-                bus_a1_idx=self.options.sending_bus_idx,
-                bus_a2_idx=self.options.receiving_bus_idx,
-                transfer_method=self.options.transfer_method,
-                monitor_only_ntc_load_rule_branches=self.options.monitor_only_ntc_load_rule_branches,
-                alpha_threshold=self.options.branch_exchange_sensitivity,
-                monitor_only_sensitive_branches=self.options.use_branch_exchange_sensitivity,
-                ntc_load_rule=self.options.branch_rating_contribution,
-                logger=self.logger,
-                progress_text=self.report_text,
-                progress_func=self.report_progress,
-                verbose=self.options.opf_options.verbose,
-                robust=self.options.opf_options.robust,
-                mip_framework=self.options.opf_options.mip_framework
-            )
+        opf_vars, model = run_linear_ntc_opf(
+            grid=self.grid,
+            consider_slacks=self.options.consider_slacks,
+            t=None,
+            solver_type=self.options.opf_options.mip_solver,
+            zonal_grouping=self.options.opf_options.zonal_grouping,
+            skip_generation_limits=self.options.skip_generation_limits,
+            consider_contingencies=self.options.consider_contingencies,
+            corrective_contingencies=self.options.corrective_contingencies,
+            contingency_groups_used=contingency_groups_used,
+            lodf_threshold=self.options.lin_options.lodf_threshold,
+            bus_a1_idx=self.options.sending_bus_idx,
+            bus_a2_idx=self.options.receiving_bus_idx,
+            transfer_method=self.options.transfer_method,
+            monitor_only_ntc_load_rule_branches=self.options.monitor_only_ntc_load_rule_branches,
+            alpha_threshold=self.options.branch_exchange_sensitivity,
+            monitor_only_sensitive_branches=self.options.use_branch_exchange_sensitivity,
+            ntc_load_rule=self.options.branch_rating_contribution,
+            logger=self.logger,
+            progress_text=self.report_text,
+            progress_func=self.report_progress,
+            verbose=self.options.opf_options.verbose,
+            robust=self.options.opf_options.robust,
+            mip_framework=self.options.opf_options.mip_framework
+        )
 
         # pack the results
         self.results = OptimalNetTransferCapacityResults(
@@ -321,10 +295,9 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
         self.results.Sf = opf_vars.branch_vars.flows[0, :]
         self.results.St = -opf_vars.branch_vars.flows[0, :]
 
-        if not self.options.strict_formulation:
-            self.results.load_shedding = opf_vars.bus_vars.load_shedding[0, :]
-            self.results.overloads = (opf_vars.branch_vars.flow_slacks_pos[0, :]
-                                      - opf_vars.branch_vars.flow_slacks_neg[0, :])
+        self.results.load_shedding = opf_vars.bus_vars.load_shedding[0, :]
+        self.results.overloads = (opf_vars.branch_vars.flow_slacks_pos[0, :]
+                                  - opf_vars.branch_vars.flow_slacks_neg[0, :])
 
         self.results.loading = opf_vars.branch_vars.loading[0, :]
         self.results.phase_shift = opf_vars.branch_vars.tap_angles[0, :]
@@ -333,7 +306,7 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
         self.results.alpha = opf_vars.branch_vars.alpha[0, :]
         self.results.monitor_logic = opf_vars.branch_vars.monitor_logic[0, :]
         self.results.contingency_flows_list = opf_vars.branch_vars.contingency_flow_data
-        self.results.strict_formulation = self.options.strict_formulation
+        self.results.consider_slacks = self.options.consider_slacks
         self.results.loading_threshold_to_report = self.options.loading_threshold_to_report
 
         self.results.hvdc_Pf = opf_vars.hvdc_vars.flows[0, :]

@@ -19,6 +19,9 @@ import warnings
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
 
+from VeraGridEngine.Utils.Sparse.sparse_solve import SparseProviderLinearSolver, solve_sparse_system_once
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
+from VeraGridEngine.Utils.NumericalMethods.emt_sparse_solver_registry import resolve_emt_sparse_solver_backend_provider
 from VeraGridEngine.enumerations import EmtInitializationMethod, EmtInitializationStatus
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
@@ -2314,13 +2317,14 @@ def _solve_reduced_linear_system(
         matrix: sp.csc_matrix,
         rhs: np.ndarray,
         dense_threshold: int,
-) -> np.ndarray:
+        linear_solver: SparseProviderLinearSolver | None = None) -> np.ndarray:
     """
     Solve one reduced linear system using a dense or sparse backend depending on size.
 
     :param matrix: Reduced Jacobian-like matrix.
     :param rhs: Right-hand-side vector.
     :param dense_threshold: Dense/sparse switching threshold.
+    :param linear_solver: This initialization phase's resident sparse factors.
     :return: Linear-system solution vector.
     """
     n_unknown: int = int(matrix.shape[0])
@@ -2340,7 +2344,7 @@ def _solve_reduced_linear_system(
         try:
             with warnings.catch_warnings():
                 warnings.simplefilter("error")
-                return spla.spsolve(matrix, rhs)
+                return solve_sparse_system_once(matrix, rhs, None, linear_solver)
         except Exception:
             lsqr_solution = spla.lsqr(matrix, rhs)
             return np.asarray(lsqr_solution[0], dtype=np.float64)
@@ -2350,8 +2354,11 @@ def _solve_equilibrated_reduced_linear_system(
         matrix: sp.csc_matrix,
         rhs: np.ndarray,
         dense_threshold: int,
-) -> np.ndarray:
-    """Solve after row and column equilibration."""
+        linear_solver: SparseProviderLinearSolver | None = None) -> np.ndarray:
+    """Solve after row and column equilibration.
+
+    :param linear_solver: Optional phase-local sparse LU session used for current sparse corrections; None retains the existing helper selection/fallback policy. Dense thresholds and least-squares recovery remain unchanged.
+    """
     squared = matrix.multiply(matrix)
     row_scale = np.maximum(
         np.sqrt(np.asarray(squared.sum(axis=1)).ravel()),
@@ -2369,7 +2376,7 @@ def _solve_equilibrated_reduced_linear_system(
         equilibrated,
         rhs / row_scale,
         dense_threshold,
-    )
+        linear_solver=linear_solver)
     return scaled_step / column_scale
 
 
@@ -2382,9 +2389,8 @@ def _run_reduced_newton_initialization(
         constant_params: np.ndarray,
         options: EmtOptions,
         report: EmtInitializationReport,
-) -> bool:
-    """
-    Solve the reduced initialization system with damped sparse Newton iterations.
+        linear_solver: SparseProviderLinearSolver | None = None) -> bool:
+    """Solve the reduced initialization system with damped sparse Newton iterations.
 
     :param reduced_system: Reduced initialization system.
     :param problem: EMT problem being initialized.
@@ -2394,6 +2400,7 @@ def _run_reduced_newton_initialization(
     :param constant_params: Constant-parameter vector.
     :param options: EMT simulation options.
     :param report: Initialization report updated in place.
+    :param linear_solver: Optional phase-local sparse LU session used for current sparse corrections; None retains the existing helper selection/fallback policy. Dense thresholds and least-squares recovery remain unchanged.
     :return: True if Newton converged.
     """
     reduced_x: np.ndarray = _extract_unknown_vector(problem, reduced_system.unknown_vars, x)
@@ -2420,7 +2427,7 @@ def _run_reduced_newton_initialization(
             report.final_residual_inf = report.final_residual_inf
 
         jacobian: sp.csc_matrix = _evaluate_initialization_jacobian(reduced_system, problem, x, dx, runtime_params, constant_params)
-        delta: np.ndarray = _solve_reduced_linear_system(jacobian, -residual, int(options.init_dense_threshold))
+        delta: np.ndarray = _solve_reduced_linear_system(jacobian, -residual, int(options.init_dense_threshold), linear_solver=linear_solver)
 
         if np.all(np.isfinite(delta)):
             delta = delta
@@ -2462,9 +2469,8 @@ def _run_reduced_pseudo_transient_initialization(
         constant_params: np.ndarray,
         options: EmtOptions,
         report: EmtInitializationReport,
-) -> bool:
-    """
-    Solve the reduced initialization system with pseudo-transient iterations.
+        linear_solver: SparseProviderLinearSolver | None = None) -> bool:
+    """Solve the reduced initialization system with pseudo-transient iterations.
 
     :param reduced_system: Reduced initialization system.
     :param problem: EMT problem being initialized.
@@ -2474,6 +2480,7 @@ def _run_reduced_pseudo_transient_initialization(
     :param constant_params: Constant-parameter vector.
     :param options: EMT simulation options.
     :param report: Initialization report updated in place.
+    :param linear_solver: Optional phase-local sparse LU session used for current sparse corrections; None retains the existing helper selection/fallback policy. Dense thresholds and least-squares recovery remain unchanged.
     :return: True if pseudo-transient converged.
     """
     # The reduced vector stores only unresolved EMT unknowns. The pseudo-transient
@@ -2532,13 +2539,13 @@ def _run_reduced_pseudo_transient_initialization(
                 linear_matrix,
                 -residual,
                 int(options.init_dense_threshold),
-            )
+                linear_solver=linear_solver)
         else:
             delta = _solve_equilibrated_reduced_linear_system(
                 linear_matrix,
                 -residual,
                 int(options.init_dense_threshold),
-            )
+                linear_solver=linear_solver)
 
         if np.all(np.isfinite(delta)):
             # Form one trial iterate and accept it only when the pseudo-transient
@@ -2832,6 +2839,25 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
     :param options: EMT simulation options.
     :return: Initialization report.
     """
+    sparse_provider: SparseLinearSolverBackendProvider | None = problem.get_sparse_solver_backend_provider(
+            options.sparse_solver, options.external_sparse_solver_plugin_name,
+            options.external_sparse_solver_directory, options.allow_internal_sparse_fallback)
+    if sparse_provider is None:
+        # Direct generic helpers first receive options here; keep plugin/strict policy.
+        sparse_provider = resolve_emt_sparse_solver_backend_provider(
+            solver_type=options.sparse_solver,
+            external_plugin_name=options.external_sparse_solver_plugin_name,
+            external_plugin_directory=options.external_sparse_solver_directory,
+            allow_internal_fallback=options.allow_internal_sparse_fallback,
+            logger=None,
+        )
+        problem.set_sparse_solver_backend_provider(
+            sparse_provider, options.sparse_solver, options.external_sparse_solver_plugin_name,
+            options.external_sparse_solver_directory, options.allow_internal_sparse_fallback)
+    else:
+        pass
+    newton_linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(sparse_provider)
+    ptc_linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(sparse_provider)
     report = EmtInitializationReport(method_requested=options.initialization_method)
     start_time: float = time.perf_counter()
     if options.init_periodic_samples:
@@ -3007,7 +3033,7 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
                     constant_params=constant_params,
                     options=options,
                     report=report,
-                )
+                    linear_solver=newton_linear_solver)
                 report.newton_elapsed_s += float(time.perf_counter() - phase_t0)
                 if converged:
                     report.method_used = EmtInitializationMethod.ConsistentNewton
@@ -3029,7 +3055,7 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
                     constant_params=constant_params,
                     options=options,
                     report=report,
-                )
+                    linear_solver=ptc_linear_solver)
                 report.pseudo_transient_elapsed_s += float(time.perf_counter() - phase_t0)
                 if converged:
                     report.status = InitializationStatus.RESOLVED

@@ -316,6 +316,44 @@ Profile-enabled properties: none.
 
 ## Generator
 
+### Synchronous Q-V droop in power flow
+
+`GeneratorControlMode.QVDroop` uses the existing `k_droop` gain and `dead_band`:
+outside the dead band, `Q = k_droop * Qmax * (dU - sign(dU) * dead_band)`, where
+`dU = Vset - U`. Inside the dead band, Q is zero. Outside it, Q is clipped to
+`Qmin`/`Qmax`, as in the existing generator control, independently of the PV-limit
+switch. Q is in MVAr. In ABC power flow, U is the positive-sequence magnitude.
+The same scalar curve is reused for positive-sequence control, ABC injections and
+reported generator Q. There is no second `droop` parameter on Generator or Battery.
+
+The synchronous machine remains a sequence source: `I2 = -U2/Z2`, and
+`I0 = -U0/Z0` for a finite grounded path. Delta and floating-star connections block
+I0. The existing ideal-source condition handles a grounded Z0 exactly equal to zero.
+The I1 source compensates the passive sequence powers to preserve total terminal P
+and the droop-commanded total Q. No extra control unknown or Jacobian implementation
+is added. Voltage control is local.
+
+PowerFactory `ElmSym.av_mode = vdroop` imports as a synchronous Q-V droop generator.
+Export `ElmSym.ddroop` using **DGS Export Definitions 8 - VeraGrid**. If the field
+is missing in a legacy export, import keeps the configured fixed `qgini` and warns
+that droop was unavailable. A nonpositive or nonfinite value is rejected.
+The DGS parser converts the external percentage to the existing gain:
+`slope = 100 * Snom / ddroop`, `k_droop = slope / Qmax`, and
+`Vset = usetp + qgini / slope`. This preserves the unsaturated PF curve, including
+a nonzero Q reference, with zero dead band. The imported Vset is the zero-Q
+intercept; Generator.Q is not an additional offset in Q-V droop mode.
+The native limits are preserved. A nonpositive Qmax cannot represent this slope
+with the existing gain definition and is reported explicitly, without changing
+the rating or limits. The existing generator saturation still applies, so this
+does not reproduce PF operation beyond Q limits when PF disables them.
+Unlike the VSC curve, the generator curve does not clamp U to 0.9--1.1 pu.
+
+DGS export performs the inverse gain conversion with a zero-Q reference; nonzero
+dead bands are rejected because this export does not represent them. Storage
+with percentage droop continues to use `StaticGenerator` or the explicit VSC option.
+
+### Sequence impedance model for short-circuit studies
+
 For the power flow simulations, generators had been modelled as simple power injections into the system, which was
 completely valid. However, this is not sufficient when performing the short-circuit analysis, as the impedance of the
 generator must also be taken into account. VeraGrid has been programmed to accept a $3 \times 3$ impedance matrix, which
@@ -1341,7 +1379,25 @@ Profile-enabled properties: `active`, `Cost`, `shift_key`, `G`, `G0`, `Ga`, `Gb`
 
 ## ControllableShunt
 
-A `ControllableShunt` provides reactive support with continuous, discrete or locked control.
+A `ControllableShunt` provides reactive support with continuous, discrete, locked or Q-V droop control.
+
+### Q-V droop control
+
+Q-V droop reuses the VSC curve: injected `Q = Snom * (Vset - abs(U1)) / (droop/100)`,
+with the measured magnitude clamped between `Vmin` and `Vmax`. Q is zero at Vset.
+`Snom` is in MVA and `droop` in percent. As in the existing VSC curve, Q is not clipped
+to the shunt's B limits. This mode requires a positive rating/droop and a local ABC AC bus.
+
+In ABC, Q is the total three-phase reactive injection. For Y/D,
+`Bpu = (Q/Sbase) / (abs(U1)^2 + abs(U2)^2)` and `Iabc = -j*Bpu*(Uabc-U0)`.
+For Yg, include `abs(U0)^2` in the denominator and use `Uabc` directly.
+Thus delta blocks I0 while retaining I2, and total Q still follows the same droop law.
+In balance this reduces to the existing positive-sequence equivalent. Fixed G remains
+in the network admittance; fixed B and step data are not added to the droop susceptance.
+No additional Newton unknowns or Jacobian changes are required.
+
+The settings survive native save/load and island slicing. This implementation covers
+power flow, not OPF/dynamics or reverse DGS export of droop settings.
 
 ### Continuous voltage control in ABC power flow
 
@@ -1382,18 +1438,21 @@ dynamic control equations.
 
 ### PowerFactory import
 
-Without explicit VSC import, an `ElmSvs` in voltage control without droop is represented
-by a continuous `ControllableShunt`. Its susceptances connect AB/BC/CA, so import uses
+Without explicit VSC import, an `ElmSvs` in voltage control is represented
+by a `ControllableShunt`. Its susceptances connect AB/BC/CA, so import uses
 **D**. ABC regulation uses U1 and a common susceptance, as for PowerFactory's balanced
 SVS control with positive-sequence voltage selected.
 
-When bank data are available, the importer reuses the existing VSC-route range:
+For continuous voltage control without droop, when bank data are available the importer
+reuses the existing VSC-route range:
 `Bmin = qmin*nxcap + Qfixcap*nfixcap` and `Bmax = tcrmax + Qfixcap*nfixcap`.
 Here, native `qmin` describes one capacitor step, not the whole bank. Legacy exports
 without bank data retain the earlier `qmin/qmax` fallback. Reimport the DGS to update
 previously imported connections and bank limits.
 
-The separate [StaticGenerator Q-V droop](static_generator.md) route is unchanged.
+With droop enabled it uses Q-V droop mode, mapping `Srated`, `ddroop` and `usetp`
+to `Snom`, `droop` and `Vset`. The separate [StaticGenerator Q-V droop](static_generator.md)
+route is unchanged. Reimport DGS to update SVCs previously stored as static generators.
 
 ### Registered properties
 Profile-enabled properties: `active`, `Cost`, `shift_key`, `G`, `G0`, `Ga`, `Gb`, `Gc`, `B`, `B0`, `Ba`, `Bb`, `Bc`, `step`, `Vset`.
@@ -1465,9 +1524,11 @@ Profile-enabled properties: `active`, `Cost`, `shift_key`, `G`, `G0`, `Ga`, `Gb`
 |Bmin                    |float                   |MVAr        |False    |         |Minimum susceptance                                                             |False      |       |
 |active_steps            |Array                   |            |False    |         |steps active?                                                                   |False      |       |
 |step                    |int                     |            |False    |         |Device step position (0~N-1)                                                    |True       |       |
-|Vmin                    |float                   |p.u.        |False    |         |Lower range voltage value when regulating with Discrete mode                    |False      |       |
+|Vmin                    |float                   |p.u.        |False    |         |Lower voltage band in Discrete mode, or measurement clamp in Q-V droop mode.    |False      |       |
 |Vset                    |float                   |p.u.        |False    |         |Set voltage. This is used for controlled shunts.                                |True       |       |
-|Vmax                    |float                   |p.u.        |False    |         |Upper range voltage value when regulating with Discrete mode.                   |False      |       |
+|Vmax                    |float                   |p.u.        |False    |         |Upper voltage band in Discrete mode, or measurement clamp in Q-V droop mode.    |False      |       |
+|Snom                    |float                   |MVA         |False    |         |Rated power for Q-V droop control.                                              |False      |       |
+|droop                   |float                   |%           |False    |         |Voltage droop at rated reactive power; zero Q at Vset.                          |False      |       |
 
 ## CurrentInjection
 
@@ -1620,12 +1681,12 @@ earth connection. The PQ sequence source reproduces the P1/Q1 behaviour validate
 against native PowerFactory constq cases; it does not copy the PV controller's
 terminal-power compensation. Connection and sequence data survive native save/load.
 
-Without the explicit VSC import option, `ElmSvs` with voltage droop
-(`i_ctrl = 1`, `i_droop != 0`) becomes a `StaticGenerator` in Q-V droop mode.
-`Srated`, `ddroop` and `usetp` map to `Snom`, `droop` and `Vset`;
-the P/Q references are zero, as in the existing SVC-to-VSC route.
-Other SVC modes keep their previous shunt mapping. Selecting VSC import retains
-the converter mapping. This is a local terminal-voltage equivalent.
+Without the explicit VSC import option, `ElmSvs` with voltage droop now becomes a
+[ControllableShunt](controllable_shunt.md) in Q-V droop mode. It reuses the same
+Q-U1 curve but retains the physical susceptance's negative-sequence response.
+Reimport DGS to replace older SVC equivalents stored as static generators.
+Generic static generators and storage with droop retain the current-source model
+described above; selecting VSC import retains the converter mapping.
 
 The control settings survive native `.veragrid` save/load. Older native static
 generators default to PQ. This addition extends power flow and DGS import;
@@ -3873,6 +3934,10 @@ Profile-enabled properties: none.
 
 An `OverheadLineType` stores reusable conductor geometry and the derived impedance and admittance matrices for overhead lines.
 
+Set `transposed=True` for perfect transposition of a single complete ABC circuit. After the existing earth-wire reduction, the series impedance Z and shunt admittance Y are averaged over the three cyclic phase positions; series admittance is then obtained by inverting the averaged Z. The branch NABC matrices and catalogue sequence values use the same result. The default is False, preserving existing geometrical calculations.
+
+PowerFactory imports this setting from `TypTow.iTransMode=3`, exported by **DGS Export Definitions 8 - VeraGrid**. Mode 0 retains the original arrangement. Circuit-wise, symmetrical and multi-circuit perfect transposition are not implemented here and produce an explicit import error; use electrical-parameter input for those cases.
+
 This device stores reusable equipment data that can be applied to physical network elements.
 
 ### Registered properties
@@ -3903,6 +3968,7 @@ Profile-enabled properties: none.
 |emt_fmu_import_config   |str                |            |False    |         |Serialized FMU Co-Simulation EMT configuration                                  |False      |       |
 |rms_fmu_me_import_config|str                |            |False    |         |Serialized FMU Model Exchange RMS configuration                                 |False      |       |
 |emt_fmu_me_import_config|str                |            |False    |         |Serialized FMU Model Exchange EMT configuration                                 |False      |       |
+|transposed              |bool               |            |False    |         |Perfect transposition of a single ABC circuit, after earth-wire reduction.      |False      |       |
 |earth_resistivity       |float              |Ohm/m3      |False    |         |Earth resistivity                                                               |False      |       |
 |frequency               |float              |Hz          |False    |         |Frequency                                                                       |False      |       |
 |Vnom                    |float              |kV          |False    |         |Voltage rating of the line                                                      |False      |       |

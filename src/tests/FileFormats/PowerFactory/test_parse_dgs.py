@@ -14,10 +14,12 @@ import VeraGridEngine.Devices as dev
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.IO.dgs.dgs_circuit import DgsCircuit
-from VeraGridEngine.IO.dgs.dgs_objects import ElmGenstat, ElmSind, ElmLne, ElmLnesec
-from VeraGridEngine.IO.dgs.dgs_to_veragrid import _add_elmgenstat_devices, _apply_elmtow_tower_coupling, convert_dgs_to_line
-from VeraGridEngine.enumerations import (DeviceType, GeneratorControlMode, ShuntConnectionType,
-                                         StaticGeneratorControlMode, ConverterControlType)
+from VeraGridEngine.IO.dgs.dgs_objects import ElmGenstat, ElmSind, ElmLne, ElmLnesec, ElmSvs, ElmTerm, TypTr2
+from VeraGridEngine.IO.dgs.dgs_to_veragrid import (_add_elmgenstat_devices, _apply_elmtow_tower_coupling,
+                                                  convert_dgs_svs_to_droop_shunt, convert_dgs_to_line)
+from VeraGridEngine.enumerations import (DeviceType, GeneratorControlMode, ShuntConnectionType, ShuntControlMode,
+                                         StaticGeneratorControlMode, ConverterControlType, TapChangerTypes,
+                                         TapModuleControl)
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Simulations.PowerFlow3ph.Formulations.positive_sequence_control import PositiveSequenceControl
@@ -670,3 +672,312 @@ def test_dgs_sequence_sections_preserve_parameter_contract(
     # Section G/G0 aggregation is pre-existing import debt outside this API fix.
     # Changing tuple positions must neither invent that policy nor retain a shift.
     assert converted.G == 0.0 and converted.G0 == 0.0
+
+
+def _grid_with_an_exact_tap_table(table: np.ndarray, neutral: int = 8, hv_at_from: bool = True,
+                                  bus_voltages: tuple[float, float] = (132.0, 33.0),
+                                  tc_type: TapChangerTypes = TapChangerTypes.VoltageRegulation) -> dev.MultiCircuit:
+    """Two buses and a transformer on an exact table at position 12.
+
+    :param table: Exact table of the tap.
+    :param neutral: Neutral position.
+    :param hv_at_from: Whether the first bus is the from bus.
+    :param bus_voltages: Nominal voltages of the two buses.
+    :param tc_type: Tap changer type.
+    :return: The grid.
+    """
+    grid: dev.MultiCircuit = dev.MultiCircuit(name="signed-tap")
+    first: dev.Bus = dev.Bus(name="B1", Vnom=bus_voltages[0], is_slack=True)
+    second: dev.Bus = dev.Bus(name="B2", Vnom=bus_voltages[1])
+    grid.add_bus(first)
+    grid.add_bus(second)
+    transformer: dev.Transformer2W
+    if hv_at_from:
+        transformer = dev.Transformer2W(bus_from=first, bus_to=second, name="T1", HV=max(bus_voltages) + 1.5,
+                                        LV=min(bus_voltages), nominal_power=100.0, r=0.001, x=0.1)
+    else:
+        transformer = dev.Transformer2W(bus_from=second, bus_to=first, name="T1", HV=max(bus_voltages) + 1.5,
+                                        LV=min(bus_voltages), nominal_power=100.0, r=0.001, x=0.1)
+    grid.add_transformer2w(transformer)
+    transformer.tap_changer.total_positions = len(table)
+    transformer.tap_changer.neutral_position = neutral
+    transformer.tap_changer.dV = 0.0125
+    transformer.tap_changer.tc_type = tc_type
+    assert transformer.tap_changer.set_tap_module_phase_values(tap_modules=table, tap_phases=np.zeros(len(table)))
+    transformer.tap_changer.tap_position = 12
+    transformer.tap_module = table[12]
+    return grid
+
+
+def _table(shape: str, neutral: int) -> np.ndarray:
+    """A 17 position table of one shape around a neutral.
+
+    :param shape: Shape of the table.
+    :param neutral: Neutral position.
+    :return: The table.
+    """
+    offsets: np.ndarray = np.arange(17) - neutral
+    if shape == "rising":
+        return 1.0 + 0.0125 * offsets
+    elif shape == "falling":
+        return 1.0 - 0.0125 * offsets
+    elif shape == "falling_on_the_to_bus":
+        return 1.0 / (1.0 + 0.0125 * offsets)
+    else:
+        return 1.0 / (1.0 - 0.0125 * offsets)
+
+
+def _assert_the_table_survives_a_dgs_file(tmp_path: Path, grid: dev.MultiCircuit, table: np.ndarray) -> None:
+    """Write a grid to a DGS file and read its transformer back.
+
+    :param tmp_path: Isolated pytest directory for the DGS file.
+    :param grid: Grid with one transformer at position 12.
+    :param table: Exact table of the tap.
+    :return: None.
+    """
+    path: Path = tmp_path / "signed_tap.dgs"
+    dgs: DgsCircuit = circuit_to_dgs(grid=grid)
+    dgs.write_dgs(path=str(path))
+    imported: dev.Transformer2W = FileOpen(str(path)).open().transformers2w[0]
+
+    assert not dgs.logger.has_logs()
+    assert imported.tap_changer.tap_position == 12
+    assert imported.tap_module == pytest.approx(table[12])
+    assert imported.tap_module_control_mode == TapModuleControl.fixed
+    assert imported.tap_changer.tap_modules_array == pytest.approx(table)
+
+
+@pytest.mark.parametrize("neutral", [8, 5])
+@pytest.mark.parametrize("hv_at_from", [True, False])
+@pytest.mark.parametrize("shape", ["rising", "falling", "falling_on_the_to_bus", "rising_on_the_to_bus"])
+def test_exported_dgs_keeps_an_exact_tap_table(tmp_path: Path, shape: str, hv_at_from: bool, neutral: int) -> None:
+    """A DGS round trip keeps the table, the position and the frozen control of a signed tap.
+
+    :param tmp_path: Isolated pytest directory for the DGS file.
+    :param shape: Shape of the table.
+    :param hv_at_from: Whether the high voltage bus is the from bus.
+    :param neutral: Neutral position.
+    :return: None.
+    """
+    table: np.ndarray = _table(shape=shape, neutral=neutral)
+    grid: dev.MultiCircuit = _grid_with_an_exact_tap_table(table=table, neutral=neutral, hv_at_from=hv_at_from)
+    _assert_the_table_survives_a_dgs_file(tmp_path=tmp_path, grid=grid, table=table)
+
+
+@pytest.mark.parametrize("shape", ["rising", "falling", "falling_on_the_to_bus", "rising_on_the_to_bus"])
+def test_exported_dgs_keeps_a_table_between_equal_bus_voltages(tmp_path: Path, shape: str) -> None:
+    """The buses decide the tap side as in the importer, whatever voltages the transformer declares.
+
+    :param tmp_path: Isolated pytest directory for the DGS file.
+    :param shape: Shape of the table.
+    :return: None.
+    """
+    table: np.ndarray = _table(shape=shape, neutral=8)
+    grid: dev.MultiCircuit = _grid_with_an_exact_tap_table(table=table, bus_voltages=(33.0, 33.0))
+    _assert_the_table_survives_a_dgs_file(tmp_path=tmp_path, grid=grid, table=table)
+
+
+@pytest.mark.parametrize("amplitude", [5e-4, 1e-7])
+@pytest.mark.parametrize("shape", ["falling", "falling_on_the_to_bus"])
+def test_exported_dgs_keeps_the_module_of_a_table_without_a_tap_law(tmp_path: Path, shape: str,
+                                                                    amplitude: float) -> None:
+    """A table close to a law but off it keeps its operating module, and the export says so.
+
+    :param tmp_path: Isolated pytest directory for the DGS file.
+    :param shape: Shape the table stays close to.
+    :param amplitude: Distance of the table from that law.
+    :return: None.
+    """
+    table: np.ndarray = _table(shape=shape, neutral=8) + amplitude * np.sin(np.arange(17))
+    path: Path = tmp_path / "signed_tap.dgs"
+    dgs: DgsCircuit = circuit_to_dgs(grid=_grid_with_an_exact_tap_table(table=table))
+    dgs.write_dgs(path=str(path))
+
+    assert dgs.logger.has_logs()
+    assert FileOpen(str(path)).open().transformers2w[0].tap_module == pytest.approx(table[12])
+
+
+@pytest.mark.parametrize("slope, neutral, keeps_the_direction",
+                         [(0.0125, 8, True), (0.0125, 0, False), (0.0125, 16, True),
+                          (-0.0125, 8, True), (-0.0125, 0, True), (-0.0125, 16, False)])
+def test_exported_dgs_keeps_the_module_of_a_table_without_a_tap_law_at_its_neutral(tmp_path: Path, slope: float,
+                                                                                  neutral: int,
+                                                                                  keeps_the_direction: bool) -> None:
+    """A neutral whose module is not 1 cannot carry it, so the position beside takes the neutral, in range and on
+    the side that keeps the direction of the table unless the table ends there.
+
+    :param tmp_path: Isolated pytest directory for the DGS file.
+    :param slope: Slope of the table.
+    :param neutral: Neutral position, where the tap sits.
+    :param keeps_the_direction: Whether the side that keeps the direction is in range.
+    :return: None.
+    """
+    table: np.ndarray = 1.02 + slope * (np.arange(17) - neutral)
+    grid: dev.MultiCircuit = _grid_with_an_exact_tap_table(table=table, neutral=neutral)
+    grid.transformers2w[0].tap_changer.tap_position = neutral
+    grid.transformers2w[0].tap_module = table[neutral]
+    path: Path = tmp_path / "signed_tap.dgs"
+    dgs: DgsCircuit = circuit_to_dgs(grid=grid)
+    dgs.write_dgs(path=str(path))
+    tap_type: TypTr2 = dgs.typtr2s[0]
+    imported: dev.Transformer2W = FileOpen(str(path)).open().transformers2w[0]
+
+    assert dgs.logger.has_logs()
+    assert tap_type.ntpmn <= tap_type.nntap0 <= tap_type.ntpmx
+    assert abs(tap_type.nntap0 - neutral) == 1
+    assert imported.tap_module == pytest.approx(1.02)
+    modules: np.ndarray = imported.tap_changer.tap_modules_array
+    assert ((modules[-1] > modules[0]) == (slope > 0.0)) == keeps_the_direction
+
+
+def test_exported_dgs_warns_about_a_module_off_its_table_position() -> None:
+    """DGS carries the position, so a module the table does not hold there is reported.
+
+    :return: None.
+    """
+    grid: dev.MultiCircuit = _grid_with_an_exact_tap_table(table=_table(shape="rising", neutral=8))
+    grid.transformers2w[0].tap_module = 1.043
+
+    assert circuit_to_dgs(grid=grid).logger.has_logs()
+
+
+def test_exported_dgs_writes_a_flat_table_at_zero_degrees() -> None:
+    """A flat table has no direction and stays on the high voltage side.
+
+    :return: None.
+    """
+    tap_type: TypTr2 = circuit_to_dgs(grid=_grid_with_an_exact_tap_table(table=np.ones(17))).typtr2s[0]
+
+    assert tap_type.phitr == 0.0
+    assert tap_type.dutap == 0.0
+    assert tap_type.tap_side == 0
+
+
+@pytest.mark.parametrize("tc_type", [TapChangerTypes.VoltageRegulation, TapChangerTypes.NoRegulation])
+@pytest.mark.parametrize("dv, phase", [(0.0125, 0.0), (-0.0125, 180.0)])
+def test_exported_dgs_writes_a_generic_tap_as_a_positive_step(dv: float, phase: float,
+                                                              tc_type: TapChangerTypes) -> None:
+    """A tap on the generic law has no table to read, and its step leaves positive with its angle.
+
+    :param dv: Step of the generic law.
+    :param phase: Angle it leaves with.
+    :param tc_type: Tap changer type, frozen or regulating.
+    :return: None.
+    """
+    grid: dev.MultiCircuit = _grid_with_an_exact_tap_table(table=np.ones(17), tc_type=tc_type)
+    grid.transformers2w[0].tap_changer.dV = dv
+
+    tap_type: TypTr2 = circuit_to_dgs(grid=grid).typtr2s[0]
+
+    assert tap_type.dutap == pytest.approx(1.25)
+    assert tap_type.phitr == phase
+    assert tap_type.tap_side == 0
+
+
+def test_exported_dgs_takes_an_exact_table_of_one_position() -> None:
+    """One position has no slope, so the tap keeps its step.
+
+    :return: None.
+    """
+    grid: dev.MultiCircuit = _grid_with_an_exact_tap_table(table=np.ones(17))
+    tap_changer: dev.TapChanger = grid.transformers2w[0].tap_changer
+    tap_changer.total_positions = 1
+    tap_changer.neutral_position = 0
+    assert tap_changer.set_tap_module_phase_values(tap_modules=np.array([1.0]), tap_phases=np.zeros(1))
+
+    tap_type: TypTr2 = circuit_to_dgs(grid=grid).typtr2s[0]
+
+    assert tap_type.dutap == pytest.approx(1.25)
+
+
+def test_exported_dgs_reads_the_table_of_voltage_regulating_taps_only() -> None:
+    """A changer with no voltage regulation writes its own step.
+
+    :return: None.
+    """
+    grid: dev.MultiCircuit = _grid_with_an_exact_tap_table(table=1.0 + 0.02 * (np.arange(17) - 8),
+                                                           tc_type=TapChangerTypes.NoRegulation)
+
+    tap_type: TypTr2 = circuit_to_dgs(grid=grid).typtr2s[0]
+
+    assert tap_type.dutap == pytest.approx(1.25)
+
+
+@pytest.mark.parametrize("tc_type, phase", [(TapChangerTypes.Asymmetrical, 30.0), (TapChangerTypes.Symmetrical, 180.0)])
+def test_exported_dgs_keeps_the_angle_of_a_phase_shifting_tap(tc_type: TapChangerTypes, phase: float) -> None:
+    """A phase shifting tap keeps its own step and angle, out of the signed step of a voltage tap.
+
+    :param tc_type: Phase shifting tap changer type.
+    :param phase: Angle it leaves with.
+    :return: None.
+    """
+    grid: dev.MultiCircuit = _grid_with_an_exact_tap_table(table=np.ones(17), tc_type=tc_type)
+    grid.transformers2w[0].tap_changer.asymmetry_angle = 30.0
+
+    tap_type: TypTr2 = circuit_to_dgs(grid=grid).typtr2s[0]
+
+    assert tap_type.dutap == pytest.approx(1.25)
+    assert tap_type.phitr == phase
+
+
+def test_circuit_to_dgs_exports_static_generators_and_batteries(tmp_path: Path) -> None:
+    """The injections written as ElmGenstat carry their scaling column in the file.
+
+    :param tmp_path: Isolated pytest directory for the DGS file.
+    :return: None.
+    """
+    grid: dev.MultiCircuit = dev.MultiCircuit(name="genstat")
+    bus: dev.Bus = dev.Bus(name="B1", Vnom=33.0)
+    grid.add_bus(bus)
+    grid.add_static_generator(bus, dev.StaticGenerator(name="G1", P=10.0, Q=1.0))
+    grid.add_battery(bus, dev.Battery(name="BESS1", P=5.0))
+
+    path: Path = tmp_path / "genstat.dgs"
+    dgs: DgsCircuit = circuit_to_dgs(grid=grid)
+    dgs.write_dgs(path=str(path))
+
+    assert sorted(genstat.loc_name for genstat in dgs.elmgenstats) == ["BESS1", "G1"]
+    assert all(genstat.scale0 == 1.0 for genstat in dgs.elmgenstats)
+    lines: list[str] = path.read_text(encoding="utf-8").splitlines()
+    header: str = next(line for line in lines if line.startswith("$$ElmGenstat"))
+    assert "scale0" in header
+    assert ElmGenstat().scale0 == 1.0
+
+
+@pytest.mark.parametrize("uset_mode, node, expected_vset, controls_node", [
+    (1, "node", 1.0, True),
+    (0, "node", 1.03, True),
+    (1, "", 1.03, False),
+])
+def test_droop_svs_imports_as_a_qv_droop_shunt(uset_mode: int, node: str, expected_vset: float,
+                                                controls_node: bool) -> None:
+    """A voltage-controlled ElmSvs with droop keeps the PowerFactory band, slope and setpoint (TechRef SVS eq. 15-16).
+
+    :param uset_mode: PowerFactory setpoint source
+    :param node: Controlled node reference, empty for none
+    :param expected_vset: Setpoint the shunt must take
+    :param controls_node: Whether the shunt must control the node bus
+    """
+    elmsvs = ElmSvs()
+    elmsvs.ID, elmsvs.loc_name = "svs", "SVS"
+    elmsvs.i_ctrl, elmsvs.i_droop = 1, 1
+    elmsvs.qmin, elmsvs.nxcap, elmsvs.nncap = -100.0, 4, 2
+    elmsvs.tcrmax, elmsvs.tcrqact = 150.0, 30.0
+    elmsvs.Qfixcap, elmsvs.nfixcap = -10.0, 1
+    elmsvs.Srated, elmsvs.ddroop, elmsvs.usetp = 400.0, 4.0, 1.03
+    elmsvs.uset_mode, elmsvs.cpCtrlNode = uset_mode, node
+    terminal = ElmTerm()
+    terminal.ID, terminal.vtarget = "node", 1.0
+    own_bus, node_bus = dev.Bus(name="own"), dev.Bus(name="node")
+
+    shunt = convert_dgs_svs_to_droop_shunt(elmsvs=elmsvs, bus=own_bus, terms_by_id={"node": terminal},
+                                           bus_by_term_id={"node": node_bus})
+
+    assert shunt.control_mode == ShuntControlMode.QVDroop
+    assert shunt.Bmin == pytest.approx(-140.0)  # -(tcrmax + Qfixcap * nfixcap)
+    assert shunt.Bmax == pytest.approx(410.0)  # -(qmin * nxcap + Qfixcap * nfixcap)
+    assert shunt.B == pytest.approx(180.0)  # -(qmin * nncap + tcrqact + Qfixcap * nfixcap)
+    assert shunt.Qdroop == pytest.approx(10000.0)  # Srated * 100 / ddroop
+    assert shunt.Vset == pytest.approx(expected_vset)
+    assert shunt.control_bus is (node_bus if controls_node else own_bus)
+    assert shunt.conn == ShuntConnectionType.Delta

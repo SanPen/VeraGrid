@@ -18,11 +18,11 @@ from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbol
 from VeraGridEngine.Simulations.EMT.solvers.solver_AD import JitAdSolver
 from VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver import StructuralVectorizedSolver
 from VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver import StructuralCompiledSolver
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import get_shunt_r_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.enumerations import (
     DynamicIntegrationMethod,
     EmtInitializationMethod,

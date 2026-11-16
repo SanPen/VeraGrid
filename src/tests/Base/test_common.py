@@ -3,6 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
+import pytest
 from VeraGridEngine.Utils.NumericalMethods.common import find_closest_number
 from VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_fx import max_abs
 
@@ -137,3 +138,59 @@ def test_opf_max_abs_uses_absolute_value():
     x = np.array([-5.0, 3.0, -4.0])
 
     assert max_abs(x) == 5.0
+
+
+def test_find_closest_number_in_a_falling_array() -> None:
+    """
+    A falling array gives the value of its rising mirror, at the mirrored index
+    :return:
+    """
+    rising: np.ndarray = np.linspace(0.9, 1.1, 21)
+    falling: np.ndarray = rising[::-1].copy()
+    midpoints: np.ndarray = (rising[:-1] + rising[1:]) / 2.0
+    targets: np.ndarray = np.linspace(0.85, 1.15, 301)
+    for target in targets[np.abs(targets[:, None] - midpoints).min(axis=1) > 1e-9]:
+        rising_index, rising_value = find_closest_number(rising, target)
+        falling_index, falling_value = find_closest_number(falling, target)
+        assert falling_value == rising_value
+        assert falling_index == len(rising) - 1 - rising_index
+
+
+def test_find_closest_number_lands_as_close_at_the_midpoint_of_a_falling_array() -> None:
+    """
+    A midpoint has two closest values, so a falling array may land on either
+    :return:
+    """
+    rising: np.ndarray = np.linspace(0.9, 1.1, 21)
+    falling: np.ndarray = rising[::-1].copy()
+    for target in (rising[:-1] + rising[1:]) / 2.0:
+        _, rising_value = find_closest_number(rising, target)
+        _, falling_value = find_closest_number(falling, target)
+        assert abs(falling_value - target) == pytest.approx(abs(rising_value - target))
+
+
+def test_find_closest_number_keeps_the_rising_search_on_equal_ends() -> None:
+    """
+    Only a first value above the last one means a falling table
+    :return:
+    """
+    index, value = find_closest_number(np.array([1.0, 1.1, 1.0]), 1.05)
+    assert (index, value) == (2, 1.0)
+
+
+def test_find_closest_number_takes_any_falling_table() -> None:
+    """
+    A table that falls from first to last gives the closest value even with steps out of order
+    :return:
+    """
+    index, value = find_closest_number(np.array([1.1, 0.9, 1.0, 0.8]), 0.98)
+    assert (index, value) == (2, 1.0)
+
+
+def test_find_closest_number_still_rejects_a_disordered_rising_array() -> None:
+    """
+    An array that ends above its start keeps the check of the rising search
+    :return:
+    """
+    with pytest.raises(Exception, match="monotonically increasing"):
+        find_closest_number(np.array([0.8, 1.0, 0.9, 1.1]), 1.05)

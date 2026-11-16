@@ -77,7 +77,7 @@ def collect_ncp_ps_sis_timestamps(cgmes_model: CgmesCircuit,
     """
     collected_timestamps: List[pd.Timestamp] = list()
 
-    for power_time_point in cgmes_model.cgmes_assets.PowerTimePoint_list:
+    for power_time_point in cgmes_model.ncp_assets.PowerTimePoint_list:
         parsed_time: pd.Timestamp | None = parse_ncp_time_to_utc_timestamp(
             raw_time=power_time_point.atTime,
             logger=logger,
@@ -88,7 +88,7 @@ def collect_ncp_ps_sis_timestamps(cgmes_model: CgmesCircuit,
         else:
             collected_timestamps.append(parsed_time)
 
-    for grid_state_time_point in cgmes_model.cgmes_assets.GridStateAlterationTimePoint_list:
+    for grid_state_time_point in cgmes_model.ncp_assets.GridStateAlterationTimePoint_list:
         parsed_time = parse_ncp_time_to_utc_timestamp(
             raw_time=grid_state_time_point.atTime,
             logger=logger,
@@ -562,7 +562,7 @@ def apply_power_schedule_profiles(cgmes_model: CgmesCircuit,
     """
     applied_assignment_count: int = 0
 
-    for power_time_point in cgmes_model.cgmes_assets.PowerTimePoint_list:
+    for power_time_point in cgmes_model.ncp_assets.PowerTimePoint_list:
         parsed_time: pd.Timestamp | None = parse_ncp_time_to_utc_timestamp(
             raw_time=power_time_point.atTime,
             logger=logger,
@@ -672,7 +672,7 @@ def apply_sis_profiles(cgmes_model: CgmesCircuit,
     """
     applied_assignment_count: int = 0
 
-    for grid_state_time_point in cgmes_model.cgmes_assets.GridStateAlterationTimePoint_list:
+    for grid_state_time_point in cgmes_model.ncp_assets.GridStateAlterationTimePoint_list:
         parsed_time: pd.Timestamp | None = parse_ncp_time_to_utc_timestamp(
             raw_time=grid_state_time_point.atTime,
             logger=logger,
@@ -759,13 +759,13 @@ def apply_ssi_profiles(cgmes_model: CgmesCircuit,
     """
     applied_assignment_count: int = 0
     action_lists: List[List[CGMES_ASSETS]] = list()
-    action_lists.append(cgmes_model.cgmes_assets.TopologyAction_list)
-    action_lists.append(cgmes_model.cgmes_assets.RotatingMachineAction_list)
-    action_lists.append(cgmes_model.cgmes_assets.RegulatingControlAction_list)
-    action_lists.append(cgmes_model.cgmes_assets.EquivalentInjectionAction_list)
-    action_lists.append(cgmes_model.cgmes_assets.LoadAction_list)
-    action_lists.append(cgmes_model.cgmes_assets.TapPositionAction_list)
-    action_lists.append(cgmes_model.cgmes_assets.StaticVarCompensatorAction_list)
+    action_lists.append(cgmes_model.ncp_assets.TopologyAction_list)
+    action_lists.append(cgmes_model.ncp_assets.RotatingMachineAction_list)
+    action_lists.append(cgmes_model.ncp_assets.RegulatingControlAction_list)
+    action_lists.append(cgmes_model.ncp_assets.EquivalentInjectionAction_list)
+    action_lists.append(cgmes_model.ncp_assets.LoadAction_list)
+    action_lists.append(cgmes_model.ncp_assets.TapPositionAction_list)
+    action_lists.append(cgmes_model.ncp_assets.StaticVarCompensatorAction_list)
 
     deduplicated_actions: Dict[str, CGMES_ASSETS] = dict()
     for action_list in action_lists:

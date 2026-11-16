@@ -5,27 +5,15 @@
 
 from __future__ import annotations
 
-import warnings
-
 from VeraGridEngine.Utils.NumericalMethods.emt_sparse_solver_loader import load_sparse_solver_backend_provider
 from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
-from VeraGridEngine.Utils.NumericalMethods.sparse_lu_selection import get_sparse_lu_provider_status, resolve_sparse_lu_provider
+from VeraGridEngine.Utils.Sparse.sparse_solve import (
+    get_sparse_lu_provider_status,
+    report_sparse_solver_warning,
+    resolve_sparse_lu_provider,
+)
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import SparseSolver
-
-
-def _report_sparse_solver_warning(message: str, logger: Logger | None) -> None:
-    """
-    Report a sparse solver resolution warning.
-
-    :param message: Warning text.
-    :param logger: Logger receiving the warning; a RuntimeWarning is emitted when None.
-    :return: None
-    """
-    if logger is None:
-        warnings.warn(message, RuntimeWarning, stacklevel=3)
-    else:
-        logger.add_warning(message)
 
 
 def resolve_emt_sparse_solver_backend_provider(
@@ -64,7 +52,7 @@ def resolve_emt_sparse_solver_backend_provider(
             )
         except (FileNotFoundError, RuntimeError, AttributeError, TypeError, ValueError) as error:
             if allow_internal_fallback:
-                _report_sparse_solver_warning(
+                report_sparse_solver_warning(
                     f"External sparse solver plugin '{external_plugin_name}' could not be loaded: {error}",
                     logger,
                 )
@@ -83,7 +71,7 @@ def resolve_emt_sparse_solver_backend_provider(
                     pass
 
                 if allow_internal_fallback:
-                    _report_sparse_solver_warning(
+                    report_sparse_solver_warning(
                         f"External sparse solver plugin '{external_plugin_name}' is unavailable: {plugin_reason}",
                         logger,
                     )

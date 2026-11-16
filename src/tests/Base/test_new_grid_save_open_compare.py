@@ -5,10 +5,10 @@
 import os
 from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.api as gce
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 
 def test_new_grid_save_load_compare() -> None:

@@ -12,7 +12,6 @@ from VeraGridEngine.Compilers.Gslv.activation import (
     tap_module_control_mode_dict,
     tap_phase_control_mode_dict,
     winding_type_dict,
-    windings_connection_dict,
 )
 from VeraGridEngine.Compilers.Gslv.common import fill_profile
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -93,7 +92,8 @@ def convert_transformer(elm: Transformer2W,
         x2=elm.X2,
         g2=elm.G2,
         b2=elm.B2,
-        conn=windings_connection_dict[elm.conn],
+        conn_f=winding_type_dict[elm.conn_f],
+        conn_t=winding_type_dict[elm.conn_t],
         capex=elm.capex,
         opex=elm.opex,
         build_status=pg.BuildStatus.Commissioned,
@@ -107,12 +107,6 @@ def convert_transformer(elm: Transformer2W,
         # design_rate=0.0,
         # contingency_enabled=True,
     )
-
-    if add_three_phase_data:
-        tr2.conn_f = winding_type_dict[elm.conn_f]
-        tr2.conn_t = winding_type_dict[elm.conn_t]
-    else:
-        pass
 
     if elm.regulation_bus is not None:
         tr2.regulation_bus = bus_dict[elm.regulation_bus.idtag]

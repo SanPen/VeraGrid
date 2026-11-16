@@ -117,12 +117,13 @@ class FmuMeSolverPolicy:
         :return: None.
         """
 
-        if integration_method == DynamicIntegrationMethod.DaeBackEuler:
+        if integration_method in (DynamicIntegrationMethod.DaeBackEuler,
+                                  DynamicIntegrationMethod.DaeAdaptiveBdf15):
             self.integration_method: DynamicIntegrationMethod = integration_method
         else:
             raise RuntimeError(
                 "Attached FMI Model Exchange devices currently require "
-                "DynamicIntegrationMethod.DaeBackEuler"
+                "DynamicIntegrationMethod.DaeBackEuler or DaeAdaptiveBdf15"
             )
         if math.isfinite(absolute_tolerance) and absolute_tolerance > 0.0:
             self.absolute_tolerance: float = float(absolute_tolerance)
@@ -328,11 +329,12 @@ class FmuMeDeviceAdapter:
         """
 
         self.spec: FmuMeDeviceSpec = spec
-        if solver_policy.integration_method == DynamicIntegrationMethod.DaeBackEuler:
+        if solver_policy.integration_method in (DynamicIntegrationMethod.DaeBackEuler,
+                                               DynamicIntegrationMethod.DaeAdaptiveBdf15):
             self.solver_policy: FmuMeSolverPolicy = solver_policy
         else:
             raise RuntimeError(
-                "Attached FMI Model Exchange devices require Backward Euler"
+                "Attached FMI Model Exchange devices require Backward Euler or adaptive BDF1--5"
             )
         state_count: int = len(spec.state_variable_names)
         if state_count <= solver_policy.maximum_continuous_states:
@@ -1461,6 +1463,9 @@ class FmuMeDeviceAdapter:
         :raises RuntimeError: If dimensions, data, linear solve, or convergence fail.
         """
 
+        if self.solver_policy.integration_method != DynamicIntegrationMethod.DaeBackEuler:
+            raise RuntimeError("BDF Model Exchange states must be integrated by the combined RMS solver")
+
         normalized_time: float = float(current_time)
         normalized_step: float = float(step_size)
         state_count: int = accepted_state_values.size
@@ -1744,14 +1749,21 @@ class FmuMeDeviceAdapter:
         accepted: bool,
         importer_detected_event: bool = False,
         evaluation_budget: FmuMeEvaluationBudget | None = None,
+        complete_integrator_step: bool = True,
     ) -> tuple[float, ...] | None:
         """Accept or reject one prepared Model Exchange candidate.
 
         :param accepted: Whether the owning numerical solver accepted the step.
         :param importer_detected_event: Whether an event was localized here.
         :param evaluation_budget: Optional owner-provided runtime-call budget.
+        :param complete_integrator_step: False for input synchronization at the
+            accepted time, when no new integration step has occurred.
         :return: Restored FMI 2 or resolved FMI 3 readings when applicable.
         """
+
+        if (accepted and not complete_integrator_step
+                and self.pending_time != self.pending_accepted_time):
+            raise ValueError("FMU input synchronization must stay at the accepted time")
 
         coordinator: FmiThreeModelExchangeCoordinator | None = (
             self.fmi_three_coordinator
@@ -1779,6 +1791,7 @@ class FmuMeDeviceAdapter:
                             or time_event_is_due
                         ),
                         evaluation_budget=evaluation_budget,
+                        **({} if complete_integrator_step else {"complete_integrator_step": False}),
                     )
                 )
             else:
@@ -1824,7 +1837,7 @@ class FmuMeDeviceAdapter:
                             "FMI 2 acceptance lost its candidate input vector"
                         )
                     completed_step_requested_event: bool = False
-                    if runtime_host.needs_completed_integrator_step():
+                    if complete_integrator_step and runtime_host.needs_completed_integrator_step():
                         active_budget.consume()
                         enter_event_mode: bool
                         terminate_simulation: bool
@@ -2531,19 +2544,49 @@ class FmuMeDeviceAdapter:
                 "RMS or EMT solver-owned localization path"
             )
 
+    def prepare_external_candidate(
+        self, current_time: float, target_time: float, state_values: np.ndarray,
+        input_values: dict[str, float], evaluation_budget: FmuMeEvaluationBudget,
+    ) -> dict[VarPowerFlowReferenceType, float]:
+        """Present a solver-owned endpoint, retaining the accepted rollback point.
+
+        Call once at the accepted point before probing and once with the final
+        candidate. Probes between these calls must not accept or set state_vector.
+        """
+        if not math.isfinite(target_time) or target_time < current_time:
+            raise ValueError("FMU candidate time must not precede acceptance")
+        return self._prepare_bound_step(
+            current_time, target_time - current_time, input_values,
+            evaluation_budget, state_values=state_values,
+        )
+
+    def evaluate_external_point(
+        self, time_value: float, state_values: np.ndarray,
+        input_values: dict[str, float], evaluation_budget: FmuMeEvaluationBudget,
+    ) -> tuple[np.ndarray, dict[VarPowerFlowReferenceType, float]]:
+        """Evaluate derivatives and outputs without integrating or accepting."""
+        self._validate_finite_vector(state_values, len(self.spec.state_variable_names),
+                                     "external state vector")
+        derivatives, readings = self._evaluate_derivatives_for_state(
+            time_value, state_values, input_values, evaluation_budget,
+        )
+        return derivatives, self.map_bound_output_values(readings)
+
     def _prepare_bound_step(
         self,
         current_time: float,
         step_size: float,
         input_values: dict[str, float],
         evaluation_budget: FmuMeEvaluationBudget,
+        state_values: np.ndarray | None = None,
     ) -> dict[VarPowerFlowReferenceType, float]:
-        """Prepare one solver-owned Backward Euler candidate.
+        """Prepare a Backward Euler or externally integrated candidate.
 
         :param current_time: Current accepted integration time.
         :param step_size: Integration step length.
         :param input_values: Complete scalar FMU input values.
         :param evaluation_budget: Shared owner-provided runtime-call budget.
+        :param state_values: Externally integrated endpoint, or None to use BE.
         :return: Candidate outputs indexed by VeraGrid reference.
         """
 
@@ -2577,17 +2620,28 @@ class FmuMeDeviceAdapter:
         candidate_state_values: np.ndarray
         candidate_derivatives: np.ndarray
         candidate_readable_values: tuple[float, ...] | None
-        (
-            candidate_state_values,
-            candidate_derivatives,
-            candidate_readable_values,
-        ) = self._solve_backward_euler_candidate(
-            current_time=current_time,
-            step_size=step_size,
-            accepted_state_values=accepted_state_values,
-            input_values=input_values,
-            evaluation_budget=evaluation_budget,
-        )
+        if state_values is None:
+            (
+                candidate_state_values,
+                candidate_derivatives,
+                candidate_readable_values,
+            ) = self._solve_backward_euler_candidate(
+                current_time=current_time,
+                step_size=step_size,
+                accepted_state_values=accepted_state_values,
+                input_values=input_values,
+                evaluation_budget=evaluation_budget,
+            )
+        else:
+            candidate_state_values = np.array(state_values, dtype=float, copy=True)
+            self._validate_finite_vector(candidate_state_values, accepted_state_values.size,
+                                         "externally integrated state vector")
+            candidate_derivatives, candidate_readable_values = self._evaluate_derivatives_for_state(
+                time_value=current_time + step_size,
+                state_values=candidate_state_values,
+                input_values=input_values,
+                evaluation_budget=evaluation_budget,
+            )
         candidate_time: float = current_time + step_size
         self.state_vector = np.array(candidate_state_values, copy=True)
         self.pending_time = candidate_time

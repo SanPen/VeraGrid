@@ -1,0 +1,1707 @@
+﻿********************************************************************************
+*
+* DIgSILENT (R) DGS Export V1.8.4
+* Copyright (C) DIgSILENT GmbH 2026. All rights reserved.
+*
+* DIgSILENT (C) PowerFactory V24.0.2.0
+*
+* Date:     11/10/2026 05:06
+* Project:  VeraGrid Native HVDC_Offshore_Wind 20261 (Study Case: 01_Base_Case)
+*
+********************************************************************************
+
+
+$$General;FID(a:40);Descr(a:40);Val(a:255)
+  1;Version;7.0
+
+
+$$BlkDef;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);isMacro(i);level(i);sUpLimPar:SIZEROW(i);sUpLimPar:0(a);sUpLimInp:SIZEROW(i);sUpLimInp:0(a);sLowLimPar:SIZEROW(i);sLowLimPar:0(a);sLowLimInp:SIZEROW(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);sStates:SIZEROW(i);sStates:0(a);sParams:SIZEROW(i);sParams:0(a);sIntern:SIZEROW(i);sIntern:0(a);sAddEquat:SIZEROW(i);sAddEquat:0(a);sAddEquat:1(a);sAddEquat:2(a);sAddEquat:3(a);sAddEquat:4(a);sAddEquat:5(a);sAddEquat:6(a);sAddEquat:7(a);sAddEquat:8(a);sAddEquat:9(a);sAddEquat:10(a);sAddEquat:11(a);sAddEquat:12(a);sAddEquat:13(a);sAddEquat:14(a);sAddEquat:15(a);sAddEquat:16(a);sAddEquat:17(a);sAddEquat:18(a);sAddEquat:19(a);sAddEquat:20(a);sAddEquat:21(a);sAddEquat:22(a);sAddEquat:23(a);sAddEquat:24(a);sAddEquat:25(a);sAddEquat:26(a);sAddEquat:27(a);sAddEquat:28(a);sAddEquat:29(a);sAddEquat:30(a);sAddEquat:31(a);sAddEquat:32(a);sAddEquat:33(a);sAddEquat:34(a);sAddEquat:35(a);sAddEquat:36(a);sAddEquat:37(a);sAddEquat:38(a);sAddInter:SIZEROW(i);sAddParam:SIZEROW(i);cOutput:SIZEROW(i);cOutput:0(a);cInput:SIZEROW(i);cInput:0(a);cStates:SIZEROW(i);cStates:0(a);cParams:SIZEROW(i);cParams:0(a);cIntern:SIZEROW(i);cIntern:0(a)
+  2;C;ActivePowerReduction;857;0;4;1;posGrad;0;;1;p_min,negGrad;0;1;pref_out;1;Fmeas,pref_in;1;x,x1;1;fUp,fLow,PHz,Tfilter;1;yneu,yalt,red,yi,yi1;11;"vardef(fUp)='Hz';'Start of Act. Power Reduction'";"vardef(fLow)='Hz';'End of Act. Power Reduction' ";"vardef(PHz)='%/Hz';'Gradient of Act. Power Reduction'  ";"vardef(Tfilter)='s';'PT1-Filter Time Constant' ";"vardef(posGrad)='pu/s';'Pos Gradient for Power Change'";"vardef(negGrad)='pu/s';'Neg Gradient for Power Change'";"vardef(p_min) = 'pu';'Minimal active power' ";;"inc(pref_in)=pref_out ";"inc(x1)=yi1 ";inc(x)=Fmeas;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;pref_out;1;Fmeas,pref_in;1;x,x1;1;fUp,fLow,PHz,Tfilter;1;yneu,yalt,red,yi,yi1
+  3;C;1/(1+sT);832;1;4;0;;0;;0;;0;1;yo;1;yi;1;x;1;T;0;;4;limits(T)=(0,);x.=(yi-x)/T;yo=x;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T;0;
+  4;C;Gradient Limiter;832;1;4;1;y_max;0;;1;y_min;0;1;yo;1;yi;1;x;1;T;0;;4;limits(T)=[0,];x. = lim((yi-x)/T,y_min,y_max);yo = x;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T;0;
+  5;C;OverfrequPowerReduction;832;0;4;0;;0;;1;p_min;0;1;yo;1;yi;0;;1;fUp,fLow,gradient;1;yneu,yalt;5;inc(yneu)=1;inc(yalt)=1;"yneu=lim(select(yi<=fUp,1,1-gradient/100*(yi-fUp)),max(p_min,0),1)  ";yalt=delay(min(yo,yneu),0.01);yo=select(yi<fLow,yneu,yalt);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;1;fUp,fLow,gradient;1;yneu,yalt
+  6;C;Compensation_s;857;0;3;0;;0;;0;;0;1;ua,ub;1;pctrl,qctrl,cosphiu,sinphiu,cosphiref,sinphiref,psir_r,psir_i,speed,bypass;0;;1;kv;1;cosphius,sinphius,ucompa,ucompb;23;!calculation of the output parameter (rotor voltage);ua=select(bypass,0,pctrl*cosphius+qctrl*sinphius+ucompa);ub=select(bypass,0,pctrl*sinphius-qctrl*cosphius+ucompb);;!initialisation of the input signals (flux in d- and q-axis);inc(pctrl)=(ua-ucompa)*cosphius+(ub-ucompb)*sinphius;inc(qctrl)=(ua-ucompa)*sinphius-(ub-ucompb)*cosphius;;;ucompa=-kv*psir_r-(1-speed)*psir_i;ucompb=-kv*psir_i+(1-speed)*psir_r;;cosphius=cosphiu*cosphiref+sinphiu*sinphiref;sinphius=-cosphiu*sinphiref+sinphiu*cosphiref;;!initialisation of input signals if no signal is connected;inc0(cosphiref)=1;inc0(sinphiref)=0;inc0(speed)=1.2;;"!bypass is alway zero during initialisation  ";inc(bypass)=0;;;;;;;;;;;;;;;;;;0;0;1;ua,ub;1;pctrl,qctrl,cosphiu,sinphiu,cosphiref,sinphiref,psir_r,psir_i,speed,bypass;0;;1;kv;1;cosphius,sinphius,ucompa,ucompb
+  7;C;Generic DFIG-Turbine_resync;857;0;0;0;;0;;0;;0;0;;0;;0;;0;;0;;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;0;;0;;0;;0;;0;
+  8;C;Irot_Ctrl;857;0;3;0;;0;;0;;0;1;up,uq;1;ird_ref,ird,bypass,irq_ref,irq;1;xd,xq;1;Kd,Td,Kq,Tq;1;did,diq;13;inc(xd)=up;inc(xq)=uq;;inc(ird_ref)=ird;inc(irq_ref)=irq;;inc0(up)=0;inc0(uq)=0;;inc0(ird)=0;inc0(irq)=0;;inc(bypass)=0;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;up,uq;1;ird_ref,ird,bypass,irq_ref,irq;1;xd,xq;1;Kd,Td,Kq,Tq;1;did,diq
+  9;C;K;834;1;3;0;;0;;0;;0;1;yo;1;yi,bypass;1;x;1;K,T;0;;4;x.=select(bypass<0.5,K*yi/T,-x/(10*T));yo=select(bypass<0.5,x+K*yi,0);;limits(T)=(0,];;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi,bypass;1;x;1;K,T;0;
+  10;C;PQ Control with synch;857;0;3;1;id_max,iq_max;0;;0;;0;1;Ptot,ird_ref,irq_ref,Qtot;1;SynchMode,Pstat,Prot,Pref,dud_synch,u,Qref,duq_synch,Qstat,Qrot,bypass;1;xpctrl,xqctrl,xu,xflt,xlim,xr;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp;1;id_min,iq_min,Max,iq_min1,id_min1,,iqf_EEG,iqf_eON,iq0,Kflt,iqtest,maxP,OnLine,Pref1,Pref2,Pref3,Qr,Qref1,Qref2,delt_u,flt,iP_ref,iQ_ref,idr,idrf_max,idrf_min,imag,iqr,iqrf,sw;38;inc(xpctrl)= ird_ref;inc(xqctrl)= irq_ref;;inc(Pref)  = Pref1;inc(Pref1)  = Prot+Pstat;inc(Pref2) = Prot+Pstat;inc(Qref)  = Qrot+Qstat;inc(Qref1) = Qrot+Qstat;inc(Qref2) = 0;inc(Qtot)  = Qrot+Qstat;inc(Ptot)  = Prot+Pstat;inc(bypass)= 0;;inc(SynchMode)  = 0;inc(dud_synch)  = 0;inc(duq_synch)  = 0;;inc0(ird_ref)=0;inc0(irq_ref)=0;;inc0(Prot) = 0;inc0(Qrot) = 0;;;"vardef(Kp)        = 'p.u.';  ' : Active Power Control Gain'";"vardef(Tp)        = 's';     ' : Active Power Control Time Constant'";"vardef(Kq)        = 'p.u.';  ' : Reactive Power Control Gain'";"vardef(Tq)        = 's';     ' : Reactive Power Control Time Constant'";"vardef(deltaU)    = 'p.u.';  ' : Voltage Dead Band'";"vardef(Tudelay)   = 's';     ' : Voltage Support Delay'";"vardef(Xm)        = 'p.u.';  ' : Magnetizing reactance @Pbase'";"vardef(K_deltaU)  = ' ';     ' : Reactive support gain'";"vardef(i_max)     = 'p.u.';  ' : Combined current limit'";"vardef(Tramp)     = 'p.u./s';' : Power return ramp rate (PT1)'";"vardef(id_max)    = 'p.u.';  ' : id current limit'";"vardef(iq_max)    = 'p.u.';  ' : iq current limit' ";"vardef(i_EEG)     = '0/1';   ' : 0=e.on mode; 1=SDLWindV mode'";limits(Tudelay)=[0.001,);;0;0;1;Ptot,ird_ref,irq_ref,Qtot;1;SynchMode,Pstat,Prot,Pref,dud_synch,u,Qref,duq_synch,Qstat,Qrot,bypass;1;xpctrl,xqctrl,xu,xflt,xlim,xr;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp;1;id_min,iq_min,Max,iq_min1,id_min1,,iqf_EEG,iqf_eON,iq0,Kflt,iqtest,maxP,OnLine,Pref1,Pref2,Pref3,Qr,Qref1,Qref2,delt_u,flt,iP_ref,iQ_ref,idr,idrf_max,idrf_min,imag,iqr,iqrf,sw
+  11;C;Dband(yi<(1-K));835;0;0;0;;0;;0;;0;1;sw,du;1;u;1;xu;1;K;0;;4;inc(xu) = u;xu. = select({u<(1-K)}.or.{u>(1+K)},0,(u-xu)/30);du = select(u<(xu-K), xu-K-u, select(u>(xu+K), xu+K-u, 0));sw = select({u<(xu-K)}.or.{u>(xu+K)}, 1, 0);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;sw,du;1;u;1;xu;1;K;0;
+  12;C;FaultLimits;835;1;3;1;iq_max;0;;0;;0;1;ird_ref,irq_ref;1;idr,flt,idrf_min,idrf_max,iqrf,iqr,bypass;1;xflt;0;;1;Kflt,iq0;11;irq_ref = select(bypass, 0, select(flt, lim(iqrf+iq0,-iq_max,iq_max), iqr));ird_ref = select(bypass, 0, select(flt, lim(idr, idrf_min,idrf_max), idr));inc(iq0) = 0!irq_ref;! Logic to ramp iQ_ref back to normal after fault;xflt. = select(flt, (flt-xflt)/0.01, -100*xflt);Kflt  = limstate(xflt, 0, 1);inc(xflt) = 0;inc(Kflt) = 0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;ird_ref,irq_ref;1;idr,flt,idrf_min,idrf_max,iqrf,iqr,bypass;1;xflt;0;;1;Kflt,iq0
+  13;C;Iq_fault;835;1;3;1;iq_max,id_max;0;;0;;0;1;idrf_min,idrf_max,iqrf;1;yi,imag,iqin;0;;1;K,i_max,deltaU,i_EEG;1;iq_min,id_min,iqf_EEG,iqf_eON,iq0;13;iqf_EEG = -lim((yi*K+imag)-iq0, iq_min, iq_max);iqf_eON = -lim((yi+yi/max(abs(yi),1e-8)*deltaU)*K+imag,iq_min,iq_max);;iqrf    = select(i_EEG,iqf_EEG,iqf_eON);;;idrf_min = -min(i_max - abs(iqrf),-id_min);idrf_max =  min(i_max - abs(iqrf), id_max);;inc(iq_min) = -iq_max;inc(id_min) = -id_max;"  ";inc(iq0) = iqin+imag;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;idrf_min,idrf_max,iqrf;1;yi,imag,iqin;0;;1;K,i_max,deltaU,i_EEG;1;iq_min,id_min,iqf_EEG,iqf_eON,iq0
+  14;C;MagCurr;835;1;3;0;;0;;0;;0;1;yo;1;yi;0;;1;K;0;;1;yo = yi/K;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;1;K;0;
+  15;C;PI_d;835;1;3;1;y_max;0;;0;;0;1;yo;1;yi,bypass,flt;1;x;1;K,T;1;y_min;7;!x. = select(bypass, -x/0.01, select(flt, 0, K*yi/T));x. = select(bypass, -x/0.01, select(flt, -x/0.01, K*yi/T));yo = select(bypass, 0, lim(limstate(x,y_min,y_max)+K*yi,y_min,y_max));;limits(T)  = (0,];inc(y_min) = -y_max;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi,bypass,flt;1;x;1;K,T;1;y_min
+  16;C;PI_q;835;1;3;1;y_max;0;;0;;0;1;yo;1;track,yi,flt,bypass;1;x;1;K,T;1;y_min;9;!caused toggling;!x. = select(bypass, -x/0.01, select(flt, (track-K*yi-x)/0.001, K*yi/T));;x. = select(bypass, -x/0.01, select(flt, (track-x)/0.001, K*yi/T));yo = select(bypass, 0, lim(limstate(x,y_min,y_max)+K*yi,y_min,y_max));;limits(T)  = (0,];inc(y_min) = -y_max;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;track,yi,flt,bypass;1;x;1;K,T;1;y_min
+  17;C;PickDrop(1);835;1;1;0;;0;;0;;0;1;yo;1;synch_mode,sw;0;;1;Tpick,Tdrop,i_EEG;0;;1;yo=select(synch_mode,0,picdro(sw,Tpick,select(i_EEG,0,Tdrop)));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;synch_mode,sw;0;;1;Tpick,Tdrop,i_EEG;0;
+  18;C;RampUp;835;1;3;0;;0;;0;;0;1;yo;1;yi;1;x;1;T;0;;5;yo = limstate(x, 0, 1);x. = select(yi<0.5, select(x>=1,0,T), -100*x);;;inc(x) = 1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T;0;
+  19;C;Reference Limiter;835;1;1;0;;1;u;0;;0;1;yo;1;yi;1;x;1;T_ramp;1;Max;5;"inc(Max) = lim(0.95/0.65*(abs(u)-0.15)+0.05,0,1.1) ";"inc(x) = lim(0.95/0.65*(abs(u)-0.15)+0.05,0,1.1) ";Max = lim(0.95/0.65*(abs(u)-0.15)+0.05,0,1.1);x.=select(Max<x,(Max-x)/0.005,(Max-x)*T_ramp);yo  = lim(yi,-x, x);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T_ramp;1;Max
+  20;C;Reference Limiter_q;835;1;1;0;;1;u;0;;0;1;yo;1;yi;0;;0;;1;Max;5;"inc(Max) = lim(0.95/0.65*(abs(u)-0.15)+0.05,0,1.1) ";;Max = lim(0.95/0.65*(abs(u)-0.15)+0.05,0,1.1);;yo  = lim(yi,-Max, Max);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;1;Max
+  21;C;Pitch-Ctrl_Generic;857;0;3;1;beta_max,dbeta_max;0;;1;beta_min,dbeta_min;0;1;beta;1;speed_ref,speed;1;xip,xp;1;Kpp,Kip,Tp;1;beta_speed,dbeta,dspeed,s_offset,yi,yi1;15;inc(xp)=beta_min;inc(xip)=beta_min;inc(xic)=beta_min;inc(beta)=beta_min;inc(speed_ref) = speed;;;"vardef(Kpp)   ='p.u.';'Blade Angle Controller Gain'";"vardef(Kip)   ='s';'Blade Angle Controller Time Constant'";"vardef(Tp)   ='s';'Servo Time Constant'";"vardef(dbeta_max)   ='deg/s';'Max. dbeta/dt'";"vardef(dbeta_min)   ='deg/s';'Min. dbeta/dt'";"vardef(beta_max)   ='deg';'Max. beta'";"vardef(beta_min)   ='deg';'Min. beta'";"vardef(speed_ref)   ='p.u.';'Speed Reference'";;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;beta;1;speed_ref,speed;1;xip,xp;1;Kpp,Kip,Tp;1;beta_speed,dbeta,dspeed,s_offset,yi,yi1
+  22;C;Const;837;1;3;0;;0;;0;;0;1;yo;0;;0;;1;C;0;;1;yo=C;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;0;;0;;1;C;0;
+  23;C;Limiter;837;1;3;1;y_max;0;;1;y_min;0;1;yo;1;yi;0;;0;;0;;1;yo=lim(yi,y_min,y_max);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  24;C;Time Const;837;1;3;0;;0;;0;;0;1;yo;1;yi;0;;1;K;0;;1;yo=yi/K;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;1;K;0;
+  25;C;_(Kp+Ki/2)_;837;0;3;1;y_max;0;;1;y_min;0;1;yo;1;yi;1;x;1;Kp,Ki;0;;2;x.=Ki*yi;yo=lim(limstate(x,y_min,y_max)+Kp*yi,y_min,y_max);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;Kp,Ki;0;
+  26;C;{1/s};837;1;3;1;Ymax;0;;1;Ymin;0;1;yo;1;yi;1;x;0;;0;;2;x.=yi;yo=limstate(x,Ymin,Ymax);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;0;;0;
+  27;C;Protection with synch;857;0;4;0;;0;;0;;0;1;Close,dud,duq,bypass;1;ub,ubr,ubi,ugr,ugi,irot,speed,u,u2,u0;0;;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;1;cosub,sinub,ugd,ugq,Allow,TripSpeedMin,TripSpeedMax,TripVoltageMin,TripVoltageMax,iRMS,CrowBar,Latch,ReConn,TripSpeed,TripVoltage,Tripped,yi1,yi2,yi3;39;inc0(u)    = 1;inc0(speed)= 1;inc0(dud)  = 0;"inc0(duq)  = 0  ";inc0(u2)   = 999 !-> trigger for EMT simulation;inc0(u0)   = 999 !-> trigger for balanced RMS;;"vardef(MaxIrotor)  = 'p.u.';': Rotor Current for Crow Bar Insertion'";"vardef(tbypass)    = 's';   ': Crow Bar Insertion Time'";;"vardef(MaxSpeed1)  = 'p.u.';': Overspeed setting step 1'";"vardef(ttripMaxS1) = 's'   ;': Overspeed time Setting step 1'";;"vardef(MaxSpeed2)  = 'p.u.';': Overspeed setting step 2'";"vardef(ttripMaxS2) = 's'   ;': Overspeed time Setting step 2'";;"vardef(MinSpeed1)  = 'p.u.';': Underspeed setting step 1'";"vardef(ttripMinS1) = 's'   ;': Underspeed time Setting step 1'";;"vardef(MinSpeed2)  = 'p.u.';': Underspeed setting step 2'";"vardef(ttripMinS2) = 's'   ;': Underspeed time Setting step 2'";;"vardef(MaxVoltage1)= 'p.u.';': Overvoltage setting step 1'";"vardef(ttripMaxV1) = 's'   ;': Overvoltage time Setting step 1'";;"vardef(MaxVoltage2)= 'p.u.';': Overvoltage setting step 2'";"vardef(ttripMaxV2) = 's'   ;': Overvoltage time Setting step 2'";;"vardef(MinVoltage1)= 'p.u.';': Undervoltage setting step 1'";"vardef(ttripMinV1) = 's'   ;': Undervoltage time Setting step 1'";;"vardef(MinVoltage2)= 'p.u.';': Undervoltage setting step 2'";"vardef(ttripMinV2) = 's'   ;': Undervoltage time Setting step 2'";;"vardef(TripIfCrow)  = '1/0'; ': Trip if crowbar activated'";"vardef(MaxSynchTime)= 's';   ': Synchronisation window'";"vardef(CloseDelay)  = 's';   ': Breaker delay after synchronisation'";"vardef(Usynch)      = 'p.u.';': Minimum grid voltage for reconnection'";"vardef(Reconnect)   = '1/0'; ': Reconnect after trip'";0;0;1;Close,dud,duq,bypass;1;ub,ubr,ubi,ugr,ugi,irot,speed,u,u2,u0;0;;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;1;cosub,sinub,ugd,ugq,Allow,TripSpeedMin,TripSpeedMax,TripVoltageMin,TripVoltageMax,iRMS,CrowBar,Latch,ReConn,TripSpeed,TripVoltage,Tripped,yi1,yi2,yi3
+  28;C;Max;838;0;3;0;;0;;0;;0;1;bypass;1;Hold,CrowBar,TripSpeed,TripVoltage;0;;0;;0;;5;bypass = max(max(CrowBar,max(TripSpeed,TripVoltage)),Hold);;inc(bypass)= 0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;bypass;1;Hold,CrowBar,TripSpeed,TripVoltage;0;;0;;0;
+  29;C;Max3;838;0;4;0;;0;;0;;0;1;Tripped;1;yi1,yi2,yi3;0;;0;;0;;1;Tripped=max(yi1,max(yi2,yi3));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;Tripped;1;yi1,yi2,yi3;0;;0;;0;
+  30;C;Rotor Bypass;838;0;4;0;;0;;0;;0;1;CrowBar,Tripped;1;Irot,ReConn;0;;1;MaxIrotor,tbypass,TripIfCrow;0;;20;inc(CrowBar)  = 0.0;;!Bypass to block the rotor side converter;CrowBar=picdro({Irot>MaxIrotor}.and.{.not. CrowBar},0.001,tbypass);;!Events to conect the crow bar impedance;event(1, CrowBar-0.5, 'name=ConnectCrowX dtime=0');event(1, CrowBar-0.5, 'name=ConnectCrowR dtime=0');;!Events to disconnect the crow bar impedance;event(1, 0.5-CrowBar, 'name=DisconnectCrowX dtime=0');event(1, 0.5-CrowBar, 'name=DisconnectCrowR dtime=0');;!Events to trip generator breaker;event(TripIfCrow, CrowBar-0.5,'name=OpenBreaker dtime=0');inc(Tripped)=0;Tripped=flipflop((CrowBar-0.5)>0 .and. TripIfCrow,ReConn);;;;;;;;;;;;;;;;;;;;;;;0;0;1;CrowBar,Tripped;1;Irot,ReConn;0;;1;MaxIrotor,tbypass,TripIfCrow;0;
+  31;C;SpeedProt;838;0;4;0;;0;;0;;0;1;TripSpeed,Tripped;1;speed,ReConn;0;;1;MaxSpeed1,ttripMaxS1, MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2;1;TripSpeedMin,TripSpeedMax;19;!1234567890123456789012345678901234567890123456789012345678901234567890123456789;!         1         2         3         4         5         6         7;TripSpeedMax={picdro({speed>MaxSpeed1},ttripMaxS1,999)}.or.;& {picdro({speed>MaxSpeed2},ttripMaxS2,999)};;TripSpeedMin={picdro({speed<MinSpeed1},ttripMinS1,999)}.or.;& {picdro({speed<MinSpeed2},ttripMinS2,999)};;TripSpeed= TripSpeedMin .or. TripSpeedMax;;inc(TripSpeedMin)=0.0;inc(TripSpeedMax)=0.0;;!Events to trip the generator;"event(1,TripSpeed-0.5,'name=OpenBreaker dtime=0')    ";;inc(Tripped)=0;Tripped=flipflop((TripSpeed-0.5)>0,ReConn);;;;;;;;;;;;;;;;;;;;;;0;0;1;TripSpeed,Tripped;1;speed,ReConn;0;;1;MaxSpeed1,ttripMaxS1, MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2;1;TripSpeedMin,TripSpeedMax
+  32;C;Synchroniser;838;0;4;0;;0;;0;;0;1;Close,dud,duq,Hold,ReConn;1;ub,ubr,ubi,ugr,ugi,CrowBar,Tripped;0;;1;MaxSynchTime,CloseDelay,Tcrow,Usynch,Reconnect,TripIfCrow;1;cosub,sinub,ugd,ugq,Allow;34;Allow = picdro(CrowBar .and. Reconnect, Tcrow-0.005, MaxSynchTime);cosub = ubr/ub;sinub = ubi/ub;;ugd =  ugr*cosub + ugi*sinub;ugq = -ugr*sinub + ugi*cosub;;dud = -ugq*10;duq = (ugd-ub)*10;;Hold = flipflop(CrowBar .and. TripIfCrow, {.not. CrowBar }.and.{ub>Usynch});!Hold = picdro(CrowBar .and. ub<Usynch, 0, 0.04);;!Check = sqrt(sqr(dud)+sqr(duq))/10;Close = picdro(abs(dud/10)<0.01 .and. abs(duq/10)<0.01 .and. Allow .and. ub>Usynch, CloseDelay, 0.1);;!Event to set to synch mode;event({Reconnect .and. Tripped}, ub-Usynch, 'name=SynchModeOn dtime=0');;!Events to close generator breaker & reset controls to normal;event(Allow, Close-0.5,'name=CloseBreaker dtime=0');"event(Allow, Close-0.5,'name=SynchModeOff dtime=0')    ";;!Send reconnect to over current/speed/voltage block;inc(ReConn)=0;ReConn = select(Allow .and. (Close-0.5)>0,1,0);;inc(Allow) = 0;inc(cosub) = ubr/ub;inc(sinub) = ubi/ub;inc(Close) = 0;inc(Hold)  = 0;!inc(Check) = sqrt(sqr(dud)+sqr(duq));;;;;;;0;0;1;Close,dud,duq,Hold,ReConn;1;ub,ubr,ubi,ugr,ugi,CrowBar,Tripped;0;;1;MaxSynchTime,CloseDelay,Tcrow,Usynch,Reconnect,TripIfCrow;1;cosub,sinub,ugd,ugq,Allow
+  33;C;VoltageProt;838;0;4;0;;0;;0;;0;1;TripVoltage,Tripped;1;u,ReConn,u2,u0;0;;1;MaxVoltage1,ttripMaxV1, MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;1;TripVoltageMin,TripVoltageMax,iRMS;38;!Trigger for RMS simulation (balanced or unbalenced);inc(iRMS) = select({u2<999}.or.{{u2=999}.and.{u0=999}},1,0);;TripVoltageMax={picdro({u>MaxVoltage1},ttripMaxV1,999)}.or.;& {picdro({u>MaxVoltage2},ttripMaxV2,999)};;TripVoltageMin={picdro({u<MinVoltage1},ttripMinV1,999)}.or.;& {picdro({u<MinVoltage2},ttripMinV2,999)};;TripVoltage= TripVoltageMin .or. TripVoltageMax;;inc(TripVoltageMin)=0.0;inc(TripVoltageMax)=0.0;;;!Events to trip the generator;event(1,TripVoltage-0.5,'name=OpenBreaker dtime=0');;event(iRMS,TripVoltage-0.5,'create=EvtOutage target=DFIG name=DisconnectDFIG');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=PQ_tot name=DisconnectPQ_tot');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=MPT name=DisconnectMPT');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=Compensation name=DisconnectCompensation');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=Current_Measurement name=DisconnectCurrent_Measurement');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=PQ_Control name=DisconnectPQ_Control');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=Turbine name=DisconnectTurbine');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=Protection name=DisconnectProtection');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=Pitch_Control name=DisconnectPitch_Control');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=Shaft name=DisconnectShaft');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=Speed-Ctrl name=DisconnectSpeed-Ctrl');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=Ir_ctrl name=DisconnectIr_ctrl');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=SpeedRef name=DisconnectSpeedRef');event(iRMS,TripVoltage-0.5,'create=EvtOutage target=OverFreq_Pwr_Reduction name=DisconnectOverFreq_Pwr_Reduction');;;inc(Tripped)=0;Tripped=flipflop((TripVoltage-0.5)>0,ReConn);;;;0;0;1;TripVoltage,Tripped;1;u,ReConn,u2,u0;0;;1;MaxVoltage1,ttripMaxV1, MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;1;TripVoltageMin,TripVoltageMax,iRMS
+  34;C;Rotor Current Measurement;857;0;3;0;;0;;0;;0;1;Irot,irot,ird,irq;1;id,iq,cosphim,sinphim,cosphiref,sinphiref,cosphiu,sinphiu;0;;1;Urrated,Srated;1;Irnom,ir,ii,cosphius,sinphius;24;inc(Irnom)=sqrt(2.)*Srated/(sqrt(3.)*Urrated);inc(irot)=sqrt(id*id+iq*iq);inc(Irot)=Irnom*irot;irot=sqrt(id*id+iq*iq);Irot=Irnom*irot;;"vardef(Urrated)='V';'Rated Rotor Voltage'";"vardef(Srated)='kVA';'Rated Apparent Power'";;cosphius=cosphiu*cosphiref+sinphiu*sinphiref;sinphius=-cosphiu*sinphiref+sinphiu*cosphiref;;;ir=id*cosphim-iq*sinphim;ii=id*sinphim+iq*cosphim;;ird=ir*cosphius+ii*sinphius;irq=-ir*sinphius+ii*cosphius;;inc(ird)=ir*cosphius+ii*sinphius;inc(irq)=-ir*sinphius+ii*cosphius;;inc0(cosphiref)=1  !signals are only for EMT simulation available;inc0(sinphiref)=0  !signals are only for EMT simulation available;;;;;;;;;;;;;;;;0;0;1;Irot,irot,ird,irq;1;id,iq,cosphim,sinphim,cosphiref,sinphiref,cosphiu,sinphiu;0;;1;Urrated,Srated;1;Irnom,ir,ii,cosphius,sinphius
+  35;C;Shaft_Generic;857;0;2;0;;0;;0;;0;1;speed_tur,pt;1;pw,speed_gen;1;xH,dphi12;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;1;Tmec,pt_t,tdif,tw;4;inc(dphi12)=pt*Pgbase/Ptbase/speed_gen/Ktg;inc(xH)=speed_gen;inc(pw)=pt*Pgbase/Ptbase;inc(speed_tur)=speed_gen;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;speed_tur,pt;1;pw,speed_gen;1;xH,dphi12;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;1;Tmec,pt_t,tdif,tw
+  36;C;1/(2Hs);839;0;2;0;;0;;0;;0;1;speed;1;t1;1;speed_state;1;H;0;;5;;speed_state.=t1/(2*H);speed=speed_state;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;speed;1;t1;1;speed_state;1;H;0;
+  37;C;RatePt;839;0;2;0;;0;;0;;0;1;yo;1;yi;0;;1;Ptbase,Pgbase;0;;1;yo=Ptbase/Pgbase*yi;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;1;Ptbase,Pgbase;0;
+  38;C;Spring;839;0;2;0;;0;;0;;0;1;t1;1;speed1,speed2;1;dphi12;1;k12,d12,ombase;0;;6;dphi12.=ombase*(speed1-speed2);t1=k12*dphi12+d12*(speed1-speed2);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;t1;1;speed1,speed2;1;dphi12;1;k12,d12,ombase;0;
+  39;C;Speed-Ctrl_Generic;857;0;3;1;p_max,dp_max;0;;1;p_min,dp_min;0;1;Pref;1;speed_ref,speed;1;xi,xpc;1;Kptrq,Kitrq,Tpc;1;domega,yp,yt;11;inc(xi)=Pref/speed;inc(speed_ref)=speed;inc(xpc)=Pref;;"vardef(Kptrq)=;'Speed Controller Proportional Gain';";"vardef(Kitrq)='1/s';'Speed Controller Integral Gain';";"vardef(Tpc)='s';'Output Limiter Time Constant';";"vardef(p_max)='p.u.';'Active Power Upper Limit';";"vardef(p_min)='p.u.';'Active Power Lower Limit';";"vardef(dp_max)='p.u./s';'dP/dt Upper Limit';";"vardef(dp_min)='p.u./s';'dP/dt Lower Limit';";;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;Pref;1;speed_ref,speed;1;xi,xpc;1;Kptrq,Kitrq,Tpc;1;domega,yp,yt
+  40;C;PI-Ctrl;840;1;3;1;max;0;;1;min;0;1;yo;1;yi;1;x;1;Kp,Ki;0;;4;x.=Ki*yi;yo=lim(limstate(x,min,max)+Kp*yi,min,max);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;Kp,Ki;0;
+  41;C;_1/(1+sT)_;840;1;3;1;y_max,dy_max;0;;1;y_min,dy_min;0;1;yo;1;yi;1;x;1;T;0;;3;x.=(lim(yi,dy_min,dy_max)-x)/T;yo=limstate(x,y_min,y_max);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T;0;
+  42;C;SpeedRef_auto;857;0;3;0;;0;;0;;0;1;speed_ref;1;ptot,qtot,speed;1;xp;1;Td,speed0,auto;1;speed_nolim;16;xp.=(ptot-xp)/Td;;inc(xp)=ptot;;speed_nolim=-0.67*xp*xp+1.42*xp+0.511875;;;speed_ref=lim(speed_nolim,0.51,1.2);inc(speed_ref)=lim(speed_nolim,0.51,1.2);inc(speed)=select(auto,speed_ref,speed0);;"vardef(Td)     = 's'  ;'Active power filter time constant (PT1)'";"vardef(speed0) = 'pu' ;'Intial speed of the DFIG'";"vardef(auto)   = '0/1';'0: use speed0; 1: use MPT speed'";;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;speed_ref;1;ptot,qtot,speed;1;xp;1;Td,speed0,auto;1;speed_nolim
+  43;C;Turbine_Generic;857;0;3;0;;0;;0;;0;1;pwind;1;beta,speed,vw;0;;1;rhoAr,Kb,matrix_i;1;lambda,Cp;10;pwind=rhoAr*Cp*pow(vw,3);;Cp=sapprox2(beta,lambda,matrix_i);;lambda=Kb*speed/vw;;;inc(vw)=8;inc0(beta)=0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;pwind;1;beta,speed,vw;0;;1;rhoAr,Kb,matrix_i;1;lambda,Cp
+  44;C;Frame Offshore VSC;858;0;4;0;;0;;0;;0;0;;0;;0;;0;;1;Pm_in,cosref,f0,i,iq,sinref,u,udcm,udcp;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;0;;0;;0;;0;;1;Pm_in,cosref,f0,i,iq,sinref,u,udcm,udcp
+  45;C;Frame Onshore VSC;858;0;3;0;;0;;0;;0;1;flt;0;;0;;0;;1;Pin,Pmd,Pmq,Qin,cosref,gate,id,id_ref,iq,iq_ref,sinref,uac,udcm,udcp,ui,ur;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;flt;0;;0;;0;;1;Pin,Pmd,Pmq,Qin,cosref,gate,id,id_ref,iq,iq_ref,sinref,uac,udcm,udcp,ui,ur
+  46;C;Offshore Controller;858;0;4;1;i_max,Uac_max,Frequ_Grad;0;;1;i_min,Uac_min;0;1;Pm,f0;1;iq,u,Uacref,udcp,udcm,udc0;1;x1,x2,xu,xFrequ;1;array_Pm,Kuac,Tuac,Kiac,Tiac,F_ref,Tfilter_U,UdcHigh,UdcLow,plusFrequ;1;pm1,lower,upper,df,du,dudc,iq_ref,o11,uaci,udc,ufilter,upm,yi,yi1;37;!Offshore VSC-Controller, controlls the Offshore Voltage and Frequ.;! Use of Feedforward: Pm=uac/(sqrt(3/2)*udc));!Changes the frequ. in case of overvoltage in the DC-line as a signal;! for the wind turbines to reduce the power output;!In case of a offshore short circuit, the converter current will exceed;! the limit, thus, the offshore voltage have to be limited;inc0(u) = 1;inc0(udcp) = 1;inc0(udcm) = 1;;inc(x1)=-iq;inc(x2)=Pm*sqrt(3/2)*udc*1.5/1.55;inc(xu)=u;inc(Uacref)=ufilter;"inc(udc0)=udcp-udcm ";;;"vardef(Kiac)='pu';'Proportional Gain for Current Controller'";"vardef(Tiac)='s';'Integrator Time Const. for Cur. Controller'";"vardef(i_min)='pu';'Min Limit Value for Current Limitation'";"vardef(i_max)='pu';'Max Limit Value for Current Limitation'";"vardef(Tfilter_U)='s';'Time constant for PT1-Filter'";"vardef(Kuac)='pu';'Proportional Gain for Voltage Controller'";"vardef(Tuac)='s';'Integrator Time Const. for Volt. Controller'";"vardef(Uac_max)='pu';'Max Limit for Offshore Voltage'";"vardef(Uac_min)='pu';'Min Limit for Offshore Voltage'";!;"vardef(F_ref)='pu';'Reference Frequency'";!;"vardef(UdcHigh)='pu';'Upper Udc Limit for Frequ. Lifting'";"vardef(UdcLow)='pu';'Lower Udc Limit for Frequ. Lifting'";"vardef(Frequ_Grad)='1/s';'Gradient for Frequ. Lifting'";"vardef(plusFrequ)='pu';'Value of Frequ. Lifting' ";"  ";;;;;;0;0;1;Pm,f0;1;iq,u,Uacref,udcp,udcm,udc0;1;x1,x2,xu,xFrequ;1;array_Pm,Kuac,Tuac,Kiac,Tiac,F_ref,Tfilter_U,UdcHigh,UdcLow,plusFrequ;1;pm1,lower,upper,df,du,dudc,iq_ref,o11,uaci,udc,ufilter,upm,yi,yi1
+  47;C;(Kp+1/Ti s)_AWU;842;1;4;1;y_max;0;;1;y_min;0;1;yo;1;yi;1;x;1;Kp,Ti;0;;7;"!x.=select({(Kp*yi+x)>=y_max}.or.{(Kp*yi+x)<=y_min},0,yi/Ti) ";!yo=lim(Kp*yi+x,y_min,y_max);!with new picontrol_const command:;"x.=yi/Ti ";yo= picontrol_const(x,y_min,y_max,Kp*yi);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;Kp,Ti;0;
+  48;C;1/(1+sT);842;1;4;0;;0;;0;;0;1;yo;1;yi;1;x;1;T;0;;4;limits(T)=(0,);x.=(yi-x)/T;yo=x;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T;0;
+  49;C;Const;842;1;4;0;;0;;0;;0;1;yo;0;;0;;1;C;0;;1;yo=C;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;0;;0;;1;C;0;
+  50;C;Div2;842;1;4;0;;0;;0;;0;1;yo;1;yi;0;;0;;0;;1;yo = yi/2;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  51;C;Gradient Limiter_#2;842;1;4;1;y_max;0;;0;;0;1;yo;1;yi;1;x;1;T;0;;5;limits(T)=[0,];inc(x)=yi;x. = select(T>0,lim((yi-x)/T,-y_max,y_max),0);yo = select(T>0,x,yi);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T;0;
+  52;C;Hysteresis;842;1;4;0;;0;;0;;0;1;yo;1;yi;0;;1;Hpos,Hneg,plusF;1;lower,upper;7;!Increase the Frequency, if Udc>Hpos und drops the Frequ. if Udc<Hneg;inc(yo)=select(yi>(Hpos-1),1,0);;upper=picdro(yi>(Hpos-1),0,0);lower=picdro(yi<(Hneg-1),0,0);yo=select(flipflop(upper,lower),plusF,0)  !Hysteresis output is 1 or 0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;1;Hpos,Hneg,plusF;1;lower,upper
+  53;C;Udc_Feedforward;842;0;4;0;;0;;0;;0;1;Pm;1;uaci,udci;0;;1;array_Pm;1;pm1;5;!Linearer Zusammenhang für 0<Pm<1;pm1=uaci*1.55/(sqrt(3/2)*udci*1.5);!Nichtlineares Array für Pm>1;Pm=lim(select(pm1>3,lapprox(uaci*1.55/(udci*1.5*2),array_Pm),pm1),-3,3);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;Pm;1;uaci,udci;0;;1;array_Pm;1;pm1
+  54;C;Onshore Current Ctrl;858;0;4;1;P_max;0;;1;P_min;0;1;Pmd,Pmq;1;id,id_ref,iq_ref,iq;1;xPd,xPq;1;Kpm,Tpm;1;yi,yi1;10;!Simple current controller for onshore VSC-converter without decoupling;inc(xPd)=Pmd;"inc(xPq)=Pmq ";inc(id_ref)=id;"inc(iq_ref)=iq ";"vardef(Kpm)='pu';'Proportional Gain for d&q-axis'";"vardef(Tpm)='s';'Integral Time for d&q-axis'      ";"vardef(P_max)='pu';'max limit Pm for d&q-axis'";"vardef(P_min)='pu';'min limit Pm for d&q-axis'";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;Pmd,Pmq;1;id,id_ref,iq_ref,iq;1;xPd,xPq;1;Kpm,Tpm;1;yi,yi1
+  55;C;Pm_PI_Controller;843;1;4;1;y_max;0;;1;y_min;0;1;yo;1;yi;1;x;1;K,T;0;;4;limits(T)=(0,);x.=K*yi/T;yo=lim(K*yi+limstate(x,y_min,y_max),y_min,y_max);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;K,T;0;
+  56;C;OnshoreChopperCtrl;858;0;4;0;;0;;0;;0;1;gate,choptime;1;udcp,udcm,udc0;1;xc;1;UdcUpper,UdcLower;1;lower1,upper1,udc,upm,yi;7;inc0(udcp) = 1;inc0(udcm) = 1;"inc(udc0)=udc ";"inc(choptime)=0 ";;"vardef(UdcUpper)='pu';'Threshold for Chopper Connection'";"vardef(UdcLower)='pu';'Threshold for Chopper Disconnection'";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;gate,choptime;1;udcp,udcm,udc0;1;xc;1;UdcUpper,UdcLower;1;lower1,upper1,udc,upm,yi
+  57;C;Div2;844;1;4;0;;0;;0;;0;1;yo;1;yi;0;;0;;0;;1;yo = yi/2;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  58;C;chopper trigger;844;0;4;0;;0;;0;;0;1;yo,choptime;1;yi;1;xc;1;Hpos,Hneg;1;lower,upper;8;inc(yo)=select(yi>(Hpos-1),1,-1);;upper=picdro(yi>(Hpos-1),0,0);lower=picdro(yi<(Hneg-1),0,0);yo=select(flipflop(upper,lower),1,-1)  !Hysteresis output is 1 or 0;inc(xc)=0;xc.=flipflop(upper,lower);choptime=xc;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo,choptime;1;yi;1;xc;1;Hpos,Hneg;1;lower,upper
+  59;C;OnshoreControl;858;0;3;1;i_max;0;;0;;0;1;id_ref,iq_ref;1;udcp,udcm,udcref,Pin,Qref,Qin,uac_ref,uac;1;xqm,xrudc,xruac,xq1,xq2,xd,Uo;1;umax,x,Trudc,Droop,Ku,Kiu,Kdu,fltMODE,K_flt,Kd,Td,array_iqlim,iqfmax,Ut,MODE;1;yk,yis,yd,dx2,y_min,yold,ynormal,yflt,ymin,idmax,iqmax,Qd,Qm,U,dU,du,du1,flt,idref,iqref,udc,udc_offset,udcf,udcref_korr,upm,y1,y2,y_vmax,yi;32;"inc(udcref)=(udcp-udcm)/2-udc_offset ";inc(uac_ref) = select(MODE=0,uac,select(MODE=1,uac+Qin*Droop,uac));inc(Qref)  = Qin;;inc(xrudc)= udc;inc(xruac)= uac;inc(xqm)  = Qin;"inc(xd)   = id_ref ";;inc0(id_ref) = 0.852;inc0(iq_ref) = -0.1269;;inc(iqref) = iq_ref;;"vardef(K_flt) = '-';'Reactive current flt gain'";"vardef(fltMODE)='0/1';'0=ctrl acc MODE, 1=ctrl acc TC2007'";"vardef(MODE) ='0/1/2';'0=voltg. ctrl. 1=droop 2=Q ctrl.'";"vardef(array_iqlim)='pu';'Current Limit Curve'";"vardef(iqfmax)='pu';'Max. reactive current in fault case'";"vardef(Trudc)='s';'DC Voltage Filter Time Constant'";"vardef(i_max)='pu';'Current Limit'  ";"vardef(Droop)='pu';'Gain for Droop Control'";"vardef(Kd)   ='-';'Gain of DC PI-Controller'";"vardef(Td)   ='s';'Integral Time Constant of DC PI-Controller'";"vardef(Ku)   ='-';'Gain of PID Droop-Controller (Q and Vac)'";"vardef(Kiu)  ='1/s';'Integral Constant of PID Droop Controller (Q and Vac)'";"vardef(Kdu)  ='1/s';'Derivative Constant of PID Droop Controller (Q and Vac)'";"vardef(Ut)   ='pu';'Voltage Deviation to enable Fault-Mode' ";"vardef(umax) ='pu';'Max. internal voltage allowed'";"vardef(x)    ='pu';'Series reactor impedance'";;;;;;;;;;0;0;1;id_ref,iq_ref;1;udcp,udcm,udcref,Pin,Qref,Qin,uac_ref,uac;1;xqm,xrudc,xruac,xq1,xq2,xd,Uo;1;umax,x,Trudc,Droop,Ku,Kiu,Kdu,fltMODE,K_flt,Kd,Td,array_iqlim,iqfmax,Ut,MODE;1;yk,yis,yd,dx2,y_min,yold,ynormal,yflt,ymin,idmax,iqmax,Qd,Qm,U,dU,du,du1,flt,idref,iqref,udc,udc_offset,udcf,udcref_korr,upm,y1,y2,y_vmax,yi
+  60;C;1/(1+sT);845;1;3;0;;0;;0;;0;1;yo;1;yi;1;x;1;T;0;;3;limits(T)=(0,];x.=(yi-x)/T;yo=x;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T;0;
+  61;C;CurrLim;845;1;3;1;imax;0;;0;;0;1;id_ref,iq_ref;1;idref,iqref,flt;0;;1;array_iqlim,iqf_max;1;idmax,iqmax;7;id_ref = lim(idref, -idmax, idmax);iq_ref = lim(iqref, -iqmax, iqmax);;idmax = select(flt, lapprox(abs(iq_ref), array_iqlim),    imax);iqmax = select(flt, min(imax, iqf_max), lapprox(abs(idref), array_iqlim));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;id_ref,iq_ref;1;idref,iqref,flt;0;;1;array_iqlim,iqf_max;1;idmax,iqmax
+  62;C;Div2;845;1;4;0;;0;;0;;0;1;yo;1;yi;0;;0;;0;;1;yo = yi/2;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  63;C;Ftl_Detect;845;1;3;1;imax;0;;0;;0;1;du,flt;1;U;1;Uo;1;Ut;0;;7;flt = picdro({U > Uo+Ut}.or.{U < Uo-Ut}, 0.001, 0.5);du = Uo-U;inc(flt) = 0;inc(du) = 0;;Uo.     = select(flt,0,(U-Uo)/60)  ! Average voltage;inc(Uo) = U;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;du,flt;1;U;1;Uo;1;Ut;0;
+  64;C;K;845;1;3;0;;0;;0;;0;1;yo;1;yi;0;;1;K;0;;1;yo=K*yi;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;1;K;0;
+  65;C;MODE_Switch;845;0;4;0;;0;;0;;0;1;yo;1;y1,y2,y3;0;;1;MODE;0;;2;inc(yo) = select(MODE=0,y3,select(MODE=1,y2,y1));yo = select(MODE=0,-y3,select(MODE=1,y2,y1));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;y1,y2,y3;0;;1;MODE;0;
+  66;C;OverVoltageCurrentLimiter;845;0;4;0;;0;;0;;0;1;imax;1;u;0;;1;umax,x;0;;3;!limitation of internal voltage in case of high voltage and;! overexcited operation;imax = max((umax-u)/x,0);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;imax;1;u;0;;1;umax,x;0;
+  67;C;PI_Udc;845;1;3;1;y_max;0;;0;;0;1;yo;1;yi;1;x;1;K,T;1;y_min;5;x.=K*yi/T;yo=lim(limstate(x,y_min,y_max)+K*yi,y_min,y_max);;inc(y_min) = -y_max;limits(T)  = (0,];;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;K,T;1;y_min
+  68;C;udcref_offset;845;1;4;1;y_max;0;;1;y_min;0;1;yo;1;yi;0;;0;;0;;1;yo=0.026*(1-lim(yi,y_min,y_max));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  69;C;{Kp+sKd+Ki/s};845;1;4;1;y_max;0;;0;;0;1;yo;1;yi,duin,flt,y_vmax;1;x1,x2;1;Kp,Ki,Kd,Td,fltMODE,K_flt;1;yk,yis,yd,dx2,y_min,yold,ynormal,yflt;20;yk=Kp*yi;;dx2=(yi-x2)/Td;x2.=select(flt,0,dx2);yd=dx2*Kd;;x1.=select(flt,0,yi*Ki);yis=limstate(x1,max(y_min,-y_vmax),y_max);inc(yold) = yk+yis+yd;ynormal = yk+yis+yd;yflt =    yold - duin*K_flt;;"yo=lim(select(flt .and. fltMODE,yflt,ynormal),max(y_min,-y_vmax),y_max)  ";;;inc(y_min) = -y_max;inc(x2)    = yi;inc(x1)    = yo;inc(yis)   = yo;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi,duin,flt,y_vmax;1;x1,x2;1;Kp,Ki,Kd,Td,fltMODE,K_flt;1;yk,yis,yd,dx2,y_min,yold,ynormal,yflt
+  70;C;MPT;857;0;3;0;;0;;0;;0;1;speed_ref;1;ptot,qtot,speed;1;xp;1;Td;1;speed_nolim;12;xp.=(ptot-xp)/Td;;inc(xp)=ptot;;speed_nolim=-0.67*xp*xp+1.42*xp+0.511875;;;speed_ref=lim(speed_nolim,0.51,1.2);inc(speed_ref)=lim(speed_nolim,0.51,1.2);inc(speed)=speed_ref;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;speed_ref;1;ptot,qtot,speed;1;xp;1;Td;1;speed_nolim
+
+
+$$BlkMul;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  71;C;Multiplier;2
+  72;C;Multiplier(1);10
+  73;C;Multiplizierer;10
+  74;C;Multiplier;35
+  75;C;Multiplier;39
+
+
+$$BlkRef;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);cdisName(a);sUpLimPar:SIZEROW(i);sUpLimPar:0(a);sLowLimPar:SIZEROW(i);sLowLimPar:0(a);sParams:SIZEROW(i);sParams:0(a);sStates:SIZEROW(i);sStates:0(a);sIntern:SIZEROW(i);sIntern:0(a);state:SIZEROW(i);param:SIZEROW(i)
+  76;C;Block Reference(1);2;3;1/(1+sT);0;;0;;1;Tfilter;1;x;0;;0;0
+  77;C;Block Reference;2;5;OverfrequPowerReduction;0;;1;p_min;1;fUp,fLow,PHz;0;;1;yneu,yalt;0;0
+  78;C;Referenzblock;2;4;Gradient Limiter;1;posGrad;1;negGrad;1;0.01;1;x1;0;;0;0
+  79;C;Block Reference(1);8;9;K;0;;0;;1;Kd,Td;1;xd;0;;0;0
+  80;C;Block Reference(3);8;9;K;0;;0;;1;Kq,Tq;1;xq;0;;0;0
+  81;C;Block Reference(1);10;20;Reference Limiter_q;0;;0;;0;;0;;1;Max;0;0
+  82;C;Block Reference(3);10;13;Iq_fault;1;iq_max,id_max;0;;1;K_deltaU,i_max,deltaU,i_EEG;0;;1;iq_min1,id_min1,,iqf_EEG,iqf_eON,iq0;0;0
+  83;C;Block Reference(4);10;12;FaultLimits;1;iq_max;0;;0;;1;xflt;1;Kflt,iqtest;0;0
+  84;C;Block Reference(5);10;18;RampUp;0;;0;;1;Tramp;1;xr;0;;0;0
+  85;C;Block Reference(6);10;14;MagCurr;0;;0;;1;Xm;0;;0;;0;0
+  86;C;Block Reference(7);10;17;PickDrop(1);0;;0;;1;Tudelay,Tbackdelay,i_EEG;0;;0;;0;0
+  87;C;Block Reference;10;19;Reference Limiter;0;;0;;1;Tramp;1;xlim;1;maxP;0;0
+  88;C;Referenzblock(2);10;15;PI_d;1;id_max;0;;1;Kp,Tp;1;xpctrl;1;id_min;0;0
+  89;C;Referenzblock(6);10;16;PI_q;1;iq_max;0;;1;Kq,Tq;1;xqctrl;1;iq_min;0;0
+  90;C;Referenzblock;10;11;Dband(yi<(1-K));0;;0;;1;deltaU;1;xu;0;;0;0
+  91;C;Block Reference(1);21;23;Limiter;1;dbeta_max;1;dbeta_min;0;;0;;0;;0;0
+  92;C;Block Reference(2);21;22;Const;0;;0;;1;0.001;0;;0;;0;0
+  93;C;Block Reference(3);21;26;{1/s};1;beta_max;1;beta_min;0;;1;xp;0;;0;0
+  94;C;Block Reference;21;24;Time Const;0;;0;;1;Tp;0;;0;;0;0
+  95;C;PI action;21;25;_(Kp+Ki/2)_;1;beta_max;1;beta_min;1;Kpp,Kip;1;xip;0;;0;0
+  96;C;Block Reference(1);27;30;Rotor Bypass;0;;0;;1;MaxIrotor,tbypass,TripIfCrow;0;;0;;0;0
+  97;C;Block Reference(2);27;33;VoltageProt;0;;0;;1;MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;;1;TripVoltageMin,TripVoltageMax,iRMS;0;0
+  98;C;Block Reference(3);27;28;Max;0;;0;;0;;0;;0;;0;0
+  99;C;Block Reference(4);27;32;Synchroniser;0;;0;;1;MaxSynchTime,CloseDelay,tbypass,Usynch,Reconnect,TripIfCrow;0;;1;cosub,sinub,ugd,ugq,Allow;0;0
+  100;C;Block Reference(5);27;29;Max3;0;;0;;0;;0;;0;;0;0
+  101;C;Block Reference;27;31;SpeedProt;0;;0;;1;MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2;0;;1;TripSpeedMin,TripSpeedMax;0;0
+  102;C;LPB-Gen;35;38;Spring;0;;0;;1;Ktg,Dtg,ombase;1;dphi12;0;;0;0
+  103;C;Mass(1);35;37;RatePt;0;;0;;1;Ptbase,Pgbase;0;;0;;0;0
+  104;C;Mass;35;36;1/(2Hs);0;;0;;1;H;1;xH;0;;0;0
+  105;C;Block Reference(2);39;41;_1/(1+sT)_;1;p_max,dp_max;1;p_min,dp_min;1;Tpc;1;xpc;0;;0;0
+  106;C;Block Reference;39;40;PI-Ctrl;1;p_max;1;p_min;1;Kptrq,Kitrq;1;xi;0;;0;0
+  107;C;Ref-Freq(1);46;50;Div2;0;;0;;0;;0;;0;;0;0
+  108;C;Ref-Freq;46;49;Const;0;;0;;1;F_ref;0;;0;;0;0
+  109;C;Referenzblock(1);46;53;Udc_Feedforward;0;;0;;1;array_Pm;0;;1;pm1;0;0
+  110;C;Referenzblock(2);46;51;Gradient Limiter_#2;1;Frequ_Grad;0;;1;0.001;1;xFrequ;0;;0;0
+  111;C;Referenzblock(3);46;52;Hysteresis;0;;0;;1;UdcHigh,UdcLow,plusFrequ;0;;1;lower,upper;0;0
+  112;C;U-Control(1);46;47;(Kp+1/Ti s)_AWU;1;Uac_max;1;Uac_min;1;Kiac,Tiac;1;x2;0;;0;0
+  113;C;U-Control;46;47;(Kp+1/Ti s)_AWU;1;i_max;1;i_min;1;Kuac,Tuac;1;x1;0;;0;0
+  114;C;U-Filter;46;48;1/(1+sT);0;;0;;1;Tfilter_U;1;xu;0;;0;0
+  115;C;Referenzblock(1);54;55;Pm_PI_Controller;1;P_max;1;P_min;1;Kpm,Tpm;1;xPd;0;;0;0
+  116;C;Referenzblock(2);54;55;Pm_PI_Controller;1;P_max;1;P_min;1;Kpm,Tpm;1;xPq;0;;0;0
+  117;C;Block Reference;56;57;Div2;0;;0;;0;;0;;0;;0;0
+  118;C;Referenzblock(2);56;58;chopper trigger;0;;0;;1;UdcUpper,UdcLower;1;xc;1;lower1,upper1;0;0
+  119;C;Block Reference(1);59;60;1/(1+sT);0;;0;;1;0.03;1;xqm;0;;0;0
+  120;C;Block Reference(10);59;66;OverVoltageCurrentLimiter;0;;0;;1;umax,x;0;;0;;0;0
+  121;C;Block Reference(2);59;60;1/(1+sT);0;;0;;1;Trudc;1;xrudc;0;;0;0
+  122;C;Block Reference(3);59;69;{Kp+sKd+Ki/s};1;i_max;0;;1;Ku,Kiu,Kdu,0.003,fltMODE,K_flt;1;xq1,xq2;1;yk,yis,yd,dx2,y_min,yold,ynormal,yflt;0;0
+  123;C;Block Reference(4);59;61;CurrLim;1;i_max;0;;1;array_iqlim,iqfmax;0;;1;idmax,iqmax;0;0
+  124;C;Block Reference(5);59;60;1/(1+sT);0;;0;;1;0.01;1;xruac;0;;0;0
+  125;C;Block Reference(6);59;63;Ftl_Detect;1;i_max;0;;1;Ut;1;Uo;0;;0;0
+  126;C;Block Reference(7);59;67;PI_Udc;1;i_max;0;;1;Kd,Td;1;xd;1;ymin;0;0
+  127;C;Block Reference(8);59;64;K;0;;0;;1;Droop;0;;0;;0;0
+  128;C;Block Reference(9);59;65;MODE_Switch;0;;0;;1;MODE;0;;0;;0;0
+  129;C;Block Reference;59;62;Div2;0;;0;;0;;0;;0;;0;0
+  130;C;Referenzblock(2);59;68;udcref_offset;1;0;1;0;0;;0;;0;;0;0
+
+
+$$BlkSig;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);inodfrom(i);iconfrom(i);inodto(i);iconto(i);pnodfrom(p);pnodto(p)
+  131;C;Fmeas;2;0;1;0;1;2;76
+  132;C;pref_in;2;1;1;0;0;2;71
+  133;C;pref_out;2;2;0;0;2;71;2
+  134;C;red;2;0;2;1;0;78;71
+  135;C;yi;2;0;2;0;1;76;77
+  136;C;yi1;2;0;2;0;1;77;78
+  137;C;Fmeas;7;0;2;1;1;405;399
+  138;C;Irot;7;0;2;1;1;395;403
+  139;C;Pref;7;0;2;1;1;399;400
+  140;C;"Pstat;Qstat(1)";7;0;2;2;1;401;400
+  141;C;"Pstat;Qstat(2)";7;0;2;0;1;401;407
+  142;C;"Pstat;Qstat";7;0;2;0;1;401;398
+  143;C;_o1;7;-1;2;-1;0;;
+  144;C;beta;7;0;2;0;1;402;409
+  145;C;bypass(1);7;1;2;4;1;403;400
+  146;C;bypass(2);7;1;2;6;1;403;394
+  147;C;bypass;7;1;2;2;1;403;397
+  148;C;"cosphim;sinphim(1)";7;1;2;1;1;396;395
+  149;C;"cosphim;sinphim";7;1;2;3;1;396;394
+  150;C;"cosphiref;sinphiref(1)";7;2;2;2;1;396;395
+  151;C;"cosphiref;sinphiref";7;2;2;4;1;396;394
+  152;C;"cosphiu;sinphiu(1)";7;0;2;3;1;408;395
+  153;C;"cosphiu;sinphiu";7;0;2;2;1;408;394
+  154;C;"dud_synch;duq_synch";7;0;2;3;1;403;400
+  155;C;"id;iq";7;4;2;0;1;396;395
+  156;C;"ird;irq";7;1;2;0;1;395;397
+  157;C;"ird_ref;irq_ref";7;1;2;1;1;400;397
+  158;C;"pctrl;qctrl";7;0;2;1;1;397;394
+  159;C;pref_in;7;0;2;0;1;406;399
+  160;C;"psir_r;psir_i";7;3;2;5;1;396;394
+  161;C;pt;7;1;2;0;1;404;396
+  162;C;pw;7;0;2;1;1;409;404
+  163;C;speed(1);7;0;2;1;1;404;406
+  164;C;speed(2);7;0;2;2;1;404;409
+  165;C;speed;7;0;2;0;1;404;402
+  166;C;speed1(1);7;0;2;0;1;396;404
+  167;C;speed1(2);7;0;2;0;1;396;403
+  168;C;speed1(3);7;0;2;0;1;396;394
+  169;C;speed1(4);7;0;2;0;1;396;400
+  170;C;speed1(5);7;0;2;1;1;396;407
+  171;C;speed1(6);7;0;2;1;1;396;398
+  172;C;speed1;7;0;2;2;1;396;406
+  173;C;speed_ref(1);7;0;2;1;1;398;402
+  174;C;speed_ref;7;0;2;0;1;398;406
+  175;C;u(1);7;0;2;5;1;410;400
+  176;C;u;7;0;2;3;1;410;403
+  177;C;"u;ugr;ugi";7;0;2;2;1;411;403
+  178;C;"usr;usi";7;0;2;1;1;394;396
+  179;C;windsp;7;0;2;2;1;;
+  180;C;bypass(1);8;2;1;1;1;8;80
+  181;C;bypass;8;2;1;1;1;8;79
+  182;C;did;8;2;0;0;1;430;79
+  183;C;diq;8;2;0;0;1;431;80
+  184;C;ird;8;1;1;0;0;8;430
+  185;C;ird_ref;8;0;1;3;0;8;430
+  186;C;irq;8;4;1;0;0;8;431
+  187;C;irq_ref;8;3;1;3;0;8;431
+  188;C;up;8;0;2;0;2;79;8
+  189;C;uq;8;0;2;1;2;80;8
+  190;C;OnLine(1);10;0;2;1;0;84;73
+  191;C;OnLine;10;0;2;1;0;84;72
+  192;C;Pref;10;3;1;0;0;10;72
+  193;C;Pref1;10;2;0;0;1;72;87
+  194;C;Pref2;10;0;2;0;0;87;435
+  195;C;Pref3;10;2;0;1;0;435;
+  196;C;Prot;10;2;1;1;0;10;433
+  197;C;Pstat;10;1;1;0;0;10;433
+  198;C;Ptot(1);10;2;0;3;0;433;435
+  199;C;Ptot;10;2;0;0;2;433;10
+  200;C;Qr;10;2;0;0;1;73;81
+  201;C;Qref;10;6;1;0;0;10;73
+  202;C;Qref1;10;0;2;0;0;81;434
+  203;C;Qref2;10;2;0;1;0;434;
+  204;C;Qrot;10;9;1;0;0;10;432
+  205;C;Qstat;10;8;1;3;0;10;432
+  206;C;Qtot(1);10;2;0;1;0;432;434
+  207;C;Qtot;10;2;0;3;2;432;10
+  208;C;SynchMode(1);10;0;1;0;1;10;84
+  209;C;SynchMode(2);10;0;1;0;0;10;
+  210;C;SynchMode(3);10;0;1;0;1;10;86
+  211;C;SynchMode;10;0;1;0;0;10;
+  212;C;bypass(1);10;10;1;1;1;10;88
+  213;C;bypass(2);10;10;1;3;1;10;89
+  214;C;bypass;10;10;1;6;1;10;83
+  215;C;delt_u;10;1;2;0;1;90;82
+  216;C;dud_synch;10;4;1;2;0;10;
+  217;C;duq_synch;10;7;1;2;0;10;
+  218;C;flt(1);10;0;2;2;1;86;88
+  219;C;flt(2);10;0;2;2;1;86;89
+  220;C;flt;10;0;2;1;1;86;83
+  221;C;iP_ref;10;3;0;0;1;;88
+  222;C;iQ_ref;10;3;0;1;1;;89
+  223;C;idr;10;0;2;0;1;88;83
+  224;C;idrf_max;10;1;2;3;1;82;83
+  225;C;idrf_min;10;0;2;2;1;82;83
+  226;C;imag;10;0;2;1;1;85;82
+  227;C;iqr;10;0;2;5;1;89;83
+  228;C;iqrf;10;2;2;4;1;82;83
+  229;C;ird_ref;10;0;2;1;2;83;10
+  230;C;irq_ref(1);10;1;2;0;1;83;89
+  231;C;irq_ref(2);10;1;2;2;1;83;82
+  232;C;irq_ref;10;1;2;2;2;83;10
+  233;C;sw;10;0;2;1;1;90;86
+  234;C;u(1);10;5;1;0;4;10;87
+  235;C;u(2);10;5;1;0;4;10;81
+  236;C;u(3);10;5;1;0;1;10;85
+  237;C;u;10;5;1;0;1;10;90
+  238;C;beta(1);21;0;2;1;0;93;436
+  239;C;beta;21;0;2;0;2;93;21
+  240;C;beta_speed;21;0;2;0;0;95;436
+  241;C;dbeta;21;2;0;0;1;436;94
+  242;C;dspeed;21;2;0;0;1;437;95
+  243;C;s_offset;21;0;2;1;0;92;437
+  244;C;speed;21;3;1;0;0;21;437
+  245;C;speed_ref;21;2;1;3;0;21;437
+  246;C;yi;21;0;2;0;1;94;91
+  247;C;yi1;21;0;2;0;1;91;93
+  248;C;Close;27;0;2;0;2;99;27
+  249;C;CrowBar(1);27;0;2;5;1;96;99
+  250;C;CrowBar;27;0;2;1;1;96;98
+  251;C;Latch;27;3;2;0;1;99;98
+  252;C;ReConn(1);27;4;2;1;1;99;101
+  253;C;ReConn(2);27;4;2;1;1;99;97
+  254;C;ReConn;27;4;2;1;1;99;96
+  255;C;TripSpeed;27;0;2;2;1;101;98
+  256;C;TripVoltage;27;0;2;3;1;97;98
+  257;C;Tripped;27;0;2;6;1;100;99
+  258;C;bypass;27;0;2;3;2;98;27
+  259;C;dud;27;1;2;1;2;99;27
+  260;C;duq;27;2;2;2;2;99;27
+  261;C;irot;27;5;1;0;1;27;96
+  262;C;speed;27;6;1;0;1;27;101
+  263;C;u;27;7;1;0;1;27;97
+  264;C;u0;27;9;1;3;1;27;97
+  265;C;u2;27;8;1;2;1;27;97
+  266;C;ub;27;0;1;0;1;27;99
+  267;C;ubi;27;2;1;2;1;27;99
+  268;C;ubr;27;1;1;1;1;27;99
+  269;C;ugi;27;4;1;4;1;27;99
+  270;C;ugr;27;3;1;3;1;27;99
+  271;C;yi1;27;1;2;0;1;97;100
+  272;C;yi2;27;1;2;1;1;101;100
+  273;C;yi3;27;1;2;2;1;96;100
+  274;C;Tmec(1);35;0;2;0;0;102;74
+  275;C;Tmec;35;0;2;3;0;102;438
+  276;C;_o1;35;-1;2;-1;0;;
+  277;C;pt;35;0;2;1;2;103;35
+  278;C;pt_t;35;2;0;0;1;74;103
+  279;C;pw;35;0;1;0;0;35;
+  280;C;speed_gen(1);35;1;1;1;1;35;102
+  281;C;speed_gen;35;1;1;3;0;35;74
+  282;C;speed_tur(1);35;0;2;0;2;104;35
+  283;C;speed_tur(2);35;0;2;1;0;104;
+  284;C;speed_tur;35;0;2;0;1;104;102
+  285;C;tdif;35;2;0;0;1;438;104
+  286;C;tw;35;2;0;0;0;;438
+  287;C;Pref;39;0;2;0;2;105;39
+  288;C;domega;39;2;0;0;1;439;106
+  289;C;speed(1);39;1;1;3;0;39;75
+  290;C;speed;39;1;1;0;0;39;439
+  291;C;speed_ref;39;0;1;3;0;39;439
+  292;C;yp;39;2;0;0;1;75;105
+  293;C;yt;39;0;2;0;0;106;75
+  294;C;Pm_in;44;0;2;0;1;412;417
+  295;C;cosref;44;0;2;2;1;418;417
+  296;C;f0;44;1;2;1;1;412;417
+  297;C;i;44;0;2;1;1;416;412
+  298;C;iq;44;0;2;4;1;417;412
+  299;C;sinref;44;1;2;3;1;418;417
+  300;C;u;44;0;2;0;1;415;412
+  301;C;udcm;44;0;2;3;1;413;412
+  302;C;udcp;44;0;2;2;1;414;412
+  303;C;Pin;45;0;2;1;1;427;425
+  304;C;Pmd;45;0;2;2;1;422;421
+  305;C;Pmq;45;1;2;3;1;422;421
+  306;C;Qin;45;1;2;2;1;427;425
+  307;C;cosref(1);45;0;2;1;1;426;422
+  308;C;cosref;45;0;2;0;1;426;421
+  309;C;flt;45;2;2;0;2;425;45
+  310;C;gate(1);45;0;2;0;1;420;429
+  311;C;gate;45;0;2;0;1;420;428
+  312;C;id;45;0;2;6;1;421;422
+  313;C;id_ref;45;0;2;4;1;425;422
+  314;C;iq;45;1;2;7;1;421;422
+  315;C;iq_ref;45;1;2;5;1;425;422
+  316;C;sinref(1);45;1;2;0;1;426;422
+  317;C;sinref;45;1;2;1;1;426;421
+  318;C;uac;45;2;2;0;1;419;425
+  319;C;udcm(1);45;0;2;1;1;423;420
+  320;C;udcm;45;0;2;4;1;423;425
+  321;C;udcp(1);45;0;2;0;1;424;420
+  322;C;udcp;45;0;2;3;1;424;425
+  323;C;ui;45;1;2;3;1;419;422
+  324;C;ur;45;0;2;2;1;419;422
+  325;C;Pm;46;0;2;0;2;109;46
+  326;C;Uacref;46;2;1;1;0;46;444
+  327;C;df;46;0;2;3;0;110;442
+  328;C;du;46;2;0;0;1;444;113
+  329;C;dudc;46;2;0;0;1;441;111
+  330;C;f0;46;2;0;1;2;442;46
+  331;C;iq;46;0;1;3;0;46;443
+  332;C;iq_ref;46;0;2;0;0;113;443
+  333;C;o11;46;0;2;0;0;108;442
+  334;C;u;46;1;1;0;1;46;114
+  335;C;uaci;46;0;2;0;1;112;109
+  336;C;udc(1);46;0;2;1;1;107;109
+  337;C;udc;46;0;2;0;0;107;441
+  338;C;udc0;46;5;1;1;0;46;441
+  339;C;udcm;46;4;1;0;0;46;440
+  340;C;udcp;46;3;1;3;0;46;440
+  341;C;ufilter;46;0;2;0;0;114;444
+  342;C;upm;46;2;0;0;1;440;107
+  343;C;yi;46;0;2;0;1;111;110
+  344;C;yi1;46;2;0;0;1;443;112
+  345;C;Pmd;54;0;2;0;2;115;54
+  346;C;Pmq;54;0;2;1;2;116;54
+  347;C;id;54;0;1;3;0;54;446
+  348;C;id_ref;54;1;1;0;0;54;446
+  349;C;iq;54;3;1;1;0;54;445
+  350;C;iq_ref;54;2;1;0;0;54;445
+  351;C;yi;54;2;0;0;1;446;115
+  352;C;yi1;54;2;0;0;1;445;116
+  353;C;choptime;56;1;2;1;2;118;56
+  354;C;gate;56;0;2;0;2;118;56
+  355;C;udc;56;0;2;0;0;117;448
+  356;C;udc0;56;2;1;1;0;56;448
+  357;C;udcm;56;1;1;0;0;56;447
+  358;C;udcp;56;0;1;3;0;56;447
+  359;C;upm;56;2;0;0;1;447;117
+  360;C;yi;56;2;0;0;1;448;118
+  361;C;Pin;59;3;1;0;1;59;130
+  362;C;Qd;59;0;2;0;0;127;450
+  363;C;Qin;59;5;1;0;1;59;119
+  364;C;Qm(1);59;0;2;1;0;119;452
+  365;C;Qm;59;0;2;0;1;119;127
+  366;C;Qref;59;4;1;0;0;59;452
+  367;C;U(1);59;0;2;1;0;124;451
+  368;C;U(2);59;0;2;0;1;124;120
+  369;C;U;59;0;2;0;1;124;125
+  370;C;dU(1);59;2;0;2;1;451;128
+  371;C;dU;59;2;0;1;0;451;450
+  372;C;du;59;2;0;0;1;449;126
+  373;C;du1;59;0;2;1;1;125;122
+  374;C;flt(1);59;1;2;2;1;125;122
+  375;C;flt;59;1;2;2;1;125;123
+  376;C;id_ref;59;0;2;0;2;123;59
+  377;C;idref;59;0;2;0;1;126;123
+  378;C;iq_ref;59;1;2;1;2;123;59
+  379;C;iqref;59;0;2;1;1;122;123
+  380;C;uac;59;7;1;0;1;59;124
+  381;C;uac_ref;59;6;1;0;0;59;451
+  382;C;udc;59;0;2;0;1;129;121
+  383;C;udc_offset;59;0;2;1;0;130;454
+  384;C;udcf;59;0;2;0;0;121;449
+  385;C;udcm;59;1;1;0;0;59;453
+  386;C;udcp;59;0;1;3;0;59;453
+  387;C;udcref;59;2;1;0;0;59;454
+  388;C;udcref_korr;59;2;0;1;0;454;449
+  389;C;upm;59;2;0;0;1;453;129
+  390;C;y1;59;2;0;0;1;452;128
+  391;C;y2;59;2;0;1;1;450;128
+  392;C;y_vmax;59;0;2;3;1;120;122
+  393;C;yi;59;0;2;0;1;128;122
+
+
+$$BlkSlot;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sUpLimInp:SIZEROW(i);sLowLimInp:SIZEROW(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);element(p);filtmod(a:80)
+  394;C;Compensation;7;0;0;1;"ua;ub";1;"speed,pctrl;qctrl,cosphiu;sinphiu,cosphim;sinphim,cosphiref;sinphiref,psir_r;psir_i,bypass,udc";;ElmCom
+  395;C;Current_Measurement;7;0;0;1;"irot,ird;irq";1;"id;iq,cosphim;sinphim,cosphiref;sinphiref,cosphiu;sinphiu";;*
+  396;C;DFIG;7;0;0;1;"xspeed,cosphim;sinphim,cosphi;sinphi,psir_r;psir_i,ird;irq";1;"pt,usr;usi";;ElmAsm*
+  397;C;Ir_ctrl;7;0;0;1;"up;uq";1;"ird;irq,ird_ref;irq_ref,bypass";;*
+  398;C;MPT;7;0;0;1;speed_ref;1;"ptot;qtot,speed";;ElmMpt*
+  399;C;OverFreq_Pwr_Reduction;7;0;0;1;pref_out;1;pref_in,Fmeas;;ElmDsl*
+  400;C;PQ_Control;7;0;0;1;"Ptot,ird_ref;irq_ref";1;"speed,Pref,Pstat;Qstat,dud_synch;duq_synch,bypass,u;ur;ui";;ElmPQ*
+  401;C;PQ_tot;7;0;0;1;"p;q";0;;;StaPqmea
+  402;C;Pitch_Control;7;0;0;1;beta;1;speed,speed_ref;;ElmDsl*
+  403;C;Protection;7;0;0;1;"dud;duq,bypass";1;"speed,irot,u;ugr;ugi;u2;u0,ub;ubr;ubi";;ElmPro*
+  404;C;Shaft;7;0;0;1;speed_tur,pt;1;speed_gen,pw;;ElmDsl*
+  405;C;SlowFrequMeas;7;0;0;1;Fmeas;0;;;ElmPhi*
+  406;C;Speed-Ctrl;7;0;0;1;Pref;1;speed_ref,speed_tur,speed;;ElmDsl*
+  407;C;SpeedRef;7;0;0;0;;1;"ptot;qtot,speed";;ElmDsl*
+  408;C;Theta_Meas;7;0;0;1;"cosphi;sinphi";0;;;ElmPhi*
+  409;C;Turbine;7;0;0;1;pwind;1;beta,vw,speed;;ElmDsl*
+  410;C;Vac_bus;7;0;0;1;"u;ur;ui";0;;;StaVmea*
+  411;C;Vac_gen;7;0;0;1;"u;ur;ui;u2r;u0";0;;;StaVmea*
+  412;C;Controller;44;0;0;1;Pm,f0;1;u,i,udcp,udcm,iq;;ElmDsl*
+  413;C;DC VoltageN;44;0;0;1;ur;0;;;StaVmea*
+  414;C;DC VoltageP;44;0;0;1;ur;0;;;StaVmea*
+  415;C;Offshore AC Voltage;44;0;0;1;u;0;;;StaVmea*
+  416;C;Offshore Current;44;0;0;1;i;0;;;StaImea*
+  417;C;Offshore VSC;44;0;0;1;iq;1;Pm_in,f0,cosref,sinref;;ElmVsc*
+  418;C;PLL (EMT only);44;0;0;1;cosphi,sinphi;0;;;ElmPhi*
+  419;C;AC-Voltage;45;0;0;1;ur,ui,u;0;;;StaVmea
+  420;C;ChopperControl;45;0;0;1;gate;1;udcp,udcm;;ElmDsl*
+  421;C;Converter;45;0;0;1;id,iq;1;cosref,sinref,Pmd,Pmq;;ElmVsc*
+  422;C;Current Controller;45;0;0;1;Pmd,Pmq;1;sinr,cosr,ur,ui,id_ref,iq_ref,id,iq;;ElmDsl*
+  423;C;DCn-Voltage;45;0;0;1;ur;0;;;StaVmea
+  424;C;DCp-Voltage;45;0;0;1;ur;0;;;StaVmea
+  425;C;Main Controller;45;0;0;1;id_ref,iq_ref,flt;1;uac,Pin,Qin,udcp,udcm;;ElmDsl*
+  426;C;PLL;45;0;0;1;cosphi,sinphi;0;;;ElmPhi*
+  427;C;PQ_Measurement_onsh;45;0;0;1;p,q;0;;;StaPq*
+  428;C;Valve1;45;0;0;0;;1;gate;;ElmValve*
+  429;C;Valve2;45;0;0;0;;1;gate;;ElmValve*
+
+
+$$BlkSum;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iInput0(i);iInput1(i);iInput2(i);iInput3(i)
+  430;C;Summation Point(2);8;1;2;2;0
+  431;C;Summation Point(3);8;0;2;2;1
+  432;C;Summation Point(1);10;0;2;2;0
+  433;C;Summation Point;10;0;0;2;2
+  434;C;Summationspunkt(2);10;1;0;2;2
+  435;C;Summationspunkt;10;0;2;2;1
+  436;C;Summation Point(1);21;0;1;2;2
+  437;C;Summation Point;21;0;1;2;1
+  438;C;Summation Point(3);35;0;2;2;1
+  439;C;Summation Point;39;0;2;2;1
+  440;C;Summation Point;46;1;2;2;0
+  441;C;Summationspunkt(1);46;0;1;2;2
+  442;C;Summationspunkt(2);46;0;2;2;0
+  443;C;Summationspunkt(3);46;0;2;2;0
+  444;C;Summationspunkt;46;1;0;2;3
+  445;C;Summationspunkt(1);54;0;1;2;2
+  446;C;Summationspunkt;54;0;2;2;1
+  447;C;Summation Point;56;1;2;2;0
+  448;C;Summationspunkt;56;0;1;2;2
+  449;C;Summation Point(1);59;0;1;2;2
+  450;C;Summation Point(2);59;0;1;2;3
+  451;C;Summation Point(3);59;0;1;2;2
+  452;C;Summation Point(4);59;1;0;2;2
+  453;C;Summation Point;59;1;2;2;0
+  454;C;Summationspunkt(1);59;0;0;2;2
+
+
+$$ElmAsm;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);ngnum(i);i_mot(i);pgini(r);outserv(i);idfig(i);bustp(a:4);qgini(r)
+  455;C;WTG_1;721;1588;1;0;5;0;1;PQ;0
+  456;C;WTG_10;721;1588;1;0;5;0;1;PQ;0
+  457;C;WTG_11;721;1588;10;0;5;0;1;PQ;0
+  458;C;WTG_12;721;1588;20;0;5;0;1;PQ;0
+  459;C;WTG_13;721;1588;20;0;5;0;1;PQ;0
+  460;C;WTG_14;721;1588;20;0;5;0;1;PQ;0
+  461;C;WTG_2;721;1588;1;0;5;0;1;PQ;0
+  462;C;WTG_3;721;1588;1;0;5;0;1;PQ;0
+  463;C;WTG_4;721;1588;1;0;5;0;1;PQ;0
+  464;C;WTG_5;721;1588;1;0;5;0;1;PQ;0
+  465;C;WTG_6;721;1588;1;0;5;0;1;PQ;0
+  466;C;WTG_7;721;1588;1;0;5;0;1;PQ;0
+  467;C;WTG_8;721;1588;1;0;5;0;1;PQ;0
+  468;C;WTG_9;721;1588;1;0;5;0;1;PQ;0
+
+
+$$ElmComp;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);outserv(i);typ_id(p);contents:SIZEROW(i);dat_src(a:6);pblk:SIZEROW(i);pblk:0(p);pblk:1(p);pblk:2(p);pblk:3(p);pblk:4(p);pblk:5(p);pblk:6(p);pblk:7(p);pblk:8(p);pblk:9(p);pblk:10(p);pblk:11(p);pblk:12(p);pblk:13(p);pblk:14(p);pblk:15(p);pblk:16(p);pblk:17(p);pelm:SIZEROW(i);pelm:0(p);pelm:1(p);pelm:2(p);pelm:3(p);pelm:4(p);pelm:5(p);pelm:6(p);pelm:7(p);pelm:8(p);pelm:9(p);pelm:10(p);pelm:11(p);pelm:12(p);pelm:13(p);pelm:14(p);pelm:15(p);pelm:16(p);pelm:17(p)
+  469;C;Offshore Controller;720;0;44;0;MAN;7;417;412;413;414;415;416;418;;;;;;;;;;;;7;829;535;1555;1556;1554;1514;;;;;;;;;;;;
+  470;C;Onshore Controller;720;0;45;0;MAN;11;421;428;429;425;420;427;419;423;424;426;422;;;;;;;;11;830;;;537;536;;1557;1558;1559;;538;;;;;;;
+  471;C;WTG_Ctrl_1;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;455;539;540;544;;542;550;546;1561;;1560;;545;547;548;541;549;543
+  472;C;WTG_Ctrl_10;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;456;551;552;556;;554;562;558;1563;;1562;;557;559;560;553;561;555
+  473;C;WTG_Ctrl_11;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;457;563;564;568;;566;574;570;1565;;1564;;569;571;572;565;573;567
+  474;C;WTG_Ctrl_12;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;458;575;576;580;;578;586;582;1567;;1566;;581;583;584;577;585;579
+  475;C;WTG_Ctrl_13;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;459;587;588;592;;590;598;594;1569;;1568;;593;595;596;589;597;591
+  476;C;WTG_Ctrl_14;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;460;599;600;604;;602;610;606;1571;;1570;;605;607;608;601;609;603
+  477;C;WTG_Ctrl_2;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;461;611;612;616;;614;622;618;1573;;1572;;617;619;620;613;621;615
+  478;C;WTG_Ctrl_3;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;462;623;624;628;;626;634;630;1575;;1574;;629;631;632;625;633;627
+  479;C;WTG_Ctrl_4;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;463;635;636;640;;638;646;642;1577;;1576;;641;643;644;637;645;639
+  480;C;WTG_Ctrl_5;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;464;647;648;652;;650;658;654;1579;;1578;;653;655;656;649;657;651
+  481;C;WTG_Ctrl_6;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;465;659;660;664;;662;670;666;1581;;1580;;665;667;668;661;669;663
+  482;C;WTG_Ctrl_7;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;466;671;672;676;;674;682;678;1583;;1582;;677;679;680;673;681;675
+  483;C;WTG_Ctrl_8;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;467;683;684;688;;686;694;690;1585;;1584;;689;691;692;685;693;687
+  484;C;WTG_Ctrl_9;721;0;7;0;MAN;18;396;394;395;400;401;398;409;403;410;408;411;405;402;404;406;397;407;399;18;468;695;696;700;;698;706;702;1587;;1586;;701;703;704;697;705;699
+
+
+$$ElmCoup;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);on_off(i);aUsage(a:4);nphase(i);nneutral(i);chr_name(a:40);for_name(a:100)
+  485;C;CB.L1;724;;1;cbk;3;0;;
+  486;C;CB.L2;724;;1;cbk;3;0;;
+  487;C;CB.L3;724;;1;cbk;3;0;;
+  488;C;CB.L4;724;;1;cbk;3;0;;
+  489;C;CB.R1;724;;1;cbk;3;0;;
+  490;C;CB.R2;724;;1;cbk;3;0;;
+  491;C;CB.R3;724;;1;cbk;3;0;;
+  492;C;CB.R4;724;;1;cbk;3;0;;
+  493;C;CBS;724;;0;cbk;3;0;;
+  494;C;IS.L1.1;724;;1;dct;3;0;;
+  495;C;IS.L1.2;724;;1;dct;3;0;;
+  496;C;IS.L2.1;724;;1;dct;3;0;;
+  497;C;IS.L2.2;724;;1;dct;3;0;;
+  498;C;IS.L3.1;724;;1;dct;3;0;;
+  499;C;IS.L3.2;724;;1;dct;3;0;;
+  500;C;IS.L4.1;724;;1;dct;3;0;;
+  501;C;IS.L4.2;724;;1;dct;3;0;;
+  502;C;IS.R1.1;724;;1;dct;3;0;;
+  503;C;IS.R1.2;724;;1;dct;3;0;;
+  504;C;IS.R2.1;724;;1;dct;3;0;;
+  505;C;IS.R2.2;724;;1;dct;3;0;;
+  506;C;IS.R3.1;724;;1;dct;3;0;;
+  507;C;IS.R3.2;724;;1;dct;3;0;;
+  508;C;IS.R4.1;724;;1;dct;3;0;;
+  509;C;IS.R4.2;724;;1;dct;3;0;;
+  510;C;CB.L1;725;;1;cbk;3;0;;
+  511;C;CB.L2;725;;1;cbk;3;0;;
+  512;C;CB.L3;725;;1;cbk;3;0;;
+  513;C;CB.L4;725;;1;cbk;3;0;;
+  514;C;CB.R1;725;;1;cbk;3;0;;
+  515;C;CB.R2;725;;1;cbk;3;0;;
+  516;C;CB.R3;725;;1;cbk;3;0;;
+  517;C;CB.R4;725;;1;cbk;3;0;;
+  518;C;CBS;725;;0;cbk;3;0;;
+  519;C;IS.L1.1;725;;1;dct;3;0;;
+  520;C;IS.L1.2;725;;1;dct;3;0;;
+  521;C;IS.L2.1;725;;1;dct;3;0;;
+  522;C;IS.L2.2;725;;1;dct;3;0;;
+  523;C;IS.L3.1;725;;1;dct;3;0;;
+  524;C;IS.L3.2;725;;1;dct;3;0;;
+  525;C;IS.L4.1;725;;1;dct;3;0;;
+  526;C;IS.L4.2;725;;1;dct;3;0;;
+  527;C;IS.R1.1;725;;1;dct;3;0;;
+  528;C;IS.R1.2;725;;1;dct;3;0;;
+  529;C;IS.R2.1;725;;1;dct;3;0;;
+  530;C;IS.R2.2;725;;1;dct;3;0;;
+  531;C;IS.R3.1;725;;1;dct;3;0;;
+  532;C;IS.R3.2;725;;1;dct;3;0;;
+  533;C;IS.R4.1;725;;1;dct;3;0;;
+  534;C;IS.R4.2;725;;1;dct;3;0;;
+
+
+$$ElmDsl;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);outserv(i);params:SIZEROW(i);params:0(r);params:1(r);params:2(r);params:3(r);params:4(r);params:5(r);params:6(r);params:7(r);params:8(r);params:9(r);params:10(r);params:11(r);params:12(r);params:13(r);params:14(r);params:15(r);params:16(r);params:17(r);params:18(r);params:19(r);params:20(r);params:21(r);params:22(r);pelm:SIZEROW(i);pelm:0(p);pelm:1(p);signal:SIZEROW(i);parameterNames:SIZEROW(i);parameterNames:0(a);oarrmat:SIZEROW(i);iAstabint(i)
+  535;C;AC Offshore Controller_V3;469;46;0;14;2;0.2;2;0.02;1;0.005;99;0;0.03;-0.7;-0.1;0.7;1.1;1;;;;;;;;;;2;;;0;1;Kuac,Tuac,Kiac,Tiac,F_ref,Tfilter_U,UdcHigh,UdcLow,plusFrequ,i_min,Uac_min,i_max,Uac_max,Frequ_Grad;0;1
+  536;C;ChopperControl;470;56;0;2;1.2;1.1;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;UdcUpper,UdcLower;0;1
+  537;C;Control;470;59;0;15;1.15;0.1487;0.001;0.05;12;100;0;1;2;10;0.1;1;0.1;1;1.1;;;;;;;;;2;;;0;1;umax,x,Trudc,Droop,Ku,Kiu,Kdu,fltMODE,K_flt,Kd,Td,iqfmax,Ut,MODE,i_max;0;1
+  538;C;Current Ctrl;470;54;0;4;2;0.002;-3;3;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kpm,Tpm,P_min,P_max;0;1
+  539;C;Compensation;471;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  540;C;Current Measurement;471;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  541;C;Irot-Ctirl;471;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  542;C;MPT;471;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  543;C;OverFrequPwr Reductiom;471;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  544;C;PQ Control & synch;471;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  545;C;Pitch Control;471;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  546;C;Protection & synch;471;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  547;C;Shaft;471;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  548;C;Speed-Controller;471;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  549;C;SpeedRef;471;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  550;C;Turbine;471;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  551;C;Compensation;472;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  552;C;Current Measurement;472;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  553;C;Irot-Ctirl;472;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  554;C;MPT;472;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  555;C;OverFrequPwr Reductiom;472;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  556;C;PQ Control & synch;472;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  557;C;Pitch Control;472;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  558;C;Protection & synch;472;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  559;C;Shaft;472;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  560;C;Speed-Controller;472;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  561;C;SpeedRef;472;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  562;C;Turbine;472;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  563;C;Compensation;473;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  564;C;Current Measurement;473;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  565;C;Irot-Ctirl;473;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  566;C;MPT;473;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  567;C;OverFrequPwr Reductiom;473;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  568;C;PQ Control & synch;473;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  569;C;Pitch Control;473;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  570;C;Protection & synch;473;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  571;C;Shaft;473;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  572;C;Speed-Controller;473;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  573;C;SpeedRef;473;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  574;C;Turbine;473;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  575;C;Compensation;474;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  576;C;Current Measurement;474;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  577;C;Irot-Ctirl;474;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  578;C;MPT;474;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  579;C;OverFrequPwr Reductiom;474;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  580;C;PQ Control & synch;474;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  581;C;Pitch Control;474;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  582;C;Protection & synch;474;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  583;C;Shaft;474;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  584;C;Speed-Controller;474;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  585;C;SpeedRef;474;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  586;C;Turbine;474;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  587;C;Compensation;475;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  588;C;Current Measurement;475;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  589;C;Irot-Ctirl;475;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  590;C;MPT;475;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  591;C;OverFrequPwr Reductiom;475;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  592;C;PQ Control & synch;475;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  593;C;Pitch Control;475;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  594;C;Protection & synch;475;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  595;C;Shaft;475;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  596;C;Speed-Controller;475;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  597;C;SpeedRef;475;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  598;C;Turbine;475;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  599;C;Compensation;476;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  600;C;Current Measurement;476;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  601;C;Irot-Ctirl;476;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  602;C;MPT;476;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  603;C;OverFrequPwr Reductiom;476;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  604;C;PQ Control & synch;476;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  605;C;Pitch Control;476;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  606;C;Protection & synch;476;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  607;C;Shaft;476;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  608;C;Speed-Controller;476;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  609;C;SpeedRef;476;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  610;C;Turbine;476;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  611;C;Compensation;477;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  612;C;Current Measurement;477;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  613;C;Irot-Ctirl;477;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  614;C;MPT;477;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  615;C;OverFrequPwr Reductiom;477;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  616;C;PQ Control & synch;477;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  617;C;Pitch Control;477;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  618;C;Protection & synch;477;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  619;C;Shaft;477;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  620;C;Speed-Controller;477;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  621;C;SpeedRef;477;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  622;C;Turbine;477;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  623;C;Compensation;478;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  624;C;Current Measurement;478;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  625;C;Irot-Ctirl;478;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  626;C;MPT;478;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  627;C;OverFrequPwr Reductiom;478;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  628;C;PQ Control & synch;478;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  629;C;Pitch Control;478;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  630;C;Protection & synch;478;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  631;C;Shaft;478;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  632;C;Speed-Controller;478;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  633;C;SpeedRef;478;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  634;C;Turbine;478;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  635;C;Compensation;479;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  636;C;Current Measurement;479;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  637;C;Irot-Ctirl;479;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  638;C;MPT;479;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  639;C;OverFrequPwr Reductiom;479;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  640;C;PQ Control & synch;479;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  641;C;Pitch Control;479;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  642;C;Protection & synch;479;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  643;C;Shaft;479;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  644;C;Speed-Controller;479;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  645;C;SpeedRef;479;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  646;C;Turbine;479;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  647;C;Compensation;480;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  648;C;Current Measurement;480;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  649;C;Irot-Ctirl;480;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  650;C;MPT;480;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  651;C;OverFrequPwr Reductiom;480;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  652;C;PQ Control & synch;480;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  653;C;Pitch Control;480;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  654;C;Protection & synch;480;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  655;C;Shaft;480;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  656;C;Speed-Controller;480;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  657;C;SpeedRef;480;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  658;C;Turbine;480;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  659;C;Compensation;481;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  660;C;Current Measurement;481;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  661;C;Irot-Ctirl;481;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  662;C;MPT;481;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  663;C;OverFrequPwr Reductiom;481;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  664;C;PQ Control & synch;481;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  665;C;Pitch Control;481;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  666;C;Protection & synch;481;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  667;C;Shaft;481;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  668;C;Speed-Controller;481;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  669;C;SpeedRef;481;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  670;C;Turbine;481;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  671;C;Compensation;482;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  672;C;Current Measurement;482;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  673;C;Irot-Ctirl;482;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  674;C;MPT;482;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  675;C;OverFrequPwr Reductiom;482;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  676;C;PQ Control & synch;482;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  677;C;Pitch Control;482;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  678;C;Protection & synch;482;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  679;C;Shaft;482;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  680;C;Speed-Controller;482;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  681;C;SpeedRef;482;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  682;C;Turbine;482;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  683;C;Compensation;483;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  684;C;Current Measurement;483;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  685;C;Irot-Ctirl;483;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  686;C;MPT;483;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  687;C;OverFrequPwr Reductiom;483;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  688;C;PQ Control & synch;483;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  689;C;Pitch Control;483;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  690;C;Protection & synch;483;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  691;C;Shaft;483;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  692;C;Speed-Controller;483;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  693;C;SpeedRef;483;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  694;C;Turbine;483;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+  695;C;Compensation;484;6;0;1;0.15;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;kv;0;1
+  696;C;Current Measurement;484;34;0;2;1863;5556;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Urrated,Srated;0;1
+  697;C;Irot-Ctirl;484;8;0;4;0.0496;0.0128;0.0496;0.0128;;;;;;;;;;;;;;;;;;;;2;;;0;1;Kd,Td,Kq,Tq;0;1
+  698;C;MPT;484;70;1;1;5;;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td;0;1
+  699;C;OverFrequPwr Reductiom;484;2;0;7;50.2;50.05;50;0.01;0;-0.1;0.1;;;;;;;;;;;;;;;;;2;;;0;1;fUp,fLow,PHz,Tfilter,p_min,negGrad,posGrad;0;1
+  700;C;PQ Control & synch;484;10;0;14;4;0.1;4;0.1;3.5;0.1;2;1.31;1;0.01;0.5;2;1.1;1;;;;;;;;;;2;;;0;1;Kp,Tp,Kq,Tq,Xm,deltaU,K_deltaU,i_max,i_EEG,Tudelay,Tbackdelay,Tramp,id_max,iq_max;0;1
+  701;C;Pitch Control;484;21;0;7;150;25;0.01;0;-10;27;10;;;;;;;;;;;;;;;;;2;;;0;1;Kpp,Kip,Tp,beta_min,dbeta_min,beta_max,dbeta_max;0;1
+  702;C;Protection & synch;484;27;0;23;6;0.06;0;2;0.05;0.9;1;1.53;0;1.6;0;0.6;0;0.7;1;1.5;0.1;1.2;1;0.1;0.2;0.4;2;2;;;0;1;MaxIrotor,tbypass,TripIfCrow,MaxSynchTime,CloseDelay,Usynch,Reconnect,MaxSpeed1,ttripMaxS1,MaxSpeed2,ttripMaxS2,MinSpeed1,ttripMinS1,MinSpeed2,ttripMinS2,MaxVoltage1,ttripMaxV1,MaxVoltage2,ttripMaxV2,MinVoltage1,ttripMinV1,MinVoltage2,ttripMinV2;0;1
+  703;C;Shaft;484;35;0;6;4.02;2.22;1.947;80.27;1.5;1.745;;;;;;;;;;;;;;;;;;2;;;0;1;H,Ptbase,Pgbase,Ktg,Dtg,ombase;0;1
+  704;C;Speed-Controller;484;39;0;7;1;0.1;0.5;0.1;-99;1.1;99;;;;;;;;;;;;;;;;;2;;;0;1;Kptrq,Kitrq,Tpc,p_min,dp_min,p_max,dp_max;0;1
+  705;C;SpeedRef;484;42;0;3;5;1.2;1;;;;;;;;;;;;;;;;;;;;;2;;;0;1;Td,speed0,auto;0;1
+  706;C;Turbine;484;43;0;2;0.00159;56;;;;;;;;;;;;;;;;;;;;;;2;;;0;1;rhoAr,Kb;0;1
+
+
+$$ElmLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);dline(r);fline(r);GPScoords:MATRIX(a);nlnum(i);inAir(i);outserv(i);c:R1(r);c:X1(r);c:B1(r);c:R0(r);c:X0(r);c:B0(r);c:G1(r);c:G0(r);i_dist(i);chr_name(a:40);pStoch(p);for_name(a:100);GPScoords:SIZEROW:SIZEROW(i);GPScoords:SIZECOL:SIZEROW(i)
+  707;C;DC_line_neg;720;1589;100;1;;1;0;0;1;;;;;;0;;0;;;;0;0
+  708;C;DC_line_pos;720;1589;100;1;;1;0;0;1;;;;;;0;;0;;;;0;0
+  709;C;Line;721;1591;1.5;1;;1;0;0;0.05805;0.155508;141.3717;0.2322;0.622035;147.215;0;0;0;;;;0;0
+  710;C;Line_a;721;1591;1.5;1;;1;0;0;0.05805;0.155508;141.3717;0.2322;0.622035;147.215;0;0;0;;;;0;0
+  711;C;Line_b;721;1591;1.5;1;;1;0;0;0.05805;0.155508;141.3717;0.2322;0.622035;147.215;0;0;0;;;;0;0
+  712;C;Line_c;721;1591;1.5;1;;1;0;0;0.05805;0.155508;141.3717;0.2322;0.622035;147.215;0;0;0;;;;0;0
+  713;C;Line_d;721;1591;1.5;1;;1;0;0;0.05805;0.155508;141.3717;0.2322;0.622035;147.215;0;0;0;;;;0;0
+  714;C;Line_e;721;1590;1.5;1;;1;0;0;0.135;0.15;103.6726;0.9;0.225;103.6726;0;0;0;;;;0;0
+  715;C;Line_f;721;1590;1.5;1;;1;0;0;0.135;0.15;103.6726;0.9;0.225;103.6726;0;0;0;;;;0;0
+  716;C;Line_g;721;1590;1.5;1;;1;0;0;0.135;0.15;103.6726;0.9;0.225;103.6726;0;0;0;;;;0;0
+  717;C;Line_h;721;1590;1.5;1;;1;0;0;0.135;0.15;103.6726;0.9;0.225;103.6726;0;0;0;;;;0;0
+  718;C;Line_i;721;1590;1.5;1;;1;0;0;0.135;0.15;103.6726;0.9;0.225;103.6726;0;0;0;;;;0;0
+
+
+$$ElmNet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);pDiagram(p);for_name(a:100)
+  719;C;150-33kV Offshore Station;;50;1314;
+  720;C;HVDC;;50;1316;
+  721;C;Windpark;;50;1315;
+
+
+$$ElmSind;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);ucn(r);Sn(r);uk(r);Pcu(r);outserv(i);for_name(a:100)
+  722;C;Chopper_neg;720;150;1;0;0;0;
+  723;C;Chopper_pos;720;150;1;0;0;0;
+
+
+$$ElmSubstat;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sShort(a:24);sType(a:160);GPSlat(r);GPSlon(r)
+  724;C;Sub_A;719;;;0;0
+  725;C;Sub_B;719;;;0;0
+
+
+$$ElmTerm;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);systype(i);iUsage(i);uknom(r);unknom(r);iminus(i);outserv(i);GPSlat(r);GPSlon(r);vtarget(r);cpZone(p);cpSubstat(p);ivpriority(i);dvmin(r);dvmax(r);chr_name(a:40);cpArea(p);cpGrid(p);cpSite(p);phtech(i);for_name(a:100)
+  726;C;A1;724;;0;0;33;19.05256;0;0;0;0;1;;724;1;-5;5;;;719;;0;
+  727;C;A2;724;;0;0;33;19.05256;0;0;0;0;1;;724;2;-5;5;;;719;;0;
+  728;C;L1;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  729;C;L2;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  730;C;L3;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  731;C;L4;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  732;C;R1;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  733;C;R2;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  734;C;R3;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  735;C;R4;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  736;C;T00;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  737;C;T01;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  738;C;T02;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  739;C;T03;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  740;C;T04;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  741;C;T05;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  742;C;T06;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  743;C;T07;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  744;C;T10;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  745;C;T11;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  746;C;T12;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  747;C;T13;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  748;C;T14;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  749;C;T15;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  750;C;T16;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  751;C;T17;724;;0;2;33;19.05256;0;0;0;0;1;;724;-1;-5;5;;;719;;0;
+  752;C;B1;725;;0;0;33;19.05256;0;0;0;0;1;;725;1;-5;5;;;719;;0;
+  753;C;B2;725;;0;0;33;19.05256;0;0;0;0;1;;725;2;-5;5;;;719;;0;
+  754;C;L1;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  755;C;L2;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  756;C;L3;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  757;C;L4;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  758;C;R1;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  759;C;R2;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  760;C;R3;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  761;C;R4;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  762;C;T00;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  763;C;T01;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  764;C;T02;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  765;C;T03;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  766;C;T04;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  767;C;T05;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  768;C;T06;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  769;C;T07;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  770;C;T10;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  771;C;T11;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  772;C;T12;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  773;C;T13;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  774;C;T14;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  775;C;T15;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  776;C;T16;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  777;C;T17;725;;0;2;33;19.05256;0;0;0;0;1;;725;-1;-5;5;;;719;;0;
+  778;C;T_AC  Offshore;719;;0;0;155;89.48929;0;0;0;0;1;;;-1;-5;5;;;719;;0;
+  779;C;Earth Onshore;720;;1;1;150;150;0;0;0;0;1;;;-1;-5;5;;;720;;-1;
+  780;C;Onshore Slack;720;;0;0;380;219.3931;0;0;0;0;1;;;-1;-5;5;;;720;;0;
+  781;C;T_AC Onshore;720;;0;0;110;63.50853;0;0;0;0;1;;;-1;-5;5;;;720;;0;
+  782;C;T_DC_Chopper_neg;720;;1;1;150;150;1;0;0;0;1;;;-1;-5;5;;;720;;-1;
+  783;C;T_DC_Chopper_pos;720;;1;1;150;150;0;0;0;0;1;;;-1;-5;5;;;720;;-1;
+  784;C;T_DC_Offshore_neg;720;;1;0;150;150;1;0;0;0;1;;;-1;-5;5;;;720;;-1;
+  785;C;T_DC_Offshore_pos;720;;1;0;150;150;0;0;0;0;1;;;-1;-5;5;;;720;;-1;
+  786;C;T_DC_Onshore_neg;720;;1;0;150;150;1;0;0;0;1;;;-1;-5;5;;;720;;-1;
+  787;C;T_DC_Onshore_pos;720;;1;0;150;150;0;0;0;0;1;;;-1;-5;5;;;720;;-1;
+  788;C;LV 1;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  789;C;LV 10;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  790;C;LV 11;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  791;C;LV 12;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  792;C;LV 13;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  793;C;LV 14;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  794;C;LV 2;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  795;C;LV 3;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  796;C;LV 4;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  797;C;LV 5;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  798;C;LV 6;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  799;C;LV 7;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  800;C;LV 8;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  801;C;LV 9;721;;0;0;0.69;0.398371;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  802;C;Term_a;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  803;C;Term_b;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  804;C;Term_c;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  805;C;Term_d;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  806;C;Term_e;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  807;C;Term_f;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  808;C;Term_g;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  809;C;Term_h;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  810;C;Term_i;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+  811;C;Term_j;721;;0;0;33;19.05256;0;0;0;0;1;;;-1;-5;5;;;721;;0;
+
+
+$$ElmTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);ntnum(i);outserv(i);nntap(i);i_auto(i);ntrcn(i);usetp(r);usp_low(r);usp_up(r);t2ldc(i);cgnd_h(i);cgnd_l(i);i_eahv(i);i_ealv(i);c:nntap(i);p_rem(p);cpCtrlNode(p);uset_mode(i);sernum(a:40);constr(i);chr_name(a:40);ratfac(r);for_name(a:100)
+  812;C;110-380kV;720;1592;1;0;0;0;1;1;0.99;1.01;1;0;0;0;0;0;;781;0;;0;;1;
+  813;C;Trf 1;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;803;0;;0;;1;
+  814;C;Trf 10;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;802;0;;0;;1;
+  815;C;Trf 11;721;1593;10;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;726;0;;0;;1;
+  816;C;Trf 12;721;1593;20;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;727;0;;0;;1;
+  817;C;Trf 13;721;1593;20;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;752;0;;0;;1;
+  818;C;Trf 14;721;1593;20;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;753;0;;0;;1;
+  819;C;Trf 2;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;804;0;;0;;1;
+  820;C;Trf 3;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;805;0;;0;;1;
+  821;C;Trf 4;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;806;0;;0;;1;
+  822;C;Trf 5;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;807;0;;0;;1;
+  823;C;Trf 6;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;808;0;;0;;1;
+  824;C;Trf 7;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;809;0;;0;;1;
+  825;C;Trf 8;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;810;0;;0;;1;
+  826;C;Trf 9;721;1593;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;811;0;;0;;1;
+
+
+$$ElmTr3;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);nt3nm(i);typ_id(p);outserv(i);n3tap_h(i);n3tap_m(i);n3tap_l(i);i_auto_hl(i);ictrlside(i);ntrcn(i);t3ldc(i);usetp(r);usp_low(r);usp_up(r)
+  827;C;A1B1;719;1;1594;0;0;0;0;0;0;1;1;1;0.99;1.01
+  828;C;A2B2;719;1;1594;0;0;0;0;0;0;1;1;1;0.99;1.01
+
+
+$$ElmVsc;FID(a:40);OP(a:1);c_pmod(p);loc_name(a:80);for_name(a:100);fold_id(p);outserv(i);Unom(r);usetp(r);psetp(r);qsetp(r);Pnold(r);P_max(r);Snom(r);Pcu(r);uk(r);Rarm(r);Larm(r);mmcCmod(r);NmmcSM(i);iZarmDCside(i);swtLossFactor(r);resLossFactor(r);usetpdc(r);Unomdc(r);vsctype(i);Cdc(r);i_acdc(i);i_ctrl(i);i_mod(i);iVIsource(i);iVacMax(i);Pmmax(r);Kd(r);Td(r);Kq(r);Tq(r);i_det(i)
+  829;C;469;Conv_Offshore;;720;0;155;1;-400;0;3000;450;450;400;10;0.006;60;10000;200;0;0;0;1;300;1;0;0;0;0;0;0;1;0;0;0;0;0
+  830;C;470;Conv_Onshore;;720;0;110;1;400;0;3000;450;450;400;15;0.006;60;10000;200;0;0;0;0.974;300;1;0;3;0;0;0;0;1;1;0.002;1;0.002;0
+
+
+$$ElmXnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snss(r);rntxn(r);z2tz1(r);snssmin(r);rntxnmin(r);z2tz1min(r);chr_name(a:40);bustp(a:2);pgini(r);qgini(r);phiini(r);usetp(r);outserv(i);Kpf(r);K(r)
+  831;C;External Grid;720;10000;0.1;1;8000;0.1;1;;SL;0;0;0;1;0;0;9999
+
+
+$$IntFolder;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iopt_typ(i)
+  832;C;Used Macros;2;0
+  833;C;Used Macros;7;0
+  834;C;Used Macros;8;0
+  835;C;Used Macros;10;0
+  836;C;Used Macros;11;0
+  837;C;Used Macros;21;0
+  838;C;Used Macros;27;0
+  839;C;Used Macros;35;0
+  840;C;Used Macros;39;0
+  841;C;Used Macros;42;0
+  842;C;Used Macros;46;0
+  843;C;Used Macros;54;0
+  844;C;Used Macros;56;0
+  845;C;Used Macros;59;0
+  846;C;Layers;1314;0
+  847;C;Settings;1314;0
+  848;C;Layers;1315;0
+  849;C;Settings;1315;0
+  850;C;Layers;1316;0
+  851;C;Settings;1316;0
+  852;C;Layers;1317;0
+  853;C;Settings;1317;0
+  854;C;Layers;1318;0
+  855;C;Settings;1318;0
+  856;C;Library;1319;1
+  857;C;DFIG Model;856;1
+  858;C;HVDC Converter Control;;0
+
+
+$$IntGrf;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iCol(i);iVis(i);iLevel(i);rCenterX(r);rCenterY(r);sSymNam(a:80);pDataObj(p);iRot(i);rSizeX(r);rSizeY(r);sAttr:SIZEROW(i);sAttr:0(a);iCollapsed(i);iIndLS(i)
+  859;C;ColLeg;1314;1;0;42;13.31859;48.5673;__COLGRAF__;;0;0.6;0.6;1;MAXLINESCOLOURLEGEND,25;1;1
+  860;C;Grafisches Netzelement(1);1314;1;1;1;107.1875;65.62501;TermStrip;791;0;0.833333;1;0;;1;1
+  861;C;Grafisches Netzelement(11);1314;1;1;1;67.8125;65.625;TermStrip;790;0;0.833333;1;0;;1;1
+  862;C;Grafisches Netzelement(2);1314;1;1;1;181.5625;65.625;TermStrip;792;0;0.833333;1;0;;1;1
+  863;C;Grafisches Netzelement(3);1314;1;1;1;242.8125;65.625;TermStrip;793;0;0.833333;1;0;;1;1
+  864;C;Graphical Net Object(1);1314;1;1;1;54.68752;100.625;TermStrip;726;0;1.833334;1;0;;1;1
+  865;C;Graphical Net Object(10);1314;1;1;1;80.9375;100.625;LogSwitch;493;90;1;1;0;;1;1
+  866;C;Graphical Net Object(12);1314;1;1;1;148.75;192.5;3_vsc;829;90;1;1;0;;1;1
+  867;C;Graphical Net Object(2);1314;1;1;1;181.5625;100.625;TermStrip;752;0;1.833334;1;0;;1;1
+  868;C;Graphical Net Object(3);1314;1;1;1;207.8125;100.625;LogSwitch;518;90;1;1;0;;1;1
+  869;C;Graphical Net Object(4);1314;1;1;1;238.4375;100.625;TermStrip;753;0;2.166667;1;0;;1;1
+  870;C;Graphical Net Object(9);1314;1;1;1;109.375;100.625;TermStrip;727;0;2.000001;1;0;;1;1
+  871;C;Graphical Net Object10;1314;1;1;1;61.25;148.75;d_tr3;827;0;1;1;0;;1;1
+  872;C;Graphical Net Object11;1314;1;1;1;227.5;148.75;d_tr3;828;0;1;1;0;;1;1
+  873;C;Graphical Net Object12;1314;1;1;1;65.625;118.1271;d_nec;;180;1;1;0;;1;1
+  874;C;Graphical Net Object13;1314;1;1;1;96.25;118.1271;d_nec;;180;1;1;0;;1;1
+  875;C;Graphical Net Object14;1314;1;1;1;166.25;118.1271;d_nec;;180;1;1;0;;1;1
+  876;C;Graphical Net Object15;1314;1;1;1;223.125;118.1271;d_nec;;180;1;1;0;;1;1
+  877;C;Graphical Net Object17;1314;1;1;1;142.1875;170.625;TermStrip;778;0;7.5;1;0;;1;1
+  878;C;Graphical Net Object21(1);1314;1;1;1;109.375;48.125;d_asm;458;0;1;1;0;;1;1
+  879;C;Graphical Net Object21(11);1314;1;1;1;70;48.125;d_asm;457;0;1;1;0;;1;1
+  880;C;Graphical Net Object21(2);1314;1;1;1;183.75;48.125;d_asm;459;0;1;1;0;;1;1
+  881;C;Graphical Net Object21(3);1314;1;1;1;245;48.125;d_asm;460;0;1;1;0;;1;1
+  882;C;Graphical Net Object5(1);1314;1;1;1;183.75;83.125;d_tr2;817;0;1;1;0;;1;1
+  883;C;Graphical Net Object5(10);1314;1;1;1;70;83.125;d_tr2;815;0;1;1;0;;1;1
+  884;C;Graphical Net Object5(2);1314;1;1;1;245;83.125;d_tr2;818;0;1;1;0;;1;1
+  885;C;Graphical Net Object5;1314;1;1;1;109.375;83.125;d_tr2;816;0;1;1;0;;1;1
+  886;C;Graphical Net Object7;1314;1;1;1;43.75;65.625;d_lin;709;0;1;1;0;;1;1
+  887;C;ColLeg;1315;1;0;42;13.31859;48.5673;__COLGRAF__;;0;0.6;0.6;1;MAXLINESCOLOURLEGEND,25;1;1
+  888;C;Grafisches Netzelement(1);1315;1;1;1;26.25;74.375;TermStrip;788;0;0.666666;1;0;;1;1
+  889;C;Grafisches Netzelement(10);1315;1;1;1;262.5;74.375;TermStrip;789;0;0.666666;1;0;;1;1
+  890;C;Grafisches Netzelement(11);1315;1;1;1;52.5;157.5;TermStrip;790;0;0.666666;1;0;;1;1
+  891;C;Grafisches Netzelement(12);1315;1;1;1;100.625;157.5;TermStrip;791;0;0.666666;1;0;;1;1
+  892;C;Grafisches Netzelement(2);1315;1;1;1;52.5;74.375;TermStrip;794;0;0.666666;1;0;;1;1
+  893;C;Grafisches Netzelement(3);1315;1;1;1;78.75;74.37501;TermStrip;795;0;0.666666;1;0;;1;1
+  894;C;Grafisches Netzelement(4);1315;1;1;1;105;74.375;TermStrip;796;0;0.666666;1;0;;1;1
+  895;C;Grafisches Netzelement(5);1315;1;1;1;131.25;74.375;TermStrip;797;0;0.666666;1;0;;1;1
+  896;C;Grafisches Netzelement(6);1315;1;1;1;157.5;74.375;TermStrip;798;0;0.666666;1;0;;1;1
+  897;C;Grafisches Netzelement(7);1315;1;1;1;183.75;74.375;TermStrip;799;0;0.666666;1;0;;1;1
+  898;C;Grafisches Netzelement(8);1315;1;1;1;210;74.375;TermStrip;800;0;0.666666;1;0;;1;1
+  899;C;Grafisches Netzelement(9);1315;1;1;1;236.25;74.375;TermStrip;801;0;0.666666;1;0;;1;1
+  900;C;Graphical Net Object(1);1315;1;1;1;45.93752;192.5;TermStrip;726;0;1.833334;1;0;;1;1
+  901;C;Graphical Net Object(10);1315;1;1;1;72.18751;192.5;LogSwitch;493;90;1;1;0;;1;1
+  902;C;Graphical Net Object(11);1315;1;1;1;253.75;109.375;d_lin;718;90;1;1;0;;1;1
+  903;C;Graphical Net Object(2);1315;1;1;1;69.9998;109.375;d_lin;711;90;1;1;0;;1;1
+  904;C;Graphical Net Object(3);1315;1;1;1;96.25014;109.375;d_lin;712;90;1;1;0;;1;1
+  905;C;Graphical Net Object(4);1315;1;1;1;122.4997;109.375;d_lin;713;90;1;1;0;;1;1
+  906;C;Graphical Net Object(5);1315;1;1;1;148.7499;109.375;d_lin;714;90;1;1;0;;1;1
+  907;C;Graphical Net Object(6);1315;1;1;1;175;109.375;d_lin;715;90;1;1;0;;1;1
+  908;C;Graphical Net Object(7);1315;1;1;1;201.2503;109.375;d_lin;716;90;1;1;0;;1;1
+  909;C;Graphical Net Object(8);1315;1;1;1;227.5002;109.375;d_lin;717;90;1;1;0;;1;1
+  910;C;Graphical Net Object(9);1315;1;1;1;100.625;192.5;TermStrip;727;0;2.000001;1;0;;1;1
+  911;C;Graphical Net Object;1315;1;1;1;43.74997;109.375;d_lin;710;90;1;1;0;;1;1
+  912;C;Graphical Net Object10;1315;1;1;1;56.875;109.375;PointTerm;804;0;1;1;0;;1;1
+  913;C;Graphical Net Object12;1315;1;1;1;83.125;109.375;PointTerm;805;0;1;1;0;;1;1
+  914;C;Graphical Net Object14;1315;1;1;1;109.375;109.375;PointTerm;806;0;1;1;0;;1;1
+  915;C;Graphical Net Object16;1315;1;1;1;135.625;109.375;PointTerm;807;0;1;1;0;;1;1
+  916;C;Graphical Net Object18;1315;1;1;1;161.875;109.375;PointTerm;808;0;1;1;0;;1;1
+  917;C;Graphical Net Object20;1315;1;1;1;188.125;109.375;PointTerm;809;0;1;1;0;;1;1
+  918;C;Graphical Net Object21(1);1315;1;1;1;30.625;56.875;d_asm;455;0;1;1;0;;1;1
+  919;C;Graphical Net Object21(10);1315;1;1;1;266.875;56.875;d_asm;456;0;1;1;0;;1;1
+  920;C;Graphical Net Object21(11);1315;1;1;1;56.875;140;d_asm;457;0;1;1;0;;1;1
+  921;C;Graphical Net Object21(12);1315;1;1;1;105;140;d_asm;458;0;1;1;0;;1;1
+  922;C;Graphical Net Object21(2);1315;1;1;1;56.875;56.875;d_asm;461;0;1;1;0;;1;1
+  923;C;Graphical Net Object21(3);1315;1;1;1;83.125;56.875;d_asm;462;0;1;1;0;;1;1
+  924;C;Graphical Net Object21(4);1315;1;1;1;109.375;56.875;d_asm;463;0;1;1;0;;1;1
+  925;C;Graphical Net Object21(5);1315;1;1;1;135.625;56.875;d_asm;464;0;1;1;0;;1;1
+  926;C;Graphical Net Object21(6);1315;1;1;1;161.875;56.875;d_asm;465;0;1;1;0;;1;1
+  927;C;Graphical Net Object21(7);1315;1;1;1;188.125;56.875;d_asm;466;0;1;1;0;;1;1
+  928;C;Graphical Net Object21(8);1315;1;1;1;214.375;56.875;d_asm;467;0;1;1;0;;1;1
+  929;C;Graphical Net Object21(9);1315;1;1;1;240.625;56.875;d_asm;468;0;1;1;0;;1;1
+  930;C;Graphical Net Object22;1315;1;1;1;214.375;109.375;PointTerm;810;0;1;1;0;;1;1
+  931;C;Graphical Net Object24;1315;1;1;1;240.625;109.375;PointTerm;811;0;1;1;0;;1;1
+  932;C;Graphical Net Object5(1);1315;1;1;1;56.875;91.87501;d_tr2;819;0;1;1;0;;1;1
+  933;C;Graphical Net Object5(10);1315;1;1;1;56.875;175;d_tr2;815;0;1;1;0;;1;1
+  934;C;Graphical Net Object5(11);1315;1;1;1;105;175;d_tr2;816;0;1;1;0;;1;1
+  935;C;Graphical Net Object5(2);1315;1;1;1;83.125;91.87501;d_tr2;820;0;1;1;0;;1;1
+  936;C;Graphical Net Object5(3);1315;1;1;1;109.375;91.87501;d_tr2;821;0;1;1;0;;1;1
+  937;C;Graphical Net Object5(4);1315;1;1;1;135.625;91.87501;d_tr2;822;0;1;1;0;;1;1
+  938;C;Graphical Net Object5(5);1315;1;1;1;161.875;91.87501;d_tr2;823;0;1;1;0;;1;1
+  939;C;Graphical Net Object5(6);1315;1;1;1;188.125;91.87501;d_tr2;824;0;1;1;0;;1;1
+  940;C;Graphical Net Object5(7);1315;1;1;1;214.375;91.87501;d_tr2;825;0;1;1;0;;1;1
+  941;C;Graphical Net Object5(8);1315;1;1;1;240.625;91.87501;d_tr2;826;0;1;1;0;;1;1
+  942;C;Graphical Net Object5(9);1315;1;1;1;266.875;91.87501;d_tr2;814;0;1;1;0;;1;1
+  943;C;Graphical Net Object5;1315;1;1;1;30.625;91.87501;d_tr2;813;0;1;1;0;;1;1
+  944;C;Graphical Net Object6;1315;1;1;1;266.875;109.375;PointTerm;802;0;1;1;0;;1;1
+  945;C;Graphical Net Object7;1315;1;1;1;30.625;150.9375;d_lin;709;180;1;1;0;;1;1
+  946;C;Graphical Net Object8;1315;1;1;1;30.625;109.375;PointTerm;803;0;1;1;0;;1;1
+  947;C;ColLeg;1316;1;1;42;0;0;__COLGRAF__;;0;0.6;0.6;1;MAXLINESCOLOURLEGEND,25;1;1
+  948;C;Grafisches Netzelement23;1316;1;1;1;188.125;146.5626;d_valve_dc;;0;1;1;0;;1;1
+  949;C;Grafisches Netzelement24;1316;1;1;1;188.125;72.1874;d_valve_dc;;0;1;1;0;;1;1
+  950;C;Grafisches Netzelement39;1316;1;1;1;188.125;109.375;ShortTermStrip;779;0;1.000001;1;0;;1;1
+  951;C;Graphical Net Object10;1316;1;1;1;35;122.5;d_tr3;827;270;1;1;0;;1;1
+  952;C;Graphical Net Object11;1316;1;1;1;35;91.87499;d_tr3;828;270;1;1;0;;1;1
+  953;C;Graphical Net Object17(1);1316;1;1;1;231.875;109.375;TermStrip;781;90;1;1;0;;1;1
+  954;C;Graphical Net Object17;1316;1;1;1;52.5;109.375;TermStrip;778;90;2;1;0;;1;1
+  955;C;Graphical Net Object24(1);1316;1;1;1;78.75001;109.375;3_vsc;829;0;1;1;0;;1;1
+  956;C;Graphical Net Object24;1316;1;1;1;205.625;109.375;3_vsc;830;0;-1;1;0;;1;1
+  957;C;Graphical Net Object27;1316;1;1;1;135.625;175;d_lin;708;90;1;1;0;;1;1
+  958;C;Graphical Net Object28;1316;1;1;1;135.625;43.75;d_lin;707;90;1;1;0;;1;1
+  959;C;Graphical Net Object29;1316;1;1;1;262.5;109.375;TermStrip;780;90;1;1;0;;1;1
+  960;C;Graphical Net Object30;1316;1;1;1;247.1875;109.375;d_tr2;812;270;1;1;0;;1;1
+  961;C;Graphical Net Object31;1316;1;1;1;280;109.375;d_net;831;90;1;1;0;;1;1
+  962;C;Graphical Net Object33;1316;1;1;1;188.125;135.625;PointTerm;783;0;1;1;0;;1;1
+  963;C;Graphical Net Object34;1316;1;1;1;188.125;83.12501;PointTerm;782;0;1;1;0;;1;1
+  964;C;Graphical Net Object35;1316;1;1;1;188.125;122.5;d_ser_rea;723;0;1;1;0;;1;1
+  965;C;Graphical Net Object36;1316;1;1;1;188.125;96.25002;d_ser_rea;722;0;1;1;0;;1;1
+  966;C;Graphical Net Object37;1316;1;0;1;218.75;118.125;TBDummy;470;0;1;1;0;;1;1
+  967;C;Graphical Net Object38;1316;1;0;1;65.62499;118.125;TBDummy;469;0;1;1;0;;1;1
+  968;C;Graphical Net Object8(1);1316;1;1;1;76.56251;157.5;TermStrip;785;0;0.833333;1;0;;1;1
+  969;C;Graphical Net Object8(2);1316;1;1;1;76.56251;61.24999;TermStrip;784;0;0.833334;1;0;;1;1
+  970;C;Graphical Net Object9(1);1316;1;1;1;192.5;157.5;TermStrip;787;0;1.666666;1;0;;1;1
+  971;C;Graphical Net Object9(2);1316;1;1;1;192.5;61.25;TermStrip;786;0;1.666666;1;0;;1;1
+  972;C;Graphical Net Object(1);1317;1;1;1;135.625;96.25002;TermStrip;753;0;2.333333;1;0;;1;1
+  973;C;Graphical Net Object(10);1317;1;1;1;118.125;74.375;PointTerm;770;90;1;1;0;;1;1
+  974;C;Graphical Net Object(11);1317;1;1;1;118.125;83.125;PointTerm;771;90;1;1;0;;1;1
+  975;C;Graphical Net Object(12);1317;1;1;1;118.125;70;d_couple;527;0;1;1;0;;1;1
+  976;C;Graphical Net Object(13);1317;1;1;1;118.125;78.75;d_couple;514;0;1;1;0;;1;1
+  977;C;Graphical Net Object(14);1317;1;1;1;118.125;87.5;d_couple;528;0;1;1;0;;1;1
+  978;C;Graphical Net Object(15);1317;1;1;1;65.62501;61.25;PointTerm;755;0;1;1;0;;1;1
+  979;C;Graphical Net Object(16);1317;1;1;1;65.62501;74.375;PointTerm;764;90;1;1;0;;1;1
+  980;C;Graphical Net Object(17);1317;1;1;1;65.62501;83.125;PointTerm;765;90;1;1;0;;1;1
+  981;C;Graphical Net Object(18);1317;1;1;1;65.625;70;d_couple;521;0;1;1;0;;1;1
+  982;C;Graphical Net Object(19);1317;1;1;1;65.625;78.75;d_couple;511;0;1;1;0;;1;1
+  983;C;Graphical Net Object(2);1317;1;1;1;52.50001;61.25;PointTerm;754;0;1;1;0;;1;1
+  984;C;Graphical Net Object(20);1317;1;1;1;65.625;87.5;d_couple;522;0;1;1;0;;1;1
+  985;C;Graphical Net Object(21);1317;1;1;1;78.75001;61.25;PointTerm;756;0;1;1;0;;1;1
+  986;C;Graphical Net Object(22);1317;1;1;1;78.75001;74.375;PointTerm;766;90;1;1;0;;1;1
+  987;C;Graphical Net Object(23);1317;1;1;1;78.75001;83.125;PointTerm;767;90;1;1;0;;1;1
+  988;C;Graphical Net Object(24);1317;1;1;1;78.75;70;d_couple;523;0;1;1;0;;1;1
+  989;C;Graphical Net Object(25);1317;1;1;1;78.75;78.75;d_couple;512;0;1;1;0;;1;1
+  990;C;Graphical Net Object(26);1317;1;1;1;78.75;87.5;d_couple;524;0;1;1;0;;1;1
+  991;C;Graphical Net Object(27);1317;1;1;1;91.87499;61.25;PointTerm;757;0;1;1;0;;1;1
+  992;C;Graphical Net Object(28);1317;1;1;1;91.87499;74.375;PointTerm;768;90;1;1;0;;1;1
+  993;C;Graphical Net Object(29);1317;1;1;1;91.87499;83.125;PointTerm;769;90;1;1;0;;1;1
+  994;C;Graphical Net Object(3);1317;1;1;1;52.50001;74.375;PointTerm;762;90;1;1;0;;1;1
+  995;C;Graphical Net Object(30);1317;1;1;1;91.87499;70;d_couple;525;0;1;1;0;;1;1
+  996;C;Graphical Net Object(31);1317;1;1;1;91.87499;78.75;d_couple;513;0;1;1;0;;1;1
+  997;C;Graphical Net Object(32);1317;1;1;1;91.87499;87.5;d_couple;526;0;1;1;0;;1;1
+  998;C;Graphical Net Object(33);1317;1;1;1;131.25;74.375;PointTerm;772;90;1;1;0;;1;1
+  999;C;Graphical Net Object(34);1317;1;1;1;131.25;83.125;PointTerm;773;90;1;1;0;;1;1
+  1000;C;Graphical Net Object(35);1317;1;1;1;131.25;61.25;PointTerm;759;0;1;1;0;;1;1
+  1001;C;Graphical Net Object(36);1317;1;1;1;131.25;70;d_couple;529;0;1;1;0;;1;1
+  1002;C;Graphical Net Object(37);1317;1;1;1;131.25;78.75;d_couple;515;0;1;1;0;;1;1
+  1003;C;Graphical Net Object(38);1317;1;1;1;131.25;87.5;d_couple;530;0;1;1;0;;1;1
+  1004;C;Graphical Net Object(39);1317;1;1;1;144.375;74.375;PointTerm;774;90;1;1;0;;1;1
+  1005;C;Graphical Net Object(4);1317;1;1;1;52.50001;83.125;PointTerm;763;90;1;1;0;;1;1
+  1006;C;Graphical Net Object(40);1317;1;1;1;144.375;83.125;PointTerm;775;90;1;1;0;;1;1
+  1007;C;Graphical Net Object(41);1317;1;1;1;144.375;61.25;PointTerm;760;0;1;1;0;;1;1
+  1008;C;Graphical Net Object(42);1317;1;1;1;144.375;70;d_couple;531;0;1;1;0;;1;1
+  1009;C;Graphical Net Object(43);1317;1;1;1;144.375;78.75;d_couple;516;0;1;1;0;;1;1
+  1010;C;Graphical Net Object(44);1317;1;1;1;144.375;87.5;d_couple;532;0;1;1;0;;1;1
+  1011;C;Graphical Net Object(45);1317;1;1;1;157.5;74.375;PointTerm;776;90;1;1;0;;1;1
+  1012;C;Graphical Net Object(46);1317;1;1;1;157.5;83.125;PointTerm;777;90;1;1;0;;1;1
+  1013;C;Graphical Net Object(47);1317;1;1;1;157.5;61.25;PointTerm;761;0;1;1;0;;1;1
+  1014;C;Graphical Net Object(48);1317;1;1;1;157.5;70;d_couple;533;0;1;1;0;;1;1
+  1015;C;Graphical Net Object(49);1317;1;1;1;157.5;78.75;d_couple;517;0;1;1;0;;1;1
+  1016;C;Graphical Net Object(5);1317;1;1;1;52.50001;70;d_couple;519;0;1;1;0;;1;1
+  1017;C;Graphical Net Object(50);1317;1;1;1;157.5;87.5;d_couple;534;0;1;1;0;;1;1
+  1018;C;Graphical Net Object(6);1317;1;1;1;52.50001;78.75;d_couple;510;0;1;1;0;;1;1
+  1019;C;Graphical Net Object(7);1317;1;1;1;52.50001;87.5;d_couple;520;0;1;1;0;;1;1
+  1020;C;Graphical Net Object(8);1317;1;1;1;118.125;61.25;PointTerm;758;0;1;1;0;;1;1
+  1021;C;Graphical Net Object(9);1317;1;1;1;102.81;96.25002;d_couple;518;90;1;1;0;;1;1
+  1022;C;Graphical Net Object;1317;1;1;1;69.99999;96.25002;TermStrip;752;0;2.333333;1;0;;1;1
+  1023;C;Graphical Net Object53(1);1317;1;1;1;52.49998;43.75;d_tr3;827;0;1;1;0;;1;1
+  1024;C;Graphical Net Object53;1317;1;1;1;118.125;43.75;d_tr3;828;0;1;1;0;;1;1
+  1025;C;Graphical Net Object54;1317;1;1;1;65.62501;43.75;d_nec;;0;1;1;0;;1;1
+  1026;C;Graphical Net Object55;1317;1;1;1;131.25;43.75;d_nec;;0;1;1;0;;1;1
+  1027;C;Graphical Net Object56;1317;1;1;1;78.75002;43.75;d_tr2;817;0;1;1;0;;1;1
+  1028;C;Graphical Net Object57;1317;1;1;1;144.375;43.75;d_tr2;818;0;1;1;0;;1;1
+  1029;C;Graphical Net Object(1);1318;1;1;1;135.625;96.25002;TermStrip;727;0;2.333333;1;0;;1;1
+  1030;C;Graphical Net Object(10);1318;1;1;1;118.125;74.375;PointTerm;744;90;1;1;0;;1;1
+  1031;C;Graphical Net Object(11);1318;1;1;1;118.125;83.125;PointTerm;745;90;1;1;0;;1;1
+  1032;C;Graphical Net Object(12);1318;1;1;1;118.125;70;d_couple;502;0;1;1;0;;1;1
+  1033;C;Graphical Net Object(13);1318;1;1;1;118.125;78.75;d_couple;489;0;1;1;0;;1;1
+  1034;C;Graphical Net Object(14);1318;1;1;1;118.125;87.5;d_couple;503;0;1;1;0;;1;1
+  1035;C;Graphical Net Object(15);1318;1;1;1;65.62501;61.25;PointTerm;729;0;1;1;0;;1;1
+  1036;C;Graphical Net Object(16);1318;1;1;1;65.62501;74.375;PointTerm;738;90;1;1;0;;1;1
+  1037;C;Graphical Net Object(17);1318;1;1;1;65.62501;83.125;PointTerm;739;90;1;1;0;;1;1
+  1038;C;Graphical Net Object(18);1318;1;1;1;65.625;70;d_couple;496;0;1;1;0;;1;1
+  1039;C;Graphical Net Object(19);1318;1;1;1;65.625;78.75;d_couple;486;0;1;1;0;;1;1
+  1040;C;Graphical Net Object(2);1318;1;1;1;52.50001;61.25;PointTerm;728;0;1;1;0;;1;1
+  1041;C;Graphical Net Object(20);1318;1;1;1;65.625;87.5;d_couple;497;0;1;1;0;;1;1
+  1042;C;Graphical Net Object(21);1318;1;1;1;78.75001;61.25;PointTerm;730;0;1;1;0;;1;1
+  1043;C;Graphical Net Object(22);1318;1;1;1;78.75001;74.375;PointTerm;740;90;1;1;0;;1;1
+  1044;C;Graphical Net Object(23);1318;1;1;1;78.75001;83.125;PointTerm;741;90;1;1;0;;1;1
+  1045;C;Graphical Net Object(24);1318;1;1;1;78.75;70;d_couple;498;0;1;1;0;;1;1
+  1046;C;Graphical Net Object(25);1318;1;1;1;78.75;78.75;d_couple;487;0;1;1;0;;1;1
+  1047;C;Graphical Net Object(26);1318;1;1;1;78.75;87.5;d_couple;499;0;1;1;0;;1;1
+  1048;C;Graphical Net Object(27);1318;1;1;1;91.87499;61.25;PointTerm;731;0;1;1;0;;1;1
+  1049;C;Graphical Net Object(28);1318;1;1;1;91.87499;74.375;PointTerm;742;90;1;1;0;;1;1
+  1050;C;Graphical Net Object(29);1318;1;1;1;91.87499;83.125;PointTerm;743;90;1;1;0;;1;1
+  1051;C;Graphical Net Object(3);1318;1;1;1;52.50001;74.375;PointTerm;736;90;1;1;0;;1;1
+  1052;C;Graphical Net Object(30);1318;1;1;1;91.87499;70;d_couple;500;0;1;1;0;;1;1
+  1053;C;Graphical Net Object(31);1318;1;1;1;91.87499;78.75;d_couple;488;0;1;1;0;;1;1
+  1054;C;Graphical Net Object(32);1318;1;1;1;91.87499;87.5;d_couple;501;0;1;1;0;;1;1
+  1055;C;Graphical Net Object(33);1318;1;1;1;131.25;74.375;PointTerm;746;90;1;1;0;;1;1
+  1056;C;Graphical Net Object(34);1318;1;1;1;131.25;83.125;PointTerm;747;90;1;1;0;;1;1
+  1057;C;Graphical Net Object(35);1318;1;1;1;131.25;61.25;PointTerm;733;0;1;1;0;;1;1
+  1058;C;Graphical Net Object(36);1318;1;1;1;131.25;70;d_couple;504;0;1;1;0;;1;1
+  1059;C;Graphical Net Object(37);1318;1;1;1;131.25;78.75;d_couple;490;0;1;1;0;;1;1
+  1060;C;Graphical Net Object(38);1318;1;1;1;131.25;87.5;d_couple;505;0;1;1;0;;1;1
+  1061;C;Graphical Net Object(39);1318;1;1;1;144.375;74.375;PointTerm;748;90;1;1;0;;1;1
+  1062;C;Graphical Net Object(4);1318;1;1;1;52.50001;83.125;PointTerm;737;90;1;1;0;;1;1
+  1063;C;Graphical Net Object(40);1318;1;1;1;144.375;83.125;PointTerm;749;90;1;1;0;;1;1
+  1064;C;Graphical Net Object(41);1318;1;1;1;144.375;61.25;PointTerm;734;0;1;1;0;;1;1
+  1065;C;Graphical Net Object(42);1318;1;1;1;144.375;70;d_couple;506;0;1;1;0;;1;1
+  1066;C;Graphical Net Object(43);1318;1;1;1;144.375;78.75;d_couple;491;0;1;1;0;;1;1
+  1067;C;Graphical Net Object(44);1318;1;1;1;144.375;87.5;d_couple;507;0;1;1;0;;1;1
+  1068;C;Graphical Net Object(45);1318;1;1;1;157.5;74.375;PointTerm;750;90;1;1;0;;1;1
+  1069;C;Graphical Net Object(46);1318;1;1;1;157.5;83.125;PointTerm;751;90;1;1;0;;1;1
+  1070;C;Graphical Net Object(47);1318;1;1;1;157.5;61.25;PointTerm;735;0;1;1;0;;1;1
+  1071;C;Graphical Net Object(48);1318;1;1;1;157.5;70;d_couple;508;0;1;1;0;;1;1
+  1072;C;Graphical Net Object(49);1318;1;1;1;157.5;78.75;d_couple;492;0;1;1;0;;1;1
+  1073;C;Graphical Net Object(5);1318;1;1;1;52.50001;70;d_couple;494;0;1;1;0;;1;1
+  1074;C;Graphical Net Object(50);1318;1;1;1;157.5;87.5;d_couple;509;0;1;1;0;;1;1
+  1075;C;Graphical Net Object(6);1318;1;1;1;52.50001;78.75;d_couple;485;0;1;1;0;;1;1
+  1076;C;Graphical Net Object(7);1318;1;1;1;52.50001;87.5;d_couple;495;0;1;1;0;;1;1
+  1077;C;Graphical Net Object(8);1318;1;1;1;118.125;61.25;PointTerm;732;0;1;1;0;;1;1
+  1078;C;Graphical Net Object(9);1318;1;1;1;102.81;96.25002;d_couple;493;90;1;1;0;;1;1
+  1079;C;Graphical Net Object;1318;1;1;1;69.99999;96.25002;TermStrip;726;0;2.333333;1;0;;1;1
+  1080;C;Graphical Net Object52;1318;1;1;1;52.49998;43.75;d_tr3;827;0;1;1;0;;1;1
+  1081;C;Graphical Net Object53;1318;1;1;1;118.125;43.75;d_tr3;828;0;1;1;0;;1;1
+  1082;C;Graphical Net Object54;1318;1;1;1;65.62501;43.75;d_nec;;0;1;1;0;;1;1
+  1083;C;Graphical Net Object55;1318;1;1;1;131.25;43.75;d_nec;;0;1;1;0;;1;1
+  1084;C;Graphical Net Object56;1318;1;1;1;78.75002;43.75;d_lin;709;0;1;1;0;;1;1
+  1085;C;Graphical Net Object57;1318;1;1;1;91.87503;43.75;d_tr2;815;0;1;1;0;;1;1
+  1086;C;Graphical Net Object58;1318;1;1;1;144.375;43.75;d_tr2;816;0;1;1;0;;1;1
+
+
+$$IntGrfcon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);rX:SIZEROW(i);rX:0(r);rX:1(r);rX:2(r);rX:3(r);rY:SIZEROW(i);rY:0(r);rY:1(r);rY:2(r);rY:3(r);iDatConNr(i);iLinSt(i);rLinWd(r)
+  1087;C;GCO_1;865;2;78.75;78.75;;;2;100.625;100.625;;;1;1;0
+  1088;C;GCO_2;865;2;83.125;83.125;;;2;100.625;100.625;;;0;1;0
+  1089;C;GCO_1;866;2;148.75;148.75;;;2;188.125;170.625;;;0;1;0
+  1090;C;GCO_1;868;2;205.625;205.625;;;2;100.625;100.625;;;1;1;0
+  1091;C;GCO_2;868;2;210;210;;;2;100.625;100.625;;;0;1;0
+  1092;C;GCO_1;871;2;61.25;61.25;;;2;153.125;170.625;;;0;1;0
+  1093;C;GCO_2;871;3;56.875;48.125;48.125;;3;144.375;140;100.625;;1;1;0
+  1094;C;GCO_3;871;4;65.625;74.375;179.375;179.375;4;144.375;135.625;135.625;100.625;2;1;0
+  1095;C;GCO_1;872;2;227.5;227.5;;;2;153.125;170.625;;;0;1;0
+  1096;C;GCO_2;872;4;223.125;218.75;113.75;113.75;4;144.375;140;140;100.6285;1;1;0
+  1097;C;GCO_3;872;3;231.875;236.25;236.25;;3;144.375;140;100.625;;2;1;0
+  1098;C;GCO_1;873;2;65.625;65.625;;;2;113.7521;100.6242;;;0;1;0
+  1099;C;GCO_1;874;2;96.25;96.25;;;2;113.7521;100.6271;;;0;1;0
+  1100;C;GCO_1;875;2;166.25;166.25;;;2;113.7521;100.6242;;;0;1;0
+  1101;C;GCO_1;876;2;223.125;223.125;;;2;113.7521;100.6271;;;0;1;0
+  1102;C;GCO_1;878;2;109.375;109.375;;;2;52.5;65.62501;;;0;1;0
+  1103;C;GCO_1;879;2;70;70;;;2;52.5;65.625;;;0;1;0
+  1104;C;GCO_1;880;2;183.75;183.75;;;2;52.5;65.625;;;0;1;0
+  1105;C;GCO_1;881;2;245;245;;;2;52.5;65.625;;;0;1;0
+  1106;C;GCO_1;882;2;183.75;183.75;;;2;87.5;100.625;;;0;1;0
+  1107;C;GCO_2;882;2;183.75;183.75;;;2;78.75;65.625;;;1;1;0
+  1108;C;GCO_1;883;2;70;70;;;2;78.75;65.625;;;1;1;0
+  1109;C;GCO_2;883;2;70;70;;;2;87.5;100.625;;;0;1;0
+  1110;C;GCO_1;884;2;245;245;;;2;87.5;100.625;;;0;1;0
+  1111;C;GCO_2;884;2;245;245;;;2;78.75;65.625;;;1;1;0
+  1112;C;GCO_1;885;2;109.375;109.375;;;2;87.5;100.625;;;0;1;0
+  1113;C;GCO_2;885;2;109.375;109.375;;;2;78.75;65.62501;;;1;1;0
+  1114;C;GCO_1;886;0;;;;;0;;;;;-1;1;0
+  1115;C;GCO_2;886;2;43.75;43.75;;;2;65.625;100.625;;;0;1;0
+  1116;C;GCO_1;901;2;70.00001;70.00001;;;2;192.5;192.5;;;1;1;0
+  1117;C;GCO_2;901;2;74.37501;74.37501;;;2;192.5;192.5;;;0;1;0
+  1118;C;GCO_1;902;2;253.75;240.625;;;2;109.375;109.375;;;0;1;0
+  1119;C;GCO_2;902;2;253.75;266.875;;;2;109.375;109.375;;;1;1;0
+  1120;C;GCO_1;903;2;69.9998;56.875;;;2;109.375;109.375;;;0;1;0
+  1121;C;GCO_2;903;2;69.9998;83.125;;;2;109.375;109.375;;;1;1;0
+  1122;C;GCO_1;904;2;96.25014;83.125;;;2;109.375;109.375;;;0;1;0
+  1123;C;GCO_2;904;2;96.25014;109.375;;;2;109.375;109.375;;;1;1;0
+  1124;C;GCO_1;905;2;122.4997;109.375;;;2;109.375;109.375;;;0;1;0
+  1125;C;GCO_2;905;2;122.4997;135.625;;;2;109.375;109.375;;;1;1;0
+  1126;C;GCO_1;906;2;148.7499;135.625;;;2;109.375;109.375;;;0;1;0
+  1127;C;GCO_2;906;2;148.7499;161.875;;;2;109.375;109.375;;;1;1;0
+  1128;C;GCO_1;907;2;175;161.875;;;2;109.375;109.375;;;0;1;0
+  1129;C;GCO_2;907;2;175;188.125;;;2;109.375;109.375;;;1;1;0
+  1130;C;GCO_1;908;2;201.2503;188.125;;;2;109.375;109.375;;;0;1;0
+  1131;C;GCO_2;908;2;201.2503;214.375;;;2;109.375;109.375;;;1;1;0
+  1132;C;GCO_1;909;2;227.5002;214.375;;;2;109.375;109.375;;;0;1;0
+  1133;C;GCO_2;909;2;227.5002;240.625;;;2;109.375;109.375;;;1;1;0
+  1134;C;GCO_1;911;2;43.74997;30.625;;;2;109.375;109.375;;;0;1;0
+  1135;C;GCO_2;911;2;43.74997;56.875;;;2;109.375;109.375;;;1;1;0
+  1136;C;GCO_1;918;2;30.625;30.625;;;2;61.25;74.375;;;0;1;0
+  1137;C;GCO_1;919;2;266.875;266.875;;;2;61.25;74.375;;;0;1;0
+  1138;C;GCO_1;920;2;56.875;56.875;;;2;144.375;157.5;;;0;1;0
+  1139;C;GCO_1;921;2;105;105;;;2;144.375;157.5;;;0;1;0
+  1140;C;GCO_1;922;2;56.875;56.875;;;2;61.25;74.375;;;0;1;0
+  1141;C;GCO_1;923;2;83.125;83.125;;;2;61.25;74.375;;;0;1;0
+  1142;C;GCO_1;924;2;109.375;109.375;;;2;61.25;74.375;;;0;1;0
+  1143;C;GCO_1;925;2;135.625;135.625;;;2;61.25;74.375;;;0;1;0
+  1144;C;GCO_1;926;2;161.875;161.875;;;2;61.25;74.375;;;0;1;0
+  1145;C;GCO_1;927;2;188.125;188.125;;;2;61.25;74.375;;;0;1;0
+  1146;C;GCO_1;928;2;214.375;214.375;;;2;61.25;74.375;;;0;1;0
+  1147;C;GCO_1;929;2;240.625;240.625;;;2;61.25;74.375;;;0;1;0
+  1148;C;GCO_1;932;2;56.875;56.875;;;2;96.25001;109.375;;;0;1;0
+  1149;C;GCO_2;932;2;56.875;56.875;;;2;87.50001;74.375;;;1;1;0
+  1150;C;GCO_1;933;2;56.875;56.875;;;2;179.375;192.5;;;0;1;0
+  1151;C;GCO_2;933;2;56.875;56.875;;;2;170.625;157.5;;;1;1;0
+  1152;C;GCO_1;934;2;105;105;;;2;170.625;157.5;;;1;1;0
+  1153;C;GCO_2;934;2;105;105;;;2;179.375;192.5;;;0;1;0
+  1154;C;GCO_1;935;2;83.125;83.125;;;2;96.25;109.375;;;0;1;0
+  1155;C;GCO_2;935;2;83.125;83.125;;;2;87.5;74.37501;;;1;1;0
+  1156;C;GCO_1;936;2;109.375;109.375;;;2;96.25001;109.375;;;0;1;0
+  1157;C;GCO_2;936;2;109.375;109.375;;;2;87.50001;74.375;;;1;1;0
+  1158;C;GCO_1;937;2;135.625;135.625;;;2;96.25001;109.375;;;0;1;0
+  1159;C;GCO_2;937;2;135.625;135.625;;;2;87.50001;74.375;;;1;1;0
+  1160;C;GCO_1;938;2;161.875;161.875;;;2;96.25;109.375;;;0;1;0
+  1161;C;GCO_2;938;2;161.875;161.875;;;2;87.5;74.375;;;1;1;0
+  1162;C;GCO_1;939;2;188.125;188.125;;;2;96.25001;109.375;;;0;1;0
+  1163;C;GCO_2;939;2;188.125;188.125;;;2;87.50001;74.375;;;1;1;0
+  1164;C;GCO_1;940;2;214.375;214.375;;;2;96.25001;109.375;;;0;1;0
+  1165;C;GCO_2;940;2;214.375;214.375;;;2;87.50001;74.375;;;1;1;0
+  1166;C;GCO_1;941;2;240.625;240.625;;;2;96.25001;109.375;;;0;1;0
+  1167;C;GCO_2;941;2;240.625;240.625;;;2;87.50001;74.375;;;1;1;0
+  1168;C;GCO_1;942;2;266.875;266.875;;;2;96.25001;109.375;;;0;1;0
+  1169;C;GCO_2;942;2;266.875;266.875;;;2;87.50001;74.375;;;1;1;0
+  1170;C;GCO_1;943;2;30.625;30.625;;;2;96.25001;109.375;;;0;1;0
+  1171;C;GCO_2;943;2;30.625;30.625;;;2;87.50001;74.375;;;1;1;0
+  1172;C;GCO_1;945;2;30.625;30.625;;;2;150.9375;192.5;;;0;1;0
+  1173;C;GCO_2;945;2;30.625;30.625;;;2;150.9375;109.375;;;1;1;0
+  1174;C;GCO_1;948;2;188.125;188.125;;;2;150.9376;157.5;;;0;1;0
+  1175;C;GCO_2;948;2;188.125;188.125;;;2;142.1876;135.625;;;1;1;0
+  1176;C;GCO_1;949;2;188.125;188.125;;;2;76.5624;83.12501;;;0;1;0
+  1177;C;GCO_2;949;2;188.125;188.125;;;2;67.8124;61.25;;;1;1;0
+  1178;C;GCO_1;951;2;39.375;52.5;;;2;122.5;122.5;;;0;1;0
+  1179;C;GCO_2;951;0;;;;;0;;;;;-1;29;0
+  1180;C;GCO_3;951;0;;;;;0;;;;;-1;29;0
+  1181;C;GCO_1;952;2;39.375;52.5;;;2;91.87499;91.87499;;;0;1;0
+  1182;C;GCO_2;952;0;;;;;0;;;;;1;1;0
+  1183;C;GCO_3;952;0;;;;;0;;;;;-1;29;0
+  1184;C;GCO_1;955;2;74.37501;52.5;;;2;109.375;109.375;;;0;1;0
+  1185;C;GCO_2;955;2;78.75001;78.75001;;;2;113.75;157.5;;;1;1;0
+  1186;C;GCO_3;955;2;78.75001;78.75001;;;2;105;61.24999;;;2;1;0
+  1187;C;GCO_1;956;2;210;231.875;;;2;109.375;109.375;;;0;1;0
+  1188;C;GCO_2;956;2;205.625;205.625;;;2;113.75;157.5;;;1;1;0
+  1189;C;GCO_3;956;2;205.625;205.625;;;2;105;61.25;;;2;1;0
+  1190;C;GCO_1;957;3;135.625;192.5;192.5;;3;175;175;157.5;;1;1;0
+  1191;C;GCO_2;957;3;135.625;78.75;78.75;;3;175;175;157.5;;0;1;0
+  1192;C;GCO_1;958;3;135.625;192.5;192.5;;3;43.75;43.75;61.25;;1;1;0
+  1193;C;GCO_2;958;3;135.625;78.75;78.75;;3;43.75;43.75;61.24999;;0;1;0
+  1194;C;GCO_1;960;2;251.5625;262.5;;;2;109.375;109.375;;;0;1;0
+  1195;C;GCO_2;960;2;242.8125;231.875;;;2;109.375;109.375;;;1;1;0
+  1196;C;GCO_1;961;2;275.625;262.5;;;2;109.375;109.375;;;0;1;0
+  1197;C;GCO_1;964;2;188.125;188.125;;;2;126.875;135.625;;;0;1;0
+  1198;C;GCO_2;964;2;188.125;188.125;;;2;118.125;109.375;;;1;1;0
+  1199;C;GCO_1;965;2;188.125;188.125;;;2;100.625;109.375;;;0;1;0
+  1200;C;GCO_2;965;2;188.125;188.125;;;2;91.87502;83.12501;;;1;1;0
+  1201;C;GCO(1);975;2;118.125;118.125;;;2;67.8125;61.25;;;1;1;0
+  1202;C;GCO;975;2;118.125;118.125;;;2;72.1875;74.375;;;0;1;0
+  1203;C;GCO(1);976;2;118.125;118.125;;;2;76.5625;74.375;;;1;1;0
+  1204;C;GCO;976;2;118.125;118.125;;;2;80.93749;83.125;;;0;1;0
+  1205;C;GCO(1);977;2;118.125;118.125;;;2;85.3125;83.125;;;1;1;0
+  1206;C;GCO;977;2;118.125;118.125;;;2;89.6875;96.25002;;;0;1;0
+  1207;C;GCO(1);981;2;65.625;65.625;;;2;67.8125;61.25;;;1;1;0
+  1208;C;GCO;981;2;65.625;65.625;;;2;72.1875;74.375;;;0;1;0
+  1209;C;GCO(1);982;2;65.625;65.625;;;2;76.56251;74.375;;;1;1;0
+  1210;C;GCO;982;2;65.625;65.625;;;2;80.9375;83.125;;;0;1;0
+  1211;C;GCO(1);984;2;65.625;65.625;;;2;85.3125;83.125;;;1;1;0
+  1212;C;GCO;984;2;65.625;65.625;;;2;89.6875;96.25002;;;0;1;0
+  1213;C;GCO(1);988;2;78.75;78.75;;;2;67.8125;61.25;;;1;1;0
+  1214;C;GCO;988;2;78.75;78.75;;;2;72.1875;74.375;;;0;1;0
+  1215;C;GCO(1);989;2;78.75;78.75;;;2;76.56251;74.375;;;1;1;0
+  1216;C;GCO;989;2;78.75;78.75;;;2;80.9375;83.125;;;0;1;0
+  1217;C;GCO(1);990;2;78.75;78.75;;;2;85.3125;83.125;;;1;1;0
+  1218;C;GCO;990;2;78.75;78.75;;;2;89.6875;96.25002;;;0;1;0
+  1219;C;GCO(1);995;2;91.87499;91.87499;;;2;67.8125;61.25;;;1;1;0
+  1220;C;GCO;995;2;91.87499;91.87499;;;2;72.1875;74.375;;;0;1;0
+  1221;C;GCO(1);996;2;91.87499;91.87499;;;2;76.56251;74.375;;;1;1;0
+  1222;C;GCO;996;2;91.87499;91.87499;;;2;80.9375;83.125;;;0;1;0
+  1223;C;GCO(1);997;2;91.87499;91.87499;;;2;85.3125;83.125;;;1;1;0
+  1224;C;GCO;997;2;91.87499;91.87499;;;2;89.6875;96.25002;;;0;1;0
+  1225;C;GCO(1);1001;2;131.25;131.25;;;2;67.8125;61.25;;;1;1;0
+  1226;C;GCO;1001;2;131.25;131.25;;;2;72.1875;74.375;;;0;1;0
+  1227;C;GCO(1);1002;2;131.25;131.25;;;2;76.56251;74.375;;;1;1;0
+  1228;C;GCO;1002;2;131.25;131.25;;;2;80.9375;83.125;;;0;1;0
+  1229;C;GCO(1);1003;2;131.25;131.25;;;2;85.3125;83.125;;;1;1;0
+  1230;C;GCO;1003;2;131.25;131.25;;;2;89.6875;96.25002;;;0;1;0
+  1231;C;GCO(1);1008;2;144.375;144.375;;;2;67.8125;61.25;;;1;1;0
+  1232;C;GCO;1008;2;144.375;144.375;;;2;72.1875;74.375;;;0;1;0
+  1233;C;GCO(1);1009;2;144.375;144.375;;;2;76.56251;74.375;;;1;1;0
+  1234;C;GCO;1009;2;144.375;144.375;;;2;80.9375;83.125;;;0;1;0
+  1235;C;GCO(1);1010;2;144.375;144.375;;;2;85.3125;83.125;;;1;1;0
+  1236;C;GCO;1010;2;144.375;144.375;;;2;89.6875;96.25002;;;0;1;0
+  1237;C;GCO(1);1014;2;157.5;157.5;;;2;67.8125;61.25;;;1;1;0
+  1238;C;GCO;1014;2;157.5;157.5;;;2;72.1875;74.375;;;0;1;0
+  1239;C;GCO(1);1015;2;157.5;157.5;;;2;76.56251;74.375;;;1;1;0
+  1240;C;GCO;1015;2;157.5;157.5;;;2;80.9375;83.125;;;0;1;0
+  1241;C;GCO(1);1016;2;52.50001;52.50001;;;2;67.8125;61.25;;;1;1;0
+  1242;C;GCO;1016;2;52.50001;52.50001;;;2;72.1875;74.375;;;0;1;0
+  1243;C;GCO(1);1017;2;157.5;157.5;;;2;85.3125;83.125;;;1;1;0
+  1244;C;GCO;1017;2;157.5;157.5;;;2;89.6875;96.25002;;;0;1;0
+  1245;C;GCO(1);1018;2;52.50001;52.50001;;;2;76.5625;74.375;;;1;1;0
+  1246;C;GCO;1018;2;52.50001;52.50001;;;2;80.93749;83.125;;;0;1;0
+  1247;C;GCO(1);1019;2;52.50001;52.50001;;;2;85.3125;83.125;;;1;1;0
+  1248;C;GCO;1019;2;52.50001;52.50001;;;2;89.6875;96.25002;;;0;1;0
+  1249;C;GCO(1);1021;2;104.9975;104.9975;;;2;96.25002;96.25002;;;0;1;0
+  1250;C;GCO;1021;2;100.6225;100.6225;;;2;96.25002;96.25002;;;1;1;0
+  1251;C;GCO_1;1023;2;52.49998;52.50001;;;2;48.125;61.25;;;2;1;0
+  1252;C;GCO_1;1024;2;118.125;118.125;;;2;48.125;61.25;;;2;1;0
+  1253;C;GCO_1;1025;2;65.625;65.62501;;;2;48.125;61.25;;;0;1;0
+  1254;C;GCO_1;1026;2;131.25;131.25;;;2;48.125;61.25;;;0;1;0
+  1255;C;GCO_1;1027;2;78.75002;78.75001;;;2;48.125;61.25;;;0;1;0
+  1256;C;GCO_1;1028;2;144.375;144.375;;;2;48.125;61.25;;;0;1;0
+  1257;C;GCO(1);1032;2;118.125;118.125;;;2;67.8125;61.25;;;1;1;0
+  1258;C;GCO;1032;2;118.125;118.125;;;2;72.1875;74.375;;;0;1;0
+  1259;C;GCO(1);1033;2;118.125;118.125;;;2;76.5625;74.375;;;1;1;0
+  1260;C;GCO;1033;2;118.125;118.125;;;2;80.93749;83.125;;;0;1;0
+  1261;C;GCO(1);1034;2;118.125;118.125;;;2;85.3125;83.125;;;1;1;0
+  1262;C;GCO;1034;2;118.125;118.125;;;2;89.6875;96.25002;;;0;1;0
+  1263;C;GCO(1);1038;2;65.625;65.625;;;2;67.8125;61.25;;;1;1;0
+  1264;C;GCO;1038;2;65.625;65.625;;;2;72.1875;74.375;;;0;1;0
+  1265;C;GCO(1);1039;2;65.625;65.625;;;2;76.56251;74.375;;;1;1;0
+  1266;C;GCO;1039;2;65.625;65.625;;;2;80.9375;83.125;;;0;1;0
+  1267;C;GCO(1);1041;2;65.625;65.625;;;2;85.3125;83.125;;;1;1;0
+  1268;C;GCO;1041;2;65.625;65.625;;;2;89.6875;96.25002;;;0;1;0
+  1269;C;GCO(1);1045;2;78.75;78.75;;;2;67.8125;61.25;;;1;1;0
+  1270;C;GCO;1045;2;78.75;78.75;;;2;72.1875;74.375;;;0;1;0
+  1271;C;GCO(1);1046;2;78.75;78.75;;;2;76.56251;74.375;;;1;1;0
+  1272;C;GCO;1046;2;78.75;78.75;;;2;80.9375;83.125;;;0;1;0
+  1273;C;GCO(1);1047;2;78.75;78.75;;;2;85.3125;83.125;;;1;1;0
+  1274;C;GCO;1047;2;78.75;78.75;;;2;89.6875;96.25002;;;0;1;0
+  1275;C;GCO(1);1052;2;91.87499;91.87499;;;2;67.8125;61.25;;;1;1;0
+  1276;C;GCO;1052;2;91.87499;91.87499;;;2;72.1875;74.375;;;0;1;0
+  1277;C;GCO(1);1053;2;91.87499;91.87499;;;2;76.56251;74.375;;;1;1;0
+  1278;C;GCO;1053;2;91.87499;91.87499;;;2;80.9375;83.125;;;0;1;0
+  1279;C;GCO(1);1054;2;91.87499;91.87499;;;2;85.3125;83.125;;;1;1;0
+  1280;C;GCO;1054;2;91.87499;91.87499;;;2;89.6875;96.25002;;;0;1;0
+  1281;C;GCO(1);1058;2;131.25;131.25;;;2;67.8125;61.25;;;1;1;0
+  1282;C;GCO;1058;2;131.25;131.25;;;2;72.1875;74.375;;;0;1;0
+  1283;C;GCO(1);1059;2;131.25;131.25;;;2;76.56251;74.375;;;1;1;0
+  1284;C;GCO;1059;2;131.25;131.25;;;2;80.9375;83.125;;;0;1;0
+  1285;C;GCO(1);1060;2;131.25;131.25;;;2;85.3125;83.125;;;1;1;0
+  1286;C;GCO;1060;2;131.25;131.25;;;2;89.6875;96.25002;;;0;1;0
+  1287;C;GCO(1);1065;2;144.375;144.375;;;2;67.8125;61.25;;;1;1;0
+  1288;C;GCO;1065;2;144.375;144.375;;;2;72.1875;74.375;;;0;1;0
+  1289;C;GCO(1);1066;2;144.375;144.375;;;2;76.56251;74.375;;;1;1;0
+  1290;C;GCO;1066;2;144.375;144.375;;;2;80.9375;83.125;;;0;1;0
+  1291;C;GCO(1);1067;2;144.375;144.375;;;2;85.3125;83.125;;;1;1;0
+  1292;C;GCO;1067;2;144.375;144.375;;;2;89.6875;96.25002;;;0;1;0
+  1293;C;GCO(1);1071;2;157.5;157.5;;;2;67.8125;61.25;;;1;1;0
+  1294;C;GCO;1071;2;157.5;157.5;;;2;72.1875;74.375;;;0;1;0
+  1295;C;GCO(1);1072;2;157.5;157.5;;;2;76.56251;74.375;;;1;1;0
+  1296;C;GCO;1072;2;157.5;157.5;;;2;80.9375;83.125;;;0;1;0
+  1297;C;GCO(1);1073;2;52.50001;52.50001;;;2;67.8125;61.25;;;1;1;0
+  1298;C;GCO;1073;2;52.50001;52.50001;;;2;72.1875;74.375;;;0;1;0
+  1299;C;GCO(1);1074;2;157.5;157.5;;;2;85.3125;83.125;;;1;1;0
+  1300;C;GCO;1074;2;157.5;157.5;;;2;89.6875;96.25002;;;0;1;0
+  1301;C;GCO(1);1075;2;52.50001;52.50001;;;2;76.5625;74.375;;;1;1;0
+  1302;C;GCO;1075;2;52.50001;52.50001;;;2;80.93749;83.125;;;0;1;0
+  1303;C;GCO(1);1076;2;52.50001;52.50001;;;2;85.3125;83.125;;;1;1;0
+  1304;C;GCO;1076;2;52.50001;52.50001;;;2;89.6875;96.25002;;;0;1;0
+  1305;C;GCO(1);1078;2;104.9975;104.9975;;;2;96.25002;96.25002;;;0;1;0
+  1306;C;GCO;1078;2;100.6225;100.6225;;;2;96.25002;96.25002;;;1;1;0
+  1307;C;GCO_1;1080;2;52.49998;52.50001;;;2;48.125;61.25;;;1;1;0
+  1308;C;GCO_1;1081;2;118.125;118.125;;;2;48.125;61.25;;;1;1;0
+  1309;C;GCO_1;1082;2;65.625;65.62501;;;2;48.125;61.25;;;0;1;0
+  1310;C;GCO_1;1083;2;131.25;131.25;;;2;48.125;61.25;;;0;1;0
+  1311;C;GCO_1;1084;2;78.75002;78.75001;;;2;43.75;61.25;;;0;1;0
+  1312;C;GCO_1;1085;2;91.87503;91.87499;;;2;48.125;61.25;;;0;1;0
+  1313;C;GCO_1;1086;2;144.375;144.375;;;2;48.125;61.25;;;0;1;0
+
+
+$$IntGrfnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snap_on(i);ortho_on(i);pDataFolder(p);iType(i);rScalFac(r);rXFak(r);rYFak(r);rRTopXc(r);rRTopYc(r);rLBotXc(r);rLBotYc(r)
+  1314;C;150-33kV Offshore Station;;1;2;721;0;100000;1;1;0;0;0;0
+  1315;C;Detailed Feeder;;1;1;721;0;100000;1;1;0;0;0;0
+  1316;C;HVDC;;1;1;720;0;100000;1;1;0;0;0;0
+  1317;C;SingleBusbarWithTie(1);;1;1;725;0;100000;1;1;0;0;0;0
+  1318;C;SingleBusbarWithTie;;1;1;724;0;100000;1;1;0;0;0;0
+
+
+$$IntTemplate;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  1319;C;DFIG_WTG_5.0MW;
+
+
+$$StaCt;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);chr_name(a:40);ptapset(r);stapset(r);outserv(i);typ_id(p)
+  1320;C;Current Transformer;1335;;1;1;0;
+
+
+$$StaCubic;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_bus(i);obj_id(p);it2p1(i);it2p2(i);it2p3(i);cPhInfo(a);chr_name(a:40);for_name(a:100)
+  1321;C;Cubicle_S0.0.2;726;0;495;0;1;2;abc;;
+  1322;C;Cubicle_S3.0;726;1;493;0;1;2;abc;;
+  1323;C;Feld_1;726;0;497;0;1;2;abc;;
+  1324;C;Feld_2;726;0;499;0;1;2;abc;;
+  1325;C;Feld_3;726;0;501;0;1;2;abc;;
+  1326;C;Cub_1;727;0;503;0;1;2;abc;;
+  1327;C;Cubicle_S3.0;727;0;493;0;1;2;abc;;
+  1328;C;Feld_2;727;0;505;0;1;2;abc;;
+  1329;C;Feld_3;727;0;507;0;1;2;abc;;
+  1330;C;Feld_4;727;0;509;0;1;2;abc;;
+  1331;C;Cub_1;728;1;827;0;1;2;abc;;
+  1332;C;Cubicle_S0.0.0;728;1;494;0;1;2;abc;;
+  1333;C;Cub_1;729;0;;0;1;2;abc;;
+  1334;C;Cubicle_S0.0.0;729;1;496;0;1;2;abc;;
+  1335;C;Cub_1;730;0;709;0;1;2;abc;;
+  1336;C;Cubicle_S0.0.0;730;1;498;0;1;2;abc;;
+  1337;C;Cub_1;731;0;815;0;1;2;abc;;
+  1338;C;Cubicle_S0.0.0;731;1;500;0;1;2;abc;;
+  1339;C;Cub_1;732;1;828;0;1;2;abc;;
+  1340;C;Cubicle_S0.0.0;732;1;502;0;1;2;abc;;
+  1341;C;Cub_1;733;0;;0;1;2;abc;;
+  1342;C;Cubicle_S0.0.0;733;1;504;0;1;2;abc;;
+  1343;C;Cub_1;734;0;816;0;1;2;abc;;
+  1344;C;Cubicle_S0.0.0;734;1;506;0;1;2;abc;;
+  1345;C;Cubicle_S0.0.0;735;1;508;0;1;2;abc;;
+  1346;C;Cubicle_S0.0.0;736;0;494;0;1;2;abc;;
+  1347;C;Cubicle_S0.0.1;736;1;485;0;1;2;abc;;
+  1348;C;Cubicle_S0.0.1;737;0;485;0;1;2;abc;;
+  1349;C;Cubicle_S0.0.2;737;1;495;0;1;2;abc;;
+  1350;C;Cubicle_S0.0.0;738;0;496;0;1;2;abc;;
+  1351;C;Cubicle_S0.0.1;738;1;486;0;1;2;abc;;
+  1352;C;Cubicle_S0.0.1;739;0;486;0;1;2;abc;;
+  1353;C;Cubicle_S0.0.2;739;1;497;0;1;2;abc;;
+  1354;C;Cubicle_S0.0.0;740;0;498;0;1;2;abc;;
+  1355;C;Cubicle_S0.0.1;740;1;487;0;1;2;abc;;
+  1356;C;Cubicle_S0.0.1;741;0;487;0;1;2;abc;;
+  1357;C;Cubicle_S0.0.2;741;1;499;0;1;2;abc;;
+  1358;C;Cubicle_S0.0.0;742;0;500;0;1;2;abc;;
+  1359;C;Cubicle_S0.0.1;742;1;488;0;1;2;abc;;
+  1360;C;Cubicle_S0.0.1;743;0;488;0;1;2;abc;;
+  1361;C;Cubicle_S0.0.2;743;1;501;0;1;2;abc;;
+  1362;C;Cubicle_S0.0.0;744;0;502;0;1;2;abc;;
+  1363;C;Cubicle_S0.0.1;744;1;489;0;1;2;abc;;
+  1364;C;Cubicle_S0.0.1;745;0;489;0;1;2;abc;;
+  1365;C;Cubicle_S0.0.2;745;1;503;0;1;2;abc;;
+  1366;C;Cubicle_S0.0.0;746;0;504;0;1;2;abc;;
+  1367;C;Cubicle_S0.0.1;746;1;490;0;1;2;abc;;
+  1368;C;Cubicle_S0.0.1;747;0;490;0;1;2;abc;;
+  1369;C;Cubicle_S0.0.2;747;1;505;0;1;2;abc;;
+  1370;C;Cubicle_S0.0.0;748;0;506;0;1;2;abc;;
+  1371;C;Cubicle_S0.0.1;748;1;491;0;1;2;abc;;
+  1372;C;Cubicle_S0.0.1;749;0;491;0;1;2;abc;;
+  1373;C;Cubicle_S0.0.2;749;1;507;0;1;2;abc;;
+  1374;C;Cubicle_S0.0.0;750;0;508;0;1;2;abc;;
+  1375;C;Cubicle_S0.0.1;750;1;492;0;1;2;abc;;
+  1376;C;Cubicle_S0.0.1;751;0;492;0;1;2;abc;;
+  1377;C;Cubicle_S0.0.2;751;1;509;0;1;2;abc;;
+  1378;C;Cubicle_S0.0.2;752;0;520;0;1;2;abc;;
+  1379;C;Cubicle_S3.0;752;1;518;0;1;2;abc;;
+  1380;C;Feld_1;752;0;522;0;1;2;abc;;
+  1381;C;Feld_2;752;0;524;0;1;2;abc;;
+  1382;C;Feld_3;752;0;526;0;1;2;abc;;
+  1383;C;Cub_1;753;0;528;0;1;2;abc;;
+  1384;C;Cubicle_S3.0;753;0;518;0;1;2;abc;;
+  1385;C;Feld_2;753;0;530;0;1;2;abc;;
+  1386;C;Feld_3;753;0;532;0;1;2;abc;;
+  1387;C;Feld_4;753;0;534;0;1;2;abc;;
+  1388;C;Cub_1;754;2;827;0;1;2;abc;;
+  1389;C;Cubicle_S0.0.0;754;1;519;0;1;2;abc;;
+  1390;C;Cub_1;755;0;;0;1;2;abc;;
+  1391;C;Cubicle_S0.0.0;755;1;521;0;1;2;abc;;
+  1392;C;Cub_1;756;0;817;0;1;2;abc;;
+  1393;C;Cubicle_S0.0.0;756;1;523;0;1;2;abc;;
+  1394;C;Cubicle_S0.0.0;757;1;525;0;1;2;abc;;
+  1395;C;Cub_1;758;2;828;0;1;2;abc;;
+  1396;C;Cubicle_S0.0.0;758;1;527;0;1;2;abc;;
+  1397;C;Cub_1;759;0;;0;1;2;abc;;
+  1398;C;Cubicle_S0.0.0;759;1;529;0;1;2;abc;;
+  1399;C;Cub_1;760;0;818;0;1;2;abc;;
+  1400;C;Cubicle_S0.0.0;760;1;531;0;1;2;abc;;
+  1401;C;Cubicle_S0.0.0;761;1;533;0;1;2;abc;;
+  1402;C;Cubicle_S0.0.0;762;0;519;0;1;2;abc;;
+  1403;C;Cubicle_S0.0.1;762;1;510;0;1;2;abc;;
+  1404;C;Cubicle_S0.0.1;763;0;510;0;1;2;abc;;
+  1405;C;Cubicle_S0.0.2;763;1;520;0;1;2;abc;;
+  1406;C;Cubicle_S0.0.0;764;0;521;0;1;2;abc;;
+  1407;C;Cubicle_S0.0.1;764;1;511;0;1;2;abc;;
+  1408;C;Cubicle_S0.0.1;765;0;511;0;1;2;abc;;
+  1409;C;Cubicle_S0.0.2;765;1;522;0;1;2;abc;;
+  1410;C;Cubicle_S0.0.0;766;0;523;0;1;2;abc;;
+  1411;C;Cubicle_S0.0.1;766;1;512;0;1;2;abc;;
+  1412;C;Cubicle_S0.0.1;767;0;512;0;1;2;abc;;
+  1413;C;Cubicle_S0.0.2;767;1;524;0;1;2;abc;;
+  1414;C;Cubicle_S0.0.0;768;0;525;0;1;2;abc;;
+  1415;C;Cubicle_S0.0.1;768;1;513;0;1;2;abc;;
+  1416;C;Cubicle_S0.0.1;769;0;513;0;1;2;abc;;
+  1417;C;Cubicle_S0.0.2;769;1;526;0;1;2;abc;;
+  1418;C;Cubicle_S0.0.0;770;0;527;0;1;2;abc;;
+  1419;C;Cubicle_S0.0.1;770;1;514;0;1;2;abc;;
+  1420;C;Cubicle_S0.0.1;771;0;514;0;1;2;abc;;
+  1421;C;Cubicle_S0.0.2;771;1;528;0;1;2;abc;;
+  1422;C;Cubicle_S0.0.0;772;0;529;0;1;2;abc;;
+  1423;C;Cubicle_S0.0.1;772;1;515;0;1;2;abc;;
+  1424;C;Cubicle_S0.0.1;773;0;515;0;1;2;abc;;
+  1425;C;Cubicle_S0.0.2;773;1;530;0;1;2;abc;;
+  1426;C;Cubicle_S0.0.0;774;0;531;0;1;2;abc;;
+  1427;C;Cubicle_S0.0.1;774;1;516;0;1;2;abc;;
+  1428;C;Cubicle_S0.0.1;775;0;516;0;1;2;abc;;
+  1429;C;Cubicle_S0.0.2;775;1;532;0;1;2;abc;;
+  1430;C;Cubicle_S0.0.0;776;0;533;0;1;2;abc;;
+  1431;C;Cubicle_S0.0.1;776;1;517;0;1;2;abc;;
+  1432;C;Cubicle_S0.0.1;777;0;517;0;1;2;abc;;
+  1433;C;Cubicle_S0.0.2;777;1;534;0;1;2;abc;;
+  1434;C;Cub_1;778;0;827;0;1;2;abc;;
+  1435;C;Cub_2(1);778;0;828;0;1;2;abc;;
+  1436;C;Cub_2;778;0;829;0;1;2;abc;;
+  1437;C;Cub_1;779;1;723;0;1;2;;;
+  1438;C;Cub_2;779;0;722;0;1;2;;;
+  1439;C;Cub_1;780;0;812;0;1;2;abc;;
+  1440;C;Cub_2;780;0;831;0;1;2;abc;;
+  1441;C;Cub_1;781;1;812;0;1;2;abc;;
+  1442;C;Cub_3;781;0;830;0;1;2;abc;;
+  1443;C;Cub_1;782;1;722;0;1;2;;;
+  1444;C;Cub_2;782;0;;0;1;2;;;
+  1445;C;Cub_1;783;0;723;0;1;2;;;
+  1446;C;Cub_2;783;1;;0;1;2;;;
+  1447;C;Cub_1;784;2;829;0;1;2;;;
+  1448;C;Feld_3;784;0;707;0;1;2;;;
+  1449;C;Cub_4;785;1;829;0;1;2;;;
+  1450;C;Feld_5;785;0;708;0;1;2;;;
+  1451;C;Cub_2;786;1;707;0;1;2;;;
+  1452;C;Cub_4;786;2;830;0;1;2;;;
+  1453;C;Feld_6;786;1;;0;1;2;;;
+  1454;C;Cub_2;787;1;708;0;1;2;;;
+  1455;C;Cub_4;787;1;830;0;1;2;;;
+  1456;C;Feld_6;787;0;;0;1;2;;;
+  1457;C;Cub_1;788;0;455;0;1;2;abc;;
+  1458;C;Cub_4;788;1;813;0;1;2;abc;;
+  1459;C;Cub_1;789;0;456;0;1;2;abc;;
+  1460;C;Cub_4;789;1;814;0;1;2;abc;;
+  1461;C;Cub_1;790;0;457;0;1;2;abc;;
+  1462;C;Cub_4;790;1;815;0;1;2;abc;;
+  1463;C;Cub_1;791;0;458;0;1;2;abc;;
+  1464;C;Cub_4;791;1;816;0;1;2;abc;;
+  1465;C;Cub_1;792;0;459;0;1;2;abc;;
+  1466;C;Cub_4;792;1;817;0;1;2;abc;;
+  1467;C;Cub_1;793;0;460;0;1;2;abc;;
+  1468;C;Cub_4;793;1;818;0;1;2;abc;;
+  1469;C;Cub_1;794;0;461;0;1;2;abc;;
+  1470;C;Cub_4;794;1;819;0;1;2;abc;;
+  1471;C;Cub_1;795;0;462;0;1;2;abc;;
+  1472;C;Cub_4;795;1;820;0;1;2;abc;;
+  1473;C;Cub_1;796;0;463;0;1;2;abc;;
+  1474;C;Cub_4;796;1;821;0;1;2;abc;;
+  1475;C;Cub_1;797;0;464;0;1;2;abc;;
+  1476;C;Cub_4;797;1;822;0;1;2;abc;;
+  1477;C;Cub_1;798;0;465;0;1;2;abc;;
+  1478;C;Cub_4;798;1;823;0;1;2;abc;;
+  1479;C;Cub_1;799;0;466;0;1;2;abc;;
+  1480;C;Cub_4;799;1;824;0;1;2;abc;;
+  1481;C;Cub_1;800;0;467;0;1;2;abc;;
+  1482;C;Cub_4;800;1;825;0;1;2;abc;;
+  1483;C;Cub_1;801;0;468;0;1;2;abc;;
+  1484;C;Cub_4;801;1;826;0;1;2;abc;;
+  1485;C;Cub_1;802;1;718;0;1;2;abc;;
+  1486;C;Cub_2;802;0;814;0;1;2;abc;;
+  1487;C;Cub_0;803;0;710;0;1;2;abc;;
+  1488;C;Cub_1;803;1;709;0;1;2;abc;;
+  1489;C;Cub_2;803;0;813;0;1;2;abc;;
+  1490;C;Cub_0;804;0;711;0;1;2;abc;;
+  1491;C;Cub_1;804;1;710;0;1;2;abc;;
+  1492;C;Cub_2;804;0;819;0;1;2;abc;;
+  1493;C;Cub_0;805;0;712;0;1;2;abc;;
+  1494;C;Cub_1;805;1;711;0;1;2;abc;;
+  1495;C;Cub_2;805;0;820;0;1;2;abc;;
+  1496;C;Cub_0;806;0;713;0;1;2;abc;;
+  1497;C;Cub_1;806;1;712;0;1;2;abc;;
+  1498;C;Cub_2;806;0;821;0;1;2;abc;;
+  1499;C;Cub_0;807;0;714;0;1;2;abc;;
+  1500;C;Cub_1;807;1;713;0;1;2;abc;;
+  1501;C;Cub_2;807;0;822;0;1;2;abc;;
+  1502;C;Cub_0;808;0;715;0;1;2;abc;;
+  1503;C;Cub_1;808;1;714;0;1;2;abc;;
+  1504;C;Cub_2;808;0;823;0;1;2;abc;;
+  1505;C;Cub_0;809;0;716;0;1;2;abc;;
+  1506;C;Cub_1;809;1;715;0;1;2;abc;;
+  1507;C;Cub_2;809;0;824;0;1;2;abc;;
+  1508;C;Cub_0;810;0;717;0;1;2;abc;;
+  1509;C;Cub_1;810;1;716;0;1;2;abc;;
+  1510;C;Cub_2;810;0;825;0;1;2;abc;;
+  1511;C;Cub_0;811;0;718;0;1;2;abc;;
+  1512;C;Cub_1;811;1;717;0;1;2;abc;;
+  1513;C;Cub_2;811;0;826;0;1;2;abc;;
+
+
+$$StaImea;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);pcubic(p);outserv(i);i_mode(i);iOutput(i);Inom(r);nominalFreq(r);nphase(i);it2p(i);samplingFreq(r);samplesPerPeriod(i);samplesPerWindow(i);windowLength(r);rateLim(r);clockPeriod(r);chr_name(a:40)
+  1514;C;IAC Offshore;469;1436;0;1;0;1.676;50;3;0;1000;20;100;0.1;100;0.02;
+
+
+$$StaSwitch;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);on_off(i);typ_id(p);aUsage(a);iUse(i);for_name(a:100)
+  1515;C;Switch;1434;1;;cbk;1;
+  1516;C;Switch;1435;1;;cbk;1;
+  1517;C;Switch;1436;1;;cbk;1;
+  1518;C;Switch;1437;1;;cbk;1;
+  1519;C;Switch;1438;1;;cbk;1;
+  1520;C;Switch;1439;1;;cbk;1;
+  1521;C;Switch;1440;1;;cbk;1;
+  1522;C;Switch;1441;1;;cbk;1;
+  1523;C;Switch;1442;1;;cbk;1;
+  1524;C;Schalter;1448;1;;cbk;1;
+  1525;C;Schalter;1450;1;;cbk;1;
+  1526;C;Switch;1457;1;;cbk;1;
+  1527;C;Switch;1458;1;;cbk;1;
+  1528;C;Switch;1459;1;;cbk;1;
+  1529;C;Switch;1460;1;;cbk;1;
+  1530;C;Switch;1461;1;;cbk;1;
+  1531;C;Switch;1462;1;;cbk;1;
+  1532;C;Switch;1463;1;;cbk;1;
+  1533;C;Switch;1464;1;;cbk;1;
+  1534;C;Switch;1465;1;;cbk;1;
+  1535;C;Switch;1466;1;;cbk;1;
+  1536;C;Switch;1467;1;;cbk;1;
+  1537;C;Switch;1468;1;;cbk;1;
+  1538;C;Switch;1469;1;;cbk;1;
+  1539;C;Switch;1470;1;;cbk;1;
+  1540;C;Switch;1471;1;;cbk;1;
+  1541;C;Switch;1472;1;;cbk;1;
+  1542;C;Switch;1473;1;;cbk;1;
+  1543;C;Switch;1474;1;;cbk;1;
+  1544;C;Switch;1475;1;;cbk;1;
+  1545;C;Switch;1476;1;;cbk;1;
+  1546;C;Switch;1477;1;;cbk;1;
+  1547;C;Switch;1478;1;;cbk;1;
+  1548;C;Switch;1479;1;;cbk;1;
+  1549;C;Switch;1480;1;;cbk;1;
+  1550;C;Switch;1481;1;;cbk;1;
+  1551;C;Switch;1482;1;;cbk;1;
+  1552;C;Switch;1483;1;;cbk;1;
+  1553;C;Switch;1484;1;;cbk;1;
+
+
+$$StaVmea;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);pbusbar(p);pbusbar2(p);outserv(i);i_mode(i);iOutput(i);iUdcOutput(i);iFreq(i);freqOutput(i);nominalFreq(r);meatech(i);nphase(i);it2p(i);it2p2(i);samplingFreq(r);samplesPerPeriod(i);samplesPerWindow(i);windowLength(r);rateLim(r);clockPeriod(r);chr_name(a:40)
+  1554;C;VAC Offshore;469;778;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1555;C;VDCm Offshore;469;784;;0;1;0;0;0;0;0;0;3;0;0;0;20;100;0;100;0;
+  1556;C;VDCp Offshore;469;785;;0;1;0;0;0;0;0;0;3;0;0;0;20;100;0;100;0;
+  1557;C;VAC-Onshore;470;781;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1558;C;VDCn-Onshore;470;786;;0;1;0;1;0;0;0;0;3;0;0;0;20;100;0;100;0;
+  1559;C;VDCp-Onshore;470;787;;0;1;0;1;0;0;0;0;3;0;0;0;20;100;0;100;0;
+  1560;C;V generator side;471;1457;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1561;C;V grid side;471;788;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1562;C;V generator side;472;1459;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1563;C;V grid side;472;789;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1564;C;V generator side;473;1461;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1565;C;V grid side;473;790;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1566;C;V generator side;474;1463;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1567;C;V grid side;474;791;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1568;C;V generator side;475;1465;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1569;C;V grid side;475;792;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1570;C;V generator side;476;1467;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1571;C;V grid side;476;793;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1572;C;V generator side;477;1469;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1573;C;V grid side;477;794;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1574;C;V generator side;478;1471;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1575;C;V grid side;478;795;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1576;C;V generator side;479;1473;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1577;C;V grid side;479;796;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1578;C;V generator side;480;1475;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1579;C;V grid side;480;797;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1580;C;V generator side;481;1477;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1581;C;V grid side;481;798;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1582;C;V generator side;482;1479;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1583;C;V grid side;482;799;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1584;C;V generator side;483;1481;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1585;C;V grid side;483;800;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1586;C;V generator side;484;1483;;0;1;0;0;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+  1587;C;V grid side;484;801;;0;1;0;1;0;0;50;0;3;0;0;1000;20;100;0.1;100;0.02;
+
+
+$$TypAsmo;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);ugn(r);i_mode(i);sgn(r);pgn(r);cosn(r);effic(r);frequ(r);anend(r);nppol(i);nslty(i);i_cage(i);aiazn(r);amazn(r);amkzn(r);xstr(r);xmrtr(r);rstr(r);xm(r)
+  1588;C;IG5MW;856;0.69;1;5556;4869.553;0.895211;97.90421;50;1485.153;2;1;0;5.045273;0.271800;2.579885;0.1;0;0.01;3.5
+
+
+$$TypLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uline(r);sline(r);InomAir(r);cohl_(i);rline(r);xline(r);rline0(r);xline0(r);Ithr(r);tmax(r);rtemp(r);systp(i);nlnph(i);nneutral(i);frnom(r);mlei(a:4);bline(r);bline0(r);c:rline(r);c:xline(r);c:bline(r);gline(r);gline0(r);aohl_(a:6);cline(r);cline0(r);chr_name(a:40);for_name(a:100)
+  1589;C;DC_Line_150kV;;150;1.4;1;0;0.01;0.4;0;0;0;80;80;1;1;0;50;Al;3.141593;0;0.01;0.4;3.141593;0;0;cab;0.01;0;;
+  1590;C;Sea Cable 0.5kA;;33;0.5;0.5;0;0.09;0.1;0.6;0.15;0;80;80;0;3;0;50;Al;69.11504;69.11504;0.09;0.1;69.11504;0;0;cab;0.22;0.22;;
+  1591;C;Sea Cable 1kA;;33;1;1;0;0.0387;0.103672;0.1548;0.414690;70.9;90;250;0;3;0;50;Cu;94.24778;98.14336;0.0387;0.103672;94.24778;0;0;cab;0.3;0.3124;;
+
+
+$$TypTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);nt2ph(i);strn(r);frnom(r);utrn_h(r);utrn_l(r);uktr(r);pcutr(r);uk0tr(r);ur0tr(r);tr2cn_h(a:4);tr2cn_l(a:4);nt2ag(r);curmg(r);pfe(r);zx0hl_n(r);itapch(i);tap_side(i);dutap(r);phitr(r);nntap0(i);ntpmn(i);ntpmx(i);manuf(a:40);itapzdep(i);iIntPola(i);uktmn(r);uktmx(r);pcutmn(r);pcutmx(r);ukrtmn(r);ukrtmx(r);itrdl(r);itrdl_lv(r);itrdr(r);itrdr_lv(r);chr_name(a:40);for_name(a:100)
+  1592;C;T_Conv 380/150;;3;450;50;380;110;11;250;11;0;YN;D;5;0;0;100;1;0;1;0;0;-10;10;;0;0;0;0;0;0;0;0;0.5;0.5;0.5;0.5;;
+  1593;C;Trf 0.69kV - 33kV;856;3;5.6;50;33;0.69;6;5.599223;3;0;D;YN;5;0;0;100;1;0;0;0;0;0;0;;0;0;0;0;0;0;0;0;0.5;0.5;0.5;0.5;;
+
+
+$$TypTr3;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);strn3_h(r);strn3_m(r);strn3_l(r);utrn3_h(r);utrn3_m(r);utrn3_l(r);uktr3_h(r);uktr3_m(r);uktr3_l(r);pcut3_h(r);pcut3_m(r);pcut3_l(r);uk0hm(r);uk0ml(r);uk0hl(r);ur0hm(r);ur0ml(r);ur0hl(r);tr3cn_h(a:4);tr3cn_m(a:4);tr3cn_l(a:4);nt3ag_h(r);nt3ag_m(r);nt3ag_l(r);curm3(r);pfe(r);du3tp_h(r);ph3tr_h(r);n3tp0_h(i);n3tmn_h(i);n3tmx_h(i);du3tp_m(r);ph3tr_m(r);n3tp0_m(i);n3tmn_m(i);n3tmx_m(i);du3tp_l(r);ph3tr_l(r);n3tp0_l(i);n3tmn_l(i);n3tmx_l(i);itapos(i);i3loc(i)
+  1594;C;240MVA_155_33kV;;240;120;120;155;33;33;13;10;13;30;20;30;3;3;3;0;0;0;YN;D;D;0;5;5;0;0;2;0;0;-8;8;0;0;0;0;0;0;0;0;0;0;0;0

@@ -424,6 +424,7 @@ def get_load_data(data: LoadData,
     :param fill_three_phase: Fill the tree phase info?
     :return:
     """
+    data.fixed_voltage = np.zeros(data.nelm, dtype=bool) if fill_three_phase else None
     ii = 0
     for elm in circuit.get_loads():
 
@@ -440,16 +441,18 @@ def get_load_data(data: LoadData,
             data.mttf[ii] = elm.mttf
             data.mttr[ii] = elm.mttr
             data.scalable[ii] = elm.scalable
+            data.grounds_neutral[ii] = elm.phN and elm.conn == ShuntConnectionType.GroundedStar
+
+            data.S[ii] = elm.get_S_at(t_idx)
+            # Use phase totals only when both P and Q are zero.
+            if data.S[ii] == 0j:
+                data.S[ii] = elm.get_Sa_at(t_idx) + elm.get_Sb_at(t_idx) + elm.get_Sc_at(t_idx)
 
             if opf_results is not None:
                 if opf_results.load_shedding.ndim == 1:
-                    data.S[ii] = elm.get_S_at(t_idx) - opf_results.load_shedding[ii]
+                    data.S[ii] -= opf_results.load_shedding[ii]
                 elif opf_results.load_shedding.ndim == 2:
-                    data.S[ii] = elm.get_S_at(t_idx) - opf_results.load_shedding[t_idx, ii]
-                else:
-                    data.S[ii] = elm.get_S_at(t_idx)  # ???
-            else:
-                data.S[ii] = elm.get_S_at(t_idx)
+                    data.S[ii] -= opf_results.load_shedding[t_idx, ii]
 
             if fill_three_phase:
                 if elm.conn == ShuntConnectionType.GroundedStar:
@@ -766,6 +769,8 @@ def get_load_data(data: LoadData,
 
             # change stuff depending on the modes
             if elm.mode == ExternalGridMode.VD:
+                if data.fixed_voltage is not None:
+                    data.fixed_voltage[ii] = True
                 # bus_data.bus_types[i] = BusMode.Slack_tpe.value  # set as Slack
                 bus_data.set_bus_mode(i, BusMode.Slack_tpe)
 
@@ -1036,7 +1041,12 @@ def get_shunt_data(
             data.control_mode_int[ii] = elm.control_mode.idx()
             data.conn[ii] = elm.conn.idx()
 
-            data.vset[ii] = elm.get_Vset_at(t_idx)
+            if elm.facility is not None and elm.use_facility_control:
+                data.vset[ii] = elm.facility.get_Vset_at(t_idx)
+            else:
+                data.vset[ii] = elm.get_Vset_at(t_idx)
+
+
             data.vmin[ii] = elm.Vmin
             data.vmax[ii] = elm.Vmax
             if elm.control_mode == ShuntControlMode.Continuous:
@@ -1068,47 +1078,77 @@ def get_shunt_data(
                 s = elm.step if 0 <= elm.step < len(cum_b) else 0
                 data.Y[ii] += complex(cum_g[s], cum_b[s])
 
-            if fill_three_phase:
-                if elm.control_mode == ShuntControlMode.Continuous:
-                    # U1 control solves a common susceptance in the existing controller.
-                    # Keep only conductance here, avoiding a second fixed B contribution.
-                    if elm.conn == ShuntConnectionType.GroundedStar:
-                        pattern: np.ndarray = np.eye(3, dtype=complex)
-                    elif elm.conn in (ShuntConnectionType.Delta, ShuntConnectionType.FloatingStar):
-                        pattern = fortescue_012_to_abc(0j, 1+0j, 1+0j)
-                    else:
-                        raise ValueError('Continuous shunt U1 control does not support an explicit neutral: '
+            if elm.control_mode == ShuntControlMode.QVDroop and data.active[ii]:
+                scale = 1000.0 if elm.use_kw else 1.0
+                if elm.Qdroop == 0.0 and elm.Snom != 0.0:
+                    # Legacy SVCs clamp the measured voltage and store the droop in percent.
+                    if (not np.all(np.isfinite((elm.Snom, elm.droop, data.vset[ii], elm.Vmin, elm.Vmax)))
+                            or elm.Snom <= 0.0 or elm.droop <= 0.0 or elm.Vmin <= 0.0
+                            or not elm.Vmin <= data.vset[ii] <= elm.Vmax
+                            or elm.bus.is_dc or not (elm.phA and elm.phB and elm.phC)
+                            or (elm.control_bus is not None and elm.control_bus != elm.bus)):
+                        raise ValueError('Shunt Q-V droop requires a local AC three-phase bus, positive rating/droop '
+                                         'and ordered voltage clamps: ' + elm.name)
+                    data.q_droop[ii] = elm.droop
+                    data.q_droop_snom[ii] = elm.Snom / scale
+                    data.controllable_bus_idx[ii] = i
+                    data.Y[ii] = complex(elm.get_Y_at(t_idx).real)
+                else:
+                    # The droop sets B from the control voltage and keeps it in [Bmin, Bmax]; the bus stays PQ.
+                    if (not np.all(np.isfinite((elm.Qdroop, elm.Bmin, elm.Bmax, data.vset[ii])))
+                            or elm.Qdroop <= 0.0 or elm.Bmin > elm.Bmax or data.vset[ii] <= 0.0):
+                        raise ValueError('Shunt Q-V droop requires a positive Qdroop, Bmin <= Bmax and a positive Vset: '
                                          + elm.name)
-                    admittance: complex = complex(data.Y[ii].real)
-                    if bus_data.bus_types[i] == BusMode.Slack_tpe.value:
-                        # The ideal slack supplies voltage control; retain this shunt's fixed step.
-                        admittance = data.Y[ii]
+                    if elm.bus.is_dc:
+                        raise ValueError('Shunt Q-V droop requires an AC bus: ' + elm.name)
+                    if fill_three_phase and not (elm.phA and elm.phB and elm.phC):
+                        raise ValueError('Shunt Q-V droop requires three connected phases in three-phase power flow: '
+                                         + elm.name)
+                    data.q_droop[ii] = elm.Qdroop / scale
+                    data.qmin[ii] = elm.Bmin / scale
+                    data.qmax[ii] = elm.Bmax / scale
+                    data.controllable_bus_idx[ii] = i if elm.control_bus is None else bus_dict[elm.control_bus]
+
+            if fill_three_phase:
+                if elm.conn == ShuntConnectionType.GroundedStar:
+                    pattern: np.ndarray = np.eye(3, dtype=complex)
+                elif elm.conn in (ShuntConnectionType.Delta, ShuntConnectionType.FloatingStar):
+                    pattern = fortescue_012_to_abc(0j, 1+0j, 1+0j)
+                else:
+                    raise ValueError('Controllable shunt does not support an explicit neutral in ABC: '
+                                     + elm.name)
+                # Reuse the actual scalar step: step zero has exactly zero admittance.
+                admittance: complex = data.Y[ii]
+                if elm.control_mode == ShuntControlMode.Continuous:
+                    if bus_data.bus_types[i] != BusMode.Slack_tpe.value:
+                        # U1 control supplies B; do not also stamp it as a fixed shunt.
+                        admittance = complex(admittance.real)
                     else:
                         pass
-                    if elm.use_kw:
-                        admittance /= 1000.0
-                    else:
-                        pass
-                    data.Y3_star[4 * ii + 1:4 * ii + 4, 1:4] = (
-                        pattern * admittance * data.active[ii] / 3.0)
                     data.qmin[ii] /= 1000.0 if elm.use_kw else 1.0
                     data.qmax[ii] /= 1000.0 if elm.use_kw else 1.0
-                elif elm.conn == ShuntConnectionType.GroundedStar:
-
-                    data.Y3_star[3 * ii + 0, 1] = elm.get_Ya_at(t_idx)
-                    data.Y3_star[3 * ii + 1, 2] = elm.get_Yb_at(t_idx)
-                    data.Y3_star[3 * ii + 2, 3] = elm.get_Yc_at(t_idx)
-
-                elif elm.conn == ShuntConnectionType.Delta:
-
-                    data.Y3_star[4 * ii:4 * ii + 4, [0, 1, 2, 3]] = delta2StarAdmittance(
-                        Yab=elm.get_Ya_at(t_idx),
-                        Ybc=elm.get_Yb_at(t_idx),
-                        Yca=elm.get_Yc_at(t_idx)
-                    )
-
                 else:
-                    raise Exception(f"Unhandled connection type {elm.conn}")
+                    pass
+                block: np.ndarray = pattern * admittance / 3.0
+                if elm.control_mode == ShuntControlMode.Locked:
+                    phase_y: np.ndarray = np.array((elm.get_Ya_at(t_idx), elm.get_Yb_at(t_idx),
+                                                   elm.get_Yc_at(t_idx)))
+                    # Preserve explicit phase data, excluding the historical constructor defaults.
+                    if np.any(phase_y) and not np.all(phase_y == complex(1e-20, 1e-20)):
+                        if elm.conn == ShuntConnectionType.GroundedStar:
+                            block = np.diag(phase_y)
+                        elif elm.conn == ShuntConnectionType.Delta:
+                            block = delta2StarAdmittance(*phase_y)[1:4, 1:4]
+                        elif np.sum(phase_y) != 0j:
+                            block = np.diag(phase_y) - np.outer(phase_y, phase_y) / np.sum(phase_y)
+                        else:
+                            raise ValueError('Floating shunt phase admittances sum to zero: ' + elm.name)
+                    else:
+                        pass
+                else:
+                    pass
+                data.Y3_star[4 * ii + 1:4 * ii + 4, 1:4] = (
+                    block * data.active[ii] / (1000.0 if elm.use_kw else 1.0))
 
             if elm.control_mode == ShuntControlMode.Continuous and data.active[ii]:
                 if elm.control_bus is not None:
@@ -1126,7 +1166,7 @@ def get_shunt_data(
                                         bus_name=elm.bus.name,
                                         bus_data=bus_data,
                                         bus_voltage_used=bus_voltage_used,
-                                        candidate_Vm=elm.get_Vset_at(t_idx),
+                                        candidate_Vm=data.vset[ii],
                                         use_stored_guess=use_stored_guess,
                                         logger=logger)
 
@@ -1134,7 +1174,7 @@ def get_shunt_data(
                 # pass kW to MW
                 data.Y[ii] /= 1000.0
 
-            # reactive power sharing data
+            # reactive power-sharing data
             if data.active[ii]:
                 if data.control_mode_int[ii] == ShuntControlMode.Locked.idx():
                     bus_data.q_shared_total[i] += data.Y[ii].imag
@@ -1231,7 +1271,11 @@ def fill_generator_parent(
     if hasattr(data, 'is_static_generator'):
         data.is_static_generator[k] = elm.is_static_generator
 
-    data.v[k] = elm.get_Vset_at(t_idx)
+    if elm.facility is not None and elm.use_facility_control:
+        data.v[k] = elm.facility.get_Vset_at(t_idx)
+    else:
+        data.v[k] = elm.get_Vset_at(t_idx)
+
     data.k_droop[k] = elm.k_droop
     data.dead_band[k] = elm.dead_band
     pmin, pmax = normalize_upper_bound(
@@ -1278,7 +1322,7 @@ def fill_generator_parent(
                                     bus_name=elm.bus.name,
                                     bus_data=bus_data,
                                     bus_voltage_used=bus_voltage_used,
-                                    candidate_Vm=elm.get_Vset_at(t_idx),
+                                    candidate_Vm=data.v[k],
                                     use_stored_guess=use_stored_guess,
                                     logger=logger)
             data.q[k] = 0.0
@@ -1855,9 +1899,11 @@ def get_branch_data(
              data.phB[ii],
              data.phC[ii]) = elm.transformer_phases(logger=logger)
 
-        data.conn[ii] = elm.conn.idx()
         data.conn_f[ii] = elm.conn_f.idx()
         data.conn_t[ii] = elm.conn_t.idx()
+        # Compile the existing oriented device clock in canonical 30-degree steps.
+        data.vector_group_number[ii] = int(round(elm.get_clock_phase() / (np.pi / 6.0)))
+        data.is_transformer[ii] = True
         data.m_taps[ii] = elm.tap_changer.tap_modules_array
         data.tau_taps[ii] = elm.tap_changer.tap_angles_array
 
@@ -1919,12 +1965,14 @@ def get_branch_data(
             else:
                 pass
 
-            data.conn[ii] = elm.conn.idx()
             winding_conn_f: WindingType
             winding_conn_t: WindingType
             winding_conn_f, winding_conn_t = elm.get_winding_connections()
             data.conn_f[ii] = winding_conn_f.idx()
             data.conn_t[ii] = winding_conn_t.idx()
+            # Internal-star windings retain their terminal-to-core clock orientation.
+            data.vector_group_number[ii] = int(round(elm.get_clock_phase() / (np.pi / 6.0)))
+            data.is_transformer[ii] = True
             data.m_taps[ii] = elm.tap_changer.tap_modules_array
             data.tau_taps[ii] = elm.tap_changer.tap_angles_array
 
@@ -2389,6 +2437,24 @@ def get_vsc_data(
         else:
             pass  # keep the converter controls of the grid
 
+        # Keep the measured passive branch separate from the VSC's own index.
+        # Resolve after OPF overrides so their deliberately local targets stay local.
+        remote_q_requested: bool = False
+        if (data.control1_int[ii] == ConverterControlType.Qac.idx()
+                and control1_dev is not None and not isinstance(control1_dev, Bus)):
+            remote_q_requested = True
+            data.remote_q_branch_original_idx[ii] = branch_dict.get(control1_dev, -1)
+        elif (data.control2_int[ii] == ConverterControlType.Qac.idx()
+                and control2_dev is not None and not isinstance(control2_dev, Bus)):
+            remote_q_requested = True
+            data.remote_q_branch_original_idx[ii] = branch_dict.get(control2_dev, -1)
+        else:
+            data.remote_q_branch_original_idx[ii] = -1
+        if remote_q_requested and data.remote_q_branch_original_idx[ii] < 0:
+            raise ValueError(f"{elm.name}: remote Qac branch is not in the circuit")
+        else:
+            pass
+
         # Using DC_positive to set the controls, may need to also pass DC_negative
         set_control_dev(k=ii, f=f, t=t,
                         control_int=data.control1_int[ii],
@@ -2553,6 +2619,7 @@ def get_fluid_node_data(data: FluidNodeData,
         data.initial_level[k] = 1e6 * elm.initial_level
 
         data.inflow[k] = elm.get_inflow_at(t_idx)
+        data.loss_factor[k] = elm.get_loss_factor_at(t_idx)
         data.spillage_cost[k] = elm.get_spillage_cost_at(t_idx)
         min_soc, max_soc = normalize_upper_bound(
             lower=elm.get_min_soc_at(t_idx),
@@ -2644,6 +2711,7 @@ def get_fluid_turbine_data(data: FluidTurbineData,
                            circuit: MultiCircuit,
                            plant_dict: Dict[str, int],
                            gen_dict: Dict[str, int],
+                           t_idx: int | None = None,
                            logger: Logger = Logger()) -> FluidTurbineData:
     """
 
@@ -2669,8 +2737,8 @@ def get_fluid_turbine_data(data: FluidTurbineData,
             data.names[k] = elm.name
             data.idtag[k] = elm.idtag
 
-            data.efficiency[k] = elm.efficiency
-            data.max_flow_rate[k] = elm.max_flow_rate
+            data.efficiency[k] = elm.get_efficiency_at(t_idx)
+            data.max_flow_rate[k] = elm.get_max_flow_rate_at(t_idx)
 
             k += 1
         else:
@@ -2685,6 +2753,7 @@ def get_fluid_pump_data(data: FluidPumpData,
                         circuit: MultiCircuit,
                         plant_dict: Dict[str, int],
                         gen_dict: Dict[str, int],
+                        t_idx: int | None = None,
                         logger: Logger = Logger()) -> FluidPumpData:
     """
 
@@ -2711,8 +2780,8 @@ def get_fluid_pump_data(data: FluidPumpData,
             data.names[k] = elm.name
             data.idtag[k] = elm.idtag
 
-            data.efficiency[k] = elm.efficiency
-            data.max_flow_rate[k] = elm.max_flow_rate
+            data.efficiency[k] = elm.get_efficiency_at(t_idx)
+            data.max_flow_rate[k] = elm.get_max_flow_rate_at(t_idx)
 
             k += 1
         else:
@@ -2727,6 +2796,7 @@ def get_fluid_p2x_data(data: FluidP2XData,
                        circuit: MultiCircuit,
                        plant_dict: Dict[str, int],
                        gen_dict: Dict[str, int],
+                       t_idx: int | None = None,
                        logger: Logger = Logger()) -> FluidP2XData:
     """
 
@@ -2753,8 +2823,8 @@ def get_fluid_p2x_data(data: FluidP2XData,
             data.names[k] = elm.name
             data.idtag[k] = elm.idtag
 
-            data.efficiency[k] = elm.efficiency
-            data.max_flow_rate[k] = elm.max_flow_rate
+            data.efficiency[k] = elm.get_efficiency_at(t_idx)
+            data.max_flow_rate[k] = elm.get_max_flow_rate_at(t_idx)
 
             k += 1
         else:
@@ -2768,6 +2838,7 @@ def get_fluid_p2x_data(data: FluidP2XData,
 def get_fluid_path_data(data: FluidPathData,
                         circuit: MultiCircuit,
                         plant_dict: Dict[str, int],
+                        t_idx: int | None = None,
                         logger: Logger = Logger()) -> FluidPathData:
     """
 
@@ -2787,8 +2858,8 @@ def get_fluid_path_data(data: FluidPathData,
         data.target_idx[k] = plant_dict[elm.target.idtag]
 
         min_flow, max_flow = normalize_upper_bound(
-            lower=elm.min_flow,
-            upper=elm.max_flow,
+            lower=elm.get_min_flow_at(t_idx),
+            upper=elm.get_max_flow_at(t_idx),
             logger=logger,
             device_name=elm.name,
             device_class=str(elm.device_type.value),
@@ -2797,6 +2868,7 @@ def get_fluid_path_data(data: FluidPathData,
         )
         data.min_flow[k] = min_flow
         data.max_flow[k] = max_flow
+        data.loss_factor[k] = elm.get_loss_factor_at(t_idx)
 
     return data
 
@@ -2989,6 +3061,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
             circuit=circuit,
             plant_dict=plant_dict,
             gen_dict=gen_dict,
+            t_idx=t_idx,
             logger=logger,
         )
         nc.nfluidturbine = nc.fluid_turbine_data.nelm
@@ -2998,6 +3071,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
             circuit=circuit,
             plant_dict=plant_dict,
             gen_dict=gen_dict,
+            t_idx=t_idx,
             logger=logger,
         )
         nc.nfluidpump = nc.fluid_pump_data.nelm
@@ -3007,6 +3081,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
             circuit=circuit,
             plant_dict=plant_dict,
             gen_dict=gen_dict,
+            t_idx=t_idx,
             logger=logger,
         )
         nc.nfluidp2x = nc.fluid_p2x_data.nelm
@@ -3015,6 +3090,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
             data=nc.fluid_path_data,
             circuit=circuit,
             plant_dict=plant_dict,
+            t_idx=t_idx,
             logger=logger,
         )
 

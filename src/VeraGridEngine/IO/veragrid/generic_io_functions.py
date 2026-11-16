@@ -18,6 +18,11 @@ def parse_config_df(df, data=None):
     else:
         data["baseMVA"] = 100
 
+    if 'BaseFrequency' in df.index:
+        data['baseFrequency'] = float(df.at['BaseFrequency', 'Value'])
+    elif 'baseFrequency' in df.index:
+        data['baseFrequency'] = float(df.at['baseFrequency', 'Value'])
+
     if 'version' in df.index:
         data["version"] = float(df.at['version', 'Value'])
 

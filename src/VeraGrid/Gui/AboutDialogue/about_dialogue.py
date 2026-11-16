@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
+
 import os
 import sys
 import chardet
@@ -323,7 +325,7 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
         add_lib(rows=rows, name="pandapower", package_name="pandapower")
         add_lib(rows=rows, name="pypsa", package_name="pypsa")
         add_lib(rows=rows, name="pypowsybl", package_name="pypowsybl")
-        add_lib(rows=rows, name="msgspec", package_name="msgspec")
+        add_lib(rows=rows, name="opendssdirect", package_name="opendssdirect")
         add_lib(rows=rows, name="msgspec", package_name="msgspec")
 
         self.ui.librariesTableWidget.setColumnCount(6)

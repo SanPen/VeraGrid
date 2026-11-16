@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Tests for the symbolic explicit-initialization workflow used by RMS problems."""
 
 import numpy as np
@@ -5,7 +9,7 @@ import pytest
 import scipy.sparse as sp
 
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import project_initial_algebraic_state
+from VeraGridEngine.Simulations.Rms.initialization_rms import project_initial_algebraic_state
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import (
     ExplicitInitializationResult,
@@ -321,6 +325,69 @@ def test_direct_algebraic_initialization_preserves_external_seed() -> None:
     assert len(init_events) == 0
 
 
+def test_direct_algebraic_forward_closure_follows_initialized_inputs() -> None:
+    """Initialize a chain of DGS helpers downstream of explicit seeds."""
+    first_power: Var = Var("P1")
+    second_power: Var = Var("P2")
+    speed: Var = Var("W1")
+    power_ratio: Var = Var("RP2oP1")
+    mechanical_signal: Var = Var("M1")
+    ratio_parameter: Var = Var("R")
+    fraction_parameter: Var = Var("F")
+    block: Block = Block(
+        algebraic_vars=list((
+            first_power,
+            second_power,
+            speed,
+            power_ratio,
+            mechanical_signal,
+        )),
+        algebraic_eqs=list((
+            power_ratio - ratio_parameter * second_power / first_power,
+            mechanical_signal - fraction_parameter * speed * power_ratio,
+        )),
+        init_eqs=dict((
+            (first_power, Const(2.0)),
+            (second_power, Const(2.0)),
+            (speed, Const(2.0)),
+        )),
+        parameters=dict((
+            (ratio_parameter, Const(0.25)),
+            (fraction_parameter, Const(0.26)),
+        )),
+        name="DGS governor forward initialization",
+    )
+
+    init_vars, dependencies, topological_order, _init_events = (
+        build_explicit_init_graph(mdl=block)
+    )
+
+    assert init_vars[power_ratio] is not None
+    assert init_vars[mechanical_signal] is not None
+    assert dependencies[power_ratio] == list((second_power, first_power))
+    assert dependencies[mechanical_signal] == list((speed, power_ratio))
+    assert topological_order.index(first_power) < topological_order.index(power_ratio)
+    assert topological_order.index(second_power) < topological_order.index(power_ratio)
+    assert topological_order.index(power_ratio) < topological_order.index(mechanical_signal)
+
+
+def test_direct_algebraic_forward_closure_leaves_unresolved_chain_to_dae() -> None:
+    """Do not infer a helper whose runtime source has no initial value."""
+    unresolved_source: Var = Var("unresolved_source")
+    helper: Var = Var("helper")
+    block: Block = Block(
+        algebraic_vars=list((unresolved_source, helper)),
+        algebraic_eqs=list((helper - unresolved_source,)),
+        name="Unresolved direct assignment",
+    )
+
+    init_vars, _dependencies, _topological_order, _init_events = (
+        build_explicit_init_graph(mdl=block)
+    )
+
+    assert helper not in init_vars
+
+
 def test_direct_algebraic_back_edge_remains_an_external_boundary_seed() -> None:
     """Reject an inferred terminal equation that closes a legacy EMT cycle.
 
@@ -394,6 +461,44 @@ def test_explicit_initialization_binds_external_time_by_exact_uid() -> None:
         external_uid_values=external_uid_values,
     )
     assert result == 0.0
+
+
+def test_explicit_initialization_accepts_zero_over_zero_helper_branch() -> None:
+    """Treat an inactive DGS helper contribution ``0 / 0`` as zero."""
+    numerator: Var = Var("inactive_power")
+    denominator: Var = Var("inactive_rating")
+    result = evaluate_explicit_init_equation(
+        eq=numerator / denominator,
+        event_params_array=np.zeros(0, dtype=float),
+        x=np.zeros(0, dtype=float),
+        params_array=np.zeros(0, dtype=float),
+        dx=np.zeros(0, dtype=float),
+        uid2idx_event_params=dict(),
+        uid2idx_vars=dict(),
+        uid2idx_params=dict(),
+        uid2idx_diff=dict(),
+        init_guess=dict(((numerator.uid, 0.0), (denominator.uid, 0.0))),
+    )
+    assert result == 0.0
+
+
+def test_explicit_initialization_accepts_nested_zero_over_zero_helper() -> None:
+    """Treat a nested inactive ``0 / 0`` contribution as zero."""
+    numerator: Var = Var("inactive_power")
+    denominator: Var = Var("inactive_rating")
+    result = evaluate_explicit_init_equation(
+        eq=Const(2.0) + numerator / denominator,
+        event_params_array=np.zeros(0, dtype=float),
+        x=np.zeros(0, dtype=float),
+        params_array=np.zeros(0, dtype=float),
+        dx=np.zeros(0, dtype=float),
+        uid2idx_event_params=dict(),
+        uid2idx_vars=dict(),
+        uid2idx_params=dict(),
+        uid2idx_diff=dict(),
+        init_guess=dict(((numerator.uid, 0.0), (denominator.uid, 0.0))),
+    )
+    assert result == 2.0
 
 
 def test_initial_algebraic_projection_preserves_states() -> None:
@@ -611,3 +716,25 @@ def test_explicit_initialization_result_rejects_failed_legacy_tuple_unpacking() 
 
     with pytest.raises(RuntimeError, match="Expected explicit-initialization failure"):
         list(result)
+
+
+@pytest.mark.parametrize("startup_time, expected", ((0.0, 0.0), (1.0, 1.0)))
+def test_external_time_used_only_by_nested_procedural_initializer(startup_time: float, expected: float) -> None:
+    """Bind time introduced by procedural startup without changing mode fallbacks.
+
+    :param startup_time: Declared external startup instant.
+    :param expected: Sampled comparison at that instant.
+    :return: None.
+    """
+    global_time: Var = Var("glob_time")
+    sampled: Var = Var("sampled_condition")
+    fallback: Const = Const(0.0)
+    child: Block = Block(mode_dict=dict(((sampled, fallback),)),
+                         procedural_logic=list((fixed_sample(sampled, global_time >= Const(0.5)),)))
+    root: Block = Block(children=list((child,)))
+    bindings: dict[int, float] = build_explicit_external_uid_values(root, dict((("glob_time", startup_time),)))
+    assert bindings == dict(((global_time.uid, startup_time),))
+    assert child.mode_dict[sampled] is fallback
+    initializers: dict[Var, Expr | Const]
+    initializers, _, _, _ = build_explicit_init_graph(root)
+    assert initializers[sampled].eval_uid(bindings) == pytest.approx(expected)

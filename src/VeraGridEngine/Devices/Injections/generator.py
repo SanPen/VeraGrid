@@ -642,7 +642,7 @@ class Generator(InjectionParent):
         self._Snom = float(Snom)
 
         # Voltage module set point (p.u.)
-        self.Vset = float(vset)
+        self._Vset = float(vset)
 
         # voltage set profile for this load in p.u.
         self._Vset_prof = ProfileFloat(default_value=self.Vset)

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Check compensation signs, shared-current effects and voltage-limit placement."""
 from __future__ import annotations
@@ -6,10 +10,10 @@ import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards import build_international_standard_template
-from VeraGridEngine.Templates.Rms.international_standards.voltage_compensators.comp import build_comp_template
-from VeraGridEngine.Templates.Rms.international_standards.voltage_compensators.compcc import build_compcc_template
-from VeraGridEngine.Templates.Rms.international_standards.voltage_compensators.ccomp4a import build_ccomp4a_template
+from VeraGridEngine.Templates.Rms import build_international_standard_template
+from VeraGridEngine.Templates.Rms.voltage_compensators.comp import build_comp_template
+from VeraGridEngine.Templates.Rms.voltage_compensators.compcc import build_compcc_template
+from VeraGridEngine.Templates.Rms.voltage_compensators.ccomp4a import build_ccomp4a_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const
 from VeraGridEngine.enumerations import InternationalStandardModel

@@ -11,10 +11,9 @@ from PySide6.QtWidgets import (QGraphicsItem, QDialog, QVBoxLayout, QDialogButto
 from PySide6.QtGui import (QDropEvent, QDragEnterEvent, QDragMoveEvent)
 from PySide6.QtCore import Qt, QPointF, Signal
 
-from VeraGridEngine import BlockType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Utils.Symbolic.rms_measurements_functions import (measurement_vars_dict_rms,
@@ -41,30 +40,30 @@ from VeraGridEngine.enumerations import (
     PlotSimulationType,
     VarPowerFlowReferenceType,
 )
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_algebraic_vars
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_algebraic_vars
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Dynamic.var_factory import Connection, VarFactory
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
 from VeraGridEngine.Devices.Dynamic.manufacturer_native_model import ManufacturerNativeModel
-from VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks import signal_pair
-from VeraGridEngine.Templates.BasicBlockCatalog import (
+from VeraGridEngine.Templates.template_catalogue import signal_pair
+from VeraGridEngine.Templates.template_catalogue import (
     BasicBlockTemplateDescriptor,
     ExactMathematicalBlockDescriptor,
     build_exact_mathematical_block_template,
     load_basic_block_catalog_template,
 )
-from VeraGridEngine.Templates.ProceduralLogicCatalog import (
+from VeraGridEngine.Templates.template_catalogue import (
     ProceduralBlockTemplateDescriptor,
     build_procedural_block_catalog_template,
 )
-from VeraGridEngine.Templates.InternationalStandardsCatalog import (
+from VeraGridEngine.Templates.template_catalogue import (
     InternationalStandardTemplateDescriptor,
     load_international_standard_template,
 )
 
-import VeraGridEngine.Templates.BasicBlockCatalog as BasicBlockTemplates
+import VeraGridEngine.Templates.template_catalogue as BasicBlockTemplates
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Utils.Symbolic.block import (Block,
                                                  find_connections,
@@ -86,9 +85,11 @@ from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_librar
     LibraryDeviceTemplateSpec,
     LibraryTreeFilterProxyModel,
     build_dynamic_library_device_template,
-    get_catalogue_template_block_type,
     is_supported_library_payload,
 )
+from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.interconnection_dialog import InterconnectionDialog
+from VeraGridEngine.Devices.Dynamic.model_interconnections import add_interconnection_block
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGrid.Gui.DynamicModelEditor.Editor.ElementDialogues.MeasurementsDialog import (
     is_measurement_reference_input,
     MeasurementsDialog,
@@ -107,7 +108,7 @@ from VeraGrid.Gui.DynamicModelEditor.Plots.dynamic_plots_handler import (
     DynamicsResultsHandler,
 )
 import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_validation as valid
-from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_utilities import (
+from VeraGridEngine.Templates.device_template_materialization import (
     create_block_of_type,
     create_default_template_builder,
     create_structural_template_builder,
@@ -135,7 +136,7 @@ from VeraGridEngine.Utils.procedural_logic import (
     ManufacturerNativeControllerLogic,
     ProceduralLogicBase,
 )
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import get_bus_rms_algebraic_vars
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import get_bus_rms_algebraic_vars
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import (
     attach_emt_model_to_buses,
     connect_models_by_reference,
@@ -150,8 +151,7 @@ from VeraGridEngine.Utils.SugiyamaLayered import (
     SugiyamaNode,
     SugiyamaPort,
 )
-from VeraGridEngine.Utils.SugiyamaLayered.engine import EngineResult
-from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
+from VeraGridEngine.Templates.template_catalogue import TemplateDefinition, TemplateProp
 from VeraGrid.Gui.DynamicModelEditor.Editor.RoutingQt import QtRoutingSession
 
 from VeraGrid.Gui.DynamicModelEditor.Editor.Routing.routing_graph import RoutingGraph
@@ -313,7 +313,7 @@ def build_integrator_port_keys(block: Block, is_input: bool) -> List[tuple[str, 
     reset_mode: IntegratorResetMode = IntegratorResetMode.NONE
     saturation_mode: IntegratorSaturationMode = IntegratorSaturationMode.NONE
     bound_source: IntegratorBoundSource = IntegratorBoundSource.PARAMETER
-    configuration: Dict[str, object] | None = block.modal_template_config
+    configuration: Dict[str, str | int | float | bool | None] | None = block.modal_template_config
     if configuration is None:
         pass
     else:
@@ -1659,13 +1659,13 @@ def build_expected_root_emt_output_name(reference: VarPowerFlowReferenceType) ->
     :return: Canonical variable name.
     """
     if reference == VarPowerFlowReferenceType.Idc:
-        return "net_conn_Idc"
+        return "Idc"
     elif reference == VarPowerFlowReferenceType.If_dc:
-        return "net_conn_If_dc"
+        return "If_dc"
     elif reference == VarPowerFlowReferenceType.It_dc:
-        return "net_conn_It_dc"
+        return "It_dc"
     else:
-        return f"net_conn_{reference.value}"
+        return f"{reference.value}"
 
 
 def build_branch_authoritative_ref_by_shared_ref(reference: VarPowerFlowReferenceType,
@@ -2689,6 +2689,12 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         :param y_pos: Scene y coordinate of the double-clicked measurement item.
         :return: None.
         """
+        if isinstance(source_item, graph.InterconnectionItem):
+            self.open_interconnection_editor(source_item, x_pos, y_pos)
+            return
+        else:
+            pass
+
         # Editing replaces the measurement block and would invalidate any
         # connections attached to its current ports. Require users to remove
         # those connections explicitly before changing the block structure.
@@ -2782,6 +2788,83 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 ref_outputs=outputs_list,
                 color=preserved_color,
             )
+        else:
+            pass
+
+    def create_interconnection_item(self, x_pos: float, y_pos: float,
+                                   device: DynamicDevice | None = None,
+                                   variables: List[Var] | None = None) -> graph.InterconnectionItem:
+        """Create symbolic, diagram and graphic state through the shared builder.
+
+        :param x_pos: Scene x coordinate.
+        :param y_pos: Scene y coordinate.
+        :param device: Selected source device.
+        :param variables: Selected source variables.
+        :return: Newly registered graphical item.
+        """
+        block: Block = add_interconnection_block(self.main_block, self.var_factory, device,
+                                                list() if variables is None else variables, x_pos, y_pos)
+        item: graph.InterconnectionItem = graph.InterconnectionItem(
+            var_factory=self.var_factory, name=block.name, editor=self, mode=self.mode,
+            api_object=self.api_object,
+            position_changed_callback=self.build_position_changed_callback(block.uid))
+        item.set_subsystem(block)
+        item.build_item()
+        item.recolour()
+        self.scene.add_block_item(block_uid=block.uid, item=item)
+        item.setPos(QPointF(x_pos, y_pos))
+        return item
+
+    def open_interconnection_editor(self, source_item: graph.InterconnectionItem,
+                                    x_pos: float, y_pos: float) -> None:
+        """Configure another device's variables using the measurement editing lifecycle.
+
+        :param source_item: Item being configured.
+        :param x_pos: Existing scene x coordinate.
+        :param y_pos: Existing scene y coordinate.
+        :return: None.
+        """
+        if source_item.has_connections():
+            QtWidgets.QMessageBox.warning(self, "Interconnection", "Remove item's connections to edit")
+            return
+        else:
+            pass
+        # Only materialized RMS models can expose executable variables.
+        devices: List[DynamicDevice] = list(device for device in self.circuit.get_all_elements_dict()[0].values()
+                                            if isinstance(device, DynamicDevice)
+                                            and device.idtag != self.api_object.idtag
+                                            and not device.rms_model.empty())
+        initial_device_id: str = ""
+        initial_variables: List[Var] = list()
+        if source_item.subsys is not None:
+            initial_variables = source_item.subsys.out_vars
+            source_node: BlockDiagramNode | None = self.get_diagram_node_for_block_uid(source_item.subsys.uid)
+            if source_node is not None:
+                initial_device_id = source_node.api_object_name
+            else:
+                pass
+        else:
+            pass
+        dialogue: InterconnectionDialog = InterconnectionDialog(devices, initial_device_id, initial_variables, self)
+        if exec_dialog_safely(dialogue) == QtWidgets.QDialog.DialogCode.Accepted:
+            color: str | None = None
+            if source_item.subsys is not None:
+                node: BlockDiagramNode | None = self.get_diagram_node_for_block_uid(source_item.subsys.uid)
+                if node is not None:
+                    color = node.color
+                else:
+                    pass
+            else:
+                pass
+            self.remove_block_item(source_item)
+            replacement: graph.InterconnectionItem = self.create_interconnection_item(x_pos, y_pos,
+                                                                                      dialogue.get_selected_device(),
+                                                                                      dialogue.get_variables())
+            if replacement.subsys is not None and color is not None:
+                self.diagram.node_data[replacement.subsys.uid].color = color
+                self.apply_diagram_node_color_to_block_item(replacement)
+            else:
+                pass
         else:
             pass
 
@@ -5583,7 +5666,6 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             item_name=template.name,
             x_pos=x_pos,
             y_pos=y_pos,
-            block_type=get_catalogue_template_block_type(template=template, mode=self.mode),
         )
 
     @QtCore.Slot()
@@ -5608,6 +5690,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     graph.RoundBaseArithmeticOpItem,
                     graph.RectBaseArithmeticOpItem,
                     graph.UnOpItem,
+                    graph.InterconnectionItem,
                 ),
             )
             if is_supported_block and not isinstance(selected_item, graph.ProtectedConnectionBlockItem):
@@ -5694,6 +5777,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 pasted_block: Block = duplicate_block(
                     block=clipboard_entry.get_block_snapshot(),
                     var_factory=self.var_factory,
+                    preserve_external_network_connections=source_node.tpe == BlockType.INTERCONNECTION.name,
                 )
                 # Only the node is added to the parent diagram. No connection
                 # record is copied, so pasted blocks never recreate arrows.
@@ -5871,6 +5955,9 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     )
                 else:
                     return None
+
+        elif isinstance(payload, BlockType) and payload == BlockType.INTERCONNECTION:
+            return self.create_interconnection_item(x_pos, y_pos)
 
         elif isinstance(payload, BlockType) and payload == BlockType.INPUT_CONN:
             return self.create_measurements_block_item(x_pos=x_pos, y_pos=y_pos)
@@ -7469,7 +7556,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.Vmf, Vf_dc_working_block),)))
                     # add connection variables
-                    Pf = self.var_factory.add_var('net_conn_Pf', VarPowerFlowReferenceType.Pf, True)
+                    Pf = self.var_factory.add_var('Pf', VarPowerFlowReferenceType.Pf, True)
                     self.main_block.out_vars.append(Pf)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.Pf, Pf),)))
                 else:
@@ -7504,8 +7591,8 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     dict(((VarPowerFlowReferenceType.Vaf, Vaf_working_block),)))
 
                 # add connection variables
-                Pf = self.var_factory.add_var('net_conn_Pf', VarPowerFlowReferenceType.Pf, True)
-                Qf = self.var_factory.add_var('net_conn_Qf', VarPowerFlowReferenceType.Qf, True)
+                Pf = self.var_factory.add_var('Pf', VarPowerFlowReferenceType.Pf, True)
+                Qf = self.var_factory.add_var('Qf', VarPowerFlowReferenceType.Qf, True)
 
                 self.main_block.out_vars.append(Pf)
                 self.main_block.out_vars.append(Qf)
@@ -7529,7 +7616,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.Vt_dc, Vt_dc_working_block),)))
                     # add connection variables
-                    Pt = self.var_factory.add_var('net_conn_Pt', VarPowerFlowReferenceType.Pt, True)
+                    Pt = self.var_factory.add_var('Pt', VarPowerFlowReferenceType.Pt, True)
                     self.main_block.out_vars.append(Pt)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.Pt, Pt),)))
                 else:
@@ -7564,8 +7651,8 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 self.main_block.external_mapping.update(
                     dict(((VarPowerFlowReferenceType.Vat, Vat_working_block),)))
                 # add connection variables
-                P_t = self.var_factory.add_var('net_conn_Pt', VarPowerFlowReferenceType.Pt, True)
-                Q_t = self.var_factory.add_var('net_conn_Qt', VarPowerFlowReferenceType.Qt, True)
+                P_t = self.var_factory.add_var('Pt', VarPowerFlowReferenceType.Pt, True)
+                Q_t = self.var_factory.add_var('Qt', VarPowerFlowReferenceType.Qt, True)
 
                 self.main_block.out_vars.append(P_t)
                 self.main_block.out_vars.append(Q_t)
@@ -7594,7 +7681,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                         dict(((VarPowerFlowReferenceType.Vdc, Vdc_working_block),)))
 
                     # add connection variables
-                    P = self.var_factory.add_var('net_conn_P', VarPowerFlowReferenceType.P, True)
+                    P = self.var_factory.add_var('P', VarPowerFlowReferenceType.P, True)
 
                     self.main_block.out_vars.append(P)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.P, P),)))
@@ -7629,8 +7716,8 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     dict(((VarPowerFlowReferenceType.Va, Va_working_block),)))
 
                 # add connection variables
-                P = self.var_factory.add_var('net_conn_P', VarPowerFlowReferenceType.P, True)
-                Q = self.var_factory.add_var('net_conn_Q', VarPowerFlowReferenceType.Q, True)
+                P = self.var_factory.add_var('P', VarPowerFlowReferenceType.P, True)
+                Q = self.var_factory.add_var('Q', VarPowerFlowReferenceType.Q, True)
 
                 self.main_block.out_vars.append(P)
                 self.main_block.out_vars.append(Q)
@@ -7710,7 +7797,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.Vf_dc, Vf_dc_working_block),)))
                     # add connection variables (currents)
-                    If_dc = self.var_factory.add_var('net_conn_If_dc', VarPowerFlowReferenceType.If_dc, True)
+                    If_dc = self.var_factory.add_var('If_dc', VarPowerFlowReferenceType.If_dc, True)
                     self.main_block.out_vars.append(If_dc)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.If_dc, If_dc),)))
                 else:
@@ -7730,7 +7817,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.vf_N, vf_N_working_block),)))
                     # add connection variables (currents)
-                    if_N = self.var_factory.add_var('net_conn_if_N', VarPowerFlowReferenceType.if_N, True)
+                    if_N = self.var_factory.add_var('if_N', VarPowerFlowReferenceType.if_N, True)
                     self.main_block.out_vars.append(if_N)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.if_N, if_N),)))
                 else:
@@ -7747,7 +7834,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.vf_A, vf_A_working_block),)))
                     # add connection variables (currents)
-                    if_A = self.var_factory.add_var('net_conn_if_A', VarPowerFlowReferenceType.if_A, True)
+                    if_A = self.var_factory.add_var('if_A', VarPowerFlowReferenceType.if_A, True)
                     self.main_block.out_vars.append(if_A)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.if_A, if_A),)))
                 else:
@@ -7764,7 +7851,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.vf_B, vf_B_working_block),)))
                     # add connection variables (currents)
-                    if_B = self.var_factory.add_var('net_conn_if_B', VarPowerFlowReferenceType.if_B, True)
+                    if_B = self.var_factory.add_var('if_B', VarPowerFlowReferenceType.if_B, True)
                     self.main_block.out_vars.append(if_B)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.if_B, if_B),)))
                 else:
@@ -7781,7 +7868,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.vf_C, vf_C_working_block),)))
                     # add connection variables (currents)
-                    if_C = self.var_factory.add_var('net_conn_if_C', VarPowerFlowReferenceType.if_C, True)
+                    if_C = self.var_factory.add_var('if_C', VarPowerFlowReferenceType.if_C, True)
                     self.main_block.out_vars.append(if_C)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.if_C, if_C),)))
                 else:
@@ -7803,7 +7890,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.Vt_dc, Vt_dc_working_block),)))
                     # add connection variables (currents)
-                    It_dc = self.var_factory.add_var('net_conn_It_dc', VarPowerFlowReferenceType.It_dc, True)
+                    It_dc = self.var_factory.add_var('It_dc', VarPowerFlowReferenceType.It_dc, True)
                     self.main_block.out_vars.append(It_dc)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.It_dc, It_dc),)))
                 else:
@@ -7824,7 +7911,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.vt_N, vt_N_working_block),)))
                     # add connection variables (currents)
-                    it_N = self.var_factory.add_var('net_conn_it_N', VarPowerFlowReferenceType.it_N, True)
+                    it_N = self.var_factory.add_var('it_N', VarPowerFlowReferenceType.it_N, True)
                     self.main_block.out_vars.append(it_N)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.it_N, it_N),)))
                 else:
@@ -7841,7 +7928,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.vt_A, vt_A_working_block),)))
                     # add connection variables (currents)
-                    it_A = self.var_factory.add_var('net_conn_it_A', VarPowerFlowReferenceType.it_A, True)
+                    it_A = self.var_factory.add_var('it_A', VarPowerFlowReferenceType.it_A, True)
                     self.main_block.out_vars.append(it_A)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.it_A, it_A),)))
                 else:
@@ -7858,7 +7945,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.vt_B, vt_B_working_block),)))
                     # add connection variables (currents)
-                    it_B = self.var_factory.add_var('net_conn_it_B', VarPowerFlowReferenceType.it_B, True)
+                    it_B = self.var_factory.add_var('it_B', VarPowerFlowReferenceType.it_B, True)
                     self.main_block.out_vars.append(it_B)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.it_B, it_B),)))
                 else:
@@ -7875,7 +7962,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.vt_C, vt_C_working_block),)))
                     # add connection variables (currents)
-                    it_C = self.var_factory.add_var('net_conn_it_C', VarPowerFlowReferenceType.it_C, True)
+                    it_C = self.var_factory.add_var('it_C', VarPowerFlowReferenceType.it_C, True)
                     self.main_block.out_vars.append(it_C)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.it_C, it_C),)))
                 else:
@@ -7903,7 +7990,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.Vdc, Vdc_working_block),)))
                     # add connection variables (currents)
-                    Idc = self.var_factory.add_var('net_conn_Idc', VarPowerFlowReferenceType.Idc, True)
+                    Idc = self.var_factory.add_var('Idc', VarPowerFlowReferenceType.Idc, True)
                     self.main_block.out_vars.append(Idc)
                     self.main_block.external_mapping.update(dict(((VarPowerFlowReferenceType.Idc, Idc),)))
                 else:
@@ -7923,7 +8010,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.v_N, v_N_working_block),)))
                     # add connection variables
-                    i_N = self.var_factory.add_var('net_conn_i_N', VarPowerFlowReferenceType.i_N, True)
+                    i_N = self.var_factory.add_var('i_N', VarPowerFlowReferenceType.i_N, True)
                     self.main_block.out_vars.append(i_N)
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.i_N, i_N),)))
@@ -7941,7 +8028,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.v_A, v_A_working_block),)))
                     # add connection variables
-                    i_A = self.var_factory.add_var('net_conn_i_A', VarPowerFlowReferenceType.i_A, True)
+                    i_A = self.var_factory.add_var('i_A', VarPowerFlowReferenceType.i_A, True)
                     self.main_block.out_vars.append(i_A)
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.i_A, i_A),)))
@@ -7959,7 +8046,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.v_B, v_B_working_block),)))
                     # add connection variables
-                    i_B = self.var_factory.add_var('net_conn_i_B', VarPowerFlowReferenceType.i_B, True)
+                    i_B = self.var_factory.add_var('i_B', VarPowerFlowReferenceType.i_B, True)
                     self.main_block.out_vars.append(i_B)
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.i_B, i_B),)))
@@ -7977,7 +8064,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.v_C, v_C_working_block),)))
                     # add connection variables
-                    i_C = self.var_factory.add_var('net_conn_i_C', VarPowerFlowReferenceType.i_C, True)
+                    i_C = self.var_factory.add_var('i_C', VarPowerFlowReferenceType.i_C, True)
                     self.main_block.out_vars.append(i_C)
                     self.main_block.external_mapping.update(
                         dict(((VarPowerFlowReferenceType.i_C, i_C),)))
@@ -10725,20 +10812,24 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                               BlockType.MEASUREMENTS_VOLTAGE_ANGLE,
                               BlockType.MEASUREMENTS_VOLTAGE_FROM_DC,
                               BlockType.MEASUREMENTS_VOLTAGE_FROM_POLAR,
-                              BlockType.MEASUREMENTS_PLL]:
+                              BlockType.MEASUREMENTS_PLL,
+                              BlockType.INTERCONNECTION]:
 
                 if block_model is not None:
 
                     if self.mode == DynamicSimulationMode.EMT:
                         self.ensure_correct_bus_variables(block_model)
 
-                    measurements_item: graph.MeasurementsItem = graph.MeasurementsItem(
+                    measurements_item: graph.MeasurementsItem = (graph.InterconnectionItem(
+                        editor=self, var_factory=self.var_factory, name=block_model.name,
+                        mode=self.mode, api_object=self.api_object)
+                        if block_type == BlockType.INTERCONNECTION else graph.MeasurementsItem(
                         editor=self,
                         var_factory=self.var_factory,
                         name=block_model.name,
                         mode=self.mode,
                         api_object=self.api_object,
-                    )
+                    ))
                     measurements_item.set_subsystem(block_model)
                     measurements_item.position_changed_callback = self.build_position_changed_callback(uid)
                     measurements_item.build_item()

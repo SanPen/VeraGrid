@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 0
 - Top-level function count: 3
-- Representative imports: time, numpy, typing, VeraGridEngine.basic_structures, VeraGridEngine.Utils.NumericalMethods.sparse_solve, VeraGridEngine.basic_structures, VeraGridEngine.Utils.NumericalMethods.common
+- Representative imports: time, numpy, typing, VeraGridEngine.basic_structures, VeraGridEngine.Utils.Sparse.sparse_solve, VeraGridEngine.basic_structures, VeraGridEngine.Utils.NumericalMethods.common
 
 ## Function: compute_beta(a, b, delta)
 

@@ -1,15 +1,22 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent cascaded-PI transfer and physical insertion of excitation take-over gates."""
 from __future__ import annotations
+
 
 import json
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.excitation_systems.st4c import FilteredCompoundPiParameters, CompoundExcitationSource, CompoundSupplementLocation, build_st4c_template
-from VeraGridEngine.Templates.Rms.self_feedback_exciter import ExcitationLimiterLocation
+from VeraGridEngine.Templates.Rms.excitation_systems.st4c import FilteredCompoundPiParameters, CompoundExcitationSource, CompoundSupplementLocation, build_st4c_template
+from VeraGridEngine.Templates.Rms.excitation_systems.self_feedback_exciter import ExcitationLimiterLocation
 from VeraGridEngine.Utils.Symbolic.block import Block
 from tests.RMS.test_native_turbine_governors import initialized_values, linearized_response, evaluate_controller
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 @pytest.mark.parametrize('kir,kim,ta',((10.,1.,.02),(0.,1.,.02),(10.,0.,.02),(0.,0.,0.)))
@@ -75,7 +82,7 @@ def test_filtered_compound_pi_native_persistence() -> None:
     """New physical signal ports and differential memories survive native persistence."""
     block: Block = build_st4c_template(VarFactory(),'filtered').block
     payload: dict[str,object] = json.loads(json.dumps(block.to_dict()))
-    assert json.loads(json.dumps(Block.parse(payload).to_dict())) == payload
+    assert json.loads(json.dumps(roundtrip_block(block).to_dict())) == payload
 
 
 @pytest.mark.parametrize('minimum,maximum',((1,1),(1,2),(2,3),(3,1),(3,2),(2,2)))

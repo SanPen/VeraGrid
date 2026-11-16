@@ -1,5 +1,11 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+from math import pi
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
 import VeraGridEngine.api as vge
@@ -14,7 +20,7 @@ from VeraGridEngine.IO.dgs.dgs_objects import TypLne
 from VeraGridEngine.IO.dgs.dgs_to_veragrid import convert_dgs_to_dc_cable_type
 from VeraGridEngine.IO.dgs.veragrid_to_dgs import circuit_to_dgs
 from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
-from VeraGridEngine.IO.veragrid.pack_unpack import get_objects_dictionary
+from VeraGridEngine.IO.veragrid.pack_unpack import gather_model_as_jsons, get_objects_dictionary, parse_veragrid_data
 from VeraGridEngine.enumerations import DynamicSimulationMode, FileType
 
 
@@ -381,6 +387,100 @@ def test_dc_cable_type_roundtrip_preserves_template_identity(tmp_path: Path) -> 
     assert len(loaded_grid.underground_cable_types) == 1
     assert len(loaded_grid.dc_lines) == 1
     assert loaded_grid.dc_lines[0].template is loaded_grid.underground_cable_types[0]
+
+
+def _legacy_dc_cable_payload() -> tuple[dict, str]:
+    """Build legacy DC cable records alongside an existing AC Cable System."""
+    grid = MultiCircuit(Sbase=100.0)
+    ac_system = UndergroundLineType(name='Existing AC', R=0.7, X=0.3)
+    legacy = UndergroundLineType(name='Legacy DC', R=0.02, X=2 * pi * 50 * 0.001,
+                                 C=0.25, Vnom=320.0)
+    legacy.code = 'original-code'
+    rms = vge.RmsModelTemplate(name='Original DC model')
+    rms.tpe = DeviceType.DCLineDevice
+    grid.add_rms_model(rms)
+    legacy.rms_template = rms
+    grid.add_underground_line(ac_system)
+    grid.add_underground_line(legacy)
+    assert legacy.rms_template is rms
+    assert legacy.rms_model.empty()
+
+    bus_from = grid.add_bus(Bus(name='DC from', Vnom=320.0, is_dc=True))
+    bus_to = grid.add_bus(Bus(name='DC to', Vnom=320.0, is_dc=True))
+    for length in (10.0, 20.0):
+        line = DcLine(bus_from=bus_from, bus_to=bus_to, length=length, rate=250.0)
+        grid.add_dc_line(line)
+        line.apply_template(legacy, grid.Sbase)
+
+    payload = gather_model_as_jsons(grid)
+    records = payload['model_data']
+    record = records['underground_cable_types'].pop()
+    # Retain identity and dynamic metadata while restoring the old schema and units.
+    system_fields = set(legacy.registered_properties) - {'R', 'Vnom', 'Imax'}
+    shared_fields = set(DcLine().registered_properties)
+    record = {key: value for key, value in record.items()
+              if key not in system_fields or key in shared_fields}
+    record.update(R=0.02, Vnom=320.0, Imax=1.0, L=0.001, C=0.25e-6)
+    records['dc_cable_types'] = [record]
+    for item in records['dc_line']:
+        item.pop('dc_conductor')
+    return payload, legacy.idtag
+
+
+def test_legacy_json_migration_preserves_identity_units_and_existing_ac(tmp_path: Path) -> None:
+    """Migrate legacy JSON records and save them with the shared catalogue."""
+    payload, identity = _legacy_dc_cable_payload()
+    logger = Logger()
+    restored = parse_veragrid_data(payload, logger=logger)
+
+    assert not logger.has_errors(), str(logger)
+    assert len(restored.underground_cable_types) == 2
+    assert len(restored.dc_lines) == 2
+    system = next(item for item in restored.underground_cable_types if item.idtag == identity)
+    assert system.device_type == DeviceType.UnderGroundLineDevice
+    assert system.code == 'original-code'
+    assert system.rms_template is restored.rms_models[0]
+    assert system.get_dc_parameters() == pytest.approx((0.02, 0.001, 0.25e-6))
+    assert restored.underground_cable_types[0].R == 0.7
+    for line in restored.dc_lines:
+        assert line.template is system
+        assert line.rms_template is system.rms_template
+        assert line.dc_conductor == 1
+        assert line.R == pytest.approx(0.02 * line.length / 1024.0)
+        assert line.get_applied_dynamic_values_pu_seconds(100.0) == pytest.approx(
+            (0.001 * line.length / 1024.0, 0.25e-6 * line.length * 1024.0))
+
+    saved = gather_model_as_jsons(restored)['model_data']
+    assert 'dc_cable_types' not in saved
+    assert len(saved['underground_cable_types']) == 2
+    path = tmp_path / 'migrated.veragrid'
+    vge.save_file(restored, str(path))
+    reloaded = vge.open_file(str(path))
+    assert len(reloaded.dc_lines) == 2
+    assert all(line.template.idtag == identity for line in reloaded.dc_lines)
+
+
+def test_legacy_dataframe_migration_preserves_dc_references() -> None:
+    """Resolve DC lines against the migrated catalogue in legacy tabular files."""
+    payload, identity = _legacy_dc_cable_payload()
+    records = payload['model_data']
+    columns = {
+        'bus': ('idtag', 'name', 'Vnom', 'is_dc'),
+        'dc_line': ('idtag', 'name', 'bus_from', 'bus_to', 'R', 'length', 'template'),
+        'underground_cable_types': ('idtag', 'name', 'R', 'X', 'C', 'Imax', 'Vnom', 'freq'),
+        'dc_cable_types': ('idtag', 'name', 'R', 'L', 'C', 'Imax', 'Vnom'),
+    }
+    frames = {key: pd.DataFrame(records[key], columns=names) for key, names in columns.items()}
+    logger = Logger()
+    restored = parse_veragrid_data(frames, logger=logger)
+
+    assert not logger.has_errors(), str(logger)
+    assert len(restored.underground_cable_types) == 2
+    assert len(restored.dc_lines) == 2
+    for line in restored.dc_lines:
+        assert line.template.idtag == identity
+        assert line.R == pytest.approx(0.02 * line.length / 1024.0)
+        assert line.template.get_dc_parameters() == pytest.approx((0.02, 0.001, 0.25e-6))
 
 
 def test_deleting_dc_cable_type_clears_dc_line_dependency() -> None:

@@ -1,16 +1,23 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Verify native control equations and signal ports survive declarative persistence."""
 from __future__ import annotations
+
 
 import json
 import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards import build_international_standard_template
+from VeraGridEngine.Templates.Rms import build_international_standard_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const
 from VeraGridEngine.enumerations import InternationalStandardModel
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 @pytest.mark.parametrize('model',(InternationalStandardModel.GAST,InternationalStandardModel.IEESGO,
@@ -27,7 +34,8 @@ from VeraGridEngine.enumerations import InternationalStandardModel
     InternationalStandardModel.GENSAE,InternationalStandardModel.EXAC1A,InternationalStandardModel.ESAC1A,
     InternationalStandardModel.EXAC2,InternationalStandardModel.EXAC3,InternationalStandardModel.IEET1A,
     InternationalStandardModel.IEEET4,InternationalStandardModel.IEEET5,InternationalStandardModel.IEEEX4,InternationalStandardModel.IEET5A,
-    InternationalStandardModel.ESAC2A,InternationalStandardModel.ESAC3A,InternationalStandardModel.EXBAS,
+    InternationalStandardModel.ESAC2A,InternationalStandardModel.ESAC3A,InternationalStandardModel.AC6A,
+    InternationalStandardModel.ESAC6A,InternationalStandardModel.EXBAS,
     InternationalStandardModel.IEEEG3,InternationalStandardModel.IEEEG3D,
     InternationalStandardModel.PSS2A,InternationalStandardModel.PSS2B,InternationalStandardModel.PSS2C,InternationalStandardModel.PSS3B,
     InternationalStandardModel.IEEEG1,InternationalStandardModel.IEEEG1D,InternationalStandardModel.LCFB1,
@@ -38,7 +46,7 @@ def test_native_control_graph_round_trip(model: InternationalStandardModel) -> N
     """Restore actual states, expressions, initializers and ports through native JSON data."""
     source: Block = build_international_standard_template(model,VarFactory(),'persistent_control').block
     payload: dict[str,object] = json.loads(json.dumps(source.to_dict()))
-    restored: Block = Block.parse(payload)
+    restored: Block = roundtrip_block(source)
     assert json.loads(json.dumps(restored.to_dict())) == payload
     assert len(restored.state_vars) == len(source.state_vars)
     assert tuple(variable.uid for variable in restored.in_vars) == tuple(variable.uid for variable in source.in_vars)
@@ -52,7 +60,7 @@ def test_native_control_graph_round_trip(model: InternationalStandardModel) -> N
 @pytest.mark.parametrize('field_coefficient', (1.0, 2.0))
 def test_brushless_native_graph_equilibrium(model: InternationalStandardModel, field_coefficient: float) -> None:
     """Native catalogue graphs are square and initialize consistently without an import adapter."""
-    from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import set_rms_model_parameter
+    from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import set_rms_model_parameter
     from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import collect_direct_algebraic_initializers
     from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr
     from VeraGridEngine.enumerations import DeviceType
@@ -110,7 +118,7 @@ def test_brushless_field_memory_lower_stop(model: InternationalStandardModel) ->
 @pytest.mark.parametrize('model', (InternationalStandardModel.EXAC1, InternationalStandardModel.EXAC1A, InternationalStandardModel.ESAC1A))
 def test_brushless_native_live_current_loading(model: InternationalStandardModel) -> None:
     """Rectifier drop and field demagnetization consume live current without an import adapter."""
-    from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import set_rms_model_parameter
+    from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import set_rms_model_parameter
     from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller
     vf: VarFactory = VarFactory()
     block: Block = build_international_standard_template(model, vf, 'current').block

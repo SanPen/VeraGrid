@@ -286,6 +286,7 @@
     <file>icons/lock.png</file>
     <file>icons/unlock.png</file>
     <file>icons/pdf.png</file>
+    <file>icons/operator_view.png</file>
   </qresource>
   <qresource prefix="Program icon">
     <file>icons/VeraGrid_icon.png</file>

@@ -42,7 +42,7 @@ from VeraGridEngine.IO.dgs.dgs_to_blocks import (
     get_unambiguous_elmcomp_direct_instances,
     get_unique_elmcomp_slot_entries,
 )
-from VeraGridEngine.Templates.Rms.rms_meter_templates import (
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import (
     build_rms_current_meter_outputs_from_pq,
     build_rms_physical_signal_meter_block,
     build_rms_phase_locked_loop_block,
@@ -52,12 +52,11 @@ from VeraGridEngine.Templates.Rms.rms_meter_templates import (
 )
 from VeraGridEngine.Utils.Symbolic.block import (
     Block,
-    RmsPhysicalMeasurementPoint,
     RmsPhysicalMeterKind,
     RmsTerminalSide,
     build_name_to_vars_lookup,
 )
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import get_bus_rms_algebraic_vars
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import get_bus_rms_algebraic_vars
 from VeraGridEngine.Utils.Symbolic.symbolic import (
     BinOp,
     Const,
@@ -69,7 +68,17 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (
 )
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import ConverterControlType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import (
+    ConverterControlType,
+    VarPowerFlowReferenceType,
+    DgsImportField,
+)
+
+
+from VeraGridEngine.IO.dgs.dgs_import_metadata import (
+    DgsImportMetadata,
+    get_import_field,
+)
 
 
 class DgsRmsMeasurementBindingReport:
@@ -510,6 +519,7 @@ def _resolve_logical_actuator_current_source(
         circuit: MultiCircuit,
         root_dgs_id: str,
         measured_bus: Bus,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> Tuple[DynamicDevice | None, int | None]:
     """Resolve an omitted native valve to its retained series branch.
 
@@ -522,6 +532,7 @@ def _resolve_logical_actuator_current_source(
     :param circuit: Imported circuit with prepared logical actuator topology.
     :param root_dgs_id: Exact owning ElmComp FID.
     :param measured_bus: Terminal resolved from the measurement cubicle.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Unique physical series branch and terminal index, or two ``None`` values.
     """
     candidates: List[Tuple[DynamicDevice, int]] = list()
@@ -531,9 +542,16 @@ def _resolve_logical_actuator_current_source(
         add_hvdc=False,
         add_switch=False,
     ):
-        if isinstance(branch, (Line, SeriesReactance)):
+        if (isinstance(branch, (Line, SeriesReactance))
+                and import_metadata is not None
+                and branch.rms_model.uid in import_metadata.blocks
+                and DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID.value in import_metadata.blocks[branch.rms_model.uid]):
             branch_root_raw: str | None = (
-                branch.rms_model.dynamic_model_contract.dgs_logical_actuator_root_id
+                get_import_field(
+                    branch.rms_model,
+                    DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID,
+                    import_metadata,
+                )
             )
             if branch_root_raw == root_dgs_id:
                 if branch.bus_from is measured_bus:
@@ -597,6 +615,7 @@ def _get_ideal_transformer_relay_pq_expressions(
         source_device: DynamicDevice,
         source_terminal_index: int,
         host_device: DynamicDevice,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> Tuple[Expr | None, Expr | None]:
     """Relay ideal-transformer terminal power from one unique adjacent VSC.
 
@@ -611,12 +630,13 @@ def _get_ideal_transformer_relay_pq_expressions(
     :param source_device: Physical device selected by the native meter.
     :param source_terminal_index: Measured transformer terminal ordinal.
     :param host_device: Dynamic equipment root that consumes the meter signal.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Relayed active/reactive expressions, or two ``None`` values.
     """
     if (
             isinstance(source_device, Transformer2W)
             and isinstance(host_device, VSC)
-            and source_device.rms_model.dynamic_model_contract.rms_ideal_transformer
+            and float(source_device.R_corrected) ** 2 + float(source_device.X) ** 2 <= 1.0e-24
             and source_terminal_index in (0, 1)
     ):
         pass
@@ -907,10 +927,10 @@ def _build_voltage_alias_expressions(
 
     for signal_name in signal_names:
         normalized_name = signal_name.lower()
-        if "u1r" in normalized_name or normalized_name == "ur":
+        if "u1r" in normalized_name or normalized_name in ("ur", "xr_pos", "alpha"):
             source_expression = native_outputs["ur"]
         else:
-            if "u1i" in normalized_name or normalized_name == "ui":
+            if "u1i" in normalized_name or normalized_name in ("ui", "xi_pos", "beta"):
                 source_expression = native_outputs["ui"]
             else:
                 if normalized_name.startswith("cosphi"):
@@ -1178,10 +1198,10 @@ def _build_current_alias_expressions(
 
     for signal_name in signal_names:
         normalized_name = signal_name.lower()
-        if "i1r" in normalized_name or normalized_name == "ir":
+        if "i1r" in normalized_name or normalized_name in ("ir", "xr_pos", "alpha"):
             alias_expressions[signal_name] = Const(current_scale) * native_outputs["ir"]
         else:
-            if "i1i" in normalized_name or normalized_name == "ii":
+            if "i1i" in normalized_name or normalized_name in ("ii", "xi_pos", "beta"):
                 alias_expressions[signal_name] = Const(current_scale) * native_outputs["ii"]
             else:
                 alias_expressions[signal_name] = Const(current_scale) * native_outputs["i"]
@@ -1397,6 +1417,7 @@ def _build_power_alias_expressions(
         system_base_mva: float,
         circuit: MultiCircuit,
         host_device: DynamicDevice,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> Dict[str, Expr]:
     """
     Map exported P/Q-slot aliases to physical terminal power expressions.
@@ -1408,6 +1429,7 @@ def _build_power_alias_expressions(
     :param system_base_mva: VeraGrid circuit power base in MVA.
     :param circuit: Canonical circuit used for exact topology validation.
     :param host_device: Dynamic equipment root consuming the measurement.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Alias-to-expression mapping.
     """
     if meter.outserv != 0:
@@ -1422,6 +1444,7 @@ def _build_power_alias_expressions(
         source_device=source_device,
         source_terminal_index=source_terminal_index,
         host_device=host_device,
+        import_metadata=import_metadata,
     )
     if active_power is None or reactive_power is None:
         active_power, reactive_power = _get_device_pq_expressions(
@@ -1470,6 +1493,7 @@ def _refer_vsc_pq_controls_through_measured_transformer(
         host_device: DynamicDevice | None,
         source_device: DynamicDevice,
         source_terminal_index: int,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> bool:
     """Refer a configured remote P/Q pair to the VSC electrical terminal.
 
@@ -1484,12 +1508,13 @@ def _refer_vsc_pq_controls_through_measured_transformer(
     :param host_device: Dynamic root consuming the native power measurement.
     :param source_device: Physical device selected by the measured cubicle.
     :param source_terminal_index: Measured transformer terminal ordinal.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: ``True`` when both VSC controls were referred successfully.
     """
     if (
             isinstance(host_device, VSC)
             and isinstance(source_device, Transformer2W)
-            and not source_device.rms_model.dynamic_model_contract.rms_ideal_transformer
+            and float(source_device.R_corrected) ** 2 + float(source_device.X) ** 2 > 1.0e-24
             and circuit.Sbase > 0.0
     ):
         pass
@@ -1850,12 +1875,10 @@ def _connect_meter_aliases(
         targets_by_name: Dict[str, List[Var]],
         alias_expressions: Dict[str, Expr],
         meter_name: str,
-        meter_source_fid: str,
-        meter_target_fid: str,
-        meter_terminal_side: RmsTerminalSide,
         meter_kind: RmsPhysicalMeterKind,
         var_factory: VarFactory,
         prepared_meter_block: Block | None,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> int:
     """
     Finalize one native meter block and connect it to controller inputs.
@@ -1867,17 +1890,14 @@ def _connect_meter_aliases(
     :param targets_by_name: Stable pre-connection control interfaces by name.
     :param alias_expressions: Exported signal aliases and physical expressions.
     :param meter_name: Stable user-facing native measurement identity.
-    :param meter_source_fid: Exact native meter or built-in slot FID.
-    :param meter_target_fid: Exact measured bus or physical-device FID.
-    :param meter_terminal_side: Canonical physical terminal selected by the meter.
     :param meter_kind: Typed physical quantity family.
     :param var_factory: Shared circuit variable factory that owns connections.
     :param prepared_meter_block: Optional stateful meter whose output variables
         already occur in ``alias_expressions``.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Number of aliases connected to existing control variables.
     """
     connected_expressions: Dict[str, Expr] = dict()
-    connected_alias_names: List[str] = list()
     connected_count: int = 0
     alias_name: str
     source_expression: Expr
@@ -1979,10 +1999,6 @@ def _connect_meter_aliases(
                 alias_names=list(connected_expressions.keys()),
             ),
             name=meter_name,
-            source_fid=meter_source_fid,
-            target_fid=meter_target_fid,
-            terminal_side=meter_terminal_side,
-            meter_kind=meter_kind,
         )
     else:
         meter_block = prepared_meter_block
@@ -2022,8 +2038,6 @@ def _connect_meter_aliases(
         else:
             return 0
 
-    selected_output_names: List[str] = list()
-    selected_output_uids: List[int] = list()
     selected_alias_name: str
     for selected_alias_name in connected_expressions.keys():
         selected_output_var: Var | None = output_by_alias_name.get(
@@ -2033,22 +2047,12 @@ def _connect_meter_aliases(
         if selected_output_var is None:
             return 0
         else:
-            selected_output_names.append(selected_output_var.name)
-            selected_output_uids.append(selected_output_var.uid)
+            pass
+            pass
 
     # Persist only the outputs that have exact controller endpoints. The block
     # owns their equations; this metadata exposes physical identity and signal
     # selection to local logic and global readout without duplicating variables.
-    meter_block.dynamic_model_contract.rms_physical_measurement_point = (
-        RmsPhysicalMeasurementPoint(
-            source_fid=meter_source_fid,
-            target_fid=meter_target_fid,
-            terminal_side=meter_terminal_side,
-            meter_kind=meter_kind,
-            output_signal_names=tuple(selected_output_names),
-            output_var_uids=tuple(selected_output_uids),
-        )
-    )
 
     # The child is part of the one canonical RMS graph. The editor will expose
     # it as a separate node and infer each cable from the propagated Var UID.
@@ -2115,31 +2119,7 @@ def _connect_meter_aliases(
                             meter_output_var=output_var,
                         )
                         connected_count += 1
-            if alias_name in connected_alias_names:
-                pass
-            else:
-                connected_alias_names.append(alias_name)
 
-    if connected_count > 0:
-        # Native meter outputs are algebraic signal sources whose physical
-        # dependencies may change during every nonlinear boundary refresh.
-        # Keep this declaration separate from controller startup ordering so
-        # the solver can refresh measurements after updating retained DGS
-        # branches without replaying unrelated controller shells.
-        runtime_measurement_sync_names: List[str] = list(
-            host_model.dynamic_model_contract.runtime_measurement_shell_sync_names
-        )
-        alias_name: str
-        for alias_name in connected_alias_names:
-            if alias_name in runtime_measurement_sync_names:
-                pass
-            else:
-                runtime_measurement_sync_names.append(alias_name)
-        host_model.dynamic_model_contract.runtime_measurement_shell_sync_names = (
-            runtime_measurement_sync_names
-        )
-    else:
-        pass
     return connected_count
 
 
@@ -2194,32 +2174,6 @@ def _retain_disabled_meter_targets(
                 connected_count += 1
 
     return connected_count
-
-
-
-
-def _get_equipment_owned_signal_names(host_model: Block) -> Set[str]:
-    """Return signal aliases whose units are owned by a physical wrapper.
-
-    Imported graphical meters are built after dynamic device activation. A
-    runtime adapter can therefore declare the boundary aliases it already
-    supplies, allowing the generic binder to retain the meter in the catalogue
-    without creating a second equation for the same controller receiver.
-
-    :param host_model: Activated physical or logical RMS root.
-    :return: Exact non-empty wrapper-owned signal names.
-    """
-    equipment_owned_names: Set[str] = set()
-    raw_name: str
-
-    for raw_name in host_model.dynamic_model_contract.dgs_equipment_owned_signal_names:
-        if raw_name != "":
-            equipment_owned_names.add(raw_name)
-        else:
-            pass
-    else:
-        pass
-    return equipment_owned_names
 
 
 def _find_block_child_path(
@@ -2381,46 +2335,13 @@ def _build_exact_meter_targets(
     return exact_targets
 
 
-def _build_meter_targets(
-        host_model: Block,
-        dgs_circuit: DgsCircuit,
-        source_slot_id: str,
-        child_block_by_slot_id: Dict[str, Block],
-) -> Dict[str, List[Var]]:
-    """
-    Build exact native-meter targets from the source signal graph.
-
-    :param host_model: Activated imported controller model.
-    :param dgs_circuit: Parsed DGS signal graph.
-    :param source_slot_id: Native meter producer-slot FID.
-    :param child_block_by_slot_id: Transient exact slot-to-canonical-block map.
-    :return: Signal-to-runtime-variable lookup.
-    """
-    targets: Dict[str, List[Var]] = _build_exact_meter_targets(
-        dgs_circuit=dgs_circuit,
-        source_slot_id=source_slot_id,
-        child_block_by_slot_id=child_block_by_slot_id,
-    )
-    equipment_owned_names: Set[str] = _get_equipment_owned_signal_names(
-        host_model=host_model,
-    )
-    for signal_name in equipment_owned_names:
-        if signal_name in targets:
-            targets.pop(signal_name, None)
-        else:
-            pass
-    return targets
-
-
 def bind_dgs_rms_measurements(
         circuit: MultiCircuit,
         dgs_circuit: DgsCircuit,
-        templates_by_root_dgs_id: Dict[
-            str,
-            RmsModelTemplate | EmtModelTemplate,
-        ],
+        templates_by_root_dgs_id: Dict[str, RmsModelTemplate | EmtModelTemplate],
         child_blocks_by_root_and_slot_id: Dict[str, Dict[str, Block]],
         logger: Logger,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> DgsRmsMeasurementBindingReport:
     """
     Bind native PowerFactory measurements to activated VeraGrid RMS controls.
@@ -2436,6 +2357,7 @@ def bind_dgs_rms_measurements(
     :param child_blocks_by_root_and_slot_id: Transient exact slot lookups into
         the same canonical blocks owned by the registered templates.
     :param logger: Diagnostic sink for handled partial failures.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Structured native-meter binding report.
     """
     report: DgsRmsMeasurementBindingReport = DgsRmsMeasurementBindingReport()
@@ -2484,9 +2406,16 @@ def bind_dgs_rms_measurements(
             add_hvdc=False,
             add_switch=False,
     ):
-        if isinstance(physical_branch, (Line, SeriesReactance)):
+        if (isinstance(physical_branch, (Line, SeriesReactance))
+                and import_metadata is not None
+                and physical_branch.rms_model.uid in import_metadata.blocks
+                and DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID.value in import_metadata.blocks[physical_branch.rms_model.uid]):
             actuator_root_id: str | None = (
-                physical_branch.rms_model.dynamic_model_contract.dgs_logical_actuator_root_id
+                get_import_field(
+                    physical_branch.rms_model,
+                    DgsImportField.DGS_LOGICAL_ACTUATOR_ROOT_ID,
+                    import_metadata,
+                )
             )
             if actuator_root_id is None:
                 pass
@@ -2708,6 +2637,7 @@ def bind_dgs_rms_measurements(
                                     circuit=circuit,
                                     root_dgs_id=str(root_element.ID),
                                     measured_bus=source_bus,
+                                    import_metadata=import_metadata,
                                 )
                                 if (
                                     logical_source_device is not None
@@ -2776,6 +2706,7 @@ def bind_dgs_rms_measurements(
                                             host_device=host_device,
                                             source_device=power_device,
                                             source_terminal_index=power_terminal_index,
+                                            import_metadata=import_metadata,
                                         )
                                         meter_target_fid = str(power_device.idtag)
                                         physical_meter_kind = RmsPhysicalMeterKind.POWER
@@ -2787,6 +2718,7 @@ def bind_dgs_rms_measurements(
                                             system_base_mva=float(circuit.Sbase),
                                             circuit=circuit,
                                             host_device=host_device,
+                                            import_metadata=import_metadata,
                                         )
                             else:
                                 if is_pll_slot:
@@ -2916,12 +2848,7 @@ def bind_dgs_rms_measurements(
                             # equation. Preserve receiver inc0 values and create
                             # held zero parameters only where no fallback exists.
                             host_targets_by_name: Dict[str, List[Var]] = (
-                                _build_meter_targets(
-                                    host_model=host_model,
-                                    dgs_circuit=dgs_circuit,
-                                    source_slot_id=entry.slot_id,
-                                    child_block_by_slot_id=child_block_by_slot_id,
-                                )
+                                _build_exact_meter_targets(dgs_circuit=dgs_circuit, source_slot_id=entry.slot_id, child_block_by_slot_id=child_block_by_slot_id)
                             )
                             connected_count: int = _retain_disabled_meter_targets(
                                 host_model=host_model,
@@ -2954,12 +2881,7 @@ def bind_dgs_rms_measurements(
                                     value=entry.element_id,
                                 )
                             else:
-                                host_targets_by_name = _build_meter_targets(
-                                    host_model=host_model,
-                                    dgs_circuit=dgs_circuit,
-                                    source_slot_id=entry.slot_id,
-                                    child_block_by_slot_id=child_block_by_slot_id,
-                                )
+                                host_targets_by_name = _build_exact_meter_targets(dgs_circuit=dgs_circuit, source_slot_id=entry.slot_id, child_block_by_slot_id=child_block_by_slot_id)
                                 if (
                                         isinstance(
                                             meter_element,
@@ -2981,12 +2903,10 @@ def bind_dgs_rms_measurements(
                                         meter_kind=physical_meter_kind,
                                         source_fid=meter_source_id,
                                     ),
-                                    meter_source_fid=meter_source_id,
-                                    meter_target_fid=meter_target_fid,
-                                    meter_terminal_side=meter_terminal_side,
                                     meter_kind=physical_meter_kind,
                                     var_factory=circuit.var_factory,
                                     prepared_meter_block=prepared_meter_block,
+                                    import_metadata=import_metadata,
                                 )
                                 if connected_count > 0:
                                     report.record_bound_meter(

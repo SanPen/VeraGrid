@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Tests for DAE linting and context-aware source completion."""
 
 from __future__ import annotations
@@ -21,7 +25,7 @@ from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties.dynamic_procedural_l
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import (
     get_dynamic_library_procedural_descriptors,
 )
-from VeraGridEngine.Templates.ProceduralLogicCatalog import ProceduralBlockTemplateDescriptor
+from VeraGridEngine.Templates.template_catalogue import ProceduralBlockTemplateDescriptor
 from VeraGridEngine.Utils.Symbolic.symbolic import (
     Comparison,
     Expr,
@@ -170,7 +174,7 @@ def test_procedural_completion_inserts_complete_documented_call() -> None:
     :return: None.
     """
     context: DaeLanguageContext = build_language_context()
-    source: str = "procedural_logic = [\n    tim"
+    source: str = "procedural_logic = [\n    time_d"
     position: DaeCompletionPosition = analyze_dae_completion_position(
         source,
         len(source),

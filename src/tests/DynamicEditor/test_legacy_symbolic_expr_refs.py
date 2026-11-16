@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import json
@@ -20,6 +24,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic_io import (
     symbolic_objects_to_dict,
 )
 from VeraGridEngine.enumerations import LogSeverity, ParamPowerFlowReferenceType
+from tests.symbolic_block_roundtrip import parse_saved_blocks
 
 
 def test_symbolic_object_serialization_does_not_mutate_source_registry() -> None:
@@ -149,14 +154,15 @@ def test_block_roundtrip_shares_expression_registry_across_fields() -> None:
         name="legacy_expr_ref_block",
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     serialized_block: Dict[str, Any] = saver.get_blocks()[source_block.uid]
 
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-    restored_block: Block = parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_block: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_expression: sym.Expr = restored_block.algebraic_eqs[0]
     restored_event_expression: sym.Expr = next(iter(restored_block.event_dict.values()))
     restored_mode_expression: sym.Expr = next(iter(restored_block.mode_dict.values()))
@@ -182,16 +188,13 @@ def test_legacy_mapping_only_static_target_is_restored_as_parameter() -> None:
         api_obj_mapping=dict(((ParamPowerFlowReferenceType.dc_line_r_pu, parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_blocks: List[Block] = parser.parse_blocks(
-        blocks_data=saver.get_blocks(),
-        main_block_uids=list((source_block.uid,)),
+    restored_blocks: List[Block] = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
     )
     restored_block: Block = restored_blocks[0]
     restored_parameter: sym.Var | None = restored_block.api_obj_mapping.get(
@@ -227,14 +230,14 @@ def test_legacy_parent_child_static_parameter_copy_keeps_only_child_owner() -> N
         api_obj_mapping=dict(((mapping_key, parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(root_block, main=True)
+    saver.save_block(root_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_root: Block = parser.parse_block(saver.get_blocks(), root_block.uid)
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_child: Block = restored_root.children[0]
     restored_parameter: sym.Var | None = restored_child.api_obj_mapping.get(mapping_key, None)
 
@@ -273,14 +276,14 @@ def test_legacy_equivalent_sibling_parameter_owners_are_not_rewritten() -> None:
         children=list((first_child, second_child)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(root_block, main=True)
+    saver.save_block(root_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_root: Block = parser.parse_block(saver.get_blocks(), root_block.uid)
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_first_child: Block = restored_root.children[0]
     restored_second_child: Block = restored_root.children[1]
 
@@ -330,14 +333,14 @@ def test_legacy_ambiguous_owner_does_not_block_independent_migration() -> None:
         api_obj_mapping=dict(((independent_mapping_key, independent_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(root_block, main=True)
+    saver.save_block(root_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_root: Block = parser.parse_block(saver.get_blocks(), root_block.uid)
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_first_ambiguous_child: Block = restored_root.children[0]
     restored_second_ambiguous_child: Block = restored_root.children[1]
     restored_independent_child: Block = restored_root.children[2]
@@ -380,13 +383,13 @@ def test_legacy_parent_mapping_is_moved_to_child_parameter_owner() -> None:
         api_obj_mapping=dict(((mapping_key, parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(root_block, main=True)
+    saver.save_block(root_block)
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_root: Block = parser.parse_block(saver.get_blocks(), root_block.uid)
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_child: Block = restored_root.children[0]
     restored_parameter: sym.Var | None = restored_child.api_obj_mapping.get(mapping_key, None)
 
@@ -419,13 +422,13 @@ def test_legacy_parent_mapping_localizes_beside_concrete_child_parameter() -> No
         api_obj_mapping=dict(((mapping_key, parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(root_block, main=True)
+    saver.save_block(root_block)
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_root: Block = parser.parse_block(saver.get_blocks(), root_block.uid)
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_child: Block = restored_root.children[0]
     restored_parameters: List[sym.Var] = list(restored_child.parameters)
     restored_parameter: sym.Var = restored_parameters[0]
@@ -468,13 +471,13 @@ def test_legacy_parent_runtime_mapping_moves_to_declaration_owner(
         api_obj_mapping=dict(((mapping_key, runtime_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(root_block, main=True)
+    saver.save_block(root_block)
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_root: Block = parser.parse_block(saver.get_blocks(), root_block.uid)
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_child: Block = restored_root.children[0]
     restored_runtime_parameters: List[sym.Var] = list(restored_child.event_dict)
     restored_runtime_parameter: sym.Var = restored_runtime_parameters[0]
@@ -511,14 +514,14 @@ def test_legacy_parent_event_mapping_is_localized_without_changing_role() -> Non
         api_obj_mapping=dict(((mapping_key, parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(root_block, main=True)
+    saver.save_block(root_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_root: Block = parser.parse_block(saver.get_blocks(), root_block.uid)
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_child: Block = restored_root.children[0]
     restored_parameter: sym.Var | None = restored_child.api_obj_mapping.get(mapping_key, None)
 
@@ -557,16 +560,13 @@ def test_mapped_event_target_preserves_runtime_storage(
         api_obj_mapping=dict(((mapping_key, parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_blocks: List[Block] = parser.parse_blocks(
-        blocks_data=saver.get_blocks(),
-        main_block_uids=list((source_block.uid,)),
+    restored_blocks: List[Block] = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
     )
     restored_block: Block = restored_blocks[0]
     restored_parameter: sym.Var | None = restored_block.api_obj_mapping.get(
@@ -610,16 +610,13 @@ def test_partial_governor_like_mapping_is_not_migrated() -> None:
         api_obj_mapping=api_obj_mapping,
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_blocks: List[Block] = parser.parse_blocks(
-        blocks_data=saver.get_blocks(),
-        main_block_uids=list((source_block.uid,)),
+    restored_blocks: List[Block] = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
     )
     restored_block: Block = restored_blocks[0]
 
@@ -699,16 +696,13 @@ def test_legacy_governor_mapping_preserves_runtime_parameters(
         api_obj_mapping=api_obj_mapping,
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_blocks: List[Block] = parser.parse_blocks(
-        blocks_data=saver.get_blocks(),
-        main_block_uids=list((source_block.uid,)),
+    restored_blocks: List[Block] = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
     )
     restored_block: Block = restored_blocks[0]
     restored_event_variables: Dict[int, sym.Var] = dict()
@@ -789,35 +783,31 @@ def test_legacy_governor_migration_is_idempotent_after_save() -> None:
         api_obj_mapping=api_obj_mapping,
     )
     source_saver: BlockSaver = BlockSaver(source_factory)
-    source_saver.save_block(source_block, main=True)
+    source_saver.save_block(source_block)
 
     first_factory: VarFactory = VarFactory()
     first_logger: Logger = Logger()
     first_parser: BlockParser = BlockParser(first_factory, logger=first_logger)
-    first_parser.parse_consts(source_saver.get_const_to_save())
-    first_parser.parse_vars(source_saver.get_vars_to_save())
-    first_parser.parse_diff_vars(source_saver.get_diff_vars_to_save())
-    first_roots: List[Block] = first_parser.parse_blocks(
-        blocks_data=source_saver.get_blocks(),
-        main_block_uids=list((source_block.uid,)),
+    first_roots: List[Block] = parse_saved_blocks(
+        parser=first_parser,
+        saver=source_saver,
+        data=source_saver.get_blocks(),
     )
     first_root: Block = first_roots[0]
     first_saver: BlockSaver = BlockSaver(first_factory)
-    first_saver.save_block(first_root, main=True)
+    first_saver.save_block(first_root)
 
     second_factory: VarFactory = VarFactory()
     second_logger: Logger = Logger()
     second_parser: BlockParser = BlockParser(second_factory, logger=second_logger)
-    second_parser.parse_consts(first_saver.get_const_to_save())
-    second_parser.parse_vars(first_saver.get_vars_to_save())
-    second_parser.parse_diff_vars(first_saver.get_diff_vars_to_save())
-    second_roots: List[Block] = second_parser.parse_blocks(
-        blocks_data=first_saver.get_blocks(),
-        main_block_uids=list((first_root.uid,)),
+    second_roots: List[Block] = parse_saved_blocks(
+        parser=second_parser,
+        saver=first_saver,
+        data=first_saver.get_blocks(),
     )
     second_root: Block = second_roots[0]
     second_saver: BlockSaver = BlockSaver(second_factory)
-    second_saver.save_block(second_root, main=True)
+    second_saver.save_block(second_root)
 
     assert first_saver.get_blocks() == second_saver.get_blocks()
     assert len(first_logger.entries) == 1
@@ -847,20 +837,18 @@ def test_current_static_parameter_contract_requires_no_migration() -> None:
         children=list((source_child,)),
     )
     source_saver: BlockSaver = BlockSaver(source_factory)
-    source_saver.save_block(source_root, main=True)
+    source_saver.save_block(source_root)
 
     restored_factory: VarFactory = VarFactory()
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(restored_factory, logger=logger)
-    parser.parse_consts(source_saver.get_const_to_save())
-    parser.parse_vars(source_saver.get_vars_to_save())
-    parser.parse_diff_vars(source_saver.get_diff_vars_to_save())
-    restored_root: Block = parser.parse_block(
-        blocks_data=source_saver.get_blocks(),
-        main_block_uid=source_root.uid,
-    )
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=source_saver,
+        data=source_saver.get_blocks(),
+    )[0]
     restored_saver: BlockSaver = BlockSaver(restored_factory)
-    restored_saver.save_block(restored_root, main=True)
+    restored_saver.save_block(restored_root)
 
     assert logger.entries == list()
     assert restored_saver.get_blocks() == source_saver.get_blocks()
@@ -888,33 +876,29 @@ def test_legacy_static_owner_migration_is_idempotent_after_save() -> None:
         api_obj_mapping=dict(((mapping_key, source_parameter),)),
     )
     source_saver: BlockSaver = BlockSaver(source_factory)
-    source_saver.save_block(source_root, main=True)
+    source_saver.save_block(source_root)
 
     first_factory: VarFactory = VarFactory()
     first_logger: Logger = Logger()
     first_parser: BlockParser = BlockParser(first_factory, logger=first_logger)
-    first_parser.parse_consts(source_saver.get_const_to_save())
-    first_parser.parse_vars(source_saver.get_vars_to_save())
-    first_parser.parse_diff_vars(source_saver.get_diff_vars_to_save())
-    first_root: Block = first_parser.parse_block(
-        blocks_data=source_saver.get_blocks(),
-        main_block_uid=source_root.uid,
-    )
+    first_root: Block = parse_saved_blocks(
+        parser=first_parser,
+        saver=source_saver,
+        data=source_saver.get_blocks(),
+    )[0]
     first_saver: BlockSaver = BlockSaver(first_factory)
-    first_saver.save_block(first_root, main=True)
+    first_saver.save_block(first_root)
 
     second_factory: VarFactory = VarFactory()
     second_logger: Logger = Logger()
     second_parser: BlockParser = BlockParser(second_factory, logger=second_logger)
-    second_parser.parse_consts(first_saver.get_const_to_save())
-    second_parser.parse_vars(first_saver.get_vars_to_save())
-    second_parser.parse_diff_vars(first_saver.get_diff_vars_to_save())
-    second_root: Block = second_parser.parse_block(
-        blocks_data=first_saver.get_blocks(),
-        main_block_uid=first_root.uid,
-    )
+    second_root: Block = parse_saved_blocks(
+        parser=second_parser,
+        saver=first_saver,
+        data=first_saver.get_blocks(),
+    )[0]
     second_saver: BlockSaver = BlockSaver(second_factory)
-    second_saver.save_block(second_root, main=True)
+    second_saver.save_block(second_root)
 
     assert len(first_logger.entries) == 1
     assert first_logger.entries[0].msg == "Migrated legacy dynamic parameter declarations"
@@ -949,13 +933,13 @@ def test_legacy_runtime_mapping_target_is_not_promoted_to_static(
         api_obj_mapping=dict(((mapping_key, runtime_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_block: Block = parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_block: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_runtime_parameter: sym.Var | None = restored_block.api_obj_mapping.get(
         mapping_key,
         None,
@@ -989,13 +973,13 @@ def test_intermediate_converter_static_migration_is_restored_to_runtime(
         api_obj_mapping=dict(((mapping_key, runtime_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_block: Block = parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_block: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_runtime_parameter: sym.Var | None = restored_block.api_obj_mapping.get(
         mapping_key,
         None,
@@ -1020,13 +1004,13 @@ def test_legacy_converter_loss_parameter_uses_static_alpha1_mapping() -> None:
         api_obj_mapping=dict(((ParamPowerFlowReferenceType.converter_loss_power_0, loss_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_block: Block = parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_block: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_loss_parameter: sym.Var | None = restored_block.api_obj_mapping.get(
         ParamPowerFlowReferenceType.alpha1,
         None,
@@ -1055,13 +1039,13 @@ def test_legacy_converter_operating_loss_mapping_is_removed() -> None:
         api_obj_mapping=dict(((ParamPowerFlowReferenceType.converter_loss_power_0, loss_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_block: Block = parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_block: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_runtime_parameters: List[sym.Var] = list(restored_block.event_dict.keys())
 
     assert (
@@ -1090,13 +1074,13 @@ def test_legacy_parent_converter_runtime_mapping_moves_to_event_owner() -> None:
         api_obj_mapping=dict(((ParamPowerFlowReferenceType.converter_control_mode_1, runtime_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_root: Block = parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_root: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_child: Block = restored_root.children[0]
     restored_runtime_parameter: sym.Var | None = restored_child.api_obj_mapping.get(
         ParamPowerFlowReferenceType.converter_control_mode_1,
@@ -1133,14 +1117,14 @@ def test_legacy_parent_mapping_to_child_runtime_parameter_is_removed() -> None:
         api_obj_mapping=dict(((ParamPowerFlowReferenceType.Ql0, runtime_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_block: Block = parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_block: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_child: Block = restored_block.children[0]
     restored_parameters: List[sym.Var] = list(restored_child.event_dict.keys())
     restored_runtime_parameter: sym.Var = restored_parameters[0]
@@ -1187,14 +1171,14 @@ def test_legacy_mapping_only_runtime_target_is_restored_as_runtime(
         api_obj_mapping=dict(((mapping_key, runtime_parameter),)),
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    restored_block: Block = parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_block: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     restored_runtime_parameter: sym.Var | None = restored_block.api_obj_mapping.get(
         mapping_key,
         None,
@@ -1239,23 +1223,35 @@ def test_symbolic_block_model_family_roundtrip_accepts_legacy_absence() -> None:
     assert copied_block.model_family_name == "generator_family"
 
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     saved_blocks: Dict[int, Dict[str, Any]] = saver.get_blocks()
 
     current_parser: BlockParser = BlockParser(VarFactory())
-    current_block: Block = current_parser.parse_block(saved_blocks, source_block.uid)
+    current_block: Block = parse_saved_blocks(
+        parser=current_parser,
+        saver=saver,
+        data=saved_blocks,
+    )[0]
     assert current_block.model_family_name == "generator_family"
 
     # Removing the optional field reproduces every archive written before the
     # model comparator existed; opening it must not require a migration step.
     del saved_blocks[source_block.uid]["model_family_name"]
     legacy_parser: BlockParser = BlockParser(VarFactory())
-    legacy_block: Block = legacy_parser.parse_block(saved_blocks, source_block.uid)
+    legacy_block: Block = parse_saved_blocks(
+        parser=legacy_parser,
+        saver=saver,
+        data=saved_blocks,
+    )[0]
     assert legacy_block.model_family_name == ""
 
     saved_blocks[source_block.uid]["model_family_name"] = None
     null_parser: BlockParser = BlockParser(VarFactory())
-    null_block: Block = null_parser.parse_block(saved_blocks, source_block.uid)
+    null_block: Block = parse_saved_blocks(
+        parser=null_parser,
+        saver=saver,
+        data=saved_blocks,
+    )[0]
     assert null_block.model_family_name == ""
 
 
@@ -1325,20 +1321,15 @@ def test_block_parser_rebuilds_legacy_uid_lookup_after_connections() -> None:
     :return: None.
     """
     parser: BlockParser = BlockParser(VarFactory())
-    parser.parse_vars(
-        data=list((
-            dict(type="Var", name="source", uid=99, non_mutable_uid=10, shared_ref=None, ref=None),
-            dict(type="Var", name="target", uid=20, non_mutable_uid=20, shared_ref=None, ref=None),
-        ))
-    )
-    parser.parse_diff_vars(data=list())
-    parser.parse_connections(
-        data=dict({
-            10: list((
-                dict(type="Connection", non_mutable_uid=20, name="target", uid=20),
-            )),
-        })
-    )
+    variable_data: List[Dict[str, Any]] = list((
+        dict(type="Var", name="source", uid=99, non_mutable_uid=10, shared_ref=None, ref=None),
+        dict(type="Var", name="target", uid=20, non_mutable_uid=20, shared_ref=None, ref=None),
+    ))
+    connection_data: Dict[int, List[Dict[str, Any]]] = dict({
+        10: list((
+            dict(type="Connection", non_mutable_uid=20, name="target", uid=20),
+        )),
+    })
     block_data: Dict[str, Any] = dict(
         uid=1,
         name="legacy_uid_block",
@@ -1353,7 +1344,17 @@ def test_block_parser_rebuilds_legacy_uid_lookup_after_connections() -> None:
     )
     blocks_data: Dict[int, Dict[str, Any]] = dict(((1, block_data),))
 
-    restored_block: Block = parser.parse_block(blocks_data=blocks_data, main_block_uid=1)
+    symbolic_data: Dict[str, Any] = dict(
+        shared_references=list(),
+        consts=list(),
+        vars=variable_data,
+        diff_vars=list(),
+        connections=connection_data,
+        blocks=blocks_data,
+    )
+    restored_block: Block = parser.parse(
+        data=symbolic_data,
+    )[0]
     restored_source: sym.Var | None = parser.var_factory.get_vars_dict().get(10, None)
     restored_target: sym.Var | None = parser.var_factory.get_vars_dict().get(20, None)
 
@@ -1377,39 +1378,50 @@ def test_legacy_func2_min_max_codegen_uses_elementwise_numpy_operations() -> Non
 
     maximum_source: str = sym.expression2numba(legacy_maximum, compiler_names)
     minimum_source: str = sym.expression2numba(legacy_minimum, compiler_names)
-    evaluation_namespace: Dict[str, Any] = dict(np=np, vrs=np.array([-2.0], dtype=float))
-    maximum_value: float = float(eval(maximum_source, evaluation_namespace))
-    minimum_value: float = float(eval(minimum_source, evaluation_namespace))
 
     assert maximum_source == "np.maximum(vrs[0], 1e-12)"
     assert minimum_source == "np.minimum(vrs[0], -1e-12)"
-    assert maximum_value == 1.0e-12
-    assert minimum_value == -2.0
+    # Symbolic evaluation covers the semantics without executing generated source text.
+    assert legacy_maximum.eval(x=-2.0) == 1.0e-12
+    assert legacy_minimum.eval(x=-2.0) == -2.0
 
 
-def test_block_parser_opens_legacy_inline_child_tree_without_main_uids() -> None:
+def test_block_parser_rebuilds_flat_child_tree_after_json_round_trip() -> None:
     """
-    Verify the inline-child archive layout written by commit ``48bcef198``.
+    Verify persisted blocks use flat child UIDs and ignore JSON object keys.
 
     :return: None.
     """
     child_data: Dict[str, Any] = dict(
         uid=202,
-        name="legacy_inline_child",
+        name="flat_child",
         children=list(),
     )
     root_data: Dict[str, Any] = dict(
         uid=101,
-        name="legacy_inline_root",
-        children=list((child_data,)),
+        name="flat_root",
+        children=list((child_data["uid"],)),
     )
-    legacy_blocks: Dict[str, Any] = dict({"101": root_data})
+    saved_blocks: Dict[int, Dict[str, Any]] = dict({
+        root_data["uid"]: root_data,
+        child_data["uid"]: child_data,
+    })
+    loaded_blocks: Dict[str, Dict[str, Any]] = json.loads(json.dumps(saved_blocks))
     parser: BlockParser = BlockParser(VarFactory())
 
-    # The old symbolic section had no main_block_uids, so the parser must infer
-    # the root and flatten the nested child before rebuilding runtime blocks.
-    parsed_roots: List[Block] = parser.parse_blocks(blocks_data=legacy_blocks,
-                                                     main_block_uids=None)
+    # The JSON transport rewrites only the outer lookup keys. Internal block
+    # identities and child references remain integer values.
+    symbolic_data: Dict[str, Any] = dict(
+        shared_references=list(),
+        consts=list(),
+        vars=list(),
+        diff_vars=list(),
+        connections=dict(),
+        blocks=loaded_blocks,
+    )
+    parsed_roots: List[Block] = parser.parse(
+        data=symbolic_data,
+    )
 
     assert len(parsed_roots) == 1
     assert parsed_roots[0].uid == 101
@@ -1418,30 +1430,42 @@ def test_block_parser_opens_legacy_inline_child_tree_without_main_uids() -> None
     assert parser.block_dict[202] is parsed_roots[0].children[0]
 
 
-def test_block_parser_opens_legacy_list_table_and_warns_for_missing_pointer_child() -> None:
+def test_block_parser_warns_for_missing_flat_child_record() -> None:
     """
-    Verify list-based pointer archives retain recoverable blocks and warn on loss.
+    Verify a missing child record does not hide recoverable flat-table blocks.
 
     :return: None.
     """
     child_data: Dict[str, Any] = dict(
         uid=302,
-        name="legacy_pointer_child",
+        name="flat_child",
         children=list(),
     )
     root_data: Dict[str, Any] = dict(
         uid=301,
-        name="legacy_pointer_root",
+        name="flat_root",
         children=list((302, 999)),
     )
-    legacy_blocks: List[Dict[str, Any]] = list((root_data, child_data))
+    blocks_data: Dict[int, Dict[str, Any]] = dict({
+        root_data["uid"]: root_data,
+        child_data["uid"]: child_data,
+    })
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
 
-    # Pointer-format files predate main_block_uids. The valid edge is restored;
-    # an absent referenced record is isolated instead of aborting file opening.
-    parsed_roots: List[Block] = parser.parse_blocks(blocks_data=legacy_blocks,
-                                                     main_block_uids=None)
+    # The valid edge is restored while the absent referenced record is isolated
+    # instead of aborting the complete file opening operation.
+    symbolic_data: Dict[str, Any] = dict(
+        shared_references=list(),
+        consts=list(),
+        vars=list(),
+        diff_vars=list(),
+        connections=dict(),
+        blocks=blocks_data,
+    )
+    parsed_roots: List[Block] = parser.parse(
+        data=symbolic_data,
+    )
 
     assert len(parsed_roots) == 1
     assert parsed_roots[0].uid == 301
@@ -1451,25 +1475,44 @@ def test_block_parser_opens_legacy_list_table_and_warns_for_missing_pointer_chil
     assert logger.entries[0].value == "999"
 
 
-def test_block_parser_ignores_cyclic_legacy_child_uid_without_recursing_forever() -> None:
+def test_block_parser_ignores_cyclic_flat_child_uid_without_recursing_forever() -> None:
     """
-    Verify a malformed historical child graph cannot block the file loader.
+    Verify a malformed current child graph cannot block the file loader.
 
     :return: None.
     """
     root_data: Dict[str, Any] = dict(
-        uid="401",
-        name="legacy_cyclic_root",
-        children=list((401,)),
+        uid=401,
+        name="cyclic_root",
+        children=list((402,)),
     )
+    child_data: Dict[str, Any] = dict(
+        uid=402,
+        name="cyclic_child",
+        children=list((402,)),
+    )
+    blocks_data: Dict[int, Dict[str, Any]] = dict({
+        root_data["uid"]: root_data,
+        child_data["uid"]: child_data,
+    })
     logger: Logger = Logger()
     parser: BlockParser = BlockParser(VarFactory(), logger=logger)
 
-    parsed_roots: List[Block] = parser.parse_blocks(blocks_data=list((root_data,)),
-                                                     main_block_uids=None)
+    symbolic_data: Dict[str, Any] = dict(
+        shared_references=list(),
+        consts=list(),
+        vars=list(),
+        diff_vars=list(),
+        connections=dict(),
+        blocks=blocks_data,
+    )
+    parsed_roots: List[Block] = parser.parse(
+        data=symbolic_data,
+    )
 
     assert len(parsed_roots) == 1
     assert parsed_roots[0].uid == 401
-    assert parsed_roots[0].children == list()
+    assert len(parsed_roots[0].children) == 1
+    assert parsed_roots[0].children[0].children == list()
     assert len(logger.entries) == 1
     assert logger.entries[0].msg == "Cyclic child dynamic block reference ignored while parsing persisted data"

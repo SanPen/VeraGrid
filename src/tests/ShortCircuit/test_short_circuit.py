@@ -53,7 +53,10 @@ def test_short_circuit():
                             pf_results3ph=None)
     sc.run()
     assert sc.results is not None
-    assert sc.logger.has_errors()
+    assert not sc.logger.has_errors(), str(sc.logger)
+    assert np.all(np.isfinite(sc.results.voltage1))
+    assert abs(sc.results.voltage1[16, 0]) < 1e-6
+    assert np.any(abs(sc.results.If1) > 0)
     print('\n\n', main_circuit.name)
     print('\t|V|:', abs(sc.results.voltage1))
     print('\t|Sf|:', abs(sc.results.Sf1))

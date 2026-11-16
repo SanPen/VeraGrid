@@ -9,7 +9,58 @@ import numpy as np
 import pandas as pd
 
 import VeraGridEngine.api as vge
-import VeraGridEngine.Templates as tem
+from VeraGridEngine.Templates.Emt.line.bergeron_line_emt_template import get_bergeron_line_emt_template
+from VeraGridEngine.Templates.Emt.battery_energy_storage.bess_avm_emt_template import get_bess_avm_grid_following_emt_template
+from VeraGridEngine.Templates.Emt.converters.bridge_2level_3ph_emt_template import get_bridge_2level_3ph_emt_template
+from VeraGridEngine.Templates.Emt.converters.bridge_filter_2level_3ph_emt_template import get_bridge_filter_2level_3ph_emt_template
+from VeraGridEngine.Templates.Emt.converters.bridge_filter_control_2level_3ph_emt_template import get_bridge_filter_control_2level_3ph_emt_template
+from VeraGridEngine.Templates.Emt.converters.converter_emt_template import get_emt_ideal_converter, get_full_pseudo_emt_converter
+from VeraGridEngine.Templates.Emt.converters.converter_switched_emt_template import get_switched_emt_converter
+from VeraGridEngine.Templates.Emt.dc_line.dc_line_emt_template import get_dc_line_with_power_input_emt_template
+from VeraGridEngine.Templates.Emt.dc_line.dc_load_emt_template import get_dc_load_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.generator_emt_type_template import (
+    get_complete_generator_template_emt,
+    get_exciter_emt,
+    get_generator_sauer_pai_type_emt_template,
+    get_governor_emt,
+    get_simple_generator_emt_template,
+    get_stabilizer_emt,
+)
+from VeraGridEngine.Templates.Emt.induction_machines.induction_motor_emt_template import (
+    get_induction_motor_double_cage_emt_template,
+    get_induction_motor_single_cage_emt_template,
+)
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import (
+    get_shunt_c_emt_template,
+    get_shunt_l_emt_template,
+    get_shunt_r_emt_template,
+)
+from VeraGridEngine.Templates.Emt.load_characteristics.load_exponential_emt_template import get_exponential_load_emt
+from VeraGridEngine.Templates.Emt.load_characteristics.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.solar_pv_generation.pv_emt_template import (
+    get_pv_avm_boost_grid_following_emt_template,
+    get_pv_avm_grid_following_emt_template,
+)
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import (
+    get_generator_thevenin_rl_emt_template_with_ref,
+)
+from VeraGridEngine.Templates.Emt.transformers.transformer_emt_template import get_transformer_emt_template
+from VeraGridEngine.Templates.Emt.common.valve_emt_template import get_valve_emt_template
+from VeraGridEngine.Templates.Emt.converters.vsc_gfm_emt import get_gfm_emt_template
+from VeraGridEngine.Templates.Emt.transformers.xfmr_emt_template import get_xfmr_emt_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template_v2 import (
+    get_complete_generator_template_rms,
+    get_exciter_rms,
+    get_genqec_rms,
+    get_governor_rms,
+    get_stabilizer_rms,
+)
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow_rms_template import get_genrow_rms_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.solar_pv_generation.pvd1_rms_template import get_pvd1_rms_template
+from VeraGridEngine.Templates.Rms.converters.vsc_gfl_dclinked import build_vsc_rms
 from VeraGridEngine.Devices.Diagrams.graphic_location import GraphicLocation
 from VeraGridEngine.Devices.Diagrams.map_location import MapLocation
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
@@ -120,16 +171,16 @@ def add_rms_model_catalogue(grid):
     """
     # TODO: eliminate
     grid.rms_models += [
-        tem.get_genqec_rms(vfactory=grid.var_factory),
-        tem.get_governor_rms(vfactory=grid.var_factory),
-        tem.get_stabilizer_rms(vfactory=grid.var_factory),
-        tem.get_exciter_rms(vfactory=grid.var_factory),
-        tem.get_complete_generator_template_rms(vfactory=grid.var_factory),
-        tem.get_genrow_rms_template(vfactory=grid.var_factory),
-        tem.get_line_rms_template(vfactory=grid.var_factory),
-        tem.get_load_rms_template(vfactory=grid.var_factory),
-        tem.get_pvd1_rms_template(vfactory=grid.var_factory),
-        tem.build_vsc_rms(vfactory=grid.var_factory)
+        get_genqec_rms(vfactory=grid.var_factory),
+        get_governor_rms(vfactory=grid.var_factory),
+        get_stabilizer_rms(vfactory=grid.var_factory),
+        get_exciter_rms(vfactory=grid.var_factory),
+        get_complete_generator_template_rms(vfactory=grid.var_factory),
+        get_genrow_rms_template(vfactory=grid.var_factory),
+        get_line_rms_template(vfactory=grid.var_factory),
+        get_load_rms_template(vfactory=grid.var_factory),
+        get_pvd1_rms_template(vfactory=grid.var_factory),
+        build_vsc_rms(vfactory=grid.var_factory)
     ]
 
 def add_emt_model_catalogue(grid):
@@ -139,41 +190,41 @@ def add_emt_model_catalogue(grid):
     """
     grid.emt_models += [
 
-        tem.get_simple_generator_emt_template(vf=grid.var_factory),
-        tem.get_generator_sauer_pai_type_emt_template(vf=grid.var_factory),
-        tem.get_governor_emt(vf=grid.var_factory),
-        tem.get_stabilizer_emt(vf=grid.var_factory),
-        tem.get_exciter_emt(vf=grid.var_factory),
-        tem.get_complete_generator_template_emt(vf=grid.var_factory),
+        get_simple_generator_emt_template(vf=grid.var_factory),
+        get_generator_sauer_pai_type_emt_template(vf=grid.var_factory),
+        get_governor_emt(vf=grid.var_factory),
+        get_stabilizer_emt(vf=grid.var_factory),
+        get_exciter_emt(vf=grid.var_factory),
+        get_complete_generator_template_emt(vf=grid.var_factory),
 
-        tem.get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory),
-        tem.get_emt_ideal_converter(vf=grid.var_factory),
-        tem.get_full_pseudo_emt_converter(vf=grid.var_factory),
-        tem.get_switched_emt_converter(vf=grid.var_factory),
-        tem.get_bridge_2level_3ph_emt_template(vf=grid.var_factory),
-        tem.get_bridge_filter_2level_3ph_emt_template(vf=grid.var_factory),
-        tem.get_bridge_filter_control_2level_3ph_emt_template(vf=grid.var_factory),
-        tem.get_dc_load_emt_template(vf=grid.var_factory),
+        get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory),
+        get_emt_ideal_converter(vf=grid.var_factory),
+        get_full_pseudo_emt_converter(vf=grid.var_factory),
+        get_switched_emt_converter(vf=grid.var_factory),
+        get_bridge_2level_3ph_emt_template(vf=grid.var_factory),
+        get_bridge_filter_2level_3ph_emt_template(vf=grid.var_factory),
+        get_bridge_filter_control_2level_3ph_emt_template(vf=grid.var_factory),
+        get_dc_load_emt_template(vf=grid.var_factory),
         # tem.get_dc_line_emt_template(vf=self._var_factory),
-        tem.get_dc_line_with_power_input_emt_template(vf=grid.var_factory),
-        tem.get_valve_emt_template(vf=grid.var_factory),
-        tem.get_transformer_emt_template(vf=grid.var_factory),
-        tem.get_xfmr_emt_template(vf=grid.var_factory),
-        tem.get_induction_motor_single_cage_emt_template(vf=grid.var_factory),
-        tem.get_induction_motor_double_cage_emt_template(vf=grid.var_factory),
-        tem.get_bess_avm_grid_following_emt_template(vf=grid.var_factory),
-        tem.get_pv_avm_grid_following_emt_template(vf=grid.var_factory),
-        tem.get_pv_avm_boost_grid_following_emt_template(vf=grid.var_factory),
-        tem.get_gfm_emt_template(vf=grid.var_factory),
+        get_dc_line_with_power_input_emt_template(vf=grid.var_factory),
+        get_valve_emt_template(vf=grid.var_factory),
+        get_transformer_emt_template(vf=grid.var_factory),
+        get_xfmr_emt_template(vf=grid.var_factory),
+        get_induction_motor_single_cage_emt_template(vf=grid.var_factory),
+        get_induction_motor_double_cage_emt_template(vf=grid.var_factory),
+        get_bess_avm_grid_following_emt_template(vf=grid.var_factory),
+        get_pv_avm_grid_following_emt_template(vf=grid.var_factory),
+        get_pv_avm_boost_grid_following_emt_template(vf=grid.var_factory),
+        get_gfm_emt_template(vf=grid.var_factory),
 
         # the following are functions that generate templates depending on phases or things
-        tem.get_shunt_c_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_shunt_l_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_exponential_load_emt(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_load_ZIP_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_pi_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True),
-        tem.get_bergeron_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True),
+        get_shunt_c_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        get_shunt_l_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        get_exponential_load_emt(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        get_load_ZIP_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        get_pi_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True),
+        get_bergeron_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True),
 
     ]
 

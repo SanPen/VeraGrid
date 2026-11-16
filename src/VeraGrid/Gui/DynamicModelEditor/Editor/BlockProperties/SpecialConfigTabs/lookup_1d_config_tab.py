@@ -25,7 +25,7 @@ from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties.SpecialConfigTabs.ta
     normalize_curve_points,
 )
 from VeraGridEngine.enumerations import BlockType
-from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
+from VeraGridEngine.Templates.template_catalogue import TemplateDefinition, TemplateProp
 
 
 def get_lookup_1d_builder_points(

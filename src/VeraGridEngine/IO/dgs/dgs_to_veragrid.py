@@ -3,11 +3,12 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-import math
+
 import re
 import numpy as np
-from typing import Dict, List, Set, Tuple, TypeVar
+from typing import Set, Tuple, TypeVar
 
+from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.enumerations import (
     ExternalGridMode,
     SwitchGraphicType,
@@ -24,28 +25,20 @@ from VeraGridEngine.enumerations import (
     ShuntConnectionType,
     DynamicSimulationMode,
 )
+
 import VeraGridEngine.Devices as dev
+
+from VeraGridEngine.IO.dgs.dyn_dgs_parser import DynDgsParser
+
 from VeraGridEngine.Devices.Branches.wire import Wire
+from VeraGridEngine.Devices.types import BRANCH_TYPES, INJECTION_DEVICE_TYPES
 from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType, WireInTower
-from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
-from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
+
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.dgs.dgs_circuit import DgsCircuit
-from VeraGridEngine.IO.dgs.dgs_logical_actuator_binding import (
-    bind_dgs_logical_actuator_runtime,
-    prepare_dgs_logical_actuator_topology,
-    release_dgs_logical_actuator_import_context,
-)
-from VeraGridEngine.IO.dgs.dgs_rms_measurement_binding import bind_dgs_rms_measurements
-from VeraGridEngine.IO.dgs.dgs_rms_preparation import (
-    bind_dgs_switch_event_runtime,
-    prepare_dgs_circuit_for_rms,
-)
-from VeraGridEngine.IO.dgs.dynamic_models.dynamic_model_import import (
-    DgsDynamicTemplateConversionResult,
-    apply_dgs_dynamic_templates_to_devices,
-    convert_and_add_dgs_dynamic_templates_to_circuit,
-)
+
+from VeraGridEngine.IO.dgs.dgs_complete_injection import build_complete_injection_template
+
 from VeraGridEngine.IO.dgs.dgs_objects import *
 
 TDgsObject = TypeVar("TDgsObject")
@@ -692,7 +685,15 @@ def convert_dgs_to_bus(elmterm: ElmTerm,
     # configured voltage target independent from optional measured results.
     measured_voltage_magnitude: float = float(elmterm.m_u)
     measured_voltage_angle_radians: float = math.radians(float(elmterm.m_phiu))
-    if measured_voltage_magnitude > 0.0 and math.isfinite(measured_voltage_magnitude):
+    if int(elmterm.systype or 0) == 1:
+        # DC voltage has a signed axis; the negative pole must not become +1 pu.
+        if math.isfinite(measured_voltage_magnitude) and measured_voltage_magnitude != 0.0:
+            initial_voltage_magnitude: float = abs(measured_voltage_magnitude)
+            initial_voltage_angle: float = math.pi if measured_voltage_magnitude < 0.0 else 0.0
+        else:
+            initial_voltage_magnitude = 1.0
+            initial_voltage_angle = math.pi if elmterm.iminus == 1 else 0.0
+    elif measured_voltage_magnitude > 0.0 and math.isfinite(measured_voltage_magnitude):
         initial_voltage_magnitude: float = measured_voltage_magnitude
         initial_voltage_angle: float = measured_voltage_angle_radians
     else:
@@ -719,7 +720,9 @@ def convert_dgs_to_bus(elmterm: ElmTerm,
         ),
     )
 
-    if measured_voltage_magnitude > 0.0 and math.isfinite(measured_voltage_magnitude):
+    if int(elmterm.systype or 0) == 1:
+        pass
+    elif measured_voltage_magnitude > 0.0 and math.isfinite(measured_voltage_magnitude):
         pass
     elif float(elmterm.vtarget) > 0.0:
         bus.Vm0 = float(elmterm.vtarget)
@@ -1223,6 +1226,10 @@ def convert_dgs_to_overhead_line_type_geometrical_parameters(
 
     earth_res = _convert_gearth_us_per_cm_to_resistivity_ohm_m(float(typtow.gearth))
 
+    if typtow.iTransMode not in (0, 3) or (typtow.iTransMode == 3 and typtow.nlcir != 1):
+        raise ValueError(f'{name}: unsupported TypTow transposition mode {typtow.iTransMode} '
+                         f'with {typtow.nlcir} circuits; export electrical parameters instead.')
+
     # Determine nominal voltage from referenced conductor types.
     v_candidates: List[float] = list()
     for ptr in typtow.pcond_c:
@@ -1252,6 +1259,7 @@ def convert_dgs_to_overhead_line_type_geometrical_parameters(
         Vnom=vnom,
         earth_resistivity=earth_res,
         frequency=freq,
+        transposed=typtow.iTransMode == 3,
     )
 
     # Earth wires (phase 0)
@@ -2299,7 +2307,14 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
     trafo.phases = np.array(phases, dtype=int)
 
     if int(typtr2_raw.itapch) != 0 and trafo.tap_changer.total_positions > 0:
-        tap_position = int(tr2.nntap) - int(typtr2_raw.ntpmn)
+        # A solved load flow holds the position PowerFactory reached with its
+        # discrete band, which is the operating point to reproduce.
+        operating_position: int
+        if tr2.c_nntap is None:
+            operating_position = int(tr2.nntap)
+        else:
+            operating_position = int(tr2.c_nntap)
+        tap_position = operating_position - int(typtr2_raw.ntpmn)
         if tap_position < 0:
             tap_position = 0
         else:
@@ -2317,9 +2332,10 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
 
         tc_type = _get_transformer_tap_changer_type(typtr2=typtr2_raw)
         if tc_type == TapChangerTypes.VoltageRegulation:
-            step: float = float(typtr2_raw.dutap) / 100.0
+            # A voltage tap has phitr 0 or 180 degrees, and 180 inverts its sign.
+            step: float = float(typtr2_raw.dutap) / 100.0 * math.cos(math.radians(float(typtr2_raw.phitr)))
             neutral_position: int = int(typtr2_raw.nntap0)
-            current_position: int = int(tr2.nntap)
+            current_position: int = operating_position
 
             tap: float = 1.0 + (current_position - neutral_position) * step
             tap_min: float = 1.0 + (int(typtr2_raw.ntpmn) - neutral_position) * step
@@ -2346,14 +2362,30 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
             else:
                 tap_on_bus = lv_bus
 
+            position_modules: np.ndarray = 1.0 + (
+                    int(typtr2_raw.ntpmn) + np.arange(trafo.tap_changer.total_positions) - neutral_position
+            ) * step
             if tap_on_bus is not bus_vg_from:
                 tap = 1.0 / tap
                 tap_min_inverted = 1.0 / tap_min
                 tap_max_inverted = 1.0 / tap_max
                 tap_min = min(tap_min_inverted, tap_max_inverted)
                 tap_max = max(tap_min_inverted, tap_max_inverted)
+                position_modules = 1.0 / position_modules
             else:
                 pass
+
+            # The generic tap law has no sign, so the changer needs the exact table
+            # to stay on the same module when a user moves the tap.
+            table_accepted: bool = trafo.tap_changer.set_tap_module_phase_values(
+                tap_modules=position_modules,
+                tap_phases=np.zeros(trafo.tap_changer.total_positions),
+            )
+            if table_accepted:
+                pass
+            else:
+                logger.add_warning(msg="DGS tap table rejected, moving this tap follows the generic law",
+                                   device=trafo.name, value=str(position_modules.min()))
 
             tap, tap_min, tap_max = _sanitize_tap_window(
                 tap_value=tap,
@@ -2395,7 +2427,9 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
     else:
         pass
 
-    if int(tr2.ntrcn) != 0:
+    # A solved position is frozen: VeraGrid has no discrete band to reach it, and
+    # its continuous control would move the transformer off the operating point.
+    if int(tr2.ntrcn) != 0 and tr2.c_nntap is None:
         trafo.tap_module_control_mode = TapModuleControl.Vm
         if float(tr2.usetp) > 0.0:
             trafo.vset = float(tr2.usetp)
@@ -2427,7 +2461,7 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
 
 
 def _tr3_zero_sequence_impedance(uk0: float, ur0: float, rated_power: float,
-                                  base_mva: float) -> complex:
+                                 base_mva: float) -> complex:
     """Convert a PF pairwise zero-sequence test to the system base.
 
     :param uk0: Impedance magnitude in percent on the smaller winding rating.
@@ -3117,6 +3151,41 @@ def convert_dgs_to_switch(stasw: StaSwitch,
     return sw
 
 
+def _get_dgs_distributed_pi_sequence(
+        resistance_pu: float,
+        reactance_pu: float,
+        conductance_pu: float,
+        susceptance_pu: float,
+) -> Tuple[float, float, float, float]:
+    """Reduce one uniform distributed sequence to its exact terminal pi.
+
+    The hyperbolic factors depend on ZY, which is invariant under the existing
+    voltage and power base conversion. The resulting charging conductance is
+    retained even when the source line had only capacitive charging.
+
+    :param resistance_pu: Total uncorrected series resistance.
+    :param reactance_pu: Total uncorrected series reactance.
+    :param conductance_pu: Total uncorrected shunt conductance.
+    :param susceptance_pu: Total uncorrected shunt susceptance.
+    :return: Equivalent series R/X and total parallel G/B in per unit.
+    """
+    impedance: complex = complex(resistance_pu, reactance_pu)
+    admittance: complex = complex(conductance_pu, susceptance_pu)
+    propagation: complex = complex(np.sqrt(impedance * admittance))
+    if propagation == 0.0:
+        # The analytic zero-product limit also covers ideal zero-length links.
+        return resistance_pu, reactance_pu, conductance_pu, susceptance_pu
+    else:
+        equivalent_impedance: complex = complex(impedance * np.sinh(propagation) / propagation)
+        half_propagation: complex = propagation / 2.0
+        equivalent_admittance: complex = complex(admittance * np.tanh(half_propagation) / half_propagation)
+        if not np.isfinite(equivalent_impedance) or not np.isfinite(equivalent_admittance):
+            raise ValueError('Distributed line has nonfinite terminal pi parameters')
+        else:
+            return (equivalent_impedance.real, equivalent_impedance.imag,
+                    equivalent_admittance.real, equivalent_admittance.imag)
+
+
 def convert_dgs_to_line(
         lne: ElmLne,
         buses: List[dev.Bus],
@@ -3385,7 +3454,8 @@ def convert_dgs_to_line(
                 section_template_found = True
                 # Sequence conversion includes G/G0; preserve the existing section
                 # aggregation of series, charging and rating at their new positions.
-                sequence_values: Tuple[float, float, float, float, float, float, float, float, float] = seq_section_template.get_values(
+                sequence_values: Tuple[
+                    float, float, float, float, float, float, float, float, float] = seq_section_template.get_values(
                     Sbase=baseMVA,
                     freq=freq,
                     length=float(section.dline),
@@ -3482,6 +3552,26 @@ def convert_dgs_to_line(
         line.rate = float(line.rate) * float(lne.fline)
     else:
         pass
+
+    if lne.i_dist == 1:
+        # Only a uniform scalar sequence declaration authorizes this reduction;
+        # matrix/coupled geometry and cascaded sections need their own models.
+        if len(owned_sections) != 0 or not isinstance(line.template, dev.SequenceLineType):
+            raise ValueError(f"{line.name}: distributed line requires one uniform sequence type")
+        else:
+            line.R, line.X, line.G, line.B = _get_dgs_distributed_pi_sequence(
+                line.R, line.X, line.G, line.B,
+            )
+            line.R0, line.X0, line.G0, line.B0 = _get_dgs_distributed_pi_sequence(
+                line.R0, line.X0, line.G0, line.B0,
+            )
+            line.fill_3_phase_from_sequence()
+    elif lne.i_dist in (None, 0):
+        # Legacy exports did not declare a distributed model and retain their
+        # existing ordinary-pi interpretation.
+        pass
+    else:
+        raise ValueError(f"{line.name}: unsupported native distributed-line selector")
 
     phases = _get_element_phases(
         element_id=lne.ID,
@@ -3599,7 +3689,7 @@ def convert_dgs_series_capacitor_to_reactance(
         cubics_by_obj_id: Dict[str, List[StaCubic]],
         logger: Logger,
         sbase_mva: float = 100.0
-) -> dev.SeriesReactance:
+) -> dev.SeriesReactance | dev.Switch:
     """
     Convert dgs series capacitor to reactance.
 
@@ -3628,6 +3718,26 @@ def convert_dgs_series_capacitor_to_reactance(
     )
 
     name: str = element.loc_name
+
+    if bus_from.is_dc and bus_to.is_dc:
+        # A configured DC capacitor carries no stationary current. Preserve
+        # the open topology instead of interpreting its zero xcap as a short.
+        if (element.ccap is None or not math.isfinite(element.ccap)
+                or element.ccap <= 0.0 or element.gcap != 0.0
+                or element.nphases != 1):
+            raise ValueError(f"{name}: DC capacitor requires positive C and explicitly zero conductance")
+        else:
+            return dev.Switch(
+                bus_from=bus_from, bus_to=bus_to, name=name,
+                idtag=_ref_id(element.ID), code=element.for_name,
+                active=False, normal_open=True, r=0.0, x=0.0,
+                rated_current=element.Curn,
+                rate=element.ucn * element.Curn,
+            )
+    elif bus_from.is_dc or bus_to.is_dc:
+        raise ValueError(f"{name}: capacitor cannot connect AC and DC domains")
+    else:
+        pass
 
     # Rated power calculation [MVA]
     Ur = element.ucn
@@ -3661,7 +3771,7 @@ def convert_dgs_to_series_reactance(
         typsind_dict: Dict[str, TypSind],
         logger: Logger,
         sbase_mva: float = 100.0
-) -> dev.SeriesReactance:
+) -> dev.SeriesReactance | dev.DcLine:
     """
     Convert dgs to series reactance.
 
@@ -3691,6 +3801,42 @@ def convert_dgs_to_series_reactance(
     )
 
     name: str = element.loc_name
+
+    if bus_from.is_dc and bus_to.is_dc:
+        # DC resistors use their configured Ohm value; AC uk/Pcu may be zero
+        # and must not erase the chopper resistance or change its voltage base.
+        if (element.rrea is None and element.xrea is None
+                and element.initial_resistance_column_declared
+                and element.Rin is not None and math.isfinite(element.Rin)
+                and element.Rin > 0.0 and element.ucn > 0.0):
+            # Legacy enriched RMS exports declare the initialized resistance
+            # as s:Rin. Keep their SeriesReactance shell: the existing logical
+            # actuator completion resolves the omitted valve-side terminals.
+            return dev.SeriesReactance(
+                bus_from=bus_from, bus_to=bus_to, name=name,
+                idtag=_ref_id(element.ID), code=element.for_name,
+                active=not bool(element.outserv),
+                r=element.Rin * sbase_mva / (element.ucn * element.ucn),
+                x=0.0, rate=element.Sn,
+            )
+        elif element.rrea is not None or element.xrea is not None:
+            if (element.rrea is None or not math.isfinite(element.rrea)
+                    or element.rrea <= 0.0 or element.xrea is None
+                    or not math.isfinite(element.xrea) or element.xrea < 0.0
+                    or bus_from.Vnom <= 0.0 or bus_from.Vnom != bus_to.Vnom):
+                raise ValueError(f"{name}: DC reactor requires explicit resistance and compatible DC bases")
+            resistance_pu: float = element.rrea * sbase_mva / (bus_from.Vnom * bus_from.Vnom)
+            return dev.DcLine(
+                bus_from=bus_from, bus_to=bus_to, name=name,
+                idtag=_ref_id(element.ID), code=element.for_name,
+                active=not bool(element.outserv), r=resistance_pu,
+                rate=element.Sn,
+            )
+        # Older exports without usable DC fields use the rated reactor data below.
+    elif bus_from.is_dc or bus_to.is_dc:
+        raise ValueError(f"{name}: reactor cannot connect AC and DC domains")
+    else:
+        pass
 
     # Initialize sequence impedances (p.u.)
     r_pu: float = 1e-20
@@ -5120,6 +5266,67 @@ def convert_dgs_to_controllable_shunt_from_svs(elmsvs: ElmSvs,
     return bus, cshunt
 
 
+def convert_dgs_svs_to_droop_shunt(elmsvs: ElmSvs,
+                                   bus: dev.Bus,
+                                   terms_by_id: Dict[str, ElmTerm],
+                                   bus_by_term_id: Dict[str, dev.Bus]) -> dev.ControllableShunt:
+    """
+    Convert a voltage-controlled ElmSvs with droop into a Q-V droop controllable shunt.
+
+    PowerFactory keeps the SVS susceptance within [ymin, ymax] (MVAr at 1 p.u., capacitive positive) and moves it
+    by Srated * 100 / ddroop MVAr per p.u. of control voltage below the setpoint. The setpoint is the target of the
+    controlled node when uset_mode is 1, and usetp otherwise (TechRef SVS, eq. 15-16).
+
+    :param elmsvs: Voltage-controlled ElmSvs with droop
+    :param bus: Bus of the SVS terminal
+    :param terms_by_id: DGS terminals by reference id
+    :param bus_by_term_id: VeraGrid buses by terminal reference id
+    :return: Controllable shunt in ShuntControlMode.QVDroop
+    """
+    fixed: float = float(elmsvs.Qfixcap) * float(elmsvs.nfixcap)
+    ymin: float = -(float(elmsvs.tcrmax) + fixed)
+    ymax: float = -(float(elmsvs.qmin) * float(elmsvs.nxcap) + fixed)
+    ysvs: float = -(float(elmsvs.qmin) * float(elmsvs.nncap) + float(elmsvs.tcrqact) + fixed)
+
+    node_id: str | None = _ref_id(elmsvs.cpCtrlNode)
+    node: ElmTerm | None = terms_by_id.get(node_id, None) if node_id else None
+    control_bus: dev.Bus = bus
+    vset: float = float(elmsvs.usetp)
+    if node is not None and node_id in bus_by_term_id:
+        control_bus = bus_by_term_id[node_id]
+        if elmsvs.uset_mode == 1:
+            vset = float(node.vtarget)
+        else:
+            pass
+    else:
+        pass
+
+    cshunt: dev.ControllableShunt = dev.ControllableShunt(
+        name=_get_non_empty_name(elmsvs.loc_name, f"SVS_{_ref_id(elmsvs.ID)}"),
+        idtag=_ref_id(elmsvs.ID),
+        number_of_steps=1,
+        step=0,
+        Bmin=ymin,
+        Bmax=ymax,
+        Gmin=0.0,
+        Gmax=0.0,
+        active=(elmsvs.outserv == 0),
+        vset=vset,
+        qdroop=float(elmsvs.Srated) * 100.0 / float(elmsvs.ddroop) if float(elmsvs.ddroop) > 0.0 else 0.0,
+        control_mode=ShuntControlMode.QVDroop,
+        control_bus=control_bus
+    )
+    # The operating susceptance is what the studies without the droop law see
+    cshunt.b_steps = np.array([ysvs], dtype=float)
+    cshunt.g_steps = np.zeros(1, dtype=float)
+    cshunt.active_steps = np.ones(1, dtype=int)
+    cshunt.step = 0
+    # ElmSvs susceptances connect AB, BC and CA, including with balanced control.
+    cshunt.conn = ShuntConnectionType.Delta
+
+    return cshunt
+
+
 def _pf_from_pq(p_mw: float, q_mvar: float, default: float = 0.8) -> float:
     """
     Pf from pq.
@@ -5227,6 +5434,19 @@ def convert_dgs_to_generator(elmsym: ElmSym,
     if elmsym.av_mode != "":
         if elmsym.av_mode == "constv":
             control_mode = GeneratorControlMode.V
+        elif elmsym.av_mode == "vdroop":
+            if elmsym.ddroop is None:
+                control_mode = GeneratorControlMode.Q
+                logger.add_warning(
+                    'Missing ElmSym ddroop; using the configured fixed Q from qgini. '
+                    'Export with DGS Export Definitions 8 - VeraGrid to enable voltage droop.',
+                    device=name, device_class='ElmSym', device_property='ddroop',
+                )
+            elif not np.isfinite(elmsym.ddroop) or elmsym.ddroop <= 0.0:
+                raise ValueError(f'{name}: voltage droop requires a positive ElmSym ddroop; '
+                                 'export it with DGS Export Definitions 8 - VeraGrid.')
+            else:
+                control_mode = GeneratorControlMode.QVDroop
         else:
             control_mode = GeneratorControlMode.Q
     else:
@@ -5249,22 +5469,28 @@ def convert_dgs_to_generator(elmsym: ElmSym,
     else:
         pass
 
-    # Limits (q_min/q_max are often in p.u. on Sbase in DGS exports)
-    qmin_raw = float(elmsym.q_min)
-    qmax_raw = float(elmsym.q_max)
-    if qmin_raw == 0.0 and typsym is not None:
-        qmin_raw = float(typsym.q_min)
-    else:
-        pass
-    if qmax_raw == 0.0 and typsym is not None:
-        qmax_raw = float(typsym.q_max)
-    else:
-        pass
+    if control_mode == GeneratorControlMode.QVDroop and (
+            typsym is None or not np.isfinite(snom) or snom <= 0.0):
+        raise ValueError(f'{name}: percentage Q-V droop requires a positive TypSym sgn rating.')
 
-    qmin = _interpret_pu_limit(value=qmin_raw, baseMVA=baseMVA, reference_abs=abs(q_mvar),
-                               logger=logger, name=name, field="q_min")
-    qmax = _interpret_pu_limit(value=qmax_raw, baseMVA=baseMVA, reference_abs=abs(q_mvar),
-                               logger=logger, name=name, field="q_max")
+    # PF fixed q_min/q_max are pu on one machine's nominal MVA, independent of
+    # qgini and the network base. iqtype selects type limits; zero is a valid limit.
+    q_source: ElmSym | TypSym = typsym if elmsym.iqtype == 1 and typsym is not None else elmsym
+    q_scale: float = snom if typsym is not None else 1.0
+    if typsym is None:
+        logger.add_warning('Missing synchronous generator type; cannot convert Q limits to MVAr, retaining raw values',
+                           device=name, device_class='ElmSym')
+    qmin = float(q_source.q_min) * q_scale
+    qmax = float(q_source.q_max) * q_scale
+
+    k_droop: float = 1.0
+    if control_mode == GeneratorControlMode.QVDroop:
+        if not np.isfinite(qmax) or qmax <= 0.0:
+            raise ValueError(f'{name}: converting voltage droop to k_droop requires a positive finite Qmax.')
+        # PF uses percent on Snom; VeraGrid uses a gain on Qmax, centred on Q=0.
+        slope: float = 100.0 * snom / float(elmsym.ddroop)
+        k_droop = slope / qmax
+        vset += q_mvar / slope
 
     # Optional P limits if present in schema
     pmin = float(elmsym.Pmin_uc)
@@ -5283,6 +5509,7 @@ def convert_dgs_to_generator(elmsym: ElmSym,
                         power_factor=pf,
                         vset=vset,
                         control_mode=control_mode,
+                        k_droop=k_droop,
                         Qmin=qmin,
                         Qmax=qmax,
                         Snom=snom,
@@ -5293,8 +5520,14 @@ def convert_dgs_to_generator(elmsym: ElmSym,
 
     # Optional sequence data from type (best-effort, may not exist in all exports)
     if typsym is not None:
-        r1 = typsym.rstr * baseMVA / snom
-        x1 = typsym.xstr * baseMVA / snom
+        # All three sequences use the machine base in PF and the system base in VG.
+        impedance_scale: float = baseMVA / snom
+        if typsym.ugn > 0.0 and bus.Vnom > 0.0:
+            impedance_scale *= (typsym.ugn / bus.Vnom) ** 2
+        else:
+            pass
+        r1 = typsym.rstr * impedance_scale
+        x1 = float(typsym.xstr or 0.0) * impedance_scale
 
         if r1 != 0.0 or x1 != 0.0:
             gen.R1 = float(r1)
@@ -5302,17 +5535,52 @@ def convert_dgs_to_generator(elmsym: ElmSym,
         else:
             pass
 
-        if float(typsym.r0sy) != 0.0 or float(typsym.x0sy) != 0.0:
-            gen.R0 = float(typsym.r0sy)
-            gen.X0 = float(typsym.x0sy)
+        if typsym.r0sy is not None and typsym.x0sy is not None:
+            gen.R0 = float(typsym.r0sy) * impedance_scale
+            gen.X0 = float(typsym.x0sy) * impedance_scale
         else:
-            pass
+            logger.add_warning('Missing synchronous generator Z0; export TypSym r0sy/x0sy for ABC',
+                               device=name, device_class='ElmSym')
 
-        if float(typsym.r2sy) != 0.0 or float(typsym.x2sy) != 0.0:
-            gen.R2 = float(typsym.r2sy)
-            gen.X2 = float(typsym.x2sy)
+        if typsym.r2sy is not None and typsym.x2sy is not None:
+            gen.R2 = float(typsym.r2sy) * impedance_scale
+            gen.X2 = float(typsym.x2sy) * impedance_scale
         else:
-            pass
+            logger.add_warning('Missing synchronous generator Z2; export TypSym r2sy/x2sy for ABC',
+                               device=name, device_class='ElmSym')
+
+        if typsym.nslty == 0:
+            gen.conn = ShuntConnectionType.Delta
+        elif typsym.nslty == 1:
+            gen.conn = ShuntConnectionType.FloatingStar
+        elif typsym.nslty == 2:
+            if elmsym.iintgnd not in (None, 0) or _ref_id(elmsym.bus1n):
+                gen.conn = ShuntConnectionType.NeutralStar
+                logger.add_warning('Synchronous generator explicit neutral is not supported in ABC',
+                                   device=name, device_class='ElmSym')
+            elif elmsym.cgnd == 1:
+                gen.conn = ShuntConnectionType.FloatingStar
+            else:
+                gen.conn = ShuntConnectionType.GroundedStar
+                if elmsym.cgnd is None:
+                    logger.add_warning('YN grounding was not exported; retaining the legacy grounded connection',
+                                       device=name, device_class='ElmSym')
+                elif elmsym.cgnd != 0:
+                    raise ValueError('Unsupported synchronous generator grounding: ' + name)
+                else:
+                    pass
+                if (elmsym.resy is not None and elmsym.xesy is not None
+                        and typsym.r0sy is not None and typsym.x0sy is not None):
+                    # Neutral current is 3*I0; PF grounding impedances are in ohms.
+                    gen.R0 += 3.0 * elmsym.resy * baseMVA / bus.Vnom ** 2
+                    gen.X0 += 3.0 * elmsym.xesy * baseMVA / bus.Vnom ** 2
+                else:
+                    pass
+        elif typsym.nslty is None:
+            logger.add_warning('Generator connection was not exported; retaining the legacy grounded connection',
+                               device=name, device_class='ElmSym')
+        else:
+            raise ValueError('Unsupported synchronous generator connection: ' + name)
 
     return bus, gen
 
@@ -5539,6 +5807,60 @@ def _add_elmasm_generators(dgs_grid: DgsCircuit,
             grid.add_generator(bus=bus, api_obj=gen)
 
 
+def _add_elmvac_voltage_source(
+        source: ElmVac,
+        grid: dev.MultiCircuit,
+        terminal: dev.Bus,
+        logger: Logger,
+) -> None:
+    """Represent an AC source and its explicit impedance in PF and RMS.
+
+    :param source: Native voltage source with impedances in ohms.
+    :param grid: Receiving circuit, whose RMS preparation runs after import.
+    :param terminal: Physical source terminal resolved through its cubicle.
+    :param logger: Import diagnostics.
+    :return: None.
+    """
+    active: bool = source.outserv == 0
+    nominal_kv: float = source.Unom if source.Unom > 0.0 else terminal.Vnom
+    if terminal.Vnom <= 0.0 or grid.Sbase <= 0.0:
+        logger.add_error(msg="AC voltage source requires positive voltage and power bases", device=source.loc_name)
+        return
+    else:
+        pass
+    source_bus: dev.Bus = terminal
+    impedance_base: float = terminal.Vnom * terminal.Vnom / grid.Sbase
+    angle: float = math.radians(source.phisetp)
+    magnitude: float = source.usetp * nominal_kv / terminal.Vnom
+    if source.R1 != 0.0 or source.X1 != 0.0:
+        # Both endpoints use the terminal voltage base. The internal source
+        # target carries the nominal-voltage conversion, avoiding a fictitious tap.
+        source_bus = dev.Bus(
+            name=f"{source.loc_name} internal", idtag=f"{_ref_id(source.ID)}:internal",
+            Vnom=terminal.Vnom, Vm0=magnitude, Va0=angle,
+            active=active, is_slack=active)
+        grid.add_bus(source_bus)
+        impedance: dev.SeriesReactance = dev.SeriesReactance(
+            name=f"{source.loc_name} impedance", idtag=f"{_ref_id(source.ID)}:impedance",
+            bus_from=source_bus, bus_to=terminal, active=active,
+            r=source.R1 / impedance_base, x=source.X1 / impedance_base,
+            r0=source.R0 / impedance_base, x0=source.X0 / impedance_base,
+            r2=source.R2 / impedance_base, x2=source.X2 / impedance_base)
+        grid.add_series_reactance(impedance)
+    else:
+        # An ideal source attaches directly; never manufacture an impedance.
+        pass
+    boundary: dev.ExternalGrid = dev.ExternalGrid(
+        name=source.loc_name, idtag=_ref_id(source.ID), code=source.for_name, active=active,
+        mode=ExternalGridMode.VD, Vm=magnitude, Va=angle)
+    grid.add_external_grid(bus=source_bus, api_obj=boundary)
+    if source.freq > 0.0 and abs(source.freq - grid.fBase) > 1.0e-9:
+        logger.add_warning(msg="AC voltage source nominal frequency differs from the circuit base frequency",
+                           device=source.loc_name, value=source.freq, expected_value=grid.fBase)
+    else:
+        pass
+
+
 def _add_elmvac_loads(dgs_grid: DgsCircuit,
                       grid: dev.MultiCircuit,
                       stacubic_dict: Dict[str, List[int]],
@@ -5557,7 +5879,12 @@ def _add_elmvac_loads(dgs_grid: DgsCircuit,
     :return: Function result.
     """
     for elmvac in dgs_grid.elmvacs:
-        if elmvac.itype == 2:
+        if elmvac.itype == 0:
+            terminal: dev.Bus = get_injection_bus(
+                elm_id=elmvac.ID, stacubic_dict=stacubic_dict, buses=grid.buses,
+                cubics_by_objid=cubics_by_objid, bus_by_term_id=bus_by_term_id)
+            _add_elmvac_voltage_source(elmvac, grid, terminal, logger)
+        elif elmvac.itype == 2:
             bus, load = convert_dgs_ward_equivalent_to_load(
                 elmvac=elmvac,
                 stacubic_dict=stacubic_dict,
@@ -5567,6 +5894,97 @@ def _add_elmvac_loads(dgs_grid: DgsCircuit,
                 bus_by_term_id=bus_by_term_id
             )
             grid.add_load(bus=bus, api_obj=load)
+        else:
+            logger.add_warning(msg="Unsupported AC voltage source type", device=elmvac.loc_name,
+                               value=elmvac.itype)
+
+
+def _add_dgs_dc_sources_and_valves(
+        dgs_grid: DgsCircuit,
+        grid: dev.MultiCircuit,
+        stacubic_dict: Dict[str, List[int]],
+        cubics_by_objid: Dict[str, List[StaCubic]],
+        bus_by_term_id: Dict[str, dev.Bus],
+) -> None:
+    """Reuse fixed current injections and open switches for exact DC cases.
+
+    :param dgs_grid: Typed native source declarations.
+    :param grid: Destination circuit owning the canonical devices.
+    :param stacubic_dict: Legacy terminal index lookup.
+    :param cubics_by_objid: Cubicles grouped by source FID.
+    :param bus_by_term_id: Canonical buses indexed by terminal FID.
+    :return: None.
+    """
+    current_source: ElmDcibi
+    for current_source in dgs_grid.elmdcibis:
+        # Two opposite fixed-axis currents preserve the two-terminal source;
+        # no solved power or fixed-power approximation enters this mapping.
+        if (current_source.Inom is None or current_source.isetp is None
+                or current_source.Gi != 0.0 or current_source.Ci != 0.0
+                or not math.isfinite(current_source.Inom)
+                or not math.isfinite(current_source.isetp)
+                or current_source.Inom <= 0.0):
+            raise ValueError(f"{current_source.loc_name}: only complete ideal DC current sources are supported")
+        else:
+            source_bus1: dev.Bus
+            source_bus2: dev.Bus
+            source_bus1, source_bus2 = get_branch_buses(
+                elm_id=current_source.ID, stacubic_dict=stacubic_dict,
+                buses=grid.buses, cubics_by_objid=cubics_by_objid,
+                bus_by_term_id=bus_by_term_id,
+            )
+            if (not source_bus1.is_dc or not source_bus2.is_dc
+                    or source_bus1.Vnom <= 0.0 or source_bus2.Vnom <= 0.0):
+                raise ValueError(f"{current_source.loc_name}: current source requires two DC voltage bases")
+            else:
+                configured_current_ka: float = current_source.Inom * current_source.isetp / 1000.0
+                injection1: dev.CurrentInjection = dev.CurrentInjection(
+                    name=current_source.loc_name + ' / terminal 1',
+                    idtag=str(_ref_id(current_source.ID)) + ':1',
+                    code=current_source.for_name,
+                    active=not bool(current_source.outserv),
+                    Ir=configured_current_ka * source_bus1.Vnom,
+                )
+                injection2: dev.CurrentInjection = dev.CurrentInjection(
+                    name=current_source.loc_name + ' / terminal 2',
+                    idtag=str(_ref_id(current_source.ID)) + ':2',
+                    code=current_source.for_name,
+                    active=not bool(current_source.outserv),
+                    Ir=-configured_current_ka * source_bus2.Vnom,
+                )
+                grid.add_current_injection(bus=source_bus1, api_obj=injection1)
+                grid.add_current_injection(bus=source_bus2, api_obj=injection2)
+
+    valve: ElmValve
+    for valve in dgs_grid.elmvalves:
+        # The supported state is an explicitly blocked IGBT without a DC
+        # leakage path. Conducting devices require a separate physical proof.
+        if (valve.swtch != 2 or valve.iblock != 1 or valve.igate != 0
+                or valve.iopt_apdiode != 0 or valve.Goff != 0.0
+                or valve.iopt_snubber not in (0, 1)
+                or (valve.iopt_snubber == 1 and valve.Gp != 0.0)
+                or valve.inom is None or not math.isfinite(valve.inom)
+                or valve.inom <= 0.0):
+            raise ValueError(f"{valve.loc_name}: valve is not an explicitly ideal blocked IGBT")
+        else:
+            valve_bus1: dev.Bus
+            valve_bus2: dev.Bus
+            valve_bus1, valve_bus2 = get_branch_buses(
+                elm_id=valve.ID, stacubic_dict=stacubic_dict,
+                buses=grid.buses, cubics_by_objid=cubics_by_objid,
+                bus_by_term_id=bus_by_term_id,
+            )
+            if not valve_bus1.is_dc or not valve_bus2.is_dc:
+                raise ValueError(f"{valve.loc_name}: blocked valve requires two DC terminals")
+            else:
+                open_valve: dev.Switch = dev.Switch(
+                    bus_from=valve_bus1, bus_to=valve_bus2,
+                    name=valve.loc_name, idtag=_ref_id(valve.ID), code=valve.for_name,
+                    active=False, normal_open=True, r=0.0, x=0.0,
+                    rated_current=valve.inom / 1000.0,
+                    rate=valve.inom * max(valve_bus1.Vnom, valve_bus2.Vnom) / 1000.0,
+                )
+                grid.add_switch(obj=open_valve)
 
 
 def _add_elmlod_loads(dgs_grid: DgsCircuit,
@@ -5670,6 +6088,7 @@ def _get_powerfactory_vsc_loss_coefficients(
     )
     if (
             isinstance(source, ElmVsc)
+            and source.vsctype != int(PowerFactoryVscType.TwoLevel)
             and nominal_voltage_kv > 0.0
             and system_base_mva > 0.0
             and arm_resistance_ohm > 0.0
@@ -5724,6 +6143,7 @@ def _get_powerfactory_vsc_series_impedance(
     nominal_voltage_kv: float = abs(float(source.Unom))
     if (
             isinstance(source, ElmVsc)
+            and source.vsctype != int(PowerFactoryVscType.TwoLevel)
             and rated_power_mva > 0.0
             and nominal_voltage_kv > 0.0
             and frequency_hz > 0.0
@@ -5773,7 +6193,8 @@ def _get_powerfactory_mmc_arm_capacitance_uf(
     else:
         submodules_per_arm = max(int(source.NmmcSM), 0)
     # Reduce the pair only when both native values establish a physical capacitance.
-    if submodule_capacitance_uf > 0.0 and submodules_per_arm > 0:
+    if (source.vsctype in (PowerFactoryVscType.HalfBridgeMmc, PowerFactoryVscType.FullBridgeMmc)
+            and submodule_capacitance_uf > 0.0 and submodules_per_arm > 0):
         arm_capacitance_uf: float = (
                 submodule_capacitance_uf / float(submodules_per_arm)
         )
@@ -5972,6 +6393,26 @@ def convert_dgs_to_vsc(
         control1, control1_value, control2, control2_value, control_is_exact = (
             _get_native_vsc_controls(source=elmvsc, logger=logger)
         )
+        # Native DC targets use the converter pole-to-pole rating. Canonical
+        # Vm_dc equations use the DC bus voltage base, including both poles.
+        if control1 == ConverterControlType.Vm_dc or control2 == ConverterControlType.Vm_dc:
+            if elmvsc.Unomdc is not None:
+                if (not math.isfinite(elmvsc.Unomdc) or elmvsc.Unomdc <= 0.0
+                        or dc_positive_bus.Vnom <= 0.0
+                        or dc_positive_bus.Vnom != dc_negative_bus.Vnom):
+                    raise ValueError(f"{elmvsc.loc_name}: bipolar voltage control requires compatible DC bases")
+                else:
+                    dc_voltage_scale: float = elmvsc.Unomdc / dc_positive_bus.Vnom
+                    if control1 == ConverterControlType.Vm_dc:
+                        control1_value *= dc_voltage_scale
+                    else:
+                        control2_value *= dc_voltage_scale
+            else:
+                # Older exports lacked the native DC rating and retain their
+                # historical interpretation on the already canonical bus base.
+                pass
+        else:
+            pass
         converter_active: bool = bool(
             not bool(elmvsc.outserv)
             and control_is_exact
@@ -6031,7 +6472,8 @@ def convert_dgs_to_vsc(
                 _get_powerfactory_mmc_arm_capacitance_uf(source=elmvsc)
             ),
             mmc_consider_arm_reactor_dc=(
-                False if elmvsc.iZarmDCside is None else bool(elmvsc.iZarmDCside)
+                elmvsc.vsctype in (PowerFactoryVscType.HalfBridgeMmc, PowerFactoryVscType.FullBridgeMmc)
+                and elmvsc.iZarmDCside is not None and bool(elmvsc.iZarmDCside)
             ),
             control1=control1,
             control1_val=control1_value,
@@ -6178,7 +6620,8 @@ def convert_dgs_to_monopolar_vsc(
                 _get_powerfactory_mmc_arm_capacitance_uf(source=source)
             ),
             mmc_consider_arm_reactor_dc=(
-                False if source.iZarmDCside is None else bool(source.iZarmDCside)
+                source.vsctype in (PowerFactoryVscType.HalfBridgeMmc, PowerFactoryVscType.FullBridgeMmc)
+                and source.iZarmDCside is not None and bool(source.iZarmDCside)
             ),
             control1=control1,
             control1_val=control1_value,
@@ -6264,13 +6707,102 @@ def _add_elmvscmono_devices(
             grid.add_vsc(obj=converter)
 
 
+def _get_capability_points(curve: IntQlim, source: ElmSym | ElmGenstat, snom: float) -> np.ndarray:
+    """
+    Get the capability points of one machine in MW and Mvar.
+
+    :param curve: Capability curve the machine points to.
+    :param source: Machine that scales the reactive limits in percent.
+    :param snom: Nominal power of the machine in MVA.
+    :return: Points (P, Qmin, Qmax) ordered by active power.
+    """
+    base: float
+    if curve.inputmod == 1:
+        base = snom
+    else:
+        base = 1.0
+    points: np.ndarray = base * np.column_stack((curve.active_power, curve.reactive_power_min, curve.reactive_power_max))
+    if source.scaleQmin is None:
+        pass
+    else:
+        points[:, 1] *= source.scaleQmin / 100.0
+    if source.scaleQmax is None:
+        pass
+    else:
+        points[:, 2] *= source.scaleQmax / 100.0
+    return points[np.argsort(points[:, 0], kind="stable")]
+
+
+def _set_generator_capability_curves(grid: dev.MultiCircuit, dgs_grid: DgsCircuit, logger: Logger) -> None:
+    """
+    Give every imported machine the capability curve its source element points to.
+
+    :param grid: Circuit holding the imported generators and batteries.
+    :param dgs_grid: Parsed DGS circuit.
+    :param logger: Logger receiving the curves that cannot be applied as declared.
+    :return: None.
+    """
+    curves: Dict[str, IntQlim] = {_ref_id(curve.ID): curve for curve in dgs_grid.intqlims}
+    sources: Dict[str, ElmSym | ElmGenstat] = dict()
+    source: ElmSym | ElmGenstat
+    for source in dgs_grid.elmsyms + dgs_grid.elmgenstats:
+        parallel_count: int = _get_parallel_device_count(count=int(source.ngnum))
+        parallel_index: int
+        for parallel_index in range(parallel_count):
+            sources[_get_parallel_device_idtag(_ref_id(source.ID), parallel_index, parallel_count)] = source
+
+    generator: dev.Generator | dev.Battery
+    for generator in grid.generators + grid.batteries:
+        source_element: ElmSym | ElmGenstat | None = sources.get(generator.idtag, None)
+        if source_element is None or not source_element.pQlimType:
+            curve: IntQlim | None = None
+        else:
+            curve = curves.get(_ref_id(source_element.pQlimType), None)
+            if curve is None or len(curve.active_power) == 0:
+                curve = None
+                logger.add_warning(msg="DGS capability curve unavailable, the declared limits stay",
+                                   device=generator.name, value=source_element.pQlimType)
+            else:
+                pass
+
+        if curve is None:
+            pass
+        else:
+            if curve.voltagedep != 0:
+                logger.add_warning(msg="DGS capability curve read without its voltage dependency",
+                                   device=generator.name, value=curve.loc_name)
+            else:
+                pass
+            generator.q_curve.set(_get_capability_points(curve=curve, source=source_element, snom=float(generator.Snom)))
+            generator.Qmin = generator.q_curve.get_Qmin()
+            generator.Qmax = generator.q_curve.get_Qmax()
+            generator.use_reactive_power_curve = True
+
+
+def _set_generators_nominal_frequency(grid: dev.MultiCircuit, frequency: float) -> None:
+    """
+    Give every imported machine the nominal frequency of the DGS network.
+
+    :param grid: Circuit holding the imported generators and batteries.
+    :param frequency: Nominal frequency of the source ElmNet in Hz.
+    :return: None.
+    """
+    for generator in grid.generators:
+        generator.freq = frequency
+    for battery in grid.batteries:
+        battery.freq = frequency
+
+
 def _add_elmgenstat_devices(dgs_grid: DgsCircuit,
                             grid: dev.MultiCircuit,
                             stacubic_dict: Dict[str, List[int]],
                             use_vsc_for_injections: bool,
                             logger: Logger,
                             cubics_by_objid: Dict[str, List[StaCubic]],
-                            bus_by_term_id: Dict[str, dev.Bus]) -> None:
+                            bus_by_term_id: Dict[str, dev.Bus],
+                            use_complete_models_for_injections: bool = False,
+                            has_wecc_vdl_lookup: bool = False,
+                            complete_injection_hosts: List[dev.DynamicDevice] | None = None) -> None:
     """
     Add elmgenstat devices.
 
@@ -6288,7 +6820,9 @@ def _add_elmgenstat_devices(dgs_grid: DgsCircuit,
         for parallel_index in range(parallel_count):
             # Without explicit VSC import, voltage-controlled wind units use the PV path below.
             if (elmgenstat.cCategory == 'Wind' and not bool(elmgenstat.outserv)
-                    and (use_vsc_for_injections or elmgenstat.av_mode != 'constv')):
+                    and (use_vsc_for_injections or use_complete_models_for_injections
+                         or has_wecc_vdl_lookup
+                         or elmgenstat.av_mode != 'constv')):
                 if use_vsc_for_injections:
                     dc_bus, vsc = convert_dgs_staticgen_to_vsc(
                         elmgenstat=elmgenstat,
@@ -6303,18 +6837,35 @@ def _add_elmgenstat_devices(dgs_grid: DgsCircuit,
                     grid.add_bus(dc_bus)
                     grid.add_vsc(vsc)
                 else:
-                    bus, stagen = convert_dgs_to_static_gen(
-                        elmgenstat=elmgenstat,
-                        stacubic_dict=stacubic_dict,
-                        buses=grid.buses,
-                        logger=logger,
-                        cubics_by_objid=cubics_by_objid,
-                        bus_by_term_id=bus_by_term_id,
-                        parallel_index=parallel_index,
-                        parallel_count=parallel_count,
-                        Sbase=grid.Sbase
-                    )
-                    grid.add_static_generator(bus=bus, api_obj=stagen)
+                    if use_complete_models_for_injections or has_wecc_vdl_lookup:
+                        bus, host = convert_dgs_staticgen_to_gen(
+                            elmgenstat=elmgenstat, stacubic_dict=stacubic_dict,
+                            buses=grid.buses, logger=logger,
+                            cubics_by_objid=cubics_by_objid,
+                            bus_by_term_id=bus_by_term_id,
+                            parallel_index=parallel_index, parallel_count=parallel_count,
+                            Sbase=grid.Sbase)
+                        host.Q = float(elmgenstat.qgini)
+                        if elmgenstat.av_mode == 'constv':
+                            host.control_mode = GeneratorControlMode.V
+                        elif (elmgenstat.av_mode == 'vdroop'
+                              and use_complete_models_for_injections):
+                            host.control_mode = GeneratorControlMode.QVDroop
+                            host.k_droop = float(elmgenstat.ddroop)
+                        else:
+                            host.control_mode = GeneratorControlMode.Q
+                        grid.add_generator(bus=bus, api_obj=host)
+                    else:
+                        bus, host = convert_dgs_to_static_gen(
+                            elmgenstat=elmgenstat, stacubic_dict=stacubic_dict,
+                            buses=grid.buses, logger=logger,
+                            cubics_by_objid=cubics_by_objid,
+                            bus_by_term_id=bus_by_term_id,
+                            parallel_index=parallel_index, parallel_count=parallel_count,
+                            Sbase=grid.Sbase)
+                        grid.add_static_generator(bus=bus, api_obj=host)
+                    if use_complete_models_for_injections and complete_injection_hosts is not None:
+                        complete_injection_hosts.append(host)
             elif elmgenstat.cCategory == 'HVDC Terminal':
                 bus, gen = convert_dgs_staticgen_to_gen(
                     elmgenstat=elmgenstat,
@@ -6344,7 +6895,22 @@ def _add_elmgenstat_devices(dgs_grid: DgsCircuit,
                 grid.add_battery(bus=bus, api_obj=battery)
 
             elif (elmgenstat.cCategory == 'Storage' and elmgenstat.av_mode == 'vdroop'
-                  and use_vsc_for_injections):
+                  and (use_vsc_for_injections or use_complete_models_for_injections)):
+                if use_complete_models_for_injections:
+                    bus, host = convert_dgs_staticgen_to_gen(
+                        elmgenstat=elmgenstat, stacubic_dict=stacubic_dict,
+                        buses=grid.buses, logger=logger,
+                        cubics_by_objid=cubics_by_objid,
+                        bus_by_term_id=bus_by_term_id,
+                        parallel_index=parallel_index, parallel_count=parallel_count,
+                        Sbase=grid.Sbase)
+                    host.Q = float(elmgenstat.qgini)
+                    host.control_mode = GeneratorControlMode.QVDroop
+                    host.k_droop = float(elmgenstat.ddroop)
+                    grid.add_generator(bus=bus, api_obj=host)
+                    if complete_injection_hosts is not None:
+                        complete_injection_hosts.append(host)
+                    continue
                 dc_bus, vsc = convert_dgs_staticgen_to_vsc(
                     elmgenstat=elmgenstat,
                     stacubic_dict=stacubic_dict,
@@ -6481,7 +7047,9 @@ def _add_elmsvs_devices(dgs_grid: DgsCircuit,
                         use_vsc_for_injections: bool,
                         logger: Logger,
                         cubics_by_objid: Dict[str, List[StaCubic]],
-                        bus_by_term_id: Dict[str, dev.Bus]) -> None:
+                        bus_by_term_id: Dict[str, dev.Bus],
+                        use_complete_models_for_injections: bool = False,
+                        complete_injection_hosts: List[dev.DynamicDevice] | None = None) -> None:
     """
     Add elmsvs devices.
 
@@ -6494,6 +7062,7 @@ def _add_elmsvs_devices(dgs_grid: DgsCircuit,
     :param bus_by_term_id: bus_by_term_id parameter.
     :return: Function result.
     """
+    terms_by_id: Dict[str, ElmTerm] = {_ref_id(elmterm.ID): elmterm for elmterm in dgs_grid.elmterms}
     for elmsvs in dgs_grid.elmsvss:
         if use_vsc_for_injections:
             dc_bus, vsc = convert_dgs_svs_to_vsc(
@@ -6507,15 +7076,14 @@ def _add_elmsvs_devices(dgs_grid: DgsCircuit,
             grid.add_bus(dc_bus)
             grid.add_vsc(vsc)
         elif elmsvs.i_ctrl == 1 and elmsvs.i_droop != 0:
-            # Keep the established VSC droop parameters without inventing a DC terminal for ABC.
             bus: dev.Bus = get_injection_bus(elm_id=elmsvs.ID, stacubic_dict=stacubic_dict,
-                buses=grid.buses, cubics_by_objid=cubics_by_objid, bus_by_term_id=bus_by_term_id)
-            static_gen: dev.StaticGenerator = dev.StaticGenerator(
-                name=_get_non_empty_name(elmsvs.loc_name, f"SVS_{_ref_id(elmsvs.ID)}"),
-                idtag=_ref_id(elmsvs.ID), active=not bool(elmsvs.outserv), P=0.0, Q=0.0,
-                Snom=float(elmsvs.Srated), control_mode=StaticGeneratorControlMode.QVDroop,
-                vset=float(elmsvs.usetp), droop=float(elmsvs.ddroop))
-            grid.add_static_generator(bus=bus, api_obj=static_gen)
+                                             buses=grid.buses, cubics_by_objid=cubics_by_objid,
+                                             bus_by_term_id=bus_by_term_id)
+            droop_shunt: dev.ControllableShunt = convert_dgs_svs_to_droop_shunt(
+                elmsvs=elmsvs, bus=bus, terms_by_id=terms_by_id, bus_by_term_id=bus_by_term_id)
+            grid.add_controllable_shunt(bus=bus, api_obj=droop_shunt)
+            if use_complete_models_for_injections and complete_injection_hosts is not None:
+                complete_injection_hosts.append(droop_shunt)
         else:
             bus, cshunt = convert_dgs_to_controllable_shunt_from_svs(
                 elmsvs=elmsvs,
@@ -6526,6 +7094,8 @@ def _add_elmsvs_devices(dgs_grid: DgsCircuit,
                 bus_by_term_id=bus_by_term_id
             )
             grid.add_controllable_shunt(bus=bus, api_obj=cshunt)
+            if use_complete_models_for_injections and complete_injection_hosts is not None:
+                complete_injection_hosts.append(cshunt)
 
 
 def _add_elmcoup_switches(dgs_grid: DgsCircuit,
@@ -6637,7 +7207,10 @@ def _add_elmscap_series_reactances(dgs_grid: DgsCircuit,
             branch_group = branch_group_by_id.get(fold_id)
             if branch_group is not None:
                 reactance.group = branch_group
-        grid.add_series_reactance(obj=reactance)
+        if isinstance(reactance, dev.Switch):
+            grid.add_switch(obj=reactance)
+        else:
+            grid.add_series_reactance(obj=reactance)
 
 
 def _add_elmsind_series_reactances(dgs_grid: DgsCircuit,
@@ -6679,7 +7252,10 @@ def _add_elmsind_series_reactances(dgs_grid: DgsCircuit,
             branch_group = branch_group_by_id.get(fold_id)
             if branch_group is not None:
                 reactance.group = branch_group
-        grid.add_series_reactance(obj=reactance)
+        if isinstance(reactance, dev.DcLine):
+            grid.add_dc_line(obj=reactance)
+        else:
+            grid.add_series_reactance(obj=reactance)
 
 
 def _add_elmtr2_transformers(dgs_grid: DgsCircuit,
@@ -8042,7 +8618,7 @@ def _apply_elmtow_tower_coupling(dgs_grid: DgsCircuit,
                 else:
                     pass
                 ohl_type.add_wire_relationship(wire=relationship.wire, xpos=relationship.xpos,
-                                              ypos=relationship.ypos, phase=new_phase)
+                                               ypos=relationship.ypos, phase=new_phase)
             # Existing per-circuit template accessors expect N, then electrical ABC blocks.
             order: np.ndarray = np.argsort([wire.phase for wire in ohl_type.wires_in_tower.data], kind='stable')
             ohl_type.wires_in_tower.data = [ohl_type.wires_in_tower.data[i] for i in order]
@@ -8088,16 +8664,87 @@ def _apply_elmtow_tower_coupling(dgs_grid: DgsCircuit,
                     )
 
 
+def _bind_dgs_vsc_remote_reactive_control(
+        dgs_grid: DgsCircuit,
+        grid: dev.MultiCircuit,
+        bus_by_term_id: Dict[str, dev.Bus],
+) -> None:
+    """Resolve a switch flow by KCL at a unique passive-branch boundary.
+
+    :param dgs_grid: Native converter and cubicle declarations.
+    :param grid: Complete canonical topology, including transformers.
+    :param bus_by_term_id: Canonical buses keyed by native terminal FID.
+    :return: None.
+    """
+    cubic_by_id: Dict[str, StaCubic] = dict((str(_ref_id(cubic.ID)), cubic)
+                                          for cubic in dgs_grid.stacubics)
+    converter_by_id: Dict[str, dev.VSC] = dict((converter.idtag, converter)
+                                              for converter in grid.vsc_devices)
+    switch_by_id: Dict[str, dev.Switch] = dict((switch.idtag, switch)
+                                              for switch in grid.get_switches())
+    source: ElmVsc
+    for source in dgs_grid.elmvscs:
+        if source.p_pctrl is not None and _ref_id(source.p_pctrl) not in (None, ''):
+            # The measured cubicle fixes both the flow device and its side;
+            # names and solved Q outputs never determine the control target.
+            if source.iQorient != 0:
+                raise ValueError(f"{source.loc_name}: unsupported native reactive-flow orientation")
+            else:
+                pass
+            converter: dev.VSC | None = converter_by_id.get(str(_ref_id(source.ID)), None)
+            cubic: StaCubic | None = cubic_by_id.get(str(_ref_id(source.p_pctrl)), None)
+            if converter is None or cubic is None or converter.control2 != ConverterControlType.Qac:
+                raise ValueError(f"{source.loc_name}: unresolved native reactive-flow control")
+            else:
+                measured_bus: dev.Bus | None = bus_by_term_id.get(str(_ref_id(cubic.fold_id)), None)
+                measured_switch: dev.Switch | None = switch_by_id.get(str(_ref_id(cubic.obj_id)), None)
+                if (measured_bus is None or measured_switch is None or not measured_switch.active
+                        or measured_bus not in (measured_switch.bus_from, measured_switch.bus_to)):
+                    raise ValueError(f"{source.loc_name}: controlled flow requires a closed, resolved switch")
+                else:
+                    passive_candidates: List[dev.Transformer2W] = list()
+                    connected_branch_count: int = 0
+                    branch: BRANCH_TYPES
+                    for branch in grid.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
+                        if (branch.active and branch is not measured_switch
+                                and measured_bus in (branch.bus_from, branch.bus_to)):
+                            connected_branch_count += 1
+                            if isinstance(branch, dev.Transformer2W) and branch.bus_from is measured_bus:
+                                passive_candidates.append(branch)
+                            else:
+                                pass
+                        else:
+                            pass
+                    has_injection: bool = False
+                    injection: INJECTION_DEVICE_TYPES
+                    for injection in grid.get_injection_devices_iter():
+                        if injection.active and injection.bus is measured_bus:
+                            has_injection = True
+                        else:
+                            pass
+                    if connected_branch_count != 1 or len(passive_candidates) != 1 or has_injection:
+                        raise ValueError(f"{source.loc_name}: remote Q flow lacks a unique passive KCL boundary")
+                    else:
+                        # At the otherwise empty POI, Q_switch + Q_transformer=0.
+                        converter.control2_dev = passive_candidates[0]
+                        converter.control2_dev_prof.fill(passive_candidates[0])
+                        converter.control2_val = -float(source.qsetp)
+        else:
+            pass
+
+
 def dgs_to_circuit(path: str,
                    use_vsc_for_injections: bool = False,
                    use_dynamic_information: bool = False,
                    dynamic_simulation_mode: DynamicSimulationMode | None = None,
-                   logger_: Logger | None = None) -> dev.MultiCircuit:
+                   logger_: Logger | None = None,
+                   use_complete_models_for_injections: bool = False) -> dev.MultiCircuit:
     """
     Dgs to circuit.
 
     :param path: path parameter.
     :param use_vsc_for_injections: use_vsc_for_injections parameter.
+    :param use_complete_models_for_injections: Compose supported DGS injection controllers with internal DC equations.
     :param use_dynamic_information: Import dynamic DGS equations when available.
     :param dynamic_simulation_mode: Explicit RMS or EMT destination for imported dynamic models.
     :param logger_: logger_ parameter.
@@ -8105,8 +8752,33 @@ def dgs_to_circuit(path: str,
     """
     logger = Logger() if logger_ is None else logger_
 
+    if use_complete_models_for_injections:
+        if use_vsc_for_injections:
+            raise ValueError("Complete injection models and VSC injection conversion are exclusive")
+        if not use_dynamic_information or dynamic_simulation_mode != DynamicSimulationMode.RMS:
+            raise ValueError("Complete injection models require RMS dynamic DGS import")
+
     dgs_grid = DgsCircuit()
     dgs_grid.parse_dgs(path)
+
+    # The DGS parser has no numeric array payload for these WECC limiter curves.
+    # Use the exported scalar Imax limit when importing their RMS controllers.
+    has_wecc_vdl_lookup = bool(
+        use_dynamic_information
+        and dynamic_simulation_mode == DynamicSimulationMode.RMS
+        and not use_vsc_for_injections
+        and any(
+            block.loc_name == "VDL"
+            and any("lapprox" in equation for equation in block.equations_raw)
+            for block in dgs_grid.blkdefs
+        )
+    )
+
+    # if has_wecc_vdl_lookup:
+    #     logger.add_warning(
+    #         "WECC VDL lookup curves unavailable; using exported Imax as current limit",
+    #         device_class="ElmGenstat",
+    #     )
 
     grid = dev.MultiCircuit()
 
@@ -8115,12 +8787,15 @@ def dgs_to_circuit(path: str,
     # --- frequency ---
     if len(dgs_grid.elmnets) > 0:
         frnom = dgs_grid.elmnets[0].frnom
-        if frnom is None:
+        if frnom is None or float(frnom) <= 0.0:
             frequency = 50.0
         else:
             frequency = float(frnom)
     else:
         frequency = 50.0
+    # Native equipment construction and RMS initialization read the circuit
+    # base as well as individual device frequencies. Keep both consistent.
+    grid.fBase = frequency
 
     # StaCubic dictionaries
     sta_cubic_dict, cubics_by_objid = _build_stacubic_mappings(stacubics=dgs_grid.stacubics)
@@ -8154,6 +8829,10 @@ def dgs_to_circuit(path: str,
         typ_switch_dict=typ_switch_dict,
         baseMVA=baseMVA,
         logger=logger,
+    )
+    _add_dgs_dc_sources_and_valves(
+        dgs_grid=dgs_grid, grid=grid, stacubic_dict=sta_cubic_dict,
+        cubics_by_objid=cubics_by_objid, bus_by_term_id=bus_by_term_id,
     )
 
     _add_elmsym_generators(
@@ -8192,11 +8871,15 @@ def dgs_to_circuit(path: str,
         bus_by_term_id=bus_by_term_id,
         phase_map=phase_map,
     )
+    complete_injection_hosts: List[dev.DynamicDevice] = list()
     _add_elmgenstat_devices(
         dgs_grid=dgs_grid,
         grid=grid,
         stacubic_dict=sta_cubic_dict,
         use_vsc_for_injections=use_vsc_for_injections,
+        use_complete_models_for_injections=use_complete_models_for_injections,
+        complete_injection_hosts=complete_injection_hosts,
+        has_wecc_vdl_lookup=has_wecc_vdl_lookup,
         logger=logger,
         cubics_by_objid=cubics_by_objid,
         bus_by_term_id=bus_by_term_id,
@@ -8244,6 +8927,8 @@ def dgs_to_circuit(path: str,
         grid=grid,
         stacubic_dict=sta_cubic_dict,
         use_vsc_for_injections=use_vsc_for_injections,
+        use_complete_models_for_injections=use_complete_models_for_injections,
+        complete_injection_hosts=complete_injection_hosts,
         logger=logger,
         cubics_by_objid=cubics_by_objid,
         bus_by_term_id=bus_by_term_id,
@@ -8413,6 +9098,14 @@ def dgs_to_circuit(path: str,
         switch_by_cubic_id=switch_by_cubic_id,
         branch_group_by_id=branch_group_by_id,
     )
+    _bind_dgs_vsc_remote_reactive_control(
+        dgs_grid=dgs_grid, grid=grid, bus_by_term_id=bus_by_term_id,
+    )
+
+    _set_generators_nominal_frequency(grid=grid, frequency=frequency)
+    _set_generator_capability_curves(grid=grid, dgs_grid=dgs_grid, logger=logger)
+
+    # until here all static devices and info is parsed and we have a complete static grid
 
     if use_dynamic_information:
         if dynamic_simulation_mode is None:
@@ -8423,128 +9116,94 @@ def dgs_to_circuit(path: str,
                 ),
             )
         else:
-            # 1: Convert each DGS root to its final template, register it in
-            # MultiCircuit and retain only the irreducible root-FID lookup.
-            conversion_result: DgsDynamicTemplateConversionResult = (
-                convert_and_add_dgs_dynamic_templates_to_circuit(
-                    dgs_circuit=dgs_grid,
-                    circuit=grid,
-                    target_domain=dynamic_simulation_mode,
-                    logger=logger,
-                )
-            )
-            templates_by_root_dgs_id: Dict[
-                str,
-                RmsModelTemplate | EmtModelTemplate,
-            ] = conversion_result.templates_by_root_dgs_id
 
-            # 2: Apply the registered templates to exact static devices using
-            # that minimal lookup and the original declarative FID relations.
-            apply_dgs_dynamic_templates_to_devices(
-                dgs_circuit=dgs_grid,
-                circuit=grid,
-                templates_by_root_dgs_id=templates_by_root_dgs_id,
-                logger=logger,
-            )
+            dgs_dyn_parser = DynDgsParser(dgs_grid=dgs_grid,
+                                          grid=grid,
+                                          dynamic_simulation_mode=dynamic_simulation_mode,
+                                          logger=logger)
 
-            if dynamic_simulation_mode == DynamicSimulationMode.RMS:
-                # Narrow the domain explicitly so logical actuator completion
-                # cannot consume an EMT template through the shared lookup.
-                rms_templates_by_root_dgs_id: Dict[str, RmsModelTemplate] = dict(
-                    (root_id, template)
-                    for root_id, template in templates_by_root_dgs_id.items()
-                    if isinstance(template, RmsModelTemplate)
-                )
+            # Resolve physical terminals before constructing any device template.
+            dgs_dyn_parser.classify_static_dev_and_build_missing_models()
+            prepared_actuator_count: int = dgs_dyn_parser.prepare_dgs_logical_actuator_topology()
 
-                # RMS completion is not a third template-transfer stage. It
-                # fills only empty electrical shells, then binds exact native
-                # measurement FIDs to the already assigned controller block.
-                external_grid_source_ids: Set[str] = set()
-                external_grid_source: ElmXnet
-                for external_grid_source in dgs_grid.elmxnets:
-                    if external_grid_source.ID == "":
-                        pass
-                    else:
-                        external_grid_source_ids.add(external_grid_source.ID)
-                elm_gen_stat_source_ids: Set[str] = set()
-                elm_gen_stat_source: ElmGenstat
-                for elm_gen_stat_source in dgs_grid.elmgenstats:
-                    if elm_gen_stat_source.ID == "":
-                        pass
-                    else:
-                        elm_gen_stat_source_ids.add(elm_gen_stat_source.ID)
-                elm_sym_source_ids: Set[str] = set()
-                elm_sym_reference_source_ids: Set[str] = set()
-                elm_sym_source: ElmSym
-                for elm_sym_source in dgs_grid.elmsyms:
-                    if elm_sym_source.ID == "":
-                        pass
-                    else:
-                        elm_sym_source_ids.add(elm_sym_source.ID)
-                        if int(elm_sym_source.ip_ctrl) == 1:
-                            elm_sym_reference_source_ids.add(elm_sym_source.ID)
-                        else:
-                            pass
-                typeless_elmlod_source_ids: Set[str] = set()
-                elmlod_source: ElmLod
-                for elmlod_source in dgs_grid.elmlods:
-                    if (
-                            elmlod_source.ID != ""
-                            and _ref_id(elmlod_source.typ_id) in {None, ""}
-                    ):
-                        typeless_elmlod_source_ids.add(elmlod_source.ID)
-                    else:
-                        pass
-                prepare_dgs_circuit_for_rms(
-                    circuit=grid,
-                    external_grid_source_ids=external_grid_source_ids,
-                    logger=logger,
-                    elmgenstat_source_ids=elm_gen_stat_source_ids,
-                    elmsym_source_ids=elm_sym_source_ids,
-                    elmsym_reference_source_ids=elm_sym_reference_source_ids,
-                    typeless_elmlod_source_ids=typeless_elmlod_source_ids,
-                )
-                # Passive shells exist now, so exported meter FIDs can place
-                # omitted valve terminals on their exact electrical rails.
-                prepared_actuator_count: int = prepare_dgs_logical_actuator_topology(
-                    circuit=grid,
-                    dgs_circuit=dgs_grid,
-                    templates_by_root_dgs_id=rms_templates_by_root_dgs_id,
-                    logger=logger,
-                )
+            # Install each imported instance when its exact physical host is known.
+            dgs_dyn_parser.dynamic_model_import.convert_and_add_templates()
+            dgs_dyn_parser.dynamic_model_import.apply_templates_to_devices()
 
-                # Finalize early meter outputs against the prepared physical
-                # topology before actuator runtime consumes their signals.
-                bind_dgs_rms_measurements(
-                    circuit=grid,
-                    dgs_circuit=dgs_grid,
-                    templates_by_root_dgs_id=templates_by_root_dgs_id,
-                    child_blocks_by_root_and_slot_id=conversion_result.child_blocks_by_root_and_slot_id,
-                    logger=logger,
+            # Rebuild templates for injections
+            if use_complete_models_for_injections:
+                imported_template_ids: Set[int] = set(
+                    id(template) for template in dgs_dyn_parser.conversion_result.templates_by_root_dgs_id.values()
                 )
-                bound_actuator_count: int = bind_dgs_logical_actuator_runtime(
-                    circuit=grid,
-                    templates_by_root_dgs_id=rms_templates_by_root_dgs_id,
-                    logger=logger,
+                imported_template_ids.update(
+                    id(part.template)
+                    for parts in dgs_dyn_parser.conversion_result.partitions_by_root_dgs_id.values()
+                    for part in parts if part.template is not None)
+                missing_dgs_models: List[str] = list(
+                    host.name for host in complete_injection_hosts
+                    if host.rms_template is None
+                    or id(host.rms_template) not in imported_template_ids
                 )
-                if 0 < prepared_actuator_count == bound_actuator_count:
-                    release_dgs_logical_actuator_import_context(circuit=grid)
+                if missing_dgs_models:
+                    raise ValueError(
+                        "Complete injection mode requires exported, assignable DGS RMS models; "
+                        f"missing for {len(missing_dgs_models)} devices, including "
+                        + ", ".join(missing_dgs_models[:5])
+                    )
                 else:
-                    if bound_actuator_count != prepared_actuator_count:
-                        logger.add_warning(
-                            msg="DGS logical actuator import context retained after incomplete binding",
-                            value=bound_actuator_count,
-                            expected_value=prepared_actuator_count,
+                    pass
+            else:
+                pass
+
+            dgs_dyn_parser.prepare_dgs_circuit_for_rms()
+            if not dgs_dyn_parser.dynamic_model_import.finalize_partitioned_roots():
+                dgs_dyn_parser.prepare_dgs_circuit_for_rms()
+            else:
+                pass
+            if use_complete_models_for_injections:
+                for host in complete_injection_hosts:
+                    base_template: RmsModelTemplate | None = host.rms_template
+                    if isinstance(base_template, RmsModelTemplate):
+                        complete_template = build_complete_injection_template(
+                            vfactory=grid.var_factory,
+                            base_template=base_template,
+                            name=f"{host.name} complete injection RMS model",
                         )
+                        grid.add_rms_model(complete_template)
+                        # Clone the complete declaration together, then retain
+                        # the definitive instance for later reference binding.
+                        host.rms_template = complete_template
+                        root_dgs_id: str
+                        for root_dgs_id in dgs_dyn_parser.conversion_result.templates_by_root_dgs_id:
+                            if dgs_dyn_parser.conversion_result.templates_by_root_dgs_id[root_dgs_id] is base_template:
+                                dgs_dyn_parser.conversion_result.templates_by_root_dgs_id[
+                                    root_dgs_id] = complete_template
+                                dgs_dyn_parser.conversion_result.models_by_root_dgs_id[root_dgs_id] = host.rms_model
+                            else:
+                                pass
                     else:
-                        pass
-                bind_dgs_switch_event_runtime(
-                    circuit=grid,
-                    templates_by_root_dgs_id=templates_by_root_dgs_id,
-                    logger=logger,
+                        logger.add_warning(
+                            "Complete injection has no RMS controller to enclose",
+                            device=host.name,
+                            device_class="ElmGenstat",
+                        )
+            else:
+                pass
+
+            # Complete links directly between the definitive device-owned instances.
+            dgs_dyn_parser.complete_model_references()
+            bound_actuator_count: int = dgs_dyn_parser.bind_dgs_logical_actuator_runtime()
+            if bound_actuator_count != prepared_actuator_count:
+                logger.add_warning(
+                    msg="DGS logical actuator import context retained after incomplete binding",
+                    value=bound_actuator_count,
+                    expected_value=prepared_actuator_count,
                 )
             else:
                 pass
+            dgs_dyn_parser.bind_dgs_switch_event_runtime()
+
+
     else:
         pass
 

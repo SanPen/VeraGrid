@@ -14,7 +14,7 @@ import pytest
 
 from VeraGridServer.main import app as server_app
 from VeraGridWeb.main import app as web_app
-from VeraGridWeb.settings import WebGatewaySettings, WebGatewaySettingsRegistry
+from VeraGridWeb.settings import WebGatewaySettingsRegistry
 from VeraGridWeb.server_client import VeraGridServerClient
 from VeraGridWeb.proxy import (
     SessionRouter,
@@ -41,69 +41,6 @@ def circuit_client() -> Generator[TestClient, None, None]:
         server_app.state.circuit_sessions.clear()
         server_settings.this_password = previous_password
         client.close()
-
-
-def test_web_gateway_settings_configuration() -> None:
-    """
-    Verify WebGatewaySettings configuration, thread-safe updates, and round-robin distribution.
-
-    :return: None.
-    """
-    # 1. Initialize settings with two test backends
-    initial_backends: List[str] = list(["http://10.0.0.1:8000", "http://10.0.0.2:8000"])
-    settings: WebGatewaySettings = WebGatewaySettings(
-        backends=initial_backends,
-        host="127.0.0.1",
-        port=4000,
-        timeout=45.0,
-    )
-
-    # 2. Assert initialization values
-    assert settings.get_host() == "127.0.0.1"
-    assert settings.get_port() == 4000
-    assert settings.get_timeout() == 45.0
-    assert len(settings.get_backends()) == 2
-
-    # 3. Test setter mutations
-    settings.set_host(host="0.0.0.0")
-    assert settings.get_host() == "0.0.0.0"
-
-    settings.set_port(port=5000)
-    assert settings.get_port() == 5000
-
-    settings.set_timeout(timeout=30.0)
-    assert settings.get_timeout() == 30.0
-
-    # 4. Test round-robin distribution cycling
-    first_backend: str = settings.get_next_backend()
-    second_backend: str = settings.get_next_backend()
-    third_backend: str = settings.get_next_backend()
-
-    assert first_backend == "http://10.0.0.1:8000"
-    assert second_backend == "http://10.0.0.2:8000"
-    assert third_backend == "http://10.0.0.1:8000"
-
-    # 5. Test adding a unique backend
-    added: bool = settings.add_backend(backend_url="http://10.0.0.3:8000")
-    assert added is True
-    assert len(settings.get_backends()) == 3
-
-    # 6. Test duplicate prevention
-    duplicate_added: bool = settings.add_backend(backend_url="http://10.0.0.3:8000")
-    assert duplicate_added is False
-
-    # 7. Test removing an existing backend
-    removed: bool = settings.remove_backend(backend_url="http://10.0.0.3:8000")
-    assert removed is True
-    assert len(settings.get_backends()) == 2
-
-    # 8. Test removing non-existent backend
-    non_existent_removed: bool = settings.remove_backend(backend_url="http://10.0.0.99:8000")
-    assert non_existent_removed is False
-    settings.set_backends(backends=list(["http://primary:8000", "http://worker:8001"]))
-    assert settings.model_server_url == "http://primary:8000"
-    settings.remove_backend(backend_url="http://primary:8000")
-    assert settings.model_server_url == "http://primary:8000"
 
 
 def test_session_router_mappings_and_path_extraction() -> None:

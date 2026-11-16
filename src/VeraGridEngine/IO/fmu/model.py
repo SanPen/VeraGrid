@@ -5,14 +5,25 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
+from enum import IntEnum
 from pathlib import Path
 from typing import Any, Dict, List, TypedDict, cast
 
 from VeraGridEngine.Utils.Symbolic.block import Block, flatten_block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
 from VeraGridEngine.Utils.procedural_logic import ProceduralLogicCodec
+from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockParser, BlockSaver
+from VeraGridEngine.IO.fmu.snapshot_legacy import convert_legacy_snapshot
+from VeraGridEngine.basic_structures import Logger
 
-SNAPSHOT_SCHEMA_VERSION = 1
+
+class FmuSnapshotVersion(IntEnum):
+    """Identify the self-contained and symbolic-table snapshot formats."""
+
+    SELF_CONTAINED = 1
+    SYMBOLIC_TABLES = 2
 
 
 class FmuBlockType(TypedDict):
@@ -23,7 +34,11 @@ class FmuBlockType(TypedDict):
 
 
 class FmuModelSnapshot(TypedDict):
-    """Versioned serialized FMU source model."""
+    """FMU source model whose block field contains versioned symbolic data.
+
+    Version one embeds a self-contained block; version two stores the complete
+    BlockSaver tables.
+    """
 
     schema_version: int
     block_type: FmuBlockType
@@ -56,22 +71,80 @@ def _require_string_key_mapping(value: object, context: str) -> Dict[str, object
 def build_model_snapshot(model: Block) -> FmuModelSnapshot:
     """Build the versioned declarative FMU snapshot for one symbolic block.
 
-    ``Block.to_dict`` already preserves nullable external mappings, so snapshot
-    creation reads the canonical block without temporarily mutating its graph.
-
     :param model: Canonical symbolic block to serialize.
     :return: Versioned snapshot containing declarative block data and type metadata.
     """
-    block_payload: Dict[str, Any] = model.to_dict()
+    # The saver normalizes contracts and initialization. Work on an owned copy
+    # so exporting cannot alter the live editor or simulation model.
+    owned_model: Block = deepcopy(model)
+    factory: VarFactory = VarFactory()
+    owner: Block
+    variables: List[Var]
+    variable: Var
+    for owner in owned_model.get_all_blocks():
+        for variables in (owner.state_vars, owner.algebraic_vars, owner.in_vars,
+                          owner.out_vars, owner.reformulated_vars):
+            for variable in variables:
+                _register_snapshot_variable(factory, variable)
+        for variable in owner.diff_vars:
+            _register_snapshot_variable(factory, variable)
+    saver: BlockSaver = BlockSaver(factory)
+    saver.save_block(owned_model)
+    # Expressions may introduce additional variables. Close their derivative
+    # dependencies and shared-reference table after the saver has found them.
+    for variable in tuple(factory.get_vars_dict().values()):
+        _register_snapshot_variable(factory, variable)
+    for variable in tuple(factory.get_diff_var_dict().values()):
+        _register_snapshot_variable(factory, variable)
+    # Reconstruct internal alias edges from stable identities. The block does
+    # not own the editor's factory, so unrelated editor connections are excluded.
+    source_by_uid: Dict[int, Var] = dict()
+    for variable in factory.get_vars_dict().values():
+        if variable.non_mutable_uid == variable.uid:
+            source_by_uid[variable.uid] = variable
+        else:
+            pass
+    for variable in factory.get_vars_dict().values():
+        source: Var | None = source_by_uid.get(variable.uid, None)
+        if source is not None and source is not variable:
+            factory.register_symbolic_connection(source_var=source, target_var=variable)
+        else:
+            pass
+    block_payload: Dict[str, Any] = dict(
+        references=saver.get_shared_references_to_save(),
+        constants=saver.get_const_to_save(),
+        variables=saver.get_vars_to_save(),
+        differential_variables=saver.get_diff_vars_to_save(),
+        connections=saver.get_connections_to_save(),
+        blocks=saver.get_blocks(),
+    )
     block_type_data: FmuBlockType = dict()
     block_type_data["module"] = type(model).__module__
     block_type_data["qualname"] = type(model).__qualname__
 
     snapshot: FmuModelSnapshot = dict()
-    snapshot["schema_version"] = SNAPSHOT_SCHEMA_VERSION
+    snapshot["schema_version"] = int(FmuSnapshotVersion.SYMBOLIC_TABLES)
     snapshot["block_type"] = block_type_data
     snapshot["block"] = block_payload
     return snapshot
+
+
+def _register_snapshot_variable(factory: VarFactory, variable: Var) -> None:
+    """Retain declared variables and the dependencies of derivative chains.
+
+    :param factory: Owned snapshot registry.
+    :param variable: Declared or referenced variable to retain.
+    :return: None.
+    """
+    if variable.base_var is None:
+        factory.get_vars_dict()[variable.non_mutable_uid] = variable
+    else:
+        _register_snapshot_variable(factory, variable.base_var)
+        factory.get_diff_var_dict()[variable.non_mutable_uid] = variable
+    if variable.shared_ref is not None:
+        factory.get_references_dict()[variable.shared_ref.name] = variable.shared_ref
+    else:
+        pass
 
 
 def reconstruct_block(snapshot: FmuModelSnapshot) -> Block:
@@ -80,14 +153,35 @@ def reconstruct_block(snapshot: FmuModelSnapshot) -> Block:
     :param snapshot: Versioned snapshot or legacy direct block payload.
     :return: Reconstructed block with procedural logic decoded explicitly.
     """
-    block_payload: Dict[str, object] = _require_string_key_mapping(
-        value=snapshot["block"],
+    version: int = snapshot.get("schema_version", int(FmuSnapshotVersion.SELF_CONTAINED))
+    block_payload: Dict[str, Any] = _require_string_key_mapping(
+        value=snapshot.get("block", snapshot),
         context="FMU block snapshot payload",
     )
-    return Block.parse(
-        data=block_payload,
-        procedural_logic_codec=ProceduralLogicCodec(),
+    if version == FmuSnapshotVersion.SELF_CONTAINED:
+        block_payload = convert_legacy_snapshot(block_payload)
+    elif version == FmuSnapshotVersion.SYMBOLIC_TABLES:
+        pass
+    else:
+        raise ValueError(f"Unsupported FMU snapshot schema version: {version}")
+
+    logger: Logger = Logger()
+    parser: BlockParser = BlockParser(VarFactory(), logger=logger, procedural_logic_codec=ProceduralLogicCodec())
+    symbolic_data: Dict[str, Any] = dict(
+        shared_references=block_payload["references"],
+        consts=block_payload["constants"],
+        vars=block_payload["variables"],
+        diff_vars=block_payload["differential_variables"],
+        connections=block_payload["connections"],
+        blocks=block_payload["blocks"],
     )
+    roots: List[Block] = parser.parse(data=symbolic_data)
+    if len(roots) != 1:
+        raise ValueError("An FMU snapshot must reconstruct exactly one root block")
+    elif logger.error_count() > 0 or logger.warning_count() > 0:
+        raise ValueError(f"Incomplete FMU snapshot symbolic data: {logger}")
+    else:
+        return roots[0]
 
 
 def save_snapshot(snapshot: FmuModelSnapshot, path: str | Path) -> Path:

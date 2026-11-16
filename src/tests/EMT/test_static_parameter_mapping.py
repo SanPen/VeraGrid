@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from types import SimpleNamespace
-
 import numpy as np
 import pytest
 
@@ -26,7 +24,6 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import (
-    StaticParameterMappingDiagnostics,
     assign_api_mapping_value_if_present,
     assign_static_api_object_mapping_for_device,
     get_all_line_matrix_keys,
@@ -43,17 +40,17 @@ from VeraGridEngine.Simulations.EMT.injection_operating_point import (
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from tests.EMT.test_injection_operating_point import _build_balanced_results, build_balanced_emt_injection_operating_point
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.converter_emt_multilinear_template import (
+from VeraGridEngine.Templates.Emt.converters.converter_emt_multilinear_template import (
     get_emt_ideal_converter_multilinear,
 )
-from VeraGridEngine.Templates.Emt.converter_emt_template import (
+from VeraGridEngine.Templates.Emt.converters.converter_emt_template import (
     get_emt_ideal_converter,
     get_full_pseudo_emt_converter,
 )
-from VeraGridEngine.Templates.Emt.converter_soft_switched_emt_template import (
+from VeraGridEngine.Templates.Emt.converters.converter_soft_switched_emt_template import (
     get_soft_switched_emt_converter,
 )
-from VeraGridEngine.Templates.Emt.converter_switched_emt_template import (
+from VeraGridEngine.Templates.Emt.converters.converter_switched_emt_template import (
     get_switched_emt_converter,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -61,7 +58,6 @@ from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import (
     ConverterControlType,
-    DynamicSimulationMode,
     ExternalGridMode,
     ParamPowerFlowReferenceType,
     WindingType,
@@ -90,7 +86,7 @@ def test_phase_load_units_preserve_explicit_mw_and_total_fallback(use_kw: bool, 
     original: tuple[float, ...] = (load.P, load.Q, load.Pa, load.Pb, load.Pc, load.Qa, load.Qb, load.Qc)
     p_abc: np.ndarray
     q_abc: np.ndarray
-    p_abc, q_abc = get_load_power_phase_values_pu_abc(load, grid)
+    p_abc, q_abc = get_load_power_phase_values_pu_abc(load, grid.Sbase)
     expected_p: np.ndarray = np.array((0.09, 0.1, 0.11) if explicit else (0.1, 0.1, 0.1))
     expected_q: np.ndarray = np.array((0.03, 0.04, 0.05) if explicit else (0.04, 0.04, 0.04))
     np.testing.assert_allclose(p_abc, expected_p, atol=1e-14)
@@ -128,14 +124,19 @@ def test_phase_load_units_preserve_explicit_mw_and_total_fallback(use_kw: bool, 
     generator: StaticGenerator = StaticGenerator(P=30.0, Q=12.0)
     generator_p: np.ndarray
     generator_q: np.ndarray
-    generator_p, generator_q = get_load_power_phase_values_pu_abc(generator, grid)
+    generator_p, generator_q = get_load_power_phase_values_pu_abc(generator, grid.Sbase)
     np.testing.assert_allclose(generator_p, np.full(3, 0.1))
     np.testing.assert_allclose(generator_q, np.full(3, 0.04))
 
 
-def _make_grid(sbase: float = 100.0, fbase: float = 50.0) -> SimpleNamespace:
-    """Create a small grid-like object for static-mapping tests."""
-    return SimpleNamespace(Sbase=sbase, fBase=fbase)
+def _make_grid(sbase: float = 100.0, fbase: float = 50.0) -> MultiCircuit:
+    """Create a circuit with native static-parameter mapping metadata.
+
+    :param sbase: System power base in MVA.
+    :param fbase: System frequency in Hz.
+    :return: Circuit configured with the requested bases.
+    """
+    return MultiCircuit(Sbase=sbase, fbase=fbase)
 
 
 def _make_var(name: str) -> Var:
@@ -247,7 +248,7 @@ def test_api_mapping_reports_when_device_value_overrides_template_fallback() -> 
 
     :return: None.
     """
-    grid: SimpleNamespace = _make_grid(sbase=100.0)
+    grid: MultiCircuit = _make_grid(sbase=100.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     load: Load = Load(name="load", P=30.0)
     load.bus = bus
@@ -259,16 +260,12 @@ def test_api_mapping_reports_when_device_value_overrides_template_fallback() -> 
     )
     problem_mapping: dict[Var, Const] = dict()
     logger: Logger = Logger()
-    diagnostics: StaticParameterMappingDiagnostics = StaticParameterMappingDiagnostics(
-        logger=logger,
-        simulation_mode=DynamicSimulationMode.RMS,
-    )
 
     assign_static_api_object_mapping_for_device(
         grid=grid,
         device=load,
         mdl=block,
-        logger=diagnostics,
+        logger=logger,
         problem_mapping=problem_mapping,
     )
 
@@ -276,7 +273,7 @@ def test_api_mapping_reports_when_device_value_overrides_template_fallback() -> 
     assert float(block.event_dict[target].value) == 9.0
     assert len(logger.entries) == 1
     assert logger.entries[0].msg == "API-object initial value overrides the model-template fallback."
-    assert logger.entries[0].device_class == DynamicSimulationMode.RMS.value
+    assert logger.entries[0].device_class == "Dynamic parameter mapping"
 
 
 def test_api_mapping_required_device_source_does_not_report_override() -> None:
@@ -284,7 +281,7 @@ def test_api_mapping_required_device_source_does_not_report_override() -> None:
 
     :return: None.
     """
-    grid: SimpleNamespace = _make_grid(sbase=100.0)
+    grid: MultiCircuit = _make_grid(sbase=100.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     load: Load = Load(name="load", P=30.0)
     load.bus = bus
@@ -314,7 +311,7 @@ def test_api_mapping_rejects_conflicting_values_for_one_symbolic_uid() -> None:
 
     :return: None.
     """
-    grid: SimpleNamespace = _make_grid(sbase=100.0)
+    grid: MultiCircuit = _make_grid(sbase=100.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     load: Load = Load(name="load", P=30.0, Q=12.0)
     load.bus = bus
@@ -359,7 +356,7 @@ def test_api_mapping_accepts_repeated_identical_value_for_one_symbolic_uid() -> 
 
     :return: None.
     """
-    grid: SimpleNamespace = _make_grid(sbase=100.0)
+    grid: MultiCircuit = _make_grid(sbase=100.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     load: Load = Load(name="load", P=30.0, Q=30.0)
     load.bus = bus
@@ -396,7 +393,7 @@ def test_api_mapping_accepts_repeated_identical_value_for_one_symbolic_uid() -> 
     assert len(logger.entries) == 0
 
 
-def test_mapping_context_without_logger_keeps_numeric_assignment() -> None:
+def test_mapping_without_logger_keeps_numeric_assignment() -> None:
     """Keep static mapping active when a problem is constructed silently.
 
     :return: None.
@@ -407,16 +404,12 @@ def test_mapping_context_without_logger_keeps_numeric_assignment() -> None:
         parameters=dict({target: Const(0.0)}),
     )
     problem_mapping: dict[Var, Const] = dict()
-    diagnostics: StaticParameterMappingDiagnostics = StaticParameterMappingDiagnostics(
-        logger=None,
-        simulation_mode=DynamicSimulationMode.RMS,
-    )
 
     assigned: bool = assign_api_mapping_value_if_present(
         mdl=block,
         key=ParamPowerFlowReferenceType.device_active,
         value=1.0,
-        logger=diagnostics,
+        logger=None,
         device_name="device",
         problem_mapping=problem_mapping,
     )
@@ -465,42 +458,29 @@ def test_api_mapping_requires_same_block_parameter_owner() -> None:
     assert problem_mapping == dict()
 
 
-def test_mapping_diagnostics_report_the_requesting_simulation_domain() -> None:
-    """Label identical mapping-contract warnings as RMS or EMT by caller.
+def test_mapping_warnings_use_the_supplied_logger() -> None:
+    """Record mapping-contract warnings directly on the supplied logger.
 
     :return: None.
     """
-    simulation_modes: tuple[DynamicSimulationMode, DynamicSimulationMode] = (
-        DynamicSimulationMode.RMS,
-        DynamicSimulationMode.EMT,
+    target: Var = _make_var("undeclared")
+    block: Block = Block(
+        api_obj_mapping=dict({ParamPowerFlowReferenceType.device_active: target}),
     )
-    simulation_mode: DynamicSimulationMode
+    logger: Logger = Logger()
 
-    for simulation_mode in simulation_modes:
-        target: Var = _make_var(f"undeclared_{simulation_mode.value}")
-        block: Block = Block(
-            api_obj_mapping=dict({
-                ParamPowerFlowReferenceType.device_active: target,
-            }),
-        )
-        logger: Logger = Logger()
-        diagnostics: StaticParameterMappingDiagnostics = StaticParameterMappingDiagnostics(
-            logger=logger,
-            simulation_mode=simulation_mode,
-        )
+    assigned: bool = assign_api_mapping_value_if_present(
+        mdl=block,
+        key=ParamPowerFlowReferenceType.device_active,
+        value=1.0,
+        logger=logger,
+        device_name="device",
+        problem_mapping=dict(),
+    )
 
-        assigned: bool = assign_api_mapping_value_if_present(
-            mdl=block,
-            key=ParamPowerFlowReferenceType.device_active,
-            value=1.0,
-            logger=diagnostics,
-            device_name="device",
-            problem_mapping=dict(),
-        )
-
-        assert assigned is False
-        assert len(logger.entries) == 1
-        assert logger.entries[0].device_class == simulation_mode.value
+    assert assigned is False
+    assert len(logger.entries) == 1
+    assert logger.entries[0].device_class == "Dynamic parameter mapping"
 
 
 def test_converter_templates_keep_api_mappings_on_local_parameter_owners() -> None:
@@ -561,7 +541,7 @@ def test_soft_switched_converter_maps_all_vsc_loss_coefficients() -> None:
 
 def test_load_subset_mapping_assigns_only_requested_keys() -> None:
     """A model exposing a subset of load keys must receive only that subset."""
-    grid: SimpleNamespace = _make_grid()
+    grid: MultiCircuit = _make_grid()
     bus: Bus = Bus(name="bus", Vnom=20.0)
     load: Load = Load(name="load", P1=30.0, Q1=12.0, active=False)
     load.bus = bus
@@ -582,7 +562,7 @@ def test_load_subset_mapping_assigns_only_requested_keys() -> None:
 
 def test_external_grid_enum_mapping_is_explicit() -> None:
     """External-grid modes must map through explicit enum conversion."""
-    grid: SimpleNamespace = _make_grid()
+    grid: MultiCircuit = _make_grid()
     bus: Bus = Bus(name="bus", Vnom=20.0)
     external_grid: ExternalGrid = ExternalGrid(name="eg", Vm=1.03, Va=0.2, mode=ExternalGridMode.VD)
     external_grid.bus = bus
@@ -603,7 +583,7 @@ def test_external_grid_enum_mapping_is_explicit() -> None:
 
 def test_existing_load_mapping_values_remain_unchanged() -> None:
     """Historical AC-load EMT keys must keep their existing values."""
-    grid: SimpleNamespace = _make_grid(sbase=100.0, fbase=60.0)
+    grid: MultiCircuit = _make_grid(sbase=100.0, fbase=60.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     load: Load = Load(name="load", P1=30.0, P2=20.0, P3=10.0, Q1=15.0, Q2=10.0, Q3=5.0)
     load.bus = bus
@@ -634,7 +614,7 @@ def test_existing_load_mapping_values_remain_unchanged() -> None:
 
 def test_balanced_load_values_are_distributed_to_phase_keys() -> None:
     """Balanced load totals must feed per-phase static keys when phases are empty."""
-    grid: SimpleNamespace = _make_grid(sbase=90.0, fbase=50.0)
+    grid: MultiCircuit = _make_grid(sbase=90.0, fbase=50.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     load: Load = Load(name="load", P=27.0, Q=9.0, G=18.0, B=6.0, Ir=12.0, Ii=3.0)
     load.bus = bus
@@ -667,7 +647,7 @@ def test_balanced_load_values_are_distributed_to_phase_keys() -> None:
 
 def test_load_api_mapping_seeds_runtime_targets_without_mutating_block() -> None:
     """Load API mapping must initialize event targets only in problem storage."""
-    grid: SimpleNamespace = _make_grid(sbase=100.0, fbase=60.0)
+    grid: MultiCircuit = _make_grid(sbase=100.0, fbase=60.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     load: Load = Load(name="load", P=90.0, Q=30.0)
     load.bus = bus
@@ -809,7 +789,7 @@ def test_balanced_ac_load_mapping_units_activity(
 
 def test_existing_generator_mapping_values_remain_unchanged() -> None:
     """Historical generator EMT keys must keep their existing values."""
-    grid: SimpleNamespace = _make_grid(fbase=60.0)
+    grid: MultiCircuit = _make_grid(fbase=60.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     generator: Generator = Generator(name="gen", r1=0.01, x1=0.2, x0=0.08)
     generator.bus = bus
@@ -832,9 +812,32 @@ def test_existing_generator_mapping_values_remain_unchanged() -> None:
     assert np.isclose(_const_value(problem_mapping, block, ParamPowerFlowReferenceType.X0), 0.08)
 
 
+def test_legacy_generator_fixed_injection_keys_remain_loadable() -> None:
+    """Load old DGS ElmSym shells that used generic Pl0/Ql0 keys."""
+    grid: MultiCircuit = _make_grid(sbase=100.0)
+    generator: Generator = Generator(name="legacy", P=75.5, Q=-12.0)
+    generator.bus = Bus(name="bus", Vnom=20.0)
+    block: Block = _make_block(dict({
+        ParamPowerFlowReferenceType.Pl0: _make_var("Pl0"),
+        ParamPowerFlowReferenceType.Ql0: _make_var("Ql0"),
+    }))
+    problem_mapping: dict[Var, Const] = dict()
+
+    assign_static_api_object_mapping_for_device(
+        grid=grid,
+        device=generator,
+        mdl=block,
+        problem_mapping=problem_mapping,
+        logger=None,
+    )
+
+    assert _const_value(problem_mapping, block, ParamPowerFlowReferenceType.Pl0) == pytest.approx(0.755)
+    assert _const_value(problem_mapping, block, ParamPowerFlowReferenceType.Ql0) == pytest.approx(-0.12)
+
+
 def test_generator_nominal_frequency_mapping_uses_device_frequency() -> None:
     """Generator static mapping must expose its canonical device frequency."""
-    grid: SimpleNamespace = _make_grid(fbase=60.0)
+    grid: MultiCircuit = _make_grid(fbase=60.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     generator: Generator = Generator(name="gen", freq=55.0)
     generator.bus = bus
@@ -855,7 +858,7 @@ def test_generator_nominal_frequency_mapping_uses_device_frequency() -> None:
 
 def test_dc_load_mapping_preserves_explicit_power_and_conductance_terms() -> None:
     """DC-load mapping must preserve the declared ``P`` and ``G`` ZIP terms."""
-    grid: SimpleNamespace = _make_grid(sbase=100.0, fbase=50.0)
+    grid: MultiCircuit = _make_grid(sbase=100.0, fbase=50.0)
     bus: Bus = Bus(name="dc_bus", Vnom=20.0, is_dc=True)
     load: Load = Load(name="dc_load", P=30.0, G=12.0, Q=0.0)
     load.bus = bus
@@ -876,7 +879,7 @@ def test_dc_load_mapping_preserves_explicit_power_and_conductance_terms() -> Non
 
 def test_vsc_static_mapping_skips_runtime_control_values() -> None:
     """VSC controls must stay outside the shared static parameter mapping."""
-    grid: SimpleNamespace = _make_grid(sbase=150.0, fbase=50.0)
+    grid: MultiCircuit = _make_grid(sbase=150.0, fbase=50.0)
     bus_dc: Bus = Bus(name="dc", Vnom=2.0, is_dc=True)
     bus_ac: Bus = Bus(name="ac", Vnom=20.0, is_dc=False)
     vsc: VSC = VSC(
@@ -928,7 +931,7 @@ def test_vsc_static_mapping_skips_runtime_control_values() -> None:
 
 def test_existing_dc_line_mapping_values_remain_unchanged() -> None:
     """Historical DC-line EMT keys must keep their existing values."""
-    grid: SimpleNamespace = _make_grid()
+    grid: MultiCircuit = _make_grid()
     bus_from: Bus = Bus(name="dcf", Vnom=2.0, is_dc=True)
     bus_to: Bus = Bus(name="dct", Vnom=2.0, is_dc=True)
     dc_line: DcLine = DcLine(name="dc", bus_from=bus_from, bus_to=bus_to, r=0.5)
@@ -951,7 +954,7 @@ def test_existing_dc_line_mapping_values_remain_unchanged() -> None:
 
 def test_transformer_direct_static_keys_receive_only_direct_values() -> None:
     """A direct-only transformer model must receive only direct static values."""
-    grid: SimpleNamespace = _make_grid(fbase=50.0)
+    grid: MultiCircuit = _make_grid(fbase=50.0)
     bus_hv: Bus = Bus(name="hv", Vnom=110.0)
     bus_lv: Bus = Bus(name="lv", Vnom=20.0)
     transformer: Transformer2W = Transformer2W(
@@ -1004,7 +1007,7 @@ def test_transformer_direct_static_keys_receive_only_direct_values() -> None:
 
 def test_transformer_equivalent_circuit_keys_receive_only_derived_values() -> None:
     """A derived-only transformer model must receive only derived equivalent-circuit values."""
-    grid: SimpleNamespace = _make_grid(fbase=50.0)
+    grid: MultiCircuit = _make_grid(fbase=50.0)
     bus_hv: Bus = Bus(name="hv", Vnom=110.0)
     bus_lv: Bus = Bus(name="lv", Vnom=20.0)
     transformer: Transformer2W = Transformer2W(
@@ -1062,13 +1065,16 @@ def test_transformer_equivalent_circuit_keys_receive_only_derived_values() -> No
         leakage_l_secondary + magnetizing_l_secondary,
     )
     assert np.isclose(_const_value(problem_mapping, block, ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s), mutual_inductance)
+    l1 = _const_value(problem_mapping, block, ParamPowerFlowReferenceType.transformer_winding1_inductance_pu_s)
+    m12 = _const_value(problem_mapping, block, ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s)
+    assert np.isclose(l1 - total_ratio * m12, leakage_l_primary, rtol=1e-8, atol=1e-10)
     assert np.isclose(_const_value(problem_mapping, block, ParamPowerFlowReferenceType.transformer_magnetizing_conductance_pu), 0.001)
     assert len(problem_mapping) == 6
 
 
 def test_transformer_direct_and_derived_keys_receive_both_sets() -> None:
     """A transformer model exposing direct and derived keys must receive both sets."""
-    grid: SimpleNamespace = _make_grid(fbase=50.0)
+    grid: MultiCircuit = _make_grid(fbase=50.0)
     bus_hv: Bus = Bus(name="hv", Vnom=110.0)
     bus_lv: Bus = Bus(name="lv", Vnom=20.0)
     transformer: Transformer2W = Transformer2W(
@@ -1118,7 +1124,7 @@ def test_transformer_direct_and_derived_keys_receive_both_sets() -> None:
 
 def test_transformer_missing_keys_are_skipped() -> None:
     """Transformer mapping must skip missing direct and derived keys."""
-    grid: SimpleNamespace = _make_grid(fbase=50.0)
+    grid: MultiCircuit = _make_grid(fbase=50.0)
     bus_hv: Bus = Bus(name="hv", Vnom=110.0)
     bus_lv: Bus = Bus(name="lv", Vnom=20.0)
     transformer: Transformer2W = Transformer2W(
@@ -1139,7 +1145,7 @@ def test_transformer_missing_keys_are_skipped() -> None:
 
 def test_transformer_ratio_key_semantics_are_not_ambiguous() -> None:
     """Transformer ratio keys must keep one stable meaning each."""
-    grid: SimpleNamespace = _make_grid(fbase=50.0)
+    grid: MultiCircuit = _make_grid(fbase=50.0)
     bus_hv: Bus = Bus(name="hv", Vnom=110.0)
     bus_lv: Bus = Bus(name="lv", Vnom=20.0)
     transformer: Transformer2W = Transformer2W(name="xfmr_ratio", bus_from=bus_hv, bus_to=bus_lv, HV=110.0, LV=20.0, tap_module=1.1)
@@ -1164,7 +1170,7 @@ def test_transformer_ratio_key_semantics_are_not_ambiguous() -> None:
 
 def test_existing_line_mapping_values_remain_unchanged() -> None:
     """Uncoupled line EMT matrix values must use direct line reactance and shunt."""
-    grid: SimpleNamespace = _make_grid(fbase=50.0)
+    grid: MultiCircuit = _make_grid(fbase=50.0)
     bus_from: Bus = Bus(name="from", Vnom=20.0)
     bus_to: Bus = Bus(name="to", Vnom=20.0)
     line: Line = Line(name="line", bus_from=bus_from, bus_to=bus_to, r=0.1, x=0.2, b=0.3)
@@ -1200,7 +1206,7 @@ def test_existing_line_mapping_values_remain_unchanged() -> None:
 
 def test_uncoupled_line_mapping_uses_direct_reactance_when_historical_slot_is_zero() -> None:
     """Pure-reactive uncoupled lines must keep a non-zero EMT series inductance."""
-    grid: SimpleNamespace = _make_grid(fbase=50.0)
+    grid: MultiCircuit = _make_grid(fbase=50.0)
     bus_from: Bus = Bus(name="from", Vnom=20.0)
     bus_to: Bus = Bus(name="to", Vnom=20.0)
     line: Line = Line(name="line_rx_only", bus_from=bus_from, bus_to=bus_to, r=0.0, x=0.2, b=0.0)
@@ -1226,7 +1232,7 @@ def test_uncoupled_line_mapping_uses_direct_reactance_when_historical_slot_is_ze
 
 def test_overhead_line_mapping_matches_original_template_based_values() -> None:
     """Overhead pi-line mapping must match the original template-based matrices."""
-    grid: SimpleNamespace = _make_grid(sbase=2.0, fbase=50.0)
+    grid: MultiCircuit = _make_grid(sbase=2.0, fbase=50.0)
     bus_from: Bus = Bus(name="from", Vnom=10.0)
     bus_to: Bus = Bus(name="to", Vnom=10.0)
     line: Line = Line(name="line", bus_from=bus_from, bus_to=bus_to, length=10.0)
@@ -1284,7 +1290,7 @@ def _assert_line_matrix_mapping_for_phase_mask(
     :param phase_mask: Active NABC conductors of the physical line.
     :return: None.
     """
-    grid: SimpleNamespace = _make_grid(sbase=100.0, fbase=50.0)
+    grid: MultiCircuit = _make_grid(sbase=100.0, fbase=50.0)
     bus_from: Bus = Bus(name="from", Vnom=10.0)
     bus_to: Bus = Bus(name="to", Vnom=10.0)
     line: Line = Line(name="matrix_line", bus_from=bus_from, bus_to=bus_to)
@@ -1403,7 +1409,7 @@ def test_line_matrix_mapping_projects_noncontiguous_active_phases() -> None:
 
 def test_shunt_phase_keys_fall_back_to_balanced_totals() -> None:
     """Balanced shunt totals must feed per-phase shunt keys when phases are empty."""
-    grid: SimpleNamespace = _make_grid(sbase=120.0)
+    grid: MultiCircuit = _make_grid(sbase=120.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     shunt: Shunt = Shunt(name="shunt", G=12.0, B=6.0)
     shunt.bus = bus
@@ -1429,7 +1435,7 @@ def test_shunt_phase_keys_fall_back_to_balanced_totals() -> None:
 
 def test_current_injection_phase_keys_fall_back_to_balanced_totals() -> None:
     """Balanced current-injection totals must feed per-phase keys when phases are empty."""
-    grid: SimpleNamespace = _make_grid(sbase=150.0)
+    grid: MultiCircuit = _make_grid(sbase=150.0)
     bus: Bus = Bus(name="bus", Vnom=20.0)
     current_injection: CurrentInjection = CurrentInjection(name="inj", Ir=9.0, Ii=6.0)
     current_injection.bus = bus
@@ -1454,7 +1460,7 @@ def test_line_physical_shunt_conductance_mapping() -> None:
     """
     power_base: float
     for power_base in (2.0, 100.0):
-        grid: SimpleNamespace = _make_grid(sbase=power_base)
+        grid: MultiCircuit = _make_grid(sbase=power_base)
         source: Bus = Bus(name="source", Vnom=20.0)
         target: Bus = Bus(name="target", Vnom=20.0)
         line: Line = Line(bus_from=source, bus_to=target, r=0.01, x=0.1, g=0.003)

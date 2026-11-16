@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from enum import Enum
@@ -31,12 +35,12 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOpti
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
-from VeraGridEngine.Templates.Emt.jmarti_line_emt_template import get_jmarti_line_emt_template
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
-from VeraGridEngine.Templates.Emt.balanced_source_emt_template import get_balanced_3ph_voltage_source_emt_template
-from VeraGridEngine.Templates.Emt.source_emt_template import get_current_source_emt_template, get_voltage_source_emt_template
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.line.jmarti_line_emt_template import get_jmarti_line_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Emt.sources.balanced_source_emt_template import get_balanced_3ph_voltage_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.source_emt_template import get_current_source_emt_template, get_voltage_source_emt_template
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtInitializationMethod, EmtSolverTypes, ShuntConnectionType, SolverType, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -641,7 +645,7 @@ def _build_jmarti_coupled_network_case(
     # Use the persisted block owner, which encodes Enum mappings and retains
     # symbolic identities in its canonical tables before runtime preparation.
     source_saver: BlockSaver = BlockSaver(var_factory=grid.var_factory)
-    source_saver.save_block(source_block, main=True)
+    source_saver.save_block(source_block)
     saved_source: str = json.dumps((source_saver.get_blocks(), source_saver.get_const_to_save(),
         source_saver.get_vars_to_save(), source_saver.get_diff_vars_to_save(),
         source_saver.get_shared_references_to_save(), source_saver.get_connections_to_save()), sort_keys=True)
@@ -655,7 +659,7 @@ def _build_jmarti_coupled_network_case(
     problem: EmtProblemDae = EmtProblemDae(grid=grid, options=options, pf_results=pf, pf_results_3ph=pf3)
     assert line.emt_model is source_block
     prepared_source_saver: BlockSaver = BlockSaver(var_factory=grid.var_factory)
-    prepared_source_saver.save_block(source_block, main=True)
+    prepared_source_saver.save_block(source_block)
     assert json.dumps((prepared_source_saver.get_blocks(), prepared_source_saver.get_const_to_save(),
         prepared_source_saver.get_vars_to_save(), prepared_source_saver.get_diff_vars_to_save(),
         prepared_source_saver.get_shared_references_to_save(), prepared_source_saver.get_connections_to_save()), sort_keys=True) == saved_source
@@ -937,7 +941,7 @@ def test_jmarti_coupled_network_preserves_source_and_restart(
     # Persistence uses the same existing declarative codec as the constructor
     # guard; no source generator or lossy conversion is part of this snapshot.
     source_saver: BlockSaver = BlockSaver(var_factory=problem.grid.var_factory)
-    source_saver.save_block(source, main=True)
+    source_saver.save_block(source)
     serialization: str = json.dumps((source_saver.get_blocks(), source_saver.get_const_to_save(),
         source_saver.get_vars_to_save(), source_saver.get_diff_vars_to_save(),
         source_saver.get_shared_references_to_save(), source_saver.get_connections_to_save()), sort_keys=True)
@@ -1100,7 +1104,7 @@ def test_jmarti_coupled_network_preserves_source_and_restart(
     assert get_jmarti_block_runtime_data(source) is source_data
     assert get_jmarti_block_fit_bundle(source) is source_fit
     replayed_source_saver: BlockSaver = BlockSaver(var_factory=problem.grid.var_factory)
-    replayed_source_saver.save_block(source, main=True)
+    replayed_source_saver.save_block(source)
     assert json.dumps((replayed_source_saver.get_blocks(), replayed_source_saver.get_const_to_save(),
         replayed_source_saver.get_vars_to_save(), replayed_source_saver.get_diff_vars_to_save(),
         replayed_source_saver.get_shared_references_to_save(), replayed_source_saver.get_connections_to_save()), sort_keys=True) == serialization

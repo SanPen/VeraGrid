@@ -9,6 +9,7 @@ from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Topology.admittance_matrices import AdmittanceMatrices, AdmittanceMatricesFast
 from VeraGridEngine.enumerations import BusMode, ShuntControlMode, GeneratorControlMode
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import generator_qv_droop
 
 
 def get_q_increment(V1, V2, k):
@@ -360,37 +361,13 @@ def update_qv_droop_generators(S0: CxVec,
 
     for k in qv_droop_gen_idx:
         bus_i = generator_bus_idx[k]
-        k_droop = generator_k_droop[k]
         db = generator_dead_band[k]
         dV = generator_v[k] - Vm[bus_i]
-
+        generator_q[k] = generator_qv_droop(Vm[bus_i], generator_v[k], generator_k_droop[k],
+                                           db, generator_qmin[k], generator_qmax[k])
+        S0.imag[bus_i] += generator_q[k]
         if abs(dV) > db:
-            if dV > db:
-                any_change = True
-                generator_q[k] = (dV - db) * k_droop * generator_qmax[k]
-
-                if generator_q[k] > generator_qmax[k]:
-                    generator_q[k] = generator_qmax[k]
-
-                if generator_q[k] < generator_qmin[k]:
-                    generator_q[k] = generator_qmin[k]
-
-                S0.imag[bus_i] += generator_q[k]
-            elif dV < -db:
-                any_change = True
-                generator_q[k] = (dV + db) * k_droop * generator_qmax[k]
-
-                if generator_q[k] > generator_qmax[k]:
-                    generator_q[k] = generator_qmax[k]
-
-                if generator_q[k] < generator_qmin[k]:
-                    generator_q[k] = generator_qmin[k]
-
-                S0.imag[bus_i] += generator_q[k]
-            else:
-                pass
-        else:
-            pass
+            any_change = True
 
     return any_change
 

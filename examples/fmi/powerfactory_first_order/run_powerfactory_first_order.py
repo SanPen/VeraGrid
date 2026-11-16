@@ -22,13 +22,17 @@ from pathlib import Path
 import re
 import secrets
 import shutil
+import stat
 import subprocess
 import sys
 from typing import Protocol, cast
 from xml.etree import ElementTree
 import zipfile
 
-from VeraGridEngine.IO.fmu.compiler import FmuBinaryInterface, Compiler, compile_fmu_shared_library
+from VeraGridEngine.IO.fmu.compiler import Compiler, compile_fmu_shared_library
+from VeraGridEngine.IO.fmu.config import ExportConfig, InterfaceType
+from VeraGridEngine.IO.fmu.interface import package_validated_fmu
+from VeraGridEngine.enumerations import FmiVersion
 
 
 class PowerFactoryCompatibilityProfile(Enum):
@@ -240,14 +244,33 @@ def verify_probe_inputs(
 def hash_source_closure(
     source_roots: tuple[tuple[str, Path], ...],
 ) -> dict[str, object]:
-    """Hash the bounded FMI 3 source closure with UUID normalization.
+    """Validate and hash the current FMI 3 source layout with UUID normalization.
 
     :param source_roots: Ordered interface identifiers and generated roots.
     :return: Raw entries and the normalized deterministic closure digest.
+        Missing, additional or substituted source members are rejected before
+        compilation; these paths match the existing CS/ME source emitters.
     """
 
     manifest_lines: list[str] = list()
     raw_entries: list[dict[str, object]] = list()
+    # This recipe authenticates a particular generated-source layout. A file
+    # count cannot distinguish a missing input replaced by unrelated material.
+    expected_paths: set[str] = set((
+        "include/fmi3Functions.h",
+        "include/fmi3FunctionTypes.h",
+        "include/fmi3PlatformTypes.h",
+        "src/generated_metadata.h",
+        "src/generated_model.c",
+        "src/generated_model.h",
+        "src/generated_procedural.c",
+        "src/model_instance.c",
+        "src/model_instance.h",
+        "src/runtime_fmi3.c",
+        "src/runtime_fmi3.h",
+        "src/runtime_support.h",
+        "src/solver.c",
+    ))
     uuid_pattern: re.Pattern[bytes] = re.compile(
         rb"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
     )
@@ -260,21 +283,30 @@ def hash_source_closure(
         for candidate in source_root.rglob("*"):
             relative_parts: tuple[str, ...] = candidate.relative_to(source_root).parts
             ignored_cache: bool = bool("__pycache__" in relative_parts)
-            if candidate.is_file() and not candidate.is_symlink() and not ignored_cache:
+            candidate_status: os.stat_result = candidate.lstat()
+            reparse_point: bool = False
+            if os.name == "nt":
+                reparse_point = bool(candidate_status.st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+            else:
+                pass
+            # A directory link must be rejected before is_dir accepts it;
+            # Windows junctions are reparse points rather than is_symlink links.
+            if candidate.is_symlink() or reparse_point:
+                raise ValueError("Generated source closure contains a symbolic link or reparse point")
+            elif candidate.is_file() and not ignored_cache:
                 material_paths.append(candidate)
             else:
                 if ignored_cache or candidate.is_dir():
                     pass
-                elif candidate.is_symlink():
-                    raise ValueError("Generated source closure contains a symbolic link")
                 else:
                     pass
         material_paths.sort()
-        if len(material_paths) == 15:
+        material_path: Path
+        relative_paths: set[str] = set(material_path.relative_to(source_root).as_posix() for material_path in material_paths)
+        if relative_paths == expected_paths:
             pass
         else:
-            raise ValueError("Generated FMI 3 source closure must contain 15 materials")
-        material_path: Path
+            raise ValueError("Generated FMI 3 source closure differs from the declared source layout")
         for material_path in material_paths:
             relative_path: str = material_path.relative_to(source_root).as_posix()
             raw_bytes: bytes = material_path.read_bytes()
@@ -431,18 +463,14 @@ def extract_checked_fmu(fmu_path: Path, destination: Path) -> tuple[str, ...]:
 def compile_compatibility_binary(
     source_root: Path,
     output_path: Path,
-    interface: str,
-    model_identifier: str,
     compiler: Compiler,
 ) -> Path:
     """Compile one derived FMI 3 binary through the VeraGrid public API.
 
     :param source_root: Copied and narrowly patched generated source root.
     :param output_path: Expected native shared-library destination.
-    :param interface: FMI interface identifier, ``cs`` or ``me``.
-    :param model_identifier: XML-declared binary model identifier.
     :param compiler: Caller-owned sequential compiler session.
-    :return: Validated compiled binary path.
+    :return: Compiled binary path.
     """
 
     source_files: tuple[Path, ...] = (
@@ -456,19 +484,10 @@ def compile_compatibility_binary(
         source_root / "include",
         source_root / "src",
     )
-    if interface == "cs":
-        binary_interface: FmuBinaryInterface = FmuBinaryInterface.FMI_THREE_CO_SIMULATION
-    else:
-        if interface == "me":
-            binary_interface = FmuBinaryInterface.FMI_THREE_MODEL_EXCHANGE
-        else:
-            raise ValueError("PowerFactory compatibility build supports only FMI 3 CS or ME")
     return compile_fmu_shared_library(
         source_files,
         include_directories,
         output_path,
-        binary_interface,
-        model_identifier,
         compiler,
     )
 
@@ -494,6 +513,10 @@ def build_powerfactory_compatibility_fmu(
         pass
     else:
         raise ValueError("Unsupported PowerFactory compatibility profile")
+    # Source provenance is also a build precondition. Validate it before any
+    # derived output can be published, rather than failing while making its
+    # receipt after the final file has already been replaced.
+    source_closure: dict[str, object] = hash_source_closure(((cell[0], source_root),))
     build_root: Path = output_dir / "compatibility_build" / cell[0]
     copied_source: Path = build_root / "source"
     extracted_fmu: Path = build_root / "fmu"
@@ -552,7 +575,7 @@ def build_powerfactory_compatibility_fmu(
     interface_tag: str = "CoSimulation" if cell[3] == "cs" else "ModelExchange"
     interface_node: ElementTree.Element | None = xml_root.find(interface_tag)
     if interface_node is not None:
-        model_identifier: str = str(interface_node.attrib.get("modelIdentifier", ""))
+        pass
     else:
         raise ValueError("FMI 3 XML lacks its declared interface")
     binary_members: list[str] = [name for name in members if name.endswith(".dll")]
@@ -560,31 +583,48 @@ def build_powerfactory_compatibility_fmu(
         binary_path: Path = extracted_fmu.joinpath(*binary_members[0].split("/"))
     else:
         raise ValueError("Standard FMU must contain exactly one Windows binary")
-    compile_compatibility_binary(copied_source, binary_path, cell[3], model_identifier, compiler)
+    compile_compatibility_binary(copied_source, binary_path, compiler)
     compatibility_dir: Path = output_dir / "compatibility_fmus"
     compatibility_dir.mkdir(parents=True, exist_ok=True)
     output_fmu: Path = compatibility_dir / (cell[1].stem + "_PowerFactory.fmu")
-    with zipfile.ZipFile(output_fmu, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        member_name: str
-        for member_name in members:
-            # Compiler extraction is build evidence, never an FMU member.
-            material_path: Path = extracted_fmu.joinpath(*member_name.split("/"))
-            archive.write(material_path, member_name)
+    # The compiler writes compiler_build beside the replaced binary. Select
+    # only authenticated FMU members into a separate tree before invoking the
+    # generic recursive packager; build evidence must never enter the archive.
+    package_staging: Path = build_root / "package"
+    package_staging.mkdir()
+    member_name: str
+    for member_name in members:
+        material_path: Path = extracted_fmu.joinpath(*member_name.split("/"))
+        packaged_path: Path = package_staging.joinpath(*member_name.split("/"))
+        packaged_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(material_path, packaged_path)
     with zipfile.ZipFile(cell[1], "r") as standard_archive:
-        with zipfile.ZipFile(output_fmu, "r") as derivative_archive:
-            if tuple(sorted(standard_archive.namelist())) == tuple(sorted(derivative_archive.namelist())):
+        path: Path
+        staged_members: tuple[str, ...] = tuple(sorted(path.relative_to(package_staging).as_posix() for path in package_staging.rglob("*") if path.is_file()))
+        if tuple(sorted(standard_archive.namelist())) == staged_members:
+            pass
+        else:
+            raise ValueError("PowerFactory derivative changed the FMU member topology")
+        unchanged_member: str
+        for unchanged_member in members:
+            if unchanged_member == binary_members[0]:
                 pass
             else:
-                raise ValueError("PowerFactory derivative changed the FMU member topology")
-            unchanged_member: str
-            for unchanged_member in members:
-                if unchanged_member == binary_members[0]:
+                staged_member: Path = package_staging.joinpath(*unchanged_member.split("/"))
+                if standard_archive.read(unchanged_member) == staged_member.read_bytes():
                     pass
                 else:
-                    if standard_archive.read(unchanged_member) == derivative_archive.read(unchanged_member):
-                        pass
-                    else:
-                        raise ValueError("PowerFactory derivative changed a non-binary FMU member")
+                    raise ValueError("PowerFactory derivative changed a non-binary FMU member")
+    # Recompilation invalidates the standard FMU's native evidence. The common
+    # export gate validates this exact derivative before replacing its output.
+    package_config: ExportConfig = ExportConfig(
+        model_name=xml_root.attrib["modelName"], output_path=output_fmu,
+        guid=xml_root.attrib["instantiationToken"],
+        model_identifier=interface_node.attrib["modelIdentifier"],
+        fmi_version=FmiVersion.FMI_3_0,
+        interface_type=InterfaceType.CO_SIMULATION if cell[3] == "cs" else InterfaceType.MODEL_EXCHANGE,
+    )
+    package_validated_fmu(package_staging, package_config)
     output_bytes: bytes = output_fmu.read_bytes()
     receipt: dict[str, object] = {
         "cell_id": cell[0],
@@ -595,7 +635,7 @@ def build_powerfactory_compatibility_fmu(
         "runtime_before_sha256": hashlib.sha256(runtime_before).hexdigest(),
         "runtime_after_sha256": hashlib.sha256(runtime_after).hexdigest(),
         "patch_sha256": hashlib.sha256(implementation).hexdigest(),
-        "source_closure_sha256": hash_source_closure(((cell[0], source_root),))["normalized_closure_sha256"],
+        "source_closure_sha256": source_closure["normalized_closure_sha256"],
         "changed_source": "src/runtime_fmi3.c",
         "changed_function_count": 2,
         "member_topology_preserved": True,
@@ -662,10 +702,13 @@ def verify_runtime_inputs(
         "status": "PASS" if len(builds) == 2 else "FAIL",
     }
     manifest_lines_value: object = closure.get("manifest_lines", None)
+    material_count_value: object = closure.get("material_count", None)
     manifest_lines: list[str] = list()
     if (
         isinstance(manifest_lines_value, list)
-        and len(manifest_lines_value) == 30
+        and isinstance(material_count_value, int)
+        and not isinstance(material_count_value, bool)
+        and len(manifest_lines_value) == material_count_value
         and all(isinstance(item, str) for item in manifest_lines_value)
     ):
         manifest_line_value: object

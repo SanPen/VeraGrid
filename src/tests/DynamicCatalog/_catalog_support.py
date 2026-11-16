@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from pathlib import Path
@@ -5,12 +9,11 @@ from typing import Sequence
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.BasicBlockCatalog import BasicBlockTemplateDescriptor
-from VeraGridEngine.Templates.BasicBlockCatalog import get_pending_basic_block_catalog_descriptors
-from VeraGridEngine.Templates.BasicBlockCatalog import get_basic_block_catalog_descriptor_by_key
-from VeraGridEngine.Templates.BasicBlockCatalog import get_basic_block_catalog_descriptors
-from VeraGridEngine.Templates.BasicBlockCatalog import get_basic_block_catalog_templates_dir
-from VeraGridEngine.Templates.BasicBlockCatalog import load_basic_block_catalog_template
+from VeraGridEngine.Templates.template_catalogue import BasicBlockTemplateDescriptor
+from VeraGridEngine.Templates.template_catalogue import BASIC_BLOCKS_BY_KEY
+from VeraGridEngine.Templates.template_catalogue import get_basic_block_catalog_descriptors
+from VeraGridEngine.Templates.template_catalogue import get_basic_block_catalog_templates_dir
+from VeraGridEngine.Templates.template_catalogue import load_basic_block_catalog_template
 
 
 def build_templates_dir() -> Path:
@@ -33,16 +36,6 @@ def descriptor_entries() -> Sequence[BasicBlockTemplateDescriptor]:
     return get_basic_block_catalog_descriptors()
 
 
-def pending_descriptor_entries() -> Sequence[BasicBlockTemplateDescriptor]:
-    """
-    Return the pending catalog descriptors.
-
-    :returns: Pending descriptor tuple.
-    """
-
-    return get_pending_basic_block_catalog_descriptors()
-
-
 def descriptor_lookup_by_key() -> dict[str, BasicBlockTemplateDescriptor]:
     """
     Return the descriptor lookup indexed by semantic key.
@@ -50,7 +43,7 @@ def descriptor_lookup_by_key() -> dict[str, BasicBlockTemplateDescriptor]:
     :returns: Descriptor lookup by semantic key.
     """
 
-    return get_basic_block_catalog_descriptor_by_key()
+    return {descriptor.template_key: descriptor for descriptor in descriptor_entries()}
 
 
 def _resolve_descriptor(template_identifier: str) -> BasicBlockTemplateDescriptor:
@@ -73,7 +66,7 @@ def _resolve_descriptor(template_identifier: str) -> BasicBlockTemplateDescripto
     if template_identifier.isdigit():
         candidate: BasicBlockTemplateDescriptor
         for candidate in descriptor_entries():
-            if candidate.typ_id == template_identifier:
+            if candidate.module_name.startswith(f"typ_{template_identifier}__"):
                 return candidate
             else:
                 pass

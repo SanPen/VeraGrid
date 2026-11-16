@@ -14,6 +14,9 @@ from typing import Tuple, TYPE_CHECKING
 from scipy.sparse import csc_matrix
 from scipy.sparse import linalg as spla
 
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
+from VeraGridEngine.Utils.Sparse.sparse_solve import SparseProviderLinearSolver, solve_sparse_system_once
+from VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend import SuperLUSparseBackendProvider
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 from VeraGridEngine.Simulations.options_template import OptionsTemplate
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
@@ -219,6 +222,8 @@ class PseudoTransient:
 
     __slots__ = (
         "problem",
+        "_sparse_solver_backend_provider",
+        "_sparse_linear_solver",
         "h",
         "dtau0",
         "dtau_min",
@@ -282,12 +287,22 @@ class PseudoTransient:
                  fixed_var_uids: list[int] | None = None,
                  debug_check_x_new: bool = False,
                  debug_x_new_abs_max: float = 1e6,
-                 options: PseudoTransientOptions | None = None):
-        """
+                 options: PseudoTransientOptions | None = None, sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None) -> None:
+        """:param problem:
 
-        :param problem:
+        :param sparse_solver_backend_provider: Optional resolved LU provider; inherit the problem binding when absent, then use the existing SuperLU default. Factors belong to this numerical phase.
+        :return: None; initialize an independent numerical phase.
         """
         self.problem = problem
+        self._sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = sparse_solver_backend_provider
+        if self._sparse_solver_backend_provider is None and isinstance(problem, RmsProblemTemplate):
+            self._sparse_solver_backend_provider = problem.get_sparse_solver_backend_provider()
+        else:
+            pass
+        local_provider: SparseLinearSolverBackendProvider = (
+            SuperLUSparseBackendProvider() if self._sparse_solver_backend_provider is None
+            else self._sparse_solver_backend_provider)
+        self._sparse_linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(local_provider)
         self.h = h
         self.dtau0 = dtau0
         self.dtau_min = dtau_min
@@ -1009,7 +1024,8 @@ class PseudoTransient:
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", message="Matrix is exactly singular")
             try:
-                delta = spla.spsolve(J_solve, -rhs_solve)
+                delta: Vec = solve_sparse_system_once(
+                    J_solve, -rhs_solve, self._sparse_solver_backend_provider, self._sparse_linear_solver)
             except Exception as exc:
                 self._report_singularity_diagnostics(J, rhs, x=x, context=context)
                 try:

@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import numpy as np
 import highspy
-from typing import Dict, List, Union, cast, Tuple, Protocol, runtime_checkable
+from typing import Dict, List, Union, Tuple
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, Const, BinOp, CmpOp, Comparison
 
 INF = 1.0e20
@@ -16,60 +16,13 @@ LOWER_INF  = -1.0e20
 Number = Union[int, float]
 
 
-@runtime_checkable
-class _AB(Protocol):
-    __slots__ = ()
-
-    a: Expr
-    b: Expr
-
-
-@runtime_checkable
-class _LeftRight(Protocol):
-    __slots__ = ()
-
-    left: Expr
-    right: Expr
-
-
-@runtime_checkable
-class _LhsRhs(Protocol):
-    __slots__ = ()
-
-    lhs: Expr
-    rhs: Expr
-
-
-# Union of all accepted layouts (for static checkers / IDEs)
-_BinChildrenT = Tuple[Expr, Expr]
-
-
-def _binop_children(node: BinOp) -> _BinChildrenT:
+def _binop_children(node: BinOp) -> Tuple[Expr, Expr]:
     """
     Return the two operands of *node*.
 
-    Accepted layouts (checked **statically** and **at runtime**):
-
-      • .a / .b
-      • .left / .right
-      • .lhs / .rhs
-
-    Anything else raises ``TypeError`` immediately.
+    ``BinOp`` owns its two operands as ``left`` and ``right``.
     """
-    if isinstance(node, _AB):
-        return cast(_BinChildrenT, (node.a, node.b))
-
-    if isinstance(node, _LeftRight):
-        return cast(_BinChildrenT, (node.left, node.right))
-
-    if isinstance(node, _LhsRhs):
-        return cast(_BinChildrenT, (node.lhs, node.rhs))
-
-    raise TypeError(
-        "BinOp implementation must expose either "
-        "('a','b'), ('left','right') or ('lhs','rhs') attributes "
-        f"(got {type(node).__name__})."
-    )
+    return node.left, node.right
 
 
 # =====================================================================
@@ -88,7 +41,7 @@ def _affine_parts(node: Expr, scale: float = 1.0) -> Tuple[Dict[Var, float], flo
         return {node: scale}, 0.0
 
     if isinstance(node, BinOp):
-        op = getattr(node, "op", None)
+        op: str = node.op
         a, b = _binop_children(node)
 
         if op == "+":

@@ -14,7 +14,8 @@ import shiboken6
 from PySide6 import QtGui, QtWidgets, QtCore
 
 import VeraGridEngine.Devices.Diagrams.palettes as palettes
-from VeraGridEngine import ContingencyOperationTypes, MapDiagram
+from VeraGridEngine import ContingencyOperationTypes
+from VeraGridEngine.Devices.Diagrams.map_diagram import MapDiagram
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
@@ -220,6 +221,7 @@ class DiagramsMain(CompiledArraysMain):
         # Automatic layout modes
         self.layout_algorithms_dict = dict()
         self.layout_algorithms_dict['power_system_layout'] = nx.spring_layout
+        self.layout_algorithms_dict['voltage_hierarchical_layout'] = nx.spring_layout
         self.layout_algorithms_dict['circular_layout'] = nx.circular_layout
         self.layout_algorithms_dict['random_layout'] = nx.random_layout
         self.layout_algorithms_dict['shell_layout'] = nx.shell_layout
@@ -260,6 +262,7 @@ class DiagramsMain(CompiledArraysMain):
 
         self.ui.actionSelect_buses_by.triggered.connect(self.select_buses_by)
         self.ui.actionColor_buses_by.triggered.connect(self.color_buses_by)
+        self.ui.actionColor_lines_by.triggered.connect(self.color_lines_by)
         self.ui.actionColor_substations_by.triggered.connect(self.color_substations_by)
 
         self.ui.actionAdd_selected_to_contingency.triggered.connect(self.add_selected_to_contingency)
@@ -1130,7 +1133,7 @@ class DiagramsMain(CompiledArraysMain):
                     cmap=cmap,
                 )
 
-        if method == MethodShortCircuit.sequences:
+        if method in (MethodShortCircuit.sequences, MethodShortCircuit.sequences_vsc):
             return diagram_widget.colour_results(Sbus=results.Sbus1[:, sc_index],
                                                  bus_active=bus_active,
                                                  Sf=results.Sf1[:, sc_index],
@@ -3772,7 +3775,7 @@ class DiagramsMain(CompiledArraysMain):
         Launch the bus coloring
         """
         object_select_window = ListSelectWindow(title='Select association',
-                                                elements=["area", "zone", "country", "substation"],
+                                                elements=["area", "zone", "country", "substation", "voltage level"],
                                                 parent=self)
         object_select_window.setModal(True)
         try:
@@ -3780,6 +3783,15 @@ class DiagramsMain(CompiledArraysMain):
             selected_object = object_select_window.selected_object
         finally:
             delete_dialog_safely(dialog=object_select_window)
+        if selected_object is None:
+            return
+        if selected_object == "voltage level":
+            diagram = self.get_selected_diagram_widget()
+            if isinstance(diagram, SchematicWidget):
+                diagram.colour_by_voltage(colour_buses=True, colour_lines=False)
+            else:
+                self.show_warning_toast(self.tr("Voltage-level colouring is available for schematic diagrams."))
+            return
         any_op = False
 
         for k, bus, graphic_obj in self.get_current_diagram_buses():
@@ -3810,6 +3822,22 @@ class DiagramsMain(CompiledArraysMain):
             )
         else:
             pass
+
+    def color_lines_by(self):
+        """Apply an explicitly selected line colour scheme to the current schematic."""
+        dialog = ListSelectWindow(title='Color lines by', elements=["voltage level"], parent=self)
+        dialog.setModal(True)
+        try:
+            exec_dialog_safely(dialog=dialog)
+            selected_object = dialog.selected_object
+        finally:
+            delete_dialog_safely(dialog=dialog)
+        if selected_object == "voltage level":
+            diagram = self.get_selected_diagram_widget()
+            if isinstance(diagram, SchematicWidget):
+                diagram.colour_by_voltage(colour_buses=False, colour_lines=True)
+            else:
+                self.show_warning_toast(self.tr("Voltage-level colouring is available for schematic diagrams."))
 
     def color_substations_by(self):
         """

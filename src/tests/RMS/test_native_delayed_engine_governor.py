@@ -1,19 +1,26 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent fuel-actuator transfer, bounded output and sampled combustion history."""
 from __future__ import annotations
+
 
 import json
 import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards import build_international_standard_template
-from VeraGridEngine.Templates.Rms.international_standards.governors.degov1 import DieselGovernorParameters, EngineDroopFeedback, build_degov1_template
+from VeraGridEngine.Templates.Rms import build_international_standard_template
+from VeraGridEngine.Templates.Rms.governors.degov1 import DieselGovernorParameters, EngineDroopFeedback, build_degov1_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.procedural_logic import ProceduralExpressionMode, ProceduralLogicCodec, TimeDelayLogic
 from VeraGridEngine.enumerations import InternationalStandardModel
 from tests.DynamicCatalog._catalog_functional_support import FunctionalRuntimeProblem
 from tests.RMS.test_native_turbine_governors import initialized_values, linearized_response, evaluate_controller
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 @pytest.mark.parametrize('feedback',(EngineDroopFeedback.THROTTLE,EngineDroopFeedback.ELECTRICAL_POWER))
@@ -103,7 +110,7 @@ def test_engine_delay_persistence_and_runtime_clone(model: InternationalStandard
     """The saved graph retains the delay expression and a clone remaps its output mode."""
     source: Block = build_international_standard_template(model,VarFactory(),'engine').block
     payload: dict[str,object] = json.loads(json.dumps(source.to_dict()))
-    restored: Block = Block.parse(payload,procedural_logic_codec=ProceduralLogicCodec())
+    restored: Block = roundtrip_block(source, procedural_logic_codec=ProceduralLogicCodec())
     assert json.loads(json.dumps(restored.to_dict())) == payload
     logic: TimeDelayLogic = restored.procedural_logic[0]
     assert isinstance(logic,TimeDelayLogic)

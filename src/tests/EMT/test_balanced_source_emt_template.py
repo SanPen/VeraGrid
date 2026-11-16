@@ -1,12 +1,16 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.balanced_source_emt_template import get_balanced_3ph_current_source_emt_template
-from VeraGridEngine.Templates.Emt.balanced_source_emt_template import get_balanced_3ph_voltage_source_emt_template
-from VeraGridEngine.Templates.Emt.balanced_source_emt_template import get_controlled_balanced_3ph_current_source_emt_template
-from VeraGridEngine.Templates.Emt.balanced_source_emt_template import get_controlled_balanced_3ph_voltage_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.balanced_source_emt_template import get_balanced_3ph_current_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.balanced_source_emt_template import get_balanced_3ph_voltage_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.balanced_source_emt_template import get_controlled_balanced_3ph_current_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.balanced_source_emt_template import get_controlled_balanced_3ph_voltage_source_emt_template
 
 
 def test_balanced_3ph_current_source_template_exposes_three_phase_bus_inputs_and_state() -> None:

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """CheatSheets 35.2 section 1.2: 32-character labels. ReleaseNotes 35.2 page 11 adds bus mode directives."""
 from VeraGridEngine.IO.raw.psse_auxiliary import PsseVersion, BusInputMode

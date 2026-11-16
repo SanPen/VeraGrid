@@ -17,18 +17,15 @@ from VeraGridEngine.Utils.Symbolic import SharedVarReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, Const, BinOp, UnOp, Func, Func2, CmpOp, Comparison
 from VeraGridEngine.Utils.Symbolic.block import (
     Block,
+    read_nullable_modal_template_config,
     DynamicModelContract,
-    RmsPhysicalMeasurementPoint,
     dynamic_model_contract_from_data,
     normalize_dynamic_connection_intents,
     normalize_event_parameter_initialization,
-    validate_dynamic_model_contract,
+    require_declarative_record,
 )
-from VeraGridEngine.Utils.procedural_logic_contract import (
-    ProceduralLogicCodecContract,
-    ProceduralLogicData,
-    ProceduralLogicEntryContract,
-)
+from VeraGridEngine.Utils.procedural_logic_contract import ProceduralLogicData
+from VeraGridEngine.Utils.procedural_logic import ProceduralLogicBase, ProceduralLogicCodec
 from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConnectionIntent,
                                                                      DynamicConnectionIntentDirection,
                                                                      dynamic_connection_intent_from_dict,
@@ -36,10 +33,13 @@ from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConn
                                                                      is_legacy_suppressed_connection_intent_tombstone)
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 
-
+PersistedScalar = str | int | float | bool | None
+PersistedRecord = Dict[str, "PersistedValue"]
+PersistedRecordMap = Dict[str, PersistedRecord]
+PersistedValue = PersistedScalar | List["PersistedValue"] | PersistedRecord | PersistedRecordMap
 def symbolic_objects_to_dict(
         obj_dict: Mapping[int | str, Var | Const | SharedVarReferenceType],
-) -> List[Dict[str, Any]]:
+) -> List[PersistedRecord]:
     """Serialize one symbolic-object registry without modifying its owner.
 
     The registry key is intentionally irrelevant to the persisted format: every
@@ -50,7 +50,7 @@ def symbolic_objects_to_dict(
     :param obj_dict: Symbolic objects indexed by their factory lookup keys.
     :return: Serialized records in the registry's iteration order.
     """
-    serialized_objects: List[Dict[str, Any]] = list()
+    serialized_objects: List[PersistedRecord] = list()
     expr: Var | Const | SharedVarReferenceType
 
     # Serialize values only. Registry keys are an in-memory lookup detail and
@@ -107,163 +107,26 @@ def symbolic_objects_to_dict(
 
     return serialized_objects
 
-def connections_to_dict(obj_dict: Dict[int, List[Connection]]) -> Dict[int, List[Any]]:
 
-
-    conn_dict: Dict[int, List[Any]] = dict()
+def connections_to_dict(obj_dict: Dict[int, List[Connection]]) -> Dict[int, List[Dict[str, str | int]]]:
+    conn_dict: Dict[int, List[Dict[str, str | int]]] = dict()
 
     for uuid, connections_list in obj_dict.items():
-        conn_list: List[Any] = list()
+        conn_list: List[Dict[str, str | int]] = list()
         for connection in connections_list:
             conn_list.append({"type": "Connection",
-                        "non_mutable_uid": connection.non_mutable_uid,
-                        "name": connection.name,
-                        "uid": connection.uid})
+                              "non_mutable_uid": connection.non_mutable_uid,
+                              "name": connection.name,
+                              "uid": connection.uid})
         conn_dict[uuid] = conn_list
     return conn_dict
-
-
-def normalize_persisted_block_uid(uid_value: Any) -> int | None:
-    """
-    Convert one persisted block identifier to the current integer representation.
-
-    JSON object keys are strings while symbolic block UIDs are integers in
-    memory. Historical archives can therefore contain either representation.
-    Invalid identifiers are ignored by the legacy normalization layer so the
-    caller can report the damaged reference without blocking the full file.
-
-    :param uid_value: Persisted block identifier.
-    :return: Integer UID or ``None`` when the value is not a valid identifier.
-    """
-    normalized_uid: int | None
-    try:
-        normalized_uid = int(uid_value)
-    except (TypeError, ValueError):
-        normalized_uid = None
-
-    return normalized_uid
-
-
-def register_persisted_block_tree(block_data: Dict[str, Any],
-                                  normalized_blocks: Dict[int, Dict[str, Any]],
-                                  fallback_uid: Any = None) -> None:
-    """
-    Register one block and any historically inline child block records.
-
-    Commit ``48bcef198`` serialized ``children`` as complete nested block
-    dictionaries. Later formats store only child UIDs in a flat block table.
-    Flattening the old tree before parsing lets both layouts follow the same
-    reconstruction path without changing the runtime ``Block`` architecture.
-
-    :param block_data: Persisted block record.
-    :param normalized_blocks: Destination table indexed by integer UID.
-    :param fallback_uid: Container key used when the record omits ``uid``.
-    :return: None.
-    """
-    block_uid: int | None = normalize_persisted_block_uid(block_data.get("uid", fallback_uid))
-    if block_uid is not None:
-        if block_uid not in normalized_blocks:
-            normalized_blocks[block_uid] = block_data
-        else:
-            pass
-
-        child_entry: Any
-        for child_entry in block_data.get("children", list()):
-            if isinstance(child_entry, dict):
-                register_persisted_block_tree(block_data=child_entry,
-                                              normalized_blocks=normalized_blocks)
-            else:
-                pass
-    else:
-        pass
-
-
-def normalize_persisted_blocks(blocks_data: Dict[Any, Any] | List[Dict[str, Any]]) -> Dict[int, Dict[str, Any]]:
-    """
-    Normalize every block container written by historical dynamics branches.
-
-    The first pointer-based format stored ``blocks`` as a list. It later became
-    a JSON dictionary keyed by UID, and one intermediate revision embedded
-    children recursively inside each top-level record. This function accepts
-    all three shapes and produces the current flat integer-keyed table.
-
-    :param blocks_data: Persisted list, UID mapping or single block record.
-    :return: Flat block table indexed by integer UID.
-    """
-    normalized_blocks: Dict[int, Dict[str, Any]] = dict()
-
-    if isinstance(blocks_data, list):
-        block_data: Dict[str, Any]
-        for block_data in blocks_data:
-            if isinstance(block_data, dict):
-                register_persisted_block_tree(block_data=block_data,
-                                              normalized_blocks=normalized_blocks)
-            else:
-                pass
-    elif isinstance(blocks_data, dict):
-        # A few development snapshots passed one inline root directly instead
-        # of wrapping it in the global block table.
-        direct_uid: int | None = normalize_persisted_block_uid(blocks_data.get("uid", None))
-        if direct_uid is not None:
-            register_persisted_block_tree(block_data=blocks_data,
-                                          normalized_blocks=normalized_blocks)
-        else:
-            persisted_key: Any
-            persisted_record: Any
-            for persisted_key, persisted_record in blocks_data.items():
-                if isinstance(persisted_record, dict):
-                    register_persisted_block_tree(block_data=persisted_record,
-                                                  normalized_blocks=normalized_blocks,
-                                                  fallback_uid=persisted_key)
-                else:
-                    pass
-    else:
-        pass
-
-    return normalized_blocks
-
-
-def infer_persisted_main_block_uids(blocks_data: Dict[int, Dict[str, Any]]) -> List[int]:
-    """
-    Infer root block UIDs for archives predating ``main_block_uids``.
-
-    Roots are the stored blocks that are not referenced as children by any
-    other stored block. If a damaged cyclic graph has no discoverable root, all
-    records are returned so the parser can retain the recoverable blocks while
-    its cycle guard drops only the invalid child edge.
-
-    :param blocks_data: Normalized block table.
-    :return: Deterministically ordered root block UIDs.
-    """
-    child_uids: set[int] = set()
-    block_data: Dict[str, Any]
-    child_entry: Any
-    for block_data in blocks_data.values():
-        for child_entry in block_data.get("children", list()):
-            if isinstance(child_entry, dict):
-                child_uid: int | None = normalize_persisted_block_uid(child_entry.get("uid", None))
-            else:
-                child_uid = normalize_persisted_block_uid(child_entry)
-
-            if child_uid is not None:
-                child_uids.add(child_uid)
-            else:
-                pass
-
-    root_uids: List[int] = sorted(set(blocks_data.keys()).difference(child_uids))
-    if len(root_uids) == 0 and len(blocks_data) > 0:
-        root_uids = sorted(blocks_data.keys())
-    else:
-        pass
-
-    return root_uids
 
 
 def expr_to_dict(expr: Expr | Comparison,
                  const_dict: Dict[int, Const],
                  var_dict: Dict[int, Var],
                  diff_var_dict: Dict[int, Var],
-                 composite_expression_ids: Dict[int, int] | None = None) -> Dict[str, Any]:
+                 composite_expression_ids: Dict[int, int] | None = None) -> PersistedRecord:
     """
     Serialize any ``Expr`` tree into a JSON-compatible Python dictionary.
 
@@ -390,15 +253,15 @@ def expr_to_dict(expr: Expr | Comparison,
             "type": "Func2",
             "name": expr.name,
             "arg1": expr_to_dict(expr=expr.arg1,
-                                  const_dict=const_dict,
-                                  var_dict=var_dict,
-                                  diff_var_dict=diff_var_dict,
-                                  composite_expression_ids=active_composite_expression_ids),
+                                 const_dict=const_dict,
+                                 var_dict=var_dict,
+                                 diff_var_dict=diff_var_dict,
+                                 composite_expression_ids=active_composite_expression_ids),
             "arg2": expr_to_dict(expr=expr.arg2,
-                                  const_dict=const_dict,
-                                  var_dict=var_dict,
-                                  diff_var_dict=diff_var_dict,
-                                  composite_expression_ids=active_composite_expression_ids),
+                                 const_dict=const_dict,
+                                 var_dict=var_dict,
+                                 diff_var_dict=diff_var_dict,
+                                 composite_expression_ids=active_composite_expression_ids),
             "uid": expr.uid,
             "graph_id": graph_id,
         }
@@ -436,7 +299,7 @@ def expr_list_to_list(lst: List[Expr],
                       const_dict: Dict[int, Const],
                       var_dict: Dict[int, Var],
                       diff_var_dict: Dict[int, Var],
-                      composite_expression_ids: Dict[int, int] | None = None) -> List[Dict[str, Any]]:
+                      composite_expression_ids: Dict[int, int] | None = None) -> List[PersistedRecord]:
     """
 
     :param lst:
@@ -452,7 +315,7 @@ def expr_list_to_list(lst: List[Expr],
     else:
         active_composite_expression_ids = composite_expression_ids
 
-    lst2: List[Dict[str, Any]] = list()
+    lst2: List[PersistedRecord] = list()
 
     for expr in lst:
         lst2.append(
@@ -519,71 +382,67 @@ def parse_expr(data: Dict[str, Any],
             raise KeyError(f"DiffVar with persisted uid {data['uid']} was not found")
 
     elif t == "BinOp":
-        left = parse_expr(data=data["left"],
-                          const_dict=const_dict,
-                          var_dict=var_dict,
-                          diff_var_dict=diff_var_dict,
-                          composite_expressions=active_composite_expressions)
+        left = parse_expression(data=data["left"],
+                                const_dict=const_dict,
+                                var_dict=var_dict,
+                                diff_var_dict=diff_var_dict,
+                                composite_expressions=active_composite_expressions)
 
-        right = parse_expr(data=data["right"],
-                           const_dict=const_dict,
-                           var_dict=var_dict,
-                           diff_var_dict=diff_var_dict,
-                           composite_expressions=active_composite_expressions)
+        right = parse_expression(data=data["right"],
+                                 const_dict=const_dict,
+                                 var_dict=var_dict,
+                                 diff_var_dict=diff_var_dict,
+                                 composite_expressions=active_composite_expressions)
 
         obj = BinOp(left=left, op=data["op"], right=right, uid=data["uid"])
 
     elif t == "UnOp":
-        operand = parse_expr(data=data["operand"],
-                             const_dict=const_dict,
-                             var_dict=var_dict,
-                             diff_var_dict=diff_var_dict,
-                             composite_expressions=active_composite_expressions)
+        operand = parse_expression(data=data["operand"],
+                                   const_dict=const_dict,
+                                   var_dict=var_dict,
+                                   diff_var_dict=diff_var_dict,
+                                   composite_expressions=active_composite_expressions)
         obj = UnOp(op=data["op"], operand=operand, uid=data["uid"])
 
     elif t == "Func":
-        arg = parse_expr(data=data["arg"],
-                         const_dict=const_dict,
-                         var_dict=var_dict,
-                         diff_var_dict=diff_var_dict,
-                         composite_expressions=active_composite_expressions)
+        arg = parse_expression(data=data["arg"],
+                               const_dict=const_dict,
+                               var_dict=var_dict,
+                               diff_var_dict=diff_var_dict,
+                               composite_expressions=active_composite_expressions)
 
         obj = Func(arg=arg, op=data["op"], uid=data["uid"])
 
     elif t == "Func2":
-        arg1: Expr = parse_expr(data=data["arg1"],
-                                                                      const_dict=const_dict,
-                                                                      var_dict=var_dict,
-                                                                      diff_var_dict=diff_var_dict,
-                                                                      composite_expressions=active_composite_expressions)
-        arg2: Expr = parse_expr(data=data["arg2"],
-                                                                      const_dict=const_dict,
-                                                                      var_dict=var_dict,
-                                                                      diff_var_dict=diff_var_dict,
-                                                                      composite_expressions=active_composite_expressions)
+        arg1: Expr = parse_expression(data=data["arg1"],
+                                      const_dict=const_dict,
+                                      var_dict=var_dict,
+                                      diff_var_dict=diff_var_dict,
+                                      composite_expressions=active_composite_expressions)
+        arg2: Expr = parse_expression(data=data["arg2"],
+                                      const_dict=const_dict,
+                                      var_dict=var_dict,
+                                      diff_var_dict=diff_var_dict,
+                                      composite_expressions=active_composite_expressions)
 
         obj = Func2(name=data["name"], arg1=arg1, arg2=arg2, uid=data["uid"])
 
     elif t == "Comparison":
-        lhs_value: Expr | Comparison = parse_expr(
+        lhs_value: Expr = parse_expression(
             data=data["lhs"],
             const_dict=const_dict,
             var_dict=var_dict,
             diff_var_dict=diff_var_dict,
             composite_expressions=active_composite_expressions,
         )
-        rhs_value: Expr | Comparison = parse_expr(
+        rhs_value: Expr = parse_expression(
             data=data["rhs"],
             const_dict=const_dict,
             var_dict=var_dict,
             diff_var_dict=diff_var_dict,
             composite_expressions=active_composite_expressions,
         )
-        if not isinstance(lhs_value, Expr) or not isinstance(rhs_value, Expr):
-            raise TypeError("Comparison operands must be symbolic expressions")
-        else:
-            pass
-        comparison_operator_value: object = data["op"]
+        comparison_operator_value: str = data["op"]
         if comparison_operator_value == CmpOp.LE.value:
             comparison_operator: CmpOp = CmpOp.LE
         elif comparison_operator_value == CmpOp.GE.value:
@@ -616,6 +475,38 @@ def parse_expr(data: Dict[str, Any],
         active_composite_expressions[int(graph_id_value)] = obj
 
     return obj
+
+
+def parse_expression(
+        data: Dict[str, Any],
+        const_dict: Dict[int, Const],
+        var_dict: Dict[int, Var],
+        diff_var_dict: Dict[int, Var],
+        composite_expressions: Dict[int, Expr | Comparison] | None = None,
+) -> Expr:
+    """Deserialize one scalar symbolic expression.
+
+    Arithmetic expression nodes cannot contain comparisons; comparisons are
+    decoded only by the collections that explicitly support guard semantics.
+
+    :param data: Persisted expression record.
+    :param const_dict: Saved constants indexed by their identifiers.
+    :param var_dict: Saved algebraic variables indexed by their identifiers.
+    :param diff_var_dict: Saved differential variables indexed by their identifiers.
+    :param composite_expressions: Parsed graph nodes shared by one block.
+    :return: Reconstructed scalar symbolic expression.
+    """
+    parsed_expression: Expr | Comparison = parse_expr(
+        data=data,
+        const_dict=const_dict,
+        var_dict=var_dict,
+        diff_var_dict=diff_var_dict,
+        composite_expressions=composite_expressions,
+    )
+    if isinstance(parsed_expression, Expr):
+        return parsed_expression
+    else:
+        raise TypeError("Expected a scalar symbolic expression, not a comparison")
 
 
 def parse_expr_list(lst: List[Dict[str, Any]],
@@ -653,10 +544,46 @@ def parse_expr_list(lst: List[Dict[str, Any]],
     return lst2
 
 
+def parse_expression_list(
+        lst: List[Dict[str, Any]],
+        const_dict: Dict[int, Const],
+        var_dict: Dict[int, Var],
+        diff_var_dict: Dict[int, Var],
+        composite_expressions: Dict[int, Expr | Comparison] | None = None,
+) -> List[Expr]:
+    """Deserialize scalar symbolic expressions from one persisted collection.
+
+    :param lst: Persisted scalar-expression records.
+    :param const_dict: Saved constants indexed by their identifiers.
+    :param var_dict: Saved algebraic variables indexed by their identifiers.
+    :param diff_var_dict: Saved differential variables indexed by their identifiers.
+    :param composite_expressions: Parsed graph nodes shared by one block.
+    :return: Reconstructed scalar symbolic expressions in persisted order.
+    """
+    active_composite_expressions: Dict[int, Expr | Comparison]
+    if composite_expressions is None:
+        active_composite_expressions = dict()
+    else:
+        active_composite_expressions = composite_expressions
+
+    expressions: List[Expr] = list()
+    expression_data: Dict[str, Any]
+    for expression_data in lst:
+        expressions.append(
+            parse_expression(
+                data=expression_data,
+                const_dict=const_dict,
+                var_dict=var_dict,
+                diff_var_dict=diff_var_dict,
+                composite_expressions=active_composite_expressions,
+            )
+        )
+    return expressions
+
+
 class BlockSaver:
     __slots__ = (
         "var_factory",
-        "main_block_uids",
         "blocks",
     )
 
@@ -666,7 +593,6 @@ class BlockSaver:
         :param var_factory: Factory containing the variables and shared references to serialize.
         """
         self.var_factory = var_factory
-        self.main_block_uids: List[int] = list()
         self.blocks: Dict[int, Dict[str, Any]] = dict()
 
     def get_const_to_save(self) -> List[Dict[str, Any]]:
@@ -749,13 +675,15 @@ class BlockSaver:
         else:
             pass
 
-    def save_block(self, blk: Block, main: bool = False) -> Dict[str, Any]:
-        """
-        Get a dictionary representing the block
-        All global constant, variable, and differential-variable references are retained for later serialization.
-        :param blk: Block
-        :param main: is it the main block?
-        :return: Dictionary representing the block
+    def save_block(self, blk: Block) -> None:
+        """Serialize a block tree into this saver's symbolic registries.
+
+        Global constants, variables and differential variables are retained in
+        their corresponding registries, while serialized blocks are available
+        through :meth:`get_blocks` after this operation.
+
+        :param blk: Root block whose complete child tree must be serialized.
+        :return: None.
         """
         # Deleted internal blocks cannot be restored by replaying an intent, so
         # remove those historical records at the canonical persistence boundary.
@@ -763,7 +691,6 @@ class BlockSaver:
         normalize_event_parameter_initialization(block=blk)
         # Persistence must reject an incoherent runtime contract before any
         # partial block data is registered in the canonical serializer.
-        validate_dynamic_model_contract(blk)
 
         # One registry is shared by every expression owned by this block. Child
         # blocks create their own registry when ``save_block`` recurses.
@@ -835,7 +762,7 @@ class BlockSaver:
                 }
             )
 
-        post_init_seed_list: List[Mapping[str, object]] = list()
+        post_init_seed_list: List[Mapping[str, int | Dict[str, Any]]] = list()
         for var, expr in blk.post_init_seed_eqs.items():
             self._ensure_var_registered(var)
             post_init_seed_list.append(
@@ -928,7 +855,7 @@ class BlockSaver:
 
             out_vars.append(var.non_mutable_uid)
 
-        init_values: List[Dict[str, object]] = list()
+        init_values: List[Dict[str, int | Dict[str, Any]]] = list()
         init_value_var: Var
         init_value_const: Const
         for init_value_var, init_value_const in blk.init_values.items():
@@ -950,7 +877,7 @@ class BlockSaver:
                 }
             )
 
-        parameters: List[Dict[str, object]] = list()
+        parameters: List[Dict[str, int | Dict[str, Any]]] = list()
         parameter_var: Var
         parameter_const: Const
         for parameter_var, parameter_const in blk.parameters.items():
@@ -982,25 +909,10 @@ class BlockSaver:
             else:
                 pass
 
-        dynamic_model_contract_data: Dict[str, object] = (
+        dynamic_model_contract_data: Dict[str, PersistedValue] = (
             blk.dynamic_model_contract.to_data()
         )
-        override_expression_data: Dict[str, object] = dict()
-        override_name: str
-        override_expression: Expr
-        for override_name, override_expression in (
-                blk.dynamic_model_contract.explicit_init_override_init_exprs.items()
-        ):
-            override_expression_data[override_name] = expr_to_dict(
-                expr=override_expression,
-                const_dict=self.var_factory.get_const_dict(),
-                var_dict=self.var_factory.get_vars_dict(),
-                diff_var_dict=self.var_factory.get_diff_var_dict(),
-                composite_expression_ids=composite_expression_ids,
-            )
-        dynamic_model_contract_data[
-            "explicit_init_override_init_exprs"
-        ] = override_expression_data
+
 
         # save diagram
         diagram = blk.diagram.to_dict()
@@ -1069,17 +981,47 @@ class BlockSaver:
                                    for intent in blk.connection_intents],
 
             "dynamic_model_contract": dynamic_model_contract_data,
-            "modal_template_kind": blk.modal_template_kind,
-            "modal_template_config": copy.deepcopy(blk.modal_template_config),
 
             "diagram": diagram
         }
 
         self.blocks[blk.uid] = d
-        if main:
-            self.main_block_uids.append(blk.uid)
 
-        return d
+
+def migrate_legacy_thevenin_mode_reference(block: Block, mode_uid: int) -> None:
+    """Translate a historical source-mode UID into its owner's external mapping.
+
+    :param block: Parsed legacy block with its complete descendant hierarchy.
+    :param mode_uid: Historical symbolic identity of the immutable source mode.
+    :return: None.
+    :raises ValueError: If the identity has no unique owner or conflicts with a reference.
+    """
+    owner: Block | None = None
+    mode_parameter: Var | None = None
+    candidate: Block
+    parameter: Var
+    # Resolve the original identity against canonical parameters, never variable names.
+    for candidate in block.get_all_blocks():
+        for parameter in candidate.parameters:
+            if parameter.uid == mode_uid:
+                if owner is None:
+                    owner = candidate
+                    mode_parameter = parameter
+                else:
+                    raise ValueError(f"Legacy Thevenin mode uid={mode_uid} has multiple parameter owners")
+            else:
+                pass
+    if owner is None or mode_parameter is None:
+        raise ValueError(f"Legacy Thevenin mode uid={mode_uid} does not identify an owned constant parameter")
+    else:
+        # Existing aliases must agree before migration installs the owner's declaration.
+        for candidate in block.get_all_blocks():
+            existing: Var | None = candidate.external_mapping.get(VarPowerFlowReferenceType.MODE_MARKER, None)
+            if existing is None or existing.uid == mode_uid:
+                pass
+            else:
+                raise ValueError(f"Legacy Thevenin mode uid={mode_uid} conflicts with MODE_MARKER")
+        owner.external_mapping[VarPowerFlowReferenceType.MODE_MARKER] = mode_parameter
 
 
 class BlockParser:
@@ -1096,7 +1038,7 @@ class BlockParser:
             self,
             var_factory: VarFactory,
             logger: Logger | None = None,
-            procedural_logic_codec: ProceduralLogicCodecContract[Expr] | None = None,
+            procedural_logic_codec: ProceduralLogicCodec | None = None,
     ) -> None:
         """Create a block parser bound to one symbolic variable factory.
 
@@ -1114,7 +1056,7 @@ class BlockParser:
         self._diff_var_identity_lookup: Dict[int, Var] = build_persisted_identity_lookup(
             var_dict=self.var_factory.get_diff_var_dict()
         )
-        self._procedural_logic_codec: ProceduralLogicCodecContract[Expr] | None = (
+        self._procedural_logic_codec: ProceduralLogicCodec | None = (
             procedural_logic_codec
         )
 
@@ -1877,8 +1819,8 @@ class BlockParser:
                 else:
                     stable_uid: int = mapping_target.non_mutable_uid
                     target_is_local_runtime: bool = (
-                        mapping_target in block_item.event_dict
-                        or mapping_target in block_item.mode_dict
+                            mapping_target in block_item.event_dict
+                            or mapping_target in block_item.mode_dict
                     )
                     target_is_local_constant: bool = mapping_target in block_item.parameters
                     if target_is_local_runtime:
@@ -2010,8 +1952,8 @@ class BlockParser:
                                     and declared_parameter_value.value is not None):
                                 block_item.event_dict[mapping_target] = declared_parameter_value
                             elif (isinstance(mode_expression, Const)
-                                    and mode_expression.value is None
-                                    and declared_parameter_value.value is not None):
+                                  and mode_expression.value is None
+                                  and declared_parameter_value.value is not None):
                                 block_item.mode_dict[mapping_target] = declared_parameter_value
                             else:
                                 pass
@@ -2392,104 +2334,89 @@ class BlockParser:
             else:
                 return None
 
-    def parse_consts(self, data: List[Dict[str, Any]]) -> None:
-        """Restore constants into this parser's variable factory.
+    def parse(self, data: Dict[str, Any]) -> List[Block]:
+        """Restore a complete symbolic section in dependency order.
 
-        :param data: Serialized constant records.
-        :return: None.
+        Variables and connections must be reconstructed before block expressions
+        can resolve their saved UIDs. Shared references and connections remain
+        optional because historical VeraGrid files may not contain those fields.
+
+        :param data: Complete symbolic section from a VeraGrid JSON payload.
+        :return: Restored root blocks.
         """
-        self.var_factory.parse_const_dict(data_list=data)
+        references_data: List[Dict[str, Any]] | None = data.get("shared_references", None)
+        if references_data is not None:
+            self.var_factory.parse_references_dict(datalist=references_data)
+        else:
+            pass
 
-    def parse_vars(self, data: List[Dict[str, Any]]) -> None:
-        """Restore algebraic variables and refresh stable-identity lookups.
+        self.var_factory.parse_const_dict(data_list=data["consts"])
+        self.var_factory.parse_var_dict(data_list=data["vars"])
+        self.var_factory.parse_diff_var_dict(data_list=data["diff_vars"])
 
-        :param data: Serialized algebraic-variable records.
-        :return: None.
-        """
-        self.var_factory.parse_var_dict(data_list=data)
+        connections_data: Dict[int, List[Any]] | None = data.get("connections", None)
+        if connections_data is not None:
+            self.var_factory.parse_connections_dict(datalist=connections_data)
+        else:
+            pass
+
+        # Block expressions consume stable-identity lookups only after all
+        # variables and connection aliases have reached their final state.
         self._rebuild_persisted_identity_lookups()
 
-    def parse_diff_vars(self, data: List[Dict[str, Any]]) -> None:
-        """Restore differential variables and refresh identity lookups.
+        blocks_data: Dict[int | str, Dict[str, Any]] = data["blocks"]
+        return self._parse_blocks(blocks_data=blocks_data)
 
-        :param data: Serialized differential-variable records.
-        :return: None.
+    def _parse_blocks(self, blocks_data: Dict[int | str, Dict[str, Any]]) -> List[Block]:
         """
-        self.var_factory.parse_diff_var_dict(data_list=data)
-        self._rebuild_persisted_identity_lookups()
+        Parse a complete persisted block collection.
 
-    def parse_references(self, data: List[Dict[str, Any]]) -> None:
-        """Restore shared symbolic references into the variable factory.
+        The persisted record UID is authoritative. JSON may rewrite the outer
+        dictionary key as a string, so parser lookups are built from each
+        record instead of depending on the transport representation of that key.
 
-        :param data: Serialized shared-reference records.
-        :return: None.
-        """
-        self.var_factory.parse_references_dict(datalist=data)
-
-    def parse_connections(self, data: Dict[int, List[Any]]) -> None:
-        """Restore symbolic connection aliases and refresh identity lookups.
-
-        :param data: Serialized connection records grouped by source identity.
-        :return: None.
-        """
-        self.var_factory.parse_connections_dict(datalist=data)
-        self._rebuild_persisted_identity_lookups()
-
-    def parse_blocks(self,
-                     blocks_data: Dict[Any, Any] | List[Dict[str, Any]],
-                     main_block_uids: List[Any] | None = None) -> List[Block]:
-        """
-        Parse a complete current or historical persisted block collection.
-
-        Dynamics archives created before commit ``1a59bfa9b`` do not contain
-        ``main_block_uids``. Their roots are inferred from the child graph after
-        normalizing list-based and inline-child representations.
-
-        :param blocks_data: Persisted block collection.
-        :param main_block_uids: Explicit roots, or ``None`` for legacy inference.
+        :param blocks_data: Flat persisted block table.
         :return: Parsed root blocks.
         """
-        normalized_blocks: Dict[int, Dict[str, Any]] = normalize_persisted_blocks(blocks_data=blocks_data)
-        normalized_main_uids: List[int] = list()
+        blocks_by_uid: Dict[int, Dict[str, Any]] = dict()
+        block_data: Dict[str, Any]
+        for block_data in blocks_data.values():
+            if isinstance(block_data.get("uid", None), int) and not isinstance(block_data.get("uid", None), bool):
+                block_uid: int = block_data["uid"]
+                blocks_by_uid[block_uid] = block_data
+            else:
+                self._add_warning(msg="Invalid dynamic block UID",
+                                  block_name="",
+                                  block_uid=0,
+                                  field_name="uid",
+                                  missing_uid=None)
 
-        if main_block_uids is not None:
-            persisted_main_uid: Any
-            for persisted_main_uid in main_block_uids:
-                normalized_main_uid: int | None = normalize_persisted_block_uid(persisted_main_uid)
-                if normalized_main_uid is not None:
-                    normalized_main_uids.append(normalized_main_uid)
-                else:
-                    self._add_warning(msg="Invalid main dynamic block UID in persisted symbolic data",
-                                      block_name="",
-                                      block_uid=0,
-                                      field_name="main_block_uids",
-                                      missing_uid=None)
-        else:
-            pass
+        # A root is the only structural block that no other block references as
+        # a child, so the flat table already contains the complete root index.
+        child_uids: set[int] = set()
+        child_uid: int
+        for block_data in blocks_by_uid.values():
+            for child_uid in block_data.get("children", list()):
+                child_uids.add(child_uid)
 
-        if len(normalized_main_uids) == 0:
-            normalized_main_uids = infer_persisted_main_block_uids(blocks_data=normalized_blocks)
-        else:
-            pass
+        root_block_uids: List[int] = list()
+        for block_uid in blocks_by_uid:
+            if block_uid not in child_uids:
+                root_block_uids.append(block_uid)
+            else:
+                pass
 
         parsed_blocks: List[Block] = list()
         migrated_parameter_count: int = 0
-        main_block_uid: int
-        for main_block_uid in normalized_main_uids:
-            if main_block_uid in normalized_blocks:
-                parsed_block: Block = self._parse_normalized_block(blocks_data=normalized_blocks,
-                                                                    main_block_uid=main_block_uid,
-                                                                    ancestor_uids=set())
-                migrated_parameter_count += self._migrate_legacy_static_api_parameters(
-                    root_block=parsed_block
-                )
-                parsed_blocks.append(parsed_block)
-            else:
-                self._add_warning(msg="Missing main dynamic block while parsing persisted symbolic data",
-                                  block_name="",
-                                  block_uid=main_block_uid,
-                                  field_name="main_block_uids",
-                                  missing_uid=main_block_uid)
+        root_block_uid: int
+        for root_block_uid in root_block_uids:
+            parsed_block: Block = self._parse_block_from_index(blocks_by_uid=blocks_by_uid,
+                                                               block_uid=root_block_uid,
+                                                               ancestor_uids=set())
+            migrated_parameter_count += self._migrate_legacy_static_api_parameters(
+                root_block=parsed_block
+            )
+            parsed_blocks.append(parsed_block)
 
         if migrated_parameter_count > 0:
             self._add_legacy_parameter_migration_info(
@@ -2500,71 +2427,38 @@ class BlockParser:
 
         return parsed_blocks
 
-    def parse_block(self,
-                    blocks_data: Dict[Any, Any] | List[Dict[str, Any]],
-                    main_block_uid: int) -> Block:
-        """
-        Parse one current or historical persisted block tree.
-
-        :param blocks_data: Persisted block collection.
-        :param main_block_uid: Root block UID.
-        :return: Parsed root block.
-        """
-        normalized_blocks: Dict[int, Dict[str, Any]] = normalize_persisted_blocks(blocks_data=blocks_data)
-        normalized_main_uid: int | None = normalize_persisted_block_uid(main_block_uid)
-        if normalized_main_uid is not None and normalized_main_uid in normalized_blocks:
-            parsed_block: Block = self._parse_normalized_block(blocks_data=normalized_blocks,
-                                                                main_block_uid=normalized_main_uid,
-                                                                ancestor_uids=set())
-            migrated_parameter_count: int = self._migrate_legacy_static_api_parameters(
-                root_block=parsed_block
-            )
-            if migrated_parameter_count > 0:
-                self._add_legacy_parameter_migration_info(
-                    migrated_parameter_count=migrated_parameter_count
-                )
-            else:
-                pass
-            return parsed_block
-        else:
-            raise KeyError(f"Block with persisted uid {main_block_uid} was not found")
-
-    def _parse_normalized_block(self,
-                                blocks_data: Dict[int, Dict[str, Any]],
-                                main_block_uid: int,
+    def _parse_block_from_index(self,
+                                blocks_by_uid: Dict[int, Dict[str, Any]],
+                                block_uid: int,
                                 ancestor_uids: set[int]) -> Block:
         """
-        Parse one block from an already normalized persisted block table.
+        Parse one block from the UID index of persisted records.
 
-        :param blocks_data: Flat integer-keyed block table.
-        :param main_block_uid: Block UID to parse.
-        :param ancestor_uids: Ancestors used to reject cyclic legacy child edges.
+        :param blocks_by_uid: Persisted block records indexed by their internal UID.
+        :param block_uid: Block UID to parse.
+        :param ancestor_uids: Ancestors used to reject cyclic child edges.
         :return: Parsed block.
         """
-        existing_block: Block | None = self.block_dict.get(main_block_uid, None)
+        existing_block: Block | None = self.block_dict.get(block_uid, None)
         if existing_block is not None:
             return existing_block
         else:
             pass
 
-        data: Dict[str, Any] = blocks_data[main_block_uid]
+        data: Dict[str, Any] = blocks_by_uid[block_uid]
         active_ancestor_uids: set[int] = set(ancestor_uids)
-        active_ancestor_uids.add(main_block_uid)
+        active_ancestor_uids.add(block_uid)
         block_name: str = data.get("name", "")
         # Model-family labels were introduced after the existing symbolic file
         # format. Missing and explicit null values therefore mean that no
         # custom family was assigned; neither state may prevent an old project
         # from opening.
-        raw_model_family_name: object = data.get("model_family_name", "")
+        raw_model_family_name: PersistedValue = data.get("model_family_name", "")
         if isinstance(raw_model_family_name, str):
             model_family_name: str = raw_model_family_name
         else:
             model_family_name = ""
-        normalized_block_uid: int | None = normalize_persisted_block_uid(data.get("uid", main_block_uid))
-        if normalized_block_uid is not None:
-            block_uid_value: int = normalized_block_uid
-        else:
-            block_uid_value = main_block_uid
+        block_uid_value: int = data["uid"]
 
         # Graph identifiers are local to one block and may be shared across
         # several equation collections. Recursive child parsing creates an
@@ -2580,7 +2474,7 @@ class BlockParser:
             else:
                 pass
 
-        state_eqs = parse_expr_list(lst=data.get("state_eqs", list()),
+        state_eqs = parse_expression_list(lst=data.get("state_eqs", list()),
                                     const_dict=self.var_factory.get_const_dict(),
                                     var_dict=self._var_identity_lookup,
                                     diff_var_dict=self._diff_var_identity_lookup,
@@ -2597,7 +2491,7 @@ class BlockParser:
             else:
                 pass
 
-        algebraic_eqs = parse_expr_list(lst=data.get("algebraic_eqs", list()),
+        algebraic_eqs = parse_expression_list(lst=data.get("algebraic_eqs", list()),
                                         const_dict=self.var_factory.get_const_dict(),
                                         var_dict=self._var_identity_lookup,
                                         diff_var_dict=self._diff_var_identity_lookup,
@@ -2616,7 +2510,7 @@ class BlockParser:
         else:
             diff_vars = list()
 
-        differential_eqs = parse_expr_list(lst=data.get("differential_eqs", list()),
+        differential_eqs = parse_expression_list(lst=data.get("differential_eqs", list()),
                                            const_dict=self.var_factory.get_const_dict(),
                                            var_dict=self._var_identity_lookup,
                                            diff_var_dict=self._diff_var_identity_lookup,
@@ -2659,38 +2553,26 @@ class BlockParser:
                                   field_name="out_vars",
                                   missing_uid=v_uid)
 
-        # Historical files may store child records inline, reference a missing
-        # child from the short-lived pointer format, or contain an accidental
-        # cyclic edge. Keep all valid children and report only the invalid edge.
+        # Resolve the flat child UID table while isolating missing or cyclic
+        # edges so one damaged relationship does not hide the remaining model.
         children: List[Block] = list()
-        child_entry: Any
-        for child_entry in data.get("children", list()):
-            if isinstance(child_entry, dict):
-                child_uid: int | None = normalize_persisted_block_uid(child_entry.get("uid", None))
-            else:
-                child_uid = normalize_persisted_block_uid(child_entry)
-
-            if child_uid is None:
-                self._add_warning(msg="Invalid child dynamic block UID in persisted symbolic data",
-                                  block_name=block_name,
-                                  block_uid=block_uid_value,
-                                  field_name="children",
-                                  missing_uid=None)
-            elif child_uid in active_ancestor_uids:
+        child_uid: int
+        for child_uid in data.get("children", list()):
+            if child_uid in active_ancestor_uids:
                 self._add_warning(msg="Cyclic child dynamic block reference ignored while parsing persisted data",
                                   block_name=block_name,
                                   block_uid=block_uid_value,
                                   field_name="children",
                                   missing_uid=child_uid)
-            elif child_uid not in blocks_data:
+            elif child_uid not in blocks_by_uid:
                 self._add_warning(msg="Missing child dynamic block while parsing persisted symbolic data",
                                   block_name=block_name,
                                   block_uid=block_uid_value,
                                   field_name="children",
                                   missing_uid=child_uid)
             else:
-                child_block: Block = self._parse_normalized_block(blocks_data=blocks_data,
-                                                                  main_block_uid=child_uid,
+                child_block: Block = self._parse_block_from_index(blocks_by_uid=blocks_by_uid,
+                                                                  block_uid=child_uid,
                                                                   ancestor_uids=active_ancestor_uids)
                 children.append(child_block)
 
@@ -2699,7 +2581,7 @@ class BlockParser:
         for entry in data.get("init_eqs", list()):
             var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "init_eqs")
             if var is not None:
-                init_eqs[var] = parse_expr(data=entry["expr"],
+                init_eqs[var] = parse_expression(data=entry["expr"],
                                            const_dict=self.var_factory.get_const_dict(),
                                            var_dict=self._var_identity_lookup,
                                            diff_var_dict=self._diff_var_identity_lookup,
@@ -2714,7 +2596,7 @@ class BlockParser:
                                                             block_uid_value,
                                                             "diff_init_eqs")
             if diff_var_entry is not None:
-                diff_init_eqs[diff_var_entry] = parse_expr(data=entry["expr"],
+                diff_init_eqs[diff_var_entry] = parse_expression(data=entry["expr"],
                                                            const_dict=self.var_factory.get_const_dict(),
                                                            var_dict=self._var_identity_lookup,
                                                            diff_var_dict=self._diff_var_identity_lookup,
@@ -2731,7 +2613,7 @@ class BlockParser:
                 "post_init_seed_eqs",
             )
             if seed_var is not None:
-                post_init_seed_eqs[seed_var] = parse_expr(
+                post_init_seed_eqs[seed_var] = parse_expression(
                     data=entry["expr"],
                     const_dict=self.var_factory.get_const_dict(),
                     var_dict=self._var_identity_lookup,
@@ -2745,7 +2627,7 @@ class BlockParser:
         for entry in data.get("event_dict", list()):
             var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "event_dict")
             if var is not None:
-                event_dict[var] = parse_expr(data=entry["expr"],
+                event_dict[var] = parse_expression(data=entry["expr"],
                                              const_dict=self.var_factory.get_const_dict(),
                                              var_dict=self._var_identity_lookup,
                                              diff_var_dict=self._diff_var_identity_lookup,
@@ -2757,7 +2639,7 @@ class BlockParser:
         for entry in data.get("mode_dict", list()):
             var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "mode_dict")
             if var is not None:
-                mode_dict[var] = parse_expr(data=entry["expr"],
+                mode_dict[var] = parse_expression(data=entry["expr"],
                                             const_dict=self.var_factory.get_const_dict(),
                                             var_dict=self._var_identity_lookup,
                                             diff_var_dict=self._diff_var_identity_lookup,
@@ -2769,7 +2651,7 @@ class BlockParser:
         for entry in data.get("discrete_eqs", list()):
             var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "discrete_eqs")
             if var is not None:
-                discrete_eqs[var] = parse_expr(data=entry["expr"],
+                discrete_eqs[var] = parse_expression(data=entry["expr"],
                                                const_dict=self.var_factory.get_const_dict(),
                                                var_dict=self._var_identity_lookup,
                                                diff_var_dict=self._diff_var_identity_lookup,
@@ -2920,16 +2802,15 @@ class BlockParser:
                 pass
 
         procedural_logic_data: List[ProceduralLogicData] = list()
-        procedural_entry: object
+        procedural_entry: PersistedValue
         for procedural_entry in data.get("procedural_logic", list()):
-            if isinstance(procedural_entry, dict):
-                procedural_logic_data.append(procedural_entry)
-            else:
-                raise TypeError(
-                    "Persisted procedural logic entry must be declarative data"
-                )
+            validated_procedural_entry: ProceduralLogicData = require_declarative_record(
+                value=procedural_entry,
+                context="Persisted procedural logic entry",
+            )
+            procedural_logic_data.append(validated_procedural_entry)
         if len(procedural_logic_data) == 0:
-            procedural_logic_entries: List[ProceduralLogicEntryContract[Expr]] = list()
+            procedural_logic_entries: List[ProceduralLogicBase] = list()
         else:
             if self._procedural_logic_codec is None:
                 raise ValueError(
@@ -2971,84 +2852,50 @@ class BlockParser:
             uid=block_uid_value,
             model_family_name=model_family_name,
         )
-        template_kind: object = data.get("modal_template_kind")
-        template_config: object = data.get("modal_template_config")
-        if template_kind is not None and not isinstance(template_kind, str):
-            raise TypeError("Modal template kind must be a string or null")
-        if template_config is not None and not isinstance(template_config, dict):
-            raise TypeError("Modal template config must be a mapping or null")
-        block.modal_template_kind = template_kind
-        block.modal_template_config = copy.deepcopy(template_config)
+        # Legacy top-level modal keys are validated with the contract's rules and
+        # applied per field after the contract is parsed, only where it is null.
+        template_kind: PersistedValue = data.get("modal_template_kind")
+        template_config: PersistedValue = data.get("modal_template_config")
 
-        dynamic_model_contract_raw: object | None = data.get(
-            "dynamic_model_contract",
-            None,
+        if template_kind is None:
+            legacy_template_kind: str | None = None
+        elif isinstance(template_kind, str):
+            legacy_template_kind = template_kind
+        else:
+            raise TypeError("Modal template kind must be a string or null")
+
+        legacy_template_config: Dict[str, str | int | float | bool | None] | None = read_nullable_modal_template_config(
+            dict((("modal_template_config", template_config),))
         )
+
+        dynamic_model_contract_raw: PersistedRecord | None = data.get("dynamic_model_contract", None)
+
         if dynamic_model_contract_raw is None:
             pass
         else:
-            if isinstance(dynamic_model_contract_raw, dict):
-                normalized_contract_data: Dict[str, object] = dict()
-                contract_key: object
-                contract_value: object
-                for contract_key, contract_value in dynamic_model_contract_raw.items():
-                    if isinstance(contract_key, str):
-                        normalized_contract_data[contract_key] = contract_value
-                    else:
-                        raise TypeError(
-                            "Dynamic-model contract keys must be strings"
-                        )
-
-                override_expression_data_raw: object | None = (
-                    normalized_contract_data.get(
-                        "explicit_init_override_init_exprs",
-                        dict(),
-                    )
-                )
-                normalized_contract_data[
-                    "explicit_init_override_init_exprs"
-                ] = dict()
-                parsed_contract: DynamicModelContract = (
-                    dynamic_model_contract_from_data(normalized_contract_data)
-                )
-                if isinstance(override_expression_data_raw, dict):
-                    override_name_raw: object
-                    override_expression_raw: object
-                    for override_name_raw, override_expression_raw in (
-                            override_expression_data_raw.items()
-                    ):
-                        if (
-                                isinstance(override_name_raw, str)
-                                and isinstance(override_expression_raw, dict)
-                        ):
-                            parsed_contract.explicit_init_override_init_exprs[
-                                override_name_raw
-                            ] = parse_expr(
-                                data=override_expression_raw,
-                                const_dict=self.var_factory.get_const_dict(),
-                                var_dict=self._var_identity_lookup,
-                                diff_var_dict=self._diff_var_identity_lookup,
-                                composite_expressions=composite_expressions,
-                            )
-                        else:
-                            raise TypeError(
-                                "Dynamic-model override expressions must be declarative mappings"
-                            )
-                else:
-                    raise TypeError(
-                        "Dynamic-model override expressions must be a mapping"
-                    )
-                block.dynamic_model_contract = parsed_contract
-                # The typed contract takes precedence over legacy top-level metadata.
-                block.modal_template_kind = parsed_contract.modal_template_kind
-                block.modal_template_config = parsed_contract.modal_template_config
-                validate_dynamic_model_contract(block)
+            parsed_contract: DynamicModelContract = dynamic_model_contract_from_data(dynamic_model_contract_raw)
+            block.dynamic_model_contract = parsed_contract
+            # Legacy mode identities become canonical references after all parameters exist.
+            legacy_mode_uid: PersistedValue = dynamic_model_contract_raw.get(
+                "emt_finite_reciprocal_source_mode_var_uid", None,
+            )
+            if isinstance(legacy_mode_uid, int) and not isinstance(legacy_mode_uid, bool):
+                migrate_legacy_thevenin_mode_reference(block=block, mode_uid=legacy_mode_uid)
             else:
-                raise TypeError("Dynamic-model contract must be declarative data")
+                pass
+
+        if block.dynamic_model_contract.modal_template_kind is None:
+            block.dynamic_model_contract.modal_template_kind = legacy_template_kind
+        else:
+            pass
+        if block.dynamic_model_contract.modal_template_config is None:
+            block.dynamic_model_contract.modal_template_config = legacy_template_config
+        else:
+            pass
 
         # Children have already been parsed, so both current stable variable
         # UIDs and legacy positional port references can now be resolved.
-        persisted_intent: object
+        persisted_intent: PersistedValue
         for persisted_intent in data.get("connection_intents", list()):
             if isinstance(persisted_intent, dict):
                 parsed_intent: DynamicConnectionIntent | None = dynamic_connection_intent_from_dict(
@@ -3079,7 +2926,7 @@ class BlockParser:
         normalize_dynamic_connection_intents(block=block)
         normalize_event_parameter_initialization(block=block)
 
-        diagram_data = data.get("diagram", None)
+        diagram_data: Dict[str, Any] | None = data.get("diagram", None)
         if diagram_data is not None:
             block.diagram.parse(diagram_data)
 
@@ -3459,7 +3306,7 @@ def _remember_condition_vars(
         _remember_expr_vars(condition, vars_by_non_mutable_uid)
 
 
-def _collect_block_vars_by_non_mutable_uid(
+def collect_block_vars_by_non_mutable_uid(
         block: Block,
         vars_by_non_mutable_uid: Dict[int, Var] | None = None,
 ) -> Dict[int, Var]:
@@ -3524,7 +3371,7 @@ def _collect_block_vars_by_non_mutable_uid(
 
     child: Block
     for child in block.children:
-        _collect_block_vars_by_non_mutable_uid(child, result)
+        collect_block_vars_by_non_mutable_uid(child, result)
 
     return result
 
@@ -3560,7 +3407,7 @@ def _collect_owned_block_vars_by_non_mutable_uid(
         for owned_var in var_list:
             _remember_var(owned_var, result)
 
-    owned_mapping: Mapping[Var, object]
+    owned_mapping: Mapping[Var, Expr | Comparison]
     for owned_mapping in (
             block.parameters,
             block.init_values,
@@ -3717,7 +3564,7 @@ def _duplicate_block(block: Block,
     :param old_to_new_block_uid: Source-to-clone block UID map shared across the block tree.
     :return: Duplicated block.
     """
-    source_vars_by_non_mutable_uid: Dict[int, Var] = _collect_block_vars_by_non_mutable_uid(block)
+    source_vars_by_non_mutable_uid: Dict[int, Var] = collect_block_vars_by_non_mutable_uid(block)
     owned_vars_by_non_mutable_uid: Dict[int, Var] = _collect_owned_block_vars_by_non_mutable_uid(block)
 
     source_non_mutable_uid: int
@@ -3903,7 +3750,7 @@ def _duplicate_block(block: Block,
             source_vars_by_non_mutable_uid,
             source_non_mutable_uid_to_new_var,
         )
-        new_procedural_logic: List[ProceduralLogicEntryContract[Expr]] = list(
+        new_procedural_logic: List[ProceduralLogicBase] = list(
             entry.remap_with_structural_vars(
                 var_mapping=procedural_var_mapping,
                 structural_var_mapping=source_non_mutable_uid_to_new_var,
@@ -3940,8 +3787,6 @@ def _duplicate_block(block: Block,
         name=block.name,
         model_family_name=block.model_family_name,
     )
-    new_block.modal_template_kind = block.modal_template_kind
-    new_block.modal_template_config = copy.deepcopy(block.modal_template_config)
     new_block.jmarti_fit_bundle = copy.deepcopy(block.jmarti_fit_bundle)
 
     # Intent targets use stable block and variable identities. Rebuild both
@@ -4002,121 +3847,11 @@ def _duplicate_block(block: Block,
     normalize_dynamic_connection_intents(block=new_block)
     normalize_event_parameter_initialization(block=new_block)
 
-    # Runtime identity is part of the declared Block contract. Copy every
-    # scalar declaration explicitly, then translate symbolic UIDs through the
-    # same map that owns the duplicated variables and expressions.
+    # Template selections are independent metadata; symbolic mode references
+    # have already been translated with the external mapping above.
     new_block.dynamic_model_contract = copy.deepcopy(
         block.dynamic_model_contract
     )
-    source_contract: DynamicModelContract = block.dynamic_model_contract
-    target_contract: DynamicModelContract = new_block.dynamic_model_contract
-
-    target_contract.dgs_elmsym_rotor_angle_var_uid = _remap_optional_duplicate_uid(
-        source_contract.dgs_elmsym_rotor_angle_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.dgs_elmsym_speed_var_uid = _remap_optional_duplicate_uid(
-        source_contract.dgs_elmsym_speed_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.dgs_elmsym_angular_frequency_var_uid = _remap_optional_duplicate_uid(
-        source_contract.dgs_elmsym_angular_frequency_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.dgs_elmsym_rated_field_voltage_var_uid = _remap_optional_duplicate_uid(
-        source_contract.dgs_elmsym_rated_field_voltage_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.dgs_elmsym_excitation_gain_var_uid = _remap_optional_duplicate_uid(
-        source_contract.dgs_elmsym_excitation_gain_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.dgs_elmsym_active_base_factor_var_uid = _remap_optional_duplicate_uid(
-        source_contract.dgs_elmsym_active_base_factor_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.dgs_elmsym_reference_speed_var_uid = _remap_optional_duplicate_uid(
-        source_contract.dgs_elmsym_reference_speed_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.rms_conduction_status_var_uid = _remap_optional_duplicate_uid(
-        source_contract.rms_conduction_status_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.rms_topology_constraint_status_var_uid = _remap_optional_duplicate_uid(
-        source_contract.rms_topology_constraint_status_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    target_contract.dgs_elmsvs_remote_voltage_var_uid = _remap_optional_duplicate_uid(
-        source_contract.dgs_elmsvs_remote_voltage_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-    # An instance must refer to its own mode, rather than the provider's UID.
-    target_contract.emt_finite_reciprocal_source_mode_var_uid = _remap_optional_duplicate_uid(
-        source_contract.emt_finite_reciprocal_source_mode_var_uid,
-        source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var,
-    )
-
-    target_contract.dgs_explicit_initialization_uids = set(
-        _remap_duplicate_uids(
-            source_uids=source_contract.dgs_explicit_initialization_uids,
-            source_vars_by_non_mutable_uid=source_vars_by_non_mutable_uid,
-            source_non_mutable_uid_to_new_var=source_non_mutable_uid_to_new_var,
-        )
-    )
-    target_contract.runtime_equipment_shell_sync_var_uids = _remap_duplicate_uids(
-        source_uids=source_contract.runtime_equipment_shell_sync_var_uids,
-        source_vars_by_non_mutable_uid=source_vars_by_non_mutable_uid,
-        source_non_mutable_uid_to_new_var=source_non_mutable_uid_to_new_var,
-    )
-    source_measurement_point: RmsPhysicalMeasurementPoint | None = (
-        source_contract.rms_physical_measurement_point
-    )
-    if source_measurement_point is None:
-        target_contract.rms_physical_measurement_point = None
-    else:
-        remapped_measurement_uids: List[int] = _remap_duplicate_uids(
-            source_uids=source_measurement_point.get_output_var_uids(),
-            source_vars_by_non_mutable_uid=source_vars_by_non_mutable_uid,
-            source_non_mutable_uid_to_new_var=source_non_mutable_uid_to_new_var,
-        )
-        target_contract.rms_physical_measurement_point = (
-            RmsPhysicalMeasurementPoint(
-                source_fid=source_measurement_point.get_source_fid(),
-                target_fid=source_measurement_point.get_target_fid(),
-                terminal_side=source_measurement_point.get_terminal_side(),
-                meter_kind=source_measurement_point.get_meter_kind(),
-                output_signal_names=(
-                    source_measurement_point.get_output_signal_names()
-                ),
-                output_var_uids=tuple(remapped_measurement_uids),
-            )
-        )
-    target_contract.explicit_init_override_init_exprs = dict(
-        (
-            variable_name,
-            duplicate_expr(
-                var_factory,
-                old_to_new_const,
-                source_non_mutable_uid_to_new_var,
-                source_expression,
-            ),
-        )
-        for variable_name, source_expression
-        in source_contract.explicit_init_override_init_exprs.items()
-    )
-
     return new_block
 
 
@@ -4148,8 +3883,6 @@ def _copy_editor_block_identity(
     duplicated_block.connection_intents = copy.deepcopy(source_block.connection_intents)
     duplicated_block.diagram = copy.deepcopy(source_block.diagram)
     duplicated_block.dynamic_model_contract = copy.deepcopy(source_block.dynamic_model_contract)
-    duplicated_block._modal_template_kind = copy.deepcopy(source_block._modal_template_kind)
-    duplicated_block._modal_template_config = copy.deepcopy(source_block._modal_template_config)
     duplicated_block._jmarti_fit_bundle = copy.deepcopy(source_block._jmarti_fit_bundle)
     duplicated_block._jmarti_runtime_data = copy.deepcopy(source_block._jmarti_runtime_data)
 
@@ -4251,8 +3984,6 @@ def _collect_block_consts_by_uid(block: Block) -> Dict[int, Const]:
             _remember_expression_consts(mapped_expression, consts_by_uid)
         for condition in current_block.boolean_guards.values():
             _remember_expression_consts(condition, consts_by_uid)
-        for expression in current_block.dynamic_model_contract.explicit_init_override_init_exprs.values():
-            _remember_expression_consts(expression, consts_by_uid)
 
     return consts_by_uid
 
@@ -4270,7 +4001,7 @@ def _duplicate_block_uid(
     :param source_non_mutable_uid_to_new_var: Editor variables keyed by stable identity.
     :return: Independent editor block preserving persistent identifiers.
     """
-    source_vars_by_non_mutable_uid: Dict[int, Var] = _collect_block_vars_by_non_mutable_uid(block)
+    source_vars_by_non_mutable_uid: Dict[int, Var] = collect_block_vars_by_non_mutable_uid(block)
     source_consts_by_uid: Dict[int, Const] = _collect_block_consts_by_uid(block)
     source_uid_to_new_const: Dict[int, Const] = dict()
     source_var: Var
@@ -4308,7 +4039,7 @@ def _duplicate_block_uid(
     return duplicated_block
 
 
-def duplicate_block(block: Block, var_factory: VarFactory | None,
+def duplicate_block(block: Block, var_factory: VarFactory,
                     preserve_external_network_connections: bool = False) -> Block:
     """
     Create a duplicate of this block with new variable UIDs.
@@ -4323,104 +4054,92 @@ def duplicate_block(block: Block, var_factory: VarFactory | None,
         Editor/isolated copies leave this disabled.
     :return: A new Block with duplicated variables and equations.
     """
-    if var_factory is None:
-        raise TypeError("duplicate_block: var_factory cannot be None")
+    # Freeze the existing connection graph before allocating cloned variables.
+    # Reconnecting the duplicated variables modifies this same registry, so the
+    # traversal must use an immutable view of the original directed edges.
+    original_connections: List[tuple[int, int]] = list()
+    incoming_non_mutable_uid: int
+    connections: List[Connection]
+    connection: Connection
+    for incoming_non_mutable_uid, connections in var_factory.get_connections_dict().items():
+        for connection in connections:
+            original_connections.append((
+                incoming_non_mutable_uid,
+                connection.non_mutable_uid,
+            ))
+
+    # Only structurally owned variables have a real homologue in the new block.
+    # Expression-only external references can occur in the shared duplication map,
+    # but must never cause a clone to reconnect to an object from the source model.
+    owned_source_vars: Dict[int, Var] = _collect_owned_block_vars_by_non_mutable_uid(block)
+    external_source_vars: Dict[int, Var] = dict()
+    if preserve_external_network_connections:
+        external_source_vars = dict((variable.non_mutable_uid, variable)
+                                    for variable in var_factory.get_vars_dict().values()
+                                    if variable.non_mutable_uid not in owned_source_vars)
     else:
-        # Freeze the existing connection graph before allocating cloned variables.
-        # Reconnecting the duplicated variables modifies this same registry, so the
-        # traversal must use an immutable view of the original directed edges.
-        original_connections: List[tuple[int, int]] = list()
-        incoming_non_mutable_uid: int
-        connections: List[Connection]
-        connection: Connection
-        for incoming_non_mutable_uid, connections in var_factory.get_connections_dict().items():
-            for connection in connections:
-                original_connections.append((
-                    incoming_non_mutable_uid,
-                    connection.non_mutable_uid,
-                ))
+        pass
 
-        # Only structurally owned variables have a real homologue in the new block.
-        # Expression-only external references can occur in the shared duplication map,
-        # but must never cause a clone to reconnect to an object from the source model.
-        owned_source_vars: Dict[int, Var] = _collect_owned_block_vars_by_non_mutable_uid(block)
-        external_source_vars: Dict[int, Var] = dict()
-        if preserve_external_network_connections:
-            external_source_vars = dict((variable.non_mutable_uid,variable)
-                for variable in var_factory.get_vars_dict().values()
-                if variable.non_mutable_uid not in owned_source_vars)
-        else:
-            pass
+    source_non_mutable_uid_to_new_var: Dict[int, Var] = dict()
+    old_to_new_const: Dict[int, Const] = dict()
+    old_to_new_block_uid: Dict[int, int] = dict()
+    duplicated_block: Block = _duplicate_block(
+        block=block,
+        var_factory=var_factory,
+        source_non_mutable_uid_to_new_var=source_non_mutable_uid_to_new_var,
+        old_to_new_const=old_to_new_const,
+        old_to_new_block_uid=old_to_new_block_uid,
 
-        # Every child owns an independent typed contract. Validate each local
-        # owner before cloning so an invalid descendant cannot be hidden by a
-        # structurally valid root contract.
-        source_block: Block
-        for source_block in block.get_all_blocks():
-            validate_dynamic_model_contract(source_block)
-        else:
-            pass
+    )
 
-        source_non_mutable_uid_to_new_var: Dict[int, Var] = dict()
-        duplicated_block: Block = _duplicate_block(
-            block=block,
-            var_factory=var_factory,
-            source_non_mutable_uid_to_new_var=source_non_mutable_uid_to_new_var,
-            old_to_new_const=dict(),
-            old_to_new_block_uid=dict(),
-        )
-
-        # Restore every connection whose source and substituted target both belong
-        # to the duplicated tree. The registry key is the incoming variable that
-        # remains intact; each Connection identifies the variable whose UID changes.
-        substituted_non_mutable_uid: int
-        cloned_incoming_var: Var | None
-        cloned_var_to_substitute: Var | None
-        for incoming_non_mutable_uid, substituted_non_mutable_uid in original_connections:
-            if (incoming_non_mutable_uid in owned_source_vars
-                    and substituted_non_mutable_uid in owned_source_vars):
-                cloned_incoming_var = source_non_mutable_uid_to_new_var.get(
-                    incoming_non_mutable_uid,
-                    None,
-                )
-                cloned_var_to_substitute = source_non_mutable_uid_to_new_var.get(
-                    substituted_non_mutable_uid,
-                    None,
-                )
-                if cloned_incoming_var is not None and cloned_var_to_substitute is not None:
-                    if cloned_incoming_var.network_conn:
-                        var_factory.add_network_connection(
-                            var_to_subs=cloned_var_to_substitute,
-                            incoming_var=cloned_incoming_var,
-                        )
-                    else:
-                        var_factory.add_connection(
-                            var_to_subs=cloned_var_to_substitute,
-                            incoming_var=cloned_incoming_var,
-                        )
+    # Restore every connection whose source and substituted target both belong
+    # to the duplicated tree. The registry key is the incoming variable that
+    # remains intact; each Connection identifies the variable whose UID changes.
+    substituted_non_mutable_uid: int
+    cloned_incoming_var: Var | None
+    cloned_var_to_substitute: Var | None
+    for incoming_non_mutable_uid, substituted_non_mutable_uid in original_connections:
+        if (incoming_non_mutable_uid in owned_source_vars
+                and substituted_non_mutable_uid in owned_source_vars):
+            cloned_incoming_var = source_non_mutable_uid_to_new_var.get(
+                incoming_non_mutable_uid,
+                None,
+            )
+            cloned_var_to_substitute = source_non_mutable_uid_to_new_var.get(
+                substituted_non_mutable_uid,
+                None,
+            )
+            if cloned_incoming_var is not None and cloned_var_to_substitute is not None:
+                if cloned_incoming_var.network_conn:
+                    var_factory.add_network_connection(
+                        var_to_subs=cloned_var_to_substitute,
+                        incoming_var=cloned_incoming_var,
+                    )
                 else:
-                    pass
-            elif preserve_external_network_connections and substituted_non_mutable_uid in owned_source_vars:
-                external_source: Var | None = external_source_vars.get(incoming_non_mutable_uid,None)
-                cloned_external_target: Var | None = source_non_mutable_uid_to_new_var.get(substituted_non_mutable_uid,None)
-                # Only explicit network edges may cross a runtime instance's
-                # structural boundary. Ordinary expression references stay isolated.
-                if (external_source is not None and cloned_external_target is not None
-                        and owned_source_vars[substituted_non_mutable_uid].network_conn):
-                    var_factory.add_network_connection(cloned_external_target,external_source)
-                else:
-                    pass
+                    var_factory.add_connection(
+                        var_to_subs=cloned_var_to_substitute,
+                        incoming_var=cloned_incoming_var,
+                    )
             else:
                 pass
-
-        # Remapped declarations must remain local to the duplicated owner;
-        # checking the root alone would not inspect meter children.
-        duplicated_candidate: Block
-        for duplicated_candidate in duplicated_block.get_all_blocks():
-            validate_dynamic_model_contract(duplicated_candidate)
+        elif preserve_external_network_connections and substituted_non_mutable_uid in owned_source_vars:
+            external_source: Var | None = external_source_vars.get(incoming_non_mutable_uid, None)
+            cloned_external_target: Var | None = source_non_mutable_uid_to_new_var.get(substituted_non_mutable_uid,
+                                                                                       None)
+            # Only explicit network edges may cross a runtime instance's
+            # structural boundary. Ordinary expression references stay isolated.
+            if (external_source is not None and cloned_external_target is not None
+                    and owned_source_vars[substituted_non_mutable_uid].network_conn):
+                var_factory.add_network_connection(cloned_external_target, external_source)
+            else:
+                pass
         else:
             pass
-        return duplicated_block
+
+    # Remapped declarations must remain local to the duplicated owner;
+    # checking the root alone would not inspect meter children.
+
+    return duplicated_block
 
 
 def duplicate_block_across_factories(
@@ -4462,11 +4181,7 @@ def duplicate_block_across_factories(
             pass
 
     # Validate every local contract before allocating any destination objects.
-    source_block: Block
-    for source_block in block.get_all_blocks():
-        validate_dynamic_model_contract(source_block)
-    else:
-        pass
+
 
     # The established structural duplicator creates fresh variables, constants,
     # expressions, block identities, and factory-local shared references.
@@ -4509,11 +4224,7 @@ def duplicate_block_across_factories(
             pass
 
     # Validate remapped contracts on every duplicated owner before publication.
-    duplicated_candidate: Block
-    for duplicated_candidate in duplicated_block.get_all_blocks():
-        validate_dynamic_model_contract(duplicated_candidate)
-    else:
-        pass
+
     return duplicated_block
 
 
@@ -4543,9 +4254,6 @@ def duplicate_block_vars_uid(
         raise ValueError("duplicate_block_vars_uid requires an empty target VarFactory")
     else:
         pass
-
-    for source_block in block.get_all_blocks():
-        validate_dynamic_model_contract(source_block)
 
     duplicated_block: Block = _duplicate_block_uid(
         block=block,
@@ -4581,8 +4289,6 @@ def duplicate_block_vars_uid(
         else:
             pass
 
-    for source_block in duplicated_block.get_all_blocks():
-        validate_dynamic_model_contract(source_block)
 
     return duplicated_block
 
@@ -4606,14 +4312,14 @@ def compare_blocks(
     """
     # TODO: do not use dictionaries and compare directly using the block information
     saver1 = BlockSaver(var_factory1)
-    saver1.save_block(block1, main=False)
+    saver1.save_block(block1)
     const_save1 = saver1.get_const_to_save()
     vars_save1 = saver1.get_vars_to_save()
     diff_vars_save1 = saver1.get_diff_vars_to_save()
     blocks1 = saver1.get_blocks()
 
     saver2 = BlockSaver(var_factory2)
-    saver2.save_block(block2, main=False)
+    saver2.save_block(block2)
     const_save2 = saver2.get_const_to_save()
     vars_save2 = saver2.get_vars_to_save()
     diff_vars_save2 = saver2.get_diff_vars_to_save()

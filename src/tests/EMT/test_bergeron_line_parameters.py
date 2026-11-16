@@ -1,10 +1,14 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Physical-unit checks for Bergeron line parameters."""
 from types import SimpleNamespace
 
 import numpy as np
 import pytest
 
-from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import (
+from VeraGridEngine.Templates.Emt.line.bergeron_line_emt_template import (
     _build_line_parameter_matrices_from_template_or_balanced_data,
 )
 

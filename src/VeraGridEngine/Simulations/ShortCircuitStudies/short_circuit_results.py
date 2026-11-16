@@ -232,6 +232,7 @@ class ShortCircuitResults(ResultsTemplate):
                                                               ResultTypes.BusVoltageModule1,
                                                               ResultTypes.BusVoltageModule2,
 
+                                                              ResultTypes.BusVoltageModuleABC,
                                                               ResultTypes.BusVoltageModuleA,
                                                               ResultTypes.BusVoltageModuleB,
                                                               ResultTypes.BusVoltageModuleC,
@@ -1158,6 +1159,20 @@ class ShortCircuitResults(ResultsTemplate):
                                 title=title,
                                 ylabel=y_label,
                                 units=y_label)
+
+        elif result_type == ResultTypes.BusVoltageModuleABC:
+            # Keep the three phases together for each short-circuit event.
+            y = np.abs(np.stack((self.voltageA, self.voltageB, self.voltageC), axis=2))
+            columns = np.array([f'{name}: {phase}' for name in self.sc_names for phase in 'ABC'])
+
+            return ResultsTable(data=y.reshape(len(self.bus_names), 3 * len(self.sc_names)),
+                                index=self.bus_names,
+                                idx_device_type=DeviceType.BusDevice,
+                                columns=columns,
+                                cols_device_type=DeviceType.NoDevice,
+                                title=title,
+                                ylabel='(p.u.)',
+                                units='(p.u.)')
 
         elif result_type == ResultTypes.BusVoltageModuleA:
             labels = self.bus_names

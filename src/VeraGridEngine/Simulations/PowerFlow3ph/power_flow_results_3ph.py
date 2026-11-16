@@ -235,6 +235,7 @@ class PowerFlowResults3Ph(ResultsTemplate):
             name='Power flow',
             available_results={
                 ResultTypes.BusResults: [
+                    ResultTypes.BusVoltageModuleABC,
                     ResultTypes.BusVoltageModuleA,
                     ResultTypes.BusVoltageModuleB,
                     ResultTypes.BusVoltageModuleC,
@@ -880,7 +881,18 @@ class PowerFlowResults3Ph(ResultsTemplate):
         :return: ResultsTable instance
         """
 
-        if result_type == ResultTypes.BusVoltageModuleA:
+        if result_type == ResultTypes.BusVoltageModuleABC:
+
+            return ResultsTable(data=np.abs(np.column_stack((self.voltage_A, self.voltage_B, self.voltage_C))),
+                                index=self.bus_names,
+                                idx_device_type=DeviceType.BusDevice,
+                                columns=np.array(['A', 'B', 'C']),
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(p.u.)',
+                                units='(p.u.)')
+
+        elif result_type == ResultTypes.BusVoltageModuleA:
 
             return ResultsTable(data=np.abs(self.voltage_A),
                                 index=self.bus_names,

@@ -1,20 +1,27 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Exercise actual source library and structural-property recovery owners."""
+
 
 import pytest
 
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import (
     LibraryDeviceTemplateSpec, build_dynamic_library_device_template, get_dynamic_library_device_specs,
 )
-from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_utilities import (
+from VeraGridEngine.Templates.device_template_materialization import (
     create_default_template_builder, get_blocktype2template_builder_dict, initialize_template_builder_from_block,
 )
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import TheveninSourceEmtTemplate
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import TheveninSourceEmtTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
-from VeraGridEngine.enumerations import BlockType, DynamicSimulationMode, TheveninSourceVoltageMode
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, BlockType, DynamicSimulationMode, TheveninSourceVoltageMode
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def test_thevenin_library_uses_registered_builder() -> None:
@@ -46,7 +53,7 @@ def test_thevenin_properties_recover_selected_mode(mode: TheveninSourceVoltageMo
     builder: TheveninSourceEmtTemplate = TheveninSourceEmtTemplate(VarFactory())
     builder.params_dict["source_voltage_mode"].value = mode
     original: Block = builder.eval().block
-    restored: Block = Block.parse(original.to_dict())
+    restored: Block = roundtrip_block(original)
     recovered: TheveninSourceEmtTemplate = TheveninSourceEmtTemplate(VarFactory())
     initialize_template_builder_from_block(recovered, restored, BlockType.EMT_THEVENIN)
     assert recovered.get_value("source_voltage_mode") == mode
@@ -75,7 +82,7 @@ def test_thevenin_legacy_properties_default_to_balanced(marker_value: float | No
         for variable, expression in tuple(child.parameters.items()):
             if variable.name == "source_voltage_mode":
                 # Legacy models predate the optional source-capability declaration.
-                child.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid = None
+                child.external_mapping.pop(VarPowerFlowReferenceType.MODE_MARKER, None)
                 if marker_value is None:
                     del child.parameters[variable]
                 else:

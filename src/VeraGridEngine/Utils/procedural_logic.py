@@ -14,12 +14,7 @@ import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory, find_var_by_persisted_identity
 from VeraGridEngine.Utils.emt_boundary_update_wrapper import BoundaryUpdateWrapper
-from VeraGridEngine.Utils.procedural_logic_contract import (
-    ProceduralLogicCodecContract,
-    ProceduralLogicData,
-    ProceduralLogicEntryContract,
-    ManufacturerNativeRuntimeSessionProtocol,
-)
+from VeraGridEngine.Utils.procedural_logic_contract import ProceduralLogicData, ManufacturerNativeRuntimeSessionProtocol
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.jit_compiler import ProceduralExpressionCompiler
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var
@@ -332,6 +327,17 @@ def _remap_var_uid(var_uid: int | None, var_mapping: VarRemap) -> int | None:
     return var_uid
 
 
+def _resolve_procedural_output_var(problem: ProceduralProblem, var_uid: int) -> Var:
+    """Resolve a procedural output exclusively by its canonical symbolic UID."""
+    output_var: Var | None = _find_var_by_uid_optional(
+        block=problem.sys_block,
+        var_uid=var_uid,
+    )
+    if output_var is None:
+        raise KeyError(f"Procedural output UID '{var_uid}' was not found")
+    return output_var
+
+
 def _get_expr_like_field(data: ProceduralLogicData, key: str) -> ProceduralLogicData:
     """
     Return one serialized procedural-expression field as a dictionary.
@@ -606,7 +612,7 @@ class ProceduralNumericEvaluator:
         )
 
 
-class ProceduralLogicBase(ProceduralLogicEntryContract[Expr]):
+class ProceduralLogicBase:
     """
     Base class for procedural logic objects attached to symbolic blocks.
 
@@ -1228,12 +1234,14 @@ class FixedSampleLogic(ProceduralLogicBase):
     Retain the initial truth value of one condition in a runtime mode variable.
     """
 
-    __slots__ = ["output_var_name", "condition_expr", "output_idx", "initialized"]
+    __slots__ = ["output_var_name", "output_var_uid", "condition_expr", "output_idx", "initialized"]
     logic_tpe = ProceduralLogicType.FixedSample
 
-    def __init__(self, output_var_name: str, condition_expr: Expr | Comparison, name: str = "") -> None:
+    def __init__(self, output_var_name: str, condition_expr: Expr | Comparison, name: str = "",
+                 output_var_uid: int | None = None) -> None:
         super().__init__(name=name)
         self.output_var_name = output_var_name
+        self.output_var_uid = output_var_uid
         self.condition_expr = condition_expr
         self.output_idx = -1
         self.initialized = False
@@ -1248,7 +1256,10 @@ class FixedSampleLogic(ProceduralLogicBase):
         :return: None
         """
         super().bind(problem, expression_mode)
-        output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            output_var = _resolve_procedural_output_var(problem, self.output_var_uid)
         self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
         self._register_output_parameter_index(self.output_idx)
         self._prepare_numeric_expression(self.condition_expr)
@@ -1281,6 +1292,7 @@ class FixedSampleLogic(ProceduralLogicBase):
             output_var_name=name_mapping.get(self.output_var_name, self.output_var_name),
             condition_expr=_subs_expr_like(self.condition_expr, var_mapping),
             name=self.name,
+            output_var_uid=_remap_var_uid(self.output_var_uid, var_mapping),
         )
 
 
@@ -1383,6 +1395,571 @@ class SampledValueLogic(ProceduralLogicBase):
         )
 
 
+class PeriodicSampleLogic(ProceduralLogicBase):
+    """Hold one sampled expression at a fixed positive interval."""
+
+    __slots__ = [
+        'output_var_name', 'output_var_uid', 'source_expr', 'sample_period',
+        'output_idx', 'source_eval', 'sample_origin', 'sample_index',
+        'next_sample_time', 'last_sample_time',
+    ]
+    logic_tpe = ProceduralLogicType.PeriodicSample
+
+    def __init__(
+            self,
+            output_var_name: str,
+            source_expr: Expr | Comparison,
+            sample_period: float,
+            name: str = '',
+            output_var_uid: int | None = None,
+    ) -> None:
+        """Create one periodic sample-and-hold declaration.
+
+        :param output_var_name: Runtime event-parameter output name.
+        :param source_expr: Signal sampled at each clock boundary.
+        :param sample_period: Positive interval between samples, in seconds.
+        :param name: Optional procedural entry name.
+        :param output_var_uid: Stable output UID when the template provides it.
+        :raises ValueError: The sample interval is not positive and finite.
+        """
+        super().__init__(name=name)
+        if not math.isfinite(sample_period) or sample_period <= 0.0:
+            raise ValueError('Periodic sample interval must be finite and positive')
+        else:
+            pass
+        self.output_var_name: str = output_var_name
+        self.output_var_uid: int | None = output_var_uid
+        self.source_expr: Expr | Comparison = source_expr
+        self.sample_period: float = sample_period
+        self.output_idx: int = -1
+        self.source_eval: Callable[..., float] | None = None
+        self.sample_origin: float | None = None
+        self.sample_index: int = 1
+        self.next_sample_time: float | None = None
+        self.last_sample_time: float | None = None
+
+    def bind(
+            self,
+            problem: ProceduralProblem,
+            expression_mode: ProceduralExpressionMode = ProceduralExpressionMode.Compiled,
+    ) -> None:
+        """Bind the output and source evaluator to the compiled RMS problem.
+
+        :param problem: Runtime problem that owns this sample-and-hold.
+        :param expression_mode: Compiled or interpreted expression binding.
+        :return: None.
+        """
+        super().bind(problem, expression_mode)
+        output_var: Var
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            resolved_output: Var | None = _find_var_by_uid_optional(
+                block=problem.sys_block,
+                var_uid=self.output_var_uid,
+            )
+            if resolved_output is None:
+                raise KeyError(f"Periodic sample output UID '{self.output_var_uid}' was not found")
+            else:
+                output_var = resolved_output
+        self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
+        self._register_output_parameter_index(self.output_idx)
+        self.source_eval = self._build_numeric_evaluator(self.source_expr)
+        self.sample_origin = None
+        self.sample_index = 1
+        self.next_sample_time = None
+        self.last_sample_time = None
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        """Update the held output only at its initial or scheduled sample.
+
+        :param t: Current accepted solver time.
+        :param x: Accepted state vector.
+        :param params: Mutable runtime parameter vector.
+        :return: None.
+        """
+        sample_time: float = float(t)
+        if self.source_eval is None:
+            self.source_eval = self._build_numeric_evaluator(self.source_expr)
+        else:
+            pass
+        if self.sample_origin is None:
+            self.sample_origin = sample_time
+        else:
+            pass
+        if self.last_sample_time is None:
+            self.last_sample_time = sample_time
+            if self.next_sample_time is None:
+                self.next_sample_time = self.sample_origin + self.sample_period
+            else:
+                pass
+            params[self.output_idx] = self.source_eval(sample_time, x, params)
+        elif self.next_sample_time is not None and sample_time >= self.next_sample_time - 1.0e-12:
+            params[self.output_idx] = self.source_eval(sample_time, x, params)
+            self.last_sample_time = sample_time
+            self.sample_index = int(math.floor(
+                (sample_time - self.sample_origin) / self.sample_period + 1.0e-12,
+            )) + 1
+            self.next_sample_time = self.sample_origin + self.sample_index * self.sample_period
+        else:
+            pass
+
+    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
+        """Schedule the next exact sample boundary inside the requested step.
+
+        :param t_prev: Previous accepted solver time.
+        :param t_target: Nominal target time.
+        :return: Next sample time when it lies inside the interval.
+        """
+        if self.next_sample_time is None:
+            self.sample_origin = float(t_prev)
+            self.sample_index = 1
+            self.next_sample_time = self.sample_origin + self.sample_period
+        else:
+            pass
+        if t_prev < self.next_sample_time <= t_target:
+            return self.next_sample_time
+        else:
+            return None
+
+    def remap(self, var_mapping: VarRemap) -> 'PeriodicSampleLogic':
+        """Clone the sample-and-hold under a symbolic variable mapping.
+
+        :param var_mapping: Old-to-new symbolic variable relationships.
+        :return: Remapped periodic sample entry.
+        """
+        name_mapping: Dict[str, str] = _build_name_mapping(var_mapping)
+        return PeriodicSampleLogic(
+            output_var_name=name_mapping.get(self.output_var_name, self.output_var_name),
+            source_expr=_subs_expr_like(self.source_expr, var_mapping),
+            sample_period=self.sample_period,
+            name=self.name,
+            output_var_uid=_remap_var_uid(self.output_var_uid, var_mapping),
+        )
+
+
+class SampledPiLimiterLogic(ProceduralLogicBase):
+    """Update a sampled PI command with a bounded change at fixed intervals."""
+
+    __slots__ = [
+        'output_var_name', 'output_var_uid', 'error_expr', 'sample_period',
+        'proportional_gain', 'integral_time', 'maximum_change', 'output_idx',
+        'error_eval', 'sample_origin', 'sample_index', 'next_sample_time',
+        'last_sample_time', 'previous_error', 'integral_value',
+    ]
+    logic_tpe = ProceduralLogicType.SampledPiLimiter
+
+    def __init__(
+            self,
+            output_var_name: str,
+            error_expr: Expr | Comparison,
+            sample_period: float,
+            proportional_gain: float,
+            integral_time: float,
+            maximum_change: float,
+            name: str = '',
+            output_var_uid: int | None = None,
+    ) -> None:
+        """Declare the source sampled PI and per-sample output-change limit.
+
+        :param output_var_name: Runtime parameter holding the sampled PI output.
+        :param error_expr: Error evaluated at each control sample.
+        :param sample_period: Positive interval between controller updates.
+        :param proportional_gain: Proportional PI gain.
+        :param integral_time: Positive integral time constant.
+        :param maximum_change: Maximum absolute command change per sample.
+        :param name: Optional procedural declaration name.
+        :param output_var_uid: Stable event-parameter UID, when available.
+        :raises ValueError: A period/time is invalid or a gain/limit is nonfinite.
+        """
+        super().__init__(name=name)
+        scalars: tuple[float, ...] = (
+            sample_period, proportional_gain, integral_time, maximum_change,
+        )
+        if not all(math.isfinite(value) for value in scalars):
+            raise ValueError('Sampled PI parameters must be finite')
+        elif sample_period <= 0.0 or integral_time <= 0.0 or maximum_change < 0.0:
+            raise ValueError('Sampled PI period and integral time must be positive; limit nonnegative')
+        else:
+            pass
+        self.output_var_name: str = output_var_name
+        self.output_var_uid: int | None = output_var_uid
+        self.error_expr: Expr | Comparison = error_expr
+        self.sample_period: float = sample_period
+        self.proportional_gain: float = proportional_gain
+        self.integral_time: float = integral_time
+        self.maximum_change: float = maximum_change
+        self.output_idx: int = -1
+        self.error_eval: ProceduralNumericEvaluator | None = None
+        self.sample_origin: float | None = None
+        self.sample_index: int = 1
+        self.next_sample_time: float | None = None
+        self.last_sample_time: float | None = None
+        self.previous_error: float = 0.0
+        self.integral_value: float | None = None
+
+    def bind(
+            self,
+            problem: ProceduralProblem,
+            expression_mode: ProceduralExpressionMode = ProceduralExpressionMode.Compiled,
+    ) -> None:
+        """Bind the sampled controller to its event output and compiled error.
+
+        :param problem: Runtime problem owning the event parameter.
+        :param expression_mode: Compiled or interpreted expression binding.
+        :return: None.
+        """
+        super().bind(problem, expression_mode)
+        output_var: Var
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            resolved_output: Var | None = _find_var_by_uid_optional(
+                block=problem.sys_block,
+                var_uid=self.output_var_uid,
+            )
+            if resolved_output is None:
+                raise KeyError(f"Sampled PI output UID '{self.output_var_uid}' was not found")
+            else:
+                output_var = resolved_output
+        self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
+        self._register_output_parameter_index(self.output_idx)
+        self.error_eval = self._build_numeric_evaluator(self.error_expr)
+        self.sample_origin = None
+        self.sample_index = 1
+        self.next_sample_time = None
+        self.last_sample_time = None
+        self.previous_error = 0.0
+        self.integral_value = None
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        """Integrate held error and apply one bounded PI command update.
+
+        The first accepted sample seeds the accumulator from the initialized
+        output. Subsequent intervals integrate the previously held error, which
+        is exact for the source sample-and-hold signal entering the integrator.
+
+        :param t: Current accepted solver time.
+        :param x: Accepted state vector.
+        :param params: Mutable runtime parameter vector.
+        :return: None.
+        """
+        sample_time: float = float(t)
+        if self.error_eval is None:
+            self.error_eval = self._build_numeric_evaluator(self.error_expr)
+        else:
+            pass
+        if self.sample_origin is None:
+            self.sample_origin = sample_time
+            self.next_sample_time = sample_time + self.sample_period
+        else:
+            pass
+        if self.last_sample_time is None:
+            self.integral_value = float(params[self.output_idx])
+            self.previous_error = self.error_eval(sample_time, x, params)
+            self.last_sample_time = sample_time
+        elif self.next_sample_time is not None and sample_time >= self.next_sample_time - 1.0e-12:
+            elapsed: float = sample_time - self.last_sample_time
+            integral: float = 0.0 if self.integral_value is None else self.integral_value
+            integral += self.previous_error * elapsed / self.integral_time
+            error: float = self.error_eval(sample_time, x, params)
+            command: float = self.proportional_gain * error + integral
+            previous_output: float = float(params[self.output_idx])
+            change: float = float(np.clip(
+                command - previous_output,
+                -self.maximum_change,
+                self.maximum_change,
+            ))
+            params[self.output_idx] = previous_output + change
+            self.integral_value = integral
+            self.previous_error = error
+            self.last_sample_time = sample_time
+            self.sample_index = int(math.floor(
+                (sample_time - self.sample_origin) / self.sample_period + 1.0e-12,
+            )) + 1
+            self.next_sample_time = self.sample_origin + self.sample_index * self.sample_period
+        else:
+            pass
+
+    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
+        """Return a due controller sample boundary inside the proposed step.
+
+        :param t_prev: Previous accepted time.
+        :param t_target: Proposed next integration time.
+        :return: Earliest due sample time, or ``None``.
+        """
+        if self.next_sample_time is None:
+            self.sample_origin = float(t_prev)
+            self.sample_index = 1
+            self.next_sample_time = self.sample_origin + self.sample_period
+        else:
+            pass
+        if t_prev < self.next_sample_time <= t_target:
+            return self.next_sample_time
+        else:
+            return None
+
+    def remap(self, var_mapping: VarRemap) -> 'SampledPiLimiterLogic':
+        """Clone the declaration with its error and stable output remapped.
+
+        :param var_mapping: Old-to-new symbolic variable relationships.
+        :return: Remapped sampled PI logic.
+        """
+        name_mapping: Dict[str, str] = _build_name_mapping(var_mapping)
+        return SampledPiLimiterLogic(
+            output_var_name=name_mapping.get(self.output_var_name, self.output_var_name),
+            error_expr=_subs_expr_like(self.error_expr, var_mapping),
+            sample_period=self.sample_period,
+            proportional_gain=self.proportional_gain,
+            integral_time=self.integral_time,
+            maximum_change=self.maximum_change,
+            name=self.name,
+            output_var_uid=_remap_var_uid(self.output_var_uid, var_mapping),
+        )
+
+
+class PssPTIST3SampledOutputLogic(ProceduralLogicBase):
+    """Apply PTIST3 tap averaging and time-at-limit behavior at controller clicks."""
+
+    __slots__ = [
+        'output_var_name', 'output_var_uid', 'source_expr', 'sample_period',
+        'average_count', 'average_threshold', 'limit_threshold', 'limit_count',
+        'reset_count', 'sample_origin', 'sample_index', 'next_sample_time',
+        'last_sample_time',
+        'output_idx', 'source_eval', 'average_buffer', 'average_cursor',
+        'average_size', 'average_total', 'limit_counter', 'limit_active', 'limit_ramp_count',
+        'limit_origin',
+    ]
+    logic_tpe = ProceduralLogicType.PssPTIST3SampledOutput
+
+    def __init__(
+            self,
+            output_var_name: str,
+            source_expr: Expr | Comparison,
+            sample_period: float | None,
+            average_count: int,
+            average_threshold: float,
+            limit_threshold: float,
+            limit_count: int,
+            reset_count: int,
+            name: str = '',
+            output_var_uid: int | None = None,
+    ) -> None:
+        """Create one stateful PTIST3 sampled-output stage.
+
+        :param output_var_name: Persisted runtime output name.
+        :param source_expr: Continuous filtered output entering Figure 151 blocks.
+        :param sample_period: Controller click interval, or None for accepted-step updates.
+        :param average_count: Number of control outputs in the running average.
+        :param average_threshold: Magnitude above which averaging is bypassed and cleared.
+        :param limit_threshold: Magnitude that starts the consecutive-count limit function.
+        :param limit_count: Consecutive over-limit clicks before ramp activation.
+        :param reset_count: Clicks over which the output ramps to neutral.
+        :param name: Optional procedural entry name.
+        :param output_var_uid: Stable output variable identifier when available.
+        """
+        super().__init__(name=name)
+        if average_count < 1 or average_count > 16:
+            raise ValueError('PTIST3 NAV must be between one and sixteen')
+        elif limit_count < 0 or reset_count < 0:
+            raise ValueError('PTIST3 NCL and NCR must be nonnegative')
+        elif not math.isfinite(average_threshold) or not math.isfinite(limit_threshold):
+            raise ValueError('PTIST3 thresholds must be finite')
+        elif average_threshold < 0.0 or limit_threshold < 0.0:
+            raise ValueError('PTIST3 thresholds must be nonnegative')
+        else:
+            pass
+        self.output_var_name: str = output_var_name
+        self.output_var_uid: int | None = output_var_uid
+        self.source_expr: Expr | Comparison = source_expr
+        self.sample_period: float | None = sample_period
+        self.average_count: int = average_count
+        self.average_threshold: float = average_threshold
+        self.limit_threshold: float = limit_threshold
+        self.limit_count: int = limit_count
+        self.reset_count: int = reset_count
+        self.sample_origin: float | None = None
+        self.sample_index: int = 1
+        self.next_sample_time: float | None = None
+        self.last_sample_time: float | None = None
+        self.output_idx: int = -1
+        self.source_eval: Callable[..., float] | None = None
+        self.average_buffer: list[float] = [0.0] * average_count
+        self.average_cursor: int = 0
+        self.average_size: int = 0
+        self.average_total: float = 0.0
+        self.limit_counter: int = 0
+        self.limit_active: bool = False
+        self.limit_ramp_count: int = 0
+        self.limit_origin: float = 0.0
+
+    def bind(
+            self,
+            problem: ProceduralProblem,
+            expression_mode: ProceduralExpressionMode = ProceduralExpressionMode.Compiled,
+    ) -> None:
+        """Bind output and expression references to the selected RMS problem.
+
+        :param problem: Runtime problem owning the compiled template.
+        :param expression_mode: Compiled or interpreted expression evaluation.
+        :return: None.
+        """
+        super().bind(problem, expression_mode)
+        if self.sample_period is not None and (
+                not math.isfinite(self.sample_period) or self.sample_period <= 0.0
+        ):
+            raise ValueError('PTIST3 sample interval must be finite and positive')
+        else:
+            pass
+        output_var: Var
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            output_var_optional: Var | None = _find_var_by_uid_optional(
+                block=problem.sys_block,
+                var_uid=self.output_var_uid,
+            )
+            if output_var_optional is None:
+                raise KeyError(f"PTIST3 output UID '{self.output_var_uid}' was not found")
+            else:
+                output_var = output_var_optional
+        self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
+        self._register_output_parameter_index(self.output_idx)
+        self.source_eval = self._build_numeric_evaluator(self.source_expr)
+        self.sample_origin = None
+        self.sample_index = 1
+        self.next_sample_time = None
+        self.last_sample_time = None
+        self.average_buffer = [0.0] * self.average_count
+        self.average_cursor = 0
+        self.average_size = 0
+        self.average_total = 0.0
+        self.limit_counter = 0
+        self.limit_active = False
+        self.limit_ramp_count = 0
+        self.limit_origin = 0.0
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        """Update averaging and time-at-limit state on each controller click.
+
+        :param t: Current accepted solver time.
+        :param x: Accepted state vector.
+        :param params: Mutable runtime parameter values.
+        :return: None.
+        """
+        sample_clock: float = float(t)
+        should_sample: bool = self.sample_period is None or self.next_sample_time is None
+        if self.sample_period is not None and self.next_sample_time is not None:
+            should_sample = sample_clock >= self.next_sample_time - 1.0e-12
+        else:
+            pass
+        is_new_click: bool = (
+            self.last_sample_time is None
+            or sample_clock > self.last_sample_time + 1.0e-12
+        )
+        if should_sample and is_new_click:
+            self._sample_time = sample_clock
+            if self.source_eval is None:
+                self.source_eval = self._build_numeric_evaluator(self.source_expr)
+            else:
+                pass
+            source_value: float = self.source_eval(sample_clock, x, params)
+            if abs(source_value) > self.average_threshold:
+                for buffer_index in range(self.average_count):
+                    self.average_buffer[buffer_index] = 0.0
+                self.average_cursor = 0
+                self.average_size = 0
+                self.average_total = 0.0
+                averaged_value: float = source_value
+            else:
+                if self.average_size == self.average_count:
+                    self.average_total -= self.average_buffer[self.average_cursor]
+                else:
+                    self.average_size += 1
+                self.average_buffer[self.average_cursor] = source_value
+                self.average_total += source_value
+                self.average_cursor = (self.average_cursor + 1) % self.average_count
+                averaged_value = self.average_total / self.average_size
+            if abs(averaged_value) > self.limit_threshold and self.limit_count > 0 and self.reset_count > 0:
+                self.limit_counter += 1
+                if self.limit_active:
+                    pass
+                elif self.limit_counter >= self.limit_count:
+                    self.limit_active = True
+                    self.limit_ramp_count = 0
+                    self.limit_origin = averaged_value
+                else:
+                    pass
+            else:
+                self.limit_counter = 0
+                self.limit_active = False
+                self.limit_ramp_count = 0
+                self.limit_origin = averaged_value
+            if self.limit_active:
+                self.limit_ramp_count = min(self.limit_ramp_count + 1, self.reset_count)
+                limited_value: float = self.limit_origin * (
+                    1.0 - self.limit_ramp_count / self.reset_count
+                )
+            else:
+                limited_value = averaged_value
+            params[self.output_idx] = limited_value
+            self.last_sample_time = sample_clock
+            if self.sample_period is not None:
+                if self.next_sample_time is None:
+                    self.sample_origin = sample_clock
+                    self.sample_index = 1
+                else:
+                    self.sample_index = int(round(
+                        (self.next_sample_time - self.sample_origin) / self.sample_period
+                    )) + 1
+                self.next_sample_time = self.sample_origin + self.sample_index * self.sample_period
+            else:
+                pass
+        else:
+            pass
+
+    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
+        """Schedule the next controller click at its exact sample boundary.
+
+        :param t_prev: Previous accepted integration time.
+        :param t_target: Requested integration target time.
+        :return: Due controller click time, if inside this interval.
+        """
+        super().get_next_forced_event_time(t_prev, t_target)
+        if self.sample_period is None:
+            return None
+        elif self.next_sample_time is None:
+            self.sample_origin = float(t_prev)
+            self.next_sample_time = self.sample_origin + self.sample_index * self.sample_period
+            if t_prev < self.next_sample_time <= t_target:
+                return self.next_sample_time
+            else:
+                return None
+        elif t_prev < self.next_sample_time <= t_target:
+            return self.next_sample_time
+        else:
+            return None
+
+    def remap(self, var_mapping: VarRemap) -> 'PssPTIST3SampledOutputLogic':
+        """Clone the sampled controller entry under a symbolic variable mapping.
+
+        :param var_mapping: Old-to-new symbolic variable relationships.
+        :return: Recreated PTIST3 procedural entry.
+        """
+        name_mapping: Dict[str, str] = _build_name_mapping(var_mapping)
+        return PssPTIST3SampledOutputLogic(
+            output_var_name=name_mapping.get(self.output_var_name, self.output_var_name),
+            source_expr=_subs_expr_like(self.source_expr, var_mapping),
+            sample_period=self.sample_period,
+            average_count=self.average_count,
+            average_threshold=self.average_threshold,
+            limit_threshold=self.limit_threshold,
+            limit_count=self.limit_count,
+            reset_count=self.reset_count,
+            name=self.name,
+            output_var_uid=_remap_var_uid(self.output_var_uid, var_mapping),
+        )
+
 class HardSaturationLogic(ProceduralLogicBase):
     """
     Sample one input and apply hard saturation to a runtime mode variable.
@@ -1457,11 +2034,12 @@ class HardSaturationLogic(ProceduralLogicBase):
 
 
 class TimeDelayLogic(ProceduralLogicBase):
-    """
-    Sample one input and expose its delayed value through a runtime mode variable.
-    """
+    """Expose either a history-delayed signal or sustained-on-delay flag."""
 
-    __slots__ = ["output_var_name", "source_expr", "delay_expr", "output_idx", "history"]
+    __slots__ = [
+        "output_var_name", "source_expr", "delay_expr", "output_idx", "history",
+        "continuous", "pickup_time", "timer_delay", "output_var_uid"
+    ]
     logic_tpe = ProceduralLogicType.TimeDelay
 
     def __init__(
@@ -1470,13 +2048,28 @@ class TimeDelayLogic(ProceduralLogicBase):
         source_expr: Expr | Comparison | float | int | bool,
         delay_expr: Expr | Comparison | float | int | bool,
         name: str = "",
+        output_var_uid: int | None = None,
+        continuous: bool = False,
     ) -> None:
+        """Declare one history delay or continuous-source timer.
+
+        :param output_var_name: Mutable runtime parameter receiving the output.
+        :param source_expr: Signal stored in history or held high to time.
+        :param delay_expr: Delay interval in seconds.
+        :param name: Optional human-readable logic name.
+        :param continuous: Cancel timing immediately when the source falls.
+        """
         super().__init__(name=name)
+
         self.output_var_name = output_var_name
+        self.output_var_uid: int | None = output_var_uid
         self.source_expr = source_expr
         self.delay_expr = delay_expr
         self.output_idx = -1
         self.history: List[Tuple[float, float]] = list()
+        self.continuous: bool = continuous
+        self.pickup_time: Optional[float] = None
+        self.timer_delay: float = 0.0
 
     def bind(self, problem: ProceduralProblem,
              expression_mode: ProceduralExpressionMode = ProceduralExpressionMode.Compiled) -> None:
@@ -1487,20 +2080,79 @@ class TimeDelayLogic(ProceduralLogicBase):
         :return: None.
         """
         super().bind(problem, expression_mode)
-        output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            output_var_optional = _find_var_by_uid_optional(
+                block=problem.sys_block,
+                var_uid=self.output_var_uid,
+            )
+            if output_var_optional is None:
+                raise KeyError(
+                    f"Procedural output UID '{self.output_var_uid}' was not found"
+                )
+            output_var = output_var_optional
         self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
         self._register_output_parameter_index(self.output_idx)
         self._prepare_numeric_expression(self.source_expr)
         self._prepare_numeric_expression(self.delay_expr)
         self.history = list()
+        self.pickup_time = None
+        self.timer_delay = 0.0
+
+    def get_next_forced_event_time(
+            self,
+            t_prev: float,
+            t_target: float,
+    ) -> Optional[float]:
+        """Schedule expiry when continuous-source timing is enabled.
+
+        :param t_prev: Previous accepted time.
+        :param t_target: Requested next time.
+        :return: Timer expiry when it falls within the requested step.
+        """
+        super().get_next_forced_event_time(t_prev, t_target)
+        if self.continuous and self.pickup_time is not None:
+            expiry_time: float = self.pickup_time + self.timer_delay
+            if t_prev < expiry_time <= t_target:
+                return expiry_time
+            else:
+                return None
+        else:
+            return None
 
     def update(self, t: float, x: Vec, params: Vec) -> None:
+        """Advance either a history delay or a cancellable sustained timer.
+
+        :param t: Current accepted solver time.
+        :param x: Current accepted state vector.
+        :param params: Runtime parameter vector.
+        :return: None.
+        """
         sample_time = self._get_sample_time(t)
         source_value = self.evaluate_numeric_expression(self.source_expr, t, x, params)
         delay_value = max(
             0.0,
             self.evaluate_numeric_expression(self.delay_expr, t, x, params),
         )
+        self.timer_delay = delay_value
+
+        if self.continuous:
+            if source_value <= 0.0:
+                self.pickup_time = None
+                params[self.output_idx] = 0.0
+            else:
+                if self.pickup_time is None:
+                    self.pickup_time = sample_time
+                else:
+                    pass
+                if delay_value <= 0.0 or t >= self.pickup_time + delay_value - 1.0e-15:
+                    params[self.output_idx] = 1.0
+                else:
+                    params[self.output_idx] = 0.0
+            return
+        else:
+            pass
 
         _append_history_sample(self.history, sample_time, source_value)
 
@@ -1519,6 +2171,8 @@ class TimeDelayLogic(ProceduralLogicBase):
             source_expr=_subs_expr_like(self.source_expr, var_mapping),
             delay_expr=_subs_expr_like(self.delay_expr, var_mapping),
             name=self.name,
+            output_var_uid=_remap_var_uid(var_uid=self.output_var_uid, var_mapping=var_mapping),
+            continuous=self.continuous,
         )
 
 
@@ -1527,7 +2181,7 @@ class MovingAverageLogic(ProceduralLogicBase):
     Buffer-based moving average with optional delay before the averaging window.
     """
 
-    __slots__ = ["output_var_name", "source_expr", "delay_expr", "window_expr", "output_idx", "history"]
+    __slots__ = ["output_var_name", "output_var_uid", "source_expr", "delay_expr", "window_expr", "output_idx", "history"]
     logic_tpe = ProceduralLogicType.MovingAverage
 
     def __init__(
@@ -1537,9 +2191,11 @@ class MovingAverageLogic(ProceduralLogicBase):
         delay_expr: Expr | Comparison | float | int | bool,
         window_expr: Expr | Comparison | float | int | bool,
         name: str = "",
+        output_var_uid: int | None = None,
     ) -> None:
         super().__init__(name=name)
         self.output_var_name = output_var_name
+        self.output_var_uid = output_var_uid
         self.source_expr = source_expr
         self.delay_expr = delay_expr
         self.window_expr = window_expr
@@ -1555,7 +2211,10 @@ class MovingAverageLogic(ProceduralLogicBase):
         :return: None.
         """
         super().bind(problem, expression_mode)
-        output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            output_var = _resolve_procedural_output_var(problem, self.output_var_uid)
         self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
         self._register_output_parameter_index(self.output_idx)
         self._prepare_numeric_expression(self.source_expr)
@@ -1599,6 +2258,7 @@ class MovingAverageLogic(ProceduralLogicBase):
             delay_expr=_subs_expr_like(self.delay_expr, var_mapping),
             window_expr=_subs_expr_like(self.window_expr, var_mapping),
             name=self.name,
+            output_var_uid=_remap_var_uid(self.output_var_uid, var_mapping),
         )
 
 
@@ -1607,7 +2267,7 @@ class GradientLimiterLogic(ProceduralLogicBase):
     Clamp the rate of change of one procedural value between lower and upper slopes.
     """
 
-    __slots__ = ["output_var_name", "source_expr", "lower_rate_expr", "upper_rate_expr", "output_idx", "last_time", "held_value", "initialized"]
+    __slots__ = ["output_var_name", "output_var_uid", "source_expr", "lower_rate_expr", "upper_rate_expr", "output_idx", "last_time", "held_value", "initialized"]
     logic_tpe = ProceduralLogicType.GradientLimiter
 
     def __init__(
@@ -1617,9 +2277,11 @@ class GradientLimiterLogic(ProceduralLogicBase):
         lower_rate_expr: Expr | Comparison | float | int | bool,
         upper_rate_expr: Expr | Comparison | float | int | bool,
         name: str = "",
+        output_var_uid: int | None = None,
     ) -> None:
         super().__init__(name=name)
         self.output_var_name = output_var_name
+        self.output_var_uid = output_var_uid
         self.source_expr = source_expr
         self.lower_rate_expr = lower_rate_expr
         self.upper_rate_expr = upper_rate_expr
@@ -1637,7 +2299,10 @@ class GradientLimiterLogic(ProceduralLogicBase):
         :return: None.
         """
         super().bind(problem, expression_mode)
-        output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            output_var = _resolve_procedural_output_var(problem, self.output_var_uid)
         self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
         self._register_output_parameter_index(self.output_idx)
         self._prepare_numeric_expression(self.source_expr)
@@ -1678,6 +2343,123 @@ class GradientLimiterLogic(ProceduralLogicBase):
             lower_rate_expr=_subs_expr_like(self.lower_rate_expr, var_mapping),
             upper_rate_expr=_subs_expr_like(self.upper_rate_expr, var_mapping),
             name=self.name,
+            output_var_uid=_remap_var_uid(self.output_var_uid, var_mapping),
+        )
+
+
+class WrappedDerivativeLogic(ProceduralLogicBase):
+    """Differentiate a periodic angle while removing its 2π discontinuity."""
+
+    __slots__ = [
+        'output_var_name', 'source_expr', 'maximum_rate_expr', 'output_idx',
+        'last_angle', 'last_time', 'held_rate',
+    ]
+    logic_tpe = ProceduralLogicType.WrappedDerivative
+
+    def __init__(
+            self,
+            output_var_name: str,
+            source_expr: Expr | Comparison | float | int | bool,
+            maximum_rate_expr: Expr | Comparison | float | int | bool | None,
+            name: str = '',
+    ) -> None:
+        """Create an accepted-sample angular-rate estimator.
+
+        :param output_var_name: Runtime parameter receiving the angle rate.
+        :param source_expr: Periodic source angle in radians.
+        :param maximum_rate_expr: Optional nonnegative symmetric output-rate bound.
+        :param name: Optional procedural entry name.
+        """
+        super().__init__(name=name)
+        self.output_var_name: str = output_var_name
+        self.source_expr: Expr | Comparison | float | int | bool = source_expr
+        self.maximum_rate_expr: Expr | Comparison | float | int | bool | None = maximum_rate_expr
+        self.output_idx: int = -1
+        self.last_angle: float | None = None
+        self.last_time: float | None = None
+        self.held_rate: float = 0.0
+
+    def bind(
+            self,
+            problem: ProceduralProblem,
+            expression_mode: ProceduralExpressionMode = ProceduralExpressionMode.Compiled,
+    ) -> None:
+        """Bind output storage and clear the prior accepted sample.
+
+        :param problem: Runtime problem that owns the parameter slot.
+        :param expression_mode: Compiled or interpreted expression binding.
+        :return: None.
+        """
+        super().bind(problem, expression_mode)
+        output_var: Var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
+        self._register_output_parameter_index(self.output_idx)
+        self._prepare_numeric_expression(self.source_expr)
+        if self.maximum_rate_expr is not None:
+            self._prepare_numeric_expression(self.maximum_rate_expr)
+        else:
+            pass
+        self.last_angle = None
+        self.last_time = None
+        self.held_rate = 0.0
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        """Write the wrapped finite-difference rate at an accepted solver step.
+
+        :param t: Current solver time.
+        :param x: Accepted state vector.
+        :param params: Runtime parameter vector.
+        :return: None.
+        """
+        sample_time: float = self._get_sample_time(t)
+        angle: float = self.evaluate_numeric_expression(self.source_expr, t, x, params)
+        maximum_rate: float | None
+        if self.maximum_rate_expr is None:
+            maximum_rate = None
+        else:
+            maximum_rate = abs(self.evaluate_numeric_expression(
+                self.maximum_rate_expr, t, x, params,
+            ))
+        if self.last_angle is None or self.last_time is None:
+            self.last_angle = angle
+            self.last_time = sample_time
+            self.held_rate = 0.0
+        else:
+            elapsed_time: float = sample_time - self.last_time
+            if elapsed_time > 0.0:
+                angle_delta: float = angle - self.last_angle
+                if angle_delta > math.pi:
+                    angle_delta -= 2.0 * math.pi
+                elif angle_delta < -math.pi:
+                    angle_delta += 2.0 * math.pi
+                else:
+                    pass
+                requested_rate: float = angle_delta / elapsed_time
+                if maximum_rate is None:
+                    self.held_rate = requested_rate
+                else:
+                    self.held_rate = min(max(requested_rate, -maximum_rate), maximum_rate)
+                self.last_angle = angle
+                self.last_time = sample_time
+            else:
+                pass
+        params[self.output_idx] = self.held_rate
+
+    def remap(self, var_mapping: VarRemap) -> 'WrappedDerivativeLogic':
+        """Clone the estimator under a variable remapping.
+
+        :param var_mapping: Variable substitution map.
+        :return: Remapped angular-rate estimator.
+        """
+        name_mapping: Dict[str, str] = _build_name_mapping(var_mapping)
+        return WrappedDerivativeLogic(
+            output_var_name=name_mapping.get(self.output_var_name, self.output_var_name),
+            source_expr=_subs_expr_like(self.source_expr, var_mapping),
+            maximum_rate_expr=(
+                None if self.maximum_rate_expr is None
+                else _subs_expr_like(self.maximum_rate_expr, var_mapping)
+            ),
+            name=self.name,
         )
 
 
@@ -1686,7 +2468,7 @@ class FlipFlopLogic(ProceduralLogicBase):
     Store a binary set/reset latch in a runtime mode variable.
     """
 
-    __slots__ = ["output_var_name", "set_expr", "reset_expr", "output_idx", "state", "initialized"]
+    __slots__ = ["output_var_name", "output_var_uid", "set_expr", "reset_expr", "output_idx", "state", "initialized"]
     logic_tpe = ProceduralLogicType.FlipFlop
 
     def __init__(
@@ -1695,9 +2477,11 @@ class FlipFlopLogic(ProceduralLogicBase):
         set_expr: Expr | Comparison,
         reset_expr: Expr | Comparison,
         name: str = "",
+        output_var_uid: int | None = None,
     ) -> None:
         super().__init__(name=name)
         self.output_var_name = output_var_name
+        self.output_var_uid = output_var_uid
         self.set_expr = set_expr
         self.reset_expr = reset_expr
         self.output_idx = -1
@@ -1714,7 +2498,10 @@ class FlipFlopLogic(ProceduralLogicBase):
         :return: None
         """
         super().bind(problem, expression_mode)
-        output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            output_var = _resolve_procedural_output_var(problem, self.output_var_uid)
         self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
         self._register_output_parameter_index(self.output_idx)
         self._prepare_numeric_expression(self.set_expr)
@@ -1764,6 +2551,7 @@ class FlipFlopLogic(ProceduralLogicBase):
             set_expr=_subs_expr_like(self.set_expr, var_mapping),
             reset_expr=_subs_expr_like(self.reset_expr, var_mapping),
             name=self.name,
+            output_var_uid=_remap_var_uid(self.output_var_uid, var_mapping),
         )
 
 
@@ -1774,6 +2562,7 @@ class AnalogFlipFlopLogic(ProceduralLogicBase):
 
     __slots__ = [
         "output_var_name",
+        "output_var_uid",
         "input_expr",
         "set_expr",
         "reset_expr",
@@ -1791,9 +2580,11 @@ class AnalogFlipFlopLogic(ProceduralLogicBase):
         set_expr: Expr | Comparison,
         reset_expr: Expr | Comparison,
         name: str = "",
+        output_var_uid: int | None = None,
     ) -> None:
         super().__init__(name=name)
         self.output_var_name = output_var_name
+        self.output_var_uid = output_var_uid
         self.input_expr = input_expr
         self.set_expr = set_expr
         self.reset_expr = reset_expr
@@ -1812,7 +2603,10 @@ class AnalogFlipFlopLogic(ProceduralLogicBase):
         :return: None
         """
         super().bind(problem, expression_mode)
-        output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        if self.output_var_uid is None:
+            output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        else:
+            output_var = _resolve_procedural_output_var(problem, self.output_var_uid)
         self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
         self._register_output_parameter_index(self.output_idx)
         self._prepare_numeric_expression(self.input_expr)
@@ -1868,6 +2662,7 @@ class AnalogFlipFlopLogic(ProceduralLogicBase):
             set_expr=_subs_expr_like(self.set_expr, var_mapping),
             reset_expr=_subs_expr_like(self.reset_expr, var_mapping),
             name=self.name,
+            output_var_uid=_remap_var_uid(self.output_var_uid, var_mapping),
         )
 
 
@@ -2077,6 +2872,113 @@ class PickupDropoffLogic(ProceduralLogicBase):
         )
 
 
+class TimedPulseLogic(ProceduralLogicBase):
+    """Raise one retained mode on a qualifying edge for a sampled duration."""
+
+    __slots__ = ("output_var_name", "trigger_expr", "duration_expr", "output_idx",
+                 "state", "initialized", "trigger_was_high", "pending_end_time")
+    logic_tpe = ProceduralLogicType.TimedPulse
+
+    def __init__(self, output_var_name: str, trigger_expr: Expr | Comparison,
+                 duration_expr: Expr | Comparison, name: str = "") -> None:
+        """Declare an edge-triggered pulse with duration sampled only at pickup.
+
+        :param output_var_name: Retained runtime mode written by the pulse.
+        :param trigger_expr: Boolean qualification; a rising edge starts a pulse.
+        :param duration_expr: Nonnegative pulse duration sampled at that edge.
+        :param name: Human-readable procedural entry name.
+        :return: None.
+        """
+        super().__init__(name=name)
+        self.output_var_name: str = output_var_name
+        self.trigger_expr: Expr | Comparison = trigger_expr
+        self.duration_expr: Expr | Comparison = duration_expr
+        self.output_idx: int = -1
+        self.state: float = 0.0
+        self.initialized: bool = False
+        self.trigger_was_high: bool = False
+        self.pending_end_time: float | None = None
+
+    def bind(self, problem: ProceduralProblem,
+             expression_mode: ProceduralExpressionMode = ProceduralExpressionMode.Compiled) -> None:
+        """Resolve the mode and reset retained edge and timer state.
+
+        :param problem: Runtime problem that owns the mode variable.
+        :param expression_mode: Compiled or interpreted expression evaluation.
+        :return: None.
+        """
+        super().bind(problem, expression_mode)
+        output: Var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        self.output_idx = int(problem.uid2idx_event_params[output.uid])
+        self._register_output_parameter_index(self.output_idx)
+        self._prepare_numeric_expression(self.trigger_expr)
+        self._prepare_numeric_expression(self.duration_expr)
+        self.state = 0.0
+        self.initialized = False
+        self.trigger_was_high = False
+        self.pending_end_time = None
+
+    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
+        """Place the pulse end exactly on a solver boundary.
+
+        :param t_prev: Previous accepted solver time.
+        :param t_target: Requested next solver time.
+        :return: Pending pulse end inside the interval, if any.
+        """
+        super().get_next_forced_event_time(t_prev, t_target)
+        if self.pending_end_time is not None and t_prev < self.pending_end_time <= t_target:
+            return self.pending_end_time
+        else:
+            return None
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        """Start once on a rising edge and clear after the sampled duration.
+
+        :param t: Current accepted solver time.
+        :param x: Current accepted state vector.
+        :param params: Mutable runtime parameter vector.
+        :return: None.
+        :raises ValueError: Nonfinite duration at a qualifying edge.
+        """
+        trigger_high: bool = self._eval_bool(self.trigger_expr, t, x, params)
+        if self.pending_end_time is not None and t >= self.pending_end_time - 1.0e-15:
+            self.state = 0.0
+            self.pending_end_time = None
+        else:
+            pass
+        if not self.initialized:
+            # A pre-existing startup dip is an operating-point condition, not an event.
+            self.initialized = True
+        elif trigger_high and not self.trigger_was_high and self.pending_end_time is None:
+            sampled_duration: float = self.evaluate_numeric_expression(self.duration_expr, t, x, params)
+            if not math.isfinite(sampled_duration):
+                raise ValueError('Timed pulse duration must be finite')
+            else:
+                sampled_duration = max(0.0, sampled_duration)
+                if sampled_duration > 0.0:
+                    self.state = 1.0
+                    self.pending_end_time = float(t) + sampled_duration
+                else:
+                    self.state = 0.0
+        else:
+            pass
+        self.trigger_was_high = trigger_high
+        params[self.output_idx] = self.state
+
+    def remap(self, var_mapping: VarRemap) -> "TimedPulseLogic":
+        """Clone the declaration with updated model variable identities.
+
+        :param var_mapping: Symbolic variable substitutions.
+        :return: Independent timed-pulse declaration.
+        """
+        name_mapping: Dict[str, str] = _build_name_mapping(var_mapping)
+        return TimedPulseLogic(
+            output_var_name=name_mapping.get(self.output_var_name, self.output_var_name),
+            trigger_expr=_subs_expr_like(self.trigger_expr, var_mapping),
+            duration_expr=_subs_expr_like(self.duration_expr, var_mapping),
+            name=self.name,
+        )
+
 class ResetOnRisingEdgeLogic(ProceduralLogicBase):
     """
     Apply one value reset on the rising edge of a procedural condition.
@@ -2090,6 +2992,9 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
         "target_param_idx",
         "initialized",
         "last_reset_high",
+        "target_var_uid",
+        "accepted_boundary_only",
+        "forced_event_time",
     ]
     logic_tpe = ProceduralLogicType.ResetOnRisingEdge
 
@@ -2099,8 +3004,25 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
         reset_expr: Expr | Comparison,
         value_expr: Expr | Comparison,
         name: str = "",
+        target_var_uid: int | None = None,
+        accepted_boundary_only: bool = False,
+        forced_event_time: float | None = None,
     ) -> None:
+        """Declare a retained assignment on a condition's rising edge.
+
+        :param target_var_name: Persisted target name for older declarations.
+        :param reset_expr: Condition whose rising edge performs the assignment.
+        :param value_expr: Expression sampled at the event boundary.
+        :param name: Display name.
+        :param target_var_uid: Exact target identity when available.
+        :param accepted_boundary_only: Commit only after an accepted RMS step.
+        :param forced_event_time: Known temporal boundary requiring step alignment.
+        :return: None.
+        """
         super().__init__(name=name)
+        self.target_var_uid: int | None = target_var_uid
+        self.accepted_boundary_only: bool = accepted_boundary_only
+        self.forced_event_time: float | None = forced_event_time
         self.target_var_name = target_var_name
         self.reset_expr = reset_expr
         self.value_expr = value_expr
@@ -2119,7 +3041,11 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
         :return: None
         """
         super().bind(problem, expression_mode)
-        target_var = _find_var_by_name(problem.sys_block, self.target_var_name)
+        target_var: Var
+        if self.target_var_uid is None:
+            target_var = _find_var_by_name(problem.sys_block, self.target_var_name)
+        else:
+            target_var = _resolve_procedural_output_var(problem, self.target_var_uid)
         self.target_state_idx = int(problem.uid2idx_vars.get(target_var.uid, -1))
         self.target_param_idx = int(problem.uid2idx_event_params.get(target_var.uid, -1))
         self._prepare_numeric_expression(self.reset_expr)
@@ -2128,8 +3054,40 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
         if self.target_state_idx < 0 and self.target_param_idx < 0:
             raise KeyError(f"Reset target '{self.target_var_name}' is not a state/algebraic variable nor a runtime parameter")
 
+        if self.accepted_boundary_only and self.target_param_idx >= 0:
+            self._register_output_parameter_index(self.target_param_idx)
+        else:
+            pass
         self.initialized = False
         self.last_reset_high = False
+
+    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
+        """Align a known assignment time without sampling a provisional state.
+
+        :param t_prev: Previous accepted time.
+        :param t_target: Requested step boundary.
+        :return: Known event boundary inside the requested interval.
+        """
+        super().get_next_forced_event_time(t_prev, t_target)
+        if self.forced_event_time is not None and t_prev < self.forced_event_time <= t_target:
+            return self.forced_event_time
+        else:
+            return None
+
+    def commit_boundary(self, t: float, x: Vec, params: Vec) -> None:
+        """Capture an imported assignment from the accepted boundary snapshot.
+
+        :param t: Accepted boundary time.
+        :param x: Accepted state vector.
+        :param params: Retained runtime parameters.
+        :return: None.
+        """
+        if self.accepted_boundary_only:
+            # Time and state must describe the same accepted solution.
+            self._sample_time = float(t)
+            self._apply_assignment(t, x, params)
+        else:
+            pass
 
     def update(self, t: float, x: Vec, params: Vec) -> None:
         """
@@ -2140,7 +3098,21 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
         :param params: Runtime parameter vector.
         :return: None
         """
-        reset_high = self._eval_bool(self.reset_expr, t, x, params)
+        if self.accepted_boundary_only and self.initialized:
+            # Newton retries and pre-step updates cannot consume this event.
+            pass
+        else:
+            self._apply_assignment(t, x, params)
+
+    def _apply_assignment(self, t: float, x: Vec, params: Vec) -> None:
+        """Apply one edge while leaving the destination unchanged otherwise.
+
+        :param t: Evaluation time.
+        :param x: State snapshot corresponding to that time.
+        :param params: Mutable runtime parameter values.
+        :return: None.
+        """
+        reset_high: bool = self._eval_bool(self.reset_expr, t, x, params)
 
         if not self.initialized:
             self.initialized = True
@@ -2148,7 +3120,7 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
             return
 
         if (not self.last_reset_high) and reset_high:
-            reset_value = self.evaluate_numeric_expression(self.value_expr, t, x, params)
+            reset_value: float = self.evaluate_numeric_expression(self.value_expr, t, x, params)
             if self.target_state_idx >= 0:
                 x[self.target_state_idx] = reset_value
             else:
@@ -2169,6 +3141,9 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
             reset_expr=_subs_expr_like(self.reset_expr, var_mapping),
             value_expr=_subs_expr_like(self.value_expr, var_mapping),
             name=self.name,
+            target_var_uid=_remap_var_uid(self.target_var_uid, var_mapping),
+            accepted_boundary_only=self.accepted_boundary_only,
+            forced_event_time=self.forced_event_time,
         )
 
 
@@ -2186,6 +3161,7 @@ def fixed_sample(output: Var | str, when: Expr | Comparison, name: str = "") -> 
         output_var_name=output_name,
         condition_expr=when,
         name=output_name if name == "" else name,
+        output_var_uid=output.uid if isinstance(output, Var) else None,
     )
 
 
@@ -2292,6 +3268,7 @@ def delay(
         source_expr=input_expr,
         delay_expr=T,
         name=output_name if name == "" else name,
+        output_var_uid=output.uid if isinstance(output, Var) else None,
     )
 
 
@@ -2318,6 +3295,29 @@ def movingavg(
         source_expr=input_expr,
         delay_expr=Tdel,
         window_expr=Tlength,
+        name=output_name if name == "" else name,
+    )
+
+
+def wrapped_derivative(
+    input_expr: Expr | Comparison | float | int | bool,
+    maximum_rate_expr: Expr | Comparison | float | int | bool | None,
+    output: Var | str,
+    name: str = "",
+) -> WrappedDerivativeLogic:
+    """Create an accepted-sample derivative for a periodic angle.
+
+    :param input_expr: Periodic input angle in radians.
+    :param maximum_rate_expr: Optional nonnegative symmetric angular-rate bound.
+    :param output: Runtime parameter receiving the estimated angular rate.
+    :param name: Optional procedural entry name.
+    :return: Wrapped finite-difference logic.
+    """
+    output_name: str = _coerce_var_name(output)
+    return WrappedDerivativeLogic(
+        output_var_name=output_name,
+        source_expr=input_expr,
+        maximum_rate_expr=maximum_rate_expr,
         name=output_name if name == "" else name,
     )
 
@@ -4975,13 +5975,19 @@ class BlockProceduralLogicUpdater(BoundaryUpdateWrapper):
             return min(candidates)
 
     def commit_boundary(self, t: float, x: Vec, params: Vec) -> None:
-        """Commit due manufacturer controllers after an accepted network step.
+        """Commit retained assignments and native controllers after an accepted step.
 
         :param t: Accepted solver boundary.
         :param x: Accepted network state.
         :param params: Mutable runtime parameter vector.
         :return: None.
         """
+        logic: ProceduralLogicBase
+        for logic in self.logic_entries:
+            if isinstance(logic, ResetOnRisingEdgeLogic):
+                logic.commit_boundary(t, x, params)
+            else:
+                pass
         if self.runtime_session is not None:
             self.runtime_session.commit_boundary(t, x, params)
         else:
@@ -5046,6 +6052,7 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
     elif isinstance(entry, FixedSampleLogic):
         data.update({
             "output_var_name": entry.output_var_name,
+            "output_var_uid": entry.output_var_uid,
             "condition_expr": _expr_like_to_dict(entry.condition_expr),
         })
         return data
@@ -5054,6 +6061,38 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
             "output_var_name": entry.output_var_name,
             "output_var_uid": entry.output_var_uid,
             "source_expr": _expr_like_to_dict(entry.source_expr),
+        })
+        return data
+    elif isinstance(entry, PeriodicSampleLogic):
+        data.update({
+            'output_var_name': entry.output_var_name,
+            'output_var_uid': entry.output_var_uid,
+            'source_expr': _expr_like_to_dict(entry.source_expr),
+            'sample_period': entry.sample_period,
+        })
+        return data
+    elif isinstance(entry, SampledPiLimiterLogic):
+        data.update({
+            'output_var_name': entry.output_var_name,
+            'output_var_uid': entry.output_var_uid,
+            'error_expr': _expr_like_to_dict(entry.error_expr),
+            'sample_period': entry.sample_period,
+            'proportional_gain': entry.proportional_gain,
+            'integral_time': entry.integral_time,
+            'maximum_change': entry.maximum_change,
+        })
+        return data
+    elif isinstance(entry, PssPTIST3SampledOutputLogic):
+        data.update({
+            'output_var_name': entry.output_var_name,
+            'output_var_uid': entry.output_var_uid,
+            'source_expr': _expr_like_to_dict(entry.source_expr),
+            'sample_period': entry.sample_period,
+            'average_count': entry.average_count,
+            'average_threshold': entry.average_threshold,
+            'limit_threshold': entry.limit_threshold,
+            'limit_count': entry.limit_count,
+            'reset_count': entry.reset_count,
         })
         return data
     elif isinstance(entry, HardSaturationLogic):
@@ -5067,21 +6106,35 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
     elif isinstance(entry, TimeDelayLogic):
         data.update({
             "output_var_name": entry.output_var_name,
+            "output_var_uid": entry.output_var_uid,
             "source_expr": _expr_like_to_dict(entry.source_expr),
             "delay_expr": _expr_like_to_dict(entry.delay_expr),
+            "continuous": entry.continuous,
         })
         return data
     elif isinstance(entry, MovingAverageLogic):
         data.update({
             "output_var_name": entry.output_var_name,
+            "output_var_uid": entry.output_var_uid,
             "source_expr": _expr_like_to_dict(entry.source_expr),
             "delay_expr": _expr_like_to_dict(entry.delay_expr),
             "window_expr": _expr_like_to_dict(entry.window_expr),
         })
         return data
+    elif isinstance(entry, WrappedDerivativeLogic):
+        data.update({
+            'output_var_name': entry.output_var_name,
+            'source_expr': _expr_like_to_dict(entry.source_expr),
+            'maximum_rate_expr': (
+                None if entry.maximum_rate_expr is None
+                else _expr_like_to_dict(entry.maximum_rate_expr)
+            ),
+        })
+        return data
     elif isinstance(entry, GradientLimiterLogic):
         data.update({
             "output_var_name": entry.output_var_name,
+            "output_var_uid": entry.output_var_uid,
             "source_expr": _expr_like_to_dict(entry.source_expr),
             "lower_rate_expr": _expr_like_to_dict(entry.lower_rate_expr),
             "upper_rate_expr": _expr_like_to_dict(entry.upper_rate_expr),
@@ -5090,6 +6143,7 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
     elif isinstance(entry, FlipFlopLogic):
         data.update({
             "output_var_name": entry.output_var_name,
+            "output_var_uid": entry.output_var_uid,
             "set_expr": _expr_like_to_dict(entry.set_expr),
             "reset_expr": _expr_like_to_dict(entry.reset_expr),
         })
@@ -5097,6 +6151,7 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
     elif isinstance(entry, AnalogFlipFlopLogic):
         data.update({
             "output_var_name": entry.output_var_name,
+            "output_var_uid": entry.output_var_uid,
             "input_expr": _expr_like_to_dict(entry.input_expr),
             "set_expr": _expr_like_to_dict(entry.set_expr),
             "reset_expr": _expr_like_to_dict(entry.reset_expr),
@@ -5111,9 +6166,19 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
             "drop_delay_expr": _expr_like_to_dict(entry.drop_delay_expr),
         })
         return data
+    elif isinstance(entry, TimedPulseLogic):
+        data.update({
+            "output_var_name": entry.output_var_name,
+            "trigger_expr": _expr_like_to_dict(entry.trigger_expr),
+            "duration_expr": _expr_like_to_dict(entry.duration_expr),
+        })
+        return data
     elif isinstance(entry, ResetOnRisingEdgeLogic):
         data.update({
             "target_var_name": entry.target_var_name,
+            "target_var_uid": entry.target_var_uid,
+            "accepted_boundary_only": entry.accepted_boundary_only,
+            "forced_event_time": entry.forced_event_time,
             "reset_expr": _expr_like_to_dict(entry.reset_expr),
             "value_expr": _expr_like_to_dict(entry.value_expr),
         })
@@ -5185,6 +6250,7 @@ def _fixed_sample_logic_from_dict(data: ProceduralLogicData) -> FixedSampleLogic
         output_var_name=str(data["output_var_name"]),
         condition_expr=_expr_like_from_dict(_get_expr_like_field(data, "condition_expr")),
         name=str(data.get("name", "")),
+        output_var_uid=data.get("output_var_uid") if isinstance(data.get("output_var_uid"), int) else None,
     )
 
 
@@ -5258,6 +6324,86 @@ def _sampled_value_logic_from_dict(data: ProceduralLogicData) -> SampledValueLog
     )
 
 
+def _periodic_sample_logic_from_dict(data: ProceduralLogicData) -> PeriodicSampleLogic:
+    """Recreate one fixed-period sample-and-hold declaration.
+
+    :param data: Serialized procedural declaration.
+    :return: Reconstructed periodic sample entry.
+    """
+    output_var_uid_raw: object = data.get('output_var_uid', None)
+    if output_var_uid_raw is None:
+        output_var_uid: int | None = None
+    elif isinstance(output_var_uid_raw, int) and not isinstance(output_var_uid_raw, bool):
+        output_var_uid = output_var_uid_raw
+    else:
+        raise TypeError('Periodic sample output UID must be an integer')
+    return PeriodicSampleLogic(
+        output_var_name=str(data['output_var_name']),
+        source_expr=_expr_like_from_dict(_get_expr_like_field(data, 'source_expr')),
+        sample_period=_read_finite_procedural_float(data, 'sample_period'),
+        name=str(data.get('name', '')),
+        output_var_uid=output_var_uid,
+    )
+
+
+def _sampled_pi_limiter_logic_from_dict(data: ProceduralLogicData) -> SampledPiLimiterLogic:
+    """Recreate a fixed-period PI update with its per-sample change bound.
+
+    :param data: Serialized procedural declaration.
+    :return: Reconstructed sampled PI logic.
+    """
+    output_var_uid_raw: object = data.get('output_var_uid', None)
+    if output_var_uid_raw is None:
+        output_var_uid: int | None = None
+    elif isinstance(output_var_uid_raw, int) and not isinstance(output_var_uid_raw, bool):
+        output_var_uid = output_var_uid_raw
+    else:
+        raise TypeError('Sampled PI output UID must be an integer')
+    return SampledPiLimiterLogic(
+        output_var_name=str(data['output_var_name']),
+        error_expr=_expr_like_from_dict(_get_expr_like_field(data, 'error_expr')),
+        sample_period=_read_finite_procedural_float(data, 'sample_period'),
+        proportional_gain=_read_finite_procedural_float(data, 'proportional_gain'),
+        integral_time=_read_finite_procedural_float(data, 'integral_time'),
+        maximum_change=_read_finite_procedural_float(data, 'maximum_change'),
+        name=str(data.get('name', '')),
+        output_var_uid=output_var_uid,
+    )
+
+
+def _pss_ptist3_sampled_output_logic_from_dict(
+        data: ProceduralLogicData,
+) -> PssPTIST3SampledOutputLogic:
+    """Recreate PTIST3 sampled output behavior from its persistent declaration.
+
+    :param data: Serialized procedural declaration.
+    :return: PTIST3 sampled averaging and limiter state entry.
+    """
+    output_var_uid_raw: object = data.get('output_var_uid', None)
+    if output_var_uid_raw is None:
+        output_var_uid: int | None = None
+    elif isinstance(output_var_uid_raw, int) and not isinstance(output_var_uid_raw, bool):
+        output_var_uid = output_var_uid_raw
+    else:
+        raise TypeError('PTIST3 output UID must be an integer')
+    sample_period_raw: object = data.get('sample_period', None)
+    if sample_period_raw is None:
+        sample_period: float | None = None
+    else:
+        sample_period = _read_finite_procedural_float(data, 'sample_period')
+    return PssPTIST3SampledOutputLogic(
+        output_var_name=str(data['output_var_name']),
+        source_expr=_expr_like_from_dict(_get_expr_like_field(data, 'source_expr')),
+        sample_period=sample_period,
+        average_count=_read_procedural_integer(data, 'average_count'),
+        average_threshold=_read_finite_procedural_float(data, 'average_threshold'),
+        limit_threshold=_read_finite_procedural_float(data, 'limit_threshold'),
+        limit_count=_read_procedural_integer(data, 'limit_count'),
+        reset_count=_read_procedural_integer(data, 'reset_count'),
+        name=str(data.get('name', '')),
+        output_var_uid=output_var_uid,
+    )
+
 def _hard_saturation_logic_from_dict(data: ProceduralLogicData) -> HardSaturationLogic:
     return HardSaturationLogic(
         output_var_name=str(data["output_var_name"]),
@@ -5269,11 +6415,25 @@ def _hard_saturation_logic_from_dict(data: ProceduralLogicData) -> HardSaturatio
 
 
 def _time_delay_logic_from_dict(data: ProceduralLogicData) -> TimeDelayLogic:
+    output_var_uid_raw: object = data.get("output_var_uid", None)
+    output_var_uid: int | None = (
+        int(output_var_uid_raw)
+        if isinstance(output_var_uid_raw, int)
+        and not isinstance(output_var_uid_raw, bool)
+        else None
+    )
+    continuous_raw: object = data.get("continuous", False)
+    if isinstance(continuous_raw, bool):
+        continuous: bool = continuous_raw
+    else:
+        raise TypeError("Procedural field 'continuous' must be boolean")
     return TimeDelayLogic(
         output_var_name=str(data["output_var_name"]),
         source_expr=_expr_like_from_dict(_get_expr_like_field(data, "source_expr")),
         delay_expr=_expr_like_from_dict(_get_expr_like_field(data, "delay_expr")),
         name=str(data.get("name", "")),
+        output_var_uid=output_var_uid,
+        continuous=continuous,
     )
 
 
@@ -5284,6 +6444,26 @@ def _moving_average_logic_from_dict(data: ProceduralLogicData) -> MovingAverageL
         delay_expr=_expr_like_from_dict(_get_expr_like_field(data, "delay_expr")),
         window_expr=_expr_like_from_dict(_get_expr_like_field(data, "window_expr")),
         name=str(data.get("name", "")),
+        output_var_uid=data.get("output_var_uid") if isinstance(data.get("output_var_uid"), int) else None,
+    )
+
+
+def _wrapped_derivative_logic_from_dict(data: ProceduralLogicData) -> WrappedDerivativeLogic:
+    """Recreate a periodic-angle derivative from its persistent declaration.
+
+    :param data: Serialized procedural declaration.
+    :return: Reconstructed wrapped derivative entry.
+    """
+    return WrappedDerivativeLogic(
+        output_var_name=str(data['output_var_name']),
+        source_expr=_expr_like_from_dict(_get_expr_like_field(data, 'source_expr')),
+        maximum_rate_expr=(
+            None if data.get('maximum_rate_expr', None) is None
+            else _expr_like_from_dict(
+                _get_expr_like_field(data, 'maximum_rate_expr'),
+            )
+        ),
+        name=str(data.get('name', '')),
     )
 
 
@@ -5294,6 +6474,7 @@ def _gradient_limiter_logic_from_dict(data: ProceduralLogicData) -> GradientLimi
         lower_rate_expr=_expr_like_from_dict(_get_expr_like_field(data, "lower_rate_expr")),
         upper_rate_expr=_expr_like_from_dict(_get_expr_like_field(data, "upper_rate_expr")),
         name=str(data.get("name", "")),
+        output_var_uid=data.get("output_var_uid") if isinstance(data.get("output_var_uid"), int) else None,
     )
 
 
@@ -5309,6 +6490,7 @@ def _flipflop_logic_from_dict(data: ProceduralLogicData) -> FlipFlopLogic:
         set_expr=_expr_like_from_dict(_get_expr_like_field(data, "set_expr")),
         reset_expr=_expr_like_from_dict(_get_expr_like_field(data, "reset_expr")),
         name=str(data.get("name", "")),
+        output_var_uid=data.get("output_var_uid") if isinstance(data.get("output_var_uid"), int) else None,
     )
 
 
@@ -5325,6 +6507,7 @@ def _analog_flipflop_logic_from_dict(data: ProceduralLogicData) -> AnalogFlipFlo
         set_expr=_expr_like_from_dict(_get_expr_like_field(data, "set_expr")),
         reset_expr=_expr_like_from_dict(_get_expr_like_field(data, "reset_expr")),
         name=str(data.get("name", "")),
+        output_var_uid=data.get("output_var_uid") if isinstance(data.get("output_var_uid"), int) else None,
     )
 
 
@@ -5357,6 +6540,19 @@ def _pickup_dropoff_logic_from_dict(data: ProceduralLogicData) -> PickupDropoffL
     )
 
 
+def _timed_pulse_logic_from_dict(data: ProceduralLogicData) -> TimedPulseLogic:
+    """Deserialize an edge-triggered pulse and sampled duration.
+
+    :param data: Serialized timed-pulse declaration.
+    :return: Reconstructed timed-pulse procedural entry.
+    """
+    return TimedPulseLogic(
+        output_var_name=str(data["output_var_name"]),
+        trigger_expr=_expr_like_from_dict(_get_expr_like_field(data, "trigger_expr")),
+        duration_expr=_expr_like_from_dict(_get_expr_like_field(data, "duration_expr")),
+        name=str(data.get("name", "")),
+    )
+
 def _reset_on_rising_edge_logic_from_dict(data: ProceduralLogicData) -> ResetOnRisingEdgeLogic:
     """
     Deserialize one reset-on-rising-edge procedural logic entry.
@@ -5364,11 +6560,29 @@ def _reset_on_rising_edge_logic_from_dict(data: ProceduralLogicData) -> ResetOnR
     :param data: Serialized logic dictionary.
     :return: Reset-on-rising-edge procedural logic entry.
     """
+    target_uid: object = data.get("target_var_uid", None)
+    accepted_only: object = data.get("accepted_boundary_only", False)
+    event_time: object = data.get("forced_event_time", None)
+    if target_uid is not None and (not isinstance(target_uid, int) or isinstance(target_uid, bool)):
+        raise TypeError("Reset target UID must be an integer")
+    else:
+        pass
+    if not isinstance(accepted_only, bool):
+        raise TypeError("Reset accepted-boundary flag must be boolean")
+    else:
+        pass
+    if event_time is not None and (isinstance(event_time, bool) or not isinstance(event_time, (int, float)) or not math.isfinite(float(event_time))):
+        raise TypeError("Reset boundary time must be finite")
+    else:
+        pass
     return ResetOnRisingEdgeLogic(
         target_var_name=str(data["target_var_name"]),
         reset_expr=_expr_like_from_dict(_get_expr_like_field(data, "reset_expr")),
         value_expr=_expr_like_from_dict(_get_expr_like_field(data, "value_expr")),
         name=str(data.get("name", "")),
+        target_var_uid=target_uid,
+        accepted_boundary_only=accepted_only,
+        forced_event_time=None if event_time is None else float(event_time),
     )
 
 
@@ -5589,12 +6803,20 @@ def build_procedural_logic_entry(
         return _fixed_sample_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.SampledValue:
         return _sampled_value_logic_from_dict(data)
+    elif logic_tpe == ProceduralLogicType.PeriodicSample:
+        return _periodic_sample_logic_from_dict(data)
+    elif logic_tpe == ProceduralLogicType.SampledPiLimiter:
+        return _sampled_pi_limiter_logic_from_dict(data)
+    elif logic_tpe == ProceduralLogicType.PssPTIST3SampledOutput:
+        return _pss_ptist3_sampled_output_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.HardSaturation:
         return _hard_saturation_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.TimeDelay:
         return _time_delay_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.MovingAverage:
         return _moving_average_logic_from_dict(data)
+    elif logic_tpe == ProceduralLogicType.WrappedDerivative:
+        return _wrapped_derivative_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.GradientLimiter:
         return _gradient_limiter_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.FlipFlop:
@@ -5603,6 +6825,8 @@ def build_procedural_logic_entry(
         return _analog_flipflop_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.PickupDropoff:
         return _pickup_dropoff_logic_from_dict(data)
+    elif logic_tpe == ProceduralLogicType.TimedPulse:
+        return _timed_pulse_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.ResetOnRisingEdge:
         return _reset_on_rising_edge_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.DelayedThresholdLatch:
@@ -5675,17 +6899,17 @@ def procedural_logic_from_dict(
 
 
 def clone_procedural_logic_entries(
-        entries: Iterable[ProceduralLogicEntryContract[Expr]],
+        entries: Iterable[ProceduralLogicBase],
         var_mapping: VarRemap,
-) -> List[ProceduralLogicEntryContract[Expr]]:
+) -> List[ProceduralLogicBase]:
     """Clone procedural logic entries under a variable remapping.
 
     :param entries: Source procedural logic entries.
     :param var_mapping: Mapping from old variables/names to remapped expressions.
     :return: Remapped procedural logic entries.
     """
-    remapped_entries: List[ProceduralLogicEntryContract[Expr]] = list()
-    entry: ProceduralLogicEntryContract[Expr]
+    remapped_entries: List[ProceduralLogicBase] = list()
+    entry: ProceduralLogicBase
     for entry in entries:
         remapped_entries.append(entry.remap(var_mapping))
     else:
@@ -5693,7 +6917,7 @@ def clone_procedural_logic_entries(
     return remapped_entries
 
 
-class ProceduralLogicCodec(ProceduralLogicCodecContract[Expr]):
+class ProceduralLogicCodec:
     """Reconstruct procedural state machines at an explicit parse boundary."""
 
     __slots__ = ()
@@ -5702,7 +6926,7 @@ class ProceduralLogicCodec(ProceduralLogicCodecContract[Expr]):
             self,
             entries: Iterable[ProceduralLogicData],
             var_factory: VarFactory | None = None,
-    ) -> Iterable[ProceduralLogicEntryContract[Expr]]:
+    ) -> Iterable[ProceduralLogicBase]:
         """Build typed state machines from declarative entry data.
 
         :param entries: Declarative procedural entries.
@@ -5737,7 +6961,7 @@ def build_boundary_updater_from_block(
     """
     entries: List[ProceduralLogicBase] = list()
     block: Block
-    contract_entry: ProceduralLogicEntryContract[Expr]
+    contract_entry: ProceduralLogicBase
     for block in problem.sys_block.get_all_blocks():
         for contract_entry in block.procedural_logic:
             if isinstance(contract_entry, ProceduralLogicBase):

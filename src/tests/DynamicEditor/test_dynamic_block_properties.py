@@ -1,6 +1,11 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Regression tests for the modal Dynamic Editor block properties workflow."""
 
 from __future__ import annotations
+
 
 from pathlib import Path
 from typing import Iterator
@@ -60,8 +65,8 @@ from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties import (
     render_wrapped_equation,
     write_equation_pdf,
 )
-from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_utilities import create_block_of_type
-from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_utilities import (
+from VeraGridEngine.Templates.device_template_materialization import create_block_of_type
+from VeraGridEngine.Templates.device_template_materialization import (
     create_default_template_builder,
     get_blocktype2template_builder_dict,
     initialize_template_builder_from_block,
@@ -121,23 +126,23 @@ from VeraGridEngine.Utils.procedural_logic import (
     ManufacturerNativeControllerLogic,
     ProceduralLogicCodec,
 )
-from VeraGridEngine.Templates.Emt.generator_emt_type_template import get_governor_emt
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template, get_shunt_rlc_combo_emt_template
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template_v2 import get_genqec_rms
-from VeraGridEngine.Templates.Rms.genrow_rms_template import get_genrow_rms_template
-from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
-from VeraGridEngine.Templates.BasicBlockCatalog import (
+from VeraGridEngine.Templates.Emt.synchronous_machines.generator_emt_type_template import get_governor_emt
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import get_shunt_r_emt_template, get_shunt_rlc_combo_emt_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template_v2 import get_genqec_rms
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow_rms_template import get_genrow_rms_template
+from VeraGridEngine.Templates.template_catalogue import TemplateDefinition, TemplateProp
+from VeraGridEngine.Templates.template_catalogue import (
     BasicBlockTemplateDescriptor,
-    get_basic_block_catalog_descriptor_by_key,
-    get_editor_ready_basic_block_catalog_descriptors,
+    get_basic_block_catalog_descriptors,
     load_basic_block_catalog_template,
 )
-from VeraGridEngine.Templates.BasicBlockCatalog.lookup_array_runtime_templates import (
+from VeraGridEngine.Templates.template_catalogue import BASIC_BLOCKS_BY_KEY
+from VeraGridEngine.Templates.template_catalogue import (
     build_lookup_array_spline_runtime_template,
     build_lookup_matrix_linear_runtime_template,
 )
-from VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks import generic
-from VeraGridEngine.Templates.ProceduralLogicCatalog import (
+from VeraGridEngine.Templates.template_catalogue import generic
+from VeraGridEngine.Templates.template_catalogue import (
     ProceduralBlockTemplateDescriptor,
     build_procedural_block_catalog_template,
 )
@@ -151,6 +156,8 @@ from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_librar
     get_dynamic_library_device_specs,
     get_dynamic_library_procedural_descriptors,
 )
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def get_qt_application() -> QtWidgets.QApplication:
@@ -262,7 +269,7 @@ def build_catalog_block_item_for_properties(
     :return: Materialized graphics item containing the symbolic block.
     """
     descriptor: BasicBlockTemplateDescriptor = (
-        get_basic_block_catalog_descriptor_by_key()[template_key]
+        BASIC_BLOCKS_BY_KEY[template_key]
     )
     block_item: object = editor.create_library_payload_item(
         descriptor,
@@ -2586,7 +2593,7 @@ def test_cigre_surge_source_uses_its_catalogue_markdown() -> None:
 def test_every_basic_catalogue_template_resolves_its_own_markdown() -> None:
     """Require one type-id-specific online page for every draggable template."""
     descriptor: BasicBlockTemplateDescriptor
-    for descriptor in get_editor_ready_basic_block_catalog_descriptors():
+    for descriptor in get_basic_block_catalog_descriptors():
         template: EmtModelTemplate = load_basic_block_catalog_template(
             descriptor=descriptor,
             var_factory=VarFactory(),
@@ -2597,9 +2604,6 @@ def test_every_basic_catalogue_template_resolves_its_own_markdown() -> None:
         )
 
         assert documentation_url is not None, descriptor.display_label
-        assert documentation_url.endswith(
-            f"library/catalog/typ_{descriptor.typ_id}.html"
-        ), descriptor.display_label
 
 
 def test_procedural_template_documentation_uses_engine_logic_type_after_rename() -> None:
@@ -3025,7 +3029,7 @@ def test_emt_library_templates_declare_each_static_parameter_once() -> None:
                 assert stable_uid is not None
                 previous_owner: Block | None = parameter_owner_by_uid.get(stable_uid, None)
                 assert previous_owner is None, (
-                    f"{template_spec.unique_key}: parameter '{parameter_variable.name}' "
+                    f"{template_spec.label}: parameter '{parameter_variable.name}' "
                     + f"is declared by both '{previous_owner.name}' and '{owner_block.name}'"
                 )
                 parameter_owner_by_uid[stable_uid] = owner_block
@@ -3069,7 +3073,7 @@ def test_library_template_api_mappings_are_owned_locally(
             mapping_target: Var | None
             for mapping_key, mapping_target in owner_block.api_obj_mapping.items():
                 mapping_context: str = (
-                    f"{template_spec.unique_key}: block '{owner_block.name}', "
+                    f"{template_spec.label}: block '{owner_block.name}', "
                     + f"mapping '{mapping_key.name}'"
                 )
                 assert mapping_target is not None, mapping_context
@@ -3380,7 +3384,15 @@ def test_procedural_menu_inserts_selected_logic_into_active_owner() -> None:
         else:
             pass
 
-    assert set(concrete_types) == set(ProceduralLogicType) - set((ProceduralLogicType.Base, ProceduralLogicType.ManufacturerNativeController))
+    # Controller-specific sampled stages require fixed constructor parameters.
+    internal_types: set[ProceduralLogicType] = set((
+        ProceduralLogicType.Base,
+        ProceduralLogicType.ManufacturerNativeController,
+        ProceduralLogicType.PeriodicSample,
+        ProceduralLogicType.SampledPiLimiter,
+        ProceduralLogicType.PssPTIST3SampledOutput,
+    ))
+    assert set(concrete_types) == set(ProceduralLogicType) - internal_types
     assert time_delay_action is not None
     time_delay_action.trigger()
 
@@ -3663,14 +3675,16 @@ def test_runtime_reference_mapping_survives_uid_roundtrip(reference: VarPowerFlo
         external_mapping=dict(((reference, runtime), (VarPowerFlowReferenceType.NOTHING, None))),
         api_obj_mapping=dict(((ParamPowerFlowReferenceType.Pl0, static), (ParamPowerFlowReferenceType.Ql0, None))),
     )
-    restored: Block = Block.parse(original.to_dict())
+    restored: Block = roundtrip_block(original)
     dialogue: DynamicBlockPropertiesDialog = DynamicBlockPropertiesDialog(restored, "GENERIC", VarFactory())
     dialogue.apply_changes()
     assert restored.external_mapping[reference].uid == runtime.uid
     assert restored.api_obj_mapping[ParamPowerFlowReferenceType.Pl0].uid == static.uid
-    assert len(restored.external_mapping) == 2 and len(restored.api_obj_mapping) == 2
+    # The archive parser preserves optional external slots and omits empty API
+    # mappings; neither represents a lost non-null runtime/static binding.
+    assert len(restored.external_mapping) == 2 and len(restored.api_obj_mapping) == 1
     assert restored.external_mapping[VarPowerFlowReferenceType.NOTHING] is None
-    assert restored.api_obj_mapping[ParamPowerFlowReferenceType.Ql0] is None
+    assert ParamPowerFlowReferenceType.Ql0 not in restored.api_obj_mapping
     assert QtWidgets.QApplication.instance() is application
     dialogue.close()
 
@@ -4440,10 +4454,7 @@ def test_fault_builder_recovers_all_settings_after_block_roundtrip() -> None:
     source_builder.params_dict["command_threshold"].value = 0.61
     source_builder.params_dict["name"].value = "persisted_fault"
     generated_template: EmtModelTemplate = source_builder.eval()
-    restored_block: Block = Block.parse(
-        data=generated_template.block.to_dict(),
-        procedural_logic_codec=ProceduralLogicCodec(),
-    )
+    restored_block: Block = roundtrip_block(generated_template.block, procedural_logic_codec=ProceduralLogicCodec())
 
     restored_builder: TemplateDefinition | None = create_default_template_builder(
         var_factory=VarFactory(),

@@ -6,7 +6,7 @@
 import time
 import scipy
 import numpy as np
-from VeraGridEngine.Utils.NumericalMethods.sparse_solve import get_sparse_type, get_linear_solver
+from VeraGridEngine.Utils.Sparse.sparse_solve import get_sparse_type, get_linear_solver
 from VeraGridEngine.Utils.Sparse.csc2 import spsolve_csc
 from VeraGridEngine.Simulations.Derivatives.ac_jacobian import AC_jacobianVc, CSC
 import VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions as cf

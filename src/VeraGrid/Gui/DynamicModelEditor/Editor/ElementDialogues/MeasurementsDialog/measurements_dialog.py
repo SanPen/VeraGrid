@@ -231,6 +231,58 @@ class MeasurementsDialog(QtWidgets.QDialog):
             QtWidgets.QHeaderView.ResizeMode.Interactive,
         )
 
+    def _set_initial_measurement_column_widths(self) -> None:
+        """Fit the initial columns to all rows while keeping them user-resizable.
+
+        Every measurement group is expanded temporarily so Qt considers the
+        child reference labels when calculating the one-time content widths.
+        The original expansion state is then restored and any spare viewport
+        width is assigned to the comment column.
+
+        :return: None.
+        """
+        expanded_states: List[bool] = list()
+        top_index: int
+        parent_item: QtWidgets.QTreeWidgetItem
+
+        # Include collapsed child rows in the initial content measurement.
+        for top_index in range(self.ui.measurement_tree.topLevelItemCount()):
+            parent_item = self.ui.measurement_tree.topLevelItem(top_index)
+            expanded_states.append(parent_item.isExpanded())
+            parent_item.setExpanded(True)
+
+        column_index: int
+        for column_index in range(self.ui.measurement_tree.columnCount()):
+            self.ui.measurement_tree.resizeColumnToContents(column_index)
+
+        # Leave enough breathing room for the tree and check-box decorations.
+        name_width: int = self.ui.measurement_tree.columnWidth(0) + 12
+        io_width: int = self.ui.measurement_tree.columnWidth(1) + 24
+        self.ui.measurement_tree.setColumnWidth(0, name_width)
+        self.ui.measurement_tree.setColumnWidth(1, io_width)
+
+        # Restore the same collapsed/expanded presentation the user opened.
+        for top_index in range(self.ui.measurement_tree.topLevelItemCount()):
+            parent_item = self.ui.measurement_tree.topLevelItem(top_index)
+            parent_item.setExpanded(expanded_states[top_index])
+
+        # Extend only the initial comment width to the right edge. All three
+        # sections remain Interactive, so the user can resize them afterward.
+        viewport_width: int = self.ui.measurement_tree.viewport().width()
+        columns_width: int = (
+            self.ui.measurement_tree.columnWidth(0)
+            + self.ui.measurement_tree.columnWidth(1)
+            + self.ui.measurement_tree.columnWidth(2)
+        )
+        if columns_width < viewport_width:
+            comment_width: int = self.ui.measurement_tree.columnWidth(2)
+            self.ui.measurement_tree.setColumnWidth(
+                2,
+                comment_width + viewport_width - columns_width,
+            )
+        else:
+            pass
+
     def _set_measurement_configuration_enabled(self, enabled: bool) -> None:
         """Enable or shade all controls that depend on the selected bus.
 
@@ -345,6 +397,7 @@ class MeasurementsDialog(QtWidgets.QDialog):
             self._populate_measurement_tree()
         else:
             pass
+        self._set_initial_measurement_column_widths()
         self._set_measurement_configuration_enabled(True)
 
         self._updating_tree = False

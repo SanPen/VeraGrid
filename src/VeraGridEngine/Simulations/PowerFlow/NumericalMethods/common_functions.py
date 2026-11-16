@@ -152,8 +152,9 @@ def asynchronous_gen_currents(voltage: CxVec, Rs: float, Xs: float, Xm: float,
     u1: complex = voltage @ rotation.conj() / 3.0
     # Keep the established positive-sequence P/slip law. PF AS mode adds passive
     # negative/zero-sequence losses to the terminal power without redispatching P1.
+    # Resolve slip below the Jacobian comparison step so bisection noise does not dominate dI/dV.
     slip: float = solve_slip(f=active_power_mismatch, a=-0.05, b=-1e-6,
-                             tol=1e-10, max_iter=200, u=u1, Rs=Rs, Xs=Xs, Xm=Xm,
+                             tol=1e-14, max_iter=200, u=u1, Rs=Rs, Xs=Xs, Xm=Xm,
                              Rr=Rr, Xr=Xr, P=P, Sr=Sr)
     z1: complex = asynchronous_impedance(slip, Rs, Xs, Xm, Rr, Xr)
     z2: complex = asynchronous_impedance(2.0-slip, Rs, Xs, Xm, Rr, Xr)
@@ -231,6 +232,26 @@ def compute_asynchronous_generator_q_per_bus(
             q_per_bus[bus_idx] += q[gen_idx]
 
     return q_per_bus
+
+
+@nb.njit(cache=True)
+def generator_qv_droop(vm: float, vset: float, k_droop: float,
+                       dead_band: float, qmin: float, qmax: float) -> float:
+    """Evaluate the existing generator Q-V curve, with Q in the supplied limits' units.
+
+    :param vm: Voltage magnitude (positive-sequence magnitude in ABC), pu.
+    :param vset: Zero-Q voltage reference, pu.
+    :param k_droop: Gain multiplying qmax per pu voltage deviation.
+    :param dead_band: Half-width of the zero-Q voltage band, pu.
+    :param qmin: Lower reactive-power limit.
+    :param qmax: Upper reactive-power limit and gain base.
+    :return: Reactive-power injection, including the existing saturation.
+    """
+    dv = vset - vm
+    if abs(dv) <= dead_band:
+        return 0.0
+    deviation = dv - dead_band if dv > 0.0 else dv + dead_band
+    return max(qmin, min(qmax, deviation * k_droop * qmax))
 
 
 def voltage_q_droop(ut: complex,
@@ -595,7 +616,7 @@ def expand_magnitudes(magnitude: CxVec, lookup: IntVec):
     return magnitude_expanded
 
 
-@nb.jit(cache=True)
+@nb.njit(cache=True)
 def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[complex, complex, complex, complex]:
     """
     Given the phase voltages and currents of a floating star connected current load,
@@ -619,6 +640,29 @@ def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[
     error = 1.0
     iteration = 0
     max_iterations = 25
+
+    # Two active constant-magnitude phase currents must have equal magnitudes
+    # to satisfy the floating neutral's zero-current condition.
+    active_a: bool = abs(Va) > zero_voltage and abs(Istar_a) > 1e-12
+    active_b: bool = abs(Vb) > zero_voltage and abs(Istar_b) > 1e-12
+    active_c: bool = abs(Vc) > zero_voltage and abs(Istar_c) > 1e-12
+    active_count: int = int(active_a) + int(active_b) + int(active_c)
+    if active_count == 2:
+        if active_a and active_b:
+            first_magnitude: float = abs(Istar_a)
+            second_magnitude: float = abs(Istar_b)
+        elif active_b and active_c:
+            first_magnitude = abs(Istar_b)
+            second_magnitude = abs(Istar_c)
+        else:
+            first_magnitude = abs(Istar_a)
+            second_magnitude = abs(Istar_c)
+        if abs(first_magnitude - second_magnitude) > 1e-10:
+            raise ValueError('Two-phase floating-star current magnitudes must match')
+        else:
+            pass
+    else:
+        pass
 
     # Remove @nb.jit decorator - nested functions can't be decorated
     def Iphase(U, Istar):
@@ -762,7 +806,7 @@ def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[
     return Ia, Ib, Ic, Vn
 
 
-# @nb.jit(cache=True)
+@nb.njit(cache=True)
 def floating_star_powers(Ua,
                          Ub,
                          Uc,
@@ -820,7 +864,6 @@ def floating_star_powers(Ua,
         Ic = zero_current
 
     return Ia, Ib, Ic, Un
-
 
 def power_flow_post_process_nonlinear_3ph(Sbus: CxVec,
                                           V: CxVec,
@@ -972,7 +1015,7 @@ def power_flow_post_process_nonlinear(Sbus: CxVec,
 def power_flow_post_process_linear(Sbus: CxVec, V: CxVec,
                                    active: IntVec, X: Vec, tap_module: Vec, tap_angle: Vec,
                                    F: IntVec, T: IntVec,
-                                   branch_rates: Vec, Sbase: float):
+                                   branch_rates: Vec, Sbase: float, theta: Vec | None = None):
     """
 
     :param Sbus:
@@ -985,11 +1028,13 @@ def power_flow_post_process_linear(Sbus: CxVec, V: CxVec,
     :param T:
     :param branch_rates:
     :param Sbase:
+    :param theta: Solved unwrapped bus angles, when available from the linear model.
     :return:
     """
 
     # DC power flow
-    theta = np.angle(V, deg=False)
+    if theta is None:
+        theta = np.angle(V, deg=False)
     theta_f = theta[F]
     theta_t = theta[T]
 
@@ -1239,37 +1284,9 @@ def split_bus_quantity(
                 # The droop-controlled generator reactive power is known once
                 # the final bus voltage is known, so it behaves as a fixed
                 # contribution in the post-processing split.
-                delta_v = Vset_gen[gen_idx] - Vm[bus_idx]
-                q_droop_value = 0.0
-
-                if abs(delta_v) > dead_band_gen[gen_idx]:
-                    if delta_v > dead_band_gen[gen_idx]:
-                        q_droop_value = (
-                            (delta_v - dead_band_gen[gen_idx])
-                            * k_droop_gen[gen_idx]
-                            * Qmax_gen[gen_idx]
-                        )
-                    else:
-                        if delta_v < -dead_band_gen[gen_idx]:
-                            q_droop_value = (
-                                (delta_v + dead_band_gen[gen_idx])
-                                * k_droop_gen[gen_idx]
-                                * Qmax_gen[gen_idx]
-                            )
-                        else:
-                            q_droop_value = 0.0
-
-                    if q_droop_value > Qmax_gen[gen_idx]:
-                        q_droop_value = Qmax_gen[gen_idx]
-                    else:
-                        pass
-
-                    if q_droop_value < Qmin_gen[gen_idx]:
-                        q_droop_value = Qmin_gen[gen_idx]
-                    else:
-                        pass
-                else:
-                    q_droop_value = 0.0
+                q_droop_value = generator_qv_droop(
+                    Vm[bus_idx], Vset_gen[gen_idx], k_droop_gen[gen_idx],
+                    dead_band_gen[gen_idx], Qmin_gen[gen_idx], Qmax_gen[gen_idx])
 
                 qfixed_per_bus[bus_idx] += q_droop_value
                 qmin_control_per_bus[bus_idx] += 0.0
@@ -1391,37 +1408,9 @@ def split_bus_quantity(
             elif control_mode_int_gen[gen_idx] == qv_droop_val_gen:
                 # Recompute the same droop law so the reported per-generator Q
                 # matches the fixed contribution used in the bus decomposition.
-                delta_v = Vset_gen[gen_idx] - Vm[bus_idx]
-                q_droop_value = 0.0
-
-                if abs(delta_v) > dead_band_gen[gen_idx]:
-                    if delta_v > dead_band_gen[gen_idx]:
-                        q_droop_value = (
-                            (delta_v - dead_band_gen[gen_idx])
-                            * k_droop_gen[gen_idx]
-                            * Qmax_gen[gen_idx]
-                        )
-                    else:
-                        if delta_v < -dead_band_gen[gen_idx]:
-                            q_droop_value = (
-                                (delta_v + dead_band_gen[gen_idx])
-                                * k_droop_gen[gen_idx]
-                                * Qmax_gen[gen_idx]
-                            )
-                        else:
-                            q_droop_value = 0.0
-
-                    if q_droop_value > Qmax_gen[gen_idx]:
-                        q_droop_value = Qmax_gen[gen_idx]
-                    else:
-                        pass
-
-                    if q_droop_value < Qmin_gen[gen_idx]:
-                        q_droop_value = Qmin_gen[gen_idx]
-                    else:
-                        pass
-                else:
-                    q_droop_value = 0.0
+                q_droop_value = generator_qv_droop(
+                    Vm[bus_idx], Vset_gen[gen_idx], k_droop_gen[gen_idx],
+                    dead_band_gen[gen_idx], Qmin_gen[gen_idx], Qmax_gen[gen_idx])
 
                 q_gen[gen_idx] = q_droop_value
             else:
@@ -1559,37 +1548,9 @@ def split_reactive_power_between_generators_and_batteries(
                 qmax_control_per_bus[bus_idx] += Qmax_gen[gen_idx]
                 control_count_per_bus[bus_idx] += 1
             elif control_mode_int_gen[gen_idx] == qv_droop_val_gen:
-                delta_v = Vset_gen[gen_idx] - Vm[bus_idx]
-                q_droop_value = 0.0
-
-                if abs(delta_v) > dead_band_gen[gen_idx]:
-                    if delta_v > dead_band_gen[gen_idx]:
-                        q_droop_value = (
-                            (delta_v - dead_band_gen[gen_idx])
-                            * k_droop_gen[gen_idx]
-                            * Qmax_gen[gen_idx]
-                        )
-                    else:
-                        if delta_v < -dead_band_gen[gen_idx]:
-                            q_droop_value = (
-                                (delta_v + dead_band_gen[gen_idx])
-                                * k_droop_gen[gen_idx]
-                                * Qmax_gen[gen_idx]
-                            )
-                        else:
-                            q_droop_value = 0.0
-
-                    if q_droop_value > Qmax_gen[gen_idx]:
-                        q_droop_value = Qmax_gen[gen_idx]
-                    else:
-                        pass
-
-                    if q_droop_value < Qmin_gen[gen_idx]:
-                        q_droop_value = Qmin_gen[gen_idx]
-                    else:
-                        pass
-                else:
-                    q_droop_value = 0.0
+                q_droop_value = generator_qv_droop(
+                    Vm[bus_idx], Vset_gen[gen_idx], k_droop_gen[gen_idx],
+                    dead_band_gen[gen_idx], Qmin_gen[gen_idx], Qmax_gen[gen_idx])
 
                 qfixed_per_bus[bus_idx] += q_droop_value
             else:
@@ -1672,37 +1633,9 @@ def split_reactive_power_between_generators_and_batteries(
                 else:
                     q_gen[gen_idx] = 0.0
             elif control_mode_int_gen[gen_idx] == qv_droop_val_gen:
-                delta_v = Vset_gen[gen_idx] - Vm[bus_idx]
-                q_droop_value = 0.0
-
-                if abs(delta_v) > dead_band_gen[gen_idx]:
-                    if delta_v > dead_band_gen[gen_idx]:
-                        q_droop_value = (
-                            (delta_v - dead_band_gen[gen_idx])
-                            * k_droop_gen[gen_idx]
-                            * Qmax_gen[gen_idx]
-                        )
-                    else:
-                        if delta_v < -dead_band_gen[gen_idx]:
-                            q_droop_value = (
-                                (delta_v + dead_band_gen[gen_idx])
-                                * k_droop_gen[gen_idx]
-                                * Qmax_gen[gen_idx]
-                            )
-                        else:
-                            q_droop_value = 0.0
-
-                    if q_droop_value > Qmax_gen[gen_idx]:
-                        q_droop_value = Qmax_gen[gen_idx]
-                    else:
-                        pass
-
-                    if q_droop_value < Qmin_gen[gen_idx]:
-                        q_droop_value = Qmin_gen[gen_idx]
-                    else:
-                        pass
-                else:
-                    q_droop_value = 0.0
+                q_droop_value = generator_qv_droop(
+                    Vm[bus_idx], Vset_gen[gen_idx], k_droop_gen[gen_idx],
+                    dead_band_gen[gen_idx], Qmin_gen[gen_idx], Qmax_gen[gen_idx])
 
                 q_gen[gen_idx] = q_droop_value
             else:

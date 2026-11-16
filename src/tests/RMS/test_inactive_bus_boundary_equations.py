@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from typing import Dict, List
@@ -5,7 +9,7 @@ from typing import Dict, List
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import build_inactive_bus_boundary_equations
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var
 
 

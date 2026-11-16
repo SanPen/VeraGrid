@@ -14,10 +14,10 @@ the original expression trees.
 from __future__ import annotations
 
 import hashlib
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 from VeraGridEngine.Utils.Symbolic.symbolic import (
-    Expr, Const, Var, BinOp, UnOp, Func, Func2,
+    Expr, Const, Var, BinOp, UnOp, Func, Func2, NUMBER,
     _to_expr,
 )
 
@@ -54,7 +54,7 @@ class DAGNode:
         return f"DAGNode({self.op}, [], hash={self.structural_hash[:8]})"
 
 
-def _canonical_const(value: Any) -> Tuple[str, Any]:
+def _canonical_const(value: NUMBER | None) -> Tuple[str, int | float | complex | tuple[float, float] | None]:
     """Return canonical (type_key, normalized_value) for constants."""
     if value is None:
         return ("none", None)
@@ -1026,46 +1026,56 @@ def structural_hash(expr: Expr) -> str:
     return _hash_expr(canon)
 
 
-def _hash_expr(expr: Expr) -> str:
-    """Recursively compute hash of a canonical expression."""
+def _hash_expr(expr: Expr, memo: Dict[int, str] | None = None) -> str:
+    """Hash a canonical expression without revisiting shared operands.
+
+    :param expr: Canonical expression whose legacy digest must be preserved.
+    :param memo: Node-identity cache owned by this hash traversal.
+    :return: Structural digest with the existing ordering and constant rules.
+    """
+    # Keep cached results local because symbolic objects can change between runs.
+    cache: Dict[int, str] = dict() if memo is None else memo
+    cached_digest: str | None = cache.get(id(expr), None)
+    if cached_digest is not None:
+        return cached_digest
+    else:
+        pass
+
+    payload: str
     if isinstance(expr, Const):
+        type_key: str
+        norm_val: int | float | complex | tuple[float, float] | None
         type_key, norm_val = _canonical_const(expr.value)
-        h = hashlib.sha256()
-        h.update(f"Const:{type_key}:{norm_val}".encode())
-        return h.hexdigest()
-
-    if isinstance(expr, Var):
-        h = hashlib.sha256()
-        h.update(f"Var:{expr.name}".encode())
-        return h.hexdigest()
-
-    if isinstance(expr, UnOp):
-        h = hashlib.sha256()
-        h.update(f"UnOp:{expr.op}:{_hash_expr(expr.operand)}".encode())
-        return h.hexdigest()
-
-    if isinstance(expr, BinOp):
-        h = hashlib.sha256()
-        child_hash = _hash_expr(expr.left) + _hash_expr(expr.right)
+        payload = f"Const:{type_key}:{norm_val}"
+    elif isinstance(expr, Var):
+        payload = f"Var:{expr.name}"
+    elif isinstance(expr, UnOp):
+        payload = f"UnOp:{expr.op}:{_hash_expr(expr.operand, cache)}"
+    elif isinstance(expr, BinOp):
+        child_hash: str = _hash_expr(expr.left, cache) + _hash_expr(expr.right, cache)
         if expr.op in CommutativeOps:
             child_hash = "".join(sorted(child_hash))
-        h.update(f"BinOp:{expr.op}:{child_hash}".encode())
-        return h.hexdigest()
-
-    if isinstance(expr, Func):
-        h = hashlib.sha256()
-        h.update(f"Func:{expr.op}:{_hash_expr(expr.arg)}".encode())
-        return h.hexdigest()
-
-    if isinstance(expr, Func2):
-        h = hashlib.sha256()
-        arg_hash = _hash_expr(expr.arg1) + _hash_expr(expr.arg2)
+        else:
+            pass
+        payload = f"BinOp:{expr.op}:{child_hash}"
+    elif isinstance(expr, Func):
+        payload = f"Func:{expr.op}:{_hash_expr(expr.arg, cache)}"
+    elif isinstance(expr, Func2):
+        # Nested limiters previously hashed both operands twice at every level.
+        first_hash: str = _hash_expr(expr.arg1, cache)
+        second_hash: str = _hash_expr(expr.arg2, cache)
+        arg_hash: str
         if expr.name in {"min", "max"}:
-            arg_hash = "".join(sorted([_hash_expr(expr.arg1), _hash_expr(expr.arg2)]))
-        h.update(f"Func2:{expr.name}:{arg_hash}".encode())
-        return h.hexdigest()
+            arg_hash = "".join(sorted((first_hash, second_hash)))
+        else:
+            arg_hash = first_hash + second_hash
+        payload = f"Func2:{expr.name}:{arg_hash}"
+    else:
+        raise TypeError(f"Unknown expression type: {type(expr)}")
 
-    raise TypeError(f"Unknown expression type: {type(expr)}")
+    digest: str = hashlib.sha256(payload.encode()).hexdigest()
+    cache[id(expr)] = digest
+    return digest
 
 
 def to_dag(expr: Expr, memo: Optional[Dict[str, DAGNode]] = None) -> DAGNode:

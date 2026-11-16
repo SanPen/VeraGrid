@@ -26,13 +26,13 @@ def get_ncp_remedial_action_objects(cgmes_model: CgmesCircuit) -> List[CGMES_ASS
     remedial_by_uuid: Dict[str, CGMES_ASSETS] = dict()
     remedial_lists: List[List[CGMES_ASSETS]] = list()
 
-    remedial_lists.append(cgmes_model.cgmes_assets.RemedialAction_list)
-    remedial_lists.append(cgmes_model.cgmes_assets.GridStateAlterationRemedialAction_list)
-    remedial_lists.append(cgmes_model.cgmes_assets.SchemeRemedialAction_list)
-    remedial_lists.append(cgmes_model.cgmes_assets.PowerRemedialAction_list)
-    remedial_lists.append(cgmes_model.cgmes_assets.CountertradeRemedialAction_list)
-    remedial_lists.append(cgmes_model.cgmes_assets.RedispatchRemedialAction_list)
-    remedial_lists.append(cgmes_model.cgmes_assets.AvailabilityRemedialAction_list)
+    remedial_lists.append(cgmes_model.ncp_assets.RemedialAction_list)
+    remedial_lists.append(cgmes_model.ncp_assets.GridStateAlterationRemedialAction_list)
+    remedial_lists.append(cgmes_model.ncp_assets.SchemeRemedialAction_list)
+    remedial_lists.append(cgmes_model.ncp_assets.PowerRemedialAction_list)
+    remedial_lists.append(cgmes_model.ncp_assets.CountertradeRemedialAction_list)
+    remedial_lists.append(cgmes_model.ncp_assets.RedispatchRemedialAction_list)
+    remedial_lists.append(cgmes_model.ncp_assets.AvailabilityRemedialAction_list)
 
     for remedial_list in remedial_lists:
         for remedial_action in remedial_list:
@@ -59,7 +59,7 @@ def build_remedial_action_to_contingency_lookup(cgmes_model: CgmesCircuit,
     """
     remedial_to_contingency: Dict[str, str] = dict()
 
-    for remedial_schedule in cgmes_model.cgmes_assets.RemedialActionSchedule_list:
+    for remedial_schedule in cgmes_model.ncp_assets.RemedialActionSchedule_list:
         remedial_action_ref: object = remedial_schedule.RemedialAction
         contingency_ref: object = remedial_schedule.Contingency
 
@@ -86,7 +86,7 @@ def build_remedial_action_to_contingency_lookup(cgmes_model: CgmesCircuit,
                         expected_value=mapped_contingency_uuid
                     )
 
-    for contingency_with_remedial in cgmes_model.cgmes_assets.ContingencyWithRemedialAction_list:
+    for contingency_with_remedial in cgmes_model.ncp_assets.ContingencyWithRemedialAction_list:
         remedial_action_ref = contingency_with_remedial.RemedialAction
         contingency_ref = contingency_with_remedial.Contingency
 
@@ -219,7 +219,7 @@ def get_gcdev_remedial_actions(cgmes_model: CgmesCircuit,
     :return: Nothing.
     """
     remedial_objects: List[CGMES_ASSETS] = get_ncp_remedial_action_objects(cgmes_model=cgmes_model)
-    topology_action_list: List[CGMES_ASSETS] = cgmes_model.cgmes_assets.TopologyAction_list
+    topology_action_list: List[CGMES_ASSETS] = cgmes_model.ncp_assets.TopologyAction_list
 
     if len(remedial_objects) == 0 or len(topology_action_list) == 0:
         return

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 import VeraGridEngine.api as gce
 from VeraGridEngine import WindingType, ShuntConnectionType, SolverType
 from VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph import (
@@ -110,6 +114,32 @@ def test_neutralstar_load_uses_ground_when_bus_neutral_is_eliminated():
 
     assert np.allclose(power_current, -np.conj(phase_power / voltage))
     assert np.allclose(current_current, -np.conj(phase_current) * voltage)
+
+
+def test_delta_loads_accumulate_on_shared_bus():
+    """Each current and power delta load contributes to the same bus injection."""
+    bus_idx = np.array([0, 0], dtype=int)
+    bus_lookup = np.array([-1, 0, 1, 2], dtype=int)
+    voltage = np.array([1 + 0j, -0.5 - 0.8j, -0.5 + 0.8j])
+    current_delta = np.array([0j, 1 + 0.2j, 0j, 0j,
+                              0j, 0j, 0.6 - 0.3j, 0j])
+    power_delta = np.array([0j, 0.8 + 0.1j, 0j, 0j,
+                            0j, 0j, 0.4 + 0.2j, 0j])
+    branch_ab = np.conj(current_delta[1] / np.sqrt(3)) * (voltage[0] - voltage[1]) / abs(voltage[0] - voltage[1])
+    branch_bc = np.conj(current_delta[6] / np.sqrt(3)) * (voltage[1] - voltage[2]) / abs(voltage[1] - voltage[2])
+    expected_current = np.array([-branch_ab, branch_ab - branch_bc, branch_bc])
+    expected_power_ab = np.conj(power_delta[1] / (voltage[0] - voltage[1]))
+    expected_power_bc = np.conj(power_delta[6] / (voltage[1] - voltage[2]))
+    expected_power = np.array([-expected_power_ab, expected_power_ab - expected_power_bc, expected_power_bc])
+
+    current, _, _ = compute_current_loads(bus_idx, bus_lookup, voltage,
+                                          np.zeros(8, dtype=complex), current_delta,
+                                          np.zeros(8, dtype=complex))
+    power, _, _ = compute_power_loads(bus_idx, bus_lookup, voltage,
+                                      np.zeros(8, dtype=complex), np.zeros(8, dtype=complex), power_delta)
+
+    assert np.allclose(current, expected_current)
+    assert np.allclose(power, expected_power)
 
 
 def test_impedance_floatingstar_3ph():

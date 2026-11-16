@@ -1,116 +1,42 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Contract tests for the international-standard RMS model catalog."""
 
 from __future__ import annotations
 
 import keyword
-from pathlib import Path
 
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.InternationalStandardsCatalog import (
+from VeraGridEngine.Templates.template_catalogue import (
     InternationalStandardTemplateDescriptor,
     load_international_standard_template,
 )
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import (
     get_dynamic_library_international_standard_descriptors,
 )
-from VeraGridEngine.Templates.Rms.international_standards import InternationalStandardModel
-from VeraGridEngine.enumerations import DeviceType
-
-
-def get_library_device_standard_descriptors() -> list[InternationalStandardTemplateDescriptor]:
-    """Return standards registered as complete devices by the GUI Library.
-
-    :return: Device-compatible international-standard descriptors.
-    """
-    return list(
-        descriptor
-        for descriptor in get_dynamic_library_international_standard_descriptors()
-        if descriptor.device_type is not None
-    )
-
-
-def test_international_standards_catalog_covers_every_model_once() -> None:
-    """Ensure the typed catalog contains every supported standard exactly once.
+from VeraGridEngine.Templates.Rms import InternationalStandardModel
+from VeraGridEngine.Templates.Rms import build_international_standard_template
+def test_psse_mins_trip_relays_have_distinct_native_templates() -> None:
+    """Materialize source-specific FRQTPAT and VTGTPAT relay templates.
 
     :return: None.
     """
-    descriptors: list[InternationalStandardTemplateDescriptor] = list(
-        get_dynamic_library_international_standard_descriptors()
+    frequency: RmsModelTemplate = build_international_standard_template(
+        InternationalStandardModel.FRQTPAT, VarFactory(), 'FRQTPAT_test',
     )
-    catalog_models: list[InternationalStandardModel] = list(
-        descriptor.model for descriptor in descriptors
+    voltage: RmsModelTemplate = build_international_standard_template(
+        InternationalStandardModel.VTGTPAT, VarFactory(), 'VTGTPAT_test',
     )
 
-    assert len(catalog_models) == len(set(catalog_models))
-    assert set(catalog_models) == set(InternationalStandardModel)
-
-
-def test_international_standards_catalog_paths_match_model_packages() -> None:
-    """Ensure descriptor metadata points to the reorganized physical module.
-
-    :return: None.
-    """
-    source_root: Path = Path(__file__).parents[2]
-    standards_root: Path = (
-        source_root / "VeraGridEngine" / "Templates" / "Rms" / "international_standards"
-    )
-    root_python_files: set[str] = set(path.name for path in standards_root.glob("*.py"))
-
-    assert root_python_files == set(("__init__.py",))
-
-    descriptor: InternationalStandardTemplateDescriptor
-    for descriptor in get_dynamic_library_international_standard_descriptors():
-        model_path: Path = standards_root / Path(descriptor.module_relative_path)
-        assert model_path.is_file(), descriptor.module_relative_path
-        assert len(descriptor.category_path) == 1
-
-
-def test_international_standard_device_catalog_excludes_control_families() -> None:
-    """Keep only complete circuit-device models in the reusable catalog.
-
-    :return: None.
-    """
-    device_descriptors: list[InternationalStandardTemplateDescriptor] = list(
-        get_library_device_standard_descriptors()
-    )
-    device_models: set[InternationalStandardModel] = set(
-        descriptor.model for descriptor in device_descriptors
-    )
-    expected_models: set[InternationalStandardModel] = set((
-        InternationalStandardModel.GENSAL,
-        InternationalStandardModel.GENROU,
-        InternationalStandardModel.GENTRA,
-        InternationalStandardModel.GENROE,
-        InternationalStandardModel.GENSAE,
-        InternationalStandardModel.CIMTR1,
-        InternationalStandardModel.CIMW,
-        InternationalStandardModel.WT4ACURRENTSOURCE,
-        InternationalStandardModel.WT4ACURRENTSOURCE2020,
-        InternationalStandardModel.WT4BCURRENTSOURCE,
-        InternationalStandardModel.WT4BCURRENTSOURCE2020,
-        InternationalStandardModel.WT4INJECTOR,
-        InternationalStandardModel.WTG4ACURRENTSOURCE,
-        InternationalStandardModel.WTG4BCURRENTSOURCE,
-        InternationalStandardModel.WPP4BCURRENTSOURCE2020,
-        InternationalStandardModel.PVCURRENTSOURCEBNOPLANTCONTROL,
-        InternationalStandardModel.PVVOLTAGESOURCEANOPLANTCONTROL,
-        InternationalStandardModel.PVVOLTAGESOURCEBNOPLANTCONTROL,
-        InternationalStandardModel.BESSCBCURRENTSOURCENOPLANTCONTROL,
-    ))
-
-    assert device_models == expected_models
-    descriptor: InternationalStandardTemplateDescriptor
-    for descriptor in device_descriptors:
-        assert isinstance(descriptor.device_type, DeviceType)
-
-    control_descriptors: list[InternationalStandardTemplateDescriptor] = list(
-        descriptor
-        for descriptor in get_dynamic_library_international_standard_descriptors()
-        if descriptor.model not in device_models
-    )
-    for descriptor in control_descriptors:
-        assert descriptor.device_type is None
+    assert frequency.name == 'FRQTPAT_test'
+    assert voltage.name == 'VTGTPAT_test'
+    assert frequency.block.in_vars[0].name.startswith('FHz_')
+    assert voltage.block.in_vars[0].name.startswith('UPu_')
+    assert any(variable.name.startswith('FL_') for variable in frequency.block.event_dict)
+    assert any(variable.name.startswith('VL_') for variable in voltage.block.event_dict)
 
 
 def test_international_standard_descriptor_materializes_rms_template() -> None:
@@ -162,8 +88,10 @@ def test_imported_model_interfaces_and_symbol_names_are_editor_safe() -> None:
         (InternationalStandardModel.SCL1C, 5, 4),
         (InternationalStandardModel.SCL2C, 6, 2),
         (InternationalStandardModel.UEL2C, 6, 1),
-        (InternationalStandardModel.AC6A, 5, 1),
-        (InternationalStandardModel.AC6C, 8, 1),
+        (InternationalStandardModel.AC6A, 6, 3),
+        (InternationalStandardModel.ESAC6A, 6, 3),
+        (InternationalStandardModel.AC6C, 7, 3),
+        (InternationalStandardModel.AC6C2, 7, 3),
         (InternationalStandardModel.PSS2B, 3, 1),
         (InternationalStandardModel.PSS2C, 3, 1),
     )

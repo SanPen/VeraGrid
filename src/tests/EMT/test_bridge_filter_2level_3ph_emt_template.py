@@ -9,7 +9,7 @@ import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
-from VeraGridEngine.Templates.Emt.bridge_filter_2level_3ph_emt_template import get_bridge_filter_2level_3ph_emt_template
+from VeraGridEngine.Templates.Emt.converters.bridge_filter_2level_3ph_emt_template import get_bridge_filter_2level_3ph_emt_template
 from VeraGridEngine.Utils.procedural_logic import build_boundary_updater_from_block
 from VeraGridEngine.Utils.Symbolic.block import Block, find_name_in_block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var

@@ -2963,8 +2963,15 @@ def add_hydro_formulation(t: Union[int, None],
         # inflow: fluid flow entering the target node in m3/s
         # outflow: fluid flow leaving the source node in m3/s
         # flow: amount of fluid flowing through the river in m3/s
-        node_vars.flow_in[t, path_data.target_idx[m]] += path_vars.flow[t, m]
+        loss_factor: float = path_data.loss_factor[m]
+        remaining_factor: float = max(0.0, 1.0 - loss_factor)
+        # PyPSA Link uses an oriented linear terminal equation: p1 is always
+        # efficiency times p0 with the opposite terminal sign. Retain that
+        # exact affine convention even when p0 may become negative. A physical
+        # symmetric bidirectional pipe is a different model and needs a binary
+        # direction choice; PyPSA does not impose that disjunction.
         node_vars.flow_out[t, path_data.source_idx[m]] += path_vars.flow[t, m]
+        node_vars.flow_in[t, path_data.target_idx[m]] += remaining_factor * path_vars.flow[t, m]
 
     for m in range(turbine_data.nelm):
         gen_idx = turbine_data.generator_idx[m]
@@ -3051,10 +3058,11 @@ def add_hydro_formulation(t: Union[int, None],
         for m in range(node_data.nelm):
             if t == 0:
                 dt = get_time_increment_seconds(time_array=time_array, idx=time_global_tidx)
+                remaining_factor = max(0.0, 1.0 - node_data.loss_factor[m]) ** (dt / 3600.0)
 
                 # Initialize level at fluid_level_0
                 node_vars.water_balance[t, m] = prob.add_cst(cst=(node_vars.current_level[t, m] ==
-                                                                   fluid_level_0[m]
+                                                                   remaining_factor * fluid_level_0[m]
                                                                    + dt * node_data.inflow[m]
                                                                    + dt * node_vars.flow_in[t, m]
                                                                    + dt * node_vars.p2x_flow[t, m]
@@ -3064,9 +3072,10 @@ def add_hydro_formulation(t: Union[int, None],
             else:
                 # Update the level according to the in and out flows as time passes
                 dt = get_time_increment_seconds(time_array=time_array, idx=time_global_tidx)
+                remaining_factor = max(0.0, 1.0 - node_data.loss_factor[m]) ** (dt / 3600.0)
 
                 node_vars.water_balance[t, m] = prob.add_cst(cst=(node_vars.current_level[t, m] ==
-                                                                   node_vars.current_level[t - 1, m]
+                                                                   remaining_factor * node_vars.current_level[t - 1, m]
                                                                    + dt * node_data.inflow[m]
                                                                    + dt * node_vars.flow_in[t, m]
                                                                    + dt * node_vars.p2x_flow[t, m]

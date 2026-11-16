@@ -146,7 +146,16 @@ DEVICE_NOTES = {
     "UPFC": "A `UPFC` models a unified power flow controller embedded in the AC network.",
     "Switch": "A `Switch` models a topological switching element that can open or close network connectivity.",
     "Wire": "A `Wire` stores conductor parameters used by overhead-line templates and geometry-based line calculations.",
-    "OverheadLineType": "An `OverheadLineType` stores reusable conductor geometry and the derived impedance and admittance matrices for overhead lines.",
+    "OverheadLineType": (
+        "An `OverheadLineType` stores reusable conductor geometry and the derived impedance and admittance matrices for overhead lines.\n\n"
+        "Set `transposed=True` for perfect transposition of a single complete ABC circuit. After the existing earth-wire "
+        "reduction, the series impedance Z and shunt admittance Y are averaged over the three cyclic phase positions; "
+        "series admittance is then obtained by inverting the averaged Z. The branch NABC matrices and catalogue sequence "
+        "values use the same result. The default is False, preserving existing geometrical calculations.\n\n"
+        "PowerFactory imports this setting from `TypTow.iTransMode=3`, exported by **DGS Export Definitions 8 - VeraGrid**. "
+        "Mode 0 retains the original arrangement. Circuit-wise, symmetrical and multi-circuit perfect transposition "
+        "are not implemented here and produce an explicit import error; use electrical-parameter input for those cases."
+    ),
     "UndergroundLineType": "An `UndergroundLineType` stores reusable cable data for underground line modelling.",
     "SequenceLineType": "A `SequenceLineType` stores reusable positive-, negative-, and zero-sequence branch data.",
     "TransformerType": "A `TransformerType` stores reusable nameplate and test-sheet data that can be applied to transformer objects.",

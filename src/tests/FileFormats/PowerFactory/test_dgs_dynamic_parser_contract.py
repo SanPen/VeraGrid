@@ -1,9 +1,12 @@
+
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
+import copy
 import hashlib
+import keyword
 import math
 from pathlib import Path
 from typing import Sequence, get_type_hints
@@ -11,6 +14,7 @@ from typing import Sequence, get_type_hints
 import numpy as np
 import pytest
 
+from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import build_explicit_init_graph
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.series_reactance import SeriesReactance
@@ -24,7 +28,8 @@ from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
-from VeraGridEngine.IO.dgs.dgs_circuit import DgsCircuit
+from VeraGridEngine.IO.dgs.dgs_circuit import DgsCircuit, parse_header
+from VeraGridEngine.IO.dgs.dyn_dgs_parser import DynDgsParser
 from VeraGridEngine.IO.dgs.dgs_logical_actuator_binding import (
     prepare_dgs_logical_actuator_topology,
 )
@@ -36,6 +41,7 @@ from VeraGridEngine.IO.dgs.dgs_rms_measurement_binding import (
     bind_dgs_rms_measurements,
 )
 from VeraGridEngine.IO.dgs.dgs_rms_preparation import (
+    _build_dgs_elmsym_fixed_injection_rms_template,
     bind_dgs_switch_event_runtime,
 )
 from VeraGridEngine.IO.dgs.dgs_to_veragrid import (
@@ -45,14 +51,23 @@ from VeraGridEngine.IO.dgs.dgs_to_veragrid import (
 )
 from VeraGridEngine.IO.dgs.dgs_to_blocks import (
     DgsDirectRootBuildResult,
+    DgsExpressionParser,
     DgsGraphicTreeResult,
     DgsGraphicalIndexes,
     DgsGraphicalConnectorKind,
     DgsSlotSignalDirection,
     DgsRootBlockResult,
+    DgsLookupTable,
     ElmCompInstanceEntry,
     ParsedDgsBlockDefinition,
     UnsupportedDgsExpression,
+    _bind_graphical_reference_internals,
+    _bind_graphical_reference_states,
+    _bind_graphical_reference_lookup_tables,
+    _build_block_from_parsed,
+    _resolve_graphical_child_lookup_tables,
+    _resolve_direct_slot_runtime_output_indices,
+    _slot_filter_names_a_registered_class,
     build_dgs_graphical_indexes,
     build_direct_root_elmcomp_block,
     build_graphical_arithmetic_block,
@@ -63,6 +78,7 @@ from VeraGridEngine.IO.dgs.dgs_to_blocks import (
     extract_elmcomp_direct_instances,
     extract_root_slot_block_graphical_tree,
     extract_root_slot_graphical_tree_from_circuit,
+    get_elmdsl_lookup_tables,
     get_unambiguous_elmcomp_direct_instances,
     parse_dgs_block_definitions_from_circuit,
 )
@@ -70,6 +86,7 @@ from VeraGridEngine.IO.dgs.dgs_objects import (
     BlkDef,
     BlkDiv,
     BlkFrom,
+    BlkGoto,
     BlkMul,
     BlkRef,
     BlkSig,
@@ -80,22 +97,30 @@ from VeraGridEngine.IO.dgs.dgs_objects import (
     ElmSind,
     ElmTerm,
     ElmVscmono,
+    IntMat,
     PowerFactoryVscType,
     StaCubic,
     TypLne,
 )
+from VeraGridEngine.IO.dgs.dynamic_models.dgs_native_model_workflow import (
+    NativeDgsEquipmentKind,
+    NativeDgsEquipmentPlan,
+    assemble_native_dgs_model,
+    detect_native_dgs_equipment,
+)
 from VeraGridEngine.IO.dgs.dynamic_models.dynamic_model_import import (
     DgsDynamicTemplateConversionResult,
-    _add_required_dgs_rms_measurements,
+    DynamicModelImport,
     _assign_dgs_external_input_references,
     add_dynamic_import_selection_requests_to_circuit,
     apply_dgs_dynamic_templates_to_devices,
     build_dgs_dynamic_model_import_bundle,
     build_dynamic_import_template_fingerprint,
     convert_and_add_dgs_dynamic_templates_to_circuit,
-    export_user_dynamic_template_json_from_block,
-    load_user_dynamic_template_json_payload,
+    get_dgs_dynamic_host_device_tpe,
 )
+
+
 from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
 from VeraGridEngine.Topology.simulation_indices import SimulationIndices
 from VeraGridEngine.Simulations.Rms.problems.rms_terminal_power_assembly import (
@@ -111,12 +136,10 @@ from VeraGridEngine.IO.dynamic_model_import_types import (
 from VeraGridEngine.Utils.Symbolic.block import (
     Block,
     DynamicModelContract,
-    RmsPhysicalMeasurementPoint,
     RmsPhysicalMeterKind,
     RmsTerminalSide,
-    collect_rms_physical_measurement_points,
 )
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import (
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import (
     BusRmsTemplate,
     build_dc_bus_nodal_power_equation,
     dc_bus_rms_model_has_capacitive_state,
@@ -125,12 +148,17 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
     EmtProblemTemplate,
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import (
+    BinOp,
     CmpOp,
     Comparison,
     Const,
     Expr,
+    Func,
+    Func2,
+    UnOp,
     Var,
     get_expression_vars,
+    rand,
 )
 from VeraGridEngine.Utils.procedural_logic import (
     ConditionalDiagnosticLogic,
@@ -138,13 +166,16 @@ from VeraGridEngine.Utils.procedural_logic import (
     ProceduralLogicCodec,
     SampledValueLogic,
 )
-from VeraGridEngine.Templates.Rms.line_rms_template import (
+from VeraGridEngine.Templates.basic_block_runtime import (
+    build_lookup_array_linear_runtime_template,
+)
+from VeraGridEngine.Templates.Rms.line.line_rms_template import (
     get_dc_line_rms_template,
 )
-from VeraGridEngine.Templates.Rms.rms_meter_templates import (
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import (
     build_rms_phase_locked_loop_block,
 )
-from VeraGridEngine.Templates.Rms.transformer_rms_template import (
+from VeraGridEngine.Templates.Rms.transformers.transformer_rms_template import (
     get_transformer2w_rms,
 )
 from VeraGridEngine.basic_structures import LogEntry, Logger
@@ -153,8 +184,81 @@ from VeraGridEngine.enumerations import (
     DeviceType,
     DynamicSimulationMode,
     FileType,
+    ParamPowerFlowReferenceType,
     VarPowerFlowReferenceType,
 )
+
+from tests.symbolic_block_roundtrip import roundtrip_block
+
+
+@pytest.mark.parametrize(
+    "device_type",
+    (DeviceType.GeneratorDevice, DeviceType.BatteryDevice),
+)
+def test_unresolved_elmsym_shell_uses_generator_power_mapping(
+        device_type: DeviceType,
+) -> None:
+    """An ElmSym fallback must use its owning generator-family P/Q contract."""
+    circuit: MultiCircuit = MultiCircuit()
+    template: RmsModelTemplate = _build_dgs_elmsym_fixed_injection_rms_template(
+        circuit=circuit,
+        device_tpe=device_type,
+    )
+    mappings: dict[ParamPowerFlowReferenceType, Var] = dict()
+    for block in template.block.get_all_blocks():
+        mappings.update(block.api_obj_mapping)
+
+    assert template.tpe is device_type
+    assert ParamPowerFlowReferenceType.generator_p_pu in mappings
+    assert ParamPowerFlowReferenceType.generator_q_pu in mappings
+    assert ParamPowerFlowReferenceType.Pl0 not in mappings
+    assert ParamPowerFlowReferenceType.Ql0 not in mappings
+
+
+@pytest.mark.parametrize("target_domain", (DynamicSimulationMode.RMS, DynamicSimulationMode.EMT))
+def test_dynamic_model_import_shares_parser_context_and_owns_conversion_result(
+        target_domain: DynamicSimulationMode,
+) -> None:
+    """Use one source, destination and result through the parser-owned importer.
+
+    :param target_domain: Explicit dynamic template destination.
+    :return: None.
+    """
+    source: DgsCircuit = DgsCircuit()
+    destination: MultiCircuit = MultiCircuit()
+    logger: Logger = Logger()
+    parser: DynDgsParser = DynDgsParser(source, destination, target_domain, logger)
+    # Populate the source after construction: an importer that copied its
+    # context would miss this isolated definition and fail to register it.
+    source.parse_dgs(str(_get_dynamic_gain_block_dgs_path()))
+    result: DgsDynamicTemplateConversionResult = parser.dynamic_model_import.convert_and_add_templates()
+    assert result is parser.dynamic_model_import.get_conversion_result()
+    assert result is parser.conversion_result
+    parser.dynamic_model_import.apply_templates_to_devices()
+    if target_domain is DynamicSimulationMode.RMS:
+        templates: Sequence[RmsModelTemplate | EmtModelTemplate] = destination.rms_models
+        assert len(destination.emt_models) == 0
+    else:
+        templates = destination.emt_models
+        assert len(destination.rms_models) == 0
+    assert len(templates) == 1
+    assert templates[0].name == "Dynamic gain"
+    assert logger.error_count() == 0
+
+
+def test_dynamic_model_import_reports_invalid_domain_to_shared_logger() -> None:
+    """Reject an unspecified destination without registering partial templates.
+
+    :return: None.
+    """
+    logger: Logger = Logger()
+    destination: MultiCircuit = MultiCircuit()
+    importer: DynamicModelImport = DynamicModelImport(DgsCircuit(), destination, None, logger)
+    result: DgsDynamicTemplateConversionResult = importer.convert_and_add_templates()
+    assert result is importer.get_conversion_result()
+    assert result.templates_by_root_dgs_id == dict()
+    assert logger.error_count() == 1
+    assert len(destination.rms_models) == 0 and len(destination.emt_models) == 0
 
 
 def test_dgs_vsc_unconnected_inputs_create_terminal_measurements() -> None:
@@ -194,11 +298,12 @@ def test_dgs_vsc_unconnected_inputs_create_terminal_measurements() -> None:
         block=root_block,
         device_tpe=DeviceType.VscDevice,
     )
-    _add_required_dgs_rms_measurements(
-        block=root_block,
-        host_device=converter,
-        circuit=MultiCircuit(),
-        native_specs=list(),
+    importer: DynamicModelImport = DynamicModelImport(
+        dgs_circuit=DgsCircuit(), circuit=MultiCircuit(),
+        target_domain=DynamicSimulationMode.RMS, logger=Logger(),
+    )
+    importer._add_required_dgs_rms_measurements(
+        block=root_block, host_device=converter, native_specs=list(),
     )
 
     child_names: set[str] = set(
@@ -335,9 +440,6 @@ def test_early_pll_meter_binding_preserves_canonical_output_ownership(
         targets_by_name=targets,
         alias_expressions=aliases,
         meter_name=meter_name,
-        meter_source_fid="42",
-        meter_target_fid="bus-7",
-        meter_terminal_side=RmsTerminalSide.BUS,
         meter_kind=RmsPhysicalMeterKind.PHASE_LOCKED_LOOP,
         var_factory=var_factory,
         prepared_meter_block=prepared,
@@ -356,18 +458,11 @@ def test_early_pll_meter_binding_preserves_canonical_output_ownership(
         assert retained_output.shared_ref is not None
         assert controller.in_vars[0] is retained_output
 
-        # The same ownership and physical declaration must survive both
+        # The same equation and variable ownership must survive both
         # supported lifecycle operations, without serializing runtime objects.
         restored: Block
-        for restored in (host.copy(), Block.parse(data=host.to_dict())):
+        for restored in (host.copy(), roundtrip_block(host)):
             restored_meter: Block = restored.children[1]
-            point: RmsPhysicalMeasurementPoint | None = (
-                restored_meter.dynamic_model_contract.rms_physical_measurement_point
-            )
-            assert point is not None
-            assert point.get_output_var_uids() == (retained_output.uid,)
-            assert point.get_source_fid() == "42"
-            assert point.get_target_fid() == "bus-7"
             assert tuple(var.uid for var in restored_meter.state_vars) == state_uids
             assert sum(
                 var.uid == retained_output.uid
@@ -751,13 +846,15 @@ def test_complete_hvdc_vsc_exports_preserve_static_and_dynamic_sections(
     """Parse immutable generic HVDC exports without losing either model domain.
 
     :param file_name: Exact tracked fixture name.
-    :param expected_sha256: Provenance checksum of the source export.
+    :param expected_sha256: Provenance checksum of the LF-normalized source export.
     :param expected_counts: Expected converter, PLL, composite, DSL, block and bus counts.
     :return: None.
     """
     dgs_path: Path = _get_complete_hvdc_vsc_dgs_path(file_name=file_name)
     source_bytes: bytes = dgs_path.read_bytes()
-    source_sha256: str = hashlib.sha256(source_bytes).hexdigest().upper()
+    # Git may check out the same text fixture with CRLF on Windows. Preserve
+    # the content provenance check independently of that checkout convention.
+    source_sha256: str = hashlib.sha256(source_bytes.replace(b'\r\n', b'\n')).hexdigest().upper()
     circuit: DgsCircuit = DgsCircuit()
     circuit.parse_dgs(path=str(dgs_path))
     parsed_counts: tuple[int, int, int, int, int, int, int] = (
@@ -928,6 +1025,131 @@ def test_v2_direct_root_connects_ffs_by_slot_fid_and_connector_ordinal() -> None
     )
 
 
+def test_v3_direct_root_connects_outputs_by_declared_slot_signal() -> None:
+    """Bind each cable to the output its slot declares, whatever the block order.
+
+    The V3 protection block orders its outputs differently from its slot, so
+    the slot ordinal must select the declared signal by name, not by position.
+
+    :return: None.
+    """
+    dgs_circuit: DgsCircuit = DgsCircuit()
+    dgs_circuit.parse_dgs(
+        path=str(_get_complete_hvdc_vsc_dgs_path(
+            file_name="hvdc_vsc_v3_complete_static_dynamic.dgs",
+        ))
+    )
+    parsed_blocks: dict[str, ParsedDgsBlockDefinition] = (
+        parse_dgs_block_definitions_from_circuit(circuit=dgs_circuit)
+    )
+    root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+        circuit=dgs_circuit,
+        parsed_blocks=parsed_blocks,
+        root_name="HVDC Control A",
+    )
+    direct_result: DgsDirectRootBuildResult = build_direct_root_elmcomp_block(
+        circuit=dgs_circuit,
+        result=root_result,
+        graphical_indexes=build_dgs_graphical_indexes(circuit=dgs_circuit),
+    )
+    block_by_slot_name: dict[str, Block] = dict()
+    entry_by_slot_name: dict[str, ElmCompInstanceEntry] = dict()
+    direct_entry: ElmCompInstanceEntry
+    for direct_entry in direct_result.direct_entries:
+        if direct_entry.slot_id is not None and direct_entry.slot_id in direct_result.child_block_by_slot_id:
+            block_by_slot_name[str(direct_entry.slot_name)] = (
+                direct_result.child_block_by_slot_id[direct_entry.slot_id]
+            )
+            entry_by_slot_name[str(direct_entry.slot_name)] = direct_entry
+        else:
+            pass
+
+    protection_block: Block = block_by_slot_name["Protection"]
+    limiter_block: Block = block_by_slot_name["Current Limiter"]
+    assert [var.name for var in protection_block.out_vars] != [
+        "trip", "DC_switch_open", "trip_dc", "STATCOM_on", "block", "soft",
+    ]
+    signal_name: str
+    for signal_name in ("block", "soft"):
+        protection_outputs: list[Var] = list(
+            var for var in protection_block.out_vars if var.name == signal_name
+        )
+        assert len(protection_outputs) == 1
+        assert any(
+            limiter_input.uid == protection_outputs[0].uid
+            for limiter_input in limiter_block.in_vars
+        )
+
+    # The vector connector keeps its declared components in slot order.
+    vector_indices: list[int] = _resolve_direct_slot_runtime_output_indices(
+        entry=entry_by_slot_name["Protection"],
+        child_block=protection_block,
+        graphical_output_index=1,
+    )
+    assert [protection_block.out_vars[index].name for index in vector_indices] == [
+        "DC_switch_open", "trip_dc", "STATCOM_on",
+    ]
+
+
+def _resolve_controller_output_names(
+        slot_outputs: str,
+        block_outputs: list[str],
+) -> list[list[str]]:
+    """Resolve every output ordinal of one synthetic controller slot.
+
+    :param slot_outputs: Comma-separated declared slot outputs.
+    :param block_outputs: Runtime output names of the block, in block order.
+    :return: Resolved runtime output names per ordinal.
+    """
+    entry: ElmCompInstanceEntry = ElmCompInstanceEntry(
+        slot_id="slot",
+        slot_name="Controller",
+        element_id="controller_fid",
+        element_name="Controller",
+        element_kind="ElmDsl",
+        element_outserv=0,
+        type_id=None,
+        type_name=None,
+        slot_outputs=list([slot_outputs]),
+        slot_reference_is_resolved=True,
+        element_reference_is_resolved=True,
+    )
+    block: Block = Block(name="Controller", out_vars=list(Var(name=name) for name in block_outputs))
+    resolved: list[list[str]] = list()
+    ordinal: int
+    for ordinal in range(len(slot_outputs.split(","))):
+        resolved.append(list(
+            block.out_vars[index].name
+            for index in _resolve_direct_slot_runtime_output_indices(
+                entry=entry, child_block=block, graphical_output_index=ordinal,
+            )
+        ))
+    return resolved
+
+
+def test_direct_output_ordinals_leave_unmatched_signals_unwired() -> None:
+    """Resolve by declared name and never guess an unmatched ordinal by position.
+
+    A slot that lists a graphical-only output must still wire the REGC commands
+    by name, and an output without a named match must not reuse another one.
+    Blocks whose names all differ from the slot keep the positional order.
+
+    :return: None.
+    """
+    assert _resolve_controller_output_names(
+        slot_outputs="ur_ref,ui_ref,idref,iqref,ghost",
+        block_outputs=["iqref", "ur_ref", "ui_ref", "idref"],
+    ) == [["ur_ref"], ["ui_ref"], ["idref"], ["iqref"], []]
+    assert _resolve_controller_output_names(
+        slot_outputs="a,b",
+        block_outputs=["b", "x"],
+    ) == [[], ["b"]]
+    assert _resolve_controller_output_names(
+        slot_outputs="dP_FFS",
+        block_outputs=["y"],
+    ) == [["y"]]
+
+
 def test_v1_direct_root_internalizes_slot_omitted_setpoints() -> None:
     """Keep initialized controller setpoints behind the concrete slot interface.
 
@@ -999,22 +1221,24 @@ def test_v1_direct_root_internalizes_slot_omitted_setpoints() -> None:
 
 
 @pytest.mark.parametrize(
-    ("file_name", "second_active_power_setpoint"),
+    ("file_name", "second_active_power_setpoint", "first_dc_voltage_setpoint"),
     (
-        ("hvdc_vsc_v1_complete_static_dynamic.dgs", -1000.0),
-        ("hvdc_vsc_v2_complete_static_dynamic.dgs", -1000.0),
-        ("hvdc_vsc_v3_complete_static_dynamic.dgs", 1000.0),
+        ("hvdc_vsc_v1_complete_static_dynamic.dgs", -1000.0, 1.0),
+        ("hvdc_vsc_v2_complete_static_dynamic.dgs", -1000.0, 1.0),
+        ("hvdc_vsc_v3_complete_static_dynamic.dgs", 1000.0, 2.0),
     ),
 )
 # Alex review required: converter controls use configured setpoints, never solved m:* columns.
 def test_hvdc_vsc_converter_controls_use_configuration_not_solved_outputs(
         file_name: str,
         second_active_power_setpoint: float,
+        first_dc_voltage_setpoint: float,
 ) -> None:
     """Build generic HVDC converters from configured targets, never ``m:*`` results.
 
     :param file_name: Exact tracked fixture name.
     :param second_active_power_setpoint: Configured active-power target of converter two.
+    :param first_dc_voltage_setpoint: Configured DC voltage converted to the bus base.
     :return: None.
     """
     dgs_path: Path = _get_complete_hvdc_vsc_dgs_path(file_name=file_name)
@@ -1024,7 +1248,8 @@ def test_hvdc_vsc_converter_controls_use_configuration_not_solved_outputs(
 
     assert len(circuit.vsc_devices) == 2
     assert first_converter.control1 is ConverterControlType.Vm_dc
-    assert first_converter.control1_val == pytest.approx(1.0)
+    # V3 regulates 1050 kV pole-to-pole on 525 kV pole bases; V1/V2 are monopolar.
+    assert first_converter.control1_val == pytest.approx(first_dc_voltage_setpoint)
     assert first_converter.control2 is ConverterControlType.Qac
     assert first_converter.control2_val == pytest.approx(0.0)
     assert second_converter.control1 is ConverterControlType.Pac
@@ -1335,8 +1560,6 @@ def test_v3_dynamic_route_binds_both_logical_chopper_actuators() -> None:
             actuator_branch.rms_model.dynamic_model_contract
         )
         assert actuator_branch.bus_from is not actuator_branch.bus_to
-        assert contract.dgs_logical_actuator_root_id is None
-        assert contract.dgs_open_resistance_ohm is None
         projection_entries: list[SampledValueLogic] = list(
             entry
             for block in actuator_branch.rms_model.get_all_blocks()
@@ -1400,14 +1623,6 @@ def test_v3_dynamic_route_keeps_native_meters_as_connected_editor_blocks() -> No
     ))
     meter_block_by_name: dict[str, Block] = dict()
     owner_model_by_meter_name: dict[str, Block] = dict()
-    expected_physical_location_by_fid: dict[
-        str,
-        tuple[str, RmsTerminalSide],
-    ] = dict((
-        ("425", ("275", RmsTerminalSide.TO)),
-        ("457", ("265", RmsTerminalSide.BUS)),
-        ("472", ("265", RmsTerminalSide.BUS)),
-    ))
     candidate_device: object
 
     # Inspect only final device-owned RMS graphs. Registered templates are
@@ -1443,27 +1658,8 @@ def test_v3_dynamic_route_keeps_native_meters_as_connected_editor_blocks() -> No
     meter_block: Block
     for meter_name, meter_block in meter_block_by_name.items():
         owner_model: Block = owner_model_by_meter_name[meter_name]
-        measurement_point: RmsPhysicalMeasurementPoint | None = (
-            meter_block.dynamic_model_contract.rms_physical_measurement_point
-        )
-        assert measurement_point is not None
-        source_fid: str = meter_name.rsplit(" ", 1)[1]
-        assert measurement_point.get_source_fid() == source_fid
-        assert measurement_point.get_target_fid() != ""
-        expected_physical_location: tuple[str, RmsTerminalSide] | None = (
-            expected_physical_location_by_fid.get(source_fid, None)
-        )
-        if expected_physical_location is None:
-            pass
-        else:
-            assert measurement_point.get_target_fid() == expected_physical_location[0]
-            assert measurement_point.get_terminal_side() is expected_physical_location[1]
-        assert len(measurement_point.get_output_signal_names()) > 0
-        assert set(measurement_point.get_output_var_uids()).issubset(
-            set(output_var.uid for output_var in meter_block.out_vars)
-        )
         output_var_uid: int
-        for output_var_uid in measurement_point.get_output_var_uids():
+        for output_var_uid in (output_var.uid for output_var in meter_block.out_vars):
             algebraic_owners: list[tuple[Block, Var]] = list(
                 (owner_child, algebraic_var)
                 for owner_child in owner_model.get_all_blocks()
@@ -1492,25 +1688,11 @@ def test_v3_dynamic_route_keeps_native_meters_as_connected_editor_blocks() -> No
             assert output_var_uid in set(
                 residual_var.uid for residual_var in owned_residual.get_vars()
             ), meter_name
-        global_measurement_by_fid: dict[str, RmsPhysicalMeasurementPoint] = (
-            collect_rms_physical_measurement_points(block=owner_model)
-        )
-        assert global_measurement_by_fid[source_fid] is measurement_point
         assert "powerfactory" not in meter_name.lower()
         assert all(
             "powerfactory" not in output_var.name.lower()
             for output_var in meter_block.out_vars
         )
-        if measurement_point.get_meter_kind() is RmsPhysicalMeterKind.CURRENT:
-            assert measurement_point.get_meter_kind() is RmsPhysicalMeterKind.CURRENT
-        else:
-            if measurement_point.get_meter_kind() is RmsPhysicalMeterKind.VOLTAGE:
-                assert measurement_point.get_meter_kind() is RmsPhysicalMeterKind.VOLTAGE
-            else:
-                assert (
-                    measurement_point.get_meter_kind()
-                    is RmsPhysicalMeterKind.PHASE_LOCKED_LOOP
-                )
         meter_output_reference_uids: set[int] = set(
             output_var.shared_ref.uid
             for output_var in meter_block.out_vars
@@ -1603,20 +1785,23 @@ def test_v1_early_native_measurements_preserve_power_and_phase_semantics() -> No
                     if has_stationary_cosine and has_stationary_sine:
                         found_stationary_phase_meter_count += 1
                     else:
-                        if candidate_block.name == "VSC Converter":
-                            found_vsc_converter_count += 1
-                            assert set(
-                                output_var.name
-                                for output_var in candidate_block.out_vars
-                            ) == {
-                                "id", "iq", "uDC", "Pdc", "Pac", "Qac",
-                            }
-                        else:
-                            pass
+                        pass
 
+        # The native physical block is now the assembled root and exposes its
+        # equipment signals directly, including current and DC conversion probes.
+        found_vsc_converter_count += 1
         assert set(
             output_var.name for output_var in converter.rms_model.out_vars
-        ) == {"Pdc", "Pac", "Qac"}
+        ) == {
+            "id", "iq", "uDC", "Pdc", "Pac", "Qac", "Iac",
+            "Idc_network", "Pdc_conversion",
+        }
+        assert set((
+            VarPowerFlowReferenceType.Pf,
+            VarPowerFlowReferenceType.Pt,
+            VarPowerFlowReferenceType.Qt,
+            VarPowerFlowReferenceType.Idc,
+        )).issubset(converter.rms_model.external_mapping)
 
     assert found_power_meter_names == expected_power_meter_names
     assert found_voltage_meter_names == expected_voltage_meter_names
@@ -1742,51 +1927,22 @@ def test_v1_v2_dynamic_routes_keep_power_meters_as_editor_blocks(
             pass
 
     assert set(meter_block_by_name.keys()) == expected_meter_names, str(logger)
-    expected_physical_location_by_fid: dict[
-        str,
-        tuple[str, RmsTerminalSide],
-    ]
-    if file_name == "hvdc_vsc_v1_complete_static_dynamic.dgs":
-        expected_physical_location_by_fid = dict((
-            ("220", ("124", RmsTerminalSide.TO)),
-            ("221", ("125", RmsTerminalSide.TO)),
-        ))
-    else:
-        expected_physical_location_by_fid = dict((
-            ("228", ("125", RmsTerminalSide.FROM)),
-            ("229", ("126", RmsTerminalSide.FROM)),
-        ))
     meter_name: str
     meter_block: Block
     for meter_name, meter_block in meter_block_by_name.items():
         owner_model: Block = owner_model_by_meter_name[meter_name]
         owner_device: DynamicDevice = owner_device_by_meter_name[meter_name]
-        measurement_point: RmsPhysicalMeasurementPoint | None = (
-            meter_block.dynamic_model_contract.rms_physical_measurement_point
+        # Direct algebraic assignments now supply meter initialization through
+        # the complete controller graph, without duplicating local init_eqs.
+        initialization_graph: tuple[dict[Var, Expr], dict[Var, list[Var]], list[Var], dict[Var, Expr]] = (
+            build_explicit_init_graph(mdl=owner_model)
         )
-        assert measurement_point is not None
-        source_fid: str = meter_name.rsplit(" ", 1)[1]
-        assert measurement_point.get_source_fid() == source_fid
-        assert measurement_point.get_meter_kind() is RmsPhysicalMeterKind.POWER
-        expected_physical_location: tuple[str, RmsTerminalSide] = (
-            expected_physical_location_by_fid[source_fid]
-        )
-        assert measurement_point.get_target_fid() == expected_physical_location[0]
-        assert measurement_point.get_terminal_side() is expected_physical_location[1]
-        assert len(measurement_point.get_output_signal_names()) > 0
+        initialization_equations: dict[Var, Expr] = initialization_graph[0]
+        initialization_order_uids: set[int] = set(variable.uid for variable in initialization_graph[2])
         assert "powerfactory" not in meter_name.lower()
-        assert measurement_point.get_output_signal_names() == tuple(
-            output_var.name for output_var in meter_block.out_vars
-        )
-        assert all(
-            "powerfactory" not in output_name.lower()
-            for output_name in measurement_point.get_output_signal_names()
-        )
-        assert set(measurement_point.get_output_var_uids()).issubset(
-            set(output_var.uid for output_var in meter_block.out_vars)
-        )
+        assert all("powerfactory" not in output_var.name.lower() for output_var in meter_block.out_vars)
         output_var_uid: int
-        for output_var_uid in measurement_point.get_output_var_uids():
+        for output_var_uid in (output_var.uid for output_var in meter_block.out_vars):
             algebraic_owners: list[tuple[Block, Var]] = list(
                 (owner_child, algebraic_var)
                 for owner_child in owner_model.get_all_blocks()
@@ -1797,9 +1953,10 @@ def test_v1_v2_dynamic_routes_keep_power_meters_as_editor_blocks(
             assert algebraic_owners[0][0] is meter_block
             initialization_owner_uids: set[int] = set(
                 initialization_var.uid
-                for initialization_var in meter_block.init_eqs.keys()
+                for initialization_var in initialization_equations
             )
             assert output_var_uid in initialization_owner_uids, meter_name
+            assert output_var_uid in initialization_order_uids, meter_name
             assert len(meter_block.algebraic_vars) == len(
                 meter_block.algebraic_eqs
             )
@@ -1815,10 +1972,6 @@ def test_v1_v2_dynamic_routes_keep_power_meters_as_editor_blocks(
             assert output_var_uid in set(
                 residual_var.uid for residual_var in owned_residual.get_vars()
             ), meter_name
-        global_measurement_by_fid: dict[str, RmsPhysicalMeasurementPoint] = (
-            collect_rms_physical_measurement_points(block=owner_model)
-        )
-        assert global_measurement_by_fid[source_fid] is measurement_point
         if file_name == "hvdc_vsc_v1_complete_static_dynamic.dgs":
             # The V1 meters sit behind zero-impedance transformers. Topology
             # reduction removes those internal branch flows, so initialization
@@ -1837,30 +1990,27 @@ def test_v1_v2_dynamic_routes_keep_power_meters_as_editor_blocks(
             assert owner_reactive_power is not None
             initialization_dependency_uids: set[int] = set(
                 dependency_var.uid
-                for init_expression in meter_block.init_eqs.values()
-                for dependency_var in init_expression.get_vars()
+                for output_var in meter_block.out_vars
+                for dependency_var in initialization_equations[output_var].get_vars()
             )
             assert owner_active_power.uid in initialization_dependency_uids
             assert owner_reactive_power.uid in initialization_dependency_uids
         else:
             pass
-        meter_output_reference_uids: set[int] = set(
-            output_var.shared_ref.uid
+        # Early materialization reuses the consumer variables themselves,
+        # so connectivity is represented by canonical UIDs rather than shared_ref.
+        meter_output_uids: set[int] = set(
+            output_var.uid
             for output_var in meter_block.out_vars
-            if output_var.shared_ref is not None
         )
-        connected_controller_reference_uids: set[int] = set(
-            input_var.shared_ref.uid
+        connected_controller_uids: set[int] = set(
+            input_var.uid
             for owner_child in owner_model.get_all_blocks()
             if owner_child is not meter_block
             for input_var in owner_child.in_vars
-            if input_var.shared_ref is not None
         )
-        assert len(
-            meter_output_reference_uids.intersection(
-                connected_controller_reference_uids,
-            )
-        ) > 0, meter_name
+        assert len(meter_output_uids) > 0, meter_name
+        assert meter_output_uids.issubset(connected_controller_uids), meter_name
 
     assert logger.error_count() == 0
 
@@ -3627,9 +3777,12 @@ def test_dgs_direct_builder_accepts_a_specialized_dynamic_role() -> None:
     assert direct_result.root_block.children[0].name == dynamic_definition.loc_name
 
 
-# Dynamic contract: a specialized dynamic role requires a resolvable pelm.
-def test_dgs_direct_builder_rejects_a_missing_specialized_dynamic_role() -> None:
-    """Reject an unregistered wildcard role whose dynamic wrapper is absent.
+# Dynamic contract: an empty specialized dynamic role stays unconnected (User Manual 30.2).
+def test_dgs_direct_builder_leaves_an_empty_specialized_dynamic_role_unconnected() -> None:
+    """Build a root whose specialized dynamic role is left empty, as PowerFactory allows.
+
+    An empty Composite Model slot is legal whatever its filter (User Manual
+    30.2); its inputs and outputs are simply not connected.
 
     :return: None.
     """
@@ -3647,15 +3800,13 @@ def test_dgs_direct_builder_rejects_a_missing_specialized_dynamic_role() -> None
         root_typ_id=root_element.typ_id,
         root_dgs_id=root_element.ID,
     )
-    with pytest.raises(
-        ValueError,
-        match="has no resolved ElmDsl or ElmComp instance",
-    ):
-        build_direct_root_elmcomp_block(
-            circuit=circuit,
-            result=root_result,
-            graphical_indexes=build_dgs_graphical_indexes(circuit=circuit),
-        )
+    direct_result: DgsDirectRootBuildResult = build_direct_root_elmcomp_block(
+        circuit=circuit,
+        result=root_result,
+        graphical_indexes=build_dgs_graphical_indexes(circuit=circuit),
+    )
+
+    assert dynamic_slot.ID not in direct_result.child_block_by_slot_id
 
 
 def test_direct_dynamic_import_rejects_partial_graphical_topology() -> None:
@@ -4368,10 +4519,7 @@ def test_dgs_conditional_diagnostics_are_canonical_and_round_trip() -> None:
         for entry in block.procedural_logic
         if isinstance(entry, ConditionalDiagnosticLogic)
     ]
-    rebuilt_block: Block = Block.parse(
-        data=block.to_dict(),
-        procedural_logic_codec=ProceduralLogicCodec(),
-    )
+    rebuilt_block: Block = roundtrip_block(block, procedural_logic_codec=ProceduralLogicCodec())
     rebuilt_diagnostics: list[ConditionalDiagnosticLogic] = [
         entry
         for entry in rebuilt_block.procedural_logic
@@ -4559,6 +4707,38 @@ def test_dgs_equation_continuation_discards_interleaved_comments() -> None:
     assert "result" in parsed.algebraic_rhs
 
 
+def test_dgs_inline_comment_keeps_its_semicolons_as_comment_text() -> None:
+    """Treat a semicolon inside an inline ``!`` comment as comment text.
+
+    The GB REGC_C definition exports ``limfix`` rows whose comments contain a
+    semicolon; DSL comments run to the end of the line, so nothing after the
+    marker may become a statement.
+
+    :return: None.
+    """
+    definition: BlkDef = BlkDef()
+    definition.ID = "SEMICOLON_COMMENT_DEFINITION"
+    definition.loc_name = "Semicolon comment"
+    definition.inputs = ["u"]
+    definition.outputs = ["y"]
+    definition.params = ["rrpwr", "Te"]
+    definition.equations_raw = [
+        "y = rrpwr*u",
+        "limfix(rrpwr)    = (0,)          ! rrpwr > 0; typical: 1-20",
+        "limfix(Te)       = (0.0,0.02]    ! 0.0 < Te <= 0.02; note: Te has to be larger than zero",
+        "vardef(y) = 'p.u.';'Output; scaled'",
+    ]
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.append(definition)
+
+    parsed: ParsedDgsBlockDefinition = (
+        parse_dgs_block_definitions_from_circuit(circuit=circuit)[definition.ID]
+    )
+
+    assert parsed.unsupported_lines == []
+    assert "y" in parsed.algebraic_rhs
+
+
 def test_dgs_blkslot_preserves_filter_after_quoted_semicolons() -> None:
     """Keep typed slot columns aligned after quoted signal declarations.
 
@@ -4682,6 +4862,191 @@ def test_dgs_not_equal_is_supported_inside_a_selector_condition() -> None:
     assert parsed.unsupported_lines == []
 
 
+def _build_single_definition_block(
+        inputs: list[str],
+        outputs: list[str],
+        states: list[str],
+        equations: list[str],
+) -> Block:
+    """Build one DSL definition without a graphical context.
+
+    :param inputs: Input names.
+    :param outputs: Output names.
+    :param states: State names.
+    :param equations: DSL statements.
+    :return: Materialized block.
+    """
+    definition: BlkDef = BlkDef()
+    definition.ID = "KEYWORD_DEFINITION"
+    definition.loc_name = "LPF"
+    definition.inputs = inputs
+    definition.outputs = outputs
+    definition.states = states
+    definition.equations_raw = equations
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.append(definition)
+    parsed: dict[str, ParsedDgsBlockDefinition] = parse_dgs_block_definitions_from_circuit(circuit=circuit)
+    return _build_block_from_parsed(parsed[definition.ID], dict())
+
+
+def _evaluate_by_local_name(expression: Expr, values: dict[str, float]) -> float:
+    """Evaluate an expression with values keyed by the local DSL name of each variable.
+
+    :param expression: Expression to evaluate.
+    :param values: Values by local name.
+    :return: Expression value.
+    """
+    return expression.eval_uid({var.uid: values[var.name.rsplit("__", 1)[-1]] for var in expression.get_vars()})
+
+
+@pytest.mark.parametrize("name", [name for name in keyword.kwlist if name not in ("and", "or", "not")])
+def test_dgs_keyword_symbol_parses_like_any_other_name(name: str) -> None:
+    """Parse a DSL symbol spelled as a Python keyword exactly as the same symbol renamed.
+
+    T3T4 DFIG low-pass filters write ``x.=(in-x)/T`` and their turbines
+    ``lambda=w_turbine*K_speed/wind_speed``.
+
+    :param name: Python keyword used as a DSL input name.
+    :return: None.
+    """
+    keyword_block: Block = _build_single_definition_block(
+        inputs=[name], outputs=["y"], states=["x"],
+        equations=[f"x.=({name}-x)/0.1", f"y=2*{name}+x"],
+    )
+    renamed_block: Block = _build_single_definition_block(
+        inputs=["u"], outputs=["y"], states=["x"],
+        equations=["x.=(u-x)/0.1", "y=2*u+x"],
+    )
+
+    keyword_eqs: list[Expr] = keyword_block.state_eqs + keyword_block.algebraic_eqs
+    renamed_eqs: list[Expr] = renamed_block.state_eqs + renamed_block.algebraic_eqs
+    assert len(keyword_eqs) == len(renamed_eqs) == 2
+    for keyword_eq, renamed_eq in zip(keyword_eqs, renamed_eqs):
+        assert _evaluate_by_local_name(keyword_eq, {name: 0.3, "x": 0.1, "y": 0.7}) == pytest.approx(
+            _evaluate_by_local_name(renamed_eq, {"u": 0.3, "x": 0.1, "y": 0.7}))
+
+
+def test_dgs_keyword_symbol_is_renamed_only_as_a_whole_word() -> None:
+    """Keep functions and longer names that contain a keyword symbol unchanged.
+
+    T3T4 DFIG definitions declare ``in1`` to ``in5`` next to ``in``.
+
+    :return: None.
+    """
+    block: Block = _build_single_definition_block(
+        inputs=["in", "x_in", "in1"], outputs=["y"], states=[],
+        equations=["y=sin(in)+x_in+in1"],
+    )
+
+    assert _evaluate_by_local_name(block.algebraic_eqs[0],
+                                   {"in": 0.3, "x_in": 0.5, "in1": 0.25, "y": 0.0}) == pytest.approx(
+        -(math.sin(0.3) + 0.5 + 0.25))
+
+
+def test_dgs_undeclared_keyword_variable_is_read_by_a_later_statement() -> None:
+    """Read an undeclared helper spelled as a Python keyword after the statement that computes it.
+
+    :return: None.
+    """
+    block: Block = _build_single_definition_block(
+        inputs=["w"], outputs=["y"], states=[],
+        equations=["lambda=2*w", "y=lambda+1"],
+    )
+
+    values: dict[str, float] = {"w": 0.25, "lambda": 0.5, "y": 1.5}
+    assert sorted(var.name.rsplit("__", 1)[-1] for var in block.algebraic_vars) == ["lambda", "y"]
+    assert all(_evaluate_by_local_name(eq, values) == pytest.approx(0.0) for eq in block.algebraic_eqs)
+
+
+def test_dgs_keyword_symbol_registered_after_construction_is_parsed() -> None:
+    """Parse a keyword symbol registered on the parser after its construction.
+
+    The support report registers a statement left-hand side that the symbol
+    table does not declare yet.
+
+    :return: None.
+    """
+    parser: DgsExpressionParser = DgsExpressionParser(symbol_table=dict(), block_name="LPF")
+    tip_speed: Var = Var(name="LPF__lambda")
+    parser.register_symbol(original_name="lambda", variable=tip_speed)
+
+    expression = parser.parse("lambda+1")
+    assert set(var.uid for var in expression.get_vars()) == {tip_speed.uid}
+
+
+@pytest.mark.parametrize("names", [["in", "in_symbol", "u"], ["in_symbol", "in", "u"]])
+def test_dgs_keyword_symbol_sharing_a_parser_name_resolves_each_symbol(names: list[str]) -> None:
+    """Resolve a keyword symbol and a symbol spelled like its parser alias to their own variables.
+
+    :param names: Symbol names in declaration order.
+    :return: None.
+    """
+    parser: DgsExpressionParser = DgsExpressionParser(
+        symbol_table={name: Var(name=f"LPF__{name}") for name in names}, block_name="LPF")
+
+    assert [var.name for var in parser.parse("in+1").get_vars()] == ["LPF__in"]
+    assert [var.name for var in parser.parse("in_symbol+1").get_vars()] == ["LPF__in_symbol"]
+    assert [var.name for var in parser.parse("u+1").get_vars()] == ["LPF__u"]
+
+
+def test_dgs_keyword_symbol_registered_twice_keeps_its_alias() -> None:
+    """Keep one parser alias when a keyword symbol is registered again.
+
+    :return: None.
+    """
+    parser: DgsExpressionParser = DgsExpressionParser(
+        symbol_table={"in_symbol": Var(name="LPF__in_symbol")}, block_name="LPF")
+    parser.register_symbol(original_name="in", variable=Var(name="LPF__in"))
+    parser.register_symbol(original_name="in", variable=Var(name="LPF__in"))
+
+    assert [var.name for var in parser.parse("in+1").get_vars()] == ["LPF__in"]
+    assert [var.name for var in parser.parse("in_symbol+1").get_vars()] == ["LPF__in_symbol"]
+
+
+def test_dgs_keyword_output_is_computed_by_its_equation() -> None:
+    """Compute a DSL output spelled as a Python keyword from its own statement.
+
+    :return: None.
+    """
+    block: Block = _build_single_definition_block(
+        inputs=["w"], outputs=["lambda"], states=[],
+        equations=["lambda=2*w"],
+    )
+
+    assert [var.name.rsplit("__", 1)[-1] for var in block.algebraic_vars] == ["lambda"]
+    assert _evaluate_by_local_name(block.algebraic_eqs[0], {"w": 0.25, "lambda": 0.5}) == pytest.approx(0.0)
+
+
+def test_dgs_inactive_selector_division_has_finite_value_and_derivative() -> None:
+    """Preserve lazy branch semantics when a bypassed time constant is zero."""
+    definition: BlkDef = BlkDef()
+    definition.ID = "ZERO_TIME_CONSTANT_SELECTOR_DEFINITION"
+    definition.loc_name = "Zero time constant selector"
+    definition.inputs = ["T", "source"]
+    definition.outputs = ["result"]
+    definition.equations_raw = [
+        "result=select(T>0,source/T,0.0)",
+    ]
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.append(definition)
+
+    parsed: ParsedDgsBlockDefinition = (
+        parse_dgs_block_definitions_from_circuit(circuit=circuit)[definition.ID]
+    )
+    result_expression: Expr = parsed.algebraic_rhs["result"]
+    selector_var: Var = next(iter(parsed.mode_dict))
+    time_constant: Var = parsed.symbol_table["T"]
+    source: Var = parsed.symbol_table["source"]
+    bindings: dict[int, float] = {
+        selector_var.uid: 0.0,
+        time_constant.uid: 0.0,
+        source.uid: 2.0,
+    }
+
+    assert result_expression.eval_uid(bindings) == 0.0
+    assert result_expression.diff(source).eval_uid(bindings) == 0.0
+
+
 def test_dgs_network_mode_helpers_use_the_explicit_target_domain() -> None:
     """Resolve ``rms()`` and ``balanced()`` from RMS or EMT import context.
 
@@ -4768,37 +5133,6 @@ def test_dynamic_template_fingerprint_uses_declarative_block_identity() -> None:
     assert second_fingerprint == first_fingerprint
     assert emt_fingerprint is not None
     assert emt_fingerprint != first_fingerprint
-
-
-def test_user_dynamic_template_json_round_trips_the_typed_identity(
-        tmp_path: Path,
-) -> None:
-    """Preserve the block and its typed catalogue identity through JSON."""
-
-    source_block: Block = Block(name="Portable dynamic template")
-    output_path: Path = tmp_path / "portable_dynamic_template.json"
-    exported_path: Path = export_user_dynamic_template_json_from_block(
-        block=source_block,
-        output_path=str(output_path),
-        template_name="Portable dynamic template",
-        target_domain=DynamicSimulationMode.RMS,
-        device_tpe=DeviceType.GeneratorDevice,
-    )
-    loaded_payload: (
-        tuple[Block, str, DynamicSimulationMode, DeviceType] | None
-    ) = load_user_dynamic_template_json_payload(str(exported_path))
-
-    assert loaded_payload is not None
-
-    loaded_block: Block = loaded_payload[0]
-    loaded_name: str = loaded_payload[1]
-    loaded_domain: DynamicSimulationMode = loaded_payload[2]
-    loaded_device_tpe: DeviceType = loaded_payload[3]
-
-    assert loaded_block.name == source_block.name
-    assert loaded_name == "Portable dynamic template"
-    assert loaded_domain is DynamicSimulationMode.RMS
-    assert loaded_device_tpe is DeviceType.GeneratorDevice
 
 
 def test_dgs_dynamic_import_bundle_reports_supported_and_failed_blocks() -> None:
@@ -4988,3 +5322,1752 @@ def test_file_open_rejects_dynamic_dgs_import_without_an_explicit_mode() -> None
         entry.msg == "DGS dynamic model import requires an explicit RMS or EMT simulation mode"
         for entry in file_open.logger.entries
     )
+
+
+@pytest.mark.parametrize(
+    "source_class,expected_device_tpe",
+    (("ElmVsc", DeviceType.VscDevice),
+     ("ElmVscmono", DeviceType.VscDevice),
+     ("ElmSvs", DeviceType.ControllableShuntDevice),
+     ("ElmSym", DeviceType.GeneratorDevice),
+     ("ElmGenstat", DeviceType.GeneratorDevice),
+     ("ElmLod", DeviceType.LoadDevice),
+     ("ElmLodlv", DeviceType.LoadDevice),
+     ("ElmLodmv", DeviceType.LoadDevice),
+     ("ElmBat", DeviceType.BatteryDevice),
+     ("ElmLne", DeviceType.LineDevice),
+     ("ElmTr2", DeviceType.Transformer2WDevice),
+     ("ElmXnet", DeviceType.GeneratorDevice),
+     ("StaSwitch", None),
+     ("ElmSind", None),
+     (None, None)),
+)
+def test_dgs_element_host_device_types_follow_powerfactory_classes(
+        source_class: str | None,
+        expected_device_tpe: DeviceType | None,
+) -> None:
+    """Map each PowerFactory host class to the VeraGrid device that owns its dynamics.
+
+    Auxiliary classes such as ``StaSwitch`` and ``ElmSind`` provide inputs or
+    switching actions and never identify the physical host.
+
+    :param source_class: Referenced DGS ``pElm`` class.
+    :param expected_device_tpe: Expected VeraGrid host type, or ``None``.
+    :return: None.
+    """
+    assert get_dgs_dynamic_host_device_tpe(source_element_class=source_class) == expected_device_tpe
+
+
+@pytest.mark.parametrize(
+    "source_class,expected_kind",
+    (("ElmGenstat", NativeDgsEquipmentKind.StaticGenerator),
+     ("ElmSym", NativeDgsEquipmentKind.SynchronousMachine),
+     ("ElmSvs", NativeDgsEquipmentKind.StaticVarSystem),
+     ("ElmVsc", NativeDgsEquipmentKind.BipolarVsc),
+     ("ElmVscmono", NativeDgsEquipmentKind.MonopolarVsc),
+     ("ElmLod", None)),
+)
+def test_dgs_native_equipment_kind_follows_the_slot_source_class(
+        source_class: str,
+        expected_kind: NativeDgsEquipmentKind | None,
+) -> None:
+    """Select the native physical family from the class of the slot element alone.
+
+    The slot signals do not take part: a frame may declare pins its executable
+    model leaves unused, so only the source class names the equipment.
+
+    :param source_class: PowerFactory class of the equipment.
+    :param expected_kind: Expected native family, or ``None`` for a class without one.
+    :return: None.
+    """
+    entry: ElmCompInstanceEntry = ElmCompInstanceEntry(
+        slot_id="equipment_slot",
+        slot_name="Equipment",
+        element_id="equipment_fid",
+        element_name="Equipment",
+        element_kind=source_class,
+        element_outserv=0,
+        type_id=None,
+        type_name=None,
+        slot_filter=source_class,
+        slot_inputs=list(),
+        slot_outputs=list(),
+        connected_inputs=list(),
+        connected_outputs=list(),
+        slot_reference_is_resolved=True,
+        element_reference_is_resolved=True,
+    )
+    direct_result: DgsDirectRootBuildResult = DgsDirectRootBuildResult(
+        root_block=Block(),
+        child_block_by_slot_id=dict(),
+        graphical_tree_by_slot_id=dict(),
+        direct_entries=list([entry]),
+    )
+
+    plans: tuple[NativeDgsEquipmentPlan, ...] = detect_native_dgs_equipment(direct_result)
+
+    assert list(plan.kind for plan in plans) == ([expected_kind] if expected_kind is not None else list())
+
+
+def _native_slot_entry(slot_id: str, element_kind: str, slot_inputs: list[str],
+                       slot_outputs: list[str]) -> ElmCompInstanceEntry:
+    """Resolved direct slot holding one element.
+
+    :param slot_id: Slot FID, also used for its element.
+    :param element_kind: PowerFactory class of the slot element.
+    :param slot_inputs: Declared slot input signals.
+    :param slot_outputs: Declared slot output signals.
+    :return: Direct-slot relation.
+    """
+    return ElmCompInstanceEntry(
+        slot_id=slot_id, slot_name=slot_id, element_id=slot_id, element_name=slot_id,
+        element_kind=element_kind, element_outserv=0, type_id=None, type_name=None,
+        slot_filter=element_kind, slot_inputs=slot_inputs, slot_outputs=slot_outputs,
+        connected_inputs=list(), connected_outputs=list(),
+        slot_reference_is_resolved=True, element_reference_is_resolved=True,
+    )
+
+
+def _native_cable(cable_id: str, name: str, source: str, target: str) -> BlkSig:
+    """Scalar BlkSig between the first connectors of two slots.
+
+    :param cable_id: Cable FID.
+    :param name: Signal carried by the cable.
+    :param source: Producing slot FID.
+    :param target: Consuming slot FID.
+    :return: Graphical cable record.
+    """
+    cable: BlkSig = BlkSig()
+    cable.ID = cable_id
+    cable.loc_name = name
+    cable.pnodfrom = source
+    cable.pnodto = target
+    return cable
+
+
+def test_native_assembly_keeps_the_terminal_voltage_an_equipment_input() -> None:
+    """A frame receiver cabled from the terminal voltage must not own it.
+
+    The frame declares VT as one of its own unknowns, as a PowerFactory composite
+    frame does. The cable from the equipment binds VT to the terminal Vm, which
+    stays an incoming terminal variable of the assembled model (TechRef: the
+    network gives the terminal voltage to the machine and to its controllers).
+
+    :return: None.
+    """
+    voltage: Var = Var("Vm", reference=VarPowerFlowReferenceType.Vm)
+    angle: Var = Var("Va", reference=VarPowerFlowReferenceType.Va)
+    susceptance: Var = Var("bsvs")
+    reactive: Var = Var("Qsvs", reference=VarPowerFlowReferenceType.Q)
+    active: Var = Var("Psvs", reference=VarPowerFlowReferenceType.P)
+    equipment: Block = Block(
+        name="Equipment", in_vars=list((voltage, angle, susceptance)), out_vars=list((active, reactive, voltage)),
+        algebraic_vars=list((active, reactive)),
+        algebraic_eqs=list((active - Const(0.0), reactive + susceptance * voltage * voltage)),
+        external_mapping=dict(((VarPowerFlowReferenceType.P, active), (VarPowerFlowReferenceType.Q, reactive),
+                               (VarPowerFlowReferenceType.Vm, voltage), (VarPowerFlowReferenceType.Va, angle))),
+    )
+    measured: Var = Var("VT")
+    command: Var = Var("bsvs")
+    controller: Block = Block(name="Controller", in_vars=list((measured,)), out_vars=list((command,)),
+                              algebraic_vars=list((command,)), algebraic_eqs=list((command - (Const(1.0) - measured),)))
+    frame: Block = Block(name="Frame", children=list((controller,)), algebraic_vars=list((measured,)))
+    equipment_entry: ElmCompInstanceEntry = _native_slot_entry("svs", "ElmSvs", ["bsvs"], ["VT"])
+    controller_entry: ElmCompInstanceEntry = _native_slot_entry("ctrl", "ElmDsl", ["VT"], ["bsvs"])
+    direct_result: DgsDirectRootBuildResult = DgsDirectRootBuildResult(
+        root_block=frame, child_block_by_slot_id=dict((("ctrl", controller),)),
+        graphical_tree_by_slot_id=dict(), direct_entries=list((equipment_entry, controller_entry)),
+    )
+    dgs_circuit: DgsCircuit = DgsCircuit()
+    dgs_circuit.blksigs = list((_native_cable("1", "VT", "svs", "ctrl"), _native_cable("2", "bsvs", "ctrl", "svs")))
+
+    assembled: Block = assemble_native_dgs_model(
+        NativeDgsEquipmentPlan(NativeDgsEquipmentKind.StaticVarSystem, equipment_entry),
+        equipment, direct_result, dgs_circuit, Logger(),
+    )
+
+    assert list(variable.uid for variable in assembled.in_vars) == list((voltage.uid, angle.uid))
+    assert all(voltage.uid not in set(variable.uid for variable in block.algebraic_vars)
+               for block in assembled.get_all_blocks())
+    assert any(voltage.uid in set(variable.uid for variable in block.in_vars) for block in assembled.get_all_blocks()
+               if block is controller)
+
+
+@pytest.mark.parametrize(
+    ("file_name", "uses_system_base"),
+    (
+        ("hvdc_vsc_v1_complete_static_dynamic.dgs", False),
+        ("hvdc_vsc_v2_complete_static_dynamic.dgs", False),
+        ("hvdc_vsc_v3_complete_static_dynamic.dgs", True),
+    ),
+)
+def test_hvdc_vsc_runtime_templates_are_configured_from_their_host_converter(
+        file_name: str,
+        uses_system_base: bool,
+) -> None:
+    """Configure each activated converter template with the physical data of its own VSC.
+
+    The native converter equations carry the series reactance of their exact
+    host converter as a constant, built when the template is constructed.
+
+    :param file_name: Exact tracked fixture name.
+    :param uses_system_base: Whether the equations use the reactance on the system base.
+    :return: None.
+    """
+    dgs_path: Path = _get_complete_hvdc_vsc_dgs_path(file_name=file_name)
+    logger: Logger = Logger()
+    dgs_circuit: DgsCircuit = DgsCircuit()
+    dgs_circuit.parse_dgs(path=str(dgs_path))
+    circuit: MultiCircuit = dgs_to_circuit(path=str(dgs_path))
+    conversion_result: DgsDynamicTemplateConversionResult = convert_and_add_dgs_dynamic_templates_to_circuit(
+        dgs_circuit=dgs_circuit,
+        circuit=circuit,
+        target_domain=DynamicSimulationMode.RMS,
+        logger=logger,
+    )
+    apply_dgs_dynamic_templates_to_devices(
+        dgs_circuit=dgs_circuit,
+        circuit=circuit,
+        templates_by_root_dgs_id=conversion_result.templates_by_root_dgs_id,
+        logger=logger,
+    )
+
+    assert len(circuit.vsc_devices) == 2
+    converter: VSC
+    for converter in circuit.vsc_devices:
+        template: RmsModelTemplate | None = converter.rms_template
+        assert template is not None
+        constants: list[float] = list()
+        equation: Expr
+        for equation in template.block.algebraic_eqs + template.block.state_eqs:
+            _collect_constant_values(equation, constants)
+        if uses_system_base:
+            expected: float = float(converter.x_series) * float(circuit.Sbase) / float(converter.rate)
+        else:
+            expected = float(converter.x_series)
+        assert pytest.approx(expected) in constants
+
+
+def _collect_constant_values(expression: Expr, constants: list[float]) -> None:
+    """Gather the real constants of an expression tree.
+
+    :param expression: Symbolic expression to walk.
+    :param constants: Values found so far, extended in place.
+    :return: None.
+    """
+    if isinstance(expression, Const) and isinstance(expression.value, (int, float)):
+        constants.append(float(expression.value))
+    elif isinstance(expression, BinOp):
+        _collect_constant_values(expression.left, constants)
+        _collect_constant_values(expression.right, constants)
+    elif isinstance(expression, UnOp):
+        _collect_constant_values(expression.operand, constants)
+    elif isinstance(expression, Func):
+        _collect_constant_values(expression.arg, constants)
+    elif isinstance(expression, Func2):
+        _collect_constant_values(expression.arg1, constants)
+        _collect_constant_values(expression.arg2, constants)
+    else:
+        pass
+
+
+def _build_lookup_test_definition() -> BlkDef:
+    """Build one DSL definition with internal and external characteristics.
+
+    :return: Definition declaring ``array_a``, ``array_b`` and ``oarray_c``.
+    """
+    definition: BlkDef = BlkDef()
+    definition.ID = "LOOKUP_DEFINITION"
+    definition.loc_name = "Lookup definition"
+    definition.inputs = ["yi"]
+    definition.outputs = ["yo"]
+    definition.params = ["K", "array_a", "array_b", "oarray_c"]
+    definition.equations_raw = ["yo = K*lapprox(yi, array_b)"]
+    return definition
+
+
+def test_dgs_elmdsl_lookup_tables_follow_powerfactory_storage() -> None:
+    """Read ``array_`` columns from the model matrix and ``oarray_`` from its IntMat.
+
+    Each internal array owns two adjacent columns in declaration order and
+    states its point count in row 0; an external array is the child IntMat
+    named after the characteristic (PowerFactory User Manual, chapter 30).
+    Native PowerFactory 24.0.2 exports confirm that order for different arrays.
+
+    :return: None.
+    """
+    element: ElmDsl = ElmDsl()
+    element.ID = "DSL_FID"
+    element.matrix = [
+        [2.0, 0.0, 2.0, 0.0],
+        [1.1, 1.1, 1.1, 1.1],
+        [1.15, 1.0, 1.15, 1.0],
+    ]
+    own_table: IntMat = IntMat()
+    own_table.loc_name = "c"
+    own_table.fold_id = "DSL_FID"
+    own_table.matrix = [[0.0, 0.0], [1.0, 10.0]]
+    foreign_table: IntMat = IntMat()
+    foreign_table.loc_name = "c"
+    foreign_table.fold_id = "OTHER_FID"
+    foreign_table.matrix = [[0.0, 5.0], [1.0, 6.0]]
+
+    tables: dict[str, DgsLookupTable] = get_elmdsl_lookup_tables(
+        element=element,
+        blkdef=_build_lookup_test_definition(),
+        intmats=[foreign_table, own_table],
+    )
+
+    assert sorted(tables.keys()) == ["array_a", "array_b", "oarray_c"]
+    assert (tables["array_a"].x_points, tables["array_a"].y_points) == ((1.1, 1.15), (1.1, 1.0))
+    assert (tables["array_b"].x_points, tables["array_b"].y_points) == ((1.1, 1.15), (1.1, 1.0))
+    assert (tables["oarray_c"].x_points, tables["oarray_c"].y_points) == ((0.0, 1.0), (0.0, 10.0))
+
+    element.matrix = [
+        [2.0, 0.0, 3.0, 0.0],
+        [1.1, 1.1, 0.0, 0.0],
+        [1.15, 1.0, 1.0, 2.0],
+        [None, None, 2.0, 4.0],
+    ]
+    different: dict[str, DgsLookupTable] = get_elmdsl_lookup_tables(
+        element=element,
+        blkdef=_build_lookup_test_definition(),
+        intmats=[foreign_table, own_table],
+    )
+    assert sorted(different.keys()) == ["array_a", "array_b", "oarray_c"]
+    assert (different["array_b"].x_points, different["array_b"].y_points) == ((0.0, 1.0, 2.0), (0.0, 2.0, 4.0))
+
+    # An unreadable array is left out alone; its readable neighbour keeps its columns.
+    element.matrix = [
+        [2.0, 0.0, 0.0, 0.0],
+        [1.1, 1.1, None, None],
+        [1.15, 1.0, None, None],
+    ]
+    partly_readable: dict[str, DgsLookupTable] = get_elmdsl_lookup_tables(
+        element=element,
+        blkdef=_build_lookup_test_definition(),
+        intmats=[foreign_table, own_table],
+    )
+    assert sorted(partly_readable.keys()) == ["array_a", "oarray_c"]
+
+
+def _evaluate_lookup_output(block: Block, input_var: Var, input_value: float) -> float:
+    """Evaluate the single algebraic output of a lookup block for one input.
+
+    :param block: Block whose only equation is ``yo - f(yi)``.
+    :param input_var: Its input variable.
+    :param input_value: Input value.
+    :return: Output value.
+    """
+    bindings: dict[int, float] = dict([(input_var.uid, input_value)])
+    parameter_var: Var
+    parameter_value: Expr
+    for parameter_var, parameter_value in list(block.event_dict.items()) + list(block.mode_dict.items()):
+        bindings[parameter_var.uid] = float(parameter_value.value)
+    bindings[block.algebraic_vars[0].uid] = 0.0
+    return -float(block.algebraic_eqs[0].eval_uid(bindings))
+
+
+def test_dgs_lapprox_uses_the_catalog_lookup_array_expression() -> None:
+    """Evaluate ``lapprox`` exactly as the catalog "Lookup array" block.
+
+    PowerFactory's ``lapprox`` interpolates linearly and holds the end values
+    outside the table (DSL macro reference, Lookup array).
+
+    :return: None.
+    """
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.append(_build_lookup_test_definition())
+    parsed: ParsedDgsBlockDefinition = parse_dgs_block_definitions_from_circuit(circuit=circuit)["LOOKUP_DEFINITION"]
+    assert parsed.unsupported_lines == []
+    table: DgsLookupTable = DgsLookupTable(x_points=[0.0, 1.0, 2.0], y_points=[0.0, 2.0, 3.0])
+
+    imported: Block = _build_block_from_parsed(
+        parsed,
+        dict(),
+        parameter_values=dict([("K", 1.0)]),
+        lookup_tables=dict([("array_b", table)]),
+    )
+    catalog: EmtModelTemplate = build_lookup_array_linear_runtime_template(
+        vf=VarFactory(),
+        x_points=list(table.x_points),
+        y_points=list(table.y_points),
+        clip=True,
+    )
+
+    imported_input: Var = next(var for var in imported.in_vars if var.name.endswith("yi"))
+    value: float
+    for value in (-1.0, 0.0, 0.5, 1.0, 1.7, 2.0, 3.0):
+        assert _evaluate_lookup_output(imported, imported_input, value) == pytest.approx(
+            _evaluate_lookup_output(catalog.block, catalog.block.in_vars[0], value)
+        )
+    assert _evaluate_lookup_output(imported, imported_input, 3.0) == pytest.approx(3.0)
+
+
+def test_dgs_lapprox_without_its_characteristic_fails_closed() -> None:
+    """Reject an instance whose characteristic is missing.
+
+    :return: None.
+    """
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.append(_build_lookup_test_definition())
+    parsed: ParsedDgsBlockDefinition = parse_dgs_block_definitions_from_circuit(circuit=circuit)["LOOKUP_DEFINITION"]
+
+    with pytest.raises(UnsupportedDgsExpression):
+        _build_block_from_parsed(parsed, dict(), parameter_values=dict([("K", 1.0)]))
+
+
+def test_dgs_graphical_reference_passes_characteristics_to_its_child() -> None:
+    """Bind a macro child's characteristic to the enclosing one named in ``sParams``.
+
+    :return: None.
+    """
+    child: BlkDef = BlkDef()
+    child.ID = "VDL_DEFINITION"
+    child.loc_name = "VDL"
+    child.inputs = ["yi"]
+    child.outputs = ["yo"]
+    child.params = ["array_vdl"]
+    child.equations_raw = ["yo = lapprox (yi, array_vdl)"]
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.append(child)
+    parsed_child: ParsedDgsBlockDefinition = parse_dgs_block_definitions_from_circuit(circuit=circuit)["VDL_DEFINITION"]
+    reference: BlkRef = BlkRef()
+    reference.params = ["array_vdl2"]
+    first: DgsLookupTable = DgsLookupTable(x_points=[0.0, 1.0], y_points=[0.0, 1.0])
+    second: DgsLookupTable = DgsLookupTable(x_points=[1.1, 1.15], y_points=[1.1, 1.0])
+
+    bound: dict[str, DgsLookupTable] = _bind_graphical_reference_lookup_tables(
+        reference=reference,
+        parsed_child=parsed_child,
+        root_lookup_tables=dict([("array_vdl1", first), ("array_vdl2", second)]),
+    )
+
+    assert bound == dict([("array_vdl", second)])
+
+
+def test_dgs_malformed_characteristic_cells_keep_the_file_parseable() -> None:
+    """Read a malformed IntMat cell or size as unknown instead of aborting the parse.
+
+    :return: None.
+    """
+    header_map: dict[str, int] = parse_header(
+        "$$IntMat;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);M:SIZEROW(i);M:SIZECOL(i);"
+        "M:0:0(r);M:0:1(r);M:1:0(r);M:1:1(r)"
+    )[1]
+
+    with_bad_cell: IntMat = IntMat.parse_line(line="  7;C;c;DSL_FID;2;2;0;*;1;bad", header_map=header_map)
+    with_bad_size: IntMat = IntMat.parse_line(line="  8;C;c;DSL_FID;*;2;0;0;1;1", header_map=header_map)
+    with_infinite_size: IntMat = IntMat.parse_line(line="  9;C;c;DSL_FID;inf;2;0;0;1;1", header_map=header_map)
+    with_nan_x: IntMat = IntMat.parse_line(line=" 10;C;c;DSL_FID;2;2;0;0;nan;1", header_map=header_map)
+    with_nan_y: IntMat = IntMat.parse_line(line=" 11;C;c;DSL_FID;2;2;0;0;1;nan", header_map=header_map)
+    element: ElmDsl = ElmDsl()
+    element.ID = "DSL_FID"
+    element.matrix = [[float("inf"), 0.0], [0.0, 0.0], [1.0, 1.0]]
+
+    assert with_bad_cell.matrix == [[0.0, None], [1.0, None]]
+    assert with_bad_size.matrix == []
+    assert with_infinite_size.matrix == []
+    nan_table: IntMat
+    for nan_table in (with_nan_x, with_nan_y):
+        assert get_elmdsl_lookup_tables(element=element, blkdef=_build_lookup_test_definition(),
+                                        intmats=[nan_table]) == dict()
+
+
+def test_dgs_lapprox_reads_an_external_intmat_characteristic() -> None:
+    """Build and evaluate one ``oarray_`` lookup from the IntMat owned by the model.
+
+    :return: None.
+    """
+    definition: BlkDef = BlkDef()
+    definition.ID = "VDL_OBJECT_DEFINITION"
+    definition.loc_name = "VDL object"
+    definition.inputs = ["yi"]
+    definition.outputs = ["yo"]
+    definition.params = ["oarray_vdl"]
+    definition.equations_raw = ["yo = lapprox (yi, oarray_vdl)"]
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.append(definition)
+    parsed: ParsedDgsBlockDefinition = parse_dgs_block_definitions_from_circuit(circuit=circuit)[
+        "VDL_OBJECT_DEFINITION"
+    ]
+    element: ElmDsl = ElmDsl()
+    element.ID = "VDL_FID"
+    table: IntMat = IntMat()
+    table.loc_name = "vdl"
+    table.fold_id = "VDL_FID"
+    table.matrix = [[1.1, 1.1], [1.15, 1.0], [1.3, 0.0]]
+
+    block: Block = _build_block_from_parsed(
+        parsed,
+        dict(),
+        lookup_tables=get_elmdsl_lookup_tables(element=element, blkdef=definition, intmats=[table]),
+    )
+
+    block_input: Var = next(var for var in block.in_vars if var.name.endswith("yi"))
+    assert _evaluate_lookup_output(block, block_input, 1.2) == pytest.approx(1.0 - (1.2 - 1.15) / 0.15)
+    assert _evaluate_lookup_output(block, block_input, 2.0) == pytest.approx(0.0)
+
+
+def test_dgs_graphical_child_characteristics_prefer_the_sparams_binding() -> None:
+    """Prefer the enclosing characteristic named in ``sParams`` over a nested instance.
+
+    :return: None.
+    """
+    child: BlkDef = BlkDef()
+    child.ID = "VDL_PRECEDENCE_DEFINITION"
+    child.loc_name = "VDL"
+    child.inputs = ["yi"]
+    child.outputs = ["yo"]
+    child.params = ["array_vdl", "array_own"]
+    child.equations_raw = ["yo = lapprox (yi, array_vdl)"]
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.append(child)
+    parsed_child: ParsedDgsBlockDefinition = parse_dgs_block_definitions_from_circuit(circuit=circuit)[
+        "VDL_PRECEDENCE_DEFINITION"
+    ]
+    reference: BlkRef = BlkRef()
+    reference.params = ["array_vdl1"]
+    enclosing: DgsLookupTable = DgsLookupTable(x_points=[1.1, 1.15], y_points=[1.1, 1.0])
+    nested_vdl: DgsLookupTable = DgsLookupTable(x_points=[0.0, 1.0], y_points=[0.0, 1.0])
+    nested_own: DgsLookupTable = DgsLookupTable(x_points=[0.0, 1.0], y_points=[5.0, 6.0])
+    nested: ElmCompInstanceEntry = ElmCompInstanceEntry(
+        slot_id=None,
+        slot_name="VDL",
+        element_id="NESTED_FID",
+        element_name="VDL",
+        element_kind="ElmDsl",
+        element_outserv=0,
+        type_id="VDL_PRECEDENCE_DEFINITION",
+        type_name="VDL",
+        lookup_tables=dict([("array_vdl", nested_vdl), ("array_own", nested_own)]),
+    )
+
+    tables: dict[str, DgsLookupTable] = _resolve_graphical_child_lookup_tables(
+        reference=reference,
+        parsed_child=parsed_child,
+        instance_entry=nested,
+        root_lookup_tables=dict([("array_vdl1", enclosing)]),
+    )
+
+    assert tables == dict([("array_vdl", enclosing), ("array_own", nested_own)])
+
+
+def _build_v2_slave_root(empty_ffs: bool, ffs_element_id: str | None = None) -> DgsDirectRootBuildResult:
+    """Build the V2 SlavePWM_Model root, optionally replacing the element of its FFS slot.
+
+    :param empty_ffs: Replace the FFS ``pelm`` by ``ffs_element_id``.
+    :param ffs_element_id: Replacement ``pelm`` (``None`` empties the slot).
+    :return: Direct root build result.
+    """
+    dgs_circuit: DgsCircuit = DgsCircuit()
+    dgs_circuit.parse_dgs(
+        path=str(_get_complete_hvdc_vsc_dgs_path(
+            file_name="hvdc_vsc_v2_complete_static_dynamic.dgs",
+        ))
+    )
+    if empty_ffs:
+        root: ElmComp = next(comp for comp in dgs_circuit.elmcomps if comp.loc_name == "SlavePWM_Model")
+        slot_name_by_id: dict[str, str] = dict((slot.ID, slot.loc_name) for slot in dgs_circuit.blkslots)
+        ffs_index: int = next(
+            index for index, slot_id in enumerate(root.pblk) if slot_name_by_id.get(slot_id, "") == "FFS"
+        )
+        root.pelm[ffs_index] = ffs_element_id
+    else:
+        pass
+    parsed_blocks: dict[str, ParsedDgsBlockDefinition] = (
+        parse_dgs_block_definitions_from_circuit(circuit=dgs_circuit)
+    )
+    root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+        circuit=dgs_circuit,
+        parsed_blocks=parsed_blocks,
+        root_name="SlavePWM_Model",
+    )
+    return build_direct_root_elmcomp_block(
+        circuit=dgs_circuit,
+        result=root_result,
+        graphical_indexes=build_dgs_graphical_indexes(circuit=dgs_circuit),
+    )
+
+
+def test_empty_dynamic_slot_leaves_its_cables_unconnected() -> None:
+    """Build a root whose DSL slot is empty, as PowerFactory allows.
+
+    The empty slot gets no child; every other slot is built as before.
+
+    :return: None.
+    """
+    complete: DgsDirectRootBuildResult = _build_v2_slave_root(empty_ffs=False)
+    without_ffs: DgsDirectRootBuildResult = _build_v2_slave_root(empty_ffs=True, ffs_element_id=None)
+    ffs_entry: ElmCompInstanceEntry = next(
+        entry for entry in without_ffs.direct_entries if entry.slot_name == "FFS"
+    )
+
+    assert ffs_entry.element_id is None
+    assert ffs_entry.slot_id not in without_ffs.child_block_by_slot_id
+    assert ffs_entry.slot_id in complete.child_block_by_slot_id
+    assert set(without_ffs.child_block_by_slot_id) == set(complete.child_block_by_slot_id) - {ffs_entry.slot_id}
+
+
+def test_unresolved_dynamic_slot_element_is_still_rejected() -> None:
+    """Keep rejecting a slot whose element pointer names a missing object.
+
+    :return: None.
+    """
+    with pytest.raises(ValueError, match="no resolved ElmDsl or ElmComp instance"):
+        _build_v2_slave_root(empty_ffs=True, ffs_element_id="MISSING_FID")
+
+
+def _build_internal_binding_fixture(
+        parent_equations: list[str],
+        child_equations: list[str],
+        bound_names: list[str],
+) -> tuple[BlkRef, ParsedDgsBlockDefinition, Block, ParsedDgsBlockDefinition, Block]:
+    """Build an enclosing macro and one child sharing an internal through ``sIntern``.
+
+    :param parent_equations: Enclosing definition equations.
+    :param child_equations: Child definition equations.
+    :param bound_names: Enclosing names written on the ``BlkRef``.
+    :return: Reference, parsed child, child block, parsed parent and parent block.
+    """
+    parent: BlkDef = BlkDef()
+    parent.ID = "INTERN_PARENT"
+    parent.loc_name = "REEC"
+    parent.inputs = ["Vt"]
+    parent.outputs = ["Verr"]
+    parent.internals = ["Vref"]
+    parent.equations_raw = parent_equations
+    child: BlkDef = BlkDef()
+    child.ID = "INTERN_CHILD"
+    child.loc_name = "Vref0_select"
+    child.inputs = ["yi"]
+    child.outputs = ["yo"]
+    child.internals = ["Vsel"]
+    child.equations_raw = child_equations
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.extend([parent, child])
+    parsed: dict[str, ParsedDgsBlockDefinition] = parse_dgs_block_definitions_from_circuit(circuit=circuit)
+    reference: BlkRef = BlkRef()
+    reference.ID = "284"
+    reference.internals = list(bound_names)
+    return (reference, parsed["INTERN_CHILD"], _build_block_from_parsed(parsed["INTERN_CHILD"], dict()),
+            parsed["INTERN_PARENT"], _build_block_from_parsed(parsed["INTERN_PARENT"], dict()))
+
+
+def _uids_read_by(block: Block) -> set[int]:
+    """Collect the UIDs read by the runtime equations of one block.
+
+    :param block: Materialized block.
+    :return: Variable UIDs.
+    """
+    return set(var.uid for equation in block.algebraic_eqs for var in equation.get_vars())
+
+
+def test_dgs_reference_internal_reads_the_enclosing_initialized_variable() -> None:
+    """Let a child read the enclosing ``inc()`` variable named in ``sIntern``.
+
+    GB REEC_C sets ``inc(Vref) = Vt`` and its ``Vref0_select`` child reads the
+    same ``Vref`` under its own internal name.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_internal_binding_fixture(
+        parent_equations=["Verr = Vref - Vt", "inc(Vref) = Vt"],
+        child_equations=["yo = Vsel + yi"],
+        bound_names=["Vref"],
+    )
+    parent_vref: Var = next(var for var in parent_block.event_dict if var.name == "REEC__Vref")
+
+    _bind_graphical_reference_internals(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                        parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert parent_vref.uid in _uids_read_by(child_block)
+    assert not any(var.name == "Vref0_select__Vsel" for var in child_block.algebraic_eqs[0].get_vars())
+
+
+def test_dgs_reference_internal_computed_by_the_child_takes_the_enclosing_inc_as_initial_value() -> None:
+    """Treat an enclosing ``inc()`` of a child-computed internal as its initial value.
+
+    GB SVS frames set ``inc(uv1) = 0`` while the Undervoltage Trip child
+    computes ``uv1``.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_internal_binding_fixture(
+        parent_equations=["Verr = Vref - Vt", "inc(Vref) = 0.25"],
+        child_equations=["Vsel = 2 * yi", "yo = Vsel"],
+        bound_names=["Vref"],
+    )
+    child_vsel: Var = next(var for var in child_block.algebraic_vars if var.name == "Vref0_select__Vsel")
+
+    _bind_graphical_reference_internals(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                        parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert child_vsel.uid in _uids_read_by(parent_block)
+    # The shared variable is computed, so it cannot also stay a runtime parameter.
+    assert all(var.name != "REEC__Vref" and var.uid != child_vsel.uid for var in parent_block.event_dict)
+    assert parent_block.init_eqs[child_vsel].value == pytest.approx(0.25)
+
+
+def test_dgs_reference_internal_computed_on_both_sides_fails_closed() -> None:
+    """Reject one ``sIntern`` variable computed by the child and the enclosing block.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_internal_binding_fixture(
+        parent_equations=["Vref = Vt", "Verr = Vref - Vt"],
+        child_equations=["Vsel = 2 * yi", "yo = Vsel"],
+        bound_names=["Vref"],
+    )
+
+    with pytest.raises(ValueError, match="computed by both"):
+        _bind_graphical_reference_internals(reference=reference, parsed_child=parsed_child,
+                                            child_block=child_block, parsed_parent=parsed_parent,
+                                            parent_block=parent_block)
+
+
+def test_dgs_reference_internal_count_must_match_the_child_definition() -> None:
+    """Reject an ``sIntern`` list that does not name every child internal.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_internal_binding_fixture(
+        parent_equations=["Verr = Vref - Vt", "inc(Vref) = Vt"],
+        child_equations=["yo = Vsel + yi"],
+        bound_names=["Vref", "Vt"],
+    )
+
+    with pytest.raises(ValueError, match="do not match"):
+        _bind_graphical_reference_internals(reference=reference, parsed_child=parsed_child,
+                                            child_block=child_block, parsed_parent=parsed_parent,
+                                            parent_block=parent_block)
+
+
+def test_dgs_reference_internal_initialized_on_both_sides_fails_closed() -> None:
+    """Reject one ``sIntern`` variable given an ``inc()`` by both sides.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_internal_binding_fixture(
+        parent_equations=["Verr = Vref - Vt", "inc(Vref) = 0.25"],
+        child_equations=["Vsel = 2 * yi", "yo = Vsel", "inc(Vsel) = 0.5"],
+        bound_names=["Vref"],
+    )
+
+    with pytest.raises(ValueError, match="initialized by both"):
+        _bind_graphical_reference_internals(reference=reference, parsed_child=parsed_child,
+                                            child_block=child_block, parsed_parent=parsed_parent,
+                                            parent_block=parent_block)
+
+
+def test_dgs_reference_internal_initialized_by_the_child_but_computed_by_the_enclosing_block_fails_closed() -> None:
+    """Reject a child ``inc()`` of a variable the enclosing block computes.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_internal_binding_fixture(
+        parent_equations=["Vref = Vt", "Verr = Vref - Vt"],
+        child_equations=["yo = Vsel + yi", "inc(Vsel) = 1.0"],
+        bound_names=["Vref"],
+    )
+
+    with pytest.raises(ValueError, match="initialized by the child but computed"):
+        _bind_graphical_reference_internals(reference=reference, parsed_child=parsed_child,
+                                            child_block=child_block, parsed_parent=parsed_parent,
+                                            parent_block=parent_block)
+
+
+def test_dgs_reference_internal_naming_an_enclosing_port_fails_closed() -> None:
+    """Reject an ``sIntern`` token naming an enclosing input or output.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_internal_binding_fixture(
+        parent_equations=["Verr = Vref - Vt", "inc(Vref) = Vt"],
+        child_equations=["yo = Vsel + yi"],
+        bound_names=["Vt"],
+    )
+
+    with pytest.raises(ValueError, match="enclosing port"):
+        _bind_graphical_reference_internals(reference=reference, parsed_child=parsed_child,
+                                            child_block=child_block, parsed_parent=parsed_parent,
+                                            parent_block=parent_block)
+
+
+def test_graphical_macro_child_reads_the_enclosing_internal_named_in_sintern() -> None:
+    """Bind ``sIntern`` while building a complete graphical macro.
+
+    :return: None.
+    """
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.parse_dgs(str(_get_graphical_parent_signal_binding_dgs_path()))
+    root_element: ElmComp = circuit.elmcomps[0]
+    macro: BlkDef = next(definition for definition in circuit.blkdefs if definition.ID == "MACRO")
+    macro.internals.append("held")
+    macro.equations_raw.append("inc(held) = external_x")
+
+    child_definition: BlkDef = BlkDef()
+    child_definition.ID = "SELECTOR_DEFINITION"
+    child_definition.loc_name = "Selector"
+    child_definition.inputs = ["yi"]
+    child_definition.outputs = ["yo"]
+    child_definition.internals = ["Vsel"]
+    child_definition.equations_raw = ["yo = Vsel + yi"]
+    circuit.blkdefs.append(child_definition)
+    child_reference: BlkRef = BlkRef()
+    child_reference.ID = "SELECTOR_REFERENCE"
+    child_reference.typ_id = child_definition.ID
+    child_reference.cdisName = "Selector instance"
+    child_reference.internals = ["held"]
+    circuit.blkrefs.append(child_reference)
+    child_signal: BlkSig = BlkSig()
+    child_signal.ID = "ROOT_TO_SELECTOR"
+    child_signal.loc_name = "external_x"
+    child_signal.inodfrom = 0
+    child_signal.iconfrom = 1
+    child_signal.inodto = 0
+    child_signal.iconto = 1
+    child_signal.pnodfrom = "MACRO"
+    child_signal.pnodto = child_reference.ID
+    circuit.blksigs.append(child_signal)
+
+    root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+        circuit=circuit,
+        parsed_blocks=parse_dgs_block_definitions_from_circuit(circuit=circuit),
+        root_name=root_element.loc_name,
+        root_typ_id=root_element.typ_id,
+        root_dgs_id=root_element.ID,
+    )
+    graphical_tree: DgsGraphicTreeResult | None = extract_root_slot_graphical_tree_from_circuit(
+        circuit=circuit,
+        result=root_result,
+        slot_name="Graphical parent",
+        graphical_indexes=build_dgs_graphical_indexes(circuit=circuit),
+    )
+
+    assert graphical_tree is not None
+    held: Var = next(var for var in graphical_tree.view_block.event_dict if var.name.endswith("__held"))
+    selector: Block = next(child for child in graphical_tree.view_block.children
+                           if child.name == child_reference.cdisName)
+    assert held.uid in _uids_read_by(selector)
+
+
+def _build_labelled_root_input_tree(port: int, label: str) -> tuple[DgsGraphicTreeResult | None, str]:
+    """Build the graphical parent with a second root input cabled to a child from one drawing port.
+
+    :param port: Root drawing port the cable leaves from.
+    :param label: Cable label.
+    :return: Graphical tree and the child instance name.
+    """
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.parse_dgs(str(_get_graphical_parent_signal_binding_dgs_path()))
+    root_element: ElmComp = circuit.elmcomps[0]
+    macro: BlkDef = next(definition for definition in circuit.blkdefs if definition.ID == "MACRO")
+    macro.inputs.append("second_x")
+
+    child_definition: BlkDef = BlkDef()
+    child_definition.ID = "COPY_DEFINITION"
+    child_definition.loc_name = "Copy"
+    child_definition.inputs = ["yi"]
+    child_definition.outputs = ["yo"]
+    child_definition.equations_raw = ["yo = yi"]
+    circuit.blkdefs.append(child_definition)
+    child_reference: BlkRef = BlkRef()
+    child_reference.ID = "COPY_REFERENCE"
+    child_reference.typ_id = child_definition.ID
+    child_reference.cdisName = "Copy instance"
+    circuit.blkrefs.append(child_reference)
+    signal: BlkSig = BlkSig()
+    signal.ID = "ROOT_TO_COPY"
+    signal.loc_name = label
+    signal.inodfrom = port
+    signal.iconfrom = 1
+    signal.inodto = 0
+    signal.iconto = 1
+    signal.pnodfrom = "MACRO"
+    signal.pnodto = child_reference.ID
+    circuit.blksigs.append(signal)
+
+    root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+        circuit=circuit,
+        parsed_blocks=parse_dgs_block_definitions_from_circuit(circuit=circuit),
+        root_name=root_element.loc_name,
+        root_typ_id=root_element.typ_id,
+        root_dgs_id=root_element.ID,
+    )
+    return extract_root_slot_graphical_tree_from_circuit(
+        circuit=circuit,
+        result=root_result,
+        slot_name="Graphical parent",
+        graphical_indexes=build_dgs_graphical_indexes(circuit=circuit),
+    ), child_reference.cdisName
+
+
+@pytest.mark.parametrize("port,label", [(2, "second_x"), (0, "second_x(1)")])
+def test_graphical_root_input_cable_binds_to_the_input_its_label_names(port: int, label: str) -> None:
+    """Bind a root-input cable to the input its label names, not to the drawing port position.
+
+    GB REGC_A draws its inputs on ports 0, 1, 3, 4, 5: port 5 carries Ipcmd
+    and port 3 carries Vt, the third declared input.
+
+    :param port: Root drawing port the cable leaves from.
+    :param label: Cable label.
+    :return: None.
+    """
+    graphical_tree, child_name = _build_labelled_root_input_tree(port=port, label=label)
+
+    assert graphical_tree is not None
+    copy: Block = next(child for child in graphical_tree.view_block.children if child.name == child_name)
+    assert {var.name.rsplit("__", 1)[-1] for var in copy.in_vars} == {"second_x"}
+
+
+@pytest.mark.parametrize("port,root_input", [(0, "external_x"), (1, "second_x")])
+def test_graphical_root_input_cable_without_an_input_label_binds_by_port(port: int, root_input: str) -> None:
+    """Bind a root-input cable whose label names no root input to the input at its drawing port.
+
+    :param port: Root drawing port the cable leaves from.
+    :param root_input: Root input declared at that port.
+    :return: None.
+    """
+    graphical_tree, child_name = _build_labelled_root_input_tree(port=port, label="foo")
+
+    assert graphical_tree is not None
+    copy: Block = next(child for child in graphical_tree.view_block.children if child.name == child_name)
+    assert {var.name.rsplit("__", 1)[-1] for var in copy.in_vars} == {root_input}
+
+
+def _build_state_binding_fixture(
+        parent_equations: list[str],
+        child_equations: list[str],
+        bound_names: list[str],
+) -> tuple[BlkRef, ParsedDgsBlockDefinition, Block, ParsedDgsBlockDefinition, Block]:
+    """Build an enclosing macro and one child sharing a state through ``sStates``.
+
+    :param parent_equations: Enclosing definition equations.
+    :param child_equations: Child definition equations.
+    :param bound_names: Enclosing names written on the ``BlkRef``.
+    :return: Reference, parsed child, child block, parsed parent and parent block.
+    """
+    parent: BlkDef = BlkDef()
+    parent.ID = "STATE_PARENT"
+    parent.loc_name = "REGC"
+    parent.inputs = ["Ipcmd"]
+    parent.outputs = ["idref"]
+    parent.states = ["xp"]
+    parent.equations_raw = parent_equations
+    child: BlkDef = BlkDef()
+    child.ID = "STATE_CHILD"
+    child.loc_name = "Lag"
+    child.inputs = ["yi"]
+    child.outputs = ["yo"]
+    child.states = ["x"]
+    child.equations_raw = child_equations
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.blkdefs.extend([parent, child])
+    parsed: dict[str, ParsedDgsBlockDefinition] = parse_dgs_block_definitions_from_circuit(circuit=circuit)
+    reference: BlkRef = BlkRef()
+    reference.ID = "290"
+    reference.states = list(bound_names)
+    return (reference, parsed["STATE_CHILD"], _build_block_from_parsed(parsed["STATE_CHILD"], dict()),
+            parsed["STATE_PARENT"], _build_block_from_parsed(parsed["STATE_PARENT"], dict()))
+
+
+def test_dgs_reference_state_takes_the_enclosing_inc_as_initial_value() -> None:
+    """Initialize a child state from the enclosing ``inc()`` named in ``sStates``.
+
+    GB REGC_C sets ``inc(xp)`` while its ``[{1/(1+sT)}]`` child integrates
+    the same state as ``x``.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = 2 * Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    parent_ipcmd: Var = parent_block.in_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert child_x in parent_block.init_eqs
+    assert parent_ipcmd.uid in set(var.uid for var in parent_block.init_eqs[child_x].get_vars())
+    assert all(var.name != "REGC__xp" for var in parent_block.init_eqs)
+
+
+def test_dgs_reference_state_read_by_the_enclosing_block_reads_the_child_state() -> None:
+    """Replace the enclosing state by the child state in the enclosing equations.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = 2 * xp", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    child_x: Var = child_block.state_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert child_x.uid in _uids_read_by(parent_block)
+    assert all(var.name != "REGC__xp" for equation in parent_block.algebraic_eqs for var in equation.get_vars())
+
+
+def test_dgs_reference_state_self_referencing_inc_reads_the_child_state() -> None:
+    """Rewrite an enclosing ``inc()`` that reads its own state onto the child state.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = Ipcmd + 0 * xp"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    child_x: Var = child_block.state_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert all(var.name != "REGC__xp" for var in parent_block.init_eqs[child_x].get_vars())
+
+
+def test_dgs_reference_state_naming_an_enclosing_parameter_fails_closed() -> None:
+    """Reject an ``sStates`` token naming an enclosing runtime parameter.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    parent_xp: Var = next(var for var in parent_block.init_eqs if var.name == "REGC__xp")
+    parent_block.event_dict[parent_xp] = parent_block.init_eqs.pop(parent_xp)
+
+    with pytest.raises(ValueError, match="enclosing parameter"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_dgs_reference_state_with_a_child_derivative_initialization_fails_closed() -> None:
+    """Reject an enclosing ``inc()`` of a state the child initializes through ``diff_init_eqs``.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    child_block.diff_init_eqs[child_block.state_vars[0]] = Const(0.0)
+
+    with pytest.raises(ValueError, match="initialized by both"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_dgs_reference_state_enclosing_derivative_initialization_moves_to_the_child_state() -> None:
+    """Move an enclosing ``diff_init_eqs`` entry of a bound state onto the child state.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = 2 * xp", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    parent_xp: Var = next(var for var in parent_block.init_eqs if var.name == "REGC__xp")
+    # Keyed by another object with the same UID, which update_model cannot re-key by identity.
+    parent_block.diff_init_eqs[copy.copy(parent_xp)] = Const(0.0)
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert child_x in parent_block.diff_init_eqs
+    assert all(var.name != "REGC__xp" for var in parent_block.diff_init_eqs)
+
+
+def test_dgs_reference_state_with_an_enclosing_derivative_initialization_and_a_child_inc_fails_closed() -> None:
+    """Reject a child ``inc()`` of a state the enclosing block initializes through ``diff_init_eqs``.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = 2 * xp", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x", "inc(x) = yi"],
+        bound_names=["xp"],
+    )
+    parent_xp: Var = next(var for var in parent_block.init_eqs if var.name == "REGC__xp")
+    parent_block.diff_init_eqs[parent_xp] = parent_block.init_eqs.pop(parent_xp)
+
+    with pytest.raises(ValueError, match="initialized by both"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_dgs_reference_state_with_a_child_parameter_initialization_fails_closed() -> None:
+    """Reject an enclosing ``inc()`` of a state the child holds as a runtime parameter value.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    child_block.event_dict[child_block.state_vars[0]] = Const(0.0)
+
+    with pytest.raises(ValueError, match="initialized by both"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_dgs_reference_state_absent_from_the_enclosing_runtime_is_skipped() -> None:
+    """Leave a child state alone when the enclosing state is never used.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    child_x: Var = child_block.state_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert child_x not in parent_block.init_eqs
+    assert child_block.state_vars[0] is child_x
+
+
+def test_dgs_reference_state_count_must_match_the_child_definition() -> None:
+    """Reject an ``sStates`` list that does not name every child state.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp", "Ipcmd"],
+    )
+
+    with pytest.raises(ValueError, match="do not match"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_dgs_reference_state_initialized_on_both_sides_fails_closed() -> None:
+    """Reject one ``sStates`` state given an ``inc()`` by both sides.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x", "inc(x) = yi"],
+        bound_names=["xp"],
+    )
+
+    with pytest.raises(ValueError, match="initialized by both"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_dgs_reference_state_computed_by_the_enclosing_block_fails_closed() -> None:
+    """Reject an ``sStates`` state the enclosing block computes algebraically.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["xp = Ipcmd", "idref = xp"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+
+    with pytest.raises(ValueError, match="computed by the enclosing block"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_dgs_reference_state_naming_an_enclosing_port_fails_closed() -> None:
+    """Reject an ``sStates`` token naming an enclosing input or output.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = Ipcmd"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["Ipcmd"],
+    )
+
+    with pytest.raises(ValueError, match="enclosing port"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_dgs_reference_state_naming_a_child_algebraic_variable_fails_closed() -> None:
+    """Reject an ``sStates`` binding whose child variable has no state equation.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["idref = Ipcmd", "inc(xp) = Ipcmd"],
+        child_equations=["x = yi", "yo = x"],
+        bound_names=["xp"],
+    )
+
+    with pytest.raises(ValueError, match="not a state"):
+        _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                         parsed_parent=parsed_parent, parent_block=parent_block)
+
+
+def test_graphical_macro_child_state_takes_the_enclosing_inc_named_in_sstates() -> None:
+    """Bind ``sStates`` while building a complete graphical macro.
+
+    :return: None.
+    """
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.parse_dgs(str(_get_graphical_parent_signal_binding_dgs_path()))
+    root_element: ElmComp = circuit.elmcomps[0]
+    macro: BlkDef = next(definition for definition in circuit.blkdefs if definition.ID == "MACRO")
+    macro.states.append("held_state")
+    macro.equations_raw.append("inc(held_state) = 3 * external_x")
+
+    child_definition: BlkDef = BlkDef()
+    child_definition.ID = "LAG_DEFINITION"
+    child_definition.loc_name = "Lag"
+    child_definition.inputs = ["yi"]
+    child_definition.outputs = ["yo"]
+    child_definition.states = ["x"]
+    child_definition.equations_raw = ["x. = (yi - x) / 0.1", "yo = x"]
+    circuit.blkdefs.append(child_definition)
+    child_reference: BlkRef = BlkRef()
+    child_reference.ID = "LAG_REFERENCE"
+    child_reference.typ_id = child_definition.ID
+    child_reference.cdisName = "Lag instance"
+    child_reference.states = ["held_state"]
+    circuit.blkrefs.append(child_reference)
+    child_signal: BlkSig = BlkSig()
+    child_signal.ID = "ROOT_TO_LAG"
+    child_signal.loc_name = "external_x"
+    child_signal.inodfrom = 0
+    child_signal.iconfrom = 1
+    child_signal.inodto = 0
+    child_signal.iconto = 1
+    child_signal.pnodfrom = "MACRO"
+    child_signal.pnodto = child_reference.ID
+    circuit.blksigs.append(child_signal)
+
+    root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+        circuit=circuit,
+        parsed_blocks=parse_dgs_block_definitions_from_circuit(circuit=circuit),
+        root_name=root_element.loc_name,
+        root_typ_id=root_element.typ_id,
+        root_dgs_id=root_element.ID,
+    )
+    graphical_tree: DgsGraphicTreeResult | None = extract_root_slot_graphical_tree_from_circuit(
+        circuit=circuit,
+        result=root_result,
+        slot_name="Graphical parent",
+        graphical_indexes=build_dgs_graphical_indexes(circuit=circuit),
+    )
+
+    assert graphical_tree is not None
+    lag: Block = next(child for child in graphical_tree.view_block.children if child.name == child_reference.cdisName)
+    assert lag.state_vars[0] in graphical_tree.view_block.init_eqs
+    assert all(not var.name.endswith("__held_state") for var in graphical_tree.view_block.init_eqs)
+
+
+def _build_circular_state_fixture(
+        child_equations: list[str],
+) -> tuple[BlkRef, ParsedDgsBlockDefinition, Block, ParsedDgsBlockDefinition, Block]:
+    """Build an enclosing macro whose ``inc()`` names the output its child computes from the bound state.
+
+    GB ``vol_stator_voltage_REGC_C`` declares ``inc(x_lpf_d)=ur_ref`` while the
+    graphical cable makes ``ur_ref`` the output of its lag child.
+
+    :param child_equations: Child definition equations.
+    :return: Reference, parsed child, child block, parsed parent and parent block.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["inc(xp) = idref"],
+        child_equations=child_equations,
+        bound_names=["xp"],
+    )
+    parent_block.update_model(parent_block.out_vars[0], child_block.out_vars[0])
+    return reference, parsed_child, child_block, parsed_parent, parent_block
+
+
+def test_dgs_reference_state_with_a_circular_inc_starts_a_lag_at_its_equilibrium() -> None:
+    """Start a lag whose enclosing ``inc()`` names its own output where its equation is at rest.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_circular_state_fixture(
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    child_yi: Var = child_block.in_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    initial_value = parent_block.init_eqs[child_x]
+    assert set(var.uid for var in initial_value.get_vars()) == {child_yi.uid}
+    assert initial_value.eval_uid({child_yi.uid: 0.7}) == pytest.approx(0.7)
+
+
+def test_dgs_reference_state_with_a_circular_inc_keeps_an_integrator_initialization() -> None:
+    """Keep the declared ``inc()`` of an integrator, which has no rest point of its own.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_circular_state_fixture(
+        child_equations=["x. = yi", "yo = x"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    child_yo: Var = child_block.out_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert set(var.uid for var in parent_block.init_eqs[child_x].get_vars()) == {child_yo.uid}
+
+
+def test_dgs_reference_state_with_a_circular_inc_keeps_a_nonlinear_initialization() -> None:
+    """Keep the declared ``inc()`` when the state equation is not affine in the state.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_circular_state_fixture(
+        child_equations=["x. = yi - x * x", "yo = x"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    child_yo: Var = child_block.out_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert set(var.uid for var in parent_block.init_eqs[child_x].get_vars()) == {child_yo.uid}
+
+
+def test_dgs_reference_state_with_a_circular_inc_and_a_vanishing_slope_stays_finite() -> None:
+    """Keep the equilibrium seed finite where the slope of the lag vanishes at runtime.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_circular_state_fixture(
+        child_equations=["x. = yi * (1 - x)", "yo = x"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    child_yi: Var = child_block.in_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    initial_value = parent_block.init_eqs[child_x]
+    assert initial_value.eval_uid({child_yi.uid: 0.5}) == pytest.approx(1.0)
+    assert math.isfinite(initial_value.eval_uid({child_yi.uid: 0.0}))
+
+
+def test_dgs_reference_state_with_a_circular_inc_and_no_symbolic_derivative_keeps_its_initialization() -> None:
+    """Keep the declared ``inc()`` when the state equation has no symbolic derivative.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_circular_state_fixture(
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    child_yo: Var = child_block.out_vars[0]
+    child_block.state_eqs[0] = child_block.state_eqs[0] * rand(child_x)
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert set(var.uid for var in parent_block.init_eqs[child_x].get_vars()) == {child_yo.uid}
+
+
+def test_dgs_reference_state_with_a_non_circular_inc_keeps_its_initialization() -> None:
+    """Keep an enclosing ``inc()`` that names a variable the child does not compute from the state.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_state_binding_fixture(
+        parent_equations=["inc(xp) = idref"],
+        child_equations=["x. = (yi - x) / 0.1", "yo = x"],
+        bound_names=["xp"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    parent_idref: Var = parent_block.out_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert set(var.uid for var in parent_block.init_eqs[child_x].get_vars()) == {parent_idref.uid}
+
+
+def test_dgs_reference_state_with_a_circular_inc_through_another_feedback_keeps_its_initialization() -> None:
+    """Keep the declared ``inc()`` when the root of the state equation still reads a variable fed by the state.
+
+    :return: None.
+    """
+    reference, parsed_child, child_block, parsed_parent, parent_block = _build_circular_state_fixture(
+        child_equations=["x. = (yi - x) / 0.1 - 0.5 * yo", "yo = x"],
+    )
+    child_x: Var = child_block.state_vars[0]
+    child_yo: Var = child_block.out_vars[0]
+
+    _bind_graphical_reference_states(reference=reference, parsed_child=parsed_child, child_block=child_block,
+                                     parsed_parent=parsed_parent, parent_block=parent_block)
+
+    assert set(var.uid for var in parent_block.init_eqs[child_x].get_vars()) == {child_yo.uid}
+
+
+def _build_nested_macro_tree(leaf_type_id: str | None,
+                             middle_draws_inner: bool = False) -> DgsGraphicTreeResult | None:
+    """Build the graphical parent with a nested macro child drawn from its own cables.
+
+    GB REGC_C references ``PLL`` and ``vol_stator_voltage_REGC_C``: macro
+    definitions without equations whose content is their own drawing. The
+    nested input reuses the enclosing signal name ``external_x``, so a rescue
+    by name would pull the enclosing nodes into the nested macro.
+
+    :param leaf_type_id: Definition referenced by the node drawn inside the
+        nested macro, or ``None`` for a nested macro without a drawing.
+    :param middle_draws_inner: Add a ``MIDDLE_DEFINITION`` macro whose drawing
+        references the nested macro again.
+    :return: Graphical tree of the root slot.
+    """
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.parse_dgs(str(_get_graphical_parent_signal_binding_dgs_path()))
+    root_element: ElmComp = circuit.elmcomps[0]
+
+    inner_definition: BlkDef = BlkDef()
+    inner_definition.ID = "INNER_DEFINITION"
+    inner_definition.loc_name = "Inner"
+    inner_definition.isMacro = 1
+    inner_definition.inputs = ["external_x"]
+    inner_definition.outputs = ["yo"]
+    leaf_definition: BlkDef = BlkDef()
+    leaf_definition.ID = "LEAF_DEFINITION"
+    leaf_definition.loc_name = "Leaf"
+    leaf_definition.inputs = ["yi"]
+    leaf_definition.outputs = ["yo"]
+    leaf_definition.equations_raw = ["yo = 2 * yi"]
+    circuit.blkdefs.extend([inner_definition, leaf_definition])
+
+    inner_reference: BlkRef = BlkRef()
+    inner_reference.ID = "INNER_REFERENCE"
+    inner_reference.typ_id = inner_definition.ID
+    inner_reference.cdisName = "Inner instance"
+    circuit.blkrefs.append(inner_reference)
+    cables: list[tuple[str, str, str]] = [("ROOT_TO_INNER", "MACRO", inner_reference.ID)]
+    if leaf_type_id is not None:
+        leaf_reference: BlkRef = BlkRef()
+        leaf_reference.ID = "LEAF_REFERENCE"
+        leaf_reference.typ_id = leaf_type_id
+        leaf_reference.cdisName = "Leaf instance"
+        circuit.blkrefs.append(leaf_reference)
+        cables.append(("INNER_TO_LEAF", inner_definition.ID, leaf_reference.ID))
+    else:
+        pass
+    if middle_draws_inner:
+        middle_definition: BlkDef = BlkDef()
+        middle_definition.ID = "MIDDLE_DEFINITION"
+        middle_definition.loc_name = "Middle"
+        middle_definition.isMacro = 1
+        middle_definition.inputs = ["external_x"]
+        middle_definition.outputs = ["yo"]
+        circuit.blkdefs.append(middle_definition)
+        back_reference: BlkRef = BlkRef()
+        back_reference.ID = "BACK_REFERENCE"
+        back_reference.typ_id = inner_definition.ID
+        back_reference.cdisName = "Back instance"
+        circuit.blkrefs.append(back_reference)
+        cables.append(("MIDDLE_TO_BACK", middle_definition.ID, back_reference.ID))
+    else:
+        pass
+
+    for signal_id, source, target in cables:
+        signal: BlkSig = BlkSig()
+        signal.ID = signal_id
+        signal.loc_name = "external_x"
+        signal.inodfrom = 0
+        signal.iconfrom = 1
+        signal.inodto = 0
+        signal.iconto = 1
+        signal.pnodfrom = source
+        signal.pnodto = target
+        circuit.blksigs.append(signal)
+
+    root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+        circuit=circuit,
+        parsed_blocks=parse_dgs_block_definitions_from_circuit(circuit=circuit),
+        root_name=root_element.loc_name,
+        root_typ_id=root_element.typ_id,
+        root_dgs_id=root_element.ID,
+    )
+    return extract_root_slot_graphical_tree_from_circuit(
+        circuit=circuit,
+        result=root_result,
+        slot_name="Graphical parent",
+        graphical_indexes=build_dgs_graphical_indexes(circuit=circuit),
+    )
+
+
+def test_graphical_nested_macro_is_built_from_its_own_drawing() -> None:
+    """Build a nested macro definition without equations from its own cables.
+
+    :return: None.
+    """
+    graphical_tree: DgsGraphicTreeResult | None = _build_nested_macro_tree(leaf_type_id="LEAF_DEFINITION")
+
+    assert graphical_tree is not None
+    inner: Block = next(child for child in graphical_tree.view_block.children if child.name == "Inner instance")
+    leaf: Block = next(child for child in inner.children if child.name == "Leaf instance")
+    assert len(leaf.algebraic_eqs) == 1
+
+
+def test_graphical_nested_macro_keeps_only_its_own_drawing() -> None:
+    """Keep enclosing nodes that share a signal name out of a nested macro.
+
+    :return: None.
+    """
+    graphical_tree: DgsGraphicTreeResult | None = _build_nested_macro_tree(leaf_type_id="LEAF_DEFINITION")
+
+    assert graphical_tree is not None
+    inner: Block = next(child for child in graphical_tree.view_block.children if child.name == "Inner instance")
+    assert [child.name for child in inner.children] == ["Leaf instance"]
+
+
+def test_graphical_nested_macro_without_a_drawing_keeps_its_equation_build() -> None:
+    """Build a nested macro definition without a drawing from its equations, as before.
+
+    Protected exports omit both the drawing and the equations; the REGC
+    ElmGenstat adapter restores such blocks by structural contract.
+
+    :return: None.
+    """
+    graphical_tree: DgsGraphicTreeResult | None = _build_nested_macro_tree(leaf_type_id=None)
+
+    assert graphical_tree is not None
+    inner: Block = next(child for child in graphical_tree.view_block.children if child.name == "Inner instance")
+    assert inner.children == []
+
+
+def test_graphical_nested_macro_referencing_an_enclosing_definition_fails_closed() -> None:
+    """Reject a nested macro that draws a reference to a definition enclosing it.
+
+    :return: None.
+    """
+    with pytest.raises(ValueError, match="enclosing macro definition"):
+        _build_nested_macro_tree(leaf_type_id="INNER_DEFINITION")
+
+
+def test_graphical_nested_macro_cycle_through_another_macro_fails_closed() -> None:
+    """Reject a nested macro whose own nested macro draws a reference back to it.
+
+    :return: None.
+    """
+    with pytest.raises(ValueError, match="enclosing macro definition"):
+        _build_nested_macro_tree(leaf_type_id="MIDDLE_DEFINITION", middle_draws_inner=True)
+
+
+def _build_limit_port_tree(connector: int) -> tuple[DgsGraphicTreeResult | None, str]:
+    """Build the graphical parent with a root input cabled to limit port 0 of a child that also has limit parameters.
+
+    :param connector: Target connector code, 4 for the upper limit and 3 for the lower limit.
+    :return: Graphical tree and the child instance name.
+    """
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.parse_dgs(str(_get_graphical_parent_signal_binding_dgs_path()))
+    root_element: ElmComp = circuit.elmcomps[0]
+    macro: BlkDef = next(definition for definition in circuit.blkdefs if definition.ID == "MACRO")
+    macro.inputs.append("second_x")
+
+    child_definition: BlkDef = BlkDef()
+    child_definition.ID = "LIMITED_DEFINITION"
+    child_definition.loc_name = "Limited lag"
+    child_definition.inputs = ["yi"]
+    child_definition.upper_limit_params = ["r_max"]
+    child_definition.upper_limit_inputs = ["up_lim"]
+    child_definition.lower_limit_params = ["r_min"]
+    child_definition.lower_limit_inputs = ["low_lim"]
+    # The DGS reader also lists limit parameters among the parameters.
+    child_definition.params = ["r_max", "r_min"]
+    child_definition.outputs = ["yo"]
+    child_definition.equations_raw = ["yo = yi"]
+    circuit.blkdefs.append(child_definition)
+    child_reference: BlkRef = BlkRef()
+    child_reference.ID = "LIMITED_REFERENCE"
+    child_reference.typ_id = child_definition.ID
+    child_reference.cdisName = "Limited instance"
+    circuit.blkrefs.append(child_reference)
+    signal: BlkSig = BlkSig()
+    signal.ID = "ROOT_TO_LIMIT_PORT"
+    signal.loc_name = "second_x"
+    signal.inodfrom = macro.inputs.index("second_x")
+    signal.iconfrom = 1
+    signal.inodto = 0
+    signal.iconto = connector
+    signal.pnodfrom = "MACRO"
+    signal.pnodto = child_reference.ID
+    circuit.blksigs.append(signal)
+
+    root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+        circuit=circuit,
+        parsed_blocks=parse_dgs_block_definitions_from_circuit(circuit=circuit),
+        root_name=root_element.loc_name,
+        root_typ_id=root_element.typ_id,
+        root_dgs_id=root_element.ID,
+    )
+    return extract_root_slot_graphical_tree_from_circuit(
+        circuit=circuit,
+        result=root_result,
+        slot_name="Graphical parent",
+        graphical_indexes=build_dgs_graphical_indexes(circuit=circuit),
+    ), child_reference.cdisName
+
+
+@pytest.mark.parametrize("connector,bound_input", [(4, "up_lim"), (3, "low_lim")])
+def test_graphical_limit_port_binds_the_limit_input_not_the_limit_parameter(connector: int, bound_input: str) -> None:
+    """Bind a cable on limit port 0 to the first limit input, never to a limit parameter.
+
+    PowerFactory draws only limit inputs as ports. GB REGC_A cables Lvpl_lim to
+    upper limit port 0 of a lag declaring r_max (parameter) and lvpl_lim (input);
+    REEC_C and REEC_D cable freeze_up_s and freeze_low_s the same way.
+
+    :param connector: Target connector code, 4 for the upper limit and 3 for the lower limit.
+    :param bound_input: Limit input the cable must reach.
+    :return: None.
+    """
+    graphical_tree, child_name = _build_limit_port_tree(connector=connector)
+
+    assert graphical_tree is not None
+    limited: Block = next(child for child in graphical_tree.view_block.children if child.name == child_name)
+    expected: list[str] = ["yi", "r_max", "up_lim", "r_min", "low_lim"]
+    expected[expected.index(bound_input)] = "second_x"
+    assert [var.name.rsplit("__", 1)[-1] for var in limited.in_vars] == expected
+
+
+def test_graphical_routed_limit_cable_binds_the_limit_input_by_name_and_keeps_the_parameter() -> None:
+    """Bind a limit cable from a routing node by name, never a limit parameter.
+
+    REEC_C and REEC_D cable freeze_up_s from a BlkFrom into upper limit port 0
+    of a freeze PI declaring y_max (parameter) and freeze_up (input); REEC_C
+    also has a sibling whose output is named y_max, which must not overwrite
+    the parameter the BlkRef sets.
+
+    :return: None.
+    """
+    circuit: DgsCircuit = DgsCircuit()
+    circuit.parse_dgs(str(_get_graphical_parent_signal_binding_dgs_path()))
+    root_element: ElmComp = circuit.elmcomps[0]
+    macro: BlkDef = next(definition for definition in circuit.blkdefs if definition.ID == "MACRO")
+
+    producer_definition: BlkDef = BlkDef()
+    producer_definition.ID = "ROUTED_PRODUCER_DEFINITION"
+    producer_definition.loc_name = "Routed producer"
+    producer_definition.inputs = ["u"]
+    producer_definition.outputs = ["up_lim", "r_max"]
+    producer_definition.equations_raw = ["up_lim = 2*u", "r_max = 3*u"]
+    circuit.blkdefs.append(producer_definition)
+    limited_definition: BlkDef = BlkDef()
+    limited_definition.ID = "ROUTED_LIMITED_DEFINITION"
+    limited_definition.loc_name = "Routed limited lag"
+    limited_definition.inputs = ["yi"]
+    limited_definition.upper_limit_params = ["r_max"]
+    limited_definition.upper_limit_inputs = ["up_lim"]
+    # The DGS reader also lists limit parameters among the parameters.
+    limited_definition.params = ["r_max"]
+    limited_definition.outputs = ["yo"]
+    limited_definition.equations_raw = ["yo = yi"]
+    circuit.blkdefs.append(limited_definition)
+
+    references: list[BlkRef] = list()
+    definition: BlkDef
+    for definition in (producer_definition, limited_definition):
+        reference: BlkRef = BlkRef()
+        reference.ID = definition.ID.replace("DEFINITION", "REFERENCE")
+        reference.typ_id = definition.ID
+        reference.cdisName = definition.loc_name
+        circuit.blkrefs.append(reference)
+        references.append(reference)
+    producer_reference, limited_reference = references
+    # A second limiter of the same definition with no limit cable, like the
+    # REEC_C limiters whose y_max the BlkRef sets.
+    unwired_reference: BlkRef = BlkRef()
+    unwired_reference.ID = "ROUTED_UNWIRED_REFERENCE"
+    unwired_reference.typ_id = limited_definition.ID
+    unwired_reference.cdisName = "Unwired limited lag"
+    circuit.blkrefs.append(unwired_reference)
+    # The Goto writing the tag the BlkFrom reads, fed by the producer's up_lim
+    routed_writer: BlkGoto = BlkGoto()
+    routed_writer.ID = "GOTO_ROUTE"
+    routed_writer.loc_name = "Write routed internal"
+    routed_writer.signals = list((circuit.blkfroms[0].signals[0],))
+    circuit.blkgotos.append(routed_writer)
+
+    signal_specs: list[tuple[str, int, int, str, int, int, str]] = [
+        ("PRODUCER_TO_GOTO", 2, 0, producer_reference.ID, 1, 0, routed_writer.ID),
+        ("ROOT_TO_PRODUCER", 1, macro.inputs.index("external_x"), "MACRO", 1, 0, producer_reference.ID),
+        ("ROOT_TO_LIMITED", 1, macro.inputs.index("external_x"), "MACRO", 1, 0, limited_reference.ID),
+        ("ROUTE_TO_LIMIT_PORT", 2, 0, circuit.blkfroms[0].ID, 4, 0, limited_reference.ID),
+        ("ROOT_TO_UNWIRED", 1, macro.inputs.index("external_x"), "MACRO", 1, 0, unwired_reference.ID),
+    ]
+    spec: tuple[str, int, int, str, int, int, str]
+    for spec in signal_specs:
+        signal: BlkSig = BlkSig()
+        signal.ID, signal.iconfrom, signal.inodfrom, signal.pnodfrom = spec[0], spec[1], spec[2], spec[3]
+        signal.iconto, signal.inodto, signal.pnodto = spec[4], spec[5], spec[6]
+        signal.loc_name = "up_lim_s" if spec[0] in ("ROUTE_TO_LIMIT_PORT", "PRODUCER_TO_GOTO") else "external_x"
+        circuit.blksigs.append(signal)
+
+    root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+        circuit=circuit,
+        parsed_blocks=parse_dgs_block_definitions_from_circuit(circuit=circuit),
+        root_name=root_element.loc_name,
+        root_typ_id=root_element.typ_id,
+        root_dgs_id=root_element.ID,
+    )
+    graphical_tree: DgsGraphicTreeResult | None = extract_root_slot_graphical_tree_from_circuit(
+        circuit=circuit,
+        result=root_result,
+        slot_name="Graphical parent",
+        graphical_indexes=build_dgs_graphical_indexes(circuit=circuit),
+    )
+
+    assert graphical_tree is not None
+    children: dict[str, Block] = {child.name: child for child in graphical_tree.view_block.children}
+    producer: Block = children[producer_reference.cdisName]
+    limited: Block = children[limited_reference.cdisName]
+    assert limited.in_vars[2] is producer.out_vars[0]
+    assert limited.in_vars[1] is not producer.out_vars[1]
+    assert limited.in_vars[1] in limited.event_dict
+    unwired: Block = children[unwired_reference.cdisName]
+    assert unwired.in_vars[1] is not producer.out_vars[1]
+    assert unwired.in_vars[1] in unwired.event_dict
+
+
+@pytest.mark.parametrize(
+    ("patterns", "expected"),
+    (
+        (list(("ElmVsc*",)), True),
+        (list(("ElmComp*",)), True),
+        (list(("ElmPvsys*",)), False),
+        (list(("ElmCom*",)), False),
+        (list(), False),
+    ),
+)
+def test_slot_filter_is_checked_only_against_registered_classes(patterns: list[str], expected: bool) -> None:
+    """Verify a filter only when it names a class the DGS registry knows.
+
+    :param patterns: Declared slot class patterns.
+    :param expected: Whether the importer can verify the filter.
+    :return: None.
+    """
+    assert _slot_filter_names_a_registered_class(element_kind_patterns=patterns) is expected

@@ -13,15 +13,15 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Branches.line import Line
 
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
 
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.Templates.Rms.genrow1_rms_template import get_genrow1_rms_template
-from VeraGridEngine.Templates.Rms.genrow2_rms_template import get_genrow2_rms_template
-from VeraGridEngine.Templates.Rms.genrow3_rms_template import get_genrow3_rms_template
-from VeraGridEngine.Templates.Rms.genrow4_rms_template import get_genrow4_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow1_rms_template import get_genrow1_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow2_rms_template import get_genrow2_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow3_rms_template import get_genrow3_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow4_rms_template import get_genrow4_rms_template
 from VeraGridEngine.Utils.Symbolic import Block
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import SmallSignalStabilityRmsDriver
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options import RmsSmallSignalStabilityOptions

@@ -1,0 +1,158 @@
+[
+  {
+    "case": "04- Three Cycles IEEE Type 1 Amplidyne",
+    "load_flow_code": 0,
+    "initialization_code": 0,
+    "machines": [
+      {
+        "name": "G1",
+        "values": {
+          "m:P:bus1": 71.64061612790164,
+          "m:Q:bus1": 27.039851470172504,
+          "s:pt": 0.28945705504386204,
+          "s:ve": 1.261694368082214,
+          "s:xspeed": 1.0,
+          "s:speed": 1.0,
+          "s:phi": -1.5117238607235592,
+          "s:ut": 1.0399999523855556,
+          "s:xmdm": 0.0
+        }
+      },
+      {
+        "name": "G2",
+        "values": {
+          "m:P:bus1": 162.9999901683741,
+          "m:Q:bus1": 6.65266444365114,
+          "s:pt": 1.0028164795586785,
+          "s:ve": 1.906403986130405,
+          "s:xspeed": 1.0,
+          "s:speed": 1.0,
+          "s:phi": -0.5691270482691313,
+          "s:ut": 1.0249999696350036,
+          "s:xmdm": 0.0
+        }
+      },
+      {
+        "name": "G3",
+        "values": {
+          "m:P:bus1": 85.000000321989,
+          "m:Q:bus1": -10.860876609377755,
+          "s:pt": 0.7812500061257424,
+          "s:ve": 1.5074523443452021,
+          "s:xspeed": 1.0,
+          "s:speed": 1.0,
+          "s:phi": -0.6951941117199166,
+          "s:ut": 1.0249999652134107,
+          "s:xmdm": 0.0
+        }
+      }
+    ],
+    "messages": [
+      "info - Element 'G1' is local reference in separated area of 'Bus 1'",
+      "info - Calculating load flow...",
+      "info - -------------------------------------------------------------------------------------",
+      "info - Start Newton-Raphson Algorithm...",
+      "info - Load flow iteration: 0",
+      "info - Load flow iteration: 1",
+      "info - Load flow iteration: 2",
+      "info - Load flow iteration: 3",
+      "info - Newton-Raphson converged with 3 iterations.",
+      "info - Load flow calculation successful.",
+      "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+      "info - Control conditions for all controllers of interest are fulfilled.",
+      "info - Element 'G1' is local reference in separated area of 'Bus 1'",
+      "info - Calculating load flow...",
+      "info - -------------------------------------------------------------------------------------",
+      "info - Start Newton-Raphson Algorithm...",
+      "info - Load flow iteration: 0",
+      "info - Load flow iteration: 1",
+      "info - Load flow iteration: 2",
+      "info - Load flow iteration: 3",
+      "info - Newton-Raphson converged with 3 iterations.",
+      "info - Load flow calculation successful.",
+      "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+      "info - Control conditions for all controllers of interest are fulfilled.",
+      "info - Element 'G1' is local reference in separated area of 'Bus 1'",
+      "info - Element 'G1' is reference in 60.0 Hz-system",
+      "info - (t=-100:000 ms) Initial conditions calculated."
+    ]
+  },
+  {
+    "case": "08- Three Cycles IEEE Type 1 Mag-A_PSS",
+    "load_flow_code": 0,
+    "initialization_code": 0,
+    "machines": [
+      {
+        "name": "G1",
+        "values": {
+          "m:P:bus1": 71.64061612790164,
+          "m:Q:bus1": 27.039851470172504,
+          "s:pt": 0.28945705504386204,
+          "s:ve": 1.261694368082214,
+          "s:xspeed": 1.0,
+          "s:speed": 1.0,
+          "s:phi": -1.5117238607235592,
+          "s:ut": 1.0399999523855556,
+          "s:xmdm": 0.0
+        }
+      },
+      {
+        "name": "G2",
+        "values": {
+          "m:P:bus1": 162.9999901683741,
+          "m:Q:bus1": 6.65266444365114,
+          "s:pt": 1.0028164795586785,
+          "s:ve": 1.906403986130405,
+          "s:xspeed": 1.0,
+          "s:speed": 1.0,
+          "s:phi": -0.5691270482691313,
+          "s:ut": 1.0249999696350036,
+          "s:xmdm": 0.0
+        }
+      },
+      {
+        "name": "G3",
+        "values": {
+          "m:P:bus1": 85.000000321989,
+          "m:Q:bus1": -10.860876609377755,
+          "s:pt": 0.7812500061257424,
+          "s:ve": 1.5074523443452021,
+          "s:xspeed": 1.0,
+          "s:speed": 1.0,
+          "s:phi": -0.6951941117199166,
+          "s:ut": 1.0249999652134107,
+          "s:xmdm": 0.0
+        }
+      }
+    ],
+    "messages": [
+      "info - Element 'G1' is local reference in separated area of 'Bus 1'",
+      "info - Calculating load flow...",
+      "info - -------------------------------------------------------------------------------------",
+      "info - Start Newton-Raphson Algorithm...",
+      "info - Load flow iteration: 0",
+      "info - Load flow iteration: 1",
+      "info - Load flow iteration: 2",
+      "info - Load flow iteration: 3",
+      "info - Newton-Raphson converged with 3 iterations.",
+      "info - Load flow calculation successful.",
+      "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+      "info - Control conditions for all controllers of interest are fulfilled.",
+      "info - Element 'G1' is local reference in separated area of 'Bus 1'",
+      "info - Calculating load flow...",
+      "info - -------------------------------------------------------------------------------------",
+      "info - Start Newton-Raphson Algorithm...",
+      "info - Load flow iteration: 0",
+      "info - Load flow iteration: 1",
+      "info - Load flow iteration: 2",
+      "info - Load flow iteration: 3",
+      "info - Newton-Raphson converged with 3 iterations.",
+      "info - Load flow calculation successful.",
+      "info - -------------------------------------------------------------------------------------\n            Report of Control Condition for Relevant Controllers\n       -------------------------------------------------------------------------------------",
+      "info - Control conditions for all controllers of interest are fulfilled.",
+      "info - Element 'G1' is local reference in separated area of 'Bus 1'",
+      "info - Element 'G1' is reference in 60.0 Hz-system",
+      "info - (t=-100:000 ms) Initial conditions calculated."
+    ]
+  }
+]

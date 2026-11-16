@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Physical deadband, damping, total PI limiting and nonlinear hydraulic response checks."""
 from __future__ import annotations
@@ -5,14 +9,14 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.governors.gast import GasGovernorParameters
-from VeraGridEngine.Templates.Rms.international_standards.governors.gastd import build_gastd_template
-from VeraGridEngine.Templates.Rms.international_standards.governors.ieesgo import SteamGovernorParameters
-from VeraGridEngine.Templates.Rms.international_standards.governors.ieesgod import build_ieesgod_template
-from VeraGridEngine.Templates.Rms.international_standards.governors.hygov import NonlinearHydroGovernorParameters, build_hygov_template
-from VeraGridEngine.Templates.Rms.international_standards.governors.hygovd import build_hygovd_template
-from VeraGridEngine.Templates.Rms.international_standards.governors.tgov1d import build_tgov1d_template
-from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import Tgov1RmsParameters
+from VeraGridEngine.Templates.Rms.governors.gast import GasGovernorParameters
+from VeraGridEngine.Templates.Rms.governors.gastd import build_gastd_template
+from VeraGridEngine.Templates.Rms.governors.ieesgo import SteamGovernorParameters
+from VeraGridEngine.Templates.Rms.governors.ieesgod import build_ieesgod_template
+from VeraGridEngine.Templates.Rms.governors.hygov import NonlinearHydroGovernorParameters, build_hygov_template
+from VeraGridEngine.Templates.Rms.governors.hygovd import build_hygovd_template
+from VeraGridEngine.Templates.Rms.governors.tgov1d import build_tgov1d_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import Tgov1RmsParameters
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.enumerations import InternationalStandardModel
 from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller, linearized_response

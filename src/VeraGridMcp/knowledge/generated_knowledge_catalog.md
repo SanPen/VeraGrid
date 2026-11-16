@@ -785,7 +785,6 @@
 - `generated_engine__src__VeraGridEngine__Simulations__NTC____init___py.md`
 - `generated_engine__src__VeraGridEngine__Simulations__NTC__ntc_driver_py.md`
 - `generated_engine__src__VeraGridEngine__Simulations__NTC__ntc_opf_py.md`
-- `generated_engine__src__VeraGridEngine__Simulations__NTC__ntc_opf_strict_py.md`
 - `generated_engine__src__VeraGridEngine__Simulations__NTC__ntc_options_py.md`
 - `generated_engine__src__VeraGridEngine__Simulations__NTC__ntc_results_py.md`
 - `generated_engine__src__VeraGridEngine__Simulations__NTC__ntc_ts_driver_py.md`

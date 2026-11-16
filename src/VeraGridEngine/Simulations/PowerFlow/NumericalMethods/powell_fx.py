@@ -5,7 +5,7 @@
 import time
 from typing import Tuple
 import numpy as np
-from VeraGridEngine.Utils.NumericalMethods.sparse_solve import get_linear_solver
+from VeraGridEngine.Utils.Sparse.sparse_solve import get_linear_solver
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template import PfFormulationTemplate
 from VeraGridEngine.Utils.Sparse.csc2 import mat_to_scipy

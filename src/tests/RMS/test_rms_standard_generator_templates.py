@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import math
@@ -6,16 +10,16 @@ import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.gencls_rms_template import get_gencls_rms_template
-from VeraGridEngine.Templates.Rms.gencls_rms_template import configure_gencls_block, GenclsRmsParameters
-from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import get_esst3a_rms_template
-from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import get_exst1_rms_template
-from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import get_genrou_rms_template
-from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import get_tgov1_rms_template
-from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import GenrouSaturationMode
-from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import Tgov1ModelType
-from VeraGridEngine.Templates.Rms.ieeex1_ieeest_rms_template import get_complete_genrou_ieeex1_ieeest_rms_template
-from VeraGridEngine.Templates.Rms.ieeex1_ieeest_rms_template import IeeestInputMode
+from VeraGridEngine.Templates.Rms.synchronous_machines.gencls_rms_template import get_gencls_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.gencls_rms_template import configure_gencls_block, GenclsRmsParameters
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import get_esst3a_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import get_exst1_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import get_genrou_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import get_tgov1_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import GenrouSaturationMode
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import Tgov1ModelType
+from VeraGridEngine.Templates.Rms.excitation_systems.ieeex1_ieeest_rms_template import get_complete_genrou_ieeex1_ieeest_rms_template
+from VeraGridEngine.Templates.Rms.excitation_systems.ieeex1_ieeest_rms_template import IeeestInputMode
 from VeraGridEngine.Utils.Symbolic.block import Block
 
 

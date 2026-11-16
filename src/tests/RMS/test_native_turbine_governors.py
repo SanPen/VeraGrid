@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Check physical governor realizations independently of file import."""
 from __future__ import annotations
@@ -6,9 +10,9 @@ import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards import build_international_standard_template
-from VeraGridEngine.Templates.Rms.international_standards.governors.gast import GasGovernorParameters, build_gast_template
-from VeraGridEngine.Templates.Rms.international_standards.governors.ieesgo import SteamGovernorParameters, build_ieesgo_template
+from VeraGridEngine.Templates.Rms import build_international_standard_template
+from VeraGridEngine.Templates.Rms.governors.gast import GasGovernorParameters, build_gast_template
+from VeraGridEngine.Templates.Rms.governors.ieesgo import SteamGovernorParameters, build_ieesgo_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var, Expr, BinOp
 from VeraGridEngine.enumerations import InternationalStandardModel

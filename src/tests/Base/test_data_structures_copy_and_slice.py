@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import importlib
@@ -107,6 +111,7 @@ def _customize_indices(obj) -> None:
     set_values("controllable_bus_idx", [-1, 4, 1, 3])
     set_values("tap_controlled_buses", [0, 4, 1, 0])
     set_values("F", [1, 3, 4, 1])
+    set_values("F_dcn", [4, 3, -1, 1])
     set_values("T", [3, 4, 1, 4])
     set_values("control1_bus_idx", [-1, 4, 1, 3])
     set_values("control2_bus_idx", [4, -1, 1, 3])
@@ -323,7 +328,7 @@ def _expected_slice_value(source, name: str, value, *, bus_only: bool):
         if name in {"F", "T", "bus_idx"}:
             return TEST_BUS_MAP[value[TEST_ELM_IDX]]
 
-        if name in {"controllable_bus_idx", "control1_bus_idx", "control2_bus_idx"}:
+        if name in {"F_dcn", "controllable_bus_idx", "control1_bus_idx", "control2_bus_idx"}:
             expected = value[TEST_ELM_IDX].copy()
             mask = expected > -1
             expected[mask] = TEST_BUS_MAP[expected[mask]]

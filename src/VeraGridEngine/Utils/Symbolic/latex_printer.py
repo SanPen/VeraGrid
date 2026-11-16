@@ -38,6 +38,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (
     Const,
     Func,
     Func2,
+    NUMBER,
     UnOp,
     Var,
 )
@@ -159,7 +160,7 @@ def _print_const(expr: Const) -> str:
         return r"\bot"
     else:
         pass
-    value: object = expr.value
+    value: NUMBER = expr.value
     if isinstance(value, complex):
         real_component: float = float(value.real)
         imaginary_component: float = float(value.imag)

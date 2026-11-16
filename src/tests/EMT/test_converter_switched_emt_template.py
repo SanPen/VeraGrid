@@ -6,7 +6,7 @@ from typing import Dict
 from VeraGridEngine.Utils.Symbolic.symbolic import Var,Const
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
-from VeraGridEngine.Templates.Emt.converter_switched_emt_template import get_switched_emt_converter
+from VeraGridEngine.Templates.Emt.converters.converter_switched_emt_template import get_switched_emt_converter
 from VeraGridEngine.Utils.Symbolic.block import find_name_in_block
 
 

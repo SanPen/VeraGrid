@@ -1,0 +1,609 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+"""Explicit writer registry for the Sienna v0.4 fixed-slot models."""
+
+from typing import Any, Callable
+
+from VeraGridEngine.IO.sienna.devices.schema_object import SiennaObjectKind
+from VeraGridEngine.IO.sienna.devices.core.topology.ac_bus import sienna_ac_bus_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.ac_bus_type import sienna_ac_bus_type_to_json
+from VeraGridEngine.IO.sienna.devices.operations.service.agc import sienna_agc_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.avr_fixed import sienna_avr_fixed_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.avr_simple import sienna_avr_simple_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.avr_type_i import sienna_avr_type_i_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.avr_type_ii import sienna_avr_type_ii_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.active_power_droop import sienna_active_power_droop_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.active_power_pi import sienna_active_power_pi_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.active_renewable_controller_ab import sienna_active_renewable_controller_ab_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.active_virtual_oscillator import sienna_active_virtual_oscillator_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.admittance_unit_basis import sienna_admittance_unit_basis_to_json
+from VeraGridEngine.IO.sienna.devices.investments.technologies.aggregate_transport_technology import sienna_aggregate_transport_technology_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.anderson_fouad_machine import sienna_anderson_fouad_machine_to_json
+from VeraGridEngine.IO.sienna.devices.core.topology.arc import sienna_arc_to_json
+from VeraGridEngine.IO.sienna.devices.core.topology.area import sienna_area_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.area_interchange import sienna_area_interchange_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.converter.average_converter import sienna_average_converter_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.average_rate_curve import sienna_average_rate_curve_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.base_machine import sienna_base_machine_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.bilateral_confirmation import sienna_bilateral_confirmation_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.bilateral_product import sienna_bilateral_product_to_json
+from VeraGridEngine.IO.sienna.devices.operations.market.bilateral_transaction import sienna_bilateral_transaction_to_json
+from VeraGridEngine.IO.sienna.devices.investments.requirements.capacity_reserve_margin import sienna_capacity_reserve_margin_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.capital_cost import sienna_capital_cost_to_json
+from VeraGridEngine.IO.sienna.devices.investments.requirements.carbon_caps import sienna_carbon_caps_to_json
+from VeraGridEngine.IO.sienna.devices.investments.requirements.carbon_tax import sienna_carbon_tax_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.charge_discharge import sienna_charge_discharge_to_json
+from VeraGridEngine.IO.sienna.devices.investments.technologies.colocated_supply_storage_technology import sienna_colocated_supply_storage_technology_to_json
+from VeraGridEngine.IO.sienna.devices.operations.associations.combined_cycle_association import sienna_combined_cycle_association_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.combined_cycle_block import sienna_combined_cycle_block_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.combined_cycle_configuration import sienna_combined_cycle_configuration_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.combined_cycle_fractional import sienna_combined_cycle_fractional_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.commitment_modes import sienna_commitment_modes_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.complex_number import sienna_complex_number_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.cost_curve import sienna_cost_curve_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.current_loss_curve import sienna_current_loss_curve_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.inner_control.current_mode_control import sienna_current_mode_control_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.curve_multi_step import sienna_curve_multi_step_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.curve_styles import sienna_curve_styles_to_json
+from VeraGridEngine.IO.sienna.devices.core.topology.dc_bus import sienna_dc_bus_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.degov import sienna_degov_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.degov1 import sienna_degov1_to_json
+from VeraGridEngine.IO.sienna.devices.core.supplemental_attributes.data_source import sienna_data_source_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.dbd_pnts import sienna_dbd_pnts_to_json
+from VeraGridEngine.IO.sienna.devices.investments.technologies.demand_requirement import sienna_demand_requirement_to_json
+from VeraGridEngine.IO.sienna.devices.investments.technologies.demand_side_technology import sienna_demand_side_technology_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.deterministic import sienna_deterministic_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.deterministic_single_time_series import sienna_deterministic_single_time_series_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.discrete_controlled_ac_branch import sienna_discrete_controlled_ac_branch_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.esac1_a import sienna_esac1_a_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.esac6_a import sienna_esac6_a_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.esac8_b import sienna_esac8_b_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.esdc1_a import sienna_esdc1_a_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.esdc2_a import sienna_esdc2_a_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.esst1_a import sienna_esst1_a_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.esst4_b import sienna_esst4_b_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.ex4_vsa import sienna_ex4_vsa_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.exac1 import sienna_exac1_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.exac1_a import sienna_exac1_a_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.exac2 import sienna_exac2_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.expic1 import sienna_expic1_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.exst1 import sienna_exst1_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.common.element_type import sienna_element_type_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.emission_basis import sienna_emission_basis_to_json
+from VeraGridEngine.IO.sienna.devices.core.supplemental_attributes.emissions_data import sienna_emissions_data_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.energy_reservoir_storage import sienna_energy_reservoir_storage_to_json
+from VeraGridEngine.IO.sienna.devices.investments.requirements.energy_share_requirements import sienna_energy_share_requirements_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.energy_unit import sienna_energy_unit_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.energy_unit_basis import sienna_energy_unit_basis_to_json
+from VeraGridEngine.IO.sienna.devices.investments.supplemental_attributes.existing_devices import sienna_existing_devices_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.exponential_load import sienna_exponential_load_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.facts_control_device import sienna_facts_control_device_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.facts_control_device_control_mode import sienna_facts_control_device_control_mode_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.fdbd_pnts import sienna_fdbd_pnts_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.shaft.five_mass_shaft import sienna_five_mass_shaft_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.fixed_admittance import sienna_fixed_admittance_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.dc_source.fixed_dc_source import sienna_fixed_dc_source_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.fixed_forced_outage import sienna_fixed_forced_outage_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.frequency_estimator.fixed_frequency import sienna_fixed_frequency_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.from_to import sienna_from_to_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.from_to_to_from import sienna_from_to_to_from_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.fuel_curve import sienna_fuel_curve_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.fuel_unit import sienna_fuel_unit_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.full_machine import sienna_full_machine_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.function_data import sienna_function_data_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.gas_tg import sienna_gas_tg_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.general_gov_model import sienna_general_gov_model_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.generic_arc_impedance import sienna_generic_arc_impedance_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.generic_operation_cost import sienna_generic_operation_cost_to_json
+from VeraGridEngine.IO.sienna.devices.core.supplemental_attributes.geographic_info import sienna_geographic_info_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.geometric_distribution_forced_outage import sienna_geometric_distribution_forced_outage_to_json
+from VeraGridEngine.IO.sienna.devices.operations.service.group_reserve import sienna_group_reserve_to_json
+from VeraGridEngine.IO.sienna.devices.investments.requirements.hourly_matching import sienna_hourly_matching_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.output_current_limiter.hybrid_output_current_limiter import sienna_hybrid_output_current_limiter_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.hybrid_system import sienna_hybrid_system_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.hydro_dispatch import sienna_hydro_dispatch_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.hydro_generation_cost import sienna_hydro_generation_cost_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.hydro_power_plant import sienna_hydro_power_plant_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.hydro_pump_turbine import sienna_hydro_pump_turbine_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.hydro_reservoir import sienna_hydro_reservoir_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.hydro_reservoir_cost import sienna_hydro_reservoir_cost_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.hydro_storage_generation_cost import sienna_hydro_storage_generation_cost_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.hydro_turbine import sienna_hydro_turbine_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.hydro_turbine_gov import sienna_hydro_turbine_gov_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.pss.ieeest import sienna_ieeest_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.ieeet1 import sienna_ieeet1_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.ieee_turbine_gov1 import sienna_ieee_turbine_gov1_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.impedance_correction_data import sienna_impedance_correction_data_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.impedance_unit_basis import sienna_impedance_unit_basis_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.import_export_cost import sienna_import_export_cost_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.import_export_time_series_cost import sienna_import_export_time_series_cost_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.in_out import sienna_in_out_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.incremental_curve import sienna_incremental_curve_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.input_output_curve import sienna_input_output_curve_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.output_current_limiter.instantaneous_output_current_limiter import sienna_instantaneous_output_current_limiter_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.interconnecting_converter import sienna_interconnecting_converter_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.interruptible_power_load import sienna_interruptible_power_load_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.interruptible_standard_load import sienna_interruptible_standard_load_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.common.interval_alignment import sienna_interval_alignment_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.frequency_estimator.kaura_pll import sienna_kaura_pll_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.lcc_control_mode import sienna_lcc_control_mode_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.filter.lc_filter import sienna_lc_filter_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.filter.lcl_filter import sienna_lcl_filter_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.line import sienna_line_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.linear_function_data import sienna_linear_function_data_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.load_conformity import sienna_load_conformity_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.load_cost import sienna_load_cost_to_json
+from VeraGridEngine.IO.sienna.devices.core.topology.load_zone import sienna_load_zone_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.loss_curve import sienna_loss_curve_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.loss_value_curve import sienna_loss_value_curve_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.output_current_limiter.magnitude_output_current_limiter import sienna_magnitude_output_current_limiter_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.marconato_machine import sienna_marconato_machine_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.market_bid_cost import sienna_market_bid_cost_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.market_bid_time_series_cost import sienna_market_bid_time_series_cost_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.market_stage import sienna_market_stage_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.mass_unit import sienna_mass_unit_to_json
+from VeraGridEngine.IO.sienna.devices.investments.requirements.maximum_capacity_requirements import sienna_maximum_capacity_requirements_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.min_max import sienna_min_max_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.min_max_by_key import sienna_min_max_by_key_to_json
+from VeraGridEngine.IO.sienna.devices.investments.requirements.minimum_capacity_requirements import sienna_minimum_capacity_requirements_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.motor_load import sienna_motor_load_to_json
+from VeraGridEngine.IO.sienna.devices.investments.technologies.nodal_ac_transport_technology import sienna_nodal_ac_transport_technology_to_json
+from VeraGridEngine.IO.sienna.devices.investments.technologies.nodal_hvdc_transport_technology import sienna_nodal_hvdc_transport_technology_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.non_sequential_time_series import sienna_non_sequential_time_series_to_json
+from VeraGridEngine.IO.sienna.devices.operations.service.offline_reserve import sienna_offline_reserve_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.one_d_one_q_machine import sienna_one_d_one_q_machine_to_json
+from VeraGridEngine.IO.sienna.devices.operations.service.online_reserve import sienna_online_reserve_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.operational_flow_limit import sienna_operational_flow_limit_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.operational_states import sienna_operational_states_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.outage_factors import sienna_outage_factors_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.common.owner_category import sienna_owner_category_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.pidgov import sienna_pidgov_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.pss.pss2_a import sienna_pss2_a_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.pss.pss2_b import sienna_pss2_b_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.pss.pss2_c import sienna_pss2_c_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.pss.pss_fixed import sienna_pss_fixed_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.pss.pss_simple import sienna_pss_simple_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.common.period import sienna_period_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.piecewise_linear_data import sienna_piecewise_linear_data_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.piecewise_step_data import sienna_piecewise_step_data_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.planned_outage import sienna_planned_outage_to_json
+from VeraGridEngine.IO.sienna.devices.operations.associations.plant_association import sienna_plant_association_to_json
+from VeraGridEngine.IO.sienna.devices.operations.market.point_to_point_bid import sienna_point_to_point_bid_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.pollutant_type import sienna_pollutant_type_to_json
+from VeraGridEngine.IO.sienna.devices.investments.financials.portfolio_financial_data import sienna_portfolio_financial_data_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.power_load import sienna_power_load_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.prime_movers import sienna_prime_movers_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.output_current_limiter.priority_output_current_limiter import sienna_priority_output_current_limiter_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.probabilistic import sienna_probabilistic_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.production_variable_cost_curve import sienna_production_variable_cost_curve_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.quadratic_function_data import sienna_quadratic_function_data_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.inner_control.re_current_control_b import sienna_re_current_control_b_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.filter.rl_filter import sienna_rl_filter_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.reactive_power_droop import sienna_reactive_power_droop_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.reactive_power_pi import sienna_reactive_power_pi_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.reactive_power_sharing import sienna_reactive_power_sharing_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.reactive_renewable_controller_ab import sienna_reactive_renewable_controller_ab_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.reactive_virtual_oscillator import sienna_reactive_virtual_oscillator_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.frequency_estimator.reduced_order_pll import sienna_reduced_order_pll_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.renewable_dispatch import sienna_renewable_dispatch_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.converter.renewable_energy_converter_type_a import sienna_renewable_energy_converter_type_a_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.converter.renewable_energy_voltage_converter_type_a import sienna_renewable_energy_voltage_converter_type_a_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.renewable_generation_cost import sienna_renewable_generation_cost_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.renewable_non_dispatch import sienna_renewable_non_dispatch_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.renewable_power_plant import sienna_renewable_power_plant_to_json
+from VeraGridEngine.IO.sienna.devices.investments.associations.requirement_association import sienna_requirement_association_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.reserve_direction import sienna_reserve_direction_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.reservoir_location import sienna_reservoir_location_to_json
+from VeraGridEngine.IO.sienna.devices.investments.supplemental_attributes.retirement_potential import sienna_retirement_potential_to_json
+from VeraGridEngine.IO.sienna.devices.investments.supplemental_attributes.retrofit_potential import sienna_retrofit_potential_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.round_rotor_exponential import sienna_round_rotor_exponential_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.round_rotor_machine import sienna_round_rotor_machine_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.round_rotor_quadratic import sienna_round_rotor_quadratic_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.scrx import sienna_scrx_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.sexs import sienna_sexs_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.st6_b import sienna_st6_b_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.avr.st8_c import sienna_st8_c_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.pss.stab1 import sienna_stab1_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.salient_pole_exponential import sienna_salient_pole_exponential_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.salient_pole_machine import sienna_salient_pole_machine_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.salient_pole_quadratic import sienna_salient_pole_quadratic_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.output_current_limiter.saturation_output_current_limiter import sienna_saturation_output_current_limiter_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.sauer_pai_machine import sienna_sauer_pai_machine_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.scenarios import sienna_scenarios_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.series_compensator import sienna_series_compensator_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.series_compensator_control_mode import sienna_series_compensator_control_mode_to_json
+from VeraGridEngine.IO.sienna.devices.operations.associations.service_association import sienna_service_association_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.shiftable_power_load import sienna_shiftable_power_load_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.shunt_admittance_unit_basis import sienna_shunt_admittance_unit_basis_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.simple_af_machine import sienna_simple_af_machine_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.simple_full_machine import sienna_simple_full_machine_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.machine.simple_marconato_machine import sienna_simple_marconato_machine_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.shaft.single_mass import sienna_single_mass_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.single_time_series import sienna_single_time_series_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.source import sienna_source_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.standard_load import sienna_standard_load_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.start_up_shut_down import sienna_start_up_shut_down_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.start_up_stages import sienna_start_up_stages_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.steam_turbine_gov1 import sienna_steam_turbine_gov1_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.storage_capital_cost import sienna_storage_capital_cost_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.storage_cost import sienna_storage_cost_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.storage_tech import sienna_storage_tech_to_json
+from VeraGridEngine.IO.sienna.devices.investments.technologies.storage_technology import sienna_storage_technology_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.substation import sienna_substation_to_json
+from VeraGridEngine.IO.sienna.devices.core.associations.supplemental_attribute_association import sienna_supplemental_attribute_association_to_json
+from VeraGridEngine.IO.sienna.devices.investments.technologies.supply_technology import sienna_supply_technology_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.switched_admittance import sienna_switched_admittance_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.switched_admittance_control_mode import sienna_switched_admittance_control_mode_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.synchronous_condenser import sienna_synchronous_condenser_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.tg_fixed import sienna_tg_fixed_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.tg_simple import sienna_tg_simple_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.tg_type_i import sienna_tg_type_i_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.tg_type_ii import sienna_tg_type_ii_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.t_model_hvdc_line import sienna_t_model_hvdc_line_to_json
+from VeraGridEngine.IO.sienna.devices.investments.financials.technology_financial_data import sienna_technology_financial_data_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.thermal_fuels import sienna_thermal_fuels_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.thermal_generation_cost import sienna_thermal_generation_cost_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.thermal_multi_start import sienna_thermal_multi_start_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.thermal_power_plant import sienna_thermal_power_plant_to_json
+from VeraGridEngine.IO.sienna.devices.operations.static_injection.thermal_standard import sienna_thermal_standard_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.three_winding_transformer import sienna_three_winding_transformer_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.three_winding_transformer_shunt_location import sienna_three_winding_transformer_shunt_location_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.common.time_reference import sienna_time_reference_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.time_series_association import sienna_time_series_association_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.time_series_average_rate_curve import sienna_time_series_average_rate_curve_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.common.time_series_feature_value import sienna_time_series_feature_value_to_json
+from VeraGridEngine.IO.sienna.devices.time_series.common.time_series_features import sienna_time_series_features_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.time_series_incremental_curve import sienna_time_series_incremental_curve_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.time_series_input_output_curve import sienna_time_series_input_output_curve_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.time_series_linear_function_data import sienna_time_series_linear_function_data_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.time_series_piecewise_linear_data import sienna_time_series_piecewise_linear_data_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.time_series_piecewise_step_data import sienna_time_series_piecewise_step_data_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.time_series_quadratic_function_data import sienna_time_series_quadratic_function_data_to_json
+from VeraGridEngine.IO.sienna.devices.operations.market.trading_hub import sienna_trading_hub_to_json
+from VeraGridEngine.IO.sienna.devices.operations.associations.trading_hub_association import sienna_trading_hub_association_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.transformer_circuit import sienna_transformer_circuit_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.transformer_control_objective import sienna_transformer_control_objective_to_json
+from VeraGridEngine.IO.sienna.devices.operations.service.transmission_interface import sienna_transmission_interface_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.turbine_pump import sienna_turbine_pump_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.two_dimensional_function_point import sienna_two_dimensional_function_point_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.two_terminal_generic_hvdc_line import sienna_two_terminal_generic_hvdc_line_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.two_terminal_lcc_line import sienna_two_terminal_lcc_line_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.two_terminal_vsc_line import sienna_two_terminal_vsc_line_to_json
+from VeraGridEngine.IO.sienna.devices.operations.branch.two_winding_transformer import sienna_two_winding_transformer_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.two_winding_transformer_shunt_location import sienna_two_winding_transformer_shunt_location_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.unit_system import sienna_unit_system_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.up_down import sienna_up_down_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.vscac_control_modes import sienna_vscac_control_modes_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.vscdc_control_modes import sienna_vscdc_control_modes_to_json
+from VeraGridEngine.IO.sienna.devices.core.common.value_curve import sienna_value_curve_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.outer_control.virtual_inertia import sienna_virtual_inertia_to_json
+from VeraGridEngine.IO.sienna.devices.operations.market.virtual_participant import sienna_virtual_participant_to_json
+from VeraGridEngine.IO.sienna.devices.operations.associations.voltage_control_association import sienna_voltage_control_association_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.voltage_control_terminal import sienna_voltage_control_terminal_to_json
+from VeraGridEngine.IO.sienna.devices.operations.supplemental_attributes.voltage_droop_control import sienna_voltage_droop_control_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.inner_control.voltage_mode_control import sienna_voltage_mode_control_to_json
+from VeraGridEngine.IO.sienna.devices.operations.common.voltage_unit_basis import sienna_voltage_unit_basis_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_generator_component.turbine_gov.wpidhy import sienna_wpidhy_to_json
+from VeraGridEngine.IO.sienna.devices.dynamics.dynamic_inverter_component.dc_source.zero_order_bess import sienna_zero_order_bess_to_json
+
+
+def get_sienna_object_writers() -> dict[SiennaObjectKind, Callable[[object], object]]:
+    """Return explicit JSON writers indexed by Sienna schema kind.
+
+    :return: Statically registered object writers.
+    """
+    return {
+        SiennaObjectKind.ACBus: sienna_ac_bus_to_json,
+        SiennaObjectKind.ACBusType: sienna_ac_bus_type_to_json,
+        SiennaObjectKind.AGC: sienna_agc_to_json,
+        SiennaObjectKind.AVRFixed: sienna_avr_fixed_to_json,
+        SiennaObjectKind.AVRSimple: sienna_avr_simple_to_json,
+        SiennaObjectKind.AVRTypeI: sienna_avr_type_i_to_json,
+        SiennaObjectKind.AVRTypeII: sienna_avr_type_ii_to_json,
+        SiennaObjectKind.ActivePowerDroop: sienna_active_power_droop_to_json,
+        SiennaObjectKind.ActivePowerPI: sienna_active_power_pi_to_json,
+        SiennaObjectKind.ActiveRenewableControllerAB: sienna_active_renewable_controller_ab_to_json,
+        SiennaObjectKind.ActiveVirtualOscillator: sienna_active_virtual_oscillator_to_json,
+        SiennaObjectKind.AdmittanceUnitBasis: sienna_admittance_unit_basis_to_json,
+        SiennaObjectKind.AggregateTransportTechnology: sienna_aggregate_transport_technology_to_json,
+        SiennaObjectKind.AndersonFouadMachine: sienna_anderson_fouad_machine_to_json,
+        SiennaObjectKind.Arc: sienna_arc_to_json,
+        SiennaObjectKind.Area: sienna_area_to_json,
+        SiennaObjectKind.AreaInterchange: sienna_area_interchange_to_json,
+        SiennaObjectKind.AverageConverter: sienna_average_converter_to_json,
+        SiennaObjectKind.AverageRateCurve: sienna_average_rate_curve_to_json,
+        SiennaObjectKind.BaseMachine: sienna_base_machine_to_json,
+        SiennaObjectKind.BilateralConfirmation: sienna_bilateral_confirmation_to_json,
+        SiennaObjectKind.BilateralProduct: sienna_bilateral_product_to_json,
+        SiennaObjectKind.BilateralTransaction: sienna_bilateral_transaction_to_json,
+        SiennaObjectKind.CapacityReserveMargin: sienna_capacity_reserve_margin_to_json,
+        SiennaObjectKind.CapitalCost: sienna_capital_cost_to_json,
+        SiennaObjectKind.CarbonCaps: sienna_carbon_caps_to_json,
+        SiennaObjectKind.CarbonTax: sienna_carbon_tax_to_json,
+        SiennaObjectKind.ChargeDischarge: sienna_charge_discharge_to_json,
+        SiennaObjectKind.ColocatedSupplyStorageTechnology: sienna_colocated_supply_storage_technology_to_json,
+        SiennaObjectKind.CombinedCycleAssociation: sienna_combined_cycle_association_to_json,
+        SiennaObjectKind.CombinedCycleBlock: sienna_combined_cycle_block_to_json,
+        SiennaObjectKind.CombinedCycleConfiguration: sienna_combined_cycle_configuration_to_json,
+        SiennaObjectKind.CombinedCycleFractional: sienna_combined_cycle_fractional_to_json,
+        SiennaObjectKind.CommitmentModes: sienna_commitment_modes_to_json,
+        SiennaObjectKind.ComplexNumber: sienna_complex_number_to_json,
+        SiennaObjectKind.CostCurve: sienna_cost_curve_to_json,
+        SiennaObjectKind.CurrentLossCurve: sienna_current_loss_curve_to_json,
+        SiennaObjectKind.CurrentModeControl: sienna_current_mode_control_to_json,
+        SiennaObjectKind.CurveMultiStep: sienna_curve_multi_step_to_json,
+        SiennaObjectKind.CurveStyles: sienna_curve_styles_to_json,
+        SiennaObjectKind.DCBus: sienna_dc_bus_to_json,
+        SiennaObjectKind.DEGOV: sienna_degov_to_json,
+        SiennaObjectKind.DEGOV1: sienna_degov1_to_json,
+        SiennaObjectKind.DataSource: sienna_data_source_to_json,
+        SiennaObjectKind.DbdPnts: sienna_dbd_pnts_to_json,
+        SiennaObjectKind.DemandRequirement: sienna_demand_requirement_to_json,
+        SiennaObjectKind.DemandSideTechnology: sienna_demand_side_technology_to_json,
+        SiennaObjectKind.Deterministic: sienna_deterministic_to_json,
+        SiennaObjectKind.DeterministicSingleTimeSeries: sienna_deterministic_single_time_series_to_json,
+        SiennaObjectKind.DiscreteControlledACBranch: sienna_discrete_controlled_ac_branch_to_json,
+        SiennaObjectKind.ESAC1A: sienna_esac1_a_to_json,
+        SiennaObjectKind.ESAC6A: sienna_esac6_a_to_json,
+        SiennaObjectKind.ESAC8B: sienna_esac8_b_to_json,
+        SiennaObjectKind.ESDC1A: sienna_esdc1_a_to_json,
+        SiennaObjectKind.ESDC2A: sienna_esdc2_a_to_json,
+        SiennaObjectKind.ESST1A: sienna_esst1_a_to_json,
+        SiennaObjectKind.ESST4B: sienna_esst4_b_to_json,
+        SiennaObjectKind.EX4VSA: sienna_ex4_vsa_to_json,
+        SiennaObjectKind.EXAC1: sienna_exac1_to_json,
+        SiennaObjectKind.EXAC1A: sienna_exac1_a_to_json,
+        SiennaObjectKind.EXAC2: sienna_exac2_to_json,
+        SiennaObjectKind.EXPIC1: sienna_expic1_to_json,
+        SiennaObjectKind.EXST1: sienna_exst1_to_json,
+        SiennaObjectKind.ElementType: sienna_element_type_to_json,
+        SiennaObjectKind.EmissionBasis: sienna_emission_basis_to_json,
+        SiennaObjectKind.EmissionsData: sienna_emissions_data_to_json,
+        SiennaObjectKind.EnergyReservoirStorage: sienna_energy_reservoir_storage_to_json,
+        SiennaObjectKind.EnergyShareRequirements: sienna_energy_share_requirements_to_json,
+        SiennaObjectKind.EnergyUnit: sienna_energy_unit_to_json,
+        SiennaObjectKind.EnergyUnitBasis: sienna_energy_unit_basis_to_json,
+        SiennaObjectKind.ExistingDevices: sienna_existing_devices_to_json,
+        SiennaObjectKind.ExponentialLoad: sienna_exponential_load_to_json,
+        SiennaObjectKind.FACTSControlDevice: sienna_facts_control_device_to_json,
+        SiennaObjectKind.FACTSControlDeviceControlMode: sienna_facts_control_device_control_mode_to_json,
+        SiennaObjectKind.FdbdPnts: sienna_fdbd_pnts_to_json,
+        SiennaObjectKind.FiveMassShaft: sienna_five_mass_shaft_to_json,
+        SiennaObjectKind.FixedAdmittance: sienna_fixed_admittance_to_json,
+        SiennaObjectKind.FixedDCSource: sienna_fixed_dc_source_to_json,
+        SiennaObjectKind.FixedForcedOutage: sienna_fixed_forced_outage_to_json,
+        SiennaObjectKind.FixedFrequency: sienna_fixed_frequency_to_json,
+        SiennaObjectKind.FromTo: sienna_from_to_to_json,
+        SiennaObjectKind.FromTo_ToFrom: sienna_from_to_to_from_to_json,
+        SiennaObjectKind.FuelCurve: sienna_fuel_curve_to_json,
+        SiennaObjectKind.FuelUnit: sienna_fuel_unit_to_json,
+        SiennaObjectKind.FullMachine: sienna_full_machine_to_json,
+        SiennaObjectKind.FunctionData: sienna_function_data_to_json,
+        SiennaObjectKind.GasTG: sienna_gas_tg_to_json,
+        SiennaObjectKind.GeneralGovModel: sienna_general_gov_model_to_json,
+        SiennaObjectKind.GenericArcImpedance: sienna_generic_arc_impedance_to_json,
+        SiennaObjectKind.GenericOperationCost: sienna_generic_operation_cost_to_json,
+        SiennaObjectKind.GeographicInfo: sienna_geographic_info_to_json,
+        SiennaObjectKind.GeometricDistributionForcedOutage: sienna_geometric_distribution_forced_outage_to_json,
+        SiennaObjectKind.GroupReserve: sienna_group_reserve_to_json,
+        SiennaObjectKind.HourlyMatching: sienna_hourly_matching_to_json,
+        SiennaObjectKind.HybridOutputCurrentLimiter: sienna_hybrid_output_current_limiter_to_json,
+        SiennaObjectKind.HybridSystem: sienna_hybrid_system_to_json,
+        SiennaObjectKind.HydroDispatch: sienna_hydro_dispatch_to_json,
+        SiennaObjectKind.HydroGenerationCost: sienna_hydro_generation_cost_to_json,
+        SiennaObjectKind.HydroPowerPlant: sienna_hydro_power_plant_to_json,
+        SiennaObjectKind.HydroPumpTurbine: sienna_hydro_pump_turbine_to_json,
+        SiennaObjectKind.HydroReservoir: sienna_hydro_reservoir_to_json,
+        SiennaObjectKind.HydroReservoirCost: sienna_hydro_reservoir_cost_to_json,
+        SiennaObjectKind.HydroStorageGenerationCost: sienna_hydro_storage_generation_cost_to_json,
+        SiennaObjectKind.HydroTurbine: sienna_hydro_turbine_to_json,
+        SiennaObjectKind.HydroTurbineGov: sienna_hydro_turbine_gov_to_json,
+        SiennaObjectKind.IEEEST: sienna_ieeest_to_json,
+        SiennaObjectKind.IEEET1: sienna_ieeet1_to_json,
+        SiennaObjectKind.IEEETurbineGov1: sienna_ieee_turbine_gov1_to_json,
+        SiennaObjectKind.ImpedanceCorrectionData: sienna_impedance_correction_data_to_json,
+        SiennaObjectKind.ImpedanceUnitBasis: sienna_impedance_unit_basis_to_json,
+        SiennaObjectKind.ImportExportCost: sienna_import_export_cost_to_json,
+        SiennaObjectKind.ImportExportTimeSeriesCost: sienna_import_export_time_series_cost_to_json,
+        SiennaObjectKind.InOut: sienna_in_out_to_json,
+        SiennaObjectKind.IncrementalCurve: sienna_incremental_curve_to_json,
+        SiennaObjectKind.InputOutputCurve: sienna_input_output_curve_to_json,
+        SiennaObjectKind.InstantaneousOutputCurrentLimiter: sienna_instantaneous_output_current_limiter_to_json,
+        SiennaObjectKind.InterconnectingConverter: sienna_interconnecting_converter_to_json,
+        SiennaObjectKind.InterruptiblePowerLoad: sienna_interruptible_power_load_to_json,
+        SiennaObjectKind.InterruptibleStandardLoad: sienna_interruptible_standard_load_to_json,
+        SiennaObjectKind.IntervalAlignment: sienna_interval_alignment_to_json,
+        SiennaObjectKind.KauraPLL: sienna_kaura_pll_to_json,
+        SiennaObjectKind.LCCControlMode: sienna_lcc_control_mode_to_json,
+        SiennaObjectKind.LCFilter: sienna_lc_filter_to_json,
+        SiennaObjectKind.LCLFilter: sienna_lcl_filter_to_json,
+        SiennaObjectKind.Line: sienna_line_to_json,
+        SiennaObjectKind.LinearFunctionData: sienna_linear_function_data_to_json,
+        SiennaObjectKind.LoadConformity: sienna_load_conformity_to_json,
+        SiennaObjectKind.LoadCost: sienna_load_cost_to_json,
+        SiennaObjectKind.LoadZone: sienna_load_zone_to_json,
+        SiennaObjectKind.LossCurve: sienna_loss_curve_to_json,
+        SiennaObjectKind.LossValueCurve: sienna_loss_value_curve_to_json,
+        SiennaObjectKind.MagnitudeOutputCurrentLimiter: sienna_magnitude_output_current_limiter_to_json,
+        SiennaObjectKind.MarconatoMachine: sienna_marconato_machine_to_json,
+        SiennaObjectKind.MarketBidCost: sienna_market_bid_cost_to_json,
+        SiennaObjectKind.MarketBidTimeSeriesCost: sienna_market_bid_time_series_cost_to_json,
+        SiennaObjectKind.MarketStage: sienna_market_stage_to_json,
+        SiennaObjectKind.MassUnit: sienna_mass_unit_to_json,
+        SiennaObjectKind.MaximumCapacityRequirements: sienna_maximum_capacity_requirements_to_json,
+        SiennaObjectKind.MinMax: sienna_min_max_to_json,
+        SiennaObjectKind.MinMaxByKey: sienna_min_max_by_key_to_json,
+        SiennaObjectKind.MinimumCapacityRequirements: sienna_minimum_capacity_requirements_to_json,
+        SiennaObjectKind.MotorLoad: sienna_motor_load_to_json,
+        SiennaObjectKind.NodalACTransportTechnology: sienna_nodal_ac_transport_technology_to_json,
+        SiennaObjectKind.NodalHVDCTransportTechnology: sienna_nodal_hvdc_transport_technology_to_json,
+        SiennaObjectKind.NonSequentialTimeSeries: sienna_non_sequential_time_series_to_json,
+        SiennaObjectKind.OfflineReserve: sienna_offline_reserve_to_json,
+        SiennaObjectKind.OneDOneQMachine: sienna_one_d_one_q_machine_to_json,
+        SiennaObjectKind.OnlineReserve: sienna_online_reserve_to_json,
+        SiennaObjectKind.OperationalFlowLimit: sienna_operational_flow_limit_to_json,
+        SiennaObjectKind.OperationalStates: sienna_operational_states_to_json,
+        SiennaObjectKind.OutageFactors: sienna_outage_factors_to_json,
+        SiennaObjectKind.OwnerCategory: sienna_owner_category_to_json,
+        SiennaObjectKind.PIDGOV: sienna_pidgov_to_json,
+        SiennaObjectKind.PSS2A: sienna_pss2_a_to_json,
+        SiennaObjectKind.PSS2B: sienna_pss2_b_to_json,
+        SiennaObjectKind.PSS2C: sienna_pss2_c_to_json,
+        SiennaObjectKind.PSSFixed: sienna_pss_fixed_to_json,
+        SiennaObjectKind.PSSSimple: sienna_pss_simple_to_json,
+        SiennaObjectKind.Period: sienna_period_to_json,
+        SiennaObjectKind.PiecewiseLinearData: sienna_piecewise_linear_data_to_json,
+        SiennaObjectKind.PiecewiseStepData: sienna_piecewise_step_data_to_json,
+        SiennaObjectKind.PlannedOutage: sienna_planned_outage_to_json,
+        SiennaObjectKind.PlantAssociation: sienna_plant_association_to_json,
+        SiennaObjectKind.PointToPointBid: sienna_point_to_point_bid_to_json,
+        SiennaObjectKind.PollutantType: sienna_pollutant_type_to_json,
+        SiennaObjectKind.PortfolioFinancialData: sienna_portfolio_financial_data_to_json,
+        SiennaObjectKind.PowerLoad: sienna_power_load_to_json,
+        SiennaObjectKind.PrimeMovers: sienna_prime_movers_to_json,
+        SiennaObjectKind.PriorityOutputCurrentLimiter: sienna_priority_output_current_limiter_to_json,
+        SiennaObjectKind.Probabilistic: sienna_probabilistic_to_json,
+        SiennaObjectKind.ProductionVariableCostCurve: sienna_production_variable_cost_curve_to_json,
+        SiennaObjectKind.QuadraticFunctionData: sienna_quadratic_function_data_to_json,
+        SiennaObjectKind.RECurrentControlB: sienna_re_current_control_b_to_json,
+        SiennaObjectKind.RLFilter: sienna_rl_filter_to_json,
+        SiennaObjectKind.ReactivePowerDroop: sienna_reactive_power_droop_to_json,
+        SiennaObjectKind.ReactivePowerPI: sienna_reactive_power_pi_to_json,
+        SiennaObjectKind.ReactivePowerSharing: sienna_reactive_power_sharing_to_json,
+        SiennaObjectKind.ReactiveRenewableControllerAB: sienna_reactive_renewable_controller_ab_to_json,
+        SiennaObjectKind.ReactiveVirtualOscillator: sienna_reactive_virtual_oscillator_to_json,
+        SiennaObjectKind.ReducedOrderPLL: sienna_reduced_order_pll_to_json,
+        SiennaObjectKind.RenewableDispatch: sienna_renewable_dispatch_to_json,
+        SiennaObjectKind.RenewableEnergyConverterTypeA: sienna_renewable_energy_converter_type_a_to_json,
+        SiennaObjectKind.RenewableEnergyVoltageConverterTypeA: sienna_renewable_energy_voltage_converter_type_a_to_json,
+        SiennaObjectKind.RenewableGenerationCost: sienna_renewable_generation_cost_to_json,
+        SiennaObjectKind.RenewableNonDispatch: sienna_renewable_non_dispatch_to_json,
+        SiennaObjectKind.RenewablePowerPlant: sienna_renewable_power_plant_to_json,
+        SiennaObjectKind.RequirementAssociation: sienna_requirement_association_to_json,
+        SiennaObjectKind.ReserveDirection: sienna_reserve_direction_to_json,
+        SiennaObjectKind.ReservoirLocation: sienna_reservoir_location_to_json,
+        SiennaObjectKind.RetirementPotential: sienna_retirement_potential_to_json,
+        SiennaObjectKind.RetrofitPotential: sienna_retrofit_potential_to_json,
+        SiennaObjectKind.RoundRotorExponential: sienna_round_rotor_exponential_to_json,
+        SiennaObjectKind.RoundRotorMachine: sienna_round_rotor_machine_to_json,
+        SiennaObjectKind.RoundRotorQuadratic: sienna_round_rotor_quadratic_to_json,
+        SiennaObjectKind.SCRX: sienna_scrx_to_json,
+        SiennaObjectKind.SEXS: sienna_sexs_to_json,
+        SiennaObjectKind.ST6B: sienna_st6_b_to_json,
+        SiennaObjectKind.ST8C: sienna_st8_c_to_json,
+        SiennaObjectKind.STAB1: sienna_stab1_to_json,
+        SiennaObjectKind.SalientPoleExponential: sienna_salient_pole_exponential_to_json,
+        SiennaObjectKind.SalientPoleMachine: sienna_salient_pole_machine_to_json,
+        SiennaObjectKind.SalientPoleQuadratic: sienna_salient_pole_quadratic_to_json,
+        SiennaObjectKind.SaturationOutputCurrentLimiter: sienna_saturation_output_current_limiter_to_json,
+        SiennaObjectKind.SauerPaiMachine: sienna_sauer_pai_machine_to_json,
+        SiennaObjectKind.Scenarios: sienna_scenarios_to_json,
+        SiennaObjectKind.SeriesCompensator: sienna_series_compensator_to_json,
+        SiennaObjectKind.SeriesCompensatorControlMode: sienna_series_compensator_control_mode_to_json,
+        SiennaObjectKind.ServiceAssociation: sienna_service_association_to_json,
+        SiennaObjectKind.ShiftablePowerLoad: sienna_shiftable_power_load_to_json,
+        SiennaObjectKind.ShuntAdmittanceUnitBasis: sienna_shunt_admittance_unit_basis_to_json,
+        SiennaObjectKind.SimpleAFMachine: sienna_simple_af_machine_to_json,
+        SiennaObjectKind.SimpleFullMachine: sienna_simple_full_machine_to_json,
+        SiennaObjectKind.SimpleMarconatoMachine: sienna_simple_marconato_machine_to_json,
+        SiennaObjectKind.SingleMass: sienna_single_mass_to_json,
+        SiennaObjectKind.SingleTimeSeries: sienna_single_time_series_to_json,
+        SiennaObjectKind.Source: sienna_source_to_json,
+        SiennaObjectKind.StandardLoad: sienna_standard_load_to_json,
+        SiennaObjectKind.StartUpShutDown: sienna_start_up_shut_down_to_json,
+        SiennaObjectKind.StartUpStages: sienna_start_up_stages_to_json,
+        SiennaObjectKind.SteamTurbineGov1: sienna_steam_turbine_gov1_to_json,
+        SiennaObjectKind.StorageCapitalCost: sienna_storage_capital_cost_to_json,
+        SiennaObjectKind.StorageCost: sienna_storage_cost_to_json,
+        SiennaObjectKind.StorageTech: sienna_storage_tech_to_json,
+        SiennaObjectKind.StorageTechnology: sienna_storage_technology_to_json,
+        SiennaObjectKind.Substation: sienna_substation_to_json,
+        SiennaObjectKind.SupplementalAttributeAssociation: sienna_supplemental_attribute_association_to_json,
+        SiennaObjectKind.SupplyTechnology: sienna_supply_technology_to_json,
+        SiennaObjectKind.SwitchedAdmittance: sienna_switched_admittance_to_json,
+        SiennaObjectKind.SwitchedAdmittanceControlMode: sienna_switched_admittance_control_mode_to_json,
+        SiennaObjectKind.SynchronousCondenser: sienna_synchronous_condenser_to_json,
+        SiennaObjectKind.TGFixed: sienna_tg_fixed_to_json,
+        SiennaObjectKind.TGSimple: sienna_tg_simple_to_json,
+        SiennaObjectKind.TGTypeI: sienna_tg_type_i_to_json,
+        SiennaObjectKind.TGTypeII: sienna_tg_type_ii_to_json,
+        SiennaObjectKind.TModelHVDCLine: sienna_t_model_hvdc_line_to_json,
+        SiennaObjectKind.TechnologyFinancialData: sienna_technology_financial_data_to_json,
+        SiennaObjectKind.ThermalFuels: sienna_thermal_fuels_to_json,
+        SiennaObjectKind.ThermalGenerationCost: sienna_thermal_generation_cost_to_json,
+        SiennaObjectKind.ThermalMultiStart: sienna_thermal_multi_start_to_json,
+        SiennaObjectKind.ThermalPowerPlant: sienna_thermal_power_plant_to_json,
+        SiennaObjectKind.ThermalStandard: sienna_thermal_standard_to_json,
+        SiennaObjectKind.ThreeWindingTransformer: sienna_three_winding_transformer_to_json,
+        SiennaObjectKind.ThreeWindingTransformerShuntLocation: sienna_three_winding_transformer_shunt_location_to_json,
+        SiennaObjectKind.TimeReference: sienna_time_reference_to_json,
+        SiennaObjectKind.TimeSeriesAssociation: sienna_time_series_association_to_json,
+        SiennaObjectKind.TimeSeriesAverageRateCurve: sienna_time_series_average_rate_curve_to_json,
+        SiennaObjectKind.TimeSeriesFeatureValue: sienna_time_series_feature_value_to_json,
+        SiennaObjectKind.TimeSeriesFeatures: sienna_time_series_features_to_json,
+        SiennaObjectKind.TimeSeriesIncrementalCurve: sienna_time_series_incremental_curve_to_json,
+        SiennaObjectKind.TimeSeriesInputOutputCurve: sienna_time_series_input_output_curve_to_json,
+        SiennaObjectKind.TimeSeriesLinearFunctionData: sienna_time_series_linear_function_data_to_json,
+        SiennaObjectKind.TimeSeriesPiecewiseLinearData: sienna_time_series_piecewise_linear_data_to_json,
+        SiennaObjectKind.TimeSeriesPiecewiseStepData: sienna_time_series_piecewise_step_data_to_json,
+        SiennaObjectKind.TimeSeriesQuadraticFunctionData: sienna_time_series_quadratic_function_data_to_json,
+        SiennaObjectKind.TradingHub: sienna_trading_hub_to_json,
+        SiennaObjectKind.TradingHubAssociation: sienna_trading_hub_association_to_json,
+        SiennaObjectKind.TransformerCircuit: sienna_transformer_circuit_to_json,
+        SiennaObjectKind.TransformerControlObjective: sienna_transformer_control_objective_to_json,
+        SiennaObjectKind.TransmissionInterface: sienna_transmission_interface_to_json,
+        SiennaObjectKind.TurbinePump: sienna_turbine_pump_to_json,
+        SiennaObjectKind.TwoDimensionalFunctionPoint: sienna_two_dimensional_function_point_to_json,
+        SiennaObjectKind.TwoTerminalGenericHVDCLine: sienna_two_terminal_generic_hvdc_line_to_json,
+        SiennaObjectKind.TwoTerminalLCCLine: sienna_two_terminal_lcc_line_to_json,
+        SiennaObjectKind.TwoTerminalVSCLine: sienna_two_terminal_vsc_line_to_json,
+        SiennaObjectKind.TwoWindingTransformer: sienna_two_winding_transformer_to_json,
+        SiennaObjectKind.TwoWindingTransformerShuntLocation: sienna_two_winding_transformer_shunt_location_to_json,
+        SiennaObjectKind.UnitSystem: sienna_unit_system_to_json,
+        SiennaObjectKind.UpDown: sienna_up_down_to_json,
+        SiennaObjectKind.VSCACControlModes: sienna_vscac_control_modes_to_json,
+        SiennaObjectKind.VSCDCControlModes: sienna_vscdc_control_modes_to_json,
+        SiennaObjectKind.ValueCurve: sienna_value_curve_to_json,
+        SiennaObjectKind.VirtualInertia: sienna_virtual_inertia_to_json,
+        SiennaObjectKind.VirtualParticipant: sienna_virtual_participant_to_json,
+        SiennaObjectKind.VoltageControlAssociation: sienna_voltage_control_association_to_json,
+        SiennaObjectKind.VoltageControlTerminal: sienna_voltage_control_terminal_to_json,
+        SiennaObjectKind.VoltageDroopControl: sienna_voltage_droop_control_to_json,
+        SiennaObjectKind.VoltageModeControl: sienna_voltage_mode_control_to_json,
+        SiennaObjectKind.VoltageUnitBasis: sienna_voltage_unit_basis_to_json,
+        SiennaObjectKind.WPIDHY: sienna_wpidhy_to_json,
+        SiennaObjectKind.ZeroOrderBESS: sienna_zero_order_bess_to_json,
+    }
+
+
+def write_sienna_schema_object(kind: SiennaObjectKind, value: object) -> object:
+    """Write one fixed-slot object with its declared schema writer.
+
+    :param kind: Expected Sienna schema kind.
+    :param value: Fixed-slot model for that kind.
+    :return: JSON-compatible wire value.
+    """
+    writer: Callable[[object], object] | None = get_sienna_object_writers().get(kind, None)
+    if writer is None:
+        raise ValueError(f"No Sienna writer is registered for {kind.name}")
+    else:
+        return writer(value)
+
+
+def write_sienna_schema_union(kinds: tuple[SiennaObjectKind, ...], value: object) -> object:
+    """Write one nested union through the matching declared schema writer.
+
+    :param kinds: Schema kinds permitted by the enclosing ``oneOf`` field.
+    :param value: Typed nested object.
+    :return: JSON-compatible nested value.
+    :raises ValueError: When no declared writer accepts the object.
+    """
+    errors: list[str] = list()
+    for kind in kinds:
+        try:
+            return write_sienna_schema_object(kind=kind, value=value)
+        except (AttributeError, TypeError, ValueError) as error:
+            errors.append(str(error))
+    raise ValueError(f"Nested Sienna union has no matching writer for {kinds}: {errors}")

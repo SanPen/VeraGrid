@@ -3,13 +3,19 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import TypeAlias
+from typing import TypeAlias, Union
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets as cgmes24
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_3_0_0_assets as cgmes30
 import VeraGridEngine.IO.cim.cgmes.ncp.ncp_assets as ncp
+import VeraGridEngine.IO.cim.cgmes.dynamics.schema as dynamics
+import VeraGridEngine.IO.cim.cgmes.dynamics.schema_2_4_15 as dynamics24
 
 
-CGMES_ASSETS: TypeAlias = cgmes24.CGMES_2_4_15_ASSETS | cgmes30.CGMES3_ASSETS | ncp.NCP_ASSETS
+CGMES_DYNAMICS_ASSETS: TypeAlias = Union[
+    tuple(dynamics.DY_CLASS_DICT.values())
+    + tuple(dynamics24.get_cgmes_24_15_dynamics_schema()[0].values())
+]
+CGMES_ASSETS: TypeAlias = cgmes24.CGMES_2_4_15_ASSETS | cgmes30.CGMES3_ASSETS | ncp.NCP_ASSETS | CGMES_DYNAMICS_ASSETS
 
 CGMES_ACDC_CONVERTER = cgmes24.ACDCConverter | cgmes30.ACDCConverter
 CGMES_ACDC_CONVERTER_DC_TERMINAL = cgmes24.ACDCConverterDCTerminal | cgmes30.ACDCConverterDCTerminal

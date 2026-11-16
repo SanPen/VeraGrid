@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """A complete machine/controller/grid orbit must repeat without removing unbalance."""
 import numpy as np
 import pytest
@@ -11,10 +15,10 @@ from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
-from VeraGridEngine.Templates.Emt.generator_emt_type_template import get_complete_generator_template_emt
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.generator_emt_type_template import get_complete_generator_template_emt
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 
 

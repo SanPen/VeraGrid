@@ -8,7 +8,7 @@ from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat, ProfileInt

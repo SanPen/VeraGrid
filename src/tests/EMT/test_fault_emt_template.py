@@ -1,3 +1,4 @@
+
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -9,7 +10,7 @@ import pytest
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.fault_emt_template import (
+from VeraGridEngine.Templates.Emt.buses.fault_emt_template import (
     FaultEmtTemplate,
     get_fault_emt_template,
     validate_fault_electrical_parameters,
@@ -19,6 +20,8 @@ from VeraGridEngine.Utils.procedural_logic import ProceduralLogicCodec
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var, get_expression_vars
 from VeraGridEngine.enumerations import EmtFaultPlacementSide, FaultType
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def _find_equation_with_exact_variables(equations: List[Expr],
@@ -249,10 +252,7 @@ def test_fault_structure_and_placement_survive_block_roundtrip() -> None:
         initial_closed=True,
         name="saved_fault",
     ).block
-    restored: Block = Block.parse(
-        data=source.to_dict(),
-        procedural_logic_codec=ProceduralLogicCodec(),
-    )
+    restored: Block = roundtrip_block(source, procedural_logic_codec=ProceduralLogicCodec())
     restored_algebraic_names: Set[str] = set(variable.name for variable in restored.algebraic_vars)
     restored_child_names: Set[str] = set(child.name for child in restored.children)
     restored_input_names: Set[str] = set(variable.name for variable in restored.in_vars)

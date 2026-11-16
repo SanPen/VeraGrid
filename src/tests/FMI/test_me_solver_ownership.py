@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Focused contracts for simulation-owned FMI Model Exchange integration."""
 
 from __future__ import annotations
@@ -43,12 +47,6 @@ from VeraGridEngine.IO.fmu.Elements.protocol import (
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized import (
-    BackEulerImplicitIntegrationVec,
-)
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized import (
-    BackEulerImplicitIntegrationFullVec,
-)
 from VeraGridEngine.Simulations.Rms.numerical.midpoint import (
     MidpointImplicitIntegration,
 )
@@ -74,7 +72,9 @@ class _CurrentPointCouplingProblem:
     __slots__ = (
         "_algebraic_eqs",
         "_variable_parameters_values",
+        "_constant_params",
         "_fmu_me_adapters",
+        "_fmu_cs_adapters",
         "algebraic_vars",
         "logger",
         "me_advance_snapshots",
@@ -132,7 +132,14 @@ class _CurrentPointCouplingProblem:
 
         self._algebraic_eqs: list[object] = list()
         self._variable_parameters_values: np.ndarray = np.empty(0, dtype=float)
-        self._fmu_me_adapters: list[object] = list()
+        self._constant_params: np.ndarray | None = None
+        # This double owns the ME transactions (and CS when enabled), so the integrators must see active
+        # adapters and keep their fresh-Jacobian path.
+        self._fmu_me_adapters: list[object] = list((self,))
+        if enable_cs:
+            self._fmu_cs_adapters: list[object] = list((self,))
+        else:
+            self._fmu_cs_adapters = list()
         self.algebraic_vars: list[object] = list()
         self.logger: Mock = Mock()
         self.me_advance_snapshots: list[np.ndarray] = list()
@@ -184,6 +191,14 @@ class _CurrentPointCouplingProblem:
         """
 
         return 1
+
+    def get_diff_var_base_indices(self) -> np.ndarray:
+        """Map the sole derivative to the sole network state."""
+        return np.array((0,), dtype=np.intp)
+
+    def get_diff_var_orders(self) -> np.ndarray:
+        """Identify the sole derivative as first order."""
+        return np.array((1,), dtype=np.intp)
 
     def get_algebraic_var_number(self) -> int:
         """Return the algebraic-variable count.
@@ -274,6 +289,10 @@ class _CurrentPointCouplingProblem:
             self.active_derivative_rate = self.rate_change[1]
         else:
             self.active_derivative_rate = self.derivative_rate
+
+    def update_with_current_parameters(self, t: float, x_snapshot: np.ndarray) -> None:
+        """Apply the current parameter vector through the shared solver interface."""
+        self.update(t, x_snapshot, self._variable_parameters_values)
 
     def update_input_matrices_by_model(
         self,
@@ -435,6 +454,35 @@ class _CurrentPointCouplingProblem:
             return sp.csc_matrix((0, 0), dtype=float)
         else:
             raise AssertionError("Current-point J22 contract is invalid")
+
+    def evaluate_rhs(self, x_snapshot: np.ndarray, dx_snapshot: np.ndarray):
+        """Implement the shared solver-facing equation interface."""
+        return self.rhs_state(x_snapshot, dx_snapshot), self.rhs_algebraic(x_snapshot, dx_snapshot)
+
+    def evaluate_equations(self, x_snapshot: np.ndarray, dx_snapshot: np.ndarray) -> np.ndarray:
+        """Return state and algebraic equations in solver row order."""
+        state, algebraic = self.evaluate_rhs(x_snapshot, dx_snapshot)
+        return np.r_[state, algebraic]
+
+    def has_fixed_equation_jacobian_pattern(self) -> bool:
+        """Keep this test double on the general Jacobian path."""
+        return False
+
+    def supports_derivative_jacobian_partials(self) -> bool:
+        """Use the existing four-block Jacobian implementation."""
+        return False
+
+    def get_sparse_solver_backend_provider(self):
+        """Use the integrator's default SuperLU provider."""
+        return None
+
+    def evaluate_jacobian_blocks(self, x_snapshot: np.ndarray,
+                                 dx_snapshot: np.ndarray, step_size: float):
+        """Return the equation Jacobian blocks at this trial."""
+        return (self.get_j11(x_snapshot, dx_snapshot, step_size),
+                self.get_j12(x_snapshot, dx_snapshot, step_size),
+                self.get_j21(x_snapshot, dx_snapshot, step_size),
+                self.get_j22(x_snapshot, dx_snapshot, step_size))
 
     def get_j11_vec(self, step_size: float) -> sp.csc_matrix:
         """Return the gathered vectorized J11 block.
@@ -2394,8 +2442,6 @@ def test_all_rms_integrators_use_co_simulation_step_boundary() -> None:
 
     solver_types: tuple[type, ...] = (
         BackEulerImplicitIntegration,
-        BackEulerImplicitIntegrationVec,
-        BackEulerImplicitIntegrationFullVec,
         MidpointImplicitIntegration,
         TrapezoidalImplicitIntegration,
     )
@@ -2418,7 +2464,7 @@ def test_all_rms_integrators_use_co_simulation_step_boundary() -> None:
         assert problem.operation_log.count("cs") == 1
 
 
-def test_backward_euler_variants_refresh_me_from_current_network_iterate() -> None:
+def test_backward_euler_refresh_me_from_current_network_iterate() -> None:
     """Refresh ME from the corrected point before the next residual.
 
     :return: None.
@@ -2426,8 +2472,6 @@ def test_backward_euler_variants_refresh_me_from_current_network_iterate() -> No
 
     solver_types: tuple[type, ...] = (
         BackEulerImplicitIntegration,
-        BackEulerImplicitIntegrationVec,
-        BackEulerImplicitIntegrationFullVec,
     )
     solver_type: type
     for solver_type in solver_types:
@@ -2452,17 +2496,8 @@ def test_backward_euler_variants_refresh_me_from_current_network_iterate() -> No
         assert problem.me_advance_snapshots[0][0] == pytest.approx(1.0)
         assert problem.me_advance_snapshots[1][0] == pytest.approx(1.1)
         assert problem.resolve_acceptances == [True]
-        if solver_type in (
-                BackEulerImplicitIntegration,
-                BackEulerImplicitIntegrationVec,
-        ):
-            assert problem.operation_log.count("native_commit") == 1
-            assert problem.operation_log.index("native_commit") < problem.operation_log.index("close_me")
-        else:
-            # FullVec is an existing FMI regression participant; the sealed
-            # manufacturer-native scope owns only scalar and vector RMS.
-            assert solver_type is BackEulerImplicitIntegrationFullVec
-            assert problem.operation_log.count("native_commit") == 0
+        assert problem.operation_log.count("native_commit") == 1
+        assert problem.operation_log.index("native_commit") < problem.operation_log.index("close_me")
 
 
 def test_backward_euler_pure_me_and_pre_cs_events_retry_before_cs() -> None:
@@ -2509,7 +2544,7 @@ def test_backward_euler_pure_me_and_pre_cs_events_retry_before_cs() -> None:
     assert pre_cs_problem.operation_log.count("native_commit") == 2
 
 
-def test_backward_euler_variants_fail_closed_after_real_cs_advance() -> None:
+def test_backward_euler_fail_closed_after_real_cs_advance() -> None:
     """Reject an ME retry discovered after any real CS advancement.
 
     :return: None.
@@ -2520,8 +2555,6 @@ def test_backward_euler_variants_fail_closed_after_real_cs_advance() -> None:
     )
     solver_types: tuple[type, ...] = (
         BackEulerImplicitIntegration,
-        BackEulerImplicitIntegrationVec,
-        BackEulerImplicitIntegrationFullVec,
     )
     solver_type: type
     for solver_type in solver_types:
@@ -2538,26 +2571,8 @@ def test_backward_euler_variants_fail_closed_after_real_cs_advance() -> None:
             max_iter=4,
             tolerance=1.0e-10,
         )
-        # The full-vector solver still raises, while the other two variants
-        # report the failed step through their logger and truncated results.
-        if solver_type is BackEulerImplicitIntegrationFullVec:
-            with pytest.raises(RuntimeError, match=expected_message):
-                solver.simulate()
-        else:
-            result_time: np.ndarray
-            result_state: np.ndarray
-            well_initialized: bool
-            converged: bool
-            result_time, result_state, well_initialized, converged = solver.simulate()
-            problem.logger.add_error.assert_called_once()
-            logged_message: str = problem.logger.add_error.call_args.kwargs["msg"]
-            assert "RMS FMI ME state event" in logged_message
-            assert "cannot retry after Co-Simulation devices advanced" in logged_message
-            assert "failed step is omitted" in logged_message
-            assert result_time.tolist() == [0.0]
-            assert result_state.shape == (1, 1)
-            assert result_state[0, 0] == pytest.approx(1.0)
-            assert well_initialized is True
+        with pytest.raises(RuntimeError, match=expected_message):
+            solver.simulate()
             assert converged is False
             assert problem.resolve_acceptances == [False]
         assert problem.cs_advance_count == 1
@@ -2887,8 +2902,7 @@ def test_fmi_three_me_spec_rejects_non_continuous_runtime_inputs(
 
 
 @pytest.mark.parametrize("solver_class", (
-    BackEulerImplicitIntegration, BackEulerImplicitIntegrationVec,
-    BackEulerImplicitIntegrationFullVec,
+    BackEulerImplicitIntegration,
 ))
 @pytest.mark.parametrize(
     "derivative_rate,quadratic_rate,budget,tolerance,expected_converged,expected_last,expected_corrections",
@@ -2901,7 +2915,7 @@ def test_fmi_three_me_spec_rejects_non_continuous_runtime_inputs(
     ),
 )
 def test_rms_backward_euler_accepts_final_correction(
-    solver_class: type[BackEulerImplicitIntegration] | type[BackEulerImplicitIntegrationVec] | type[BackEulerImplicitIntegrationFullVec],
+    solver_class: type[BackEulerImplicitIntegration],
     derivative_rate: float,
     quadratic_rate: float,
     budget: int,
@@ -2925,7 +2939,7 @@ def test_rms_backward_euler_accepts_final_correction(
     problem: _CurrentPointCouplingProblem = _CurrentPointCouplingProblem(
         enable_cs=False, derivative_rate=derivative_rate, quadratic_rate=quadratic_rate,
     )
-    solver: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec = solver_class(
+    solver: BackEulerImplicitIntegration = solver_class(
         problem=problem, t0=0.0, t_end=0.1, h=0.1, max_iter=budget, tolerance=tolerance,
     )
     times: np.ndarray
@@ -2958,8 +2972,7 @@ def test_rms_backward_euler_accepts_final_correction(
 
 
 @pytest.mark.parametrize("solver_class", (
-    BackEulerImplicitIntegration, BackEulerImplicitIntegrationVec,
-    BackEulerImplicitIntegrationFullVec,
+    BackEulerImplicitIntegration,
 ))
 @pytest.mark.parametrize(
     "derivative_rate,initial_candidate,step,tolerance,budget,expected_converged,expected_last,expected_corrections",
@@ -2977,7 +2990,7 @@ def test_rms_backward_euler_accepts_final_correction(
     ),
 )
 def test_rms_backward_euler_respects_tolerance_and_rejects_invalid_candidates(
-    solver_class: type[BackEulerImplicitIntegration] | type[BackEulerImplicitIntegrationVec] | type[BackEulerImplicitIntegrationFullVec],
+    solver_class: type[BackEulerImplicitIntegration],
     derivative_rate: float,
     initial_candidate: float,
     step: float,
@@ -3004,7 +3017,7 @@ def test_rms_backward_euler_respects_tolerance_and_rejects_invalid_candidates(
         enable_cs=False, derivative_rate=derivative_rate,
         initial_candidate_value=initial_candidate,
     )
-    solver: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec = solver_class(
+    solver: BackEulerImplicitIntegration = solver_class(
         problem=problem, t0=0.0, t_end=step, h=step, max_iter=budget, tolerance=tolerance,
     )
     times: np.ndarray
@@ -3019,11 +3032,7 @@ def test_rms_backward_euler_respects_tolerance_and_rejects_invalid_candidates(
     assert times.shape == (expected_rows,)
     assert values.shape == (expected_rows, 1)
     np.testing.assert_equal(values[-1, 0], expected_last)
-    # Scalar damping retains a finite point; the two vector backends overflow.
-    expected_correction_count: int = (
-        budget if derivative_rate == 1e308 and solver_class is BackEulerImplicitIntegration
-        else expected_corrections
-    )
+    expected_correction_count: int = expected_corrections
     assert problem.jacobian_evaluations == expected_correction_count
     if math.isfinite(initial_candidate):
         # No invalid corrected point may reach the FMI ME input consumer.
@@ -3044,22 +3053,19 @@ def test_rms_backward_euler_respects_tolerance_and_rejects_invalid_candidates(
         if not math.isfinite(initial_candidate):
             assert problem.residual_evaluations == 0
         elif derivative_rate == 1e308:
-            assert problem.residual_evaluations == expected_correction_count + (
-                1 if solver_class is BackEulerImplicitIntegration else 0
-            )
+            assert problem.residual_evaluations == expected_correction_count
         else:
             assert problem.residual_evaluations == 1
 
 
 @pytest.mark.parametrize("solver_class", (
-    BackEulerImplicitIntegration, BackEulerImplicitIntegrationVec,
-    BackEulerImplicitIntegrationFullVec,
+    BackEulerImplicitIntegration,
 ))
 @pytest.mark.parametrize("failure_time,retry_time,expected_rows,accepted_local_count", (
     (0.1, None, 1, 0), (0.2, None, 2, 1), (0.1, 0.05, 1, 1),
 ))
 def test_rms_backward_euler_preserves_prefix_on_rejection(
-    solver_class: type[BackEulerImplicitIntegration] | type[BackEulerImplicitIntegrationVec] | type[BackEulerImplicitIntegrationFullVec],
+    solver_class: type[BackEulerImplicitIntegration],
     failure_time: float,
     retry_time: float | None,
     expected_rows: int,
@@ -3077,7 +3083,7 @@ def test_rms_backward_euler_preserves_prefix_on_rejection(
     problem: _CurrentPointCouplingProblem = _CurrentPointCouplingProblem(
         enable_cs=False, initial_event_time=retry_time, rate_change=(failure_time, math.nan),
     )
-    solver: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec = solver_class(
+    solver: BackEulerImplicitIntegration = solver_class(
         problem=problem, t0=0.0, t_end=0.3, h=0.1, max_iter=2, tolerance=1e-10,
     )
     times: np.ndarray
@@ -3099,7 +3105,4 @@ def test_rms_backward_euler_preserves_prefix_on_rejection(
     assert problem.last_update_time == pytest.approx(failure_time, rel=0, abs=1e-12)
     assert problem.me_close_count == 1
     assert problem.cs_close_count == 0
-    if solver_class is BackEulerImplicitIntegrationFullVec:
-        assert problem.operation_log.count("native_commit") == 0
-    else:
-        assert problem.operation_log.count("native_commit") == accepted_local_count
+    assert problem.operation_log.count("native_commit") == accepted_local_count

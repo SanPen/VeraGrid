@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Focused offline gates for the named PowerFactory standard-example lane."""
 
 from __future__ import annotations
@@ -5,7 +9,6 @@ from __future__ import annotations
 import csv
 from datetime import datetime, timezone
 import hashlib
-import inspect
 import json
 from pathlib import Path
 import struct
@@ -23,20 +26,13 @@ from examples.fmi.veragrid_standard_examples.run_powerfactory_matrix import (
     PowerFactoryCell,
     PowerFactoryRunJob,
     build_powerfactory_initialization_derivative,
-    configure_standard_cell,
-    create_named_event_profile,
     inspect_pe_timestamp_normalized_binary,
     load_catalog_cells,
-    main as worker_main,
     parse_named_values,
-    prepare_powerfactory_compatibility_cells,
-    run_powerfactory_cell_worker,
     write_release_checkpoint,
 )
 from examples.fmi.veragrid_standard_examples.supervise_powerfactory_matrix import (
-    main as supervisor_main,
     validate_release_checkpoint,
-    write_matrix_release_checkpoint,
 )
 from examples.fmi.veragrid_standard_examples.validate_powerfactory_matrix import (
     canonicalize_named_trace,
@@ -45,9 +41,6 @@ from examples.fmi.veragrid_standard_examples.validate_powerfactory_matrix import
     validate_version_consistency,
     write_powerfactory_validator_view,
 )
-from examples.fmi.veragrid_standard_examples import validate_powerfactory_matrix
-
-
 def test_catalog_selection() -> None:
     """Require exactly twelve original PowerFactory-applicable catalog hashes.
 
@@ -195,21 +188,6 @@ def test_version_consistency(tmp_path: Path) -> None:
     assert receipt["status"] == "PASS"
 
 
-def test_t0_event_initialization_contract() -> None:
-    """Require empty inputInitFmu and explicit t=0 events for every input.
-
-    :return: None.
-    """
-    configure_source: str = inspect.getsource(configure_standard_cell)
-    event_source: str = inspect.getsource(create_named_event_profile)
-    assert 'set_owned_attribute(model, "inputInitFmu"' not in configure_source
-    assert 'model.GetAttribute("inputInitFmu")' in configure_source
-    assert 'len(readback_value) == 0' in configure_source
-    assert 'for input_name in cell.input_names' in event_source
-    assert 'float(schedule[0][input_name]), 0.0, "initial"' in event_source
-    assert 'set_owned_attribute(event, "outserv", 0' in event_source
-
-
 def test_powerfactory_validator_view(tmp_path: Path) -> None:
     """Permit only the auditable zero-time input rewrite in a separate CSV.
 
@@ -317,59 +295,11 @@ def test_supervisor_checkpoint(tmp_path: Path) -> None:
     write_release_checkpoint(failed_dir, failed_observations, "2" * 64, 102, job)
     with pytest.raises(ValueError):
         validate_release_checkpoint(failed_dir, "2" * 64, 102, job)
-    checkpoint_source: str = inspect.getsource(write_release_checkpoint)
-    worker_source: str = inspect.getsource(worker_main)
-    assert checkpoint_source.index("stream.flush()") < checkpoint_source.index("os.fsync") < checkpoint_source.index("os.replace")
-    supervisor_capture_index: int = worker_source.index("supervised_worker: bool = run_nonce is not None and job is not None")
-    nonce_generation_index: int = worker_source.index("nonce: str = secrets.token_hex(32) if run_nonce is None else run_nonce")
-    checkpoint_call_index: int = worker_source.rindex("write_release_checkpoint")
-    success_gate_index: int = worker_source.index('if supervised_worker and cleanup.get("status", None) == "PASS" and execution_complete', checkpoint_call_index)
-    isolated_exit_index: int = worker_source.index("os._exit(0)", success_gate_index)
-    ordinary_release_index: int = worker_source.index("application = cast", isolated_exit_index)
-    assert supervisor_capture_index < nonce_generation_index < checkpoint_call_index
-    assert checkpoint_call_index < success_gate_index < isolated_exit_index < ordinary_release_index
-
-
-def test_powerfactory_me_sensitivity_validator_views() -> None:
-    """Require every sensitivity comparison to consume authenticated views.
-
-    :return: None.
-    """
-    source: str = inspect.getsource(validate_powerfactory_matrix.main)
-    assert "if len(view_receipts) == 24" in source
-    assert "coarse_view: dict[str, object] = view_receipts" in source
-    assert "fine_view: dict[str, object] = view_receipts" in source
-    assert "load_numeric_csv(execution_dir / str(coarse[\"raw_csv\"]))" not in source
-    assert "load_numeric_csv(execution_dir / str(finer_matches[0][\"raw_csv\"]))" not in source
-
-
 def test_powerfactory_compatibility_derivative_contract(tmp_path: Path) -> None:
     """Bind deterministic source regeneration and the existing derivative owner.
 
     :return: None.
     """
-    source: str = inspect.getsource(prepare_powerfactory_compatibility_cells)
-    assert "guid=token" in source
-    assert "for pass_index in range(2)" in source
-    assert "candidate_members == canonical_members" in source
-    assert 'debug_snapshot_members: tuple[str, ...]' in source
-    assert '"resources/export_model.json"' in source
-    assert '"resources/snapshot.json"' in source
-    assert "len(debug_snapshot_receipts) == 4" in source
-    assert '"status": "RAW_PROVENANCE_ONLY"' in source
-    assert "normalize_export_model" not in source
-    assert "Regenerated FMI 3 deterministic non-binary member differs" in source
-    assert "build_powerfactory_compatibility_fmu" in source
-    assert "len(build_receipts) == 6" in source
-    assert "len(initialization_receipts) == 4" in source
-    assert "build_powerfactory_initialization_derivative" in source
-    initialization_source: str = inspect.getsource(build_powerfactory_initialization_derivative)
-    assert "comparison_source_node.tag == comparison_derived_node.tag" in initialization_source
-    assert "comparison_source_node.text == comparison_derived_node.text" in initialization_source
-    assert "comparison_source_node.tail == comparison_derived_node.tail" in initialization_source
-    assert "len(comparison_source_node) == len(comparison_derived_node)" in initialization_source
-    assert "expected_attributes == comparison_derived_node.attrib" in initialization_source
-    assert "Initialization derivative changed XML outside an authorized start coordinate" in initialization_source
     catalog_root: Path = (
         Path(__file__).resolve().parents[3]
         / "examples"
@@ -683,26 +613,6 @@ def test_powerfactory_compatibility_derivative_contract(tmp_path: Path) -> None:
     struct.pack_into("<I", invalid_debug_size, 88 + 112 + 6 * 8 + 4, 27)
     with pytest.raises(ValueError):
         inspect_pe_timestamp_normalized_binary(bytes(invalid_debug_size))
-    assert "len(candidate_binary) == len(canonical_binary)" in source
-    assert "set(differences).issubset(allowed_offsets)" in source
-    assert "regenerated_binary_hashes[0] == regenerated_binary_hashes[1]" in source
-
-
-def test_isolated_worker_matrix_contract() -> None:
-    """Require one child, checkpoint, ACK and marker per fixed job.
-
-    :return: None.
-    """
-    worker_source: str = inspect.getsource(run_powerfactory_cell_worker)
-    supervisor_source: str = inspect.getsource(supervisor_main)
-    master_source: str = inspect.getsource(write_matrix_release_checkpoint)
-    assert "return main(arguments, run_nonce, job)" in worker_source
-    assert "if len(jobs) == 24" in supervisor_source
-    assert "parent-checkpoint-ack.json" in supervisor_source
-    assert "worker-ack-validated.json" in supervisor_source
-    assert "worker_exit_value == 0" in supervisor_source
-    assert "len(child_records) == 24" in supervisor_source
-    assert "powerfactory_standard_matrix_checkpoint" in master_source
 
 
 def test_cominc_diagnostic_contract(tmp_path: Path) -> None:

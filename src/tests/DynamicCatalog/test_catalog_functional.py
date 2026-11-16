@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from typing import Sequence
@@ -68,5 +72,16 @@ def harness() -> TestDevicesCatalogFunctionalContractsHarness:
     test_harness.setUpClass()
     return test_harness
 
+
+@pytest.mark.parametrize("contract", build_functional_contract_parameters(), ids=build_functional_contract_id)
+def test_static_functional_contract(contract: FunctionalContract, harness: TestDevicesCatalogFunctionalContractsHarness) -> None:
+    """Check a catalog block against its explicit static input/output contract."""
+    harness.evaluate_contract(contract)
+
+
+@pytest.mark.parametrize("contract", build_dynamic_contract_parameters(), ids=build_dynamic_contract_id)
+def test_dynamic_functional_contract(contract: DynamicFunctionalContract, harness: TestDevicesCatalogFunctionalContractsHarness) -> None:
+    """Check a catalog block against its explicit time-domain contract."""
+    harness.simulate_dynamic_contract(contract)
 
 

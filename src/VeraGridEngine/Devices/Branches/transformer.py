@@ -8,7 +8,7 @@ import numpy as np
 from typing import Tuple
 from VeraGridEngine.basic_structures import Logger, Mat, IntVec
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import (WindingsConnection, BuildStatus, TapPhaseControl,
+from VeraGridEngine.enumerations import (BuildStatus, TapPhaseControl,
                                          TapModuleControl, TapChangerTypes, WindingType, PrpCat,
                                          ParamPowerFlowReferenceType)
 from VeraGridEngine.Devices.Parents.controllable_branch_parent import ControllableBranchParent
@@ -26,7 +26,6 @@ class Transformer2W(ControllableBranchParent):
         '_Pfe',
         '_I0',
         '_Vsc',
-        'conn',
         'template',
         'possible_transformer_types',
         '_conn_f',
@@ -91,13 +90,6 @@ class Transformer2W(ControllableBranchParent):
             definition='Short-circuit voltage (optional)',
             cat=[PrpCat.TP],
             dyn_ref=ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct,
-        ),
-        GCProp(
-            prop_name='conn',
-            units='',
-            tpe=WindingsConnection,
-            definition='Windings connection (from, to):G: grounded starS: ungrounded starD: delta',
-            cat=[PrpCat.TP, PrpCat.PF3, PrpCat.SC],
         ),
         GCProp(
             prop_name='conn_f',
@@ -184,7 +176,8 @@ class Transformer2W(ControllableBranchParent):
                  x2: float = 1e-20,
                  g2: float = 1e-20,
                  b2: float = 1e-20,
-                 conn: WindingsConnection = WindingsConnection.GG,
+                 conn_f: WindingType = WindingType.GroundedStar,
+                 conn_t: WindingType = WindingType.GroundedStar,
                  capex: float = 0.0,
                  opex: float = 0.0,
                  build_status: BuildStatus = BuildStatus.Commissioned,
@@ -242,7 +235,8 @@ class Transformer2W(ControllableBranchParent):
         :param x2: negative-sequence reactance (p.u.)
         :param g2: negative-sequence conductance (p.u.)
         :param b2: negative-sequence susceptance (p.u.)
-        :param conn: transformer connection type
+        :param conn_f: From-side winding connection
+        :param conn_t: To-side winding connection
         :param capex: Cost of investment (e/MW)
         :param opex: Cost of operation (e/MWh)
         :param build_status: build status (now time)
@@ -323,17 +317,14 @@ class Transformer2W(ControllableBranchParent):
 
         self.Vsc = float(short_circuit_voltage)
 
-        # connection type
-        self.conn: WindingsConnection = conn
-
         # type template
         self.template: TransformerType | None = template
 
         # association with transformer templates
         # self.possible_transformer_types: Associations = Associations(device_type=DeviceType.TransformerTypeDevice)
 
-        self._conn_f: WindingType = WindingType.GroundedStar
-        self._conn_t: WindingType = WindingType.GroundedStar
+        self._conn_f: WindingType = conn_f
+        self._conn_t: WindingType = conn_t
         self._vector_group_number: int = 0
         self._phases: IntVec = np.array([1, 2, 3])
 
@@ -360,6 +351,58 @@ class Transformer2W(ControllableBranchParent):
             self._conn_t = val
         else:
             raise Exception("Conn_t is not a WindingType")
+
+    def set_legacy_connection(self, connection: str) -> bool:
+        """Apply a retired two-character winding connection from a persisted file.
+
+        :param connection: Historical winding-pair value.
+        :return: True when the value maps to canonical winding sides.
+        """
+        connection_text: str = connection.strip().split('.')[-1]
+        connection_map: dict[str, tuple[WindingType, WindingType]] = {
+            'GG': (WindingType.GroundedStar, WindingType.GroundedStar),
+            'GS': (WindingType.GroundedStar, WindingType.FloatingStar),
+            'GD': (WindingType.GroundedStar, WindingType.Delta),
+            'SS': (WindingType.FloatingStar, WindingType.FloatingStar),
+            'SD': (WindingType.FloatingStar, WindingType.Delta),
+            'DD': (WindingType.Delta, WindingType.Delta),
+        }
+        connections: tuple[WindingType, WindingType] | None = connection_map.get(connection_text, None)
+        if connections is None:
+            return False
+        else:
+            self.conn_f = connections[0]
+            self.conn_t = connections[1]
+            return True
+
+    def set_legacy_control_mode(self, control_mode: str) -> bool:
+        """Apply a retired combined tap-control field from a persisted file.
+
+        :param control_mode: Historical combined transformer control mode.
+        :return: True when the value maps to current control properties.
+        """
+        if 'Pf' in control_mode:
+            self.tap_phase_control_mode = TapPhaseControl.Pf
+            return True
+        elif 'Pt' in control_mode:
+            self.tap_phase_control_mode = TapPhaseControl.Pt
+            return True
+        elif 'V' in control_mode:
+            self.tap_module_control_mode = TapModuleControl.Vm
+            self.regulation_bus = self.bus_to
+            return True
+        elif 'Qf' in control_mode:
+            self.tap_module_control_mode = TapModuleControl.Qf
+            return True
+        elif 'Qt' in control_mode:
+            self.tap_module_control_mode = TapModuleControl.Qt
+            return True
+        elif 'fixed' in control_mode:
+            self.tap_module_control_mode = TapModuleControl.fixed
+            self.tap_phase_control_mode = TapPhaseControl.fixed
+            return True
+        else:
+            return False
 
     @property
     def vector_group_number(self) -> int:
@@ -431,6 +474,17 @@ class Transformer2W(ControllableBranchParent):
             hv_at_from = False
 
         return tpe_f_v, tpe_t_v, hv_at_from
+
+    def get_clock_phase(self) -> float:
+        """Return the fixed from-to clock displacement, independently of the tap.
+
+        :return: Clock angle in radians, positive for an HV-to-LV branch.
+        """
+        if self.bus_from is not None and self.bus_to is not None:
+            _, _, hv_at_from = self.get_from_to_nominal_voltages()
+        else:
+            hv_at_from = True
+        return np.deg2rad(self.vector_group_number * 30.0) * (1 if hv_at_from else -1)
 
     def get_virtual_taps(self) -> Tuple[float, float]:
         """
@@ -718,6 +772,16 @@ class Transformer2W(ControllableBranchParent):
 
         conn_f = self.conn_f if conn_f is None else conn_f
         conn_t = self.conn_t if conn_t is None else conn_t
+        # The phase-domain primitive has one zig-zag model; grounding is represented
+        # by the network connection rather than by distinct primitive matrices.
+        if conn_f in (WindingType.NeutralZigZag, WindingType.FloatingZigZag):
+            conn_f = WindingType.GroundedZigZag
+        else:
+            pass
+        if conn_t in (WindingType.NeutralZigZag, WindingType.FloatingZigZag):
+            conn_t = WindingType.GroundedZigZag
+        else:
+            pass
         conn_y_from = conn_f == WindingType.NeutralStar or conn_f == WindingType.GroundedStar
         conn_y_to = conn_t == WindingType.NeutralStar or conn_t == WindingType.GroundedStar
 
@@ -807,7 +871,7 @@ class Transformer2W(ControllableBranchParent):
                 [0, -ytt / 3, -ytt / 3, 2 * ytt / 3]
             ])
 
-        elif conn_y_from and self.conn_t == WindingType.GroundedZigZag:  # 'Yz'
+        elif conn_y_from and conn_t == WindingType.GroundedZigZag:  # 'Yz'
             winding_phase = -np.pi / 6
             Yff = np.array([
                 [yff, 0, 0],
@@ -997,12 +1061,8 @@ class Transformer2W(ControllableBranchParent):
 
         # The clock specifies the total HV-to-LV lag, including the winding rotation.
         # Rotate opposite sequences oppositely and leave the zero-sequence path intact.
-        if self.bus_from is not None and self.bus_to is not None:
-            _, _, hv_at_from = self.get_from_to_nominal_voltages()
-        else:
-            hv_at_from = True
         if clock_phase is None:
-            clock_phase = np.deg2rad(self.vector_group_number * 30.0) * (1 if hv_at_from else -1)
+            clock_phase = self.get_clock_phase()
         else:
             pass
         correction: complex = np.exp(1j * (clock_phase - winding_phase))

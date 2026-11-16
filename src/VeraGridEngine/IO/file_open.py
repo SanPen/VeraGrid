@@ -47,6 +47,7 @@ from VeraGridEngine.IO.veragrid.h5_interface import open_h5
 from VeraGridEngine.IO.raw.rawx_parser_writer import parse_rawx
 from VeraGridEngine.IO.others.pypsa_parser import parse_pypsa_netcdf, parse_pypsa_hdf5
 from VeraGridEngine.IO.others.pandapower_parser import Panda2VeraGrid, is_pandapower_file
+from VeraGridEngine.IO.opendss.opendss_to_veragrid import OPENDSSDIRECT_AVAILABLE, OPENDSSDIRECT_UNAVAILABLE_REASON, opendss_to_veragrid
 from VeraGridEngine.IO.ucte.devices.ucte_circuit import UcteCircuit
 from VeraGridEngine.IO.ucte.ucte_to_veragrid import convert_ucte_to_veragrid
 from VeraGridEngine.IO.others.rte_parser import rte2veragrid
@@ -80,6 +81,7 @@ class FileOpenOptions:
         "psse_use_short_names",
         "psse_flatten_virtual_taps",
         "dgs_use_vsc_for_injections",
+        "dgs_use_complete_models_for_injections",
         "dgs_use_dynamic_information",
         "dgs_dynamic_simulation_mode",
     )
@@ -101,6 +103,7 @@ class FileOpenOptions:
                  psse_flatten_virtual_taps: bool = False,
                  # DGS
                  dgs_use_vsc_for_injections: bool = False,
+                 dgs_use_complete_models_for_injections: bool = False,
                  dgs_use_dynamic_information: bool = False,
                  dgs_dynamic_simulation_mode: DynamicSimulationMode | None = None,
                  ):
@@ -146,6 +149,7 @@ class FileOpenOptions:
 
         # DGS
         self.dgs_use_vsc_for_injections: bool = dgs_use_vsc_for_injections
+        self.dgs_use_complete_models_for_injections: bool = dgs_use_complete_models_for_injections
         self.dgs_use_dynamic_information: bool = dgs_use_dynamic_information
         self.dgs_dynamic_simulation_mode: DynamicSimulationMode | None = dgs_dynamic_simulation_mode
 
@@ -304,6 +308,9 @@ def determine_file_type(file_name: List[str] | str) -> FileType | None:
 
         elif file_extension == '.dgs':
             return FileType.DGS
+
+        elif file_extension == '.dss':
+            return FileType.OpenDSS
 
         elif file_extension == '.gch5':
             return FileType.VeraGrid_h5
@@ -793,11 +800,30 @@ class FileOpen:
                     self.file_name,
                     logger_=self.logger,
                     use_vsc_for_injections=self.options.dgs_use_vsc_for_injections,
+                    use_complete_models_for_injections=self.options.dgs_use_complete_models_for_injections,
                     use_dynamic_information=self.options.dgs_use_dynamic_information,
                     dynamic_simulation_mode=self.options.dgs_dynamic_simulation_mode,
                 )
             else:
                 self.logger.add("File name is not a string")
+                return None
+
+        elif self.file_type == FileType.OpenDSS:
+            if not OPENDSSDIRECT_AVAILABLE:
+                self.logger.add_warning(
+                    msg=(
+                        "OpenDSS import requires the optional OpenDSSDirect.py package. "
+                        "Install it with 'pip install OpenDSSDirect.py'. Details: "
+                        f"{OPENDSSDIRECT_UNAVAILABLE_REASON}"
+                    ),
+                    device_class="OpenDSS import",
+                )
+                return None
+
+            if isinstance(self.file_name, str):
+                self.circuit = opendss_to_veragrid(self.file_name, logger=self.logger)
+            else:
+                self.logger.add("OpenDSS import requires one .dss master file")
                 return None
 
         # --- European Grid Standards & RTE ---

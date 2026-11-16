@@ -20,14 +20,6 @@ VeraGridEngine.Simulations.NTC.ntc\_opf module
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.Simulations.NTC.ntc\_opf\_strict module
-------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Simulations.NTC.ntc_opf_strict
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 VeraGridEngine.Simulations.NTC.ntc\_options module
 --------------------------------------------------
 

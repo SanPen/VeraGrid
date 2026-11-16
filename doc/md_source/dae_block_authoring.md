@@ -470,9 +470,8 @@ def build_lagged_load_rms(
 Attach the block with the shared grid factory and the standard connection helper:
 
 ```python
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
-
 
 initialize_bus_rms(bus=load.bus, vf=grid.var_factory)
 load_template: RmsModelTemplate = build_lagged_load_rms(

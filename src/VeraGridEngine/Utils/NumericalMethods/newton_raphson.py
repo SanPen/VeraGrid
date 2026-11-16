@@ -8,7 +8,7 @@ from typing import Callable, Any
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Utils.NumericalMethods.common import (ConvexMethodResult, ConvexFunctionResult,
                                                           check_function_and_args)
-from VeraGridEngine.Utils.NumericalMethods.sparse_solve import get_linear_solver
+from VeraGridEngine.Utils.Sparse.sparse_solve import get_linear_solver
 from VeraGridEngine.basic_structures import Logger
 
 

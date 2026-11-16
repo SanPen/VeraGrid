@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Context-aware completion for the Dynamic Editor DAE source language."""
 
@@ -14,9 +18,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (
     get_symbolic_parser_function_names,
 )
 from VeraGridEngine.enumerations import ProceduralFieldType, ProceduralLogicType
-from VeraGridEngine.Templates.ProceduralLogicCatalog import (
-    ProceduralBlockTemplateDescriptor,
-)
+from VeraGridEngine.Templates.template_catalogue import ProceduralBlockTemplateDescriptor
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import (
     get_dynamic_library_procedural_descriptors,
 )
@@ -484,9 +486,9 @@ def build_procedural_function_entries(
             placeholder_start = -1
         if placeholder_start >= 0 and first_placeholder is not None:
             cursor_backtrack: int = (
-                len(insertion_text)
-                - placeholder_start
-                - len(first_placeholder)
+                    len(insertion_text)
+                    - placeholder_start
+                    - len(first_placeholder)
             )
             selection_length: int = len(first_placeholder)
         else:
@@ -502,6 +504,7 @@ def build_procedural_function_entries(
             tooltip=get_procedural_logic_help(logic_tpe),
         ))
     return result
+
 
 def extract_dae_identifier_prefix(source: str, cursor_position: int) -> str:
     """Return the Python-identifier fragment immediately before the cursor.
@@ -572,7 +575,7 @@ def cursor_is_in_dae_number(source: str, cursor_position: int) -> bool:
     cursor_line: int = source_prefix.count("\n") + 1
     last_newline_position: int = source_prefix.rfind("\n")
     cursor_column: int = bounded_position if last_newline_position < 0 else (
-        bounded_position - last_newline_position - 1
+            bounded_position - last_newline_position - 1
     )
     cursor_coordinates: tuple[int, int] = (cursor_line, cursor_column)
     result: bool = False
@@ -648,7 +651,7 @@ def get_dae_mapping_key_names(source: str, section_name: str) -> List[str]:
                 bracket_depth += 1
             elif source_token.type == tokenize.OP and token_text in (")", "]", "}"):
                 closes_dictionary: bool = (
-                    token_text == "}" and bracket_depth == dictionary_depth
+                        token_text == "}" and bracket_depth == dictionary_depth
                 )
                 bracket_depth = max(0, bracket_depth - 1)
                 if closes_dictionary:
@@ -741,9 +744,9 @@ def get_procedural_call_context(
             pending_name = None
         elif source_token.type == tokenize.OP and token_text in (")", "]", "}"):
             closes_active_call: bool = (
-                active_tpe is not None
-                and token_text == ")"
-                and bracket_depth == active_depth
+                    active_tpe is not None
+                    and token_text == ")"
+                    and bracket_depth == active_depth
             )
             bracket_depth = max(0, bracket_depth - 1)
             if closes_active_call:
@@ -790,8 +793,8 @@ def analyze_dae_completion_position(source: str,
     else:
         line_indentation = indentation_match.group(0)
     suppressed: bool = (
-        cursor_is_in_dae_non_code_text(source, bounded_position)
-        or cursor_is_in_dae_number(source, bounded_position)
+            cursor_is_in_dae_non_code_text(source, bounded_position)
+            or cursor_is_in_dae_number(source, bounded_position)
     )
     if suppressed:
         return DaeCompletionPosition(

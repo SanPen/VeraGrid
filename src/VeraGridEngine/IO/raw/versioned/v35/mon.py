@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """CheatSheets 35.2 section 1.3; ReleaseNotes 35.2 pages 10-11 explicitly add ranges, extra KV filters and TIE alias."""
 from VeraGridEngine.IO.raw.psse_auxiliary import PsseVersion, BusInputMode

@@ -1,10 +1,15 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.load_exponential_emt_template import get_exponential_load_emt
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import (
+from VeraGridEngine.Templates.Emt.load_characteristics.load_exponential_emt_template import get_exponential_load_emt
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import (
     ShuntCComboEmtTemplate,
     ShuntLComboEmtTemplate,
     ShuntRComboEmtTemplate,
@@ -14,7 +19,7 @@ from VeraGridEngine.Templates.Emt.load_RLC_emt_template import (
     get_shunt_r_emt_template,
     get_shunt_rlc_combo_emt_template,
 )
-from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_zip_emt_template import get_load_ZIP_emt_template
 from VeraGridEngine.Utils.Symbolic.block import Block, Expr, Var
 from VeraGridEngine.enumerations import BlockType, ShuntConnectionType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import assign_static_api_object_mapping_for_device
@@ -22,6 +27,8 @@ from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def test_individual_shunt_builders_keep_matching_names_and_topologies() -> None:
@@ -695,7 +702,7 @@ def test_corrected_shunt_block_roundtrip_preserves_physical_contract(resistive: 
         template = get_shunt_c_emt_template(vf, True, True, True)
     else:
         template = get_shunt_l_emt_template(vf, True, True, True)
-    restored: Block = Block.parse(template.block.to_dict())
+    restored: Block = roundtrip_block(template.block)
     assert restored.to_dict() == template.block.to_dict()
     vnom: Var = restored.external_mapping[VarPowerFlowReferenceType.VmSizing]
     assert vnom.uid == template.block.external_mapping[VarPowerFlowReferenceType.VmSizing].uid
@@ -742,7 +749,7 @@ def test_corrected_shunt_block_roundtrip_preserves_physical_contract(resistive: 
                     legacy_owner.event_dict[component] = legacy_parameter / (legacy_vnom ** 2 * frequency)
             else:
                 legacy_owner.event_dict[component] = legacy_vnom ** 2 / (legacy_parameter * frequency)
-    legacy: Block = Block.parse(template.block.to_dict())
+    legacy: Block = roundtrip_block(template.block)
     assert legacy.to_dict() == template.block.to_dict()
 
 
@@ -761,7 +768,7 @@ def test_sizing_reference_preserves_legacy_roundtrip() -> None:
     # it rather than migrating by variable name, device type or component formula.
     block.external_mapping[VarPowerFlowReferenceType.Vm] = sizing
     block.set_parameter_in_model(sizing.name, 1.17)
-    restored: Block = Block.parse(block.to_dict())
+    restored: Block = roundtrip_block(block)
     assert restored.to_dict() == block.to_dict()
     assert VarPowerFlowReferenceType.VmSizing not in restored.external_mapping
     assert restored.external_mapping[VarPowerFlowReferenceType.Vm].uid == sizing.uid
@@ -792,7 +799,7 @@ def test_sizing_reference_copy_rebind_default() -> None:
     # the same identity after rebinding; no parallel lookup state is retained.
     copied.update_model_bulk(dict(((sizing, rebound),)))
     assert copied.external_mapping[VarPowerFlowReferenceType.VmSizing].uid == rebound.uid
-    restored: Block = Block.parse(copied.to_dict())
+    restored: Block = roundtrip_block(copied)
     assert restored.to_dict() == copied.to_dict()
     assert isinstance(original.event_dict[sizing], Const)
     assert original.event_dict[sizing].value == 1.0

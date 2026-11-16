@@ -1,20 +1,24 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from typing import Dict
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.rms_meter_templates import RMS_CURRENT_METER_OUTPUT_NAMES
-from VeraGridEngine.Templates.Rms.rms_meter_templates import RMS_PLL_METER_OUTPUT_NAMES
-from VeraGridEngine.Templates.Rms.rms_meter_templates import RMS_POWER_METER_OUTPUT_NAMES
-from VeraGridEngine.Templates.Rms.rms_meter_templates import RMS_VOLTAGE_METER_OUTPUT_NAMES
-from VeraGridEngine.Templates.Rms.rms_meter_templates import build_rms_current_meter_outputs_from_pq
-from VeraGridEngine.Templates.Rms.rms_meter_templates import build_rms_pll_meter_outputs
-from VeraGridEngine.Templates.Rms.rms_meter_templates import build_rms_power_meter_outputs_from_pq
-from VeraGridEngine.Templates.Rms.rms_meter_templates import build_signal_meter_block
-from VeraGridEngine.Templates.Rms.rms_meter_templates import build_rms_station_meter_bundle
-from VeraGridEngine.Templates.Rms.rms_meter_templates import build_rms_voltage_meter_outputs_from_dc
-from VeraGridEngine.Templates.Rms.rms_meter_templates import build_rms_voltage_meter_outputs_from_polar
-from VeraGridEngine.Templates.Rms.rms_meter_templates import connect_meter_signal_outputs_to_block_inputs
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import RMS_CURRENT_METER_OUTPUT_NAMES
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import RMS_PLL_METER_OUTPUT_NAMES
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import RMS_POWER_METER_OUTPUT_NAMES
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import RMS_VOLTAGE_METER_OUTPUT_NAMES
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import build_rms_current_meter_outputs_from_pq
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import build_rms_pll_meter_outputs
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import build_rms_power_meter_outputs_from_pq
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import build_signal_meter_block
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import build_rms_station_meter_bundle
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import build_rms_voltage_meter_outputs_from_dc
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import build_rms_voltage_meter_outputs_from_polar
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import connect_meter_signal_outputs_to_block_inputs
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var
 

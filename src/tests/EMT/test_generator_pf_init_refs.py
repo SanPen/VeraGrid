@@ -10,11 +10,11 @@ import pytest
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.generator_emt_type_template import (
+from VeraGridEngine.Templates.Emt.synchronous_machines.generator_emt_type_template import (
     get_generator_sauer_pai_type_emt_template,
     get_pf_positive_sequence_init_refs,
 )
-from VeraGridEngine.Templates.Emt.simple_generator_emt_template import get_simple_generator_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.simple_generator_emt_template import get_simple_generator_emt_template
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 

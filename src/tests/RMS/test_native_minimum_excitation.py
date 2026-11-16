@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Physical capability geometry and rate-feedback checks for excitation limiters."""
 from __future__ import annotations
@@ -6,10 +10,10 @@ import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards import build_international_standard_template
-from VeraGridEngine.Templates.Rms.international_standards.excitation_limiters.mnlex1 import build_mnlex1_template
-from VeraGridEngine.Templates.Rms.international_standards.excitation_limiters.mnlex2 import build_mnlex2_template
-from VeraGridEngine.Templates.Rms.international_standards.excitation_limiters.mnlex3 import build_mnlex3_template
+from VeraGridEngine.Templates.Rms import build_international_standard_template
+from VeraGridEngine.Templates.Rms.excitation_limiters.mnlex1 import build_mnlex1_template
+from VeraGridEngine.Templates.Rms.excitation_limiters.mnlex2 import build_mnlex2_template
+from VeraGridEngine.Templates.Rms.excitation_limiters.mnlex3 import build_mnlex3_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.enumerations import InternationalStandardModel
 from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller

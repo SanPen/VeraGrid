@@ -750,7 +750,8 @@ def dSf_dVa_csc(nbus, br_indices, bus_indices, yft, V, F, T) -> CxCSC:
         f_idx = j_lookup[f]
         t_idx = j_lookup[t]
 
-        if f_idx >= 0 and t_idx >= 0:
+        # A fixed angle at one end does not remove sensitivity at the other.
+        if f_idx >= 0 or t_idx >= 0:
             Vm_f = np.abs(V[f])
             Vm_t = np.abs(V[t])
             th_f = np.angle(V[f])
@@ -772,6 +773,8 @@ def dSf_dVa_csc(nbus, br_indices, bus_indices, yft, V, F, T) -> CxCSC:
                 Ti[nnz] = k_counter
                 Tj[nnz] = t_idx
                 nnz += 1
+        else:
+            pass
 
     # convert to csc
     mat.fill_from_coo(Ti, Tj, Tx, nnz)

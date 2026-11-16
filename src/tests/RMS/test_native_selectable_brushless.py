@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Brushless selected-gate topology, initialization and field-current-stop recovery."""
 from __future__ import annotations
@@ -5,11 +9,11 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.dc_exciter import RotatingLimiterLocation
-from VeraGridEngine.Templates.Rms.international_standards.excitation_systems.ac1c import build_ac1c_template
-from VeraGridEngine.Templates.Rms.international_standards.excitation_systems.ac2c import build_ac2c_template
-from VeraGridEngine.Templates.Rms.international_standards.excitation_systems.ac5c import build_ac5c_template
-from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import set_rms_model_parameter
+from VeraGridEngine.Templates.Rms.excitation_systems.dc_exciter import RotatingLimiterLocation
+from VeraGridEngine.Templates.Rms.excitation_systems.ac1c import build_ac1c_template
+from VeraGridEngine.Templates.Rms.excitation_systems.ac2c import build_ac2c_template
+from VeraGridEngine.Templates.Rms.excitation_systems.ac5c import build_ac5c_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import set_rms_model_parameter
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var, Expr
 from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import collect_direct_algebraic_initializers

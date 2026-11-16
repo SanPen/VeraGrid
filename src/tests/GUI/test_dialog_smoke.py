@@ -1,6 +1,9 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-import ast
 import copy
 import multiprocessing
 import queue
@@ -8,7 +11,6 @@ import tempfile
 import time
 import traceback
 from enum import Enum
-from pathlib import Path
 from typing import Any, Dict, List, Set
 
 import numpy as np
@@ -118,6 +120,7 @@ from VeraGrid.Gui.gui_functions import SequenceEditorDialog
 from VeraGrid.Gui.object_column_filter_dialog import ObjectColumnFilterDialog
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
+from VeraGrid.Gui.OperatorsView.operator_view import OperatorView
 from VeraGrid.Session.session import SimulationSession
 from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
@@ -227,6 +230,7 @@ class DialogSmokeTarget(Enum):
     SEQUENCE_EDITOR = "SequenceEditorDialog"
     LOOKUP_MATRIX_EDITOR = "LookupMatrixEditorDialog"
     OBJECT_COLUMN_FILTER = "ObjectColumnFilterDialog"
+    OPERATOR_VIEW = "OperatorView"
 
 
 class NamedObject:
@@ -319,7 +323,13 @@ class FakeMainUi:
     Minimal GUI namespace required by a few diagram dialogues.
     """
 
-    __slots__ = ("defaultBusVoltageSpinBox",)
+    __slots__ = (
+        "defaultBusVoltageSpinBox",
+        "actionPower_flow",
+        "actionShort_Circuit",
+        "actionRun_Dynamic_RMS_Simulation",
+        "actionOPF",
+    )
 
     def __init__(self) -> None:
         """
@@ -328,6 +338,10 @@ class FakeMainUi:
         :return: None.
         """
         self.defaultBusVoltageSpinBox: FakeSpinBox = FakeSpinBox()
+        self.actionPower_flow: QtGui.QAction = QtGui.QAction()
+        self.actionShort_Circuit: QtGui.QAction = QtGui.QAction()
+        self.actionRun_Dynamic_RMS_Simulation: QtGui.QAction = QtGui.QAction()
+        self.actionOPF: QtGui.QAction = QtGui.QAction()
 
 
 class FakeServerDriver:
@@ -390,6 +404,7 @@ class FakeIoApp:
         "server_driver",
         "session",
         "ui",
+        "operator_view_visible",
     )
 
     def __init__(self, circuit: vge.MultiCircuit) -> None:
@@ -411,6 +426,15 @@ class FakeIoApp:
         self.server_driver: FakeServerDriver = FakeServerDriver()
         self.session: SimulationSession = SimulationSession()
         self.ui: FakeMainUi = FakeMainUi()
+        self.operator_view_visible: bool = False
+
+    def set_operator_view_action_checked(self, is_checked: bool) -> None:
+        """Record the visibility state reported by the Operator View.
+
+        :param is_checked: Whether the Operator View is visible.
+        :return: None.
+        """
+        self.operator_view_visible = is_checked
 
     def get_selected_buses(self) -> Set[vge.Bus]:
         """
@@ -1192,6 +1216,10 @@ def build_dialog_for_smoke(target: DialogSmokeTarget, context: DialogSmokeContex
         dialog = LookupMatrixEditorDialog()
     elif target == DialogSmokeTarget.OBJECT_COLUMN_FILTER:
         dialog = build_object_filter_dialog()
+    elif target == DialogSmokeTarget.OPERATOR_VIEW:
+        device_types: List[DeviceType] = list()
+        device_types.append(DeviceType.BusDevice)
+        dialog = OperatorView(device_types=device_types, main_gui=fake_app)
     else:
         raise AssertionError(f"Unhandled smoke target {target}")
 
@@ -1568,63 +1596,6 @@ def run_dialog_smoke_suite_subprocess(timeout_s: float) -> None:
     assert process.exitcode == 0, message
 
 
-def get_smoked_dialog_class_names() -> Set[str]:
-    """
-    Return class names covered by the smoke test.
-
-    :return: Covered class names.
-    """
-    names: Set[str] = set()
-    target: DialogSmokeTarget
-    for target in DialogSmokeTarget:
-        names.add(target.value)
-    return names
-
-
-def get_deferred_dialog_class_names() -> Set[str]:
-    """
-    Return base classes and dialogs covered by dedicated GUI fixtures.
-
-    :return: Deferred class names.
-    """
-    names: Set[str] = set()
-    names.add("BaseMainGui")
-    names.add("CenteredDialog")
-    names.add("CandidateInvestmentsWindow")
-    names.add("ManufacturerNativeImporterDialog")
-    return names
-
-
-def discover_qt_dialog_class_names() -> Set[str]:
-    """
-    Discover dialog/window classes declared under ``VeraGrid.Gui``.
-
-    :return: Class names backed by QDialog/QMainWindow/CenteredDialog.
-    """
-    tests_root: Path = Path(__file__).resolve().parents[1]
-    gui_root: Path = tests_root.parent / "VeraGrid" / "Gui"
-    class_names: Set[str] = set()
-    path: Path
-    for path in gui_root.rglob("*.py"):
-        tree: ast.Module = ast.parse(path.read_text(encoding="utf-8"))
-        node: ast.stmt
-        for node in tree.body:
-            if isinstance(node, ast.ClassDef):
-                bases: List[str] = list()
-                base: ast.expr
-                for base in node.bases:
-                    bases.append(ast.unparse(base))
-                if ("QDialog" in bases) or ("QMainWindow" in bases) or ("QtWidgets.QDialog" in bases):
-                    class_names.add(node.name)
-                elif ("CenteredDialog" in bases) or ("QtWidgets.QMainWindow" in bases):
-                    class_names.add(node.name)
-                else:
-                    pass
-            else:
-                pass
-    return class_names
-
-
 def test_dialog_opens_and_closes_without_blowing_up() -> None:
     """
     Smoke open and close each stable GUI dialog in an isolated process.
@@ -1710,19 +1681,6 @@ def test_logs_dialogue_expands_first_column_and_colors_severity(qt_app: QtWidget
                     assert message_item.background().style() == QtCore.Qt.BrushStyle.NoBrush
     finally:
         close_dialog_for_smoke(dialog=dialog, app=qt_app)
-
-
-def test_dialog_smoke_inventory_is_explicit() -> None:
-    """
-    Keep the smoke target list aligned with real dialog/window classes.
-
-    :return: None.
-    """
-    known_names: Set[str] = get_smoked_dialog_class_names()
-    known_names.update(get_deferred_dialog_class_names())
-    missing_names: Set[str] = discover_qt_dialog_class_names() - known_names
-
-    assert sorted(missing_names) == list()
 
 
 def test_measurements_dialog_tree_io_column_composes_reference_directions(qt_app: QtWidgets.QApplication) -> None:

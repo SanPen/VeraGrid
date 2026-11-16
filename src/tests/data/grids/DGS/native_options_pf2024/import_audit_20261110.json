@@ -1,0 +1,85 @@
+{
+  "scope": "Equation parsing and dynamic import bundle construction; no RMS trajectory validation.",
+  "files": [
+    {
+      "file": "bess_base.dgs",
+      "block_definition_count": 59,
+      "unsupported_equations": [],
+      "catalogue_entries": 65,
+      "importable_catalogue_entries": 59,
+      "diagnostics": []
+    },
+    {
+      "file": "bess_coupled_converter.dgs",
+      "block_definition_count": 59,
+      "unsupported_equations": [],
+      "catalogue_entries": 65,
+      "importable_catalogue_entries": 59,
+      "diagnostics": []
+    },
+    {
+      "file": "bess_current_controller_on.dgs",
+      "block_definition_count": 59,
+      "unsupported_equations": [],
+      "catalogue_entries": 65,
+      "importable_catalogue_entries": 59,
+      "diagnostics": []
+    },
+    {
+      "file": "bess_modulation_1.dgs",
+      "block_definition_count": 59,
+      "unsupported_equations": [],
+      "catalogue_entries": 65,
+      "importable_catalogue_entries": 59,
+      "diagnostics": []
+    },
+    {
+      "file": "bess_modulation_limit_on.dgs",
+      "block_definition_count": 59,
+      "unsupported_equations": [],
+      "catalogue_entries": 65,
+      "importable_catalogue_entries": 59,
+      "diagnostics": []
+    },
+    {
+      "file": "bess_virtual_admittance_dynamic.dgs",
+      "block_definition_count": 59,
+      "unsupported_equations": [],
+      "catalogue_entries": 65,
+      "importable_catalogue_entries": 59,
+      "diagnostics": []
+    },
+    {
+      "file": "nine_bus_avr_amplidyne.dgs",
+      "block_definition_count": 9,
+      "unsupported_equations": [],
+      "catalogue_entries": 15,
+      "importable_catalogue_entries": 9,
+      "diagnostics": []
+    },
+    {
+      "file": "nine_bus_avr_pss.dgs",
+      "block_definition_count": 14,
+      "unsupported_equations": [],
+      "catalogue_entries": 19,
+      "importable_catalogue_entries": 14,
+      "diagnostics": []
+    },
+    {
+      "file": "nine_bus_classical.dgs",
+      "block_definition_count": 1,
+      "unsupported_equations": [],
+      "catalogue_entries": 8,
+      "importable_catalogue_entries": 1,
+      "diagnostics": []
+    },
+    {
+      "file": "nine_bus_standard.dgs",
+      "block_definition_count": 1,
+      "unsupported_equations": [],
+      "catalogue_entries": 8,
+      "importable_catalogue_entries": 1,
+      "diagnostics": []
+    }
+  ]
+}

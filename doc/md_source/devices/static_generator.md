@@ -87,12 +87,12 @@ earth connection. The PQ sequence source reproduces the P1/Q1 behaviour validate
 against native PowerFactory constq cases; it does not copy the PV controller's
 terminal-power compensation. Connection and sequence data survive native save/load.
 
-Without the explicit VSC import option, `ElmSvs` with voltage droop
-(`i_ctrl = 1`, `i_droop != 0`) becomes a `StaticGenerator` in Q-V droop mode.
-`Srated`, `ddroop` and `usetp` map to `Snom`, `droop` and `Vset`;
-the P/Q references are zero, as in the existing SVC-to-VSC route.
-Other SVC modes keep their previous shunt mapping. Selecting VSC import retains
-the converter mapping. This is a local terminal-voltage equivalent.
+Without the explicit VSC import option, `ElmSvs` with voltage droop now becomes a
+[ControllableShunt](controllable_shunt.md) in Q-V droop mode. It reuses the same
+Q-U1 curve but retains the physical susceptance's negative-sequence response.
+Reimport DGS to replace older SVC equivalents stored as static generators.
+Generic static generators and storage with droop retain the current-source model
+described above; selecting VSC import retains the converter mapping.
 
 The control settings survive native `.veragrid` save/load. Older native static
 generators default to PQ. This addition extends power flow and DGS import;

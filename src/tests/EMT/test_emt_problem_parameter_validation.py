@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Tests for contextual EMT parameter diagnostics."""
 
 from __future__ import annotations
@@ -10,9 +14,9 @@ from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import reso
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
-from VeraGridEngine.Templates.Emt.generator_emt_type_template import get_governor_emt
-from VeraGridEngine.Templates.Emt.simple_generator_emt_template import get_simple_generator_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import (
+from VeraGridEngine.Templates.Emt.synchronous_machines.generator_emt_type_template import get_governor_emt
+from VeraGridEngine.Templates.Emt.synchronous_machines.simple_generator_emt_template import get_simple_generator_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import (
     get_generator_thevenin_rl_emt_template_with_ref,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -39,12 +43,12 @@ from VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver import St
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import (
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import (
     get_shunt_r_emt_template,
     get_shunt_l_emt_template,
     get_shunt_c_emt_template,
 )
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 
 

@@ -3,7 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 import os
+from pathlib import Path
+
 import VeraGridEngine.api as vge
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.IO.file_open import FileOpen
 
 
 def test_add_stuff_roundtrip() -> None:
@@ -237,6 +241,52 @@ def test_diff_addition_deselection_persists_across_save_load(tmp_path) -> None:
     original.merge_circuit(loaded_diff)
 
     assert all(bus.name != "Bus_to_skip_from_diff" for bus in original.buses)
+
+
+def test_differential_pointer_objects_keep_unchanged_base_devices(tmp_path: Path) -> None:
+    """
+    Preserve differential pointer objects whose physical target is inherited from the base circuit.
+    """
+    base: MultiCircuit = MultiCircuit(name="base")
+    bus_a: vge.Bus = vge.Bus(name="A", Vnom=220.0, is_slack=True)
+    bus_b: vge.Bus = vge.Bus(name="B", Vnom=220.0)
+    base.add_bus(bus_a)
+    base.add_bus(bus_b)
+    base.add_line(vge.Line(bus_from=bus_a, bus_to=bus_b, name="unchanged line"))
+
+    target: MultiCircuit = base.copy()
+    contingency_group: vge.ContingencyGroup = vge.ContingencyGroup(name="N-1 unchanged line")
+    remedial_action_group: vge.RemedialActionGroup = vge.RemedialActionGroup(name="unchanged line action")
+    investments_group: vge.InvestmentsGroup = vge.InvestmentsGroup(name="unchanged line investment")
+    target.add_contingency_group(contingency_group)
+    target.add_remedial_action_group(remedial_action_group)
+    target.add_investments_group(investments_group)
+    target.add_contingency(vge.Contingency(device=target.lines[0], group=contingency_group))
+    target.add_remedial_action(vge.RemedialAction(device=target.lines[0], group=remedial_action_group))
+    target.add_investment(vge.Investment(device=target.lines[0], group=investments_group))
+
+    valid: bool
+    logger: vge.Logger
+    differential: MultiCircuit
+    valid, logger, differential = target.differentiate_circuits(base_grid=base, force_second_pass=True)
+    assert valid, logger
+
+    output_file: Path = tmp_path / "pointer_loss.dveragrid"
+    vge.save_file(grid=differential, filename=str(output_file))
+    reopened: MultiCircuit | None = FileOpen(file_name=str(output_file), previous_circuit=base).open()
+    assert reopened is not None
+
+    merged: MultiCircuit = base.copy()
+    merged.merge_circuit(new_grid=reopened)
+    assert len(differential.contingencies) == 1
+    assert len(differential.remedial_actions) == 1
+    assert len(differential.investments) == 1
+    assert len(reopened.contingencies) == 1
+    assert len(reopened.remedial_actions) == 1
+    assert len(reopened.investments) == 1
+    assert len(merged.contingencies) == 1
+    assert len(merged.remedial_actions) == 1
+    assert len(merged.investments) == 1
 
 
 def test_differentiate_circuits_preserves_time_profile_consistency() -> None:

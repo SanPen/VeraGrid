@@ -1,3 +1,4 @@
+
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can see it at https://mozilla.org/MPL/2.0/.
@@ -37,6 +38,8 @@ from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonTraceCollector
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import atan2, Comparison, Const, Expr, sin, Var
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def _read_benchmark_float(
@@ -816,10 +819,7 @@ def test_block_roundtrip_preserves_procedural_logic() -> None:
     vf = VarFactory()
     block, _ = create_integrator_trip_system_with_logic(vf)
 
-    restored = Block.parse(
-        data=block.to_dict(),
-        procedural_logic_codec=ProceduralLogicCodec(),
-    )
+    restored = roundtrip_block(block, procedural_logic_codec=ProceduralLogicCodec())
 
     assert len(restored.procedural_logic) == 1
     logic = restored.procedural_logic[0]
@@ -967,10 +967,7 @@ def test_sampled_value_uses_declarative_atan2_argument_order(
             u_max=Const(math.pi),
         ),))
     block.unify_blocks()
-    block = Block.parse(
-        data=block.to_dict(),
-        procedural_logic_codec=ProceduralLogicCodec(),
-    )
+    block = roundtrip_block(block, procedural_logic_codec=ProceduralLogicCodec())
     problem: GenericEmtProblem = GenericEmtProblem(
         sys_block=block,
         glob_time=vf.add_var("t_glob_atan2"),

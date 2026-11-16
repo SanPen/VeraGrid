@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 0
 - Top-level function count: 1
-- Representative imports: time, numpy, scipy.sparse, VeraGridEngine.Utils.NumericalMethods.sparse_solve, VeraGridEngine.Simulations.PowerFlow.power_flow_results, VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template, VeraGridEngine.Utils.Sparse.csc2, VeraGridEngine.basic_structures
+- Representative imports: time, numpy, scipy.sparse, VeraGridEngine.Utils.Sparse.sparse_solve, VeraGridEngine.Simulations.PowerFlow.power_flow_results, VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template, VeraGridEngine.Utils.Sparse.csc2, VeraGridEngine.basic_structures
 
 ## Function: levenberg_marquardt_fx(problem, tol, max_iter, verbose, logger)
 

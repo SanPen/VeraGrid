@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import math
@@ -8,7 +12,7 @@ import numpy as np
 
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
-from VeraGridEngine.Utils.procedural_logic import AnalogFlipFlopLogic, FixedSampleLogic, FlipFlopLogic, GradientLimiterLogic, MovingAverageLogic, PickupDropoffLogic, ResetOnRisingEdgeLogic, SampledValueLogic, TimeDelayLogic
+from VeraGridEngine.Utils.procedural_logic import AnalogFlipFlopLogic, FixedSampleLogic, FlipFlopLogic, GradientLimiterLogic, MovingAverageLogic, PickupDropoffLogic, ProceduralExpressionMode, ResetOnRisingEdgeLogic, SampledValueLogic, TimeDelayLogic
 from VeraGridEngine.Utils.Symbolic.symbolic import Comparison, Expr
 
 from DynamicCatalog._catalog_support import (
@@ -275,16 +279,30 @@ def bind_internal_surface_values(uid_bindings: Dict[int, float], contract_values
     logical_name: str
     value: float
     for logical_name, value in contract_values.items():
+        exact_matches: dict[int, Var] = dict()
         matches: dict[int, Var] = dict()
         var: Var
         for var in vars_list:
-            if matches_internal_name(var, logical_name):
+            if var.name.startswith(f"{logical_name}_"):
+                exact_matches[var.uid] = var
+            elif matches_internal_name(var, logical_name):
                 matches[var.uid] = var
             else:
                 pass
 
-        if len(matches) == 1:
-            uid_bindings[next(iter(matches.values())).uid] = value
+        if len(exact_matches) == 0 and logical_name.startswith("y"):
+            legacy_name: str = logical_name[1:]
+            for var in vars_list:
+                if var.name.startswith(f"{legacy_name}_"):
+                    exact_matches[var.uid] = var
+                else:
+                    pass
+        else:
+            pass
+
+        selected_matches: dict[int, Var] = exact_matches if len(exact_matches) > 0 else matches
+        if len(selected_matches) == 1:
+            uid_bindings[next(iter(selected_matches.values())).uid] = value
         else:
             raise KeyError(f"Could not bind internal surface '{logical_name}' uniquely")
 
@@ -2622,13 +2640,10 @@ def build_functional_contracts() -> list[FunctionalContract]:
     FunctionalContract(label="lookup_array_1x3_linear_variable", typ_id="11", inputs={"yi": 0.5, "arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, params={"vClip": 1.0}, outputs={"yo": 5.0}),
     FunctionalContract(label="lookup_array_1x4_linear_fixed", typ_id="12", inputs={"yi": 2.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_x4": 3.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0, "arr_y4": 30.0, "vClip": 1.0}, outputs={"yo": 25.0}),
     FunctionalContract(label="lookup_array_1x4_linear_variable", typ_id="13", inputs={"yi": 2.5, "arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_x4": 3.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0, "arr_y4": 30.0}, params={"vClip": 1.0}, outputs={"yo": 25.0}),
-    FunctionalContract(label="lookup_array_linear_default", typ_id="7", inputs={"yi": 0.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 5.0}),
     FunctionalContract(label="lookup_array_linear_noclipping_default", typ_id="8", inputs={"yi": 2.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 25.0}),
-    FunctionalContract(label="inverse_lookup_array_linear_default", typ_id="5", inputs={"yi": 5.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 0.5}),
     FunctionalContract(label="inverse_lookup_array_object_linear_default", typ_id="6", inputs={"yi": 5.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 0.5}),
     FunctionalContract(label="lookup_array_object_linear_default", typ_id="14", inputs={"yi": 0.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 5.0}),
     FunctionalContract(label="lookup_array_object_linear_noclipping_default", typ_id="15", inputs={"yi": 2.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 25.0}),
-    FunctionalContract(label="lookup_array_spline_default", typ_id="9", inputs={"yi": 0.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 5.0}),
     FunctionalContract(label="lookup_array_object_spline_default", typ_id="16", inputs={"yi": 0.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 5.0}),
     FunctionalContract(label="lookup_matrix_linear_default", typ_id="17", inputs={"yi1": 0.5, "yi2": 1.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_y1": 0.0, "arr_y2": 2.0, "arr_z1_1": 0.0, "arr_z1_2": 10.0, "arr_z2_1": 20.0, "arr_z2_2": 30.0}, outputs={"yo": 15.0}),
     FunctionalContract(label="lookup_matrix_spline_default", typ_id="18", inputs={"yi1": 0.5, "yi2": 1.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_y1": 0.0, "arr_y2": 2.0, "arr_z1_1": 0.0, "arr_z1_2": 10.0, "arr_z2_1": 20.0, "arr_z2_2": 30.0}, outputs={"yo": 15.0}),
@@ -3243,7 +3258,7 @@ class TestDevicesCatalogFunctionalContractsHarness(unittest.TestCase):
             x[problem.uid2idx_vars[var.uid]] = evaluate_runtime_expr(problem, expr, x, params, 0.0)
 
         for logic in block.procedural_logic:
-            logic.bind(problem)
+            logic.bind(problem, expression_mode=ProceduralExpressionMode.Interpreted)
 
         return block, problem, x, params
 

@@ -2610,58 +2610,6 @@ class PhasesShortCircuit(Enum):
         return list(enum_item.value for enum_item in cls)
 
 
-class WindingsConnection(str, Enum):
-    """
-    Transformer windings connection types
-    """
-    # G: grounded star
-    # S: ungrounded star
-    # D: delta
-    GG = ('GG', 0)
-    GS = ('GS', 1)
-    GD = ('GD', 2)
-    SS = ('SS', 3)
-    SD = ('SD', 4)
-    DD = ('DD', 5)
-
-    def __new__(cls, value: str, code: int):
-        obj = str.__new__(cls, value)
-        obj._value_ = value
-        obj.code = code
-        return obj
-
-    def __str__(self) -> str:
-        """Return the enum value as text."""
-        return str(self.value)
-
-    def __repr__(self) -> str:
-        """Return the enum value representation."""
-        return str(self)
-
-    def idx(self) -> int:
-        return self.code
-
-    @staticmethod
-    def argparse(s):
-        """
-
-        :param s:
-        :return:
-        """
-        try:
-            return WindingsConnection[s]
-        except KeyError:
-            return s
-
-    @classmethod
-    def list(cls):
-        """
-
-        :return:
-        """
-        return list(enum_item.value for enum_item in cls)
-
-
 class TerminalType(Enum):
     """
     Terminal types
@@ -2800,9 +2748,11 @@ class WindingType(str, Enum):
     FloatingStar = ("Y", 1)
     GroundedStar = ("Yg", 2)
     Delta = ("D", 3)
+    # Distinct codes must survive numerical-circuit compilation even though all
+    # zig-zag types share the present primitive transformer model.
     NeutralZigZag = ("Zn", 4)
-    FloatingZigZag = ("Z", 4)
-    GroundedZigZag = ("Zg", 4)
+    FloatingZigZag = ("Z", 5)
+    GroundedZigZag = ("Zg", 6)
 
     def __new__(cls, value: str, code: int):
         obj = str.__new__(cls, value)
@@ -3013,6 +2963,16 @@ class PrpCat(Enum):
 #         :return:
 #         """
 #         return list(enum_item.value for enum_item in cls)
+
+
+class DgsImportField(Enum):
+    """Name the string keys of import metadata without accepting arbitrary fields."""
+
+    DGS_ELMSYM_RUNTIME_ADAPTER = "dgs_elmsym_runtime_adapter"
+    DGS_ELMSYM_ROTOR_ANGLE_VAR_UID = "dgs_elmsym_rotor_angle_var_uid"
+    DGS_ELMSYM_SPEED_VAR_UID = "dgs_elmsym_speed_var_uid"
+    DGS_LOGICAL_ACTUATOR_ROOT_ID = "dgs_logical_actuator_root_id"
+    DGS_OPEN_RESISTANCE_OHM = "dgs_open_resistance_ohm"
 
 
 class DgsDynamicAssociationRole(Enum):
@@ -3533,6 +3493,7 @@ class FileType(Enum):
     PyPsa_h5 = "PyPSA H5"
     PyPsa = "PyPsa"
     PandaPower = "Pandapower"
+    OpenDSS = "OpenDSS"
     Iidm = "Iidm"
     Eurostag = "Eurostag"
     PSSE_raw = "PSS/e raw"
@@ -3834,12 +3795,12 @@ class SparseSolver(Enum):
     ILU = 'ILU'
     KLU = 'KLU'
     CLU = 'CLU'
+    CLU_Numba = 'CLU_Numba'
     SuperLU = 'SuperLU'
     Pardiso = 'Pardiso'
     GMRES = 'GMRES'
     UMFPACK = 'UmfPack'
     UMFPACKTriangular = 'UmfPackTriangular'
-    GSLV = 'GSLV'  # Native LU runtime of the licensed pygslv package (pygslv.sparse_lu)
 
     def __str__(self) -> str:
         """Return the enum value as text."""
@@ -4033,6 +3994,7 @@ class ResultTypes(Enum):
     # PF
     BusVoltageModule = 'V: Voltage module'
 
+    BusVoltageModuleABC = 'VABC: Voltage module ABC'
     BusVoltageModuleA = 'VA: Voltage module A'
     BusVoltageModuleB = 'VB: Voltage module B'
     BusVoltageModuleC = 'VC: Voltage module C'
@@ -4819,6 +4781,8 @@ class DynamicIntegrationMethod(Enum):
     # Implicit time-stepping (DAE form)
     DaeTrapezoidal = "DAE_Trapezoidal"
     DaeBackEuler = "DAE_BackEuler"
+    DaeAdaptiveBdf12 = "DAE_Adaptive_BDF_1_2"
+    DaeAdaptiveBdf15 = "DAE_Adaptive_BDF_1_5"
     DaeBDF2 = "DAE_bdf2"
     DaeContinuous = "DAE_Continuous"
 
@@ -4947,6 +4911,40 @@ class ResidualRowAffinityCode(IntEnum):
     EXCITATION = 1
     AFFINE = 2
     NONLINEAR = 3
+
+    def __str__(self) -> str:
+        """Return the enum name as text."""
+        return str(self.name)
+
+
+class EmtNativeOpcode(IntEnum):
+    """
+    Closed opcode set of the native EMT program executed by external solvers.
+
+    The values reproduce the GSLV native EMT structural opcodes and are part of
+    the interchange schema veragrid-gslv-emt-program-v1; they must never be
+    renumbered.
+    """
+    __slots__ = tuple()
+
+    CONSTANT = 0
+    RUNTIME = 1
+    DIFFERENTIAL = 2
+    PARAMETER = 3
+    ADD = 4
+    SUBTRACT = 5
+    MULTIPLY = 6
+    DIVIDE = 7
+    POWER_CONSTANT = 8
+    POWER = 9
+    NEGATE = 10
+    SIN = 11
+    COS = 12
+    EXP = 13
+    LOG = 14
+    SQRT = 15
+    ABSOLUTE = 16
+    HEAVISIDE = 17
 
     def __str__(self) -> str:
         """Return the enum name as text."""
@@ -5461,6 +5459,8 @@ class VarPowerFlowReferenceType(Enum):
 
     ID = "ID"
     IQ = "IQ"
+
+    MODE_MARKER = "Mode_Marker"
 
     def __str__(self) -> str:
         """Return the enum value as text."""
@@ -6221,7 +6221,6 @@ class DynamicTemplateCategory(Enum):
 
     DEVICE = "device"
     COMPONENT = "component"
-    MEASUREMENT = "measurement"
 
     def __str__(self) -> str:
         """Return the enum value as text."""
@@ -6321,6 +6320,7 @@ class RmsVectorizedNodalBalanceKind(Enum):
     ACTIVE_POWER = 1
     REACTIVE_POWER = 2
     CAPACITIVE_DC_POWER = 3
+    FIXED_VOLTAGE = 4
 
     def __str__(self) -> str:
         """Return the enum value as text."""
@@ -6388,56 +6388,6 @@ class RmsPhysicalMeterKind(Enum):
             return s
 
 
-class EmtTerminalSide(Enum):
-    """Identify one physical EMT network terminal of a device."""
-
-    BUS = "bus"
-    FROM = "from"
-    TO = "to"
-
-    def __str__(self) -> str:
-        """Return the enum value as text."""
-        return str(self.value)
-
-    def __repr__(self) -> str:
-        """Return the enum value representation."""
-        return str(self)
-
-    @staticmethod
-    def argparse(s: str) -> Enum | str:
-        """Parse an enum member by name, returning unknown input unchanged."""
-        try:
-            return EmtTerminalSide[s]
-        except KeyError:
-            return s
-
-
-class EmtTerminalConductor(Enum):
-    """Identify one instantaneous EMT terminal conductor."""
-
-    DC = "dc"
-    NEUTRAL = "neutral"
-    PHASE_A = "phase_a"
-    PHASE_B = "phase_b"
-    PHASE_C = "phase_c"
-
-    def __str__(self) -> str:
-        """Return the enum value as text."""
-        return str(self.value)
-
-    def __repr__(self) -> str:
-        """Return the enum value representation."""
-        return str(self)
-
-    @staticmethod
-    def argparse(s: str) -> Enum | str:
-        """Parse an enum member by name, returning unknown input unchanged."""
-        try:
-            return EmtTerminalConductor[s]
-        except KeyError:
-            return s
-
-
 class DynamicDeviceTemplateType(Enum):
     """Identify one built-in complete dynamic-device template."""
 
@@ -6459,6 +6409,22 @@ class DynamicDeviceTemplateType(Enum):
     RMS_VOLTAGE_SOURCE = "rms:VoltageSourceBuild"
     RMS_GFL_CONVERTER = "rms:get_gfl_converter_rms"
     RMS_HVDC_VSC_GFL = "rms:build_hvdc_vsc_gfl_rms"
+    RMS_CANTILEVER_TRANSFORMER = "rms:get_cantilever_transformer_rms_template"
+    RMS_EPRI_GFM = "rms:get_epri_gfm_rms_template"
+    RMS_UPC_GFM = "rms:get_upc_gfm_rms_template"
+    RMS_FLYWHEEL = "rms:get_flywheel_rms_template"
+    RMS_IEC_TYPE3_WIND_TURBINE = "rms:get_iec_type3_wind_turbine_rms_template"
+    RMS_L2EP_GFL = "rms:get_l2ep_rms_gfl_template"
+    RMS_PI_EQUIVALENT_LINE = "rms:get_pi_equivalent_line_rms_template"
+    RMS_RTE_AVERAGE_VSC_HVDC = "rms:get_rte_average_vsc_hvdc_rms_template"
+    RMS_SFRM_UFLS = "rms:get_sfrm_ufls_rms_template"
+    RMS_SINGLE_CAGE_INDUCTION_MOTOR = "rms:get_single_cage_induction_motor_rms_template"
+    RMS_STATIC_COMPENSATOR = "rms:get_static_compensator_rms_template"
+    RMS_UPC_FULL_PHASOR_GFL = "rms:get_upc_full_phasor_gfl_rms_template"
+    RMS_UPC_PHASOR_I0_GFL = "rms:get_upc_phasor_i0_gfl_rms_template"
+    RMS_UPC_PHASOR_I1_GFL = "rms:get_upc_phasor_i1_gfl_rms_template"
+    RMS_UPC_PHASOR_PQ1_GFL = "rms:get_upc_phasor_pq1_gfl_rms_template"
+    RMS_WECC_ROTOR_FLUX_INDUCTION_MOTOR = "rms:get_wecc_rotor_flux_induction_motor_rms_template"
 
     EMT_COMPLETE_GENERATOR = "emt:get_complete_generator_template_emt"
     EMT_THEVENIN_GENERATOR = "emt:get_generator_thevenin_rl_emt_template_with_ref"
@@ -6481,6 +6447,12 @@ class DynamicDeviceTemplateType(Enum):
     EMT_BESS = "emt:get_bess_avm_grid_following_emt_template:abc"
     EMT_PV_GRID_FOLLOWING = "emt:get_pv_avm_grid_following_emt_template:abc"
     EMT_GFM = "emt:get_gfm_emt_template"
+    EMT_CONSTANT_PARAMETER_LINE = "emt:get_constant_parameter_line_emt_template"
+    EMT_FREQUENCY_DEPENDENT_LINE = "emt:get_frequency_dependent_line_emt_template"
+    EMT_SM1 = "emt:get_sm1_emt_template"
+    EMT_STATCOM_GFL = "emt:get_statcom_gfl_emt_template"
+    EMT_UPC_GFL = "emt:get_upc_gfl_emt_template"
+    EMT_UPC_POINT_TO_POINT_HVDC = "emt:get_upc_point_to_point_hvdc_emt_template"
 
     def __str__(self) -> str:
         """Return the enum value as text."""
@@ -6725,8 +6697,11 @@ class BlockType(Enum):
     # RMS - International standards
     AC1A = 'ac1a'
     AC1C = 'ac1c'
+    AC3C = 'ac3c'
     AC6A = 'ac6a'
+    ESAC6A = 'esac6a'
     AC6C = 'ac6c'
+    AC6C2 = 'ac6c2'
     AC7B = 'ac7b'
     AC7C = 'ac7c'
     AC8B = 'ac8b'
@@ -6757,6 +6732,7 @@ class BlockType(Enum):
     PSS3B = 'pss3b'
     PSS3C = 'pss3c'
     PSS6C = 'pss6c'
+    PSS7C = 'pss7c'
     PSSKUNDUR = 'psskundur'
     PVCURRENTSOURCEBNOPLANTCONTROL = 'pvcurrentsourcebnoplantcontrol'
     PVVOLTAGESOURCEANOPLANTCONTROL = 'pvvoltagesourceanoplantcontrol'
@@ -6779,7 +6755,10 @@ class BlockType(Enum):
     ST6C = 'st6c'
     ST7B = 'st7b'
     ST7C = 'st7c'
+    ST8C = 'st8c'
     ST9C = 'st9c'
+    ST10C = 'st10c'
+    TGOV2 = 'tgov2'
     TGOV3 = 'tgov3'
     UEL1 = 'uel1'
     UEL2C = 'uel2c'
@@ -6865,6 +6844,7 @@ class BlockType(Enum):
     MEASUREMENTS_CURRENT_FROM_PQ = "MEASUREMENTS_CURRENT_FROM_PQ"
     MEASUREMENTS_CURRENT_FROM_DC = "MEASUREMENTS_CURRENT_FROM_DC"
     MEASUREMENTS_CURRENT_PARK = "MEASUREMENTS_CURRENT_PARK"
+    INTERCONNECTION = "INTERCONNECTION"
     MEASUREMENTS_PLL = "MEASUREMENTS_PLL"
 
     def __str__(self) -> str:
@@ -7127,13 +7107,18 @@ class ProceduralLogicType(Enum):
     Base = "base"
     FixedSample = "fixed_sample"
     SampledValue = "sampled_value"
+    PeriodicSample = "periodic_sample"
+    SampledPiLimiter = "sampled_pi_limiter"
+    PssPTIST3SampledOutput = "pss_ptist3_sampled_output"
     HardSaturation = "hard_saturation"
     FlipFlop = "flipflop"
     AnalogFlipFlop = "analog_flipflop"
     PickupDropoff = "pickup_dropoff"
+    TimedPulse = "timed_pulse"
     ResetOnRisingEdge = "reset_on_rising_edge"
     TimeDelay = "time_delay"
     MovingAverage = "moving_average"
+    WrappedDerivative = "wrapped_derivative"
     GradientLimiter = "gradient_limiter"
     ConditionalDiagnostic = "conditional_diagnostic"
     DelayedSwitchEvent = "delayed_switch_event"
@@ -7169,14 +7154,21 @@ class InternationalStandardModel(Enum):
 
     AC1A = 'ac1a'
     AC1C = 'ac1c'
+    AC3C = 'ac3c'
     AC6A = 'ac6a'
+    ESAC6A = 'esac6a'
     AC6C = 'ac6c'
+    AC6C2 = 'ac6c2'
     AC7B = 'ac7b'
     AC7C = 'ac7c'
     AC8B = 'ac8b'
     AC8C = 'ac8c'
+    AC9C = 'ac9c'
+    AC11C = 'ac11c'
     BBSEX1 = 'bbsex1'
+    BBGOV1 = 'bbgov1'
     BESSCBCURRENTSOURCENOPLANTCONTROL = 'besscbcurrentsourcenoplantcontrol'
+    WT12T1 = 'wt12t1'
     DC1A = 'dc1a'
     DC1C = 'dc1c'
     EXAC1 = 'exac1'
@@ -7206,6 +7198,7 @@ class InternationalStandardModel(Enum):
     PSS3B = 'pss3b'
     PSS3C = 'pss3c'
     PSS6C = 'pss6c'
+    PSS7C = 'pss7c'
     PSSKUNDUR = 'psskundur'
     PVCURRENTSOURCEBNOPLANTCONTROL = 'pvcurrentsourcebnoplantcontrol'
     PVVOLTAGESOURCEANOPLANTCONTROL = 'pvvoltagesourceanoplantcontrol'
@@ -7228,8 +7221,12 @@ class InternationalStandardModel(Enum):
     ST6C = 'st6c'
     ST7B = 'st7b'
     ST7C = 'st7c'
+    ST8C = 'st8c'
     ST9C = 'st9c'
+    ST10C = 'st10c'
+    TGOV2 = 'tgov2'
     TGOV3 = 'tgov3'
+    TGOV4 = 'tgov4'
     UEL1 = 'uel1'
     UEL2C = 'uel2c'
     VRKUNDUR = 'vrkundur'
@@ -7245,7 +7242,14 @@ class InternationalStandardModel(Enum):
     ESDC2A = 'esdc2a'
     FRQTPA = 'frqtpa'
     VTGTPA = 'vtgtpa'
+    FRQTPAT = 'frqtpat'
+    VTGTPAT = 'vtgtpat'
     CIMTR1 = 'cimtr1'
+    CIMTR2 = 'cimtr2'
+    CIMTR3 = 'cimtr3'
+    CIMTR4 = 'cimtr4'
+    CIM5 = 'cim5'
+    CIM6 = 'cim6'
     CIMW = 'cimw'
     GENSAL = 'gensal'
     GENROU = 'genrou'
@@ -7294,12 +7298,14 @@ class InternationalStandardModel(Enum):
     HYGOVD = 'hygovd'
     HYGOV2 = 'hygov2'
     HYGOV2D = 'hygov2d'
+    HYGOVR1 = 'hygovr1'
     PIDGOV = 'pidgov'
     PIDGOVD = 'pidgovd'
     IEEL = 'ieel'
     TGOV1 = 'tgov1'
     TGOV1D = 'tgov1d'
     GAST = 'gast'
+    GAST2A = 'gast2a'
     GASTD = 'gastd'
     IEESGO = 'ieesgo'
     IEESGOD = 'ieesgod'
@@ -7313,16 +7319,180 @@ class InternationalStandardModel(Enum):
     IVOST = 'ivost'
     IVOGO = 'ivogo'
     IEEEST = 'ieeest'
+    BEPSST = 'bepsst'
+    OSTB2T = 'ostb2t'
+    OSTB5T = 'ostb5t'
+    PSS1A = 'pss1a'
+    PSS4B = 'pss4b'
     IEE2ST = 'iee2st'
     COMP = 'comp'
     COMPCC = 'compcc'
     CCOMP4A = 'ccomp4a'
+    CPAAUT = 'cpaaut'
     REMCMP = 'remcmp'
     MNLEX1 = 'mnlex1'
     MNLEX2 = 'mnlex2'
     MNLEX3 = 'mnlex3'
     EXST2 = 'exst2'
 
+    AsynchronousMachineTimeConstantReactance = 'international_asynchronousmachinetimeconstantreactance'
+    DiscExcContIEEEDEC1A = 'international_discexccontieeedec1a'
+    DiscExcContIEEEDEC2A = 'international_discexccontieeedec2a'
+    DiscExcContIEEEDEC3A = 'international_discexccontieeedec3a'
+    ExcAC1A = 'international_excac1a'
+    ExcAC2A = 'international_excac2a'
+    ExcAC3A = 'international_excac3a'
+    ExcAC4A = 'international_excac4a'
+    ExcAC5A = 'international_excac5a'
+    ExcAC6A = 'international_excac6a'
+    ExcAC8B = 'international_excac8b'
+    ExcANS = 'international_excans'
+    ExcAVR1 = 'international_excavr1'
+    ExcAVR2 = 'international_excavr2'
+    ExcAVR3 = 'international_excavr3'
+    ExcAVR4 = 'international_excavr4'
+    ExcAVR5 = 'international_excavr5'
+    ExcAVR7 = 'international_excavr7'
+    ExcBBC = 'international_excbbc'
+    ExcCZ = 'international_exccz'
+    ExcDC1A = 'international_excdc1a'
+    ExcDC2A = 'international_excdc2a'
+    ExcDC3A = 'international_excdc3a'
+    ExcDC3A1 = 'international_excdc3a1'
+    ExcELIN1 = 'international_excelin1'
+    ExcELIN2 = 'international_excelin2'
+    ExcHU = 'international_exchu'
+    ExcIEEEAC1A = 'international_excieeeac1a'
+    ExcIEEEAC2A = 'international_excieeeac2a'
+    ExcIEEEAC3A = 'international_excieeeac3a'
+    ExcIEEEAC4A = 'international_excieeeac4a'
+    ExcIEEEAC5A = 'international_excieeeac5a'
+    ExcIEEEAC6A = 'international_excieeeac6a'
+    ExcIEEEAC7B = 'international_excieeeac7b'
+    ExcIEEEAC8B = 'international_excieeeac8b'
+    ExcIEEEDC1A = 'international_excieeedc1a'
+    ExcIEEEDC2A = 'international_excieeedc2a'
+    ExcIEEEDC3A = 'international_excieeedc3a'
+    ExcIEEEDC4B = 'international_excieeedc4b'
+    ExcIEEEST1A = 'international_excieeest1a'
+    ExcIEEEST2A = 'international_excieeest2a'
+    ExcIEEEST3A = 'international_excieeest3a'
+    ExcIEEEST4B = 'international_excieeest4b'
+    ExcIEEEST5B = 'international_excieeest5b'
+    ExcIEEEST6B = 'international_excieeest6b'
+    ExcIEEEST7B = 'international_excieeest7b'
+    ExcNI = 'international_excni'
+    ExcOEX3T = 'international_excoex3t'
+    ExcPIC = 'international_excpic'
+    ExcREXS = 'international_excrexs'
+    ExcRQB = 'international_excrqb'
+    ExcSCRX = 'international_excscrx'
+    ExcSEXS = 'international_excsexs'
+    ExcSK = 'international_excsk'
+    ExcST1A = 'international_excst1a'
+    ExcST2A = 'international_excst2a'
+    ExcST3A = 'international_excst3a'
+    ExcST4B = 'international_excst4b'
+    ExcST6B = 'international_excst6b'
+    ExcST7B = 'international_excst7b'
+    GovCT1 = 'international_govct1'
+    GovCT2 = 'international_govct2'
+    GovGAST = 'international_govgast'
+    GovGAST1 = 'international_govgast1'
+    GovGAST2 = 'international_govgast2'
+    GovGAST3 = 'international_govgast3'
+    GovGAST4 = 'international_govgast4'
+    GovGASTWD = 'international_govgastwd'
+    GovHydro1 = 'international_govhydro1'
+    GovHydro2 = 'international_govhydro2'
+    GovHydro3 = 'international_govhydro3'
+    GovHydro4 = 'international_govhydro4'
+    GovHydroDD = 'international_govhydrodd'
+    GovHydroFrancis = 'international_govhydrofrancis'
+    GovHydroIEEE0 = 'international_govhydroieee0'
+    GovHydroIEEE2 = 'international_govhydroieee2'
+    GovHydroPID = 'international_govhydropid'
+    GovHydroPID2 = 'international_govhydropid2'
+    GovHydroPelton = 'international_govhydropelton'
+    GovHydroR = 'international_govhydror'
+    GovHydroWEH = 'international_govhydroweh'
+    GovHydroWPID = 'international_govhydrowpid'
+    GovSteam0 = 'international_govsteam0'
+    GovSteam1 = 'international_govsteam1'
+    GovSteam2 = 'international_govsteam2'
+    GovSteamBB = 'international_govsteambb'
+    GovSteamCC = 'international_govsteamcc'
+    GovSteamEU = 'international_govsteameu'
+    GovSteamFV2 = 'international_govsteamfv2'
+    GovSteamFV3 = 'international_govsteamfv3'
+    GovSteamFV4 = 'international_govsteamfv4'
+    GovSteamIEEE1 = 'international_govsteamieee1'
+    GovSteamSGO = 'international_govsteamsgo'
+    LoadComposite = 'international_loadcomposite'
+    LoadGenericNonLinear = 'international_loadgenericnonlinear'
+    LoadMotor = 'international_loadmotor'
+    LoadStatic = 'international_loadstatic'
+    MechLoad1 = 'international_mechload1'
+    OverexcLim2 = 'international_overexclim2'
+    OverexcLimIEEE = 'international_overexclimieee'
+    OverexcLimX1 = 'international_overexclimx1'
+    OverexcLimX2 = 'international_overexclimx2'
+    PFVArType1IEEEPFController = 'international_pfvartype1ieeepfcontroller'
+    PFVArType1IEEEVArController = 'international_pfvartype1ieeevarcontroller'
+    PFVArType2Common1 = 'international_pfvartype2common1'
+    PFVArType2IEEEPFController = 'international_pfvartype2ieeepfcontroller'
+    PFVArType2IEEEVArController = 'international_pfvartype2ieeevarcontroller'
+    Pss1 = 'international_pss1'
+    Pss1A = 'international_pss1a'
+    Pss2B = 'international_pss2b'
+    Pss2ST = 'international_pss2st'
+    Pss5 = 'international_pss5'
+    PssELIN2 = 'international_psselin2'
+    PssIEEE1A = 'international_pssieee1a'
+    PssIEEE2B = 'international_pssieee2b'
+    PssIEEE3B = 'international_pssieee3b'
+    PssIEEE4B = 'international_pssieee4b'
+    PssPTIST1 = 'international_pssptist1'
+    PssPTIST3 = 'international_pssptist3'
+    PssRQB = 'international_pssrqb'
+    PssSB4 = 'international_psssb4'
+    PssSH = 'international_psssh'
+    PssSK = 'international_psssk'
+    PssSTAB2A = 'international_pssstab2a'
+    PssWECC = 'international_psswecc'
+    SynchronousMachineSimplified = 'international_synchronousmachinesimplified'
+    SynchronousMachineTimeConstantReactance = 'international_synchronousmachinetimeconstantreactance'
+    TurbLCFB1 = 'international_turblcfb1'
+    UnderexcLim2Simplified = 'international_underexclim2simplified'
+    UnderexcLimIEEE1 = 'international_underexclimieee1'
+    UnderexcLimIEEE2 = 'international_underexclimieee2'
+    UnderexcLimX1 = 'international_underexclimx1'
+    UnderexcLimX2 = 'international_underexclimx2'
+    VAdjIEEE = 'international_vadjieee'
+    VCompIEEEType1 = 'international_vcompieeetype1'
+    VCompIEEEType2 = 'international_vcompieeetype2'
+    WindAeroOneDimIEC = 'international_windaeroonedimiec'
+    WindAeroLinearIEC = 'international_windaerolineariec'
+    WindAeroTwoDimIEC = 'international_windaerotwodimiec'
+    WindContCurrLimIEC = 'international_windcontcurrlimiec'
+    WindContPType3IEC = 'international_windcontptype3iec'
+    WindContPType4aIEC = 'international_windcontptype4aiec'
+    WindContPType4bIEC = 'international_windcontptype4biec'
+    WindContPitchAngleIEC = 'international_windcontpitchangleiec'
+    WindContQIEC = 'international_windcontqiec'
+    WindContQPQULimIEC = 'international_windcontqpqulimiec'
+    WindContRotorRIEC = 'international_windcontrotorriec'
+    WindGenType3aIEC = 'international_windgentype3aiec'
+    WindGenType3bIEC = 'international_windgentype3biec'
+    WindGenTurbineType3aIEC = 'international_windgenturbinetype3aiec'
+    WindGenType4IEC = 'international_windgentype4iec'
+    WindMechIEC = 'international_windmechiec'
+    WindPitchContPowerIEC = 'international_windpitchcontpoweriec'
+    WindPitchContEmulIEC = 'international_windpitchcontemuliec'
+    WindPlantFreqPcontrolIEC = 'international_windplantfreqpcontroliec'
+    WindPlantReactiveControlIEC = 'international_windplantreactivecontroliec'
+    WindProtectionIEC = 'international_windprotectioniec'
+    WindRefFrameRotIEC = 'international_windrefframerotiec'
     def __str__(self) -> str:
         """Return the enum value as text."""
         return str(self.value)

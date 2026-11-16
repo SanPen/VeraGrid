@@ -190,11 +190,11 @@ class TapChanger:
     def tap_position(self, val: int) -> None:
         """
         Set the tap position (zero indexing)
+        The tables hold every position, so moving along them leaves them as they are.
         :param val: tap value
         """
         if val < self._total_positions:
             self._tap_position = int(val)
-            self.recalc()
         else:
             print(f"Max tap changer value exceeded {val} > {self._total_positions}")
 

@@ -793,6 +793,7 @@ class OverheadLineType(DynamicDevice):
         '_Vnom',
         '_earth_resistivity',
         '_frequency',
+        'transposed',
         '_Imax',
         '_z_nabc',
         '_z_phases_nabc',
@@ -811,6 +812,13 @@ class OverheadLineType(DynamicDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(
+            prop_name='transposed',
+            units='',
+            tpe=bool,
+            definition='Perfect transposition of a single ABC circuit, after earth-wire reduction.',
+            cat=[PrpCat.TP],
+        ),
         GCProp(
             prop_name='earth_resistivity',
             units='Ohm/m3',
@@ -861,7 +869,7 @@ class OverheadLineType(DynamicDevice):
                  Vnom: float = 1.0,
                  earth_resistivity: float = 100,
                  frequency: float = 50,
-                 capex: float = 0.0, opex: float = 0.0):
+                 capex: float = 0.0, opex: float = 0.0, transposed: bool = False):
         """
         Overhead line editor
         :param name: name
@@ -871,6 +879,7 @@ class OverheadLineType(DynamicDevice):
         :param frequency: system frequency (Hz)
         :param capex: Capital expenditures
         :param opex: Operating expenditures
+        :param transposed: Perfect transposition of a single ABC circuit.
         """
         super().__init__(name=name,
                          idtag=idtag,
@@ -886,6 +895,7 @@ class OverheadLineType(DynamicDevice):
         self.earth_resistivity = earth_resistivity  # ohm/m3
 
         self.frequency = frequency  # Hz
+        self.transposed: bool = transposed
 
         self.capex = float(capex)
         self.opex = float(opex)
@@ -1307,6 +1317,22 @@ class OverheadLineType(DynamicDevice):
                  self._y_abc,
                  self._y_phases_abc,
                  self._y_seq) = calc_y_matrix(self.wires_in_tower, f=self.frequency)
+
+                if self.transposed:
+                    if set(self._z_phases_abc) != {1, 2, 3}:
+                        raise ValueError(f'{self.name}: perfect transposition requires one complete ABC circuit.')
+                    # Each phase occupies each position for one third of the length.
+                    # Average Z (not its inverse) and Y after the existing earth-wire reduction.
+                    permutations: List[IntVec] = [np.roll(np.arange(3), shift) for shift in range(3)]
+                    self._z_abc = sum(self._z_abc[np.ix_(p, p)] for p in permutations) / 3.0
+                    self._y_abc = sum(self._y_abc[np.ix_(p, p)] for p in permutations) / 3.0
+                    # The network uses NABC accessors; earth wires are already eliminated here.
+                    self._z_nabc = self._z_abc.copy()
+                    self._y_nabc = self._y_abc.copy()
+                    self._z_phases_nabc = self._z_phases_abc.copy()
+                    self._y_phases_nabc = self._y_phases_abc.copy()
+                    self._z_seq = abc_2_seq(self._z_abc)
+                    self._y_seq = abc_2_seq(self._y_abc)
 
                 # compute the tower rating in kA
                 self._Imax = self.compute_rating()

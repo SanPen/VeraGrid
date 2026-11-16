@@ -5,6 +5,7 @@
 import os
 from typing import List, Tuple
 import numpy as np
+import pytest
 import VeraGridEngine.api as gce
 from VeraGridEngine.enumerations import ConverterControlType, SolutionState, ResultTypes
 from VeraGridEngine.Simulations.NTC.ntc_ts_results import OptimalNetTransferCapacityTimeSeriesResults
@@ -14,6 +15,7 @@ from VeraGridEngine.Simulations.NTC.ntc_driver import get_ntc_operating_point_as
 from VeraGridEngine.Simulations.NTC.ntc_ts_driver import NtcOperatingPoints
 from VeraGridEngine.basic_structures import Logger, Vec, IntVec, ObjVec
 from VeraGridEngine.Utils.MIP.selected_interface import LpModel
+from VeraGridEngine.Utils.MIP.pulp_interface import PulpLpModel
 from VeraGridEngine.Devices.types import BRANCH_TYPES
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 
@@ -1339,7 +1341,7 @@ def test_ntc_snapshot_and_time_series_select_the_same_active_groups() -> None:
             options = gce.OptimalNetTransferCapacityOptions(
                 sending_bus_idx=info.idx_bus_from, receiving_bus_idx=info.idx_bus_to,
                 skip_generation_limits=True, use_branch_exchange_sensitivity=False,
-                strict_formulation=strict, consider_contingencies=True, corrective_contingencies=True,
+                consider_slacks=not strict, consider_contingencies=True, corrective_contingencies=True,
                 opf_options=gce.OptimalPowerFlowOptions(contingency_groups_used=selected),
             )
             snapshot = gce.OptimalNetTransferCapacityDriver(grid, options)
@@ -2702,7 +2704,7 @@ def test_ntc_pmode3_locked_droop_regions_match_exact_binaries() -> None:
             receiving_bus_idx=info.idx_bus_to,
             skip_generation_limits=True,
             use_branch_exchange_sensitivity=False,
-            strict_formulation=index == 0,
+            consider_slacks=index != 0,
             consider_contingencies=True,
             corrective_contingencies=True,
             opf_options=gce.OptimalPowerFlowOptions(contingency_groups_used=grid.contingency_groups),
@@ -2731,7 +2733,7 @@ def test_ntc_strict_pmode3_snapshot_report() -> None:
         receiving_bus_idx=info.idx_bus_to,
         skip_generation_limits=True,
         use_branch_exchange_sensitivity=False,
-        strict_formulation=True,
+        consider_slacks=False,
         consider_contingencies=True,
         corrective_contingencies=True,
         opf_options=gce.OptimalPowerFlowOptions(contingency_groups_used=grid.contingency_groups),
@@ -2772,7 +2774,7 @@ def test_ntc_reports_ttc_and_ntc() -> None:
                 transmission_reliability_margin=margin,
                 skip_generation_limits=True,
                 use_branch_exchange_sensitivity=False,
-                strict_formulation=strict,
+                consider_slacks=not strict,
                 consider_contingencies=True,
                 corrective_contingencies=True,
                 opf_options=gce.OptimalPowerFlowOptions(contingency_groups_used=grid.contingency_groups),
@@ -3479,3 +3481,133 @@ if __name__ == '__main__':
     # test_hvdc_lines_tests()
     # test_activs_2000_acdc()
     test_ntc_vsc_8_buses_REE_contingencies()
+
+
+@pytest.mark.parametrize("skip_generation_limits", (False, True))
+@pytest.mark.parametrize("consider_slacks", (False, True))
+@pytest.mark.parametrize("initial_transfer", (20.0, 160.0))
+@pytest.mark.parametrize("consider_contingencies,corrective_contingencies",
+                         ((False, False), (True, False), (True, True)))
+def test_ntc_slack_switch(consider_slacks: bool,
+                          initial_transfer: float,
+                          consider_contingencies: bool,
+                          corrective_contingencies: bool,
+                          skip_generation_limits: bool) -> None:
+    """Hard limits reject an unavoidable overload instead of creating relaxation variables.
+
+    :param consider_slacks: Whether to permit penalized relaxation.
+    :param initial_transfer: Scheduled transfer before the nonnegative NTC increment.
+    :param consider_contingencies: Enforce the two parallel-branch outages.
+    :param corrective_contingencies: Allow corrective converter changes after an outage.
+    :param skip_generation_limits: Whether the sending generator may exceed its maximum.
+    :return: None.
+    """
+    # Reversed parallel lines test negative-sensitivity monitoring: 140 MW in N, 40 MW in N-1.
+    grid: gce.MultiCircuit = gce.MultiCircuit()
+    sending: gce.Bus = gce.Bus(name="Sending", Vnom=400.0, is_slack=True)
+    receiving: gce.Bus = gce.Bus(name="Receiving", Vnom=400.0)
+    grid.add_bus(sending)
+    grid.add_bus(receiving)
+    grid.add_generator(sending, gce.Generator(name="Send", P=initial_transfer, Pmax=initial_transfer + 30.0))
+    grid.add_generator(receiving, gce.Generator(name="Receive", P=100.0, Pmin=-1000.0, Pmax=1000.0))
+    grid.add_load(receiving, gce.Load(name="Load", P=initial_transfer + 100.0))
+    line: gce.Line
+    for line in (gce.Line(receiving, sending, name="Small", x=0.25, rate=40.0),
+                 gce.Line(receiving, sending, name="Large", x=0.1, rate=100.0)):
+        grid.add_line(line)
+        group: gce.ContingencyGroup = gce.ContingencyGroup(name=line.name + " outage")
+        grid.add_contingency_group(group)
+        grid.add_contingency(gce.Contingency(device=line, group=group))
+
+    # Inspect the actual LP as well as the solution, so unused slack variables cannot pass.
+    logger: Logger = Logger()
+    values: NtcVars
+    model: LpModel
+    values, model = run_linear_ntc_opf(
+        grid=grid, t=None, bus_a1_idx=np.array((0,), dtype=int), bus_a2_idx=np.array((1,), dtype=int),
+        skip_generation_limits=skip_generation_limits, monitor_only_sensitive_branches=True,
+        consider_contingencies=consider_contingencies, corrective_contingencies=corrective_contingencies,
+        contingency_groups_used=grid.contingency_groups, consider_slacks=consider_slacks, logger=logger,
+    )
+    assert isinstance(model, PulpLpModel)
+    slack_names: List[str] = list(var.name for var in model.model.variables()
+                                  if "DeltaSL" in var.name or "_sl_" in var.name or "_over_" in var.name)
+    if consider_slacks:
+        assert len(slack_names) > 0
+    else:
+        assert len(slack_names) == 0
+
+    # The 160 MW schedule exceeds even the base rating and cannot be reduced by the NTC increment.
+    if initial_transfer > 140.0 and not consider_slacks:
+        assert not values.acceptable_solution[0]
+        assert not any("retrying" in entry.msg for entry in logger.entries)
+    else:
+        assert values.acceptable_solution[0]
+        base_slack: float = float(np.sum(values.branch_vars.flow_slacks_pos)
+                                  + np.sum(values.branch_vars.flow_slacks_neg))
+        contingency_slack: float = sum(float(row[4]) + float(row[5])
+                                       for row in values.branch_vars.contingency_flow_data)
+        if initial_transfer > 140.0:
+            assert base_slack > 0.0
+            if consider_contingencies:
+                assert contingency_slack > 0.0
+            else:
+                assert contingency_slack == 0.0
+        else:
+            expected_transfer: float = 40.0 if consider_contingencies else 140.0
+            if not skip_generation_limits:
+                expected_transfer = min(expected_transfer, initial_transfer + 30.0)
+            else:
+                pass  # Only transmission limits restrict the transfer.
+            assert np.isclose(values.inter_area_flows[0], expected_transfer, atol=1e-6)
+            assert np.isclose(values.delta_1[0], values.delta_2[0], atol=1e-6)
+            assert np.isclose(base_slack + contingency_slack, 0.0, atol=1e-6)
+
+
+@pytest.mark.parametrize("consider_slacks", (False, True))
+def test_ntc_pmode3_unavoidable_contingency_overload(consider_slacks: bool) -> None:
+    """P-mode 3 follows the slack switch when an outage overloads a fixed radial demand.
+
+    :param consider_slacks: Whether the post-contingency overload may be relaxed.
+    :return: None.
+    """
+    grid: gce.MultiCircuit = build_two_pmode3_link_grid(set_reference_bus_on_both=True)
+    bus: gce.Bus
+    for bus in grid.buses:
+        if not bus.is_dc:
+            bus.angle_min = -0.04
+            bus.angle_max = 0.04
+        else:
+            pass  # DC voltage bounds do not affect angle-droop regions.
+
+    # N carries 25 MW per line; losing either forces 50 MW through a 40 MW survivor.
+    radial: gce.Bus = gce.Bus(name="Radial", Vnom=400.0, area=grid.areas[0])
+    grid.add_bus(radial)
+    grid.add_load(radial, gce.Load(name="Fixed demand", P=50.0))
+    grid.generators[0].P += 50.0
+    line: gce.Line
+    for line in (gce.Line(grid.buses[0], radial, name="Radial A", x=0.01, rate=40.0),
+                 gce.Line(grid.buses[0], radial, name="Radial B", x=0.01, rate=40.0)):
+        grid.add_line(line)
+        group: gce.ContingencyGroup = gce.ContingencyGroup(name=line.name + " outage")
+        grid.add_contingency_group(group)
+        grid.add_contingency(gce.Contingency(device=line, group=group))
+
+    info: gce.InterAggregationInfo = grid.get_inter_aggregation_info(
+        objects_from=list((grid.areas[0],)), objects_to=list((grid.areas[1],)))
+    values: NtcVars
+    model: LpModel
+    values, model = run_linear_ntc_opf(
+        grid=grid, t=None, bus_a1_idx=info.idx_bus_from, bus_a2_idx=info.idx_bus_to,
+        skip_generation_limits=True, monitor_only_sensitive_branches=False,
+        consider_contingencies=True, corrective_contingencies=True,
+        contingency_groups_used=grid.contingency_groups, consider_slacks=consider_slacks, logger=Logger(),
+    )
+    assert isinstance(model, PulpLpModel)
+    if consider_slacks:
+        assert values.acceptable_solution[0]
+        assert any("_over_" in var.name for var in model.model.variables())
+        assert sum(float(row[4]) + float(row[5]) for row in values.branch_vars.contingency_flow_data) > 0.0
+    else:
+        assert not values.acceptable_solution[0]
+        assert not any("_over_" in var.name or "DeltaSL" in var.name for var in model.model.variables())

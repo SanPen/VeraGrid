@@ -16,7 +16,7 @@ from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties.SpecialConfigTabs.sp
     SpecialConfigTabWidget,
 )
 from VeraGridEngine.enumerations import BlockType
-from VeraGridEngine.Templates.template_definition import TemplateDefinition
+from VeraGridEngine.Templates.template_catalogue import TemplateDefinition
 
 
 def get_special_config_tab_title(block_type: BlockType) -> str:

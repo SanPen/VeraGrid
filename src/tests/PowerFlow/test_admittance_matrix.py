@@ -120,10 +120,7 @@ def test_fast_admittance():
                 tap_angle=tau,
                 Cf=nc.passive_branch_data.Cf,
                 Ct=nc.passive_branch_data.Ct,
-                Yshunt_bus=Yshunt_bus,
-                conn=nc.passive_branch_data.conn,
-                seq=1,
-                add_windings_phase=False
+                Yshunt_bus=Yshunt_bus
             )
 
             t1 = time.time()

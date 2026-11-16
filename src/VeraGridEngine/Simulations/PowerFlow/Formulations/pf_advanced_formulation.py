@@ -284,10 +284,7 @@ class PfAdvancedFormulation(PfFormulationTemplate):
             tap_angle=expand(self.nc.nbr, self.tau, self.idx_dtau, 0.0),
             Cf=self.Cf,
             Ct=self.Ct,
-            Yshunt_bus=self.Yshunt_bus,
-            conn=self.nc.passive_branch_data.conn,
-            seq=1,
-            add_windings_phase=False
+            Yshunt_bus=self.Yshunt_bus
         )
 
         # Store the control states in lightweight wrappers that forward the
@@ -461,9 +458,6 @@ class PfAdvancedFormulation(PfFormulationTemplate):
             Cf=self.Cf,
             Ct=self.Ct,
             Yshunt_bus=self.Yshunt_bus,
-            conn=self.nc.passive_branch_data.conn,
-            seq=1,
-            add_windings_phase=False,
         )
 
         # compute the complex voltage
@@ -525,9 +519,6 @@ class PfAdvancedFormulation(PfFormulationTemplate):
             Cf=self.Cf,
             Ct=self.Ct,
             Yshunt_bus=self.Yshunt_bus,
-            conn=self.nc.passive_branch_data.conn,
-            seq=1,
-            add_windings_phase=False
         )
 
         # compute the complex voltage
@@ -761,9 +752,6 @@ class PfAdvancedFormulation(PfFormulationTemplate):
             Cf=self.Cf,
             Ct=self.Ct,
             Yshunt_bus=self.Yshunt_bus,
-            conn=self.nc.passive_branch_data.conn,
-            seq=1,
-            add_windings_phase=False
         )
 
         Sbus = compute_zip_power(self.S0, self.I0, self.Y0, Vm)

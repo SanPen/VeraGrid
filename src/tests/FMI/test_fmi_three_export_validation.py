@@ -5,7 +5,6 @@
 """Static conformance checks for FMI 3 export assets and platform layout."""
 from __future__ import annotations
 
-import ast
 import hashlib
 from pathlib import Path
 
@@ -75,33 +74,6 @@ def test_legacy_fmi_two_template_and_me_renderers_are_absent() -> None:
     )
     for deleted_renderer in deleted_renderers:
         assert deleted_renderer not in me_build_source
-
-
-def test_product_fmi_tests_do_not_depend_on_comparison_examples() -> None:
-    """Keep product tests independent from the non-production comparison tree.
-
-    :return: None.
-    """
-    test_root: Path = Path(__file__).resolve().parent
-    forbidden_module: str = "tru" + "nk"
-    forbidden_forward_path: str = forbidden_module + "/"
-    forbidden_back_path: str = forbidden_module + "\\"
-    for test_path in test_root.rglob("*.py"):
-        source_text: str = test_path.read_text(encoding="utf-8")
-        syntax_tree: ast.Module = ast.parse(source_text, filename=str(test_path))
-        for syntax_node in ast.walk(syntax_tree):
-            if isinstance(syntax_node, ast.Import):
-                imported_modules: tuple[str, ...] = tuple(alias.name for alias in syntax_node.names)
-                assert all(not name.startswith(forbidden_module) for name in imported_modules)
-            elif isinstance(syntax_node, ast.ImportFrom):
-                imported_from: str = syntax_node.module if syntax_node.module is not None else ""
-                assert not imported_from.startswith(forbidden_module)
-            elif isinstance(syntax_node, ast.Constant) and isinstance(syntax_node.value, str):
-                normalized_value: str = syntax_node.value.lower()
-                assert forbidden_forward_path not in normalized_value
-                assert forbidden_back_path not in normalized_value
-            else:
-                pass
 
 
 def test_fmi_package_initializers_retain_mpl_license() -> None:

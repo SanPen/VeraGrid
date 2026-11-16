@@ -6,7 +6,7 @@
 import math
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.rms_meter_templates import (
+from VeraGridEngine.Templates.Rms.buses.rms_meter_templates import (
     build_rms_current_meter_outputs_from_pq,
     build_rms_physical_signal_meter_block,
     build_rms_power_meter_outputs_from_pq,
@@ -14,15 +14,12 @@ from VeraGridEngine.Templates.Rms.rms_meter_templates import (
 )
 from VeraGridEngine.Utils.Symbolic.block import (
     Block,
-    RmsPhysicalMeasurementPoint,
-    validate_dynamic_model_contract,
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var
-from VeraGridEngine.enumerations import RmsPhysicalMeterKind, RmsTerminalSide
 
 
 def test_veragrid_physical_meter_can_be_created_without_import() -> None:
-    """Build the canonical measurement contract without a source parser.
+    """Build measurement equations without a source parser.
 
     :return: None.
     """
@@ -39,20 +36,7 @@ def test_veragrid_physical_meter_can_be_created_without_import() -> None:
         signal_expressions=signal_expressions,
         output_signal_names=("active_power", "reactive_power"),
         name="VeraGrid Power meter native",
-        source_fid="native-power-meter",
-        target_fid="native-device",
-        terminal_side=RmsTerminalSide.FROM,
-        meter_kind=RmsPhysicalMeterKind.POWER,
         symbol_suffix="VeraGrid Power meter native",
-    )
-    validate_dynamic_model_contract(block=meter_block)
-    measurement_point: RmsPhysicalMeasurementPoint | None = (
-        meter_block.dynamic_model_contract.rms_physical_measurement_point
-    )
-    assert measurement_point is not None
-    assert measurement_point.get_meter_kind() is RmsPhysicalMeterKind.POWER
-    assert measurement_point.get_output_signal_names() == tuple(
-        output_var.name for output_var in meter_block.out_vars
     )
     assert len(meter_block.out_vars) == 2
     assert len(meter_block.algebraic_vars) == 2

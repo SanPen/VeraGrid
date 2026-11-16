@@ -310,23 +310,36 @@ def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gc
     Return TapChanger values for CGMES export while preserving fixed tap modules.
 
     For fixed non-regulating transformers with off-nominal tap modules, this
-    temporarily computes tap position using VoltageRegulation mode so exported
-    RatioTapChanger step encodes the actual ratio.
+    computes tap position on a copy in VoltageRegulation mode so exported
+    RatioTapChanger step encodes the actual ratio, and the exported device
+    keeps its tables and position. The increment of a regulating changer takes the sign of its table:
+    CIM defines a negative one as a voltage that falls when the step rises. A fixed changer keeps the
+    generic law.
 
     :param mc_elm: Transformer2W or Winding
     :param logger: DataLogger
     :return: lowStep, highStep, normalStep, neutralStep, stepVoltageIncrement, step
     """
-    tap_changer = mc_elm.tap_changer
+    tap_changer = mc_elm.tap_changer.copy()
     original_type = tap_changer.tc_type
-    original_position = tap_changer.tap_position
 
     low, high, normal, neutral, step_voltage_increment, step = tap_changer.get_cgmes_values()
 
     if original_type in (TapChangerTypes.NoRegulation, TapChangerTypes.VoltageRegulation):
         target_tap_module = float(mc_elm.get_tap_module_at(t_idx))
         if np.isclose(target_tap_module, 1.0):
-            return low, high, normal, neutral, step_voltage_increment, step
+            # A module of 1 is the neutral step and says nothing about the direction, so a regulating table gives
+            # it; a fixed changer keeps the generic law, as it does off 1
+            if original_type == TapChangerTypes.VoltageRegulation:
+                if tap_changer.tap_modules_array[0] > tap_changer.tap_modules_array[-1]:
+                    step_voltage_increment = -abs(step_voltage_increment)
+                elif tap_changer.tap_modules_array[0] < tap_changer.tap_modules_array[-1]:
+                    step_voltage_increment = abs(step_voltage_increment)
+                else:
+                    pass
+            else:
+                pass
+            return low, high, normal, neutral, step_voltage_increment, neutral
 
         if original_type == TapChangerTypes.NoRegulation:
             tap_changer.tc_type = TapChangerTypes.VoltageRegulation
@@ -335,9 +348,13 @@ def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gc
 
         step_delta = int(step - neutral)
         if step_delta == 0:
-            if target_tap_module > 1.0 and step < high:
+            # Leave the neutral on the side where the table reaches this module, so the increment keeps its sign;
+            # when that side is out of the range the other one is taken and the increment has the opposite sign
+            step_up: bool = (target_tap_module > 1.0) != bool(
+                tap_changer.tap_modules_array[0] > tap_changer.tap_modules_array[-1])
+            if step_up and step < high:
                 step = int(step + 1)
-            elif target_tap_module < 1.0 and step > low:
+            elif not step_up and step > low:
                 step = int(step - 1)
             elif step < high:
                 step = int(step + 1)
@@ -349,16 +366,7 @@ def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gc
 
         if step_delta != 0:
             target_dv = (1.0 - (1.0 / target_tap_module)) / float(step_delta)
-            if target_dv > 0.0:
-                step_voltage_increment = round(target_dv * 100.0, 6)
-            else:
-                logger.add_warning(
-                    msg='Computed non-positive tap increment for fixed tap export; keeping original increment',
-                    device=mc_elm.idtag,
-                    device_class=mc_elm.device_type.value,
-                    value=target_dv,
-                    expected_value='> 0.0'
-                )
+            step_voltage_increment = round(target_dv * 100.0, 6)
         else:
             logger.add_warning(
                 msg='Fixed tap module could not be encoded in CGMES step space',
@@ -376,10 +384,6 @@ def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gc
                 value=exported_tap_module,
                 expected_value=target_tap_module
             )
-
-    # Restore original object state.
-    tap_changer.tc_type = original_type
-    tap_changer.tap_position = original_position
 
     return low, high, normal, neutral, step_voltage_increment, step
 

@@ -41,12 +41,12 @@ from VeraGridEngine.Utils.procedural_logic import (
     StartupHandoverLogic,
     ThreePhaseCarrierPwmLogic,
     ThreePhaseCarrierSampledModulationLogic,
+    TimedPulseLogic,
     TimeDelayLogic,
     ValveStateLogic,
+    WrappedDerivativeLogic,
 )
-from VeraGridEngine.Templates.ProceduralLogicCatalog import (
-    ProceduralBlockTemplateDescriptor,
-)
+from VeraGridEngine.Templates.template_catalogue import ProceduralBlockTemplateDescriptor
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import (
     get_dynamic_library_procedural_descriptors,
 )
@@ -562,6 +562,20 @@ def get_procedural_fields(entry: ProceduralLogicBase) -> List[ProceduralFieldDra
                                   procedural_expression_to_text(entry.source_expr), "Value stored in history."), make_procedural_field("delay_expr", "Delay", expression_tpe,
                                   procedural_expression_to_text(entry.delay_expr), "Delay before the averaging window."), make_procedural_field("window_expr", "Window", expression_tpe,
                                   procedural_expression_to_text(entry.window_expr), "Averaging-window duration."),)))
+    elif isinstance(entry, WrappedDerivativeLogic):
+        maximum_rate_text: str = (
+            "" if entry.maximum_rate_expr is None
+            else procedural_expression_to_text(entry.maximum_rate_expr)
+        )
+        fields.extend(list((
+            make_procedural_field("output_var_name", "Output mode", mode_tpe, entry.output_var_name,
+                                  "Retained angular rate."),
+            make_procedural_field("source_expr", "Angle", expression_tpe,
+                                  procedural_expression_to_text(entry.source_expr), "Periodic angle in radians."),
+            make_procedural_field("maximum_rate_expr", "Maximum rate", expression_tpe,
+                                  maximum_rate_text,
+                                  "Maximum absolute angular rate."),
+        )))
     elif isinstance(entry, GradientLimiterLogic):
         fields.extend(list((make_procedural_field("output_var_name", "Output mode", mode_tpe, entry.output_var_name,
                                   "Retained rate-limited output."), make_procedural_field("source_expr", "Source expression", expression_tpe,
@@ -585,6 +599,15 @@ def get_procedural_fields(entry: ProceduralLogicBase) -> List[ProceduralFieldDra
                                   procedural_expression_to_text(entry.bool_expr), "Relay input condition."), make_procedural_field("pickup_delay_expr", "Pickup delay", expression_tpe,
                                   procedural_expression_to_text(entry.pickup_delay_expr), "Delay before activation."), make_procedural_field("drop_delay_expr", "Dropoff delay", expression_tpe,
                                   procedural_expression_to_text(entry.drop_delay_expr), "Delay before deactivation."),)))
+    elif isinstance(entry, TimedPulseLogic):
+        fields.extend(list((
+            make_procedural_field("output_var_name", "Output mode", mode_tpe, entry.output_var_name,
+                                  "Retained pulse state."),
+            make_procedural_field("trigger_expr", "Trigger", expression_tpe,
+                                  procedural_expression_to_text(entry.trigger_expr), "Rising edge starting the pulse."),
+            make_procedural_field("duration_expr", "Duration", expression_tpe,
+                                  procedural_expression_to_text(entry.duration_expr), "Duration sampled at pickup."),
+        )))
     elif isinstance(entry, ResetOnRisingEdgeLogic):
         fields.extend(list((make_procedural_field("target_var_name", "Target", target_tpe, entry.target_var_name,
                                   "DAE variable or runtime parameter modified on the edge."), make_procedural_field("reset_expr", "Rising-edge condition", expression_tpe,
@@ -739,6 +762,12 @@ def get_default_procedural_fields(logic_tpe: ProceduralLogicType) -> List[Proced
         fields = list((make_procedural_field("output_var_name", "Output mode", mode, "", "Retained delayed output."), make_procedural_field("source_expr", "Source expression", expr, "0.0", "History input."), make_procedural_field("delay_expr", "Delay", expr, "0.0", "Non-negative delay."),))
     elif logic_tpe == ProceduralLogicType.MovingAverage:
         fields = list((make_procedural_field("output_var_name", "Output mode", mode, "", "Retained average."), make_procedural_field("source_expr", "Source expression", expr, "0.0", "History input."), make_procedural_field("delay_expr", "Delay", expr, "0.0", "Delay before window."), make_procedural_field("window_expr", "Window", expr, "0.01", "Average window."),))
+    elif logic_tpe == ProceduralLogicType.WrappedDerivative:
+        fields = list((
+            make_procedural_field("output_var_name", "Output mode", mode, "", "Retained angular rate."),
+            make_procedural_field("source_expr", "Angle", expr, "0.0", "Periodic angle in radians."),
+            make_procedural_field("maximum_rate_expr", "Maximum rate", expr, "5.0", "Maximum absolute angular rate."),
+        ))
     elif logic_tpe == ProceduralLogicType.GradientLimiter:
         fields = list((make_procedural_field("output_var_name", "Output mode", mode, "", "Retained limited output."), make_procedural_field("source_expr", "Source expression", expr, "0.0", "Requested value."), make_procedural_field("lower_rate_expr", "Lower rate", expr, "-1.0", "Minimum slope."), make_procedural_field("upper_rate_expr", "Upper rate", expr, "1.0", "Maximum slope."),))
     elif logic_tpe == ProceduralLogicType.FlipFlop:
@@ -747,6 +776,12 @@ def get_default_procedural_fields(logic_tpe: ProceduralLogicType) -> List[Proced
         fields = list((make_procedural_field("output_var_name", "Output mode", mode, "", "Analog latch output."), make_procedural_field("input_expr", "Input expression", expr, "0.0", "Captured value."), make_procedural_field("set_expr", "Set condition", expr, "0.0", "Capture condition."), make_procedural_field("reset_expr", "Reset condition", expr, "0.0", "Release condition."),))
     elif logic_tpe == ProceduralLogicType.PickupDropoff:
         fields = list((make_procedural_field("output_var_name", "Output mode", mode, "", "Relay output."), make_procedural_field("bool_expr", "Condition", expr, "0.0", "Relay condition."), make_procedural_field("pickup_delay_expr", "Pickup delay", expr, "0.0", "Activation delay."), make_procedural_field("drop_delay_expr", "Dropoff delay", expr, "0.0", "Deactivation delay."),))
+    elif logic_tpe == ProceduralLogicType.TimedPulse:
+        fields = list((
+            make_procedural_field("output_var_name", "Output mode", mode, "", "Retained pulse state."),
+            make_procedural_field("trigger_expr", "Trigger", expr, "0.0", "Rising edge starting the pulse."),
+            make_procedural_field("duration_expr", "Duration", expr, "0.0", "Duration sampled at pickup."),
+        ))
     elif logic_tpe == ProceduralLogicType.ResetOnRisingEdge:
         fields = list((make_procedural_field("target_var_name", "Target", target, "", "Mutable reset target."), make_procedural_field("reset_expr", "Rising-edge condition", expr, "0.0", "Edge input."), make_procedural_field("value_expr", "Reset value", expr, "0.0", "Assigned value."),))
     elif logic_tpe == ProceduralLogicType.DelayedThresholdLatch:
@@ -849,6 +884,9 @@ def get_procedural_code_field_pairs(
             ("delay", "delay_expr"),
             ("window", "window_expr"),
         ))
+    elif logic_tpe == ProceduralLogicType.WrappedDerivative:
+        pairs = list((("output", "output_var_name"), ("source", "source_expr"),
+                      ("maximum_rate", "maximum_rate_expr")))
     elif logic_tpe == ProceduralLogicType.GradientLimiter:
         pairs = list((
             ("output", "output_var_name"),
@@ -876,6 +914,9 @@ def get_procedural_code_field_pairs(
             ("pickup_delay", "pickup_delay_expr"),
             ("dropoff_delay", "drop_delay_expr"),
         ))
+    elif logic_tpe == ProceduralLogicType.TimedPulse:
+        pairs = list((("output", "output_var_name"), ("trigger", "trigger_expr"),
+                      ("duration", "duration_expr")))
     elif logic_tpe == ProceduralLogicType.ResetOnRisingEdge:
         pairs = list((
             ("target", "target_var_name"),
@@ -1034,6 +1075,8 @@ def get_procedural_logic_summary(logic_tpe: ProceduralLogicType) -> str:
         result = "Return an accepted-step source value after a configurable delay."
     elif logic_tpe == ProceduralLogicType.MovingAverage:
         result = "Average accepted source history over a delayed time window."
+    elif logic_tpe == ProceduralLogicType.WrappedDerivative:
+        result = "Estimate angular rate across periodic angle wraps."
     elif logic_tpe == ProceduralLogicType.GradientLimiter:
         result = "Limit the accepted-step rate of change of a source expression."
     elif logic_tpe == ProceduralLogicType.FlipFlop:
@@ -1042,6 +1085,8 @@ def get_procedural_logic_summary(logic_tpe: ProceduralLogicType) -> str:
         result = "Capture and retain an analog value under set and reset conditions."
     elif logic_tpe == ProceduralLogicType.PickupDropoff:
         result = "Apply independent pickup and dropoff delays to a relay condition."
+    elif logic_tpe == ProceduralLogicType.TimedPulse:
+        result = "Hold a pulse for a duration sampled at a rising edge."
     elif logic_tpe == ProceduralLogicType.ResetOnRisingEdge:
         result = "Assign a value to a mutable target when a condition rises."
     elif logic_tpe == ProceduralLogicType.DelayedThresholdLatch:
@@ -1918,6 +1963,15 @@ def build_runtime_logic_entry(draft: ProceduralLogicDraft,
                                     get_required_expression(draft, "source_expr", namespace),
                                     get_required_expression(draft, "delay_expr", namespace),
                                     get_required_expression(draft, "window_expr", namespace), name)
+    elif tpe == ProceduralLogicType.WrappedDerivative:
+        maximum_rate_field: ProceduralFieldDraft | None = draft.get_field("maximum_rate_expr")
+        maximum_rate_expression: Expr | Comparison | None = (
+            None if maximum_rate_field is None or maximum_rate_field.get_value() == ""
+            else get_required_expression(draft, "maximum_rate_expr", namespace)
+        )
+        result = WrappedDerivativeLogic(get_required_field_value(draft, "output_var_name"),
+                                        get_required_expression(draft, "source_expr", namespace),
+                                        maximum_rate_expression, name)
     elif tpe == ProceduralLogicType.GradientLimiter:
         result = GradientLimiterLogic(get_required_field_value(draft, "output_var_name"),
                                       get_required_expression(draft, "source_expr", namespace),
@@ -1944,6 +1998,10 @@ def build_runtime_logic_entry(draft: ProceduralLogicDraft,
             name,
             relay_output_uid,
         )
+    elif tpe == ProceduralLogicType.TimedPulse:
+        result = TimedPulseLogic(get_required_field_value(draft, "output_var_name"),
+                                 get_required_expression(draft, "trigger_expr", namespace),
+                                 get_required_expression(draft, "duration_expr", namespace), name)
     elif tpe == ProceduralLogicType.ResetOnRisingEdge:
         result = ResetOnRisingEdgeLogic(get_required_field_value(draft, "target_var_name"),
                                         get_required_expression(draft, "reset_expr", namespace),

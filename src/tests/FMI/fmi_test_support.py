@@ -42,12 +42,12 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriv
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model, set_rms_model
 from VeraGridEngine.Utils.procedural_logic import flipflop
 from VeraGridEngine.enumerations import (
@@ -576,12 +576,16 @@ def execute_test_rms_fmu_case(
         static_reactive_power_mvar: float = 1.0,
         rms_tolerance: float = 1.0e-6,
         fmi_version: FmiVersion = FmiVersion.FMI_2_0,
+        integration_method: DynamicIntegrationMethod = DynamicIntegrationMethod.DaeBackEuler,
+        semi_explicit_grid: bool = False,
 ) -> tuple[RmsSimulationDriver, Load, Path]:
     """Execute one RMS FMU integration case through the product API.
 
     This test-only orchestration is intentionally independent from external
     benchmark packages so product tests depend only on owned fixtures.
 
+    :param integration_method: RMS numerical integration method.
+    :param semi_explicit_grid: Use GENCLS, whose equations have no RHS derivative symbols.
     :param output_dir: Isolated directory for the FMU and native staging files.
     :param mode: FMI interface mode exercised by the integration test.
     :param source_fmu_path: Optional prebuilt FMU used instead of local export.
@@ -622,6 +626,10 @@ def execute_test_rms_fmu_case(
     grid: MultiCircuit
     load: Load
     grid, load = build_test_rms_grid()
+    if semi_explicit_grid:
+        from VeraGridEngine.Templates.Rms.synchronous_machines.gencls_rms_template import get_complete_gencls_rms_template
+        grid.generators[0].rms_template = get_complete_gencls_rms_template(grid.var_factory)
+
     load.P = float(static_active_power_mw)
     load.Q = float(static_reactive_power_mvar)
     power_flow_driver: PowerFlowDriver = PowerFlowDriver(
@@ -696,7 +704,7 @@ def execute_test_rms_fmu_case(
             time_step=1.0e-3,
             simulation_time=5.0e-3,
             tolerance=rms_tolerance,
-            integration_method=DynamicIntegrationMethod.DaeBackEuler,
+            integration_method=integration_method,
             max_iter=50,
         ),
         pf_results=power_flow_driver.results,

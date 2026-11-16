@@ -8,6 +8,9 @@ from __future__ import annotations
 from typing import Dict, List, Set
 
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.IO.dgs.dgs_objects import ElmGenstat
+from VeraGridEngine.IO.dgs.dynamic_models.dgs_adapter_block_from_native_dgs import build_dgs_elmgenstat_voltage_source_block
+from VeraGridEngine.IO.dgs.dynamic_models.dgs_genstat_protection import apply_genstat_voltage_protection
 from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.series_reactance import SeriesReactance
@@ -32,35 +35,42 @@ from VeraGridEngine.enumerations import (
     DeviceType,
     ParamPowerFlowReferenceType,
     VarPowerFlowReferenceType,
+    DgsImportField,
 )
-from VeraGridEngine.Templates.Rms.genrow_rms_template import get_genrow_rms_template
-from VeraGridEngine.Templates.Rms.line_rms_template import (
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow_rms_template import get_genrow_rms_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import (
     get_dc_line_rms_template,
     get_ideal_ac_connector_rms_template,
     get_line_rms_template,
 )
-from VeraGridEngine.Templates.Rms.load_rms_template import (
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import (
     get_load_rms_template,
     get_voltage_dependent_power_rms_template,
 )
 from VeraGridEngine.enumerations import VoltageDependentPowerModel
-from VeraGridEngine.Templates.Rms.shunt_template import get_shunt_template
-from VeraGridEngine.Templates.Rms.transformer_rms_template import (
+from VeraGridEngine.Templates.Rms.buses.shunt_template import get_shunt_template
+from VeraGridEngine.Templates.Rms.transformers.transformer_rms_template import (
     get_ideal_transformer2w_rms,
     get_transformer2w_rms,
 )
-from VeraGridEngine.Templates.Rms.voltage_source_template import (
+from VeraGridEngine.Templates.Rms.common.voltage_source_template import (
     VoltageSourceBuild,
     build_thevenin_voltage_source,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import (
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import (
     initialize_bus_rms,
     promote_dc_bus_voltage_to_capacitive_state,
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.Utils.procedural_logic import DelayedSwitchEventLogic
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
+
+from VeraGridEngine.IO.dgs.dgs_import_metadata import (
+    DgsImportMetadata,
+    assign_import_template,
+    get_import_field,
+)
 
 
 class DgsRmsPreparationReport:
@@ -221,16 +231,16 @@ def _select_ideal_ac_connector_constraint_ids(
         else:
             if isinstance(device, (Line, SeriesReactance)):
                 impedance_square: float = (
-                    float(device.R_corrected) ** 2 + float(device.X) ** 2
+                        float(device.R_corrected) ** 2 + float(device.X) ** 2
                 )
                 is_ideal_ac_connector = impedance_square <= 1.0e-24
             else:
                 pass
         is_active_ac_connector: bool = (
-            is_ideal_ac_connector
-            and bool(device.active)
-            and not bool(device.bus_from.is_dc)
-            and not bool(device.bus_to.is_dc)
+                is_ideal_ac_connector
+                and bool(device.active)
+                and not bool(device.bus_from.is_dc)
+                and not bool(device.bus_to.is_dc)
         )
         if is_active_ac_connector:
             joins_components: bool = union_find.union(
@@ -313,11 +323,11 @@ def _build_active_ac_bus_components(
     branch: DynamicDevice
     for branch in branch_devices:
         connects_active_ac_buses: bool = (
-            bool(branch.active)
-            and branch.bus_from is not None
-            and branch.bus_to is not None
-            and not bool(branch.bus_from.is_dc)
-            and not bool(branch.bus_to.is_dc)
+                bool(branch.active)
+                and branch.bus_from is not None
+                and branch.bus_to is not None
+                and not bool(branch.bus_from.is_dc)
+                and not bool(branch.bus_to.is_dc)
         )
         if connects_active_ac_buses:
             components.union(
@@ -336,6 +346,7 @@ def _bind_dgs_elmsym_reference_frequencies(
         branch_devices: List[DynamicDevice],
         elmsym_reference_source_ids: Set[str],
         logger: Logger,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> int:
     """Bind each adapted ElmSym angle to its DGS reference-machine speed.
 
@@ -349,6 +360,7 @@ def _bind_dgs_elmsym_reference_frequencies(
     :param branch_devices: Imported non-HVDC branch devices.
     :param elmsym_reference_source_ids: Active ``ElmSym.ip_ctrl=1`` source FIDs.
     :param logger: Diagnostic sink for ambiguous or incomplete source data.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Number of adapted machines bound to an explicit reference frame.
     """
     components: _BusUnionFind = _build_active_ac_bus_components(
@@ -364,10 +376,10 @@ def _bind_dgs_elmsym_reference_frequencies(
             api_idtag=generator.idtag,
         )
         is_reference_candidate: bool = (
-            bool(generator.active)
-            and generator.bus is not None
-            and source_id is not None
-            and source_id in elmsym_reference_source_ids
+                bool(generator.active)
+                and generator.bus is not None
+                and source_id is not None
+                and source_id in elmsym_reference_source_ids
         )
         if is_reference_candidate and generator.bus is not None and source_id is not None:
             component: Bus = components.find(bus=generator.bus)
@@ -409,16 +421,17 @@ def _bind_dgs_elmsym_reference_frequencies(
             pass
         else:
             reference_block: Block = reference_generator.rms_model
-            reference_speed_uid_raw: int | None = (
-                reference_block.dynamic_model_contract.dgs_elmsym_speed_var_uid
-            )
-            if reference_speed_uid_raw is not None:
-                reference_speed: Var | None = _find_root_var_by_uid(
-                    block=reference_block,
-                    variable_uid=reference_speed_uid_raw,
+            reference_speed: Var | None = None
+            if import_metadata is not None and reference_block.uid in import_metadata.blocks:
+                reference_speed_uid_raw: int | None = get_import_field(
+                    reference_block, DgsImportField.DGS_ELMSYM_SPEED_VAR_UID, import_metadata,
                 )
+                if reference_speed_uid_raw is not None:
+                    reference_speed = _find_root_var_by_uid(reference_block, reference_speed_uid_raw)
+                else:
+                    pass
             else:
-                reference_speed = None
+                pass
             if reference_speed is None:
                 logger.add_warning(
                     msg="DGS reference machine lacks an adapted RMS speed state",
@@ -428,11 +441,6 @@ def _bind_dgs_elmsym_reference_frequencies(
                 )
             else:
                 reference_speed_by_component[component] = reference_speed
-                # A PowerFactory reference machine fixes the rotating dq frame,
-                # not its terminal-bus voltage angle.  Retain that distinction
-                # for DAE assembly so the bus active-power balance remains and
-                # the reference rotor supplies the absolute angular coordinate.
-                reference_block.dynamic_model_contract.dgs_elmsym_network_angle_anchor = True
     else:
         pass
 
@@ -440,25 +448,37 @@ def _bind_dgs_elmsym_reference_frequencies(
     for generator in circuit.get_generators():
         machine_block: Block = generator.rms_model
         is_adapted_machine: bool = (
-            machine_block.dynamic_model_contract.dgs_elmsym_runtime_adapter
+                import_metadata is not None
+                and machine_block.uid in import_metadata.blocks
+                and get_import_field(machine_block, DgsImportField.DGS_ELMSYM_RUNTIME_ADAPTER, import_metadata)
         )
         if is_adapted_machine and bool(generator.active) and generator.bus is not None:
             component = components.find(bus=generator.bus)
             reference_speed = reference_speed_by_component.get(component, None)
             rotor_angle_uid_raw: int | None = (
-                machine_block.dynamic_model_contract.dgs_elmsym_rotor_angle_var_uid
+                get_import_field(
+                    machine_block,
+                    DgsImportField.DGS_ELMSYM_ROTOR_ANGLE_VAR_UID,
+                    import_metadata,
+                )
             )
             local_speed_uid_raw: int | None = (
-                machine_block.dynamic_model_contract.dgs_elmsym_speed_var_uid
+                get_import_field(
+                    machine_block,
+                    DgsImportField.DGS_ELMSYM_SPEED_VAR_UID,
+                    import_metadata,
+                )
             )
-            angular_frequency_uid_raw: int | None = (
-                machine_block.dynamic_model_contract.dgs_elmsym_angular_frequency_var_uid
+            # The model owns its base-frequency parameter. Resolve it directly
+            # from that local table, without storing parameter data in the parser.
+            angular_frequency: Var | None = machine_block.api_obj_mapping.get(
+                ParamPowerFlowReferenceType.omega_base, None,
             )
             metadata_is_complete: bool = (
-                reference_speed is not None
-                and rotor_angle_uid_raw is not None
-                and local_speed_uid_raw is not None
-                and angular_frequency_uid_raw is not None
+                    reference_speed is not None
+                    and rotor_angle_uid_raw is not None
+                    and local_speed_uid_raw is not None
+                    and angular_frequency is not None
             )
             if metadata_is_complete:
                 rotor_angle: Var | None = _find_root_var_by_uid(
@@ -469,27 +489,20 @@ def _bind_dgs_elmsym_reference_frequencies(
                     block=machine_block,
                     variable_uid=local_speed_uid_raw,
                 )
-                angular_frequency: Var | None = _find_root_var_by_uid(
-                    block=machine_block,
-                    variable_uid=angular_frequency_uid_raw,
-                )
             else:
                 rotor_angle = None
                 local_speed = None
                 angular_frequency = None
             variables_are_complete: bool = (
-                rotor_angle is not None
-                and local_speed is not None
-                and angular_frequency is not None
-                and reference_speed is not None
+                    rotor_angle is not None
+                    and local_speed is not None
+                    and angular_frequency is not None
+                    and reference_speed is not None
             )
             if variables_are_complete:
                 rotor_angle_index: int = machine_block.state_vars.index(rotor_angle)
                 machine_block.state_eqs[rotor_angle_index] = (
-                    angular_frequency * (local_speed - reference_speed)
-                )
-                machine_block.dynamic_model_contract.dgs_elmsym_reference_speed_var_uid = (
-                    reference_speed.uid
+                        angular_frequency * (local_speed - reference_speed)
                 )
                 bound_machine_count += 1
             else:
@@ -559,9 +572,9 @@ def _build_dgs_standard_vsc_rms_template(
         + epsilon
     ) / (ac_voltage_magnitude + epsilon)
     converter_loss: Expr = (
-        idle_loss
-        + linear_loss * ac_current_magnitude
-        + quadratic_loss * ac_current_magnitude * ac_current_magnitude
+            idle_loss
+            + linear_loss * ac_current_magnitude
+            + quadratic_loss * ac_current_magnitude * ac_current_magnitude
     )
 
     # One converter control closes the independent DC/AC active-power degree of
@@ -569,21 +582,21 @@ def _build_dgs_standard_vsc_rms_template(
     # the static DGS converter mapping, so no case-specific sign is introduced.
     if device.control1 == ConverterControlType.Vm_dc:
         active_control_equation: Expr = (
-            dc_voltage - Const(float(device.control1_val))
+                dc_voltage - Const(float(device.control1_val))
         )
     else:
         if device.control1 == ConverterControlType.Pdc:
             active_control_equation = (
-                dc_power
-                - Const(float(device.control1_val) / float(circuit.Sbase))
+                    dc_power
+                    - Const(float(device.control1_val) / float(circuit.Sbase))
             )
         else:
             # ``Pac`` is the regular remaining contract. More elaborate droop
             # modes are supplied by their exported composite; the fallback
             # retains their configured active-power operating target.
             active_control_equation = (
-                ac_active_power
-                - Const(float(device.control1_val) / float(circuit.Sbase))
+                    ac_active_power
+                    - Const(float(device.control1_val) / float(circuit.Sbase))
             )
 
     block: Block = Block(
@@ -630,26 +643,131 @@ def _build_dgs_standard_vsc_rms_template(
     return template
 
 
+def resolve_dgs_elmgenstat_source(device_id: str, sources: List[ElmGenstat]) -> ElmGenstat | None:
+    """Resolve exact source FIDs and the static importer's numbered parallel units."""
+    matches = [source for source in sources if source.ID == device_id]
+    if not matches:
+        base, separator, index = device_id.rpartition(':')
+        if separator and index.isdigit() and str(int(index)) == index:
+            matches = [source for source in sources if source.ID == base
+                       and 1 <= int(index) <= max(1, int(source.ngnum))]
+    return matches[0] if len(matches) == 1 else None
+
+
 def _build_dgs_elmgenstat_rms_template(
         circuit: MultiCircuit,
         device_tpe: DeviceType,
+        model: int = 1,
 ) -> RmsModelTemplate:
-    """Build the supported ElmGenstat current-source RMS shell.
+    """Build the selected uncontrolled source law around its solved operating point.
 
-    Current DGS rows do not declare ``iSimModel``. The importer therefore
-    materializes only PowerFactory's documented legacy current-source default
-    instead of inventing an unavailable selector.
+    Model 1 is constant current, 3 constant impedance and 4 constant power.
+    These fallback laws do not reconstruct missing controller dynamics.
+    """
+    if model not in (1, 3, 4):
+        raise ValueError(f'Unsupported ElmGenstat fallback model {model}')
+    label = {1: 'constant current', 3: 'constant impedance', 4: 'constant power'}[model]
+    template = get_voltage_dependent_power_rms_template(
+        vfactory=circuit.var_factory,
+        voltage_model=(VoltageDependentPowerModel.ConstantImpedance if model == 3
+                       else VoltageDependentPowerModel.ConstantCurrent),
+        name=f'DGS ElmGenstat {label} RMS model',
+    )
+    if model == 4:
+        block = template.block
+        power = block.external_mapping[VarPowerFlowReferenceType.P]
+        reactive = block.external_mapping[VarPowerFlowReferenceType.Q]
+        p0 = next(var for var, value in block.event_dict.items() if value is power)
+        q0 = next(var for var, value in block.event_dict.items() if value is reactive)
+        block.algebraic_eqs = [power - p0, reactive - q0]
+    template.tpe = device_tpe
+    return template
+
+
+def build_dgs_elmgenstat_fallback(
+        circuit: MultiCircuit, device: DynamicDevice, source: ElmGenstat, logger: Logger,
+        has_controller: bool = False,
+) -> RmsModelTemplate | None:
+    """Preserve explicit native source laws when a controller cannot be assembled."""
+    model = source.iSimModel
+    has_model = has_controller or bool(source.c_pmod and str(source.c_pmod).strip() not in ('*', '0'))
+    if source.ip_ctrl == 1:
+        reason = 'Reference-machine voltage-source equations are unavailable'
+    elif model == 2 and (source.uk is None or source.Pcu is None):
+        reason = 'Voltage-source model requires exported uk and Pcu'
+    elif model == 0 and has_model:
+        reason = 'Automatic model selection requires the unresolved controller input signals'
+    elif model in (None, 0, 1) and source.iDelay not in (None, 0):
+        reason = 'Enabled dq reference delay requires a complete current-source equipment model'
+    elif model not in (None, 0, 1, 2, 3, 4):
+        reason = f'Unknown native model selection {model}'
+    else:
+        if has_model:
+            logger.add_warning(
+                msg='DGS ElmGenstat controller unavailable; retaining only the selected source law',
+                device=device.name, device_class='ElmGenstat', value=f'iSimModel={model}')
+        try:
+            if model == 2:
+                block = build_dgs_elmgenstat_voltage_source_block(
+                    circuit.Sbase, source.sgn, source.uk, source.Pcu)
+                # No executable controller: hold its voltage boundary at the
+                # load-flow initialized internal phasor, not the terminal phasor.
+                for command in list(block.in_vars[2:]):
+                    block.event_dict[command] = block.init_eqs.pop(command)
+                block.in_vars = block.in_vars[:2]
+                template = RmsModelTemplate(name='DGS ElmGenstat fixed internal voltage RMS model')
+                template.block, template.tpe = block, device.device_type
+            else:
+                template = _build_dgs_elmgenstat_rms_template(circuit, device.device_type, model=model or 1)
+            if model != 3:
+                apply_genstat_voltage_protection(template.block, source.umin or 0., source.uonthr, source.Tondelay)
+            return template
+        except ValueError as error:
+            reason = str(error)
+    device.active = False
+    logger.add_warning(msg='DGS ElmGenstat RMS model unsupported; device kept inactive',
+                       device=device.name, device_class='ElmGenstat', value=reason)
+    return None
+
+
+def _build_dgs_elmsym_fixed_injection_rms_template(
+        circuit: MultiCircuit,
+        device_tpe: DeviceType,
+) -> RmsModelTemplate:
+    """Build an algebraic fallback for an unresolved ElmSym source.
+
+    The fallback has the same constant-power equations as the generic load
+    shell, but its static parameter contract belongs to Generator/Battery.
+    Using generator-specific keys lets the normal device mapper provide P/Q
+    without teaching every Generator model about load-only Pl0/Ql0 keys.
 
     :param circuit: Circuit owning the shared variable factory.
-    :param device_tpe: Exact VeraGrid presentation type of the imported host.
-    :return: Standard constant-current RMS template.
+    :param device_tpe: Generator or battery presentation type.
+    :return: Fixed-injection RMS shell with generator P/Q mappings.
     """
-    template: RmsModelTemplate = get_voltage_dependent_power_rms_template(
+    template: RmsModelTemplate = get_load_rms_template(
         vfactory=circuit.var_factory,
-        voltage_model=VoltageDependentPowerModel.ConstantCurrent,
-        name="DGS ElmGenstat constant current RMS model",
+        name="DGS unresolved ElmSym fixed injection RMS shell",
     )
     template.tpe = device_tpe
+    block: Block
+    for block in template.block.get_all_blocks():
+        active_power: Var | None = block.api_obj_mapping.pop(
+            ParamPowerFlowReferenceType.Pl0,
+            None,
+        )
+        reactive_power: Var | None = block.api_obj_mapping.pop(
+            ParamPowerFlowReferenceType.Ql0,
+            None,
+        )
+        if active_power is not None:
+            block.api_obj_mapping[
+                ParamPowerFlowReferenceType.generator_p_pu
+            ] = active_power
+        if reactive_power is not None:
+            block.api_obj_mapping[
+                ParamPowerFlowReferenceType.generator_q_pu
+            ] = reactive_power
     return template
 
 
@@ -673,9 +791,9 @@ def _find_registered_thevenin_template(
     registered_template: RmsModelTemplate
     for registered_template in circuit.rms_models:
         is_thevenin_template: bool = (
-            registered_template.tpe is DeviceType.GeneratorDevice
-            and registered_template.name
-            == "DGS external grid Thevenin RMS shell"
+                registered_template.tpe is DeviceType.GeneratorDevice
+                and registered_template.name
+                == "DGS external grid Thevenin RMS shell"
         )
         if is_thevenin_template:
             registered_resistance: float | None = None
@@ -734,9 +852,9 @@ def _build_dgs_default_rms_template(
     # operating point. DC lines retain their current state, while AC passive
     # branches use the standard polar power-balance model.
     is_two_terminal_dc_branch: bool = (
-        isinstance(device, (Line, SeriesReactance, Switch))
-        and device.bus_from.is_dc
-        and device.bus_to.is_dc
+            isinstance(device, (Line, SeriesReactance, Switch))
+            and device.bus_from.is_dc
+            and device.bus_to.is_dc
     )
     if isinstance(device, DcLine) or is_two_terminal_dc_branch:
         if isinstance(device, DcLine):
@@ -746,8 +864,8 @@ def _build_dgs_default_rms_template(
                 )
             )
             use_dynamic_inductance: bool = (
-                dynamic_values is not None
-                and float(dynamic_values[0]) > 0.0
+                    dynamic_values is not None
+                    and float(dynamic_values[0]) > 0.0
             )
         else:
             # Legacy DC-connected passive branches have no physical cable
@@ -771,7 +889,7 @@ def _build_dgs_default_rms_template(
         else:
             if isinstance(device, Transformer2W):
                 transformer_impedance_square: float = (
-                    float(device.R_corrected) ** 2 + float(device.X) ** 2
+                        float(device.R_corrected) ** 2 + float(device.X) ** 2
                 )
                 if transformer_impedance_square <= 1.0e-24:
                     # PowerFactory permits ideal transformers and contracts
@@ -805,8 +923,8 @@ def _build_dgs_default_rms_template(
             else:
                 if isinstance(device, Switch):
                     enforce_constraint: bool = (
-                        str(device.idtag)
-                        in ideal_ac_connector_constraint_ids
+                            str(device.idtag)
+                            in ideal_ac_connector_constraint_ids
                     )
                     switch_template_name: str = (
                         "DGS ideal AC connector RMS shell"
@@ -822,7 +940,7 @@ def _build_dgs_default_rms_template(
                     if isinstance(device, (Line, SeriesReactance)):
                         passive_resistance: float = float(device.R_corrected)
                         passive_impedance_square: float = (
-                            passive_resistance ** 2 + float(device.X) ** 2
+                                passive_resistance ** 2 + float(device.X) ** 2
                         )
                         if passive_impedance_square <= 1.0e-24:
                             # PowerFactory contracts zero-impedance AC lines.
@@ -830,8 +948,8 @@ def _build_dgs_default_rms_template(
                             # nodal unknowns and enforces equal voltage phasors;
                             # zero regular-line admittance opens the connector.
                             enforce_constraint = (
-                                str(device.idtag)
-                                in ideal_ac_connector_constraint_ids
+                                    str(device.idtag)
+                                    in ideal_ac_connector_constraint_ids
                             )
                             connector_template_name: str = (
                                 "DGS ideal AC connector RMS shell"
@@ -860,9 +978,9 @@ def _build_dgs_default_rms_template(
                                     isinstance(device, Generator)
                                     and str(device.idtag) in external_grid_source_ids
                                     and (
-                                        abs(float(device.R1)) > 0.0
-                                        or abs(float(device.X1)) > 0.0
-                                    )
+                                    abs(float(device.R1)) > 0.0
+                                    or abs(float(device.X1)) > 0.0
+                            )
                             ):
                                 # The static importer derives R1/X1 exclusively from
                                 # ElmXnet snss/rntxn. Preserve that finite source
@@ -896,16 +1014,16 @@ def _build_dgs_default_rms_template(
                         else:
                             source_id: str = str(device.idtag)
                             is_elmgenstat_injection: bool = (
-                                isinstance(
-                                    device,
-                                    (
-                                        Generator,
-                                        Battery,
-                                        StaticGenerator,
-                                        CurrentInjection,
-                                    ),
-                                )
-                                and source_id in elmgenstat_source_ids
+                                    isinstance(
+                                        device,
+                                        (
+                                            Generator,
+                                            Battery,
+                                            StaticGenerator,
+                                            CurrentInjection,
+                                        ),
+                                    )
+                                    and source_id in elmgenstat_source_ids
                             )
                             if is_elmgenstat_injection:
                                 # ElmGenstat can map to Generator, Battery or
@@ -918,14 +1036,14 @@ def _build_dgs_default_rms_template(
                                 )
                             else:
                                 if (
-                                    isinstance(device, (Generator, Battery))
-                                    and source_id in elmsym_source_ids
+                                        isinstance(device, (Generator, Battery))
+                                        and source_id in elmsym_source_ids
                                 ):
                                     # Do not fabricate dynamics for an
                                     # unresolved exported synchronous source.
-                                    template = get_load_rms_template(
-                                        vfactory=circuit.var_factory,
-                                        name="DGS unresolved ElmSym fixed injection RMS shell",
+                                    template = _build_dgs_elmsym_fixed_injection_rms_template(
+                                        circuit=circuit,
+                                        device_tpe=device.device_type,
                                     )
                                 elif isinstance(device, (Generator, Battery)):
                                     template = get_genrow_rms_template(
@@ -997,31 +1115,6 @@ def _find_unique_rms_conduction_parameter(
             else:
                 pass
     return parameter_owner, conduction_parameter
-
-
-def _seed_rms_conduction_status_from_device(device: DynamicDevice) -> bool:
-    """Seed a retained RMS conduction parameter from physical service state.
-
-    Static power flow excludes an out-of-service branch. Its fixed-size RMS
-    template must start with the same status; otherwise dynamic initialization
-    silently reconnects equipment that the solved operating point excluded.
-
-    :param device: Physical device owning the connected RMS block.
-    :return: ``True`` when a retained conduction parameter was initialized.
-    """
-    status_owner: Block | None
-    status_parameter: Var | None
-    status_owner, status_parameter = _find_unique_rms_conduction_parameter(
-        block=device.rms_model,
-    )
-    seeded: bool = False
-    if status_owner is not None and status_parameter is not None:
-        status_value: float = 1.0 if bool(device.active) else 0.0
-        status_owner.event_dict[status_parameter] = Const(status_value)
-        seeded = True
-    else:
-        pass
-    return seeded
 
 
 def bind_dgs_switch_event_runtime(
@@ -1169,6 +1262,7 @@ def _prepare_dgs_rms_device(
         ideal_ac_connector_constraint_ids: Set[str],
         logger: Logger,
         report: DgsRmsPreparationReport,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> None:
     """
     Preserve or prepare the RMS model of one DGS physical device.
@@ -1206,7 +1300,7 @@ def _prepare_dgs_rms_device(
             try:
                 # The regular template setter duplicates and connects the model
                 # through the same path used by VeraGrid's Dynamic Editor.
-                device.rms_template = template
+                assign_import_template(device, template)
                 # The device keeps a typed reference to its reusable template.
                 # Register that public object in the circuit so VeraGrid
                 # persistence writes the referenced declaration before devices
@@ -1229,11 +1323,6 @@ def _prepare_dgs_rms_device(
         # Imported DGS controllers have priority over generic electrical shells.
         report.record_preserved_device()
 
-    # Apply the physical in/out-of-service state after either assignment path.
-    # Imported and standard branch models therefore share the same startup
-    # contract without relying on template-specific default constants.
-    _seed_rms_conduction_status_from_device(device=device)
-
 
 def _get_monopolar_vsc_dc_capacitance_pu_seconds(
         converter: VSC,
@@ -1254,19 +1343,19 @@ def _get_monopolar_vsc_dc_capacitance_pu_seconds(
     :return: Equivalent DC-link capacitance in per-unit seconds.
     """
     is_monopolar_dc_converter: bool = (
-        converter.active
-        and converter.bus_dc_n is None
-        and converter.bus_from.is_dc
-        and not converter.bus_from.is_grounded
+            converter.active
+            and converter.bus_dc_n is None
+            and converter.bus_from.is_dc
+            and not converter.bus_from.is_grounded
     )
     dc_link_capacitance_uf: float = float(converter.dc_link_capacitance_uf)
     arm_capacitance_uf: float = float(converter.mmc_arm_capacitance_uf)
     dc_bus_base_kv: float = float(converter.bus_from.Vnom)
     physical_data_ready: bool = (
-        is_monopolar_dc_converter
-        and (dc_link_capacitance_uf > 0.0 or arm_capacitance_uf > 0.0)
-        and dc_bus_base_kv > 0.0
-        and system_base_mva > 0.0
+            is_monopolar_dc_converter
+            and (dc_link_capacitance_uf > 0.0 or arm_capacitance_uf > 0.0)
+            and dc_bus_base_kv > 0.0
+            and system_base_mva > 0.0
     )
     if physical_data_ready:
         # A two-level converter owns Cdc directly. Legacy MMC imports retain
@@ -1278,10 +1367,10 @@ def _get_monopolar_vsc_dc_capacitance_pu_seconds(
         dc_bus_base_volts: float = dc_bus_base_kv * 1.0e3
         system_base_watts: float = system_base_mva * 1.0e6
         capacitance_pu_seconds: float = (
-            equivalent_capacitance_f
-            * dc_bus_base_volts
-            * dc_bus_base_volts
-            / system_base_watts
+                equivalent_capacitance_f
+                * dc_bus_base_volts
+                * dc_bus_base_volts
+                / system_base_watts
         )
     else:
         capacitance_pu_seconds = 0.0
@@ -1296,6 +1385,7 @@ def prepare_dgs_circuit_for_rms(
         elmsym_source_ids: Set[str] | None = None,
         elmsym_reference_source_ids: Set[str] | None = None,
         typeless_elmlod_source_ids: Set[str] | None = None,
+        import_metadata: DgsImportMetadata | None = None,
 ) -> DgsRmsPreparationReport:
     """
     Complete missing standard RMS shells after one massive DGS import.
@@ -1313,6 +1403,7 @@ def prepare_dgs_circuit_for_rms(
         FIDs defining the frequency frame of each connected AC area.
     :param typeless_elmlod_source_ids: Optional exact FIDs exported from
         ``ElmLod`` without a ``TypLod`` reference.
+    :param import_metadata: Shared metadata registry for an owned DGS import.
     :return: Structured preparation report.
     """
     report: DgsRmsPreparationReport = DgsRmsPreparationReport()
@@ -1403,12 +1494,12 @@ def prepare_dgs_circuit_for_rms(
             None,
         )
         is_replaceable_dc_shell: bool = (
-            bus_capacitance > 0.0
-            and vdc_shell_var is not None
-            and len(bus.rms_model.state_vars) == 0
-            and len(bus.rms_model.algebraic_vars) == 1
-            and len(bus.rms_model.algebraic_eqs) == 0
-            and len(bus.rms_model.children) == 0
+                bus_capacitance > 0.0
+                and vdc_shell_var is not None
+                and len(bus.rms_model.state_vars) == 0
+                and len(bus.rms_model.algebraic_vars) == 1
+                and len(bus.rms_model.algebraic_eqs) == 0
+                and len(bus.rms_model.children) == 0
         )
         if bus.rms_model.empty():
             initialize_bus_rms(
@@ -1443,6 +1534,7 @@ def prepare_dgs_circuit_for_rms(
             ideal_ac_connector_constraint_ids=ideal_ac_connector_constraint_ids,
             logger=logger,
             report=report,
+            import_metadata=import_metadata,
         )
 
     for device in circuit.get_vsc():
@@ -1456,6 +1548,7 @@ def prepare_dgs_circuit_for_rms(
             ideal_ac_connector_constraint_ids=ideal_ac_connector_constraint_ids,
             logger=logger,
             report=report,
+            import_metadata=import_metadata,
         )
 
     for device in injection_devices:
@@ -1469,6 +1562,7 @@ def prepare_dgs_circuit_for_rms(
             ideal_ac_connector_constraint_ids=ideal_ac_connector_constraint_ids,
             logger=logger,
             report=report,
+            import_metadata=import_metadata,
         )
 
     # PowerFactory evaluates every synchronous-machine angle in its connected
@@ -1480,6 +1574,7 @@ def prepare_dgs_circuit_for_rms(
         branch_devices=branch_devices,
         elmsym_reference_source_ids=effective_elmsym_reference_source_ids,
         logger=logger,
+        import_metadata=import_metadata,
     )
 
     return report

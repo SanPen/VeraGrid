@@ -4,6 +4,10 @@
 
 An `OverheadLineType` stores reusable conductor geometry and the derived impedance and admittance matrices for overhead lines.
 
+Set `transposed=True` for perfect transposition of a single complete ABC circuit. After the existing earth-wire reduction, the series impedance Z and shunt admittance Y are averaged over the three cyclic phase positions; series admittance is then obtained by inverting the averaged Z. The branch NABC matrices and catalogue sequence values use the same result. The default is False, preserving existing geometrical calculations.
+
+PowerFactory imports this setting from `TypTow.iTransMode=3`, exported by **DGS Export Definitions 8 - VeraGrid**. Mode 0 retains the original arrangement. Circuit-wise, symmetrical and multi-circuit perfect transposition are not implemented here and produce an explicit import error; use electrical-parameter input for those cases.
+
 This device stores reusable equipment data that can be applied to physical network elements.
 
 ### Registered properties
@@ -34,6 +38,7 @@ Profile-enabled properties: none.
 |emt_fmu_import_config   |str                |            |False    |         |Serialized FMU Co-Simulation EMT configuration                                  |False      |       |
 |rms_fmu_me_import_config|str                |            |False    |         |Serialized FMU Model Exchange RMS configuration                                 |False      |       |
 |emt_fmu_me_import_config|str                |            |False    |         |Serialized FMU Model Exchange EMT configuration                                 |False      |       |
+|transposed              |bool               |            |False    |         |Perfect transposition of a single ABC circuit, after earth-wire reduction.      |False      |       |
 |earth_resistivity       |float              |Ohm/m3      |False    |         |Earth resistivity                                                               |False      |       |
 |frequency               |float              |Hz          |False    |         |Frequency                                                                       |False      |       |
 |Vnom                    |float              |kV          |False    |         |Voltage rating of the line                                                      |False      |       |

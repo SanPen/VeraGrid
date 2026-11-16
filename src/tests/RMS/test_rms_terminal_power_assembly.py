@@ -1,3 +1,4 @@
+
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -5,14 +6,18 @@
 
 import numpy as np
 import pytest
+from pathlib import Path
 
 from VeraGridEngine.api import power_flow
+from VeraGridEngine.IO.file_open import FileOpen
+from VeraGridEngine.IO.file_save import FileSave
 from VeraGridEngine.basic_structures import BoolVec, ObjVec, Logger, LogEntry
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import assign_static_api_object_mapping_for_device
 from VeraGridEngine.Devices.Injections.controllable_shunt import ControllableShunt
 from VeraGridEngine.Devices.Injections.generator import Generator
@@ -21,19 +26,13 @@ from VeraGridEngine.Devices.Injections.shunt import Shunt
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized import (
-    BackEulerImplicitIntegrationFullVec,
-)
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized import (
-    BackEulerImplicitIntegrationVec,
-)
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import (
     RmsProblemDae,
     _evaluate_rms_runtime_parameter_value_from_events,
 )
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import RmsProblemDaeVec
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor import RmsProblemPhasor
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_full_vectorized import (
     RmsProblemDaeFullVec,
 )
@@ -44,26 +43,53 @@ from VeraGridEngine.Simulations.Rms.problems.rms_terminal_power_assembly import 
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.rms_problem_factory import build_rms_problem
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_multilinear import RmsProblemMultilinear
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate, project_initial_algebraic_state
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import (
+from VeraGridEngine.Simulations.Rms.initialization_rms import project_initial_algebraic_state
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template import (
     get_complete_generator_template_rms,
 )
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Templates.Rms.line_phasor_rms_template import get_line_phasor_rms_template
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.Templates.Rms.bus_phasor_rms_template import initialize_bus_phasor_rms
-from VeraGridEngine.Templates.Rms.load_phasor_current_rms_template import get_load_phasor_current_rms_template
-from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
-from VeraGridEngine.Templates.Rms.vsc_gfm import VscGfmBuild
-from VeraGridEngine.Templates.Rms.hvdc_vsc_gfl_rms_template_v2 import build_hvdc_vsc_gfl_rms
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.line.line_phasor_rms_template import get_line_phasor_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.buses.bus_phasor_rms_template import initialize_bus_phasor_rms
+from VeraGridEngine.Templates.Rms.load_characteristics.load_phasor_current_rms_template import get_load_phasor_current_rms_template
+from VeraGridEngine.Templates.Rms.renewable_controls.current_source_host import build_renewable_current_source_host
+from VeraGridEngine.Templates.Rms.induction_machines.wt2g1_electrical_core import Wt2g1ElectricalSettings, derive_wt2g1_operating_point
+from VeraGridEngine.Templates.Rms.renewable_controls.wt12a1u_b_active_stall import Wt12a1uBSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.wt2_current_balance_host import build_wt2_current_balance_host
+from VeraGridEngine.Templates.Rms.renewable_controls.wt2e1_rotor_resistance import Wt2e1Settings
+from VeraGridEngine.Templates.Rms.renewable_controls.regca1_low_voltage import (
+    Regca1LowVoltageSettings,
+    build_regca1_low_voltage_template,
+)
+from VeraGridEngine.Templates.Rms.renewable_controls.reeca1_active_power import Reeca1ActivePowerMode, Reeca1ActivePowerSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.reeca1_constant_q import Reeca1ConstantQSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.reeca1_constant_pf import Reeca1ConstantPfSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.reeca1_coordinated_qv import Reeca1CoordinatedQvSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.reeca1_local_voltage import Reeca1LocalVoltageSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.reeca1_current_limit import Reeca1CurrentLimitSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.reeca1_voltage_support import Reeca1VoltageSupportSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.wtdta1_drive_train import Wtdta1DriveTrainSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.wtara1_aerodynamic import Wtara1AerodynamicSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.wttqa1_torque import Wttqa1TorqueMode, Wttqa1TorqueSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.wtpta1_pitch import Wtpta1PitchSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.repca1_active_plant import Repca1ActivePlantSettings
+from VeraGridEngine.Templates.Rms.renewable_controls.repca1_reactive_plant import Repca1ReactiveMode, Repca1ReactivePlantSettings, Repca1VoltageCompensation, build_repca1_reactive_plant_template, repca1_line_drop_voltage
+from VeraGridEngine.Templates.Rms.renewable_controls.renewable_partial_chain import build_renewable_partial_chain
+from VeraGridEngine.Templates.Rms.converters.vsc_gfl_dclinked import build_vsc_rms
+from VeraGridEngine.Templates.Rms.converters.vsc_gfm import VscGfmBuild
+from VeraGridEngine.Templates.Rms.converters.hvdc_vsc_gfl_rms_template_v2 import build_hvdc_vsc_gfl_rms
 from VeraGridEngine.Utils.Symbolic.block import Block, DynamicModelContract
+from VeraGridEngine.Utils.procedural_logic import ProceduralLogicCodec
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, get_expression_vars
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 from VeraGridEngine.enumerations import (
     DynamicEventTransitionType, LogSeverity, ParamPowerFlowReferenceType,
     VarPowerFlowReferenceType, RmsProblemTypes,
 )
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def build_current_balance_load_case(
@@ -365,6 +391,160 @@ def test_current_balance_load_parameter_events(active: bool, use_kw: bool) -> No
     assert load.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.Pl0].uid == active_parameter.uid
     assert load.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.Ql0].uid == reactive_parameter.uid
     assert (load.P, load.Q, load.active, load.use_kw) == (powers[0][0], powers[0][1], active, use_kw)
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+@pytest.mark.parametrize('active_stall', (False, True))
+def test_wt2_unsaturated_host_matches_connected_power_flow_q_with_hidden_shunt(
+        active_stall: bool) -> None:
+    """Attach a Type 2 machine to a live bus and preserve initial PF P/Q.
+
+    :param active_stall: Select the WT12A1U_B mechanical controller.
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_current_balance_load_case(
+        powers=((10., 1.),), system_base=100., nominal_ratio=1.,
+    )
+    wind: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='WT2 source', P=30., Snom=50.),
+    )
+    wind.is_controlled = False
+    pf: PowerFlowResults
+    machine_settings: Wt2g1ElectricalSettings
+    pf = power_flow(grid=grid)
+    assert pf.converged
+    machine_settings = derive_wt2g1_operating_point(
+        source=Wt2g1ElectricalSettings(),
+        target_power=float(pf.gen_p[1] / wind.Snom),
+        voltage_d=-float(pf.voltage[1].imag),
+        voltage_q=float(pf.voltage[1].real),
+        curve=Wt2e1Settings().curve,
+    )
+    stall_vt4: float = abs(pf.voltage[1]) - .02
+    host: RmsModelTemplate = build_wt2_current_balance_host(
+        grid.var_factory, name='WT2 source', machine_settings=machine_settings,
+        active_stall_settings=Wt12a1uBSettings(
+            tr=0., t0=.01, pset=.4,
+            curve=((stall_vt4 - .3, .006), (stall_vt4 - .2, .005),
+                   (stall_vt4 - .1, .004), (stall_vt4, .003)),
+        ) if active_stall else None,
+    )
+    if active_stall:
+        assert len(host.block.procedural_logic) == 1
+    else:
+        assert len(host.block.procedural_logic) == 0
+    grid.add_rms_model(host)
+    wind.rms_template = host
+    problem: RmsProblemPhasor = RmsProblemPhasor(
+        grid=grid, options=RmsOptions(problem_type=RmsProblemTypes.CurrentBalance), pf_results=pf,
+    )
+    group: RmsEventsGroup = RmsEventsGroup()
+    if active_stall:
+        load_q: Var = next(parameter for parameter in grid.loads[0].rms_model.event_dict
+                           if parameter.name.startswith('Ql0'))
+        grid.add_rms_event(RmsEvent(
+            device=grid.loads[0], parameter=load_q, time=.001, value=-.3,
+            group=group,
+        ))
+        grid.add_rms_event(RmsEvent(
+            device=grid.loads[0], parameter=load_q, time=.005, value=.01,
+            group=group,
+        ))
+    else:
+        pass
+    problem.set_events_group(rms_events_group=group)
+    projected: np.ndarray
+    initialized: bool
+    residual: float
+    projected, initialized, residual = project_initial_algebraic_state(
+        problem=problem, initial_values=problem.get_x0(),
+        differential_values=problem.get_dx0(), tolerance=1.0e-8, max_iter=25,
+    )
+    assert initialized and residual <= 1.0e-8
+    if active_stall:
+        assert len(wind.rms_model.procedural_logic) == 1
+        assert problem._procedural_logic_updater is not None
+        assert wind.rms_model.procedural_logic[0].trigger_expr in wind.rms_model.algebraic_vars
+        qualification: Var = next(variable for variable in wind.rms_model.algebraic_vars
+                                  if variable.name.startswith('QualifiedVoltageDip_'))
+        duration: Var = next(variable for variable in wind.rms_model.algebraic_vars
+                             if variable.name.startswith('DurationSeconds_'))
+        assert projected[problem.get_var_idx(qualification)] == pytest.approx(0.)
+        assert projected[problem.get_var_idx(duration)] == pytest.approx(0.)
+    else:
+        pass
+    network_p: Var = wind.rms_model.E(VarPowerFlowReferenceType.P)
+    network_q: Var = wind.rms_model.E(VarPowerFlowReferenceType.Q)
+    assert projected[problem.get_var_idx(network_p)] == pytest.approx(pf.gen_p[1] / grid.Sbase, abs=1e-7)
+    assert projected[problem.get_var_idx(network_q)] == pytest.approx(pf.gen_q[1] / grid.Sbase, abs=1e-7)
+    machine_q: Var = wind.rms_model.out_vars[1]
+    machine_q_seed: Expr = wind.rms_model.init_eqs[machine_q]
+    assert isinstance(machine_q_seed, Const)
+    shunt: Var | None = None
+    event_parameter: Var
+    for event_parameter in wind.rms_model.event_dict:
+        if event_parameter.name.startswith('HiddenQShuntMachinePu_'):
+            shunt = event_parameter
+        else:
+            pass
+    assert shunt is not None
+    shunt_index: int = problem._uid2idx_event_params[shunt.uid]
+    shunt_value: float = problem._variable_parameters_values[shunt_index]
+    assert shunt_value == pytest.approx(pf.gen_q[1] / wind.Snom - float(machine_q_seed.value), abs=1e-7)
+    initial_voltage: complex = complex(
+        projected[problem.get_var_idx(grid.buses[1].rms_model.E(VarPowerFlowReferenceType.Vr))],
+        projected[problem.get_var_idx(grid.buses[1].rms_model.E(VarPowerFlowReferenceType.Vi))],
+    )
+    problem._variable_parameters_values[shunt_index] += .02
+    disturbed: np.ndarray
+    disturbed, initialized, residual = project_initial_algebraic_state(
+        problem=problem, initial_values=projected,
+        differential_values=problem.get_dx0(), tolerance=1.0e-8, max_iter=25,
+    )
+    assert initialized and residual <= 1e-8
+    assert disturbed[problem.get_var_idx(network_q)] > projected[problem.get_var_idx(network_q)]
+    disturbed_voltage: complex = complex(
+        disturbed[problem.get_var_idx(grid.buses[1].rms_model.E(VarPowerFlowReferenceType.Vr))],
+        disturbed[problem.get_var_idx(grid.buses[1].rms_model.E(VarPowerFlowReferenceType.Vi))],
+    )
+    assert abs(disturbed_voltage - initial_voltage) > 1e-8
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.008 if active_stall else .002,
+        h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    assert np.all(np.isfinite(values))
+    if active_stall:
+        ramp: Var = next(variable for variable in wind.rms_model.state_vars
+                         if variable.name.startswith('PowerRampPu_'))
+        ramp_index: int = problem.get_var_idx(ramp)
+        voltage_real_index: int = problem.get_var_idx(
+            grid.buses[1].rms_model.E(VarPowerFlowReferenceType.Vr),
+        )
+        voltage_imag_index: int = problem.get_var_idx(
+            grid.buses[1].rms_model.E(VarPowerFlowReferenceType.Vi),
+        )
+        voltage_magnitudes: np.ndarray = np.hypot(
+            values[:, voltage_real_index], values[:, voltage_imag_index],
+        )
+        assert voltage_magnitudes[2] < voltage_magnitudes[0] - .02
+        assert voltage_magnitudes[6] > voltage_magnitudes[2] + .02
+        assert values[2, problem.get_var_idx(qualification)] == pytest.approx(1.)
+        assert values[6, problem.get_var_idx(qualification)] == pytest.approx(0.)
+        assert float(np.min(values[:, ramp_index])) < values[0, ramp_index] - 1e-4
+        stall_mode: Var = next(iter(wind.rms_model.mode_dict))
+        assert problem._variable_parameters_values[
+            problem._uid2idx_event_params[stall_mode.uid]
+        ] == pytest.approx(0.)
+    else:
+        pass
     problem.close_fmu_cs_devices()
     problem.close_fmu_me_devices()
 
@@ -1298,6 +1478,1483 @@ def build_supported_vectorized_ac_load_case(physical_conductance: float = 0.0) -
     return grid, power_flow_results
 
 
+def test_regca1_high_voltage_current_tracks_khv_on_connected_phasor_network() -> None:
+    """Apply the bounded KHV current correction on the live network voltage.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_current_balance_load_case(
+        powers=((.5, .05),), system_base=100., nominal_ratio=1.,
+    )
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1],
+        api_obj=Generator(name='REGCA1 high-voltage boundary', P=.5, Q=.05, Snom=50.),
+    )
+    renewable.is_controlled = False
+    group: RmsEventsGroup = RmsEventsGroup()
+    template: RmsModelTemplate = build_regca1_low_voltage_template(
+        vf=grid.var_factory,
+        name='REGCA1 high-voltage boundary',
+        settings=Regca1LowVoltageSettings(volim=.999),
+        problem_type=RmsProblemTypes.CurrentBalance,
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid)
+    assert pf.converged
+
+    problem: RmsProblemPhasor = RmsProblemPhasor(
+        grid=grid,
+        options=RmsOptions(problem_type=RmsProblemTypes.CurrentBalance),
+        pf_results=pf,
+    )
+    problem.set_events_group(group)
+    projected: np.ndarray
+    initialized: bool
+    residual: float
+    projected, initialized, residual = project_initial_algebraic_state(
+        problem=problem,
+        initial_values=problem.get_x0(),
+        differential_values=problem.get_dx0(),
+        tolerance=1.e-8,
+        max_iter=50,
+    )
+    assert initialized and residual <= 1.e-8
+    voltage_real: Var = renewable.rms_model.E(VarPowerFlowReferenceType.Vr)
+    voltage_imaginary: Var = renewable.rms_model.E(VarPowerFlowReferenceType.Vi)
+    terminal_voltage: float = float(np.hypot(
+        projected[problem.get_var_idx(voltage_real)],
+        projected[problem.get_var_idx(voltage_imaginary)],
+    ))
+    correction: Var = next(
+        signal for signal in renewable.rms_model.algebraic_vars
+        if signal.name.startswith('HighVoltageReactiveCorrection_')
+    )
+    assert projected[problem.get_var_idx(correction)] > 0.
+    reactive_state: Var = next(
+        signal for signal in renewable.rms_model.state_vars
+        if signal.name.startswith('ConverterReactiveCurrent_')
+    )
+    reactive_state_value: float = projected[problem.get_var_idx(reactive_state)]
+    expected_correction: float = min(.7 * max(terminal_voltage - .999, 0.),
+                                     max(reactive_state_value + 1.2, 0.))
+    assert projected[problem.get_var_idx(correction)] == pytest.approx(
+        expected_correction, abs=1.e-8,
+    )
+    load_reactive_order: Var = next(
+        parameter for parameter in grid.loads[0].rms_model.event_dict
+        if parameter.name.startswith('Ql0')
+    )
+    load_reactive_index: int = problem._uid2idx_event_params[load_reactive_order.uid]
+    problem._variable_parameters_values[load_reactive_index] = -.3
+    undervoltage: np.ndarray
+    undervoltage_initialized: bool
+    undervoltage_residual: float
+    undervoltage, undervoltage_initialized, undervoltage_residual = project_initial_algebraic_state(
+        problem=problem,
+        initial_values=projected,
+        differential_values=problem.get_dx0(),
+        tolerance=1.e-8,
+        max_iter=50,
+    )
+    assert undervoltage_initialized and undervoltage_residual <= 1.e-8
+    assert undervoltage[problem.get_var_idx(correction)] == pytest.approx(0., abs=1.e-8)
+    undervoltage_magnitude: float = float(np.hypot(
+        undervoltage[problem.get_var_idx(voltage_real)],
+        undervoltage[problem.get_var_idx(voltage_imaginary)],
+    ))
+    assert undervoltage_magnitude < terminal_voltage
+    problem._variable_parameters_values[load_reactive_index] = .01
+    overvoltage: np.ndarray
+    overvoltage_initialized: bool
+    overvoltage_residual: float
+    overvoltage, overvoltage_initialized, overvoltage_residual = project_initial_algebraic_state(
+        problem=problem,
+        initial_values=undervoltage,
+        differential_values=problem.get_dx0(),
+        tolerance=1.e-8,
+        max_iter=50,
+    )
+    assert overvoltage_initialized and overvoltage_residual <= 1.e-8
+    overvoltage_magnitude: float = float(np.hypot(
+        overvoltage[problem.get_var_idx(voltage_real)],
+        overvoltage[problem.get_var_idx(voltage_imaginary)],
+    ))
+    overvoltage_state_value: float = overvoltage[problem.get_var_idx(reactive_state)]
+    expected_overvoltage_correction: float = min(
+        .7 * max(overvoltage_magnitude - .999, 0.),
+        max(overvoltage_state_value + 1.2, 0.),
+    )
+    assert overvoltage[problem.get_var_idx(correction)] == pytest.approx(
+        expected_overvoltage_correction, abs=1.e-8,
+    )
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_current_host_initializes_from_connected_power_flow(tmp_path: Path) -> None:
+    """Verify current and power bases on a loaded two-bus RMS network.
+
+    :param tmp_path: Directory for a native persistence round trip.
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_current_balance_load_case(
+        powers=((10.0, 1.0),), system_base=100.0, nominal_ratio=1.0,
+    )
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1],
+        api_obj=Generator(name="Renewable", P=4.0, Snom=50.0),
+    )
+    renewable.is_controlled = False
+    host_template: RmsModelTemplate = build_renewable_current_source_host(
+        vf=grid.var_factory, name="Renewable", problem_type=RmsProblemTypes.CurrentBalance,
+    )
+    grid.add_rms_model(host_template)
+    renewable.rms_template = host_template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+
+    problem: RmsProblemPhasor = RmsProblemPhasor(
+        grid=grid, options=RmsOptions(problem_type=RmsProblemTypes.CurrentBalance), pf_results=pf
+    )
+    problem.set_events_group(rms_events_group=RmsEventsGroup())
+    seed: np.ndarray = problem.get_x0()
+    projected: np.ndarray
+    initialized: bool
+    residual: float
+    projected, initialized, residual = project_initial_algebraic_state(
+        problem=problem, initial_values=seed,
+        differential_values=problem.get_dx0(), tolerance=1.0e-8, max_iter=25,
+    )
+    assert initialized and residual <= 1.0e-8
+    active_power: float = projected[
+        problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    ]
+    reactive_power: float = projected[
+        problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.Q))
+    ]
+    voltage: float = abs(pf.voltage[1])
+    machine_ratio: float = renewable.Snom / grid.Sbase
+    assert active_power == pytest.approx(pf.gen_p[1] / grid.Sbase, abs=1.0e-8)
+    assert reactive_power == pytest.approx(pf.gen_q[1] / grid.Sbase, abs=1.0e-8)
+    commands: list[Var] = list(renewable.rms_model.event_dict)
+    active_command_index: int = problem._uid2idx_event_params[commands[0].uid]
+    reactive_command_index: int = problem._uid2idx_event_params[commands[1].uid]
+    assert problem._variable_parameters_values[active_command_index] == pytest.approx(
+        pf.gen_p[1] / (voltage * renewable.Snom)
+    )
+    assert problem._variable_parameters_values[reactive_command_index] == pytest.approx(
+        pf.gen_q[1] / (voltage * renewable.Snom)
+    )
+
+    # Changing a machine-base current command must change the connected
+    # network solution and the injected system-base power together.
+    problem._variable_parameters_values[active_command_index] += 0.02
+    disturbed: np.ndarray
+    disturbed, initialized, residual = project_initial_algebraic_state(
+        problem=problem, initial_values=projected,
+        differential_values=problem.get_dx0(), tolerance=1.0e-8, max_iter=25,
+    )
+    assert initialized and residual <= 1.0e-8
+    disturbed_power: float = disturbed[
+        problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    ]
+    assert disturbed_power > active_power
+    disturbed_voltage: float = np.hypot(
+        disturbed[problem.get_var_idx(grid.buses[1].rms_model.E(VarPowerFlowReferenceType.Vr))],
+        disturbed[problem.get_var_idx(grid.buses[1].rms_model.E(VarPowerFlowReferenceType.Vi))],
+    )
+    assert disturbed_power == pytest.approx(
+        disturbed_voltage * problem._variable_parameters_values[active_command_index] * machine_ratio,
+        abs=1.0e-8,
+    )
+    assert abs(disturbed_voltage - voltage) > 1.0e-8
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+    # The generator keeps the same symbolic host association after both
+    # archive loading and a deep circuit clone.
+    archive: Path = tmp_path / "renewable-current-host.veragrid"
+    FileSave(circuit=grid, file_name=str(archive)).save()
+    restored: MultiCircuit = FileOpen(str(archive)).open()
+    circuit: MultiCircuit
+    for circuit in (restored, restored.copy()):
+        restored_generator: Generator = circuit.generators[1]
+        assert restored_generator.rms_template is circuit.rms_models[0]
+        assert ParamPowerFlowReferenceType.generator_snom_mva in restored_generator.rms_model.api_obj_mapping
+        assert ParamPowerFlowReferenceType.Sbase in restored_generator.rms_model.api_obj_mapping
+        assert VarPowerFlowReferenceType.P in restored_generator.rms_model.external_mapping
+        assert VarPowerFlowReferenceType.Q in restored_generator.rms_model.external_mapping
+
+
+def test_renewable_current_host_uses_machine_base_in_power_balance() -> None:
+    """Verify the polar RMS formulation uses the same current and MVA bases.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name="Polar renewable", P=4.0, Snom=50.0),
+    )
+    renewable.is_controlled = False
+    host: RmsModelTemplate = build_renewable_current_source_host(
+        vf=grid.var_factory, name="Polar renewable"
+    )
+    grid.add_rms_model(host)
+    renewable.rms_template = host
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(grid=grid, options=RmsOptions(), pf_results=pf)
+    problem.set_events_group(rms_events_group=RmsEventsGroup())
+    projected: np.ndarray
+    initialized: bool
+    residual: float
+    projected, initialized, residual = project_initial_algebraic_state(
+        problem=problem, initial_values=problem.get_x0(),
+        differential_values=problem.get_dx0(), tolerance=1.0e-8, max_iter=25,
+    )
+    assert initialized and residual <= 1.0e-8
+    current_command: Var = list(renewable.rms_model.event_dict)[0]
+    assert problem._variable_parameters_values[
+        problem._uid2idx_event_params[current_command.uid]
+    ] == pytest.approx(pf.gen_p[1] / (abs(pf.voltage[1]) * renewable.Snom))
+    assert projected[
+        problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    ] == pytest.approx(pf.gen_p[1] / grid.Sbase)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0.0, t_end=0.001, h=0.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    assert np.all(np.isfinite(values))
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_current_host_rejects_unconnected_formulation() -> None:
+    """Avoid constructing a current host for a network with no matching ports.
+
+    :return: None.
+    """
+    with pytest.raises(ValueError, match="network formulation"):
+        build_renewable_current_source_host(
+            vf=VarFactory(), problem_type=RmsProblemTypes.Tensygrid,
+        )
+
+
+def test_regca1_low_voltage_core_initializes_on_connected_phasor_network() -> None:
+    """Keep converter states and network injection at the solved P/Q operating point.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_current_balance_load_case(
+        powers=((10.0, 1.0),), system_base=100.0, nominal_ratio=1.0,
+    )
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='REGCA core', P=4.0, Snom=50.0),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_regca1_low_voltage_template(
+        vf=grid.var_factory, name='REGCA core', problem_type=RmsProblemTypes.CurrentBalance,
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    problem: RmsProblemPhasor = RmsProblemPhasor(
+        grid=grid, options=RmsOptions(problem_type=RmsProblemTypes.CurrentBalance),
+        pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=RmsEventsGroup())
+    projected: np.ndarray
+    initialized: bool
+    residual: float
+    projected, initialized, residual = project_initial_algebraic_state(
+        problem=problem, initial_values=problem.get_x0(),
+        differential_values=problem.get_dx0(), tolerance=1.0e-8, max_iter=25,
+    )
+    assert initialized and residual <= 1.0e-8
+    assert projected[
+        problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    ] == pytest.approx(pf.gen_p[1] / grid.Sbase, abs=1.0e-8)
+    assert projected[
+        problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.Q))
+    ] == pytest.approx(pf.gen_q[1] / grid.Sbase, abs=1.0e-8)
+    assert len(renewable.rms_model.state_vars) == 3
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_regca1_initializes_active_current_state_from_limited_pf_command() -> None:
+    """Use the LVPL-limited current as the initial converter lag state.
+
+    :return: None.
+    """
+    grid: MultiCircuit = MultiCircuit(Sbase=100., fbase=50.)
+    source_bus: Bus = grid.add_bus(Bus(name='LVPL source', Vnom=10., is_slack=True))
+    renewable_bus: Bus = grid.add_bus(Bus(name='LVPL renewable', Vnom=10.))
+    grid.add_line(Line(bus_from=source_bus, bus_to=renewable_bus, r=.02, x=.5))
+    source: Generator = grid.add_generator(
+        bus=source_bus, api_obj=Generator(name='LVPL source', vset=1.),
+    )
+    load: Load = grid.add_load(
+        bus=renewable_bus, api_obj=Load(name='LVPL load', P=20., Q=4.),
+    )
+    initialize_bus_phasor_rms(source_bus, grid.var_factory)
+    initialize_bus_phasor_rms(renewable_bus, grid.var_factory)
+    set_rms_model(
+        device=grid.lines[0], model=get_line_phasor_rms_template(grid.var_factory).block,
+        var_factory=grid.var_factory,
+    )
+    set_rms_model(
+        device=load, model=get_load_phasor_current_rms_template(grid.var_factory).block,
+        var_factory=grid.var_factory,
+    )
+    source_real: Var = grid.var_factory.add_var('LVPL source Ir')
+    source_imaginary: Var = grid.var_factory.add_var('LVPL source Ii')
+    source.rms_model = Block(
+        algebraic_vars=list((source_real, source_imaginary)),
+        algebraic_eqs=list((
+            source_bus.rms_model.E(VarPowerFlowReferenceType.Vr) - Const(1.),
+            source_bus.rms_model.E(VarPowerFlowReferenceType.Vi) - Const(0.),
+        )),
+        out_vars=list((source_real, source_imaginary)),
+        external_mapping=dict(((VarPowerFlowReferenceType.Ir, source_real),
+                              (VarPowerFlowReferenceType.Ii, source_imaginary))),
+    )
+    renewable: Generator = grid.add_generator(
+        bus=renewable_bus,
+        api_obj=Generator(name='LVPL renewable', P=100., Snom=50.),
+    )
+    renewable.is_controlled = False
+    settings: Regca1LowVoltageSettings = Regca1LowVoltageSettings(
+        brkpt=.99, zerox=.4, lvpl1=.5,
+    )
+    template: RmsModelTemplate = build_regca1_low_voltage_template(
+        vf=grid.var_factory, name='LVPL renewable', settings=settings,
+        problem_type=RmsProblemTypes.CurrentBalance,
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid)
+    assert pf.converged and abs(pf.voltage[1]) < settings.brkpt
+    problem: RmsProblemPhasor = RmsProblemPhasor(
+        grid=grid, options=RmsOptions(problem_type=RmsProblemTypes.CurrentBalance),
+        pf_results=pf,
+    )
+    problem.set_events_group(RmsEventsGroup())
+    active_state: Var = renewable.rms_model.state_vars[0]
+    initial_active: float = problem.init_guess[active_state.uid]
+    active_command: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('IpCommand_')
+    )
+    initial_command: float = problem.event_params_init_dict[active_command.uid]
+    lvpl_target: float = settings.lvpl1 * (
+        abs(pf.voltage[1]) - settings.zerox
+    ) / (settings.brkpt - settings.zerox)
+    assert initial_command > lvpl_target
+    assert initial_active == pytest.approx(lvpl_target, abs=1.e-8)
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_partial_chain_initializes_regca_from_reeca_limited_current() -> None:
+    """Preserve REECA current limiting in the composed REGCA state seed.
+
+    :return: None.
+    """
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=VarFactory(), name='Composed LVPL seed',
+        converter_settings=Regca1LowVoltageSettings(
+            brkpt=.99, zerox=.4, lvpl1=.5,
+        ),
+        current_limit_settings=Reeca1CurrentLimitSettings(
+            reactive_curve=((.2, 1.2), (1.2, 1.2)),
+            active_curve=((.2, 1.2), (1.2, 1.2)),
+        ),
+    )
+    block: Block = template.block
+    active_state: Var = block.state_vars[0]
+    limited_current: Var = next(
+        variable for variable in block.algebraic_vars
+        if variable.name.startswith('LimitedActiveCommandPu_')
+    )
+    raw_command: Var = next(
+        parameter for parameter in block.event_dict
+        if parameter.name.startswith('IpCommand_')
+    )
+    initialized_active: Expr = block.init_eqs[active_state]
+    initialized_variables: set[Var] = set(get_expression_vars(initialized_active))
+    assert limited_current in initialized_variables
+    assert raw_command not in initialized_variables
+
+
+def test_renewable_partial_chain_applies_lvpl_to_connected_active_state_seed() -> None:
+    """Keep the connected REGCA state within LVPL after REECA composition.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_current_balance_load_case(
+        powers=((10., 8.),), system_base=100., nominal_ratio=1.,
+    )
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Composed LVPL seed', P=100., Snom=50.),
+    )
+    renewable.is_controlled = False
+    converter_settings: Regca1LowVoltageSettings = Regca1LowVoltageSettings(
+        brkpt=.999, zerox=.4, lvpl1=.5,
+    )
+    current_settings: Reeca1CurrentLimitSettings = Reeca1CurrentLimitSettings(
+        imax=2., reactive_curve=((.2, 2.), (1.2, 2.)),
+        active_curve=((.2, 2.), (1.2, 2.)),
+    )
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Composed LVPL seed',
+        converter_settings=converter_settings, current_limit_settings=current_settings,
+        problem_type=RmsProblemTypes.CurrentBalance,
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid)
+    assert pf.converged and abs(pf.voltage[1]) < converter_settings.brkpt
+    problem: RmsProblemPhasor = RmsProblemPhasor(
+        grid=grid, options=RmsOptions(problem_type=RmsProblemTypes.CurrentBalance),
+        pf_results=pf,
+    )
+    problem.set_events_group(RmsEventsGroup())
+    attached: Block = renewable.rms_model
+    active_state: Var = attached.state_vars[0]
+    limited_output: Var = next(
+        variable for variable in attached.algebraic_vars
+        if variable.name.startswith('LimitedActiveCommandPu_')
+    )
+    raw_order: Var = next(
+        parameter for parameter in attached.event_dict
+        if parameter.name.startswith('IpCommand_')
+    )
+    assert problem.event_params_init_dict[raw_order.uid] > converter_settings.lvpl1
+    assert problem.init_guess[limited_output.uid] > converter_settings.lvpl1
+    lvpl_target: float = converter_settings.lvpl1 * (
+        abs(pf.voltage[1]) - converter_settings.zerox
+    ) / (converter_settings.brkpt - converter_settings.zerox)
+    assert problem.init_guess[active_state.uid] == pytest.approx(lvpl_target)
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_regca1_low_voltage_core_integrates_on_connected_polar_network() -> None:
+    """Keep all converter memories finite through a network-coupled RMS step.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Polar REGCA core', P=4.0, Snom=50.0),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_regca1_low_voltage_template(
+        vf=grid.var_factory, name='Polar REGCA core',
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=RmsEventsGroup())
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.002, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    assert np.all(np.isfinite(values))
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_partial_chain_integrates_current_limits_on_polar_network() -> None:
+    """Connect electrical current limits to converter states and the AC network.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Renewable partial chain', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Renewable partial chain',
+        current_limit_settings=Reeca1CurrentLimitSettings(trv=.03, thld2=.002),
+        active_power_settings=Reeca1ActivePowerSettings(tpord=.04),
+        reactive_power_settings=Reeca1ConstantQSettings(tiq=.04),
+        voltage_support_settings=Reeca1VoltageSupportSettings(
+            vdip=.98, kqv=2., thld=.002, iqfrz=.1,
+        ),
+    )
+    assert len(template.block.procedural_logic) == 3
+    restored_logic: Block = roundtrip_block(template.block, procedural_logic_codec=ProceduralLogicCodec())
+    assert len(restored_logic.procedural_logic) == 3
+    assert len(template.block.state_vars) == 6
+    limited_active: Var = next(
+        signal for signal in template.block.algebraic_vars
+        if signal.name.startswith('LimitedActiveCommandPu_')
+    )
+    assert limited_active.name.startswith('LimitedActiveCommandPu_')
+    assert limited_active in get_expression_vars(template.block.state_eqs[0])
+    support_current: Var = next(
+        signal for signal in template.block.algebraic_vars
+        if signal.name.startswith('FaultReactiveCurrentPu_')
+    )
+    assert support_current in get_expression_vars(template.block.algebraic_eqs[-2])
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    pref_order: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('PrefOrder_')
+    )
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=pref_order, time=.001,
+        value=pf.gen_p[1] / renewable.Snom + .1, group=group,
+    ))
+    qext_order: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('QextOrder_')
+    )
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=qext_order, time=.002,
+        value=pf.gen_q[1] / renewable.Snom + .1, group=group,
+    ))
+    reactive_load: Var = next(
+        parameter for parameter in grid.loads[0].rms_model.children[0].event_dict
+        if parameter.name.startswith('Ql0')
+    )
+    grid.add_rms_event(RmsEvent(
+        device=grid.loads[0], parameter=reactive_load, time=.004,
+        value=-.3, group=group,
+    ))
+    grid.add_rms_event(RmsEvent(
+        device=grid.loads[0], parameter=reactive_load, time=.008,
+        value=.01, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=group)
+    pref_index: int = problem._uid2idx_event_params[pref_order.uid]
+    assert problem._variable_parameters_values[pref_index] == pytest.approx(
+        pf.gen_p[1] / renewable.Snom, abs=1.e-8,
+    )
+    qext_index: int = problem._uid2idx_event_params[qext_order.uid]
+    assert problem._variable_parameters_values[qext_index] == pytest.approx(
+        pf.gen_q[1] / renewable.Snom, abs=1.e-8,
+    )
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.014, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    assert np.all(np.isfinite(values))
+    p_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    assert values[2, p_index] > values[0, p_index]
+    q_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.Q))
+    assert values[3, q_index] > values[0, q_index]
+    runtime_pord: Var = next(
+        state for state in renewable.rms_model.state_vars
+        if state.name.startswith('PordPu_')
+    )
+    pord_index: int = problem.get_var_idx(runtime_pord)
+    assert values[-1, pord_index] > values[0, pord_index]
+    runtime_support: Var = next(
+        signal for signal in renewable.rms_model.algebraic_vars
+        if signal.name.startswith('FaultReactiveCurrentPu_')
+    )
+    support_index: int = problem.get_var_idx(runtime_support)
+    runtime_fault: Var = next(
+        signal for signal in renewable.rms_model.algebraic_vars
+        if signal.name.startswith('VoltageDipFlag_')
+    )
+    fault_index: int = problem.get_var_idx(runtime_fault)
+    assert values[5, fault_index] == pytest.approx(1.)
+    assert values[9, fault_index] == pytest.approx(0.)
+    assert abs(values[5, support_index]) > 1.e-4
+    assert values[9, support_index] == pytest.approx(.1)
+    assert values[10, support_index] == pytest.approx(.1)
+    assert values[-1, support_index] == pytest.approx(0., abs=1.e-8)
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_speed_mode_changes_network_power() -> None:
+    """Drive the PFLAG speed input through a connected generator event.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Speed-coupled renewable', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Speed-coupled renewable',
+        active_power_settings=Reeca1ActivePowerSettings(
+            tpord=.02, mode=Reeca1ActivePowerMode.TORQUE_TIMES_SPEED,
+        ),
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    speed_order: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('TurbineSpeedOrder_')
+    )
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=speed_order, time=.001, value=1.1, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.006, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    p_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    assert values[-1, p_index] > values[0, p_index]
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+@pytest.mark.parametrize('initial_speed', (1., 1.05))
+def test_renewable_drive_train_feeds_reeca_speed_mode(initial_speed: float) -> None:
+    """Connect shaft speed to PFLAG and electrical power to shaft torque.
+
+    :param initial_speed: Shaft speed at the solved operating point.
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Shaft-coupled renewable', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Shaft-coupled renewable',
+        active_power_settings=Reeca1ActivePowerSettings(
+            tpord=.02, mode=Reeca1ActivePowerMode.TORQUE_TIMES_SPEED,
+        ),
+        drive_train_settings=Wtdta1DriveTrainSettings(
+            h=1., htfrac=.25, freq1=2., initial_speed=initial_speed,
+        ),
+    )
+    speed_state: Var = next(
+        state for state in template.block.state_vars
+        if state.name.startswith('GeneratorSpeedPu_')
+    )
+    pord_state: Var = next(
+        state for state in template.block.state_vars
+        if state.name.startswith('PordPu_')
+    )
+    assert speed_state in get_expression_vars(template.block.state_eqs[
+        template.block.state_vars.index(pord_state)
+    ])
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    mechanical_order: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('MechanicalPowerOrder_')
+    )
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=mechanical_order, time=.001,
+        value=pf.gen_p[1] / renewable.Snom + .2, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.05, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    runtime_speed: Var = next(
+        state for state in renewable.rms_model.state_vars
+        if state.name.startswith('GeneratorSpeedPu_')
+    )
+    speed_index: int = problem.get_var_idx(runtime_speed)
+    assert values[-1, speed_index] != pytest.approx(values[0, speed_index], abs=1.e-6)
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_pitch_drives_aerodynamic_shaft_power() -> None:
+    """Route a pitch change through WTARA1 and WTDTA1 into generator speed.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Pitch-coupled renewable', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Pitch-coupled renewable',
+        active_power_settings=Reeca1ActivePowerSettings(
+            tpord=.02, mode=Reeca1ActivePowerMode.TORQUE_TIMES_SPEED,
+        ),
+        drive_train_settings=Wtdta1DriveTrainSettings(h=1., htfrac=.25, freq1=2.),
+        aerodynamic_settings=Wtara1AerodynamicSettings(ka=.02, theta0=2.),
+    )
+    mechanical_signal: Var = next(
+        signal for signal in template.block.algebraic_vars
+        if signal.name.startswith('MechanicalPowerPu_')
+    )
+    turbine_speed: Var = next(
+        state for state in template.block.state_vars
+        if state.name.startswith('TurbineSpeedPu_')
+    )
+    assert mechanical_signal in get_expression_vars(template.block.state_eqs[
+        template.block.state_vars.index(turbine_speed)
+    ])
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    pitch_order: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('PitchAngleOrder_')
+    )
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=pitch_order, time=.001, value=4., group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.05, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    runtime_mechanical: Var = next(
+        signal for signal in renewable.rms_model.algebraic_vars
+        if signal.name.startswith('MechanicalPowerPu_')
+    )
+    mechanical_index: int = problem.get_var_idx(runtime_mechanical)
+    assert values[-1, mechanical_index] < values[0, mechanical_index] - .1
+    runtime_speed: Var = next(
+        state for state in renewable.rms_model.state_vars
+        if state.name.startswith('GeneratorSpeedPu_')
+    )
+    speed_index: int = problem.get_var_idx(runtime_speed)
+    assert values[-1, speed_index] < values[0, speed_index]
+    p_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    assert values[-1, p_index] < values[0, p_index]
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+@pytest.mark.parametrize('torque_mode', (Wttqa1TorqueMode.POWER_ERROR, Wttqa1TorqueMode.SPEED_ERROR))
+def test_renewable_torque_controller_feeds_reeca_power_order(torque_mode: Wttqa1TorqueMode) -> None:
+    """Connect WTTQA1 filtered Pe, shaft speed and fault flag to REECA1.
+
+    :param torque_mode: Source TFLAG power or speed error path.
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Torque-coupled renewable', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Torque-coupled renewable',
+        active_power_settings=Reeca1ActivePowerSettings(tpord=.02),
+        drive_train_settings=Wtdta1DriveTrainSettings(h=1., htfrac=.25, freq1=2.),
+        torque_settings=Wttqa1TorqueSettings(
+            tp=.02, twref=.1, mode=torque_mode,
+        ),
+        voltage_support_settings=Reeca1VoltageSupportSettings(),
+    )
+    torque_pref: Var = next(
+        signal for signal in template.block.algebraic_vars
+        if signal.name.startswith('PowerReferencePu_')
+    )
+    pord_state: Var = next(
+        state for state in template.block.state_vars
+        if state.name.startswith('PordPu_')
+    )
+    assert torque_pref in get_expression_vars(template.block.state_eqs[
+        template.block.state_vars.index(pord_state)
+    ])
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    group: RmsEventsGroup = RmsEventsGroup()
+    event_parameter: Var
+    event_value: float
+    if torque_mode is Wttqa1TorqueMode.POWER_ERROR:
+        event_parameter = next(
+            parameter for parameter in renewable.rms_model.event_dict
+            if parameter.name.startswith('TorquePref0Order_')
+        )
+        event_value = float(pf.gen_p[1] / renewable.Snom + .1)
+    else:
+        event_parameter = next(
+            parameter for parameter in renewable.rms_model.event_dict
+            if parameter.name.startswith('MechanicalPowerOrder_')
+        )
+        event_value = float(pf.gen_p[1] / renewable.Snom + .2)
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=event_parameter, time=.001,
+        value=event_value, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.03, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    p_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    assert values[-1, p_index] > values[0, p_index]
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+@pytest.mark.parametrize('plant_enabled', (False, True))
+def test_renewable_pitch_controller_drives_aerodynamic_power(plant_enabled: bool) -> None:
+    """Route a Type 3 power order through WTPTA1 into WTARA1 and the shaft.
+
+    :param plant_enabled: Route Pref through the REPCTA1 active plant path.
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Pitch-controlled renewable', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Pitch-controlled renewable',
+        active_power_settings=Reeca1ActivePowerSettings(tpord=.02),
+        drive_train_settings=Wtdta1DriveTrainSettings(h=1., htfrac=.25, freq1=2.),
+        aerodynamic_settings=Wtara1AerodynamicSettings(ka=.02, theta0=2.),
+        torque_settings=Wttqa1TorqueSettings(tp=.02, twref=.1,
+                                              mode=Wttqa1TorqueMode.POWER_ERROR),
+        pitch_settings=Wtpta1PitchSettings(kiw=1., kpw=2., kic=1., kpc=2.),
+        plant_settings=Repca1ActivePlantSettings(kpg=1., kig=5.) if plant_enabled else None,
+        voltage_support_settings=Reeca1VoltageSupportSettings(),
+    )
+    blade: Var = next(state for state in template.block.state_vars
+                      if state.name.startswith('PitchAngleDeg_'))
+    aerodynamic_power: Var = next(signal for signal in template.block.algebraic_vars
+                                  if signal.name.startswith('MechanicalPowerPu_'))
+    assert blade in get_expression_vars(template.block.algebraic_eqs[
+        template.block.algebraic_vars.index(aerodynamic_power)
+    ])
+    assert not any(parameter.name.startswith('PitchAngleOrder_') for parameter in template.block.event_dict)
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    pref0: Var
+    if plant_enabled:
+        pref0 = next(parameter for parameter in renewable.rms_model.event_dict
+                     if parameter.name.startswith('PlantPowerOrder_'))
+    else:
+        pref0 = next(parameter for parameter in renewable.rms_model.event_dict
+                     if parameter.name.startswith('TorquePref0Order_'))
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=pref0, time=.001,
+        value=float(pf.gen_p[1] / renewable.Snom - .05), group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(grid=grid, options=RmsOptions(), pf_results=pf)
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.05, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    runtime_blade: Var = next(state for state in renewable.rms_model.state_vars
+                              if state.name.startswith('PitchAngleDeg_'))
+    blade_index: int = problem.get_var_idx(runtime_blade)
+    assert np.max(np.abs(values[:, blade_index] - values[0, blade_index])) > 1.e-5
+    runtime_aerodynamic: Var = next(signal for signal in renewable.rms_model.algebraic_vars
+                                    if signal.name.startswith('MechanicalPowerPu_'))
+    aerodynamic_index: int = problem.get_var_idx(runtime_aerodynamic)
+    assert np.max(np.abs(values[:, aerodynamic_index] - values[0, aerodynamic_index])) > 1.e-6
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_reeca1_pref_slew_limits_connected_reference_steps() -> None:
+    """Hold Pref rise and fall to the REECA1 source rate bounds.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Slew-limited renewable', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Slew-limited renewable',
+        active_power_settings=Reeca1ActivePowerSettings(
+            tpord=0., dpmax=.5, dpmin=-.25,
+        ),
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    pref_order: Var = next(parameter for parameter in renewable.rms_model.event_dict
+                           if parameter.name.startswith('PrefOrder_'))
+    group: RmsEventsGroup = RmsEventsGroup()
+    initial_pref: float = float(pf.gen_p[1] / renewable.Snom)
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=pref_order, time=.001,
+        value=initial_pref + .2, group=group,
+    ))
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=pref_order, time=.101,
+        value=initial_pref - .2, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(grid=grid, options=RmsOptions(), pf_results=pf)
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.201, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    runtime_slew: Var = next(state for state in renewable.rms_model.state_vars
+                             if state.name.startswith('PrefSlewPu_'))
+    slew_index: int = problem.get_var_idx(runtime_slew)
+    rise: np.ndarray = np.diff(values[2:101, slew_index]) / np.diff(times[2:101])
+    fall: np.ndarray = np.diff(values[103:201, slew_index]) / np.diff(times[103:201])
+    assert np.max(rise) <= .50001
+    assert np.min(rise) >= -.00001
+    assert np.min(fall) >= -.25001
+    assert np.max(fall) <= .00001
+    assert values[100, slew_index] > values[0, slew_index] + .04
+    assert values[200, slew_index] < values[100, slew_index] - .02
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+@pytest.mark.parametrize('frequency_step,order_step,direction', (
+    (0., .1, 1.),
+    (.01, 0., -1.),
+))
+def test_repca1_active_plant_path_feeds_connected_reeca1(
+        frequency_step: float, order_step: float, direction: float,
+) -> None:
+    """Feed REPCA1 plant dispatch and frequency droop into REECA1 Pref.
+
+    :param frequency_step: Plant frequency event above nominal.
+    :param order_step: Plant power-order event above the solved output.
+    :param direction: Expected sign of generator active-power response.
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Plant-controlled renewable', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Plant-controlled renewable',
+        active_power_settings=Reeca1ActivePowerSettings(tpord=.02),
+        plant_settings=Repca1ActivePlantSettings(
+            kpg=.5, kig=5., tp=.02, tg=.02, ddn=5., dup=5.,
+            frequency_enabled=True,
+        ),
+    )
+    plant_pref: Var = next(state for state in template.block.state_vars
+                           if state.name.startswith('PlantPrefPu_'))
+    pord: Var = next(state for state in template.block.state_vars
+                     if state.name.startswith('PordPu_'))
+    assert plant_pref in get_expression_vars(template.block.state_eqs[
+        template.block.state_vars.index(pord)
+    ])
+    assert not any(parameter.name.startswith('PrefOrder_') for parameter in template.block.event_dict)
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    group: RmsEventsGroup = RmsEventsGroup()
+    event_parameter: Var
+    event_value: float
+    if order_step > 0:
+        event_parameter = next(parameter for parameter in renewable.rms_model.event_dict
+                               if parameter.name.startswith('PlantPowerOrder_'))
+        event_value = float(pf.gen_p[1] / renewable.Snom + order_step)
+    else:
+        event_parameter = next(parameter for parameter in renewable.rms_model.event_dict
+                               if parameter.name.startswith('PlantFrequencyOrder_'))
+        event_value = 1. + frequency_step
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=event_parameter, time=.001,
+        value=event_value, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(grid=grid, options=RmsOptions(), pf_results=pf)
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.08, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    p_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    assert direction * (values[-1, p_index] - values[0, p_index]) > .001
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+@pytest.mark.parametrize('plant_mode,compensation', (
+    (Repca1ReactiveMode.Q_CONTROL, Repca1VoltageCompensation.REACTIVE_DROOP),
+    (Repca1ReactiveMode.VOLTAGE_CONTROL, Repca1VoltageCompensation.REACTIVE_DROOP),
+    (Repca1ReactiveMode.VOLTAGE_CONTROL, Repca1VoltageCompensation.LINE_DROP),
+))
+def test_repca1_reactive_plant_modes_feed_connected_reeca1(
+        plant_mode: Repca1ReactiveMode, compensation: Repca1VoltageCompensation,
+) -> None:
+    """Route plant Q or local voltage dispatch through REPCA1 and REECA1.
+
+    :param plant_mode: Source RefFlag path.
+    :param compensation: Source VCFlag path in voltage mode.
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Plant-Q renewable', P=4., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Plant-Q renewable',
+        reactive_power_settings=Reeca1ConstantQSettings(tiq=.02),
+        plant_reactive_settings=Repca1ReactivePlantSettings(
+            kp=1., ki=5., kc=.05, rc=.1, xc=.2,
+            mode=plant_mode, compensation=compensation,
+        ),
+    )
+    plant_qext: Var = next(signal for signal in template.block.algebraic_vars
+                           if signal.name.startswith('PlantQextPu_'))
+    base_iq: Var = next(state for state in template.block.state_vars
+                        if state.name.startswith('BaseReactiveCurrentPu_'))
+    assert plant_qext in get_expression_vars(template.block.state_eqs[
+        template.block.state_vars.index(base_iq)
+    ])
+    assert not any(parameter.name.startswith('QextOrder_') for parameter in template.block.event_dict)
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    order: Var
+    order_value: float
+    if plant_mode is Repca1ReactiveMode.VOLTAGE_CONTROL:
+        voltage_filter: Var = next(state for state in template.block.state_vars
+                                   if state.name.startswith('FilteredPlantVoltagePu_'))
+        compensated_parameters: set[Var] = set(get_expression_vars(template.block.state_eqs[
+            template.block.state_vars.index(voltage_filter)
+        ]))
+        order = next(parameter for parameter in renewable.rms_model.event_dict
+                     if parameter.name.startswith('PlantVoltageOrder_'))
+        if compensation is Repca1VoltageCompensation.LINE_DROP:
+            rc_parameter: Var = next(parameter for parameter in template.block.event_dict
+                                     if parameter.name.startswith('RC_'))
+            assert rc_parameter in compensated_parameters
+            vm_initial: float = float(abs(pf.voltage[1]))
+            p_initial: float = float(pf.gen_p[1] / renewable.Snom)
+            q_initial: float = float(pf.gen_q[1] / renewable.Snom)
+            order_value = float(((vm_initial - (.1 * p_initial + .2 * q_initial) / vm_initial) ** 2
+                                 + ((.2 * p_initial - .1 * q_initial) / vm_initial) ** 2) ** .5 + .02)
+        else:
+            kc_parameter: Var = next(parameter for parameter in template.block.event_dict
+                                     if parameter.name.startswith('KC_'))
+            assert kc_parameter in compensated_parameters
+            order_value = float(abs(pf.voltage[1]) + .05 * pf.gen_q[1] / renewable.Snom + .02)
+    else:
+        order = next(parameter for parameter in renewable.rms_model.event_dict
+                     if parameter.name.startswith('PlantReactiveOrder_'))
+        order_value = float(pf.gen_q[1] / renewable.Snom + .1)
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=order, time=.001,
+        value=order_value, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(grid=grid, options=RmsOptions(), pf_results=pf)
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.08, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    q_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.Q))
+    assert values[-1, q_index] > values[0, q_index] + .001
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_repca1_line_drop_compensation_uses_complex_current() -> None:
+    """Retain the quadrature current term in source line-drop voltage.
+
+    :return: None.
+    """
+    compensated: Expr = repca1_line_drop_voltage(
+        Const(1.), Const(.8), Const(.4), Const(.1), Const(.2),
+    )
+    assert compensated.eval() == pytest.approx((.84 ** 2 + .12 ** 2) ** .5)
+
+
+def test_repca1_reactive_plant_freezes_pi_below_vfrz() -> None:
+    """Stop the source s2 integrator below the monitored voltage threshold.
+
+    :return: None.
+    """
+    controller: RmsModelTemplate = build_repca1_reactive_plant_template(
+        vf=VarFactory(), name='freeze', settings=Repca1ReactivePlantSettings(),
+    )
+    memory: Var = next(state for state in controller.block.state_vars
+                        if state.name.startswith('PlantReactiveIntegral_'))
+    derivative: Expr = controller.block.state_eqs[controller.block.state_vars.index(memory)]
+    assert derivative.eval(
+        PlantReactiveOrderPu_freeze=.2, FilteredPlantReactivePowerPu_freeze=0.,
+        DBD1_freeze=0., DBD2_freeze=0., EMIN_freeze=-1., EMAX_freeze=1.,
+        VFRZ_freeze=.5, MonitoredVoltagePu_freeze=.4, KI_freeze=1.,
+        PlantReactiveIntegral_freeze=0., QMIN_freeze=-1.2, QMAX_freeze=1.2,
+    ) == pytest.approx(0.)
+    assert derivative.eval(
+        PlantReactiveOrderPu_freeze=.2, FilteredPlantReactivePowerPu_freeze=0.,
+        DBD1_freeze=0., DBD2_freeze=0., EMIN_freeze=-1., EMAX_freeze=1.,
+        VFRZ_freeze=.5, MonitoredVoltagePu_freeze=.6, KI_freeze=1.,
+        PlantReactiveIntegral_freeze=0., QMIN_freeze=-1.2, QMAX_freeze=1.2,
+    ) == pytest.approx(.2)
+
+
+@pytest.mark.parametrize('coordinated,local_voltage', ((False, False), (True, False), (False, True)))
+def test_renewable_partial_chain_reads_phasor_voltage_without_duplicate_bus(
+        coordinated: bool, local_voltage: bool,
+) -> None:
+    """Feed VDL current limits from the same Vr/Vi bus used by converter power.
+
+    :param coordinated: Exercise Q/V PI rather than the constant-pf branch.
+    :param local_voltage: Exercise local voltage PI with a biased reference.
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_current_balance_load_case(
+        powers=((10., 1.),), system_base=100., nominal_ratio=1.,
+    )
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Phasor partial chain', P=4., Q=1., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate
+    if coordinated:
+        template = build_renewable_partial_chain(
+            vf=grid.var_factory, name='Phasor partial chain',
+            current_limit_settings=Reeca1CurrentLimitSettings(trv=.03),
+            active_power_settings=Reeca1ActivePowerSettings(tpord=.04),
+            coordinated_qv_settings=Reeca1CoordinatedQvSettings(),
+            voltage_support_settings=Reeca1VoltageSupportSettings(kqv=2.),
+            problem_type=RmsProblemTypes.CurrentBalance,
+        )
+    elif local_voltage:
+        template = build_renewable_partial_chain(
+            vf=grid.var_factory, name='Phasor partial chain',
+            current_limit_settings=Reeca1CurrentLimitSettings(trv=.03),
+            active_power_settings=Reeca1ActivePowerSettings(tpord=.04),
+            local_voltage_settings=Reeca1LocalVoltageSettings(vbias=.01),
+            voltage_support_settings=Reeca1VoltageSupportSettings(kqv=2.),
+            problem_type=RmsProblemTypes.CurrentBalance,
+        )
+    else:
+        template = build_renewable_partial_chain(
+            vf=grid.var_factory, name='Phasor partial chain',
+            current_limit_settings=Reeca1CurrentLimitSettings(trv=.03),
+            active_power_settings=Reeca1ActivePowerSettings(tpord=.04),
+            reactive_power_settings=Reeca1ConstantQSettings(tiq=.04),
+            power_factor_settings=Reeca1ConstantPfSettings(tp=.03),
+            voltage_support_settings=Reeca1VoltageSupportSettings(kqv=2.),
+            problem_type=RmsProblemTypes.CurrentBalance,
+        )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    problem: RmsProblemPhasor = RmsProblemPhasor(
+        grid=grid, options=RmsOptions(problem_type=RmsProblemTypes.CurrentBalance),
+        pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=RmsEventsGroup())
+    projected: np.ndarray
+    initialized: bool
+    residual: float
+    projected, initialized, residual = project_initial_algebraic_state(
+        problem=problem, initial_values=problem.get_x0(),
+        differential_values=problem.get_dx0(), tolerance=1.e-8, max_iter=25,
+    )
+    assert initialized and residual <= 1.e-8
+    assert projected[
+        problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.P))
+    ] == pytest.approx(pf.gen_p[1] / grid.Sbase, abs=1.e-8)
+    assert projected[
+        problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.Q))
+    ] == pytest.approx(pf.gen_q[1] / grid.Sbase, abs=1.e-8)
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_constant_pf_mode_tracks_active_power_on_connected_network() -> None:
+    """Use filtered generator Pe to preserve the initial Q/P ratio after a Pref step.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Renewable constant pf', P=4., Q=1., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Renewable constant pf',
+        current_limit_settings=Reeca1CurrentLimitSettings(trv=.03),
+        active_power_settings=Reeca1ActivePowerSettings(tpord=.02),
+        reactive_power_settings=Reeca1ConstantQSettings(tiq=.02),
+        power_factor_settings=Reeca1ConstantPfSettings(tp=.02),
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged and pf.gen_q[1] > 0.
+    pref_order: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('PrefOrder_')
+    )
+    pf_angle: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('PfAngle_')
+    )
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=pref_order, time=.001,
+        value=pf.gen_p[1] / renewable.Snom + .1, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=group)
+    angle_index: int = problem._uid2idx_event_params[pf_angle.uid]
+    assert problem._variable_parameters_values[angle_index] == pytest.approx(
+        np.arctan2(pf.gen_q[1], pf.gen_p[1]), abs=1.e-8,
+    )
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.012, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    q_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.Q))
+    assert values[-1, q_index] > values[0, q_index]
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_coordinated_qv_mode_tracks_q_reference_on_connected_network() -> None:
+    """Feed the Q/V PI cascade from generator Q and live current capability.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Renewable coordinated Q V', P=4., Q=1., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Renewable coordinated Q V',
+        current_limit_settings=Reeca1CurrentLimitSettings(trv=.03),
+        coordinated_qv_settings=Reeca1CoordinatedQvSettings(kqi=2., kvi=2.),
+        voltage_support_settings=Reeca1VoltageSupportSettings(kqv=0.),
+    )
+    assert len(template.block.state_vars) == 7
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    q_reference: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('QReferenceOrder_')
+    )
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=q_reference, time=.001,
+        value=pf.gen_q[1] / renewable.Snom + .1, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=group)
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.008, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    q_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.Q))
+    assert values[-1, q_index] > values[0, q_index]
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
+def test_renewable_local_voltage_mode_tracks_reference_on_connected_network() -> None:
+    """Initialize Vref plus Vbias at PF voltage and respond to a voltage step.
+
+    :return: None.
+    """
+    grid: MultiCircuit
+    ignored_pf: PowerFlowResults
+    grid, ignored_pf = build_supported_vectorized_ac_load_case()
+    renewable: Generator = grid.add_generator(
+        bus=grid.buses[1], api_obj=Generator(name='Renewable local voltage', P=4., Q=1., Snom=50.),
+    )
+    renewable.is_controlled = False
+    template: RmsModelTemplate = build_renewable_partial_chain(
+        vf=grid.var_factory, name='Renewable local voltage',
+        current_limit_settings=Reeca1CurrentLimitSettings(trv=.03),
+        local_voltage_settings=Reeca1LocalVoltageSettings(kvp=2., kvi=3., vbias=.01),
+        voltage_support_settings=Reeca1VoltageSupportSettings(kqv=0.),
+    )
+    grid.add_rms_model(template)
+    renewable.rms_template = template
+    pf: PowerFlowResults = power_flow(grid=grid)
+    assert pf.converged
+    voltage_reference: Var = next(
+        parameter for parameter in renewable.rms_model.event_dict
+        if parameter.name.startswith('VoltageReferenceOrder_')
+    )
+    group: RmsEventsGroup = RmsEventsGroup()
+    grid.add_rms_event(RmsEvent(
+        device=renewable, parameter=voltage_reference, time=.001,
+        value=abs(pf.voltage[1]) + .01, group=group,
+    ))
+    problem: RmsProblemDaeVec = RmsProblemDaeVec(
+        grid=grid, options=RmsOptions(), pf_results=pf,
+    )
+    problem.set_events_group(rms_events_group=group)
+    reference_index: int = problem._uid2idx_event_params[voltage_reference.uid]
+    assert problem._variable_parameters_values[reference_index] == pytest.approx(
+        abs(pf.voltage[1]) - .01, abs=1.e-8,
+    )
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
+        problem=problem, t0=0., t_end=.008, h=.001, max_iter=25,
+    )
+    times: np.ndarray
+    values: np.ndarray
+    initialized: bool
+    converged: bool
+    times, values, initialized, converged = solver.simulate()
+    assert initialized and converged and times.size >= 2
+    q_index: int = problem.get_var_idx(renewable.rms_model.E(VarPowerFlowReferenceType.Q))
+    assert values[-1, q_index] > values[0, q_index]
+    problem.close_fmu_cs_devices()
+    problem.close_fmu_me_devices()
+
+
 def test_dae_constructors_preserve_power_flow_vsc_current_base() -> None:
     """Seed every power-balance DAE with the PF VSC current base unchanged.
 
@@ -1451,7 +3108,7 @@ def test_dae_constructors_preserve_legacy_vsc_power_coupling() -> None:
 
 
 def test_vectorized_integrators_use_supported_initial_projection() -> None:
-    """Exercise the shared algebraic projector through both vectorized solvers.
+    """Exercise the shared algebraic projector with both vectorized problems.
 
     A zero-macro-step run isolates initialization and cleanup while still
     dispatching the real ``rhs_algebraic`` projection interface selected by
@@ -1502,8 +3159,8 @@ def test_vectorized_integrators_use_supported_initial_projection() -> None:
     assert np.array_equal(partial_generic_jacobian, partial_vectorized_jacobian)
     assert np.any(np.abs(partial_vectorized_jacobian) > 0.0)
 
-    partial_solver: BackEulerImplicitIntegrationVec = (
-        BackEulerImplicitIntegrationVec(
+    partial_solver: BackEulerImplicitIntegration = (
+        BackEulerImplicitIntegration(
             problem=partial_problem,
             t0=0.0,
             t_end=0.0,
@@ -1538,8 +3195,8 @@ def test_vectorized_integrators_use_supported_initial_projection() -> None:
         pf_results=full_power_flow_results,
     )
     full_problem.set_events_group(rms_events_group=RmsEventsGroup())
-    full_solver: BackEulerImplicitIntegrationFullVec = (
-        BackEulerImplicitIntegrationFullVec(
+    full_solver: BackEulerImplicitIntegration = (
+        BackEulerImplicitIntegration(
             problem=full_problem,
             t0=0.0,
             t_end=0.0,
@@ -2459,7 +4116,7 @@ def test_rms_line_physical_shunt_power() -> None:
         grid=grid, options=RmsOptions(), pf_results=pf_results,
     )
     problem.set_events_group(rms_events_group=RmsEventsGroup())
-    solver: BackEulerImplicitIntegrationVec = BackEulerImplicitIntegrationVec(
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
         problem=problem, t0=0.0, t_end=0.0, h=1.0e-3, max_iter=25,
     )
     times: np.ndarray

@@ -7,9 +7,10 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from scipy.sparse import csc_matrix
+import numpy as np
+from scipy.sparse import csc_matrix, spmatrix
 
-from VeraGridEngine.basic_structures import Vec
+from VeraGridEngine.basic_structures import CscMat, Vec
 from VeraGridEngine.enumerations import SparseSolver
 
 
@@ -36,7 +37,7 @@ class SparseLinearFactorizationHandle:
         """
         raise NotImplementedError()
 
-    def get_active_matrix(self) -> csc_matrix:
+    def get_active_matrix(self) -> CscMat:
         """
         Return the sparse matrix associated with the active factorization path.
 
@@ -119,7 +120,7 @@ class SparseLinearSolverBackend:
         """
         return False
 
-    def analyze(self, matrix: csc_matrix) -> Any | None:
+    def analyze(self, matrix: CscMat) -> Any | None:
         """
         Perform reusable symbolic analysis on the sparse matrix if supported.
 
@@ -128,12 +129,12 @@ class SparseLinearSolverBackend:
         :return: Symbolic-analysis handle or ``None``.
         :rtype: Any | None
         """
-        _unused_matrix: csc_matrix = matrix
+        _unused_matrix: CscMat = matrix
         return None
 
     def factorize(
             self,
-            matrix: csc_matrix,
+            matrix: CscMat,
             analysis_handle: Any | None,
     ) -> SparseLinearFactorizationHandle:
         """
@@ -150,7 +151,7 @@ class SparseLinearSolverBackend:
 
     def refactor_numeric(
             self,
-            matrix: csc_matrix,
+            matrix: CscMat,
             analysis_handle: Any | None,
             previous_factorization: SparseLinearFactorizationHandle | None,
     ) -> SparseLinearFactorizationHandle | None:
@@ -166,7 +167,7 @@ class SparseLinearSolverBackend:
         :return: New factorization handle or ``None`` when unsupported.
         :rtype: SparseLinearFactorizationHandle | None
         """
-        _unused_matrix: csc_matrix = matrix
+        _unused_matrix: CscMat = matrix
         _unused_analysis_handle: Any | None = analysis_handle
         _unused_previous_factorization: SparseLinearFactorizationHandle | None = previous_factorization
         return None
@@ -224,7 +225,7 @@ class SparseLinearSolverBackendProvider:
         """
         return ""
 
-    def create_backend(self, base_matrix: csc_matrix, base_data: Vec) -> SparseLinearSolverBackend:
+    def create_backend(self, base_matrix: CscMat, base_data: Vec) -> SparseLinearSolverBackend:
         """
         Create one sparse backend bound to the EMT Jacobian buffers.
 
@@ -236,3 +237,26 @@ class SparseLinearSolverBackendProvider:
         :rtype: SparseLinearSolverBackend
         """
         raise NotImplementedError()
+
+    def solve_once(self, matrix: spmatrix, rhs: Vec) -> Vec:
+        """
+        Solve one sparse linear system with this provider, keeping no state.
+
+        The default factorises a canonical float64 CSC copy (summed duplicates, sorted
+        indices) through create_backend and factorize, so ``matrix`` is left untouched.
+        A matrix that cannot be factorised raises RuntimeError. Providers with a cheaper
+        one-shot path override this method.
+
+        :param matrix: Square sparse system matrix.
+        :param rhs: Right-hand side vector.
+        :return: Solution vector.
+        """
+        system: CscMat = csc_matrix(matrix).astype(np.float64, copy=True)
+        system.sum_duplicates()
+        system.sort_indices()
+        backend: SparseLinearSolverBackend = self.create_backend(system, system.data)
+        right_hand_side: Vec = np.ascontiguousarray(rhs, dtype=np.float64).ravel()
+        solution: Vec = np.zeros(int(system.shape[0]), dtype=np.float64)
+        handle: SparseLinearFactorizationHandle = backend.factorize(system, None)
+        handle.solve_into(right_hand_side, solution)
+        return solution

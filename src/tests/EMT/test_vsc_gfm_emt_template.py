@@ -10,7 +10,7 @@ import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
-from VeraGridEngine.Templates.Emt.vsc_gfm_emt import get_gfm_emt_template
+from VeraGridEngine.Templates.Emt.converters.vsc_gfm_emt import get_gfm_emt_template
 from VeraGridEngine.Utils.Symbolic.block import find_name_in_block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType

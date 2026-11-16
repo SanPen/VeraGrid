@@ -1,0 +1,179 @@
+{
+  "powerfactory_version": "24.0.2.0",
+  "dgs_version": "7.0",
+  "job_id": "f27502eaace34a9fa31012c09fd9612d",
+  "files": [
+    {
+      "baseline": "genstat_current_protected.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Pcu": {
+          "value": 0.0,
+          "description": "Series reactor: Copper losses"
+        },
+        "Tondelay": {
+          "value": 0.10000000149011612,
+          "description": "Min. operation voltage: Switch-on delay"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "uk": {
+          "value": 10.0,
+          "description": "Series reactor: Short circuit impedance"
+        },
+        "umin": {
+          "value": 0.20000000298023224,
+          "description": "Min. operation voltage: Switch-off threshold"
+        },
+        "uonthr": {
+          "value": 0.30000001192092896,
+          "description": "Min. operation voltage: Switch-on threshold"
+        }
+      },
+      "file": "genstat_current_protected.dgs",
+      "change": null,
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "sha256": "b98e29b3281b14fe6cd6acbaf7e13e5cb9b2e0c18f530c986334b8fb73917db9"
+    },
+    {
+      "baseline": "genstat_current_protected.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Pcu": {
+          "value": 0.0,
+          "description": "Series reactor: Copper losses"
+        },
+        "Tondelay": {
+          "value": 0.10000000149011612,
+          "description": "Min. operation voltage: Switch-on delay"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "uk": {
+          "value": 10.0,
+          "description": "Series reactor: Short circuit impedance"
+        },
+        "umin": {
+          "value": 0.20000000298023224,
+          "description": "Min. operation voltage: Switch-off threshold"
+        },
+        "uonthr": {
+          "value": 0.30000001192092896,
+          "description": "Min. operation voltage: Switch-on threshold"
+        }
+      },
+      "file": "genstat_voltage_protected.dgs",
+      "change": {
+        "attribute": "iSimModel",
+        "before": 1,
+        "after": 2
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "sha256": "77c1fdd67959a43e62c3e966ab36c0663b7d89469934d61a1cda465d7b261439"
+    },
+    {
+      "baseline": "genstat_current_protected.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Pcu": {
+          "value": 0.0,
+          "description": "Series reactor: Copper losses"
+        },
+        "Tondelay": {
+          "value": 0.10000000149011612,
+          "description": "Min. operation voltage: Switch-on delay"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "uk": {
+          "value": 10.0,
+          "description": "Series reactor: Short circuit impedance"
+        },
+        "umin": {
+          "value": 0.20000000298023224,
+          "description": "Min. operation voltage: Switch-off threshold"
+        },
+        "uonthr": {
+          "value": 0.30000001192092896,
+          "description": "Min. operation voltage: Switch-on threshold"
+        }
+      },
+      "file": "genstat_power_protected.dgs",
+      "change": {
+        "attribute": "iSimModel",
+        "before": 1,
+        "after": 4
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "sha256": "3ea097ba3d9ab1ab9f18019d996783bce78705020cdc82b8de4345443abd58b3"
+    },
+    {
+      "baseline": "genstat_current_protected.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Pcu": {
+          "value": 0.0,
+          "description": "Series reactor: Copper losses"
+        },
+        "Tondelay": {
+          "value": 0.10000000149011612,
+          "description": "Min. operation voltage: Switch-on delay"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "uk": {
+          "value": 10.0,
+          "description": "Series reactor: Short circuit impedance"
+        },
+        "umin": {
+          "value": 0.20000000298023224,
+          "description": "Min. operation voltage: Switch-off threshold"
+        },
+        "uonthr": {
+          "value": 0.30000001192092896,
+          "description": "Min. operation voltage: Switch-on threshold"
+        }
+      },
+      "file": "genstat_current_unprotected.dgs",
+      "change": {
+        "attribute": "umin",
+        "before": 0.20000000298023224,
+        "after": 0.0
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "sha256": "b37aa96ef2c52a1eafdc9c7dc37a41c23d1bef9c2b414912682a1aed5259f4ae"
+    }
+  ]
+}

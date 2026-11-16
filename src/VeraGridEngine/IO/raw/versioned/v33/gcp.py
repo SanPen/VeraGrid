@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """PSS/E 33 capability format; POM 33 §11.21.1 / DataFormats 35 §7 / 36 §10."""
 from VeraGridEngine.IO.raw.psse_auxiliary import PsseVersion

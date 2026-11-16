@@ -9,7 +9,6 @@ from typing import Union, List
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Simulations.NTC.ntc_opf import run_linear_ntc_opf, NtcVars
-from VeraGridEngine.Simulations.NTC.ntc_opf_strict import run_linear_ntc_opf_strict
 from VeraGridEngine.Simulations.NTC.ntc_driver import (
     OptimalNetTransferCapacityOptions,
     collect_contingency_group_device_names,
@@ -147,7 +146,7 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             transmission_reliability_margin=self.options.transmission_reliability_margin,
         )
         self.results.phase_shifter_indices = collect_phase_shifter_indices(self.grid, self.time_indices)
-        self.results.strict_formulation = self.options.strict_formulation
+        self.results.consider_slacks = self.options.consider_slacks
         self.results.loading_threshold_to_report = self.options.loading_threshold_to_report
 
         contingency_groups_used: List[ContingencyGroup] = select_ntc_contingency_groups(
@@ -155,57 +154,31 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         for t_idx, t in enumerate(self.time_indices):
 
-            if self.options.strict_formulation:
-
-                opf_vars, model = run_linear_ntc_opf_strict(
-                    grid=self.grid,
-                    t=t,  # only one time index at a time
-                    solver_type=self.options.opf_options.mip_solver,
-                    zonal_grouping=self.options.opf_options.zonal_grouping,
-                    skip_generation_limits=self.options.skip_generation_limits,
-                    consider_contingencies=self.options.consider_contingencies,
-                    corrective_contingencies=self.options.corrective_contingencies,
-                    contingency_groups_used=contingency_groups_used,
-                    alpha_threshold=self.options.branch_exchange_sensitivity,
-                    lodf_threshold=self.options.lin_options.lodf_threshold,
-                    bus_a1_idx=self.options.sending_bus_idx,
-                    bus_a2_idx=self.options.receiving_bus_idx,
-                    transfer_method=self.options.transfer_method,
-                    monitor_only_sensitive_branches=self.options.use_branch_exchange_sensitivity,
-                    monitor_only_ntc_load_rule_branches=self.options.monitor_only_ntc_load_rule_branches,
-                    ntc_load_rule=self.options.branch_rating_contribution,
-                    logger=self.logger,
-                    progress_text=None,
-                    progress_func=None,
-                    verbose=self.options.opf_options.verbose,
-                    robust=self.options.opf_options.robust,
-                    mip_framework=self.options.opf_options.mip_framework
-                )
-            else:
-                opf_vars, model = run_linear_ntc_opf(
-                    grid=self.grid,
-                    t=t,  # only one time index at a time
-                    solver_type=self.options.opf_options.mip_solver,
-                    zonal_grouping=self.options.opf_options.zonal_grouping,
-                    skip_generation_limits=self.options.skip_generation_limits,
-                    consider_contingencies=self.options.consider_contingencies,
-                    corrective_contingencies=self.options.corrective_contingencies,
-                    contingency_groups_used=contingency_groups_used,
-                    alpha_threshold=self.options.branch_exchange_sensitivity,
-                    lodf_threshold=self.options.lin_options.lodf_threshold,
-                    bus_a1_idx=self.options.sending_bus_idx,
-                    bus_a2_idx=self.options.receiving_bus_idx,
-                    transfer_method=self.options.transfer_method,
-                    monitor_only_sensitive_branches=self.options.use_branch_exchange_sensitivity,
-                    monitor_only_ntc_load_rule_branches=self.options.monitor_only_ntc_load_rule_branches,
-                    ntc_load_rule=self.options.branch_rating_contribution,
-                    logger=self.logger,
-                    progress_text=None,
-                    progress_func=None,
-                    verbose=self.options.opf_options.verbose,
-                    robust=self.options.opf_options.robust,
-                    mip_framework=self.options.opf_options.mip_framework
-                )
+            opf_vars, model = run_linear_ntc_opf(
+                grid=self.grid,
+                consider_slacks=self.options.consider_slacks,
+                t=t,  # only one time index at a time
+                solver_type=self.options.opf_options.mip_solver,
+                zonal_grouping=self.options.opf_options.zonal_grouping,
+                skip_generation_limits=self.options.skip_generation_limits,
+                consider_contingencies=self.options.consider_contingencies,
+                corrective_contingencies=self.options.corrective_contingencies,
+                contingency_groups_used=contingency_groups_used,
+                alpha_threshold=self.options.branch_exchange_sensitivity,
+                lodf_threshold=self.options.lin_options.lodf_threshold,
+                bus_a1_idx=self.options.sending_bus_idx,
+                bus_a2_idx=self.options.receiving_bus_idx,
+                transfer_method=self.options.transfer_method,
+                monitor_only_sensitive_branches=self.options.use_branch_exchange_sensitivity,
+                monitor_only_ntc_load_rule_branches=self.options.monitor_only_ntc_load_rule_branches,
+                ntc_load_rule=self.options.branch_rating_contribution,
+                logger=self.logger,
+                progress_text=None,
+                progress_func=None,
+                verbose=self.options.opf_options.verbose,
+                robust=self.options.opf_options.robust,
+                mip_framework=self.options.opf_options.mip_framework
+            )
 
             if t_idx == 0:
                 # one time results
@@ -228,10 +201,9 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             self.results.Sf[t_idx, :] = opf_vars.branch_vars.flows[0, :]
             self.results.St[t_idx, :] = -opf_vars.branch_vars.flows[0, :]
 
-            if not self.options.strict_formulation:
-                self.results.load_shedding[t_idx, :] = opf_vars.bus_vars.load_shedding[0, :]
-                self.results.overloads[t_idx, :] = (opf_vars.branch_vars.flow_slacks_pos[0, :]
-                                                    - opf_vars.branch_vars.flow_slacks_neg[0, :])
+            self.results.load_shedding[t_idx, :] = opf_vars.bus_vars.load_shedding[0, :]
+            self.results.overloads[t_idx, :] = (opf_vars.branch_vars.flow_slacks_pos[0, :]
+                                                - opf_vars.branch_vars.flow_slacks_neg[0, :])
 
             self.results.loading[t_idx, :] = opf_vars.branch_vars.loading[0, :]
             self.results.phase_shift[t_idx, :] = opf_vars.branch_vars.tap_angles[0, :]
@@ -256,14 +228,11 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
 
             # The time series only reads the relaxed rows back (total slack per step). Keeping every
             # admitted N-1 row instead grows the memory.
-            if not self.options.strict_formulation:
-                for report_entry in opf_vars.branch_vars.contingency_flow_data:
-                    if abs(report_entry[4]) + abs(report_entry[5]) > 0.0:
-                        self.results.contingency_flows_list.append((t_idx,) + tuple(report_entry[1:]))
-                    else:
-                        pass  # the limit held without relaxation
-            else:
-                pass  # the strict formulation has no contingency slacks to accumulate
+            for report_entry in opf_vars.branch_vars.contingency_flow_data:
+                if abs(report_entry[4]) + abs(report_entry[5]) > 0.0:
+                    self.results.contingency_flows_list.append((t_idx,) + tuple(report_entry[1:]))
+                else:
+                    pass  # the limit held without relaxation
 
             self.results.hvdc_Pf[t_idx, :] = opf_vars.hvdc_vars.flows[0, :]
             self.results.hvdc_loading[t_idx, :] = opf_vars.hvdc_vars.loading[0, :]

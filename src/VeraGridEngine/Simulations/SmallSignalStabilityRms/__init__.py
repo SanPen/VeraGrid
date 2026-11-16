@@ -6,3 +6,8 @@
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import SmallSignalStabilityRmsDriver
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options import RmsSmallSignalStabilityOptions
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_results import SmallSignalStabilityRmsResults
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.rms_port_analysis import (
+    DescriptorStateSpace,
+    DevicePortResponse,
+    PortLinearization,
+)

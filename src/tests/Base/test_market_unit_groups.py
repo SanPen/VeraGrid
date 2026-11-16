@@ -1,3 +1,10 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+import zipfile
+from pathlib import Path
+
 import numpy as np
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.assets import Assets
@@ -112,3 +119,29 @@ def test_market_unit_groups_multi_circuit():
     assert DeviceType.MarketUnitsGroupDevice in list(mc.item_types())
     assert DeviceType.MarketUnitsGroupDevice in [t.device_type for t in mc.template_items()]
     assert grp in list(mc.get_all_elements_iter())
+
+
+def test_market_unit_group_veragrid_roundtrip(tmp_path: Path) -> None:
+    """
+    Verify market-unit groups and their market-unit references survive serialization.
+
+    :param tmp_path: Temporary directory provided by pytest.
+    :return: None.
+    """
+    # Store the group before the market unit because the loader resolves pointers in registry order.
+    grid: vg.MultiCircuit = vg.MultiCircuit()
+    group: dev.MarketUnitsGroup = dev.MarketUnitsGroup(name="UP TEST")
+    market_unit: dev.MarketUnit = dev.MarketUnit(name="UF TEST", code="TEST", group=group)
+    file_path: Path = tmp_path / "market_unit_group_roundtrip.veragrid"
+
+    grid.add_market_unit_group(group)
+    grid.add_market_unit(market_unit)
+    vg.save_file(grid=grid, filename=str(file_path))
+
+    # The registry must emit a distinct group model table, not only the market-unit table.
+    with zipfile.ZipFile(file_path) as archive:
+        assert "model_data/market_units_group.model" in archive.namelist()
+
+    reopened_grid: vg.MultiCircuit = vg.open_file(str(file_path))
+    assert len(reopened_grid.market_unit_groups) == 1
+    assert reopened_grid.market_units[0].group is reopened_grid.market_unit_groups[0]

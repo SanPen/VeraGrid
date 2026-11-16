@@ -7,7 +7,7 @@ import numpy as np
 import math
 from typing import Callable, Any
 from VeraGridEngine.basic_structures import Vec
-from VeraGridEngine.Utils.NumericalMethods.sparse_solve import get_linear_solver
+from VeraGridEngine.Utils.Sparse.sparse_solve import get_linear_solver
 from VeraGridEngine.Utils.Sparse.csc import diagc
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Utils.NumericalMethods.common import (ConvexMethodResult, ConvexFunctionResult,

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import numpy as np
@@ -5,6 +9,7 @@ import numpy as np
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_results import (
     SmallSignalStabilityRmsResults,
 )
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import run_dense_small_signal_stability
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.enumerations import ResultTypes, ResultTablePlotType
 
@@ -176,3 +181,36 @@ def test_sparse_results_expose_absent_state_matrix_as_empty_table() -> None:
     assert table.data_c.shape == (0, 0)
     assert table.index_c.shape == (0,)
     assert table.cols_c.shape == (0,)
+
+
+def test_generalized_state_matrix_uses_state_and_algebraic_names() -> None:
+    class GeneralizedProblem:
+        def get_diff_var_number(self) -> int:
+            return 1
+
+        def get_E_matrix(self, x: np.ndarray, dx: np.ndarray) -> np.ndarray:
+            return np.eye(3)
+
+        def get_static_state_matrix(self, x: np.ndarray, dx: np.ndarray) -> np.ndarray:
+            return np.diag([-1.0, -2.0, -3.0])
+
+    eigenvalues, eigenvectors, participation, damping, frequencies, matrix, _ = run_dense_small_signal_stability(
+        problem=GeneralizedProblem(), x=np.zeros(3), dx=np.zeros(3)
+    )
+    results = SmallSignalStabilityRmsResults(
+        eigenvalues=eigenvalues,
+        right_eigenvectors=eigenvectors,
+        participation_factors=participation,
+        damping_ratios=damping,
+        conjugate_frequencies=frequencies,
+        state_matrix=matrix,
+        stat_vars=list(),
+        algebraic_vars=list(),
+    )
+    results.stat_vars_array = np.array(["x1", "x2"], dtype=np.str_)
+    results.algebraic_vars_array = np.array(["y1"], dtype=np.str_)
+
+    table = results.mdl(result_type=ResultTypes.StateMatrix)
+
+    assert table.index_c.tolist() == ["Equation 0", "Equation 1", "Equation 2"]
+    assert table.cols_c.tolist() == ["x1", "x2", "y1"]

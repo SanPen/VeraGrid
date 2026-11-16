@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 import json
 import math
 from pathlib import Path
@@ -314,9 +318,12 @@ def test_sp_north():
                                   control_taps_modules=False,  # keeps taps fixed → limited support behaves like basic
                                   control_taps_phase=False,
                                   use_stored_guess=True,
+                                  # The DGS omits measured angles for the clock-shifted network.
+                                  initialize_angles=True,
                                   use_autodiff_jacobian=True,
                                   verbose=0)
     res_pf = vge.power_flow(grid=grid, options=pf_options)
+    assert res_pf.converged
 
     v_veragrid = np.abs(res_pf.voltage[0:138])
 

@@ -3,5 +3,4 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from VeraGridEngine.Templates.Rms import *
-from VeraGridEngine.Templates.Emt import *
+"""Template package with explicit module-level imports only."""

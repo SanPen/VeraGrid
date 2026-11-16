@@ -14,13 +14,15 @@ from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 import VeraGridEngine.Simulations.Derivatives.csc_derivatives as deriv
 from VeraGridEngine.Simulations.Derivatives.csc_derivatives import dSbus_dV_with_I0_numba_sparse_csc
 from VeraGridEngine.Utils.NumericalMethods.common import find_closest_number, make_complex
-from VeraGridEngine.Utils.Sparse.csc2 import (CSC, CxCSC, mat_to_scipy, scipy_to_mat, sp_slice, csc_stack_2d_ff)
+from VeraGridEngine.Utils.Sparse.csc2 import (CSC, CxCSC, mat_to_scipy, scipy_to_mat, sp_slice, csc_stack_2d_ff,
+                                              csc_add_ff)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls import (control_q_for_generalized_method,
                                                                                      DiscreteShuntControlState,
                                                                                      QvDroopControlState,
                                                                                      compute_slack_distribution)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import expand
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.static_generator_droop import StaticGeneratorDroop
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.shunt_droop import ShuntDroop
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import compute_fx_error
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template import PfFormulationTemplate
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (compute_zip_power, compute_power,
@@ -93,7 +95,8 @@ def adv_jacobian(nbus: int,
                  ytt_cbr: CxVec,
                  Yi: IntVec,
                  Yp: IntVec,
-                 Yx: CxVec) -> CSC:
+                 Yx: CxVec,
+                 dQinj_dVm: CSC) -> CSC:
     """
     Analytic Jacobian of the AC/DC formulation
     Rows as in compute_f:
@@ -159,6 +162,7 @@ def adv_jacobian(nbus: int,
     :param Yi: Ybus CSC row indices
     :param Yp: Ybus CSC column pointers
     :param Yx: Ybus CSC values
+    :param dQinj_dVm: nbus x nbus derivative of the voltage-dependent injected Q (droops) w.r.t. Vm
     :return: Jacobian in CSC format
     """
     tap = polar_to_rect(tap_modules, tap_angles)
@@ -205,7 +209,11 @@ def adv_jacobian(nbus: int,
 
     # -------- ROW 2 (Q) --------
     dQ_dVa = sp_slice(dS_dVa.imag, i_k_q, i_u_va)
-    dQ_dVm = sp_slice(dS_dVm.imag, i_k_q, i_u_vm)
+    # The residual is Scalc - Sbus, so the voltage-dependent injections enter with the opposite sign
+    if dQinj_dVm.nnz > 0:
+        dQ_dVm = csc_add_ff(sp_slice(dS_dVm.imag, i_k_q, i_u_vm), sp_slice(dQinj_dVm, i_k_q, i_u_vm), 1.0, -1.0)
+    else:
+        dQ_dVm = sp_slice(dS_dVm.imag, i_k_q, i_u_vm)
     dQ_dIfpvsc = CSC(nkq, nifp, 0, False)  # fully empty
     dQ_dPtvsc = CSC(nkq, npt, 0, False)  # fully empty
     dQ_dQtvsc = deriv.dPQ_dPQft_csc(nbus, nvsc, i_k_q, u_vsc_qt, T_vsc)
@@ -716,6 +724,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         "is_vm_controlled",
         "is_va_controlled",
         "u_cbr_m",
+        "_n_tap_qf_controls",
         "u_cbr_tau",
         "u_cbr_m_tau",
         "k_cbr_pf",
@@ -767,6 +776,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         "discrete_shunt_control",
         "qv_droop_control",
         "static_droop",
+        "shunt_droop",
     )
 
     def __init__(self, V0: CxVec, S0: CxVec, I0: CxVec, Y0: CxVec,
@@ -827,6 +837,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         self.cbr_qt_set = np.zeros(0, dtype=float)
 
         self._set_branch_control_indices()
+        self._n_tap_qf_controls: int = len(self.k_cbr_qf)
 
         # Fill VSC Indices
         self.u_vsc_ifp = np.zeros(0, dtype=int)  # instead of the power
@@ -877,16 +888,17 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         self.Qt_vsc[self.k_vsc_qt] = self.vsc_qt_set / self.nc.Sbase
 
         # Admittance ---------------------------------------------------------------------------------------------------
+        tap_modules, tap_angles = self._get_branch_taps()
         self.adm = compute_admittances_fast(
             nbus=self.nc.bus_data.nbus,
             R=self.nc.passive_branch_data.R,
             X=self.nc.passive_branch_data.X,
             G=self.nc.passive_branch_data.G,
             B=self.nc.passive_branch_data.B,
-            tap_module=expand(self.nc.nbr, self.m, self.u_cbr_m, 1.0),
+            tap_module=tap_modules,
             vtap_f=self.nc.passive_branch_data.virtual_tap_f,
             vtap_t=self.nc.passive_branch_data.virtual_tap_t,
-            tap_angle=expand(self.nc.nbr, self.tau, self.u_cbr_tau, 0.0),
+            tap_angle=tap_angles,
             F=self.nc.passive_branch_data.F,
             T=self.nc.passive_branch_data.T,
             Yshunt_bus=self.nc.get_Yshunt_bus_pu() + Y0,
@@ -901,14 +913,34 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         self.discrete_shunt_control = DiscreteShuntControlState(nc=self.nc)
         self.qv_droop_control = QvDroopControlState(S0=self.S0, nc=self.nc)
         self.static_droop: StaticGeneratorDroop = StaticGeneratorDroop(self.nc)
+        self.shunt_droop: ShuntDroop = ShuntDroop(self.nc)
 
         # On a flat start the negative DC poles sit at +1 instead
         # of -1 and the grounded buses at 1 instead of 0. Init them correctly
         if not self.options.use_stored_guess:
             self._apply_bipolar_flat_start()
 
+        # A floating two-terminal DC circuit needs a coordinate reference, not
+        # an invented physical connection to earth.
+        self._set_floating_dc_pair_reference()
+        self._set_bus_control_indices()
+
         # warm-start the DC pole currents once the pole voltages carry the right signs
         self._seed_pdc_pole_currents()
+
+    def _get_branch_taps(self, m: Vec | None = None, tau: Vec | None = None) -> tuple[Vec, Vec]:
+        """Combine fixed branch data with the existing tap control variables.
+
+        The clock is a fixed displacement; limits and solved tap angles retain
+        the independent changer reference used by devices and profiles.
+        """
+        modules = self.nc.active_branch_data.tap_module.copy()
+        modules[self.u_cbr_m] = self.m if m is None else m
+        angles = (self.nc.active_branch_data.tap_angle
+                  + np.pi / 6.0 * self.nc.passive_branch_data.vector_group_number)
+        angles[self.u_cbr_tau] = ((self.tau if tau is None else tau)
+                                 + np.pi / 6.0 * self.nc.passive_branch_data.vector_group_number[self.u_cbr_tau])
+        return modules, angles
 
     def _apply_bipolar_flat_start(self, v_ground: float = 1e-8) -> None:
         """
@@ -1011,6 +1043,60 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
             else:
                 self._Va[b] = np.pi  # Like a minus sign
         self.V = polar_to_rect(self._Vm, self._Va)
+
+    def _set_floating_dc_pair_reference(self) -> None:
+        """Choose a mathematical origin for an isolated floating DC pole pair.
+
+        Only a pair with balanced fixed-axis current injections, no grounded
+        terminal, and no passive connection or power/admittance to earth is
+        eligible. Fixing the return coordinate at minus half the regulated
+        difference removes one redundant KCL equation without adding grounding.
+
+        :return: None.
+        """
+        converter_idx: int
+        for converter_idx in self.k_vsc_vmdc_diff:
+            positive_bus: int = int(self.nc.vsc_data.F[converter_idx])
+            negative_bus: int = int(self.nc.vsc_data.F_dcn[converter_idx])
+            pair: IntVec = np.array([positive_bus, negative_bus], dtype=int)
+            passive: np.ndarray = self.nc.passive_branch_data.active.astype(bool)
+            incident: np.ndarray = (np.isin(self.nc.passive_branch_data.F, pair)
+                                    | np.isin(self.nc.passive_branch_data.T, pair))
+            shunt: CxVec = self.nc.get_Yshunt_bus_pu()[pair]
+            attached: np.ndarray = (self.nc.vsc_data.active.astype(bool)
+                                    & (np.isin(self.nc.vsc_data.F, pair)
+                                       | np.isin(self.nc.vsc_data.F_dcn, pair)))
+            same_pair: np.ndarray = ((self.nc.vsc_data.F == positive_bus)
+                                     & (self.nc.vsc_data.F_dcn == negative_bus))
+            floating_pair: bool = bool(
+                positive_bus != negative_bus
+                and not np.any(self.bus_grounded[pair])
+                and not np.any(self.is_vm_controlled[pair])
+                and not np.any(passive & incident)
+                and np.all(same_pair[attached])
+                and np.all(np.abs(self.S0[pair]) < 1.0e-12)
+                and np.all(np.abs(self.Y0[pair]) < 1.0e-12)
+                and np.all(np.abs(shunt) < 1.0e-12)
+                and abs(np.sum(self.I0[pair])) < 1.0e-12)
+            if floating_pair:
+                target: float = float(
+                    self.nc.vsc_data.control1_val[converter_idx]
+                    if self.nc.vsc_data.control1_int[converter_idx] == ConverterControlType.Vm_dc.idx()
+                    else self.nc.vsc_data.control2_val[converter_idx])
+                if abs(target) > 1.0e-12:
+                    # This fixes only the coordinate gauge. The canonical bus
+                    # remains ungrounded and all terminal currents are retained.
+                    self.is_vm_controlled[negative_bus] = True
+                    self.is_p_controlled[negative_bus] = False
+                    self._Vm[negative_bus] = abs(target) / 2.0
+                    self._Va[negative_bus] = np.pi if target > 0.0 else 0.0
+                    self._Vm[positive_bus] = abs(target) / 2.0
+                    self._Va[positive_bus] = 0.0 if target > 0.0 else np.pi
+                    self.V = polar_to_rect(self._Vm, self._Va)
+                else:
+                    pass
+            else:
+                pass
 
     def _update_Qlim_indices(self, i_u_vm: IntVec, i_k_q: IntVec) -> None:
         """
@@ -1994,6 +2080,36 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         self.vsc_qt_set = np.array(vsc_qt_set, dtype=float)
         self.vsc_i_set = np.array(vsc_i_set, dtype=float)
 
+        # A remote Qac control releases the converter's local reactive power.
+        # Reuse the existing passive-branch Qf residual and analytic derivatives
+        # instead of introducing a second controller or another equation family.
+        remote_q_mask: np.ndarray = np.zeros(len(self.k_vsc_qt), dtype=bool)
+        remote_q_branches: IntVec = np.full(len(self.k_vsc_qt), -1, dtype=int)
+        q_row: int
+        for q_row in range(len(self.k_vsc_qt)):
+            converter_idx: int = int(self.k_vsc_qt[q_row])
+            branch_original_idx: int = int(self.nc.vsc_data.remote_q_branch_original_idx[converter_idx])
+            if branch_original_idx > -1:
+                branch_matches: IntVec = np.flatnonzero(
+                    self.nc.passive_branch_data.original_idx == branch_original_idx)
+                if (len(branch_matches) == 1
+                        and self.nc.passive_branch_data.active[int(branch_matches[0])]):
+                    remote_q_mask[q_row] = True
+                    remote_q_branches[q_row] = int(branch_matches[0])
+                else:
+                    raise ValueError(
+                        f"{self.nc.vsc_data.names[converter_idx]}: remote Qac branch is inactive "
+                        "or outside its electrical island")
+            else:
+                pass
+        self.u_vsc_qt = np.unique(np.r_[self.u_vsc_qt, self.k_vsc_qt[remote_q_mask]]).astype(int)
+        self.k_cbr_qf = np.r_[self.k_cbr_qf[:self._n_tap_qf_controls],
+                              remote_q_branches[remote_q_mask]].astype(int)
+        self.cbr_qf_set = np.r_[self.cbr_qf_set[:self._n_tap_qf_controls],
+                               self.vsc_qt_set[remote_q_mask] / self.nc.Sbase]
+        self.k_vsc_qt = self.k_vsc_qt[~remote_q_mask]
+        self.vsc_qt_set = self.vsc_qt_set[~remote_q_mask]
+
         # --- Pdc voltage-droop reformulation -------------------------------------------------------------------------
         droop_k = list()
         droop_side = list()
@@ -2310,13 +2426,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         # Controllable branches ----------------------------------------------------------------------------------------
         tm[1] = time.time()
 
-        m2 = self.nc.active_branch_data.tap_module.copy()
-        if len(self.u_cbr_m) > 0:
-            m2[self.u_cbr_m] = m_
-
-        tau2 = self.nc.active_branch_data.tap_angle.copy()
-        if len(self.u_cbr_tau) > 0:
-            tau2[self.u_cbr_tau] = tau_
+        m2, tau2 = self._get_branch_taps(m=m_, tau=tau_)
 
             # adm_ = compute_admittances_fast(
         #     nbus=self.nc.bus_data.nbus,
@@ -2366,6 +2476,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         # We add self.Y0 despite it being zero
         Sbus = self.S0 + 1j * Qag / self.nc.Sbase + V * np.conj(self.I0) + V * np.conj(V) * np.conj(self.Y0)
         Sbus += 1j * self.static_droop.delta_q_bus(V)
+        Sbus += 1j * self.shunt_droop.delta_q_bus(V)
         Scalc_passive = compute_power(adm_.Ybus, V)
 
         Pf_cbr = calcSf(k=self.k_cbr_pf,
@@ -2663,7 +2774,8 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
             if self.discrete_shunt_control.apply(Vm=self.Vm, adm=self.adm):
                 any_change = True
 
-            if self.qv_droop_control.apply(S0=self.S0, Vm=self.Vm):
+            # Synchronous droop is already evaluated with the other Q-V injections.
+            if len(self.static_droop.generator_idx) == 0 and self.qv_droop_control.apply(S0=self.S0, Vm=self.Vm):
                 any_change = True
 
             # update Slack control
@@ -2932,6 +3044,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
                         self.nc.vsc_data.control2_val[i] = 0.0
                         self.nc.vsc_data.control2_branch_idx[i] = i
                         self.nc.vsc_data.control2_bus_idx[i] = -1
+                        self.nc.vsc_data.remote_q_branch_original_idx[i] = -1
 
                         n_disconnected_vscs += 1
 
@@ -2952,8 +3065,10 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
                 self.is_q_controlled = self.nc.bus_data.is_q_controlled.copy()
                 self.is_vm_controlled = self.nc.bus_data.is_vm_controlled.copy()
                 self.is_va_controlled = self.nc.bus_data.is_va_controlled.copy()
-                self._set_vsc_control_indices()
                 self._set_branch_control_indices()
+                self._n_tap_qf_controls = len(self.k_cbr_qf)
+                self._set_vsc_control_indices()
+                self._set_floating_dc_pair_reference()
                 self._set_bus_control_indices()
 
                 # re-apply the VSC setpoints after the control indices have been rebuilt
@@ -2988,17 +3103,18 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
 
         V = polar_to_rect(self.Vm, self.Va)
         Sbus = compute_zip_power(self.S0, self.I0, self.Y0, self.Vm)
+        # DC current sources act on a fixed signed axis. Using |V| on the
+        # negative pole reverses its physical current and disagrees with compute_f.
+        dc_buses: np.ndarray = self.nc.bus_data.is_dc.astype(bool)
+        Sbus[dc_buses] = (self.S0[dc_buses]
+                         + V[dc_buses] * np.conj(self.I0[dc_buses])
+                         + np.abs(V[dc_buses]) ** 2 * np.conj(self.Y0[dc_buses]))
         Sbus += 1j * self.static_droop.delta_q_bus(V)
+        Sbus += 1j * self.shunt_droop.delta_q_bus(V)
         Imax_vsc = self.nc.vsc_data.rates / self.nc.Sbase
 
         # Update Ybus with the new taps
-        m2 = self.nc.active_branch_data.tap_module.copy()
-        if len(self.u_cbr_m) > 0:
-            m2[self.u_cbr_m] = self.m
-
-        tau2 = self.nc.active_branch_data.tap_angle.copy()
-        if len(self.u_cbr_tau) > 0:
-            tau2[self.u_cbr_tau] = self.tau
+        m2, tau2 = self._get_branch_taps()
 
         # self.adm = compute_admittances_fast(
         #     nbus=self.nc.bus_data.nbus,
@@ -3202,8 +3318,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
             return J
         else:
             # expanded tap arrays
-            tap_modules = expand(self.nc.nbr, self.m, self.u_cbr_m, 1.0)
-            tap_angles = expand(self.nc.nbr, self.tau, self.u_cbr_tau, 0.0)
+            tap_modules, tap_angles = self._get_branch_taps()
 
             # HVDC parameters
             nhvdc = self.nc.hvdc_data.nelm
@@ -3225,6 +3340,10 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
             # voltage sensitivity factors of the Udc * Ifp equations
             pdc_factor: Vec = self.Ifp_vsc[self.k_vsc_pdc].copy()
             droop_factor: Vec = self.Ifp_vsc[self.k_vsc_pfp_droop] - self._pfp_droop_slopes()
+            if len(self.static_droop.bus_idx) > 0 or len(self.shunt_droop.idx) > 0:
+                dQinj_dVm: CSC = csc_add_ff(self.static_droop.dq_dvm(V), self.shunt_droop.dq_dvm(V))
+            else:
+                dQinj_dVm = CSC(self.nc.nbus, self.nc.nbus, 0, True)
 
             # DC current-balance rows and the injection sensitivities
             dc_rows: IntVec = self.i_k_p_dc
@@ -3289,7 +3408,8 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
                 ytt_cbr=self.adm.ytt,
                 Yi=self.adm.Ybus.indices,
                 Yp=self.adm.Ybus.indptr,
-                Yx=self.adm.Ybus.data
+                Yx=self.adm.Ybus.data,
+                dQinj_dVm=dQinj_dVm
             )
             return J_sym
 

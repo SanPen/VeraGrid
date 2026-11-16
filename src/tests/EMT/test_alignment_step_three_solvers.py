@@ -6,13 +6,16 @@
 from __future__ import annotations
 
 import math
+import cProfile
 from typing import Any, List, Sequence, Tuple, cast, Dict
 
 import numpy as np
 import pytest
 from scipy.sparse import csc_matrix
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
-from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
+from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
+    EmtProblemTemplate, BoundaryUpdaterCapabilities, get_solver_forced_event_time, resolve_solver_boundary_step,
+)
 from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import (
     JitSymbolicSolver,
 )
@@ -277,6 +280,51 @@ class ForcedEventTracker(
             pass
 
 
+def test_forced_event_lookup_skips_roundoff_duplicate_at_accepted_boundary() -> None:
+    """A clock near the accepted time must not create a tiny step."""
+    for duplicate in (math.nextafter(0.1, math.inf), 0.1 + 2.0e-10):
+        tracker = ForcedEventTracker(forced_times=(duplicate, 0.15), tol=0.0)
+        capabilities = BoundaryUpdaterCapabilities(tracker)
+
+        assert get_solver_forced_event_time(tracker, 0.1, 0.2, capabilities) == 0.15
+
+
+@pytest.mark.parametrize("method", [DynamicIntegrationMethod.DaeBackEuler,
+                                    DynamicIntegrationMethod.DaeTrapezoidal])
+@pytest.mark.parametrize("step", [0.05, 0.1])
+@pytest.mark.parametrize("dense_threshold", [0, 100])
+def test_jit_forced_mode_change_uses_left_limit_until_event(method, step, dense_threshold) -> None:
+    """A held source must change after, rather than before, its event boundary."""
+    x = Var("event_integral_x")
+    dx = Var("event_integral_dx", base_var=x)
+    source = Var("event_integral_source")
+    block = Block(
+        name="EventIntegral", state_vars=[x], diff_vars=[dx],
+        state_eqs=[source], mode_dict={source: Const(1.0)},
+    )
+    block.unify_blocks()
+    problem = EmtProblemTemplate(
+        sys_block=block, glob_time=Var("event_integral_time"),
+        static_parameter_values_mapping={},
+    )
+    tracker = ForcedEventTracker(
+        forced_times=(0.05,), tol=0.0,
+        change_time=0.05, parameter_value=2.0,
+    )
+    solver = JitSymbolicSolver(
+        problem=problem, t0=0.0, t_end=0.1, h=step,
+        method=method,
+        dense_threshold=dense_threshold, verbose=False,
+    )
+    _, values, _, initialized, converged = solver.simulate(
+        x0=np.array([0.0]), dx0=np.array([1.0]),
+        boundary_updater=tracker,
+    )
+    assert initialized and converged
+    assert values[-1, 0] == pytest.approx(0.15, abs=1e-10)
+    assert tracker.update_parameter_values.count(2.0) >= 1
+
+
 class DummyJacobian:
     """
     Constant 1x1 Jacobian used by the three solvers.
@@ -345,7 +393,7 @@ def _dummy_fused_residual(
 @pytest.mark.parametrize(
     ("solver_kind", "expected_updates"),
     [
-        (EmtSolverTypes.Symbolic, [0.00, 0.05, 0.10, 0.15, 0.20]),
+        (EmtSolverTypes.Symbolic, [0.00, 0.05, 0.05, 0.10, 0.15, 0.15, 0.20]),
         (EmtSolverTypes.Automatic, [0.05, 0.10, 0.15, 0.20]),
         (EmtSolverTypes.StructuralAD, [0.00, 0.05, 0.10, 0.15, 0.20]),
     ],
@@ -446,7 +494,11 @@ def test_force_step_alignment_is_used_by_all_three_solvers(
     )
     assert updater.resolve_calls == [True, True, True, True]
     expected_parameter_values: np.ndarray
-    if solver_kind == EmtSolverTypes.Automatic:
+    if solver_kind == EmtSolverTypes.Symbolic:
+        expected_parameter_values = np.array(
+            [0.00, 0.00, 0.05, 0.05, 0.10, 0.15, 0.15], dtype=np.float64
+        )
+    elif solver_kind == EmtSolverTypes.Automatic:
         expected_parameter_values = np.array(
             [0.00, 0.05, 0.10, 0.15], dtype=np.float64
         )
@@ -668,3 +720,51 @@ def test_newton_rejection_preserves_completed_samples(
                 assert solver.get_last_runtime_stats()["macro_steps"] == rows - 1
             else:
                 pass
+
+
+@pytest.mark.parametrize("with_updater", (False, True))
+def test_boundary_capabilities_avoid_repeated_inspection(with_updater: bool) -> None:
+    """Keep event callbacks active without inspecting capabilities in the loop.
+
+    :param with_updater: Whether this run has an event-aware boundary updater.
+    :return: None.
+    """
+    tracker: ForcedEventTracker | None = None
+    if with_updater:
+        tracker = ForcedEventTracker(forced_times=(0.05,))
+    else:
+        pass
+    capabilities: BoundaryUpdaterCapabilities = BoundaryUpdaterCapabilities(tracker)
+    params: np.ndarray = np.zeros(1)
+    state: np.ndarray = np.ones(1)
+    profiler: cProfile.Profile = cProfile.Profile()
+    iteration: int
+    # Profile only the hot path: preparation is deliberately outside the loop.
+    profiler.enable()
+    for iteration in range(10):
+        event_time: float | None = get_solver_forced_event_time(tracker, 0.0, 0.1, capabilities)
+        retry_time: float | None = resolve_solver_boundary_step(
+            tracker, iteration % 2 == 0, params, 0.1, state, capabilities)
+        assert retry_time is None
+        if with_updater:
+            assert event_time == 0.05
+        else:
+            assert event_time is None
+    profiler.disable()
+    # These names detect both dir() and the MRO-based capability checks.
+    forbidden_names: tuple[str, ...] = (
+        "_implements_forced_event_time_api", "_implements_step_resolution_api",
+        "_implements_commit_boundary_api")
+    for entry in profiler.getstats():
+        if isinstance(entry.code, str):
+            assert "builtins.dir" not in entry.code
+        else:
+            assert entry.code.co_name not in forbidden_names
+    if tracker is not None:
+        assert tracker.resolve_calls == list((True, False) * 5)
+        assert len(tracker.commit_calls) == 5
+        assert len(tracker.query_calls) == 10
+    else:
+        assert not capabilities.forced_event_time
+        assert not capabilities.step_resolution
+        assert not capabilities.commit_boundary

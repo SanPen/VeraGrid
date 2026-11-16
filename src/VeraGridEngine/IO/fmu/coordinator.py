@@ -755,12 +755,15 @@ class FmiThreeModelExchangeCoordinator:
         self,
         importer_detected_event: bool,
         evaluation_budget: FmuMeEvaluationBudget | None = None,
+        complete_integrator_step: bool = True,
     ) -> tuple[tuple[float, ...], tuple[float, ...]]:
         """Accept one candidate and settle Event Mode when requested.
 
         :param importer_detected_event: Whether the solver localized an event at
             the candidate point.
         :param evaluation_budget: Optional owner-provided runtime-call budget.
+        :param complete_integrator_step: False only when synchronizing inputs at the
+            already accepted time; no integration step has occurred.
         :return: Accepted continuous states and readable values after events.
         :raises RuntimeError: If the FMU requests simulation termination.
         """
@@ -793,7 +796,9 @@ class FmiThreeModelExchangeCoordinator:
             raise RuntimeError(
                 "FMI 3 candidate acceptance requires a complete candidate"
             )
-        if self._session.needs_completed_integrator_step():
+        if not complete_integrator_step and candidate_time != self._accepted_time:
+            raise ValueError("FMU input synchronization must stay at the accepted time")
+        if complete_integrator_step and self._session.needs_completed_integrator_step():
             if evaluation_budget is not None:
                 evaluation_budget.consume()
             else:

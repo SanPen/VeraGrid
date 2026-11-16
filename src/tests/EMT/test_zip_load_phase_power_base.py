@@ -1,9 +1,13 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Check that an EMT ZIP phase uses the grid's three-phase power base."""
 
 import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_zip_emt_template import get_load_ZIP_emt_template
 
 
 def test_zip_default_matches_static_constant_power_load() -> None:

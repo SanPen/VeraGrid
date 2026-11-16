@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 2
 - Top-level function count: 9
-- Representative imports: typing, dataclasses, numba, numpy, pandas, scipy.sparse, scipy, timeit, matplotlib, VeraGridEngine.basic_structures, VeraGridEngine.Utils.Sparse.csc, VeraGridEngine.Utils.NumericalMethods.sparse_solve, VeraGridEngine.enumerations
+- Representative imports: typing, dataclasses, numba, numpy, pandas, scipy.sparse, scipy, timeit, matplotlib, VeraGridEngine.basic_structures, VeraGridEngine.Utils.Sparse.csc, VeraGridEngine.Utils.Sparse.sparse_solve, VeraGridEngine.enumerations
 
 ## Function: step_calculation(v, dv, tau)
 

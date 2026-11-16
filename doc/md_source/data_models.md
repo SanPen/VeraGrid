@@ -418,9 +418,11 @@
 |Bmin                    |float                   |MVAr        |False    |         |Minimum susceptance                                                             |False      |       |
 |active_steps            |Array                   |            |False    |         |steps active?                                                                   |False      |       |
 |step                    |int                     |            |False    |         |Device step position (0~N-1)                                                    |True       |       |
-|Vmin                    |float                   |p.u.        |False    |         |Lower range voltage value when regulating with Discrete mode                    |False      |       |
+|Vmin                    |float                   |p.u.        |False    |         |Lower voltage band in Discrete mode, or measurement clamp in Q-V droop mode.    |False      |       |
 |Vset                    |float                   |p.u.        |False    |         |Set voltage. This is used for controlled shunts.                                |True       |       |
-|Vmax                    |float                   |p.u.        |False    |         |Upper range voltage value when regulating with Discrete mode.                   |False      |       |
+|Vmax                    |float                   |p.u.        |False    |         |Upper voltage band in Discrete mode, or measurement clamp in Q-V droop mode.    |False      |       |
+|Snom                    |float                   |MVA         |False    |         |Rated power for Q-V droop control.                                              |False      |       |
+|droop                   |float                   |%           |False    |         |Voltage droop at rated reactive power; zero Q at Vset.                          |False      |       |
 
 
 ### Country
@@ -1409,6 +1411,7 @@
 |emt_fmu_import_config   |str                |            |False    |         |Serialized FMU Co-Simulation EMT configuration                                  |False      |       |
 |rms_fmu_me_import_config|str                |            |False    |         |Serialized FMU Model Exchange RMS configuration                                 |False      |       |
 |emt_fmu_me_import_config|str                |            |False    |         |Serialized FMU Model Exchange EMT configuration                                 |False      |       |
+|transposed              |bool               |            |False    |         |Perfect transposition of a single ABC circuit, after earth-wire reduction.      |False      |       |
 |earth_resistivity       |float              |Ohm/m3      |False    |         |Earth resistivity                                                               |False      |       |
 |frequency               |float              |Hz          |False    |         |Frequency                                                                       |False      |       |
 |Vnom                    |float              |kV          |False    |         |Voltage rating of the line                                                      |False      |       |

@@ -58,7 +58,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         ResultsProperty(name='inter_area_flows', tpe=Vec, old_names=list(), expandable=True),
         ResultsProperty(name='transmission_reliability_margin', tpe=float, old_names=list(), expandable=False),
         ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name='strict_formulation', tpe=bool, old_names=list(), expandable=False),
+        ResultsProperty(name='consider_slacks', tpe=bool, old_names=list(), expandable=False),
         ResultsProperty(name='contingency_group_device_names', tpe=ObjVec, old_names=list(), expandable=False),
         ResultsProperty(name='worst_contingency_idx', tpe=IntMat, old_names=list(), expandable=True),
         ResultsProperty(name='worst_contingency_flow', tpe=Mat, old_names=list(), expandable=True),
@@ -104,7 +104,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         "inter_space_hvdc",
         "inter_space_vsc",
         "contingency_flows_list",
-        "strict_formulation",
+        "consider_slacks",
         "converged",
         "inter_area_flows",
         "transmission_reliability_margin",
@@ -240,8 +240,8 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         # t, m, c, contingency (strict)
         self.contingency_flows_list = list()
 
-        # whether the results come from the strict formulation (no flow slacks)
-        self.strict_formulation = False
+        # Whether the formulation permits penalized flow-limit relaxation.
+        self.consider_slacks = True
 
         self.converged = np.zeros(nt, dtype=bool)
         self.inter_area_flows = np.zeros(nt, dtype=float)
@@ -265,50 +265,46 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         Total limit-relaxation slack of each time step in MW.
 
         Base-case overload slacks plus post-contingency relaxation slacks.
-        Strict runs have no flow slacks, so the result is zero per hour.
 
         :return: slack per time step in MW
         """
         total: Vec = np.sum(np.abs(self.overloads), axis=1).astype(float)
         n_total: int = int(total.shape[0])
 
-        if self.strict_formulation:
+        # Size by simulated hours, not by the last recorded contingency row:
+        # a final hour with no relaxation entries still needs its zero slot.
+        if self.clustering_results is not None:
+            n_clustered: int = len(self.clustering_results.time_indices)
+        else:
+            n_clustered = n_total
+
+        if n_clustered == 0:
             return total
         else:
-            # Size by simulated hours, not by the last recorded contingency row:
-            # a final hour with no relaxation entries still needs its zero slot.
-            if self.clustering_results is not None:
-                n_clustered: int = len(self.clustering_results.time_indices)
-            else:
-                n_clustered = n_total
-
-            if n_clustered == 0:
-                return total
-            else:
-                con_slack: Vec = np.zeros(n_clustered, dtype=float)
-                for item in self.contingency_flows_list:
-                    t_i, m_i, c_i, flow_i, neg_i, pos_i = item
-                    t_int: int = int(t_i)
-                    if isinstance(neg_i, float) and isinstance(pos_i, float) and 0 <= t_int < n_clustered:
-                        con_slack[t_int] = con_slack[t_int] + abs(neg_i) + abs(pos_i)
-                    else:
-                        pass
-
-                sample_idx: IntVec | None = self.original_sample_idx
-                if n_clustered == n_total:
-                    total = total + con_slack
-                elif sample_idx is not None and int(sample_idx.shape[0]) == n_total:
-                    h: int
-                    for h in range(n_total):
-                        cluster_t: int = int(sample_idx[h])
-                        if 0 <= cluster_t < n_clustered:
-                            total[h] = total[h] + con_slack[cluster_t]
-                        else:
-                            pass
+            con_slack: Vec = np.zeros(n_clustered, dtype=float)
+            for item in self.contingency_flows_list:
+                t_i, m_i, c_i, flow_i, neg_i, pos_i = item
+                t_int: int = int(t_i)
+                if isinstance(neg_i, float) and isinstance(pos_i, float) and 0 <= t_int < n_clustered:
+                    con_slack[t_int] = con_slack[t_int] + abs(neg_i) + abs(pos_i)
                 else:
                     pass
 
-                return total
+            sample_idx: IntVec | None = self.original_sample_idx
+            if n_clustered == n_total:
+                total = total + con_slack
+            elif sample_idx is not None and int(sample_idx.shape[0]) == n_total:
+                h: int
+                for h in range(n_total):
+                    cluster_t: int = int(sample_idx[h])
+                    if 0 <= cluster_t < n_clustered:
+                        total[h] = total[h] + con_slack[cluster_t]
+                    else:
+                        pass
+            else:
+                pass
+
+            return total
 
     def get_solution_states(self, slack_tol_mw: float = 0.1) -> List[SolutionState]:
         """

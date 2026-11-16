@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1235</width>
-    <height>766</height>
+    <width>1267</width>
+    <height>775</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -283,7 +283,7 @@
                             <x>0</x>
                             <y>0</y>
                             <width>396</width>
-                            <height>316</height>
+                            <height>325</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -377,8 +377,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>382</width>
-                            <height>360</height>
+                            <width>262</width>
+                            <height>362</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -772,8 +772,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>396</width>
-                            <height>316</height>
+                            <width>174</width>
+                            <height>240</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -923,8 +923,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>396</width>
-                            <height>316</height>
+                            <width>124</width>
+                            <height>188</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -2444,8 +2444,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>274</width>
-                 <height>520</height>
+                 <width>98</width>
+                 <height>85</height>
                 </rect>
                </property>
                <attribute name="icon">
@@ -11119,7 +11119,7 @@ QProgressBar::chunk{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1235</width>
+     <width>1267</width>
      <height>23</height>
     </rect>
    </property>
@@ -11308,6 +11308,7 @@ QProgressBar::chunk{
     <addaction name="actionEnable_all_results_tags"/>
     <addaction name="actionSet_schematic_positions_from_GPS_coordinates"/>
     <addaction name="actionColor_buses_by"/>
+    <addaction name="actionColor_lines_by"/>
     <addaction name="actionSelect_buses_by"/>
     <addaction name="actionClear_highlights"/>
     <addaction name="separator"/>
@@ -11411,6 +11412,8 @@ QProgressBar::chunk{
    <addaction name="separator"/>
    <addaction name="actionShow_dynamic_models_editor"/>
    <addaction name="actionLaunch_data_analysis_tool"/>
+   <addaction name="actionAdd_default_catalogue"/>
+   <addaction name="actionOperator_View"/>
    <addaction name="actionai_chat"/>
   </widget>
   <action name="actionOpen_file">
@@ -12775,6 +12778,18 @@ QProgressBar::chunk{
     <font/>
    </property>
   </action>
+  <action name="actionColor_lines_by">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/grid_icon.png</normaloff>:/Icons/icons/grid_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Color lines by...</string>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+  </action>
   <action name="actionColor_substations_by">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
@@ -13281,6 +13296,24 @@ QProgressBar::chunk{
    </property>
    <property name="text">
     <string>Community chat</string>
+   </property>
+  </action>
+  <action name="actionOperator_View">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/operator_view.png</normaloff>:/Icons/icons/operator_view.png</iconset>
+   </property>
+   <property name="text">
+    <string>Operator View</string>
+   </property>
+   <property name="toolTip">
+    <string>Window to see information in a way familiar for Grid Operators</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>

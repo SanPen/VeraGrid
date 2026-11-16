@@ -15,7 +15,7 @@ class WindowManager:
     Manager for application secondary windows and dialogues.
     """
 
-    __slots__ = ("__parent", "__win")
+    __slots__ = ("__parent", "__win", "__weakref__")
 
     def __init__(self, main_window: QMainWindow):
         """

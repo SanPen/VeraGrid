@@ -365,7 +365,7 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         ResultsProperty(name='transmission_reliability_margin', tpe=float, old_names=list(), expandable=False),
         ResultsProperty(name='structural_inter_area_flows', tpe=float, old_names=list(), expandable=False),
         ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name='strict_formulation', tpe=bool, old_names=list(), expandable=False),
+        ResultsProperty(name='consider_slacks', tpe=bool, old_names=list(), expandable=False),
         ResultsProperty(name='contingency_group_device_names', tpe=ObjVec, old_names=list(), expandable=False),
         ResultsProperty(name='worst_contingency_idx', tpe=IntVec, old_names=list(), expandable=False),
         ResultsProperty(name='worst_contingency_flow', tpe=Vec, old_names=list(), expandable=False),
@@ -416,7 +416,7 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         "inter_space_hvdc",
         "inter_space_vsc",
         "contingency_flows_list",
-        "strict_formulation",
+        "consider_slacks",
         "converged",
         "inter_area_flows",
         "transmission_reliability_margin",
@@ -530,8 +530,8 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         # t, m, c, contingency (strict)
         self.contingency_flows_list = list()
 
-        # whether the results come from the strict formulation (no flow slacks)
-        self.strict_formulation = False
+        # Whether the formulation permits penalized flow-limit relaxation.
+        self.consider_slacks = True
 
         self.converged = False
 
@@ -556,24 +556,22 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
     def get_total_slack_mw(self: "OptimalNetTransferCapacityResults") -> float:
         """
         Total limit-relaxation slack of the solution in MW, with the base case overload
-        slacks plus the post-contingency relaxation slacks. Strict contingency
-        records contain no slack fields and do not contribute to the total.
+        slacks plus the post-contingency relaxation slacks.
 
         :return: total slack in MW
         """
         total: float = float(np.sum(np.abs(self.overloads)))
-        if self.strict_formulation:
-            pass  # Strict limits have no slacks; their four-field rows contain only flows.
-        else:
-            # Only the regular formulation appends negative and positive slack values.
-            item: tuple[int, int, int, float, object, object]
-            for item in self.contingency_flows_list:
+        item: tuple[int, int, int, float, object, object]
+        for item in self.contingency_flows_list:
+            if len(item) == 6:
                 neg_i: object = item[4]
                 pos_i: object = item[5]
                 if isinstance(neg_i, float) and isinstance(pos_i, float):
                     total += abs(neg_i) + abs(pos_i)
                 else:
                     pass  # Slack not evaluated to a number, nothing to add.
+            else:
+                pass  # Legacy strict records contain only the four flow fields.
         return total
 
     def get_solution_state(self, slack_tol_mw: float = 0.1) -> SolutionState:

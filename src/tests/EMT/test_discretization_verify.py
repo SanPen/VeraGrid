@@ -151,6 +151,201 @@ def test_bdf2_derivative_uid_order(
         np.testing.assert_allclose(derivatives[1:, dfast_index] + 2.0 * values[1:, fast_index], 0.0, atol=1e-8, rtol=0)
 
 
+@pytest.mark.parametrize("solver_class", (JitSymbolicSolver, JitAdSolver, StructuralVectorizedSolver,
+                                          StructuralCompiledSolver))
+@pytest.mark.parametrize("method", (DynamicIntegrationMethod.DaeTrapezoidal, DynamicIntegrationMethod.DaeBackEuler))
+@pytest.mark.parametrize("dense_threshold", (0, 100))
+def test_one_step_derivative_uid_order(
+        solver_class: (type[JitSymbolicSolver] | type[JitAdSolver] | type[StructuralVectorizedSolver]
+                       | type[StructuralCompiledSolver]),
+        method: DynamicIntegrationMethod,
+        dense_threshold: int) -> None:
+    """Check unequal rates with permuted derivative order under the one-step rules over the whole horizon.
+
+    :param solver_class: Existing EMT backend.
+    :param method: Trapezoidal or backward Euler rule.
+    :param dense_threshold: Force dense or sparse linear solves.
+    :return: None.
+    """
+    reverse: bool
+    solver: JitSymbolicSolver | JitAdSolver | StructuralVectorizedSolver | StructuralCompiledSolver
+    problem: GenericEmtProblem
+    times: np.ndarray
+    values: np.ndarray
+    derivatives: np.ndarray
+    well: bool
+    converged: bool
+    for reverse in (False, True):
+        slow: Var = Var("one_step_slow")
+        fast: Var = Var("one_step_fast")
+        dslow: Var = Var("one_step_dslow", base_var=slow)
+        dfast: Var = Var("one_step_dfast", base_var=fast)
+        block: Block = Block(name="OneStepUidOrder",
+                             state_vars=list((fast, slow) if reverse else (slow, fast)),
+                             state_eqs=list((-2.0 * fast, -slow) if reverse else (-slow, -2.0 * fast)),
+                             diff_vars=list((dslow, dfast) if reverse else (dfast, dslow)), parameters=dict())
+        solver, problem = make_solver(solver_class, block, 0.5, 0.01, method, 1e-10, dense_threshold)
+        slow_index: int = problem.uid2idx_vars[slow.uid]
+        fast_index: int = problem.uid2idx_vars[fast.uid]
+        dslow_index: int = problem.uid2idx_diff[dslow.uid]
+        dfast_index: int = problem.uid2idx_diff[dfast.uid]
+        assert slow_index != dslow_index and fast_index != dfast_index
+        seed: np.ndarray = np.empty(2)
+        seed[slow_index] = 1.0
+        seed[fast_index] = 2.0
+        slope: np.ndarray = np.empty(2)
+        slope[dslow_index] = -1.0
+        slope[dfast_index] = -4.0
+        times, values, derivatives, well, converged = solver.simulate(x0=seed, dx0=slope)
+        assert well and converged and times.size == 51
+        if method == DynamicIntegrationMethod.DaeTrapezoidal:
+            assert values[1, slow_index] == pytest.approx(0.995 / 1.005, abs=1e-12)
+            assert values[1, fast_index] == pytest.approx(2.0 * 0.99 / 1.01, abs=1e-12)
+        else:
+            assert values[1, slow_index] == pytest.approx(1.0 / 1.01, abs=1e-12)
+            assert values[1, fast_index] == pytest.approx(2.0 / 1.02, abs=1e-12)
+        np.testing.assert_allclose(derivatives[1:, dslow_index] + values[1:, slow_index], 0.0, atol=1e-8, rtol=0)
+        np.testing.assert_allclose(derivatives[1:, dfast_index] + 2.0 * values[1:, fast_index], 0.0, atol=1e-8, rtol=0)
+
+
+@pytest.mark.parametrize("solver_class", (JitSymbolicSolver, JitAdSolver))
+@pytest.mark.parametrize("method", (DynamicIntegrationMethod.DaeTrapezoidal, DynamicIntegrationMethod.DaeBackEuler,
+                                    DynamicIntegrationMethod.DaeBDF2))
+@pytest.mark.parametrize("pred_method", (None, DynamicIntegrationMethod.OdeEuler))
+@pytest.mark.parametrize("backtracking", (False, True))
+@pytest.mark.parametrize("newton_tolerance", (1e-12, 1e-1))
+def test_jit_run_does_not_depend_on_the_derivative_order(
+        solver_class: type[JitSymbolicSolver] | type[JitAdSolver],
+        method: DynamicIntegrationMethod, pred_method: DynamicIntegrationMethod | None,
+        backtracking: bool, newton_tolerance: float) -> None:
+    """
+    On s' = -s f, f' = -2 f, z = f' s a JIT solver produces the same states bit for bit, the same derivatives per
+    declared derivative and the same Newton work whether the derivatives are declared in the state order or in the
+    opposite one: the kernels, the predictor, the Jacobian and the line search read one derivative history.
+
+    :param solver_class: JIT EMT solver.
+    :param method: Integration rule.
+    :param pred_method: Solver default predictor (None) or the explicit Euler predictor.
+    :param backtracking: Enable the existing line search.
+    :param newton_tolerance: Tight, or loose enough that the initial guess itself can be accepted.
+    """
+    values_by_order: List[np.ndarray] = list()
+    derivatives_by_order: List[np.ndarray] = list()
+    work_by_order: List[Dict[str, float]] = list()
+    same_order: bool
+    for same_order in (True, False):
+        s: Var = Var("jit_order_s")
+        f: Var = Var("jit_order_f")
+        z: Var = Var("jit_order_z")
+        ds: Var = Var("jit_order_ds", base_var=s)
+        df: Var = Var("jit_order_df", base_var=f)
+        block: Block = Block(name="JitOrderInvariance", state_vars=list((s, f)), state_eqs=list((-(s * f), -2.0 * f)),
+                             diff_vars=list((ds, df) if same_order else (df, ds)), algebraic_vars=list((z,)),
+                             algebraic_eqs=list((z - df * s,)), parameters=dict())
+        block.unify_blocks()
+        problem: GenericEmtProblem = GenericEmtProblem(sys_block=block, glob_time=Var("t"),
+                                                       static_parameter_values_mapping=dict(block.parameters))
+        solver: JitSymbolicSolver | JitAdSolver = solver_class(
+            problem, t0=0.0, t_end=0.2, h=0.01, method=method, pred_method=pred_method,
+            newton_tolerance=newton_tolerance, dense_threshold=0,
+            newton_diag_config=NewtonDiagnosticsConfig(enable_backtracking=backtracking))
+        assert list(problem.uid2idx_vars[v.uid] for v in (s, f, z)) == list((0, 1, 2))
+        seed: np.ndarray = np.array((1.0, 0.5, -1.0))
+        slope: np.ndarray = np.empty(2)
+        slope[problem.uid2idx_diff[ds.uid]] = -0.5
+        slope[problem.uid2idx_diff[df.uid]] = -1.0
+        times: np.ndarray
+        values: np.ndarray
+        derivatives: np.ndarray
+        well: bool
+        converged: bool
+        times, values, derivatives, well, converged = solver.simulate(x0=seed, dx0=slope)
+        assert well and converged and times.size == 21
+        values_by_order.append(values)
+        derivatives_by_order.append(derivatives[:, list((problem.uid2idx_diff[ds.uid], problem.uid2idx_diff[df.uid]))])
+        work: Dict[str, float] = dict()
+        key: str
+        value: float
+        for key, value in solver.get_last_runtime_stats().items():
+            if not key.endswith("_s"):
+                work[key] = value
+            else:
+                pass
+        work_by_order.append(work)
+    assert np.array_equal(values_by_order[0], values_by_order[1])
+    assert np.array_equal(derivatives_by_order[0], derivatives_by_order[1])
+    assert work_by_order[0] == work_by_order[1]
+
+
+@pytest.mark.parametrize("solver_class", (JitSymbolicSolver, JitAdSolver))
+def test_jit_trapezoidal_rejects_partially_declared_derivatives(
+        solver_class: type[JitSymbolicSolver] | type[JitAdSolver]) -> None:
+    """
+    Under the trapezoidal rule a block that declares a derivative for one state but not for the other is rejected with
+    a clear error instead of integrating the undeclared state with a zero derivative history; backward Euler, whose
+    residual reads no derivative history, still integrates it with its exact one-step recurrence.
+
+    :param solver_class: JIT EMT solver.
+    """
+    declared: Var = Var("jit_partial_declared")
+    undeclared: Var = Var("jit_partial_undeclared")
+    block: Block = Block(name="JitPartialDerivatives", state_vars=list((declared, undeclared)),
+                         state_eqs=list((-declared, -2.0 * undeclared)),
+                         diff_vars=list((Var("jit_partial_ddeclared", base_var=declared),)), parameters=dict())
+    solver: JitSymbolicSolver | JitAdSolver
+    problem: GenericEmtProblem
+    solver, problem = make_solver(solver_class, block, 0.1, 0.01, DynamicIntegrationMethod.DaeTrapezoidal, 1e-10, 0)
+    with pytest.raises(ValueError, match="jit_partial_undeclared"):
+        solver.simulate(x0=np.array((1.0, 2.0)), dx0=np.array((-1.0,)))
+    solver, problem = make_solver(solver_class, block, 0.1, 0.01, DynamicIntegrationMethod.DaeBackEuler, 1e-10, 0)
+    times: np.ndarray
+    values: np.ndarray
+    derivatives: np.ndarray
+    well: bool
+    converged: bool
+    times, values, derivatives, well, converged = solver.simulate(x0=np.array((1.0, 2.0)), dx0=np.array((-1.0,)))
+    assert well and converged and times.size == 11
+    steps: np.ndarray = np.arange(times.size)
+    np.testing.assert_allclose(values[:, problem.uid2idx_vars[declared.uid]], (1.0 / 1.01) ** steps, atol=1e-12,
+                               rtol=0)
+    np.testing.assert_allclose(values[:, problem.uid2idx_vars[undeclared.uid]], 2.0 * (1.0 / 1.02) ** steps,
+                               atol=1e-12, rtol=0)
+
+
+@pytest.mark.parametrize("solver_class", (JitSymbolicSolver, JitAdSolver))
+@pytest.mark.parametrize("method", (DynamicIntegrationMethod.DaeTrapezoidal, DynamicIntegrationMethod.DaeBackEuler))
+def test_jit_history_without_declared_derivatives_stays_in_runtime_order(
+        solver_class: type[JitSymbolicSolver] | type[JitAdSolver],
+        method: DynamicIntegrationMethod) -> None:
+    """
+    A block that declares no derivative keeps the caller's derivative vector, in runtime-variable order, as the history:
+    x' = -x from x = 1 with slope -1 follows the exact one-step recurrence of the rule.
+
+    :param solver_class: JIT EMT solver.
+    :param method: Trapezoidal or backward Euler rule.
+    """
+    h: float = 0.1
+    x: Var = Var("jit_legacy_x")
+    block: Block = Block(name="JitLegacyHistory", state_vars=list((x,)), state_eqs=list((-x,)), parameters=dict())
+    solver: JitSymbolicSolver | JitAdSolver
+    problem: GenericEmtProblem
+    solver, problem = make_solver(solver_class, block, 0.5, h, method, 1e-10, 0)
+    assert len(problem.get_diff_vars()) == 0
+    times: np.ndarray
+    values: np.ndarray
+    derivatives: np.ndarray
+    well: bool
+    converged: bool
+    times, values, derivatives, well, converged = solver.simulate(x0=np.ones(1), dx0=-np.ones(1))
+    assert well and converged and times.size == 6
+    ratio: float
+    if method == DynamicIntegrationMethod.DaeTrapezoidal:
+        ratio = (1.0 - 0.5 * h) / (1.0 + 0.5 * h)
+    else:
+        ratio = 1.0 / (1.0 + h)
+    np.testing.assert_allclose(values[:, 0], ratio ** np.arange(times.size), atol=1e-12, rtol=0)
+
+
 @pytest.mark.parametrize("solver_class", (JitSymbolicSolver, JitAdSolver, StructuralVectorizedSolver, StructuralCompiledSolver))
 def test_bdf2_fresh_run_and_empty_derivatives(
         solver_class: type[JitSymbolicSolver] | type[JitAdSolver] | type[StructuralVectorizedSolver] | type[StructuralCompiledSolver]) -> None:

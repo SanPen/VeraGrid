@@ -4,11 +4,22 @@
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
 import scipy.sparse as sp
-from scipy.sparse import csc_matrix
+from numba import njit
 
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
-from VeraGridEngine.Utils.Sparse.csc import pack_4_by_4_scipy
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
+from VeraGridEngine.Simulations.Rms.jacobian_assembler import JacobianAssembler
+from VeraGridEngine.Utils.Sparse.sparse_solve import SparseProviderLinearSolver, solve_sparse_system_once
+from VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend import SuperLUSparseBackendProvider
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
 from VeraGridEngine.basic_structures import Vec, Mat
+
+
+@njit(cache=True, fastmath=False, error_model="numpy")
+def discretize_midpoint_residual(values: np.ndarray, previous: np.ndarray, h: float,
+                                 state_count: int, output: np.ndarray) -> None:
+    """Replace raw midpoint state equations with the integration residual."""
+    for row in range(state_count):
+        output[row] = values[row] - previous[row] - h * output[row]
 
 
 class MidpointImplicitIntegration:
@@ -17,6 +28,8 @@ class MidpointImplicitIntegration:
     """
     __slots__ = (
         "problem",
+        "_sparse_solver_backend_provider",
+        "_sparse_linear_solver",
         "t0",
         "h",
         "max_iter_0",
@@ -26,18 +39,37 @@ class MidpointImplicitIntegration:
         "tol",
         "dx0_init",
         "use_fd_jacobian",
+        "_jacobian_assembler",
+        "_derivative_base_indices",
+        "_derivative_orders",
     )
 
     def __init__(self,
-                 problem: RmsProblemDae,
+                 problem: RmsProblemTemplate,
                  t0: float,
                  t_end: float,
                  h: float,
                  max_iter: int,
                  tolerance: float = 1e-7,
                  dx0_init: Vec | None = None,
-                 use_fd_jacobian: bool = True) -> None:
+                 use_fd_jacobian: bool = False, sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None) -> None:
+        """Initialize this time integration phase and its sparse correction session.
+
+        :param sparse_solver_backend_provider: Optional resolved LU provider; inherit the problem binding when absent, then use the existing SuperLU default. Factors belong to this numerical phase.
+        :return: None; initialize an independent numerical phase.
+        """
         self.problem = problem
+        self._sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = sparse_solver_backend_provider
+        # A direct constructor inherits the problem's already-resolved selection.
+        if self._sparse_solver_backend_provider is None:
+            self._sparse_solver_backend_provider = problem.get_sparse_solver_backend_provider()
+        else:
+            pass
+        resolved_provider: SparseLinearSolverBackendProvider = (
+            SuperLUSparseBackendProvider() if self._sparse_solver_backend_provider is None
+            else self._sparse_solver_backend_provider)
+        # Each temporal integrator owns its own factors; projections own another phase.
+        self._sparse_linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(resolved_provider)
         self.t0 = t0
         self.h = h
         self.max_iter_0 = max_iter
@@ -47,6 +79,11 @@ class MidpointImplicitIntegration:
         self.tol = tolerance
         self.dx0_init = dx0_init
         self.use_fd_jacobian = use_fd_jacobian
+        self._jacobian_assembler = JacobianAssembler()
+        self._derivative_base_indices = (problem.get_diff_var_base_indices()
+                                         if problem.get_diff_var_number() else np.empty(0, dtype=np.intp))
+        self._derivative_orders = (problem.get_diff_var_orders()
+                                   if problem.get_diff_var_number() else np.empty(0, dtype=np.intp))
 
     def _rhs_implicit(self,
                       x_new: Vec,
@@ -54,35 +91,30 @@ class MidpointImplicitIntegration:
                       dx: Vec,
                       h: float) -> tuple[Vec, Vec]:
         x_mid = 0.5 * (x_new + x_prev)
-        f_algeb = self.problem.rhs_algebraic(x_mid, dx)
-
-        if self.problem.get_states_number() > 0:
-            f_state = self.problem.rhs_state(x_mid, dx)
-            f_state_update = x_new[:self.problem.get_states_number()] - x_prev[:self.problem.get_states_number()] - h * f_state
-            return np.r_[f_state_update, f_algeb], x_mid
-
-        return f_algeb, x_mid
+        residual = np.array(self.problem.evaluate_equations(x_mid, dx), copy=True)
+        discretize_midpoint_residual(x_new, x_prev, h, self.problem.get_states_number(), residual)
+        return residual, x_mid
 
     def _jacobian_implicit(self,
                            x_mid: Vec,
                            dx: Vec,
                            h: float) -> sp.csc_matrix:
-        if self.problem.get_states_number() == 0:
-            j22: sp.csc_matrix = self.problem.get_j22(x_mid, dx, h)
-            return 0.5 * j22
-
-        j11_val: csc_matrix = self.problem.get_j11(x_mid, dx, h)
-        j12_val: csc_matrix = self.problem.get_j12(x_mid, dx, h)
-        j21_val: csc_matrix = self.problem.get_j21(x_mid, dx, h)
-        j22_val: csc_matrix = self.problem.get_j22(x_mid, dx, h)
-
-        I = sp.eye(m=self.problem.get_states_number(), n=self.problem.get_states_number())
-        j11: sp.csc_matrix = (I - 0.5 * h * j11_val).tocsc()
-        j12: sp.csc_matrix = -0.5 * h * j12_val
-        j21: sp.csc_matrix = 0.5 * j21_val
-        j22: sp.csc_matrix = 0.5 * j22_val
-
-        return pack_4_by_4_scipy(j11, j12, j21, j22)
+        n_states = self.problem.get_states_number()
+        assembler = self._jacobian_assembler
+        if self.problem.get_diff_var_number():
+            if not self.problem.supports_derivative_jacobian_partials():
+                raise ValueError("Midpoint requires separate derivative-variable Jacobian blocks")
+            bases = self._derivative_base_indices
+            chain = sp.csc_matrix(
+                (h ** (-self._derivative_orders.astype(float)),
+                 (np.arange(bases.size), bases)),
+                shape=(bases.size, self.problem.get_all_vars_number()))
+            blocks = self.problem.evaluate_jacobian_partials(x_mid, dx)
+            return assembler.assemble_jacobian_midpoint_partials(n_states, h, *blocks, chain)
+        blocks = self.problem.evaluate_jacobian_blocks(x_mid, dx, h)
+        if n_states == 0:
+            return (0.5 * blocks[3]).tocsc()
+        return assembler.assemble_jacobian_midpoint_blocks(n_states, h, *blocks)
 
     def _jacobian_fd(self,
                      x_new: Vec,
@@ -195,11 +227,13 @@ class MidpointImplicitIntegration:
                             well_initialized = False
 
                         if not substep_converged:
-                            if self.use_fd_jacobian:
+                            if (self.use_fd_jacobian or
+                                    (self.problem.get_diff_var_number() and
+                                     not self.problem.supports_derivative_jacobian_partials())):
                                 Jf = self._jacobian_fd(x_new, x_prev, dx_last, h_eff, rhs)
                             else:
                                 Jf = self._jacobian_implicit(x_mid, dx, h_eff)
-                            delta = sp.linalg.spsolve(Jf, -rhs)
+                            delta: Vec = solve_sparse_system_once(Jf, -rhs, self._sparse_solver_backend_provider, self._sparse_linear_solver)
                             solved = np.all(np.isfinite(delta))
                             if not solved:
                                 delta, *_ = sp.linalg.lsqr(Jf, -rhs)

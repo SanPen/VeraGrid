@@ -12,7 +12,7 @@ import pandas as pd
 from typing import List, Dict, AnyStr, Any, Union, Type, Tuple
 from VeraGridEngine.basic_structures import Logger, IntVec
 from VeraGridEngine.Devices.Profiles import AnyProfile, PROFILE_INSTANCE_TYPES
-from VeraGridEngine.enumerations import (DeviceType, PrpCat, TimeFrame, BuildStatus, WindingsConnection,
+from VeraGridEngine.enumerations import (DeviceType, PrpCat, TimeFrame, BuildStatus,
                                          TapModuleControl, TapPhaseControl, SubObjectType, ConverterControlType,
                                          HvdcControlType, ActionType, AvailableTransferMode, ContingencyMethod,
                                          CpfParametrization, CpfStopAt, InvestmentEvaluationMethod, SolverType,
@@ -38,7 +38,6 @@ GCPROP_TYPES = Union[
     SubObjectType,
     Type[HvdcControlType],
     Type[BuildStatus],
-    Type[WindingsConnection],
     Type[TapModuleControl],
     Type[TapPhaseControl],
     Type[ActionType],
@@ -600,6 +599,22 @@ class EditableDevice(metaclass=EditableDeviceMeta):
     CLASS_NON_EDITABLE_PROPERTIES: Tuple[str, ...] = tuple()
     CLASS_PROPERTIES_WITH_PROFILE: Dict[str, str] = dict()
 
+    def __setattr__(self, name: str, value: Any) -> None:
+        """Reject non-finite scalar values before they enter a device.
+
+        :param name: Device attribute being assigned.
+        :param value: Proposed attribute value.
+        :return: None.
+        :raises ValueError: When a numeric attribute is NaN or infinite.
+        """
+        if isinstance(value, (float, np.floating)):
+            if np.isfinite(value):
+                object.__setattr__(self, name, value)
+            else:
+                raise ValueError(f"Non-finite value rejected for {type(self).__name__}.{name}")
+        else:
+            object.__setattr__(self, name, value)
+
     def __init__(self,
                  name: str,
                  idtag: Union[str, None],
@@ -1021,6 +1036,16 @@ class EditableDevice(metaclass=EditableDeviceMeta):
                 # the property has no profile, just return it
                 return self.get_snapshot_value(prop=prop)
 
+    def get_value_by_name(self, prop_name: str, t_idx: Union[None, int]) -> Any:
+        """
+        GEt the value of a property by the name
+        :param prop_name:
+        :param t_idx:
+        :return:
+        """
+        prop = self.get_property_by_name(prop_name)
+        return self.get_property_value(prop=prop, t_idx=t_idx)
+
     def get_property_by_idx(self, property_idx: int) -> GCProp:
         """
         Return the stored object value from the property index
@@ -1049,7 +1074,7 @@ class EditableDevice(metaclass=EditableDeviceMeta):
 
     def set_profile(self, prop: GCProp, arr: Union[AnyProfile, np.ndarray]) -> None:
         """
-        Set the profile from eithr an array or an actual profile object
+        Set the profile from either an array or an actual profile object
         :param prop: GCProp instance
         :param arr: Profile object or numpy array object
         """

@@ -43,6 +43,25 @@ Override values
 
 
 
+### Voltage-hierarchical schematic layout
+
+Select `voltage_hierarchical_layout` in the diagram automatic layout selector to
+build a schematic from the highest nominal voltage downwards. The highest level
+uses the existing power-system layout, with extra spacing for lower levels.
+Voltages within 1% of the highest value in each group share a level.
+Three-winding and general N-winding transformer junctions are placed with their
+highest connected winding voltage, rather than their artificial internal star-bus
+voltage. This affects layout ranking only; electrical device values are unchanged.
+
+Each lower-level connected component starts with its own power-system layout and
+is refined using all connections to previously placed buses as fixed anchors.
+These connections are normally transformers; meshed components may have multiple
+anchors. Components without an anchor are placed beside the existing drawing.
+Unknown or invalid voltage values are processed last. Earlier levels stay fixed,
+and new bus centres are separated to reduce overlaps. Label clearance and branch
+crossing elimination are not guaranteed. Electrical connectivity is unchanged.
+
+
 ## Theory
 In this section, we are going to explain how to do topology processing properly
 once and for all. This topic is of capital importance in power systems but is

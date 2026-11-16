@@ -52,6 +52,24 @@ def _get_matlab_constant_value(name: str) -> float:
         raise ValueError(f"Unsupported MATLAB constant: {name}")
 
 
+def normalize_matpower_float(value: float | str | np.floating) -> float:
+    """Convert one MATPOWER scalar to a finite VeraGrid-compatible float.
+
+    :param value: Parsed or textual MATPOWER scalar.
+    :return: Finite value for MATPOWER's unbounded sentinels, otherwise the parsed value.
+    """
+    numeric_value: float = float(value)
+
+    # MATPOWER uses signed infinity as an unbounded sentinel, which device values cannot retain.
+    if math.isinf(numeric_value):
+        if numeric_value > 0.0:
+            return 1.0e6
+        else:
+            return -1.0e6
+    else:
+        return numeric_value
+
+
 def _apply_matlab_unary_operator(operator_node: ast.unaryop, operand_value: float) -> float:
     """
     Apply one unary operator in a MATLAB-like scalar expression.
@@ -212,11 +230,11 @@ def parse_matlab_float(value: str) -> float:
     stripped_value: str = value.strip()
 
     try:
-        return float(stripped_value)
+        return normalize_matpower_float(stripped_value)
     except ValueError:
         normalized_value: str = stripped_value.replace("^", "**")
         expression: ast.Expression = ast.parse(normalized_value, mode="eval")
-        return _evaluate_matlab_float_node(expression)
+        return normalize_matpower_float(_evaluate_matlab_float_node(expression))
 
 
 def txt2mat(txt: str, line_splitter: str = ';', to_float: bool = True) -> np.ndarray:

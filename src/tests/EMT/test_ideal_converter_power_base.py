@@ -1,10 +1,14 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Verify ideal-converter initialization and periodic operation in network units."""
 import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.converter_emt_template import get_emt_ideal_converter
-from VeraGridEngine.Templates.Emt.converter_emt_multilinear_template import get_emt_ideal_converter_multilinear
+from VeraGridEngine.Templates.Emt.converters.converter_emt_template import get_emt_ideal_converter
+from VeraGridEngine.Templates.Emt.converters.converter_emt_multilinear_template import get_emt_ideal_converter_multilinear
 
 
 @pytest.mark.parametrize('factory', [get_emt_ideal_converter, get_emt_ideal_converter_multilinear])

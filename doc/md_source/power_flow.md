@@ -66,7 +66,8 @@ specify the initial voltage guess. If selected those values are used to initiali
   Batteries participate using fixed positive-sequence P/Q or the same local U1 voltage
   control as generators, including enabled Q limits. Their connection determines the
   passive zero-sequence path, and their Z2 determines the negative-sequence response.
-  Required sequence impedances must be finite and nonzero (Z0 only for Yg).
+  Z2 must be finite and nonzero; Yg sources also require Z0, with exactly zero
+  imposing the ideal condition U0 = 0.
   See the [DGS modelling notes](file_operations.md) for import fields and power conventions.
 - **Distributed slack**: If selected, the slack power is distributed simply among the existing generators.
 - **Control Q limits**: This is the mode of reactive power control for the generators that are set in PV mode. 
@@ -599,21 +600,50 @@ At least one slack bus is required in order to solve the power flow problem.
 | PQ    | Computed | Computed | Set      | Set      |
 | PV    | Set      | Computed | Set      | Computed |
 
-Passive neutral nodes with zero injected current are eliminated algebraically
-before iteration. Partitioning the existing admittance matrix into retained
-conductors $a$ and passive neutrals $n$ gives
+Passive neutral and ABC nodes with zero injected current are eliminated
+algebraically before iteration. This includes internal three-winding transformer
+nodes without requiring their identifiers. Partitioning the
+existing admittance matrix into retained conductors $a$ and passive conductors $n$ gives
 
 $$
 Y_{\mathrm{red}} = Y_{aa} - Y_{an}Y_{nn}^{-1}Y_{na},
 \qquad V_n = -Y_{nn}^{-1}Y_{na}V_a.
 $$
 
-The same power-flow solvers operate on this reduced system. Neutral voltages
-are reconstructed before calculating branch currents and powers. Neutrals used
+The same power-flow solvers operate on this reduced system. Eliminated voltages
+are reconstructed before calculating branch currents and powers. Compensated
+summation of the existing reconstruction coefficients reduces roundoff when large
+admittances amplify small voltage errors. These same reconstructed voltages are
+used to check the original current-balance equations against the unchanged
+convergence tolerance. Neutrals used
 by explicit star constant-power or constant-current loads remain in the nonlinear
-system; singular neutral blocks also remain explicit. This reduction introduces
+system. ABC nodes with active injection devices, controls or fixed voltages are
+retained even if their scheduled net power is zero. Selection uses the existing
+compiled data only inside the three-phase solver. Both local blocks and the
+combined elimination are checked: if the combined block is singular to numerical
+precision, the solver retries the original neutral-only reduction and leaves the
+phase variables explicit for the existing common-mode handling. Only connected
+boundary columns require dense solve workspace. No extra metadata is needed in
+positive-sequence studies. This reduction introduces
 no grounding and does not constrain the common-mode voltage of floating ABC buses.
 It is separate from the physical earth-wire reduction of overhead tower templates.
+If every unknown is eliminated, the reconstructed solution is checked directly
+without Newton iterations.
+
+A synchronous slack with physical sequence impedances fixes the **complex U1
+phasor**, rather than the three phase voltages separately. Its I1 supplies the
+network balance, while I2 = -U2/Z2 and the winding connection determines I0.
+For Yg, I0 = -U0/Z0; exactly zero Z0 instead imposes U0 = 0 and recovers I0
+from current balance. Delta and floating-star connections block I0. This reuses
+the existing generator sequence response and ideal-source current elimination;
+the original numerical solvers and differentiation routine remain in use.
+Slack terminal powers are recovered from the resulting network currents.
+
+External grids in fixed-voltage mode, bare slack buses and legacy ideal
+generators with negligible Z0 and Z2 retain their fixed ABC boundary. A fixed
+external source also takes precedence when sharing a bus with a synchronous
+machine. Its identity is retained only during ABC compilation, without allocating
+an extra device vector in positive-sequence studies.
 
 Floating common voltage modes are handled separately in the ABC formulation.
 The calculation checks the compiled branch terminal matrices, each shunt, the
@@ -621,6 +651,10 @@ assembled nodal matrix, and the connections of nonlinear injections and controls
 A candidate displacement moves all present NABC conductors at each bus together.
 Connected groups are checked for an independent null direction; a delta connection
 or a small singular value of the assembled matrix alone is not sufficient.
+Constraint rows are scaled by the original phase-coefficient magnitudes, before
+cancellation in their common-mode response. This keeps summation roundoff from
+being amplified into an apparent independent constraint. The rank tolerance and
+the separate checks for physical earth paths remain unchanged.
 
 For a confirmed free group, one redundant complex current-balance equation is
 replaced by $U_0=(U_a+U_b+U_c)/3=0$ at one representative bus. This selects a
@@ -629,12 +663,26 @@ All original current-balance and control equations remain in the convergence
 check, including the replaced equation. The existing numerical solvers and their
 numerical differentiation routine are reused.
 
+For a three-wire group with a finite earth response and no nonlinear I0 injection, the solver instead
+replaces one complex KCL equation with the normalized sum of the group's ABC
+current balances. It sums the admittance coefficients **before** multiplying by
+the voltages, avoiding cancellation of large internal currents during iteration.
+All other KCL equations remain, so this is an equivalent row transformation,
+not a new voltage reference: the actual line capacitances still determine $U_0$.
+The existing group detection and original-equation convergence checks are reused;
+the transformed balance rows have analytical derivatives. Delta loads and floating-star or positive-sequence
+sources whose phase currents sum to zero can use this balance, even when active.
+Grounded nonlinear injections, grounded generator responses, grounded shunts and
+explicit neutrals remain excluded. Sums below the assembly-roundoff bound are not
+amplified. This processing is local to the three-phase solver and does not impose
+U0 = 0 when a real earth path determines that voltage.
+
 The detection uses local summation-roundoff bounds, independently of the power-flow
 tolerance. Static-generator zero-sequence earth paths are detected from the response
 of their stored ABC admittance to a common voltage displacement, without a separate
 indicator. A contribution lost to roundoff when assembling this matrix cannot be
 distinguished from zero. Explicit branch shunts and the existing connection checks
-are retained. Slack buses and earth-referenced injections prevent
+are retained. Fixed-ABC slack buses and earth-referenced injections prevent
 a group from receiving a free reference; unsupported or ambiguous groups retain
 their original equations. Detection is rebuilt with each formulation, so a newly
 compiled phase-to-earth fault can remove a previously free reference. This does
@@ -669,6 +717,17 @@ to be solved, it can be noted that it may be expressed as $\vec{S}_i = f(\vec{U}
 Therefore, it can be solved using the Newton-Raphson method.
 
 ### Solving the Three-phase Unbalanced Power Flow Problem
+
+The three-phase formulation uses the analytical current-balance Jacobian by
+default. Its source derivatives include synchronous PQ machines, the complex
+U1 slack, continuous shunts and the supported voltage-droop controls. Ideal
+sequence-current projections and common-mode voltage or balance constraints
+apply the same transformations to the residual and its derivatives. The
+passive-conductor reduction retains its original-network KCL check.
+
+The explicit `Jacobian(autodiff=True)` comparison path uses finite differences.
+Production NR, LM and DogLeg calculations use the analytical path, including
+the signed magnitude coordinates of explicit neutrals.
 
 From the previous consideration, the solution of the function $\vec{S_i} = f(\vec{U_i})$ can be written in the form of 
 the expression above, the fundamental Newton-Raphson expression for the solution of the power flow problem,

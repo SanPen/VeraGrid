@@ -1728,7 +1728,7 @@ class GridMapWidget(BaseDiagramWidget):
                     pass
 
         # try colouring the HVDC lines
-        if self.circuit.get_hvdc_number() > 0:
+        if self.circuit.get_hvdc_number() > 0 and hvdc_Pf is not None and hvdc_loading is not None:
 
             lnorm = np.abs(hvdc_loading)
             lnorm[lnorm == np.inf] = 0
@@ -1789,6 +1789,10 @@ class GridMapWidget(BaseDiagramWidget):
                         graphic_object.set_arrows_with_hvdc_power(Pf=float(hvdc_Pf[i]), Pt=-hvdc_Pf[i])
 
                     graphic_object.set_colour(color=color, style=style, tool_tip=tooltip)
+
+        else:
+            # Studies without HVDC results must leave existing HVDC graphics unchanged.
+            pass
 
         if fluid_path_flow is not None:
 

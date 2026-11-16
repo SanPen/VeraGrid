@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Apply source-owned auxiliary data after RAW devices exist.
 
@@ -32,7 +36,7 @@ from VeraGridEngine.IO.raw.versioned.base.rop_records import (
 )
 from VeraGridEngine.IO.raw.versioned.base.loc import CoordinateSystem, LocationKind, BranchLocationLayout, LocationPoint
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import ContingencyOperationTypes, WindingsConnection
+from VeraGridEngine.enumerations import ContingencyOperationTypes, WindingType
 
 
 class PsseAuxiliaryConverter:
@@ -279,7 +283,8 @@ class PsseAuxiliaryConverter:
                 for shunt in self.grid.shunts:
                     shunt.G0 = shunt.B0 = 0.0
                 for transformer in self.grid.transformers2w:
-                    transformer.conn = WindingsConnection.DD
+                    transformer.conn_f = WindingType.Delta
+                    transformer.conn_t = WindingType.Delta
                     transformer.R0 = transformer.X0 = 0.0
             else:
                 pass
@@ -382,10 +387,16 @@ class PsseAuxiliaryConverter:
                     reference.circuit = entry.circuit or '1'
                     transformer: EditableDevice | None = self.branch(reference)
                     raw_matches: list[RawTransformerLike] = [item for item in self.source.transformers if item.I == entry.from_bus and item.J == entry.to_bus and str(item.CKT).strip() == reference.circuit and not item.K]
-                    connections: dict[int,WindingsConnection] = dict([(1,WindingsConnection.GG),(11,WindingsConnection.GG),
-                        (2,WindingsConnection.GD),(12,WindingsConnection.GD),
-                        (4,WindingsConnection.DD),(14,WindingsConnection.DD)])
-                    connection: WindingsConnection | None = connections.get(entry.connection_code if entry.connection_code is not None else 14,None)
+                    connections: dict[int, tuple[WindingType, WindingType]] = dict([
+                        (1, (WindingType.GroundedStar, WindingType.GroundedStar)),
+                        (11, (WindingType.GroundedStar, WindingType.GroundedStar)),
+                        (2, (WindingType.GroundedStar, WindingType.Delta)),
+                        (12, (WindingType.GroundedStar, WindingType.Delta)),
+                        (4, (WindingType.Delta, WindingType.Delta)),
+                        (14, (WindingType.Delta, WindingType.Delta)),
+                    ])
+                    connection: tuple[WindingType, WindingType] | None = connections.get(
+                        entry.connection_code if entry.connection_code is not None else 14, None)
                     if isinstance(transformer,dev.Transformer2W) and len(raw_matches) == 1 and connection is not None and not any((entry.r_ground_1,entry.x_ground_1,entry.r_ground_2,entry.x_ground_2,entry.r_zero_2,entry.x_zero_2,entry.r_neutral,entry.x_neutral)):
                         raw_transformer: RawTransformerLike = raw_matches[0]
                         voltage: float = raw_transformer.NOMV1 or self.buses[entry.from_bus].Vnom
@@ -401,7 +412,8 @@ class PsseAuxiliaryConverter:
                             else:
                                 pass
                             if entry.connection_code is not None or document.change == ChangeMode.REPLACE:
-                                transformer.conn = connection
+                                transformer.conn_f = connection[0]
+                                transformer.conn_t = connection[1]
                             else:
                                 pass
                             target = transformer

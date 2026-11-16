@@ -175,6 +175,49 @@ def _set_tr2_tap_control_fields_from_vgrid(tr: dev.Transformer2W, element: ElmTr
     element.t2ldc = 0
 
 
+def _get_table_tap_law(tr: dev.Transformer2W, logger: Logger) -> Tuple[float, int, bool]:
+    """
+    Recover the PowerFactory law behind an exact tap table: 1 + (position - neutral) * step,
+    or its reciprocal when the tap sits on the to bus.
+
+    A table with no such law keeps its current module, which is the operating point, on a line
+    through the neutral. A neutral whose module is not 1 cannot carry it, so the position beside
+    becomes the neutral, on the side that keeps the direction of the table when it is in range.
+
+    :param tr: VeraGrid transformer whose tap changer has an exact table and more than one position
+    :param logger: Logger of the export
+    :return: Signed step in per unit, neutral position, and whether the tap sits on the to bus
+    """
+    tap_changer: dev.TapChanger = tr.tap_changer
+    neutral: int = int(tap_changer.neutral_position)
+    position: int = int(tap_changer.tap_position)
+    positions: np.ndarray = np.arange(tap_changer.total_positions) - neutral
+    modules: np.ndarray = tap_changer.tap_modules_array
+    span: float = float(positions[-1] - positions[0])
+
+    step: float = float(modules[-1] - modules[0]) / span
+    inverse: np.ndarray = 1.0 / modules
+    inverse_step: float = float(inverse[-1] - inverse[0]) / span
+    if np.allclose(modules, 1.0 + positions * step, rtol=0.0, atol=1e-9):
+        return step, neutral, False
+    elif np.allclose(inverse, 1.0 + positions * inverse_step, rtol=0.0, atol=1e-9):
+        return inverse_step, neutral, True
+    else:
+        logger.add_warning(msg="Tap table with no PowerFactory law, only its current module is exported",
+                           device=tr.name)
+        module: float = float(modules[position])
+        if position != neutral:
+            return (module - 1.0) / (position - neutral), neutral, False
+        elif np.isclose(module, 1.0, rtol=0.0, atol=1e-9):
+            return step, neutral, False
+        elif position == 0:
+            return 1.0 - module, 1, False
+        elif position == len(modules) - 1 or (module > 1.0) == (step > 0.0):
+            return module - 1.0, position - 1, False
+        else:
+            return 1.0 - module, position + 1, False
+
+
 def _get_tr3_winding_tap_fields_from_vgrid(winding: dev.Winding) -> Tuple[int, int, int, int, float, float]:
     """
     Export a VeraGrid winding tap changer into PowerFactory 3W winding tap fields.
@@ -624,8 +667,8 @@ def convert_generator(gen: dev.Generator, tpe_new_id: str, new_id: str,
 
     e.qgini = q
 
-    e.q_min = gen.get_Qmin_at(t) / Sbase
-    e.q_max = gen.get_Qmax_at(t) / Sbase
+    e.q_min = gen.get_Qmin_at(t) / tpe.sgn
+    e.q_max = gen.get_Qmax_at(t) / tpe.sgn
     e.usetp = gen.get_Vset_at(t)
     if gen.bus is not None:
         e.ip_ctrl = 1 if gen.bus.get_is_slack_at(t) else 0
@@ -636,6 +679,13 @@ def convert_generator(gen: dev.Generator, tpe_new_id: str, new_id: str,
     e.Pmax_uc = gen.get_Pmax_at(t)
 
     e.av_mode = "constv" if gen.control_mode == GeneratorControlMode.V else "constq"
+    if gen.control_mode == GeneratorControlMode.QVDroop:
+        slope: float = gen.k_droop * gen.get_Qmax_at(t)
+        if not math.isfinite(slope) or slope <= 0.0 or gen.Snom <= 0.0 or gen.dead_band != 0.0:
+            raise ValueError(f'{gen.name}: DGS voltage droop requires a positive gain/rating and zero dead band.')
+        e.av_mode = "vdroop"
+        e.ddroop = 100.0 * gen.Snom / slope
+        e.qgini = 0.0  # VeraGrid's Vset is the zero-Q intercept, including any imported Q reference.
 
     return tpe, e
 
@@ -801,7 +851,8 @@ def convert_transformer_type(tr: dev.TransformerType, new_id: str) -> TypTr2:
     return typtr2
 
 
-def _set_tr2_tap_fields_from_vgrid(tr: dev.Transformer2W, tpe: TypTr2, e: ElmTr2, t: int | None) -> None:
+def _set_tr2_tap_fields_from_vgrid(tr: dev.Transformer2W, tpe: TypTr2, e: ElmTr2, t: int | None,
+                                   logger: Logger) -> None:
     """Set tap fields in TypTr2 and ElmTr2.
 
     This makes the exported DGS coherent with the importer (dgs_to_veragrid),
@@ -814,12 +865,8 @@ def _set_tr2_tap_fields_from_vgrid(tr: dev.Transformer2W, tpe: TypTr2, e: ElmTr2
     - We must NOT choose step = max_dev. That makes most taps round to 0.
     - If tap_min/max look like garbage defaults, we ignore them.
     """
-    from_voltage, to_voltage, hv_at_from = tr.get_from_to_nominal_voltages()
-    if abs(float(from_voltage) - float(to_voltage)) <= 1e-9:
-        hv_at_from = True
-    else:
-        pass
-    if hv_at_from:
+    # The importer takes the high voltage side from the buses
+    if float(tr.bus_from.Vnom) >= float(tr.bus_to.Vnom):
         tpe.tap_side = 0
     else:
         tpe.tap_side = 1
@@ -838,15 +885,45 @@ def _set_tr2_tap_fields_from_vgrid(tr: dev.Transformer2W, tpe: TypTr2, e: ElmTr2
         current_position: int = int(tap_changer.tap_position)
 
         tpe.itapch = 1
-        tpe.dutap = float(tap_changer.dV) * 100.0
-        tpe.phitr = _get_tap_phase_step_angle(
-            tc_type=tap_changer.tc_type,
-            asymmetry_angle_deg=float(tap_changer.asymmetry_angle),
-        )
-        tpe.nntap0 = neutral_position
         tpe.ntpmn = minimum_position
         tpe.ntpmx = maximum_position
         e.nntap = current_position
+
+        if tap_changer.tc_type in (TapChangerTypes.NoRegulation, TapChangerTypes.VoltageRegulation):
+            step: float = float(tap_changer.dV)
+            tap_on_to_bus: bool = False
+            regulates: bool = tap_changer.tc_type == TapChangerTypes.VoltageRegulation
+            if regulates and tap_changer.uses_explicit_table and total_positions > 1:
+                step, neutral_position, tap_on_to_bus = _get_table_tap_law(tr=tr, logger=logger)
+            else:
+                pass
+            tpe.dutap = abs(step) * 100.0
+            # PowerFactory writes a falling tap as a positive step at 180 degrees
+            if step < 0.0:
+                tpe.phitr = 180.0
+            else:
+                tpe.phitr = 0.0
+            if tap_on_to_bus:
+                tpe.tap_side = 1 - tpe.tap_side
+            else:
+                pass
+            # DGS carries the position, so a module off the table at that position does not survive
+            if not regulates:
+                pass
+            elif 0 <= current_position < total_positions and np.isclose(
+                    float(tr.get_tap_module_at(t)), float(tap_changer.tap_modules_array[current_position]),
+                    rtol=0.0, atol=1e-9):
+                pass
+            else:
+                logger.add_warning(msg="Tap module off its table position, the position is exported",
+                                   device=tr.name, value=float(tr.get_tap_module_at(t)))
+        else:
+            tpe.dutap = float(tap_changer.dV) * 100.0
+            tpe.phitr = _get_tap_phase_step_angle(
+                tc_type=tap_changer.tc_type,
+                asymmetry_angle_deg=float(tap_changer.asymmetry_angle),
+            )
+        tpe.nntap0 = neutral_position
         return
     else:
         pass
@@ -1543,7 +1620,7 @@ def circuit_to_dgs(
         e.fold_id = net.ID
 
         # Export tap fields from VeraGrid -> TypTr2/ElmTr2
-        _set_tr2_tap_fields_from_vgrid(tr=tr, tpe=tpe, e=e, t=export_t_idx)
+        _set_tr2_tap_fields_from_vgrid(tr=tr, tpe=tpe, e=e, t=export_t_idx, logger=dgs_grid.logger)
         _set_tr2_tap_control_fields_from_vgrid(tr=tr, element=e, t=export_t_idx)
 
         dgs_grid.elmtr2s.append(e)

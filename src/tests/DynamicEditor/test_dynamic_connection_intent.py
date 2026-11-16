@@ -1,4 +1,9 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+
 
 import copy
 from typing import Any, Dict, List
@@ -12,6 +17,8 @@ from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConn
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockParser, BlockSaver, duplicate_block
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def _build_block_with_connection_intents(var_factory: VarFactory) -> Block:
@@ -49,21 +56,34 @@ def _build_block_with_connection_intents(var_factory: VarFactory) -> Block:
     return root_block
 
 
-def _parse_saved_blocks(saver: BlockSaver) -> List[Block]:
+def _parse_saved_blocks(saver: BlockSaver,
+                        blocks_data: Dict[int, Dict[str, Any]] | None = None,
+                        logger: Logger | None = None) -> List[Block]:
     """
     Parse all symbolic collections emitted by one saver.
 
     :param saver: Populated block saver.
+    :param blocks_data: Optional edited block table replacing the saved table.
+    :param logger: Optional logger receiving parser diagnostics.
     :return: Parsed root blocks.
     """
+    active_blocks_data: Dict[int, Dict[str, Any]]
+    if blocks_data is None:
+        active_blocks_data = saver.get_blocks()
+    else:
+        active_blocks_data = blocks_data
+
     parsed_factory: VarFactory = VarFactory()
-    parser: BlockParser = BlockParser(var_factory=parsed_factory)
-    parser.parse_references(saver.get_shared_references_to_save())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-    return parser.parse_blocks(blocks_data=saver.get_blocks(),
-                               main_block_uids=saver.main_block_uids)
+    parser: BlockParser = BlockParser(var_factory=parsed_factory, logger=logger)
+    symbolic_data: Dict[str, Any] = dict(
+        shared_references=saver.get_shared_references_to_save(),
+        consts=saver.get_const_to_save(),
+        vars=saver.get_vars_to_save(),
+        diff_vars=saver.get_diff_vars_to_save(),
+        connections=saver.get_connections_to_save(),
+        blocks=active_blocks_data,
+    )
+    return parser.parse(data=symbolic_data)
 
 
 def test_connection_intent_normalization_keeps_only_current_state() -> None:
@@ -146,7 +166,8 @@ def test_block_saver_prunes_unreachable_connection_intents() -> None:
     source_block.connection_intents.append(stale_intent)
     saver: BlockSaver = BlockSaver(var_factory=source_factory)
 
-    saved_root: Dict[str, Any] = saver.save_block(blk=source_block, main=True)
+    saver.save_block(blk=source_block)
+    saved_root: Dict[str, Any] = saver.get_blocks()[source_block.uid]
     persisted_intents: List[Dict[str, object]] = saved_root["connection_intents"]
 
     assert len(source_block.connection_intents) == 2
@@ -164,7 +185,7 @@ def test_block_parser_silences_only_legacy_suppressed_tombstones() -> None:
     source_factory: VarFactory = VarFactory()
     source_block: Block = _build_block_with_connection_intents(var_factory=source_factory)
     saver: BlockSaver = BlockSaver(var_factory=source_factory)
-    saver.save_block(blk=source_block, main=True)
+    saver.save_block(blk=source_block)
     saved_blocks: Dict[int, Dict[str, Any]] = copy.deepcopy(saver.get_blocks())
     saved_root: Dict[str, Any] = saved_blocks[source_block.uid]
     stale_block_uid: int = -1
@@ -190,18 +211,10 @@ def test_block_parser_silences_only_legacy_suppressed_tombstones() -> None:
             "suppressed": False,
         }),
     ])
-    parsed_factory: VarFactory = VarFactory()
     logger: Logger = Logger()
-    parser: BlockParser = BlockParser(var_factory=parsed_factory, logger=logger)
-    parser.parse_references(saver.get_shared_references_to_save())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-
-    parsed_blocks: List[Block] = parser.parse_blocks(
-        blocks_data=saved_blocks,
-        main_block_uids=saver.main_block_uids,
-    )
+    parsed_blocks: List[Block] = _parse_saved_blocks(saver=saver,
+                                                     blocks_data=saved_blocks,
+                                                     logger=logger)
 
     assert parsed_blocks[0].connection_intents == list()
     assert len(logger) == 1
@@ -217,7 +230,8 @@ def test_block_saver_round_trip_preserves_typed_connection_intents() -> None:
     source_factory: VarFactory = VarFactory()
     source_block: Block = _build_block_with_connection_intents(var_factory=source_factory)
     saver: BlockSaver = BlockSaver(var_factory=source_factory)
-    saved_root: Dict[str, Any] = saver.save_block(blk=source_block, main=True)
+    saver.save_block(blk=source_block)
+    saved_root: Dict[str, Any] = saver.get_blocks()[source_block.uid]
     persisted_intents: List[Dict[str, object]] = saved_root["connection_intents"]
 
     assert len(persisted_intents) == 2
@@ -251,7 +265,7 @@ def test_block_saver_preserves_intent_while_root_phase_is_unavailable() -> None:
     # that temporary graphical interface.
     source_block.in_vars = list()
     saver: BlockSaver = BlockSaver(var_factory=source_factory)
-    saver.save_block(blk=source_block, main=True)
+    saver.save_block(blk=source_block)
 
     parsed_blocks: List[Block] = _parse_saved_blocks(saver=saver)
     parsed_block: Block = parsed_blocks[0]
@@ -271,7 +285,7 @@ def test_block_parser_upgrades_legacy_port_index_intent() -> None:
     source_factory: VarFactory = VarFactory()
     source_block: Block = _build_block_with_connection_intents(var_factory=source_factory)
     saver: BlockSaver = BlockSaver(var_factory=source_factory)
-    saver.save_block(blk=source_block, main=True)
+    saver.save_block(blk=source_block)
     saved_blocks: Dict[int, Dict[str, Any]] = copy.deepcopy(saver.get_blocks())
     saved_root: Dict[str, Any] = saved_blocks[source_block.uid]
     saved_root["connection_intents"] = list([dict({
@@ -284,14 +298,7 @@ def test_block_parser_upgrades_legacy_port_index_intent() -> None:
         "suppressed": False,
     })])
 
-    parsed_factory: VarFactory = VarFactory()
-    parser: BlockParser = BlockParser(var_factory=parsed_factory)
-    parser.parse_references(saver.get_shared_references_to_save())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-    parsed_blocks: List[Block] = parser.parse_blocks(blocks_data=saved_blocks,
-                                                     main_block_uids=saver.main_block_uids)
+    parsed_blocks: List[Block] = _parse_saved_blocks(saver=saver, blocks_data=saved_blocks)
     parsed_block: Block = parsed_blocks[0]
     parsed_intent: DynamicConnectionIntent = parsed_block.connection_intents[0]
 
@@ -338,7 +345,7 @@ def test_alternate_block_dict_round_trip_preserves_typed_intents() -> None:
     :return: None.
     """
     source_block: Block = _build_block_with_connection_intents(var_factory=VarFactory())
-    parsed_block: Block = Block.parse(data=source_block.to_dict())
+    parsed_block: Block = roundtrip_block(source_block)
 
     assert len(parsed_block.connection_intents) == 2
     assert parsed_block.connection_intents[0].get_direction() == DynamicConnectionIntentDirection.INPUT

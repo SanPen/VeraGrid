@@ -11,9 +11,9 @@ from typing import Callable, Tuple, Any
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Templates.device_template_materialization import build_dynamic_library_device_template
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import (
     LibraryDeviceTemplateSpec,
-    build_dynamic_library_device_template,
 )
 
 
@@ -156,6 +156,14 @@ class CatalogueAction:
         """
         return self._function_ptr
 
+    @property
+    def device_template_spec(self) -> LibraryDeviceTemplateSpec | None:
+        """Get the canonical Dynamic Library registration, when present.
+
+        :return: Device-template registration or ``None`` for static catalogues.
+        """
+        return self._device_template_spec
+
     def execute(self, circuit: MultiCircuit) -> None:
         """
         Execute the action against the provided circuit.
@@ -201,10 +209,6 @@ class CatalogueAction:
             obj = self._function_ptr(*self._args)
 
         if isinstance(obj, RmsModelTemplate):
-            # Persist the catalogue action identity on the reusable template.
-            # The display name may be edited later, while this stable code lets
-            # subsequent catalogue imports recognize the original entry.
-            obj.code = self._unique_key
             circuit.add_rms_model(obj)
         else:
             pass
@@ -227,9 +231,6 @@ class CatalogueAction:
             obj = self._function_ptr(*self._args)
 
         if isinstance(obj, EmtModelTemplate):
-            # RMS and EMT catalogue entries use the same stable-identity
-            # contract so duplicate prevention is independent of display names.
-            obj.code = self._unique_key
             circuit.add_emt_model(obj)
         else:
             pass

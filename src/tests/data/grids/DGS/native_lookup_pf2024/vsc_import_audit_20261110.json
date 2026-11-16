@@ -1,0 +1,713 @@
+{
+  "scope": "Native field comparison and RMS import; no trajectory validation",
+  "files": [
+    {
+      "file": "vsc_lookup_tables.dgs",
+      "class": "ElmVsc",
+      "change": null,
+      "added_rows": 0,
+      "removed_rows": 0,
+      "changed_fields": [],
+      "target_fid": "829",
+      "decoded_options": {
+        "Cdc": {
+          "retained": true,
+          "value": 0.0
+        },
+        "Kd": {
+          "retained": true,
+          "value": 0.0
+        },
+        "Kq": {
+          "retained": true,
+          "value": 0.0
+        },
+        "Larm": {
+          "retained": true,
+          "value": 60.0
+        },
+        "Pmmax": {
+          "retained": true,
+          "value": 1.0
+        },
+        "Rarm": {
+          "retained": true,
+          "value": 0.006
+        },
+        "Td": {
+          "retained": true,
+          "value": 0.0
+        },
+        "Tq": {
+          "retained": true,
+          "value": 0.0
+        },
+        "iVIsource": {
+          "retained": true,
+          "value": 0
+        },
+        "iVacMax": {
+          "retained": true,
+          "value": 0
+        },
+        "iZarmDCside": {
+          "retained": true,
+          "value": 0
+        },
+        "i_ctrl": {
+          "retained": true,
+          "value": 0
+        },
+        "i_mod": {
+          "retained": true,
+          "value": 0
+        },
+        "mmcCmod": {
+          "retained": true,
+          "value": 10000.0
+        },
+        "vsctype": {
+          "retained": true,
+          "value": 1
+        }
+      },
+      "import_returned": true,
+      "network_counts": {
+        "buses": 88,
+        "vscs": 2,
+        "generators": 81,
+        "static_generators": 0,
+        "rms_templates": 234
+      },
+      "target_templates": [
+        {
+          "device": "Conv_Offshore",
+          "device_type": "VSC",
+          "active": false,
+          "template": "DGS VSC RMS shell",
+          "states": 0
+        }
+      ],
+      "diagnostics": [
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_1",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_10",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (1)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (2)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (3)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (4)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (5)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (6)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (7)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (8)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (9)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_11 (10)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (1)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (2)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (3)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (4)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (5)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (6)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (7)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (8)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (9)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (10)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (11)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (12)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (13)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (14)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (15)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (16)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (17)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (18)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (19)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_12 (20)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (1)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (2)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (3)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (4)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (5)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (6)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (7)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (8)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (9)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (10)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (11)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (12)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (13)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (14)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (15)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (16)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (17)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (18)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (19)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_13 (20)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (1)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (2)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (3)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (4)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (5)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (6)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (7)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (8)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (9)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (10)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (11)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (12)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (13)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (14)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (15)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (16)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (17)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (18)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (19)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_14 (20)",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_2",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_3",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_4",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_5",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_6",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_7",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_8",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "The AG is not an Standard Asynchronous Machine.",
+          "device": "WTG_9",
+          "detail": "1"
+        },
+        {
+          "severity": "Warning",
+          "message": "Native VSC control pair is not represented exactly; converter kept inactive",
+          "device": "Conv_Offshore",
+          "detail": "i_acdc=0"
+        },
+        {
+          "severity": "Warning",
+          "message": "HV/MV/LV ambiguous, keeping Vnom-based ordering ",
+          "device": "A1B1",
+          "detail": "(va=33.0, vb=33.0, vc=155.0)"
+        },
+        {
+          "severity": "Warning",
+          "message": "HV/MV/LV ambiguous, keeping Vnom-based ordering ",
+          "device": "A2B2",
+          "detail": "(va=33.0, vb=33.0, vc=155.0)"
+        },
+        {
+          "severity": "Information",
+          "message": "Native auxiliary command is outside the physical contract",
+          "device": "Conv_Offshore",
+          "detail": "Pm_in"
+        },
+        {
+          "severity": "Information",
+          "message": "Native auxiliary command is outside the physical contract",
+          "device": "Conv_Offshore",
+          "detail": "f0"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be assembled",
+          "device": "Offshore Controller",
+          "detail": "Unsupported native output iq on slot 417"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be assembled",
+          "device": "Onshore Controller",
+          "detail": "No exact producer for native command cosref"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_1",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_10",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_11",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_12",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_13",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_14",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_2",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_3",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_4",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_5",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_6",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_7",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_8",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Warning",
+          "message": "DGS dynamic root could not be materialized",
+          "device": "WTG_Ctrl_9",
+          "detail": "DGS block contains unsupported source statements: Cp=sapprox2(beta,lambda,matrix_i)"
+        },
+        {
+          "severity": "Information",
+          "message": "DGS dynamic template conversion completed",
+          "device": "",
+          "detail": "templates=0, failed=16"
+        },
+        {
+          "severity": "Information",
+          "message": "DGS dynamic device assignment completed",
+          "device": "",
+          "detail": "activated=0, failed=0"
+        }
+      ]
+    }
+  ]
+}

@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 1
 - Top-level function count: 0
-- Representative imports: typing, VeraGridEngine.Devices.multi_circuit, VeraGridEngine.Simulations.NTC.ntc_opf, VeraGridEngine.Simulations.NTC.ntc_opf_strict, VeraGridEngine.Simulations.driver_template, VeraGridEngine.Simulations.NTC.ntc_options, VeraGridEngine.Simulations.NTC.ntc_results, VeraGridEngine.basic_structures, VeraGridEngine.enumerations
+- Representative imports: typing, VeraGridEngine.Devices.multi_circuit, VeraGridEngine.Simulations.NTC.ntc_opf, VeraGridEngine.Simulations.driver_template, VeraGridEngine.Simulations.NTC.ntc_options, VeraGridEngine.Simulations.NTC.ntc_results, VeraGridEngine.basic_structures, VeraGridEngine.enumerations
 
 ## Class: OptimalNetTransferCapacityDriver
 

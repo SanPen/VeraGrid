@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent static output-feedback transfer, firing dynamics and moving capability."""
 from __future__ import annotations
@@ -5,10 +9,11 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.self_feedback_exciter import (
+from VeraGridEngine.Templates.Rms.excitation_systems.self_feedback_exciter import (
     ExcitationBridgeDynamics, ExcitationLimiterLocation, SelfFeedbackExciterParameters,
     build_self_feedback_exciter,
 )
+from VeraGridEngine.Templates.Rms.excitation_systems.st7c import build_st7c_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from tests.RMS.test_native_turbine_governors import initialized_values, linearized_response, evaluate_controller
 
@@ -76,3 +81,15 @@ def test_self_feedback_exact_zero_measurement_stages(bridge: ExcitationBridgeDyn
     assert len(block.state_vars) == (1 if bridge == ExcitationBridgeDynamics.INSTANTANEOUS else 2)
     np.testing.assert_allclose([equation.eval_uid(values) for equation in block.state_eqs],0.,atol=1e-12)
     np.testing.assert_allclose([equation.eval_uid(values) for equation in block.algebraic_eqs],0.,atol=1e-12)
+
+
+def test_st7c_exposes_gate_selected_reference_feedback_for_uel2c() -> None:
+    """ST7C exposes its sourced Vref_FBs VAR while ST7B keeps its original port set."""
+    st7c: Block = build_st7c_template(VarFactory(),'st7c_uel2c').block
+    st7b: Block = build_self_feedback_exciter(VarFactory(),'st7b_ports',
+        ExcitationBridgeDynamics.INSTANTANEOUS).block
+    values: dict[int,float] = initialized_values(st7c)
+    np.testing.assert_allclose([equation.eval_uid(values) for equation in st7c.algebraic_eqs],0.,atol=1e-12)
+    assert len(st7c.out_vars) == 6
+    assert st7c.out_vars[5].name.endswith('VrefFbsPu_st7c_uel2c')
+    assert len(st7b.out_vars) == 5

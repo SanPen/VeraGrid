@@ -3,6 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+from collections import deque
 import numpy as np
 from typing import Union, Dict, Tuple, TYPE_CHECKING
 
@@ -25,10 +26,67 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Aggregation.area import Area
-from VeraGridEngine.basic_structures import CxVec, Vec
+from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGridEngine.Compilers.circuit_to_data import VALID_OPF_RESULTS
+
+
+def initialize_angles_3ph(nc: NumericalCircuit, voltage: CxVec, slack: IntVec) -> CxVec:
+    """Seed bus angles from the clocks already included in the NABC branch blocks.
+
+    :param nc: Compiled three-phase island.
+    :param voltage: Initial positive-sequence voltages; never modified in place.
+    :param slack: Fixed angle references in this island.
+    :return: Initial voltages with unchanged magnitudes and slack phasors.
+    """
+    rotation: CxVec = np.exp(-2j * np.pi * np.arange(3) / 3.0)
+    adjacency: list[list[tuple[int, float]]] = [[] for _ in range(nc.nbus)]
+    k: int
+    for k in range(nc.nbr):
+        if not nc.passive_branch_data.active[k] or nc.passive_branch_data.dc[k]:
+            continue
+        else:
+            pass
+        f: int = nc.passive_branch_data.F[k]
+        t: int = nc.passive_branch_data.T[k]
+        phase: float = 0.0
+        if (nc.passive_branch_data.phA[k] and nc.passive_branch_data.phB[k]
+                and nc.passive_branch_data.phC[k]):
+            # Project both terminal blocks: scalar Z1 may differ from a line's ABC data.
+            # Their no-load voltage ratio includes the effective clock/tap rotation,
+            # also for the reversed orientation of the existing 3W arms.
+            ytf: np.ndarray = nc.passive_branch_data.Ytf3[4 * k + 1:4 * k + 4, 1:4]
+            ytt: np.ndarray = nc.passive_branch_data.Ytt3[4 * k + 1:4 * k + 4, 1:4]
+            denominator: complex = np.vdot(rotation, ytt @ rotation)
+            if np.isfinite(denominator) and abs(denominator) > 0.0:
+                transfer: complex = -np.vdot(rotation, ytf @ rotation) / denominator
+                if np.isfinite(transfer) and abs(transfer) > 0.0:
+                    phase = float(np.angle(transfer))
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+        adjacency[f].append((t, phase))
+        adjacency[t].append((f, -phase))
+
+    initial: CxVec = voltage.copy()
+    visited: BoolVec = np.zeros(nc.nbus, dtype=bool)
+    visited[slack] = True
+    queue: deque = deque(slack)
+    while queue:
+        f = queue.popleft()
+        for t, phase in adjacency[f]:
+            if not visited[t]:
+                initial[t] = abs(voltage[t]) * np.exp(1j * (np.angle(initial[f]) + phase))
+                visited[t] = True
+                queue.append(t)
+            else:
+                # A spanning tree supplies only a guess; mesh flows remain Newton's task.
+                pass
+    return initial
 
 
 def __solve_island_limited_support_3ph(island: NumericalCircuit,
@@ -307,6 +365,10 @@ def __multi_island_pf_nc_limited_support_3ph(nc: NumericalCircuit,
         if len(indices.vd) > 0:
 
             V0 = island.bus_data.Vbus if V_guess is None else V_guess[island.bus_data.original_idx]
+            if V_guess is None and not options.use_stored_guess:
+                V0 = initialize_angles_3ph(island, V0, indices.vd)
+            else:
+                pass
             S_base = Sbus_base if Sbus_input is None else Sbus_input[island.bus_data.original_idx]
 
             # call the numerical methods

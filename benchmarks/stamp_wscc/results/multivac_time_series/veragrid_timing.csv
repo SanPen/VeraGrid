@@ -1,0 +1,2 @@
+implementation,setup_seconds,simulation_seconds,total_seconds,step_s,duration_s,samples,newton_tolerance,max_iter
+VeraGrid,17.39565402083099,128.15620502550155,145.55185904633254,1e-05,0.3,30001,1e-9,100

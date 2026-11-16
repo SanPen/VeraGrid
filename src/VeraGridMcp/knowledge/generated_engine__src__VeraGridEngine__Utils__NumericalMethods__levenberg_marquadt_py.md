@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 0
 - Top-level function count: 1
-- Representative imports: time, numpy, math, typing, VeraGridEngine.basic_structures, VeraGridEngine.Utils.NumericalMethods.sparse_solve, VeraGridEngine.Utils.Sparse.csc, VeraGridEngine.basic_structures, VeraGridEngine.Utils.NumericalMethods.common
+- Representative imports: time, numpy, math, typing, VeraGridEngine.basic_structures, VeraGridEngine.Utils.Sparse.sparse_solve, VeraGridEngine.Utils.Sparse.csc, VeraGridEngine.basic_structures, VeraGridEngine.Utils.NumericalMethods.common
 
 ## Function: levenberg_marquardt(func, func_args, x0, tol, max_iter, verbose, logger)
 

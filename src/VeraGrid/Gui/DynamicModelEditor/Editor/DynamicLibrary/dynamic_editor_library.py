@@ -18,20 +18,78 @@ from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.BasicBlockCatalog import (
+from VeraGridEngine.Templates.template_catalogue import (
     BasicBlockTemplateDescriptor,
     ExactMathematicalBlockDescriptor,
     build_exact_mathematical_block_descriptors,
-    get_editor_ready_basic_block_catalog_descriptors,
 )
-from VeraGridEngine.Templates.ProceduralLogicCatalog import (
+from VeraGridEngine.Templates.template_catalogue import (
     ProceduralBlockParameterSpec,
     ProceduralBlockTemplateDescriptor,
 )
-from VeraGridEngine.Templates.InternationalStandardsCatalog import (
+from VeraGridEngine.Templates.template_catalogue import (
     InternationalStandardTemplateDescriptor,
     load_international_standard_template,
 )
+from VeraGridEngine.Templates.Rms import (
+    get_international_model_builders,
+)
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template_v2 import (
+    get_complete_generator_template_rms,
+    get_genqec_rms,
+)
+from VeraGridEngine.Templates.Emt.line.bergeron_line_emt_template import get_bergeron_line_emt_template
+from VeraGridEngine.Templates.Emt.battery_energy_storage.bess_avm_emt_template import get_bess_avm_grid_following_emt_template
+from VeraGridEngine.Templates.Emt.line.constant_parameter_line_emt_template import get_constant_parameter_line_emt_template
+from VeraGridEngine.Templates.Emt.converters.converter_emt_template import get_emt_ideal_converter, get_full_pseudo_emt_converter
+from VeraGridEngine.Templates.Emt.converters.converter_switched_emt_template import get_switched_emt_converter
+from VeraGridEngine.Templates.Emt.dc_line.dc_line_emt_template import get_dc_line_with_power_input_emt_template
+from VeraGridEngine.Templates.Emt.dc_line.dc_load_emt_template import get_dc_load_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.generator_emt_type_template import get_complete_generator_template_emt
+from VeraGridEngine.Templates.Emt.line.frequency_dependent_line_emt_template import get_frequency_dependent_line_emt_template
+from VeraGridEngine.Templates.Emt.induction_machines.induction_motor_emt_template import get_induction_motor_double_cage_emt_template, get_induction_motor_single_cage_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import get_shunt_c_emt_template, get_shunt_l_emt_template, get_shunt_r_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_exponential_emt_template import get_exponential_load_emt
+from VeraGridEngine.Templates.Emt.load_characteristics.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.solar_pv_generation.pv_emt_template import get_pv_avm_grid_following_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.sm1_emt_template import get_sm1_emt_template
+from VeraGridEngine.Templates.Emt.converters.statcom_gfl_emt_template import get_statcom_gfl_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Emt.transformers.transformer_emt_template import get_transformer_emt_template
+from VeraGridEngine.Templates.Emt.converters.upc_gfl_emt_template import get_upc_gfl_emt_template
+from VeraGridEngine.Templates.Emt.converters.upc_point_to_point_hvdc_emt_template import get_upc_point_to_point_hvdc_emt_template
+from VeraGridEngine.Templates.Emt.converters.vsc_gfm_emt import get_gfm_emt_template
+from VeraGridEngine.Templates.Emt.transformers.xfmr_emt_template import get_xfmr_emt_template
+from VeraGridEngine.Templates.Rms.common.basic_devices import get_gfl_converter_rms
+from VeraGridEngine.Templates.Rms.transformers.cantilever_transformer_rms_template import get_cantilever_transformer_rms_template
+from VeraGridEngine.Templates.Rms.renewable_controls.colib_gfm_rms_templates import get_epri_gfm_rms_template, get_upc_gfm_rms_template
+from VeraGridEngine.Templates.Rms.dc_line.dc_line_rms_template_v2 import build_dc_line_rms_v2
+from VeraGridEngine.Templates.Rms.battery_energy_storage.esd1_rms_template import get_esd1_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.flywheel_rms_template import get_flywheel_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.gencls_rms_template import get_gencls_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow_rms_template import get_genrow_rms_template
+from VeraGridEngine.Templates.Rms.converters.hvdc_vsc_gfl_rms_template_v2 import build_hvdc_vsc_gfl_rms
+from VeraGridEngine.Templates.Rms.wind_generation.iec_type3_wind_turbine_rms_template import get_iec_type3_wind_turbine_rms_template
+from VeraGridEngine.Templates.Rms.renewable_controls.l2ep_rms_gfl_template import get_l2ep_rms_gfl_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.line.pi_equivalent_line_rms_template import get_pi_equivalent_line_rms_template
+from VeraGridEngine.Templates.Rms.solar_pv_generation.pvd1_rms_template import get_pvd1_complete_rms_template, get_pvd1_dc_link_bess_rms_template, get_pvd1_dc_link_mppt_rms_template, get_pvd1_dc_mppt_rms_template, get_pvd1_rms_template
+from VeraGridEngine.Templates.Rms.buses.shunt_template import get_shunt_template
+from VeraGridEngine.Templates.Rms.dc_line.rte_average_vsc_hvdc_rms_template import get_rte_average_vsc_hvdc_rms_template
+from VeraGridEngine.Templates.Rms.protection_relays.sfrm_ufls_rms_template import get_sfrm_ufls_rms_template
+from VeraGridEngine.Templates.Rms.induction_machines.single_cage_induction_motor_rms_template import get_single_cage_induction_motor_rms_template
+from VeraGridEngine.Templates.Rms.voltage_compensators.static_compensator_rms_template import get_static_compensator_rms_template
+from VeraGridEngine.Templates.Rms.transformers.transformer_rms_template import get_transformer2w_rms
+from VeraGridEngine.Templates.Rms.renewable_controls.upc_full_phasor_gfl_rms_template import get_upc_full_phasor_gfl_rms_template
+from VeraGridEngine.Templates.Rms.renewable_controls.upc_phasor_gfl_rms_templates import (
+    get_upc_phasor_i0_gfl_rms_template,
+    get_upc_phasor_i1_gfl_rms_template,
+    get_upc_phasor_pq1_gfl_rms_template,
+)
+from VeraGridEngine.Templates.Rms.common.voltage_source_template import VoltageSourceBuild
+from VeraGridEngine.Templates.Rms.induction_machines.wecc_rotor_flux_induction_motor_rms_template import get_wecc_rotor_flux_induction_motor_rms_template
 from VeraGridEngine.enumerations import (
     BlockType,
     DerivativeInactiveBehavior,
@@ -47,13 +105,14 @@ from VeraGridEngine.enumerations import (
     InternationalStandardModel,
     ProceduralLogicType,
 )
-from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_utilities import (
+from VeraGridEngine.Templates.device_template_materialization import (
     create_block_of_type,
     create_default_template_builder,
 )
-from VeraGridEngine.Templates.template_definition import TemplateDefinition
+from VeraGridEngine.Templates.template_catalogue import TemplateDefinition
+from VeraGridEngine.Templates.template_catalogue import BASIC_BLOCK_CATALOGUE, get_template_catalogue_entries
+from VeraGridEngine.Templates.device_template_materialization import build_dynamic_library_device_template
 from VeraGridEngine.Utils.Symbolic.block import Block
-import VeraGridEngine.Templates as tem
 
 
 def _new_uid() -> int:
@@ -448,7 +507,6 @@ class LibraryDeviceTemplateSpec:
         "mode",
         "device_type",
         "category_path",
-        "unique_key",
         "description",
         "search_text",
         "compatible_device_types",
@@ -461,7 +519,6 @@ class LibraryDeviceTemplateSpec:
             mode: DynamicSimulationMode,
             device_type: DeviceType,
             category_path: tuple[str, ...],
-            unique_key: str,
             description: str,
             search_text: str = "",
             compatible_device_types: tuple[DeviceType, ...] | None = None,
@@ -473,7 +530,6 @@ class LibraryDeviceTemplateSpec:
         :param mode: Dynamic simulation domain.
         :param device_type: Physical device type accepting the template.
         :param category_path: Path below the ``Devices`` branch.
-        :param unique_key: Stable key persisted by catalogue imports.
         :param description: Human-facing explanation of the model behavior.
         :param search_text: Optional additional filter terms.
         :param compatible_device_types: Physical device types that may use the
@@ -485,7 +541,6 @@ class LibraryDeviceTemplateSpec:
         self.mode: DynamicSimulationMode = mode
         self.device_type: DeviceType = device_type
         self.category_path: tuple[str, ...] = category_path
-        self.unique_key: str = unique_key
         self.description: str = description
         self.search_text: str = search_text
         if compatible_device_types is None:
@@ -701,6 +756,11 @@ class DynamicEditorLibrary:
             LibraryLeafSpec("Generic device", BlockType.GENERIC),
         ))
 
+        if mode == DynamicSimulationMode.RMS:
+            self.tree_structure["Tools"].append(LibraryLeafSpec("Interconnection", BlockType.INTERCONNECTION))
+        else:
+            pass
+
         if self.templates_list:
             self.tree_structure["Templates"] = dict((("Available", [LibraryLeafSpec(template.name, template, template.name) for template in
                               self.templates_list]),))
@@ -797,407 +857,22 @@ class DynamicEditorLibrary:
                 raise TypeError(f"Unsupported library branch data type {type(branch_data)!r}")
 
 
-def build_native_device_description(
-        source: DynamicDeviceTemplateType | BlockType,
-        label: str,
-) -> str:
-    """Return the functional description of one native device template.
 
-    Descriptions live beside the native-device registry rather than in the
-    tree rendering code. This keeps the same text available to the Library,
-    catalogue dialogue, tooltips, and search without materializing a model.
+def get_generator_technology_category(label: str) -> tuple[str, ...]:
+    """Classify one generator or source model by its known technology.
 
-    :param source: Typed native materialization source.
-    :param label: Human-facing template label used by related source variants.
-    :return: Functional description of the complete device template.
+    :param label: Registered user-facing device-model label.
+    :return: Technology category path for the shared Devices branch.
     """
-    if source == DynamicDeviceTemplateType.RMS_COMPLETE_GENERATOR:
-        description: str = (
-            "Complete synchronous-generator RMS model with GENQEC machine, exciter, governor, and stabilizer"
-        )
-    elif source == DynamicDeviceTemplateType.RMS_GENCLS:
-        description = "Classical two-state synchronous-generator GENCLS RMS model"
-    elif source == BlockType.GENQEC:
-        description = "Synchronous-generator GENQEC RMS model with quadratic magnetic saturation"
-    elif source == BlockType.GENRAW:
-        description = "Round-rotor synchronous-generator GENROU/GENROW RMS machine model"
-    elif source == BlockType.VOLTAGE_SOURCE_RMS:
-        description = "Ideal voltage-source RMS model for a generator or external-grid equivalent"
-    elif source == DynamicDeviceTemplateType.RMS_PVD1:
-        description = "PVD1 photovoltaic generator RMS model with inverter electrical controls"
-    elif source == DynamicDeviceTemplateType.RMS_PVD1_COMPLETE:
-        description = "Complete PVD1 photovoltaic RMS model with inverter, plant, and DC-side controls"
-    elif source == DynamicDeviceTemplateType.RMS_PVD1_DC_MPPT:
-        description = "PVD1 photovoltaic RMS model with a DC source and maximum-power-point tracking"
-    elif source == DynamicDeviceTemplateType.RMS_PVD1_DC_LINK_MPPT:
-        description = "PVD1 photovoltaic RMS model with DC-link dynamics and maximum-power-point tracking"
-    elif source == DynamicDeviceTemplateType.RMS_PVD1_DC_LINK_BESS:
-        description = "PVD1 battery-storage RMS model with inverter and DC-link dynamics"
-    elif source == DynamicDeviceTemplateType.RMS_ESD1:
-        description = "ESD1 battery energy-storage RMS model with active and reactive power controls"
-    elif source == BlockType.LINE_RMS:
-        description = "AC transmission-line RMS model using a pi-equivalent network"
-    elif source == BlockType.DC_LINE_RMS:
-        description = "DC transmission-line RMS model using a series resistance-inductance branch"
-    elif source == BlockType.TRANSFORMER_2W_RMS:
-        description = "Ideal two-winding transformer RMS model"
-    elif source == BlockType.LOAD_RMS:
-        description = "Static constant-power load RMS model initialized from the solved operating point"
-    elif source == DynamicDeviceTemplateType.RMS_SHUNT:
-        description = "Constant-admittance shunt RMS model"
-    elif source == BlockType.GFL_CONVERTER_RMS:
-        description = "Grid-following voltage-source converter RMS model with PLL and current control"
-    elif source == BlockType.GFL_VSC_HVDC_RMS:
-        description = "Complete grid-following VSC-HVDC terminal RMS model with AC and DC controls"
-    elif source == DynamicDeviceTemplateType.EMT_COMPLETE_GENERATOR:
-        description = "Complete three-phase synchronous-generator EMT model with machine and controls"
-    elif source == BlockType.EMT_THEVENIN:
-        description = "Grounded passive ABC source with coupled R/L impedance and balanced or per-phase internal voltage"
-    elif source == DynamicDeviceTemplateType.EMT_IDEAL_CONVERTER:
-        description = "Averaged ideal voltage-source converter EMT model without semiconductor switching"
-    elif source == BlockType.COMPLETE_PSEUDO_VSC_EMT:
-        description = "Complete averaged voltage-source converter EMT model with pseudo-switching behavior"
-    elif source == DynamicDeviceTemplateType.EMT_SWITCHED_CONVERTER:
-        description = "Explicitly switched three-phase voltage-source converter EMT model"
-    elif source == DynamicDeviceTemplateType.EMT_GFM:
-        description = "Grid-forming voltage-source converter EMT model with voltage and frequency control"
-    elif source == BlockType.BESS_EMT:
-        description = "Battery energy-storage EMT model with averaged grid-following converter controls"
-    elif source == BlockType.PV_EMT:
-        description = "Photovoltaic plant EMT model with averaged grid-following converter controls"
-    elif source == BlockType.DC_LOAD_EMT:
-        description = "Dynamic DC load EMT model connected to a DC network"
-    elif source == BlockType.EXP_LOAD_EMT:
-        description = "Three-phase exponential load EMT model with voltage-dependent active and reactive power"
-    elif source == BlockType.ZIP_LOAD_EMT:
-        description = "Three-phase ZIP load EMT model combining constant impedance, current, and power"
-    elif source == DynamicDeviceTemplateType.EMT_SINGLE_CAGE_INDUCTION_MOTOR:
-        description = "Three-phase single-cage induction-motor EMT model"
-    elif source == DynamicDeviceTemplateType.EMT_DOUBLE_CAGE_INDUCTION_MOTOR:
-        description = "Three-phase double-cage induction-motor EMT model"
-    elif source == BlockType.R_LOAD_EMT:
-        description = "Three-phase resistive shunt EMT model with independently selectable phases"
-    elif source == BlockType.L_LOAD_EMT:
-        description = "Three-phase inductive shunt EMT model with independently selectable phases"
-    elif source == BlockType.C_LOAD_EMT:
-        description = "Three-phase capacitive shunt EMT model with independently selectable phases"
-    elif source == BlockType.EMT_PI_LINE:
-        description = "Three-phase lumped-parameter pi-section transmission-line EMT model"
-    elif source == BlockType.EMT_BERGERON_LINE:
-        description = "Three-phase distributed-parameter Bergeron travelling-wave line EMT model"
-    elif source == BlockType.EMT_DC_LINE:
-        description = "DC transmission-line EMT model with electrical dynamics and power input"
-    elif source == BlockType.TRAFO_EMT:
-        description = "Three-phase two-winding transformer EMT model with winding electrical dynamics"
-    elif source == BlockType.XFMR_TRANSFORMER:
-        description = "XFMR three-phase transformer EMT model with configurable winding connections"
-    elif source == BlockType.EMT_GENERATOR:
-        description = "Simple three-phase synchronous-generator EMT model"
-    elif source == BlockType.VOLTAGE_SOURCE_EMT:
-        description = "Single-phase sinusoidal voltage-source EMT model"
-    elif source == BlockType.CURRENT_SOURCE_EMT:
-        description = "Single-phase sinusoidal current-source EMT model"
-    elif source == BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT:
-        description = "Single-phase EMT voltage source driven by an external control signal"
-    elif source == BlockType.CONTROLLED_CURRENT_SOURCE_EMT:
-        description = "Single-phase EMT current source driven by an external control signal"
-    elif source == BlockType.BALANCED_3PH_VOLTAGE_SOURCE_EMT:
-        description = "Balanced three-phase sinusoidal voltage-source EMT model"
-    elif source == BlockType.BALANCED_3PH_CURRENT_SOURCE_EMT:
-        description = "Balanced three-phase sinusoidal current-source EMT model"
-    elif source == BlockType.CONTROLLED_BALANCED_3PH_VOLTAGE_SOURCE_EMT:
-        description = "Balanced three-phase EMT voltage source driven by external control signals"
-    elif source == BlockType.CONTROLLED_BALANCED_3PH_CURRENT_SOURCE_EMT:
-        description = "Balanced three-phase EMT current source driven by external control signals"
-    elif source == BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT:
-        description = "EMT voltage source defined by an arbitrary time-domain waveform"
-    elif source == BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT:
-        description = "EMT current source defined by an arbitrary time-domain waveform"
-    elif source == BlockType.STEP_VOLTAGE_SOURCE_EMT:
-        description = "EMT voltage source that applies a configurable step waveform"
-    elif source == BlockType.STEP_CURRENT_SOURCE_EMT:
-        description = "EMT current source that applies a configurable step waveform"
-    elif source == BlockType.RAMP_VOLTAGE_SOURCE_EMT:
-        description = "EMT voltage source that applies a configurable ramp waveform"
-    elif source == BlockType.RAMP_CURRENT_SOURCE_EMT:
-        description = "EMT current source that applies a configurable ramp waveform"
-    elif source == BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT:
-        description = "EMT impulse-current source using a double-exponential waveform"
-    elif source == BlockType.HEIDLER_CURRENT_SOURCE_EMT:
-        description = "EMT lightning-current source using the Heidler impulse function"
-    elif source == BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT:
-        description = "EMT lightning-current source using the CIGRE surge waveform"
-    elif source == BlockType.PV_POWER_PLANT_EMT:
-        description = "Three-phase photovoltaic power-plant EMT model with converter interface"
-    elif source == BlockType.BATTERY_EMT:
-        description = "Battery EMT model with state-of-charge and DC electrical dynamics"
-    elif source == BlockType.EMT_JMARTI_LINE:
-        description = "Frequency-dependent JMarti travelling-wave transmission-line EMT model"
-    elif source == BlockType.SWITCH_EMT:
-        description = "Controlled ideal electrical switch EMT model"
-    elif source == BlockType.GROUND_EMT:
-        description = "Electrical ground reference for an EMT network"
-    elif source == BlockType.GROUNDING_LINK_EMT:
-        description = "Configurable grounding connection between an EMT node and ground"
-    elif source == BlockType.NONLINEAR_RESISTOR_EMT:
-        description = "Nonlinear resistor EMT model defined by its voltage-current characteristic"
-    elif source == BlockType.RLC_COMBO_EMT:
-        description = "Configurable resistor-inductor-capacitor branch for an EMT network"
-    elif source == BlockType.DC_VOLTAGE_SOURCE_EMT:
-        description = "Ideal constant DC voltage-source EMT model"
-    elif source == BlockType.DC_CURRENT_SOURCE_EMT:
-        description = "Ideal constant DC current-source EMT model"
-    elif source == BlockType.CONTROLLED_DC_VOLTAGE_SOURCE_EMT:
-        description = "DC voltage-source EMT model driven by an external control signal"
-    elif source == BlockType.CONTROLLED_DC_CURRENT_SOURCE_EMT:
-        description = "DC current-source EMT model driven by an external control signal"
+    label_text: str = label.lower()
+    if "pvd" in label_text or "pv" in label_text:
+        return ("PV generators",)
+    elif "wind" in label_text or "turbine" in label_text:
+        return ("Wind turbines",)
+    elif "source" in label_text:
+        return ("Sources",)
     else:
-        description = f"{label} complete dynamic-device template"
-
-    return description
-
-
-def _build_native_device_spec(
-        label: str,
-        source: DynamicDeviceTemplateType | BlockType,
-        mode: DynamicSimulationMode,
-        device_type: DeviceType,
-        category_name: str,
-        unique_key: str,
-        compatible_device_types: tuple[DeviceType, ...] | None = None,
-) -> LibraryDeviceTemplateSpec:
-    """Build one native device registration with a canonical Library path.
-
-    :param label: Visible device-template label.
-    :param source: Typed native materialization source.
-    :param mode: Dynamic simulation domain.
-    :param device_type: Compatible physical device type.
-    :param category_name: Category below ``Devices/Native``.
-    :param unique_key: Stable catalogue identity.
-    :param compatible_device_types: Physical device types sharing this entry.
-    :return: Complete device-template specification.
-    """
-    return LibraryDeviceTemplateSpec(
-        label=label,
-        source=source,
-        mode=mode,
-        device_type=device_type,
-        category_path=("Native", category_name),
-        unique_key=unique_key,
-        description=build_native_device_description(source=source, label=label),
-        compatible_device_types=compatible_device_types,
-    )
-
-
-def build_rms_native_device_specs() -> List[LibraryDeviceTemplateSpec]:
-    """Build every native RMS device entry in canonical Library order.
-
-    :return: Complete native RMS device specifications.
-    """
-    return list((
-        _build_native_device_spec("Complete generator", DynamicDeviceTemplateType.RMS_COMPLETE_GENERATOR,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_COMPLETE_GENERATOR.value),
-        _build_native_device_spec("Generator GENCLS", DynamicDeviceTemplateType.RMS_GENCLS,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_GENCLS.value),
-        _build_native_device_spec("Generator QEC", BlockType.GENQEC,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_GENQEC.value),
-        _build_native_device_spec("Generator basic", BlockType.GENRAW,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_GENROW.value),
-        _build_native_device_spec("Voltage source", BlockType.VOLTAGE_SOURCE_RMS,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_VOLTAGE_SOURCE.value),
-        _build_native_device_spec("PVD1", DynamicDeviceTemplateType.RMS_PVD1,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_PVD1.value),
-        _build_native_device_spec("PVD1 complete", DynamicDeviceTemplateType.RMS_PVD1_COMPLETE,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_PVD1_COMPLETE.value),
-        _build_native_device_spec("PVD1 DC MPPT", DynamicDeviceTemplateType.RMS_PVD1_DC_MPPT,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_PVD1_DC_MPPT.value),
-        _build_native_device_spec("PVD1 DC-link MPPT", DynamicDeviceTemplateType.RMS_PVD1_DC_LINK_MPPT,
-                                  DynamicSimulationMode.RMS, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.RMS_PVD1_DC_LINK_MPPT.value),
-        _build_native_device_spec("PVD1 DC-link BESS", DynamicDeviceTemplateType.RMS_PVD1_DC_LINK_BESS,
-                                  DynamicSimulationMode.RMS, DeviceType.BatteryDevice,
-                                  "Batteries", DynamicDeviceTemplateType.RMS_PVD1_DC_LINK_BESS.value),
-        _build_native_device_spec("ESD1", DynamicDeviceTemplateType.RMS_ESD1,
-                                  DynamicSimulationMode.RMS, DeviceType.BatteryDevice,
-                                  "Batteries", DynamicDeviceTemplateType.RMS_ESD1.value),
-        _build_native_device_spec("Line", BlockType.LINE_RMS,
-                                  DynamicSimulationMode.RMS, DeviceType.LineDevice,
-                                  "Lines", DynamicDeviceTemplateType.RMS_LINE.value),
-        _build_native_device_spec("DC line", BlockType.DC_LINE_RMS,
-                                  DynamicSimulationMode.RMS, DeviceType.DCLineDevice,
-                                  "DC lines", DynamicDeviceTemplateType.RMS_DC_LINE.value),
-        _build_native_device_spec("Transformer 2W", BlockType.TRANSFORMER_2W_RMS,
-                                  DynamicSimulationMode.RMS, DeviceType.Transformer2WDevice,
-                                  "Transformers", DynamicDeviceTemplateType.RMS_TRANSFORMER_2W.value),
-        _build_native_device_spec("Load", BlockType.LOAD_RMS,
-                                  DynamicSimulationMode.RMS, DeviceType.LoadDevice,
-                                  "Loads and motors", DynamicDeviceTemplateType.RMS_LOAD.value),
-        _build_native_device_spec("Shunt", DynamicDeviceTemplateType.RMS_SHUNT,
-                                  DynamicSimulationMode.RMS, DeviceType.ShuntDevice,
-                                  "Loads and shunts", DynamicDeviceTemplateType.RMS_SHUNT.value),
-        _build_native_device_spec("GFL converter", BlockType.GFL_CONVERTER_RMS,
-                                  DynamicSimulationMode.RMS, DeviceType.VscDevice,
-                                  "Converters and VSC", DynamicDeviceTemplateType.RMS_GFL_CONVERTER.value),
-        _build_native_device_spec("Complete GFL VSC HVDC", BlockType.GFL_VSC_HVDC_RMS,
-                                  DynamicSimulationMode.RMS, DeviceType.VscDevice,
-                                  "Converters and VSC", DynamicDeviceTemplateType.RMS_HVDC_VSC_GFL.value),
-    ))
-
-
-def build_emt_native_device_specs() -> List[LibraryDeviceTemplateSpec]:
-    """Build every native EMT device entry in canonical Library order.
-
-    :return: Complete native EMT device specifications.
-    """
-    specs: List[LibraryDeviceTemplateSpec] = list((
-        _build_native_device_spec("Complete generator", DynamicDeviceTemplateType.EMT_COMPLETE_GENERATOR,
-                                  DynamicSimulationMode.EMT, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.EMT_COMPLETE_GENERATOR.value),
-        _build_native_device_spec("Thevenin generator", BlockType.EMT_THEVENIN,
-                                  DynamicSimulationMode.EMT, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.EMT_THEVENIN_GENERATOR.value),
-        _build_native_device_spec("Ideal converter", DynamicDeviceTemplateType.EMT_IDEAL_CONVERTER,
-                                  DynamicSimulationMode.EMT, DeviceType.VscDevice,
-                                  "Converters and VSC", DynamicDeviceTemplateType.EMT_IDEAL_CONVERTER.value),
-        _build_native_device_spec("Full pseudo converter", BlockType.COMPLETE_PSEUDO_VSC_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.VscDevice,
-                                  "Converters and VSC", DynamicDeviceTemplateType.EMT_FULL_PSEUDO_CONVERTER.value),
-        _build_native_device_spec("Switched converter", DynamicDeviceTemplateType.EMT_SWITCHED_CONVERTER,
-                                  DynamicSimulationMode.EMT, DeviceType.VscDevice,
-                                  "Converters and VSC", DynamicDeviceTemplateType.EMT_SWITCHED_CONVERTER.value),
-        _build_native_device_spec("VSC Grid-Forming (GFM)", DynamicDeviceTemplateType.EMT_GFM,
-                                  DynamicSimulationMode.EMT, DeviceType.VscDevice,
-                                  "Converters and VSC", DynamicDeviceTemplateType.EMT_GFM.value),
-        _build_native_device_spec("BESS", BlockType.BESS_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.BatteryDevice,
-                                  "Batteries", DynamicDeviceTemplateType.EMT_BESS.value),
-        _build_native_device_spec("PV plant grid following", BlockType.PV_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.GeneratorDevice,
-                                  "Generators and sources", DynamicDeviceTemplateType.EMT_PV_GRID_FOLLOWING.value),
-        _build_native_device_spec("DC load", BlockType.DC_LOAD_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.LoadDevice,
-                                  "Loads and motors", DynamicDeviceTemplateType.EMT_DC_LOAD.value),
-        _build_native_device_spec("Exponential load (ABC)", BlockType.EXP_LOAD_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.LoadDevice,
-                                  "Loads and motors", DynamicDeviceTemplateType.EMT_EXPONENTIAL_LOAD_ABC.value),
-        _build_native_device_spec("ZIP load (ABC)", BlockType.ZIP_LOAD_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.LoadDevice,
-                                  "Loads and motors", DynamicDeviceTemplateType.EMT_ZIP_LOAD_ABC.value),
-        _build_native_device_spec("Single cage induction motor",
-                                  DynamicDeviceTemplateType.EMT_SINGLE_CAGE_INDUCTION_MOTOR,
-                                  DynamicSimulationMode.EMT, DeviceType.LoadDevice,
-                                  "Loads and motors",
-                                  DynamicDeviceTemplateType.EMT_SINGLE_CAGE_INDUCTION_MOTOR.value),
-        _build_native_device_spec("Double cage induction motor",
-                                  DynamicDeviceTemplateType.EMT_DOUBLE_CAGE_INDUCTION_MOTOR,
-                                  DynamicSimulationMode.EMT, DeviceType.LoadDevice,
-                                  "Loads and motors",
-                                  DynamicDeviceTemplateType.EMT_DOUBLE_CAGE_INDUCTION_MOTOR.value),
-        _build_native_device_spec("Shunt R (ABC)", BlockType.R_LOAD_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.LoadDevice,
-                                  "Loads and shunts", DynamicDeviceTemplateType.EMT_SHUNT_R_ABC.value),
-        _build_native_device_spec("Shunt L (ABC)", BlockType.L_LOAD_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.LoadDevice,
-                                  "Loads and shunts", DynamicDeviceTemplateType.EMT_SHUNT_L_ABC.value),
-        _build_native_device_spec("Shunt C (ABC)", BlockType.C_LOAD_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.LoadDevice,
-                                  "Loads and shunts", DynamicDeviceTemplateType.EMT_SHUNT_C_ABC.value),
-        _build_native_device_spec("PI line (ABC)", BlockType.EMT_PI_LINE,
-                                  DynamicSimulationMode.EMT, DeviceType.LineDevice,
-                                  "Lines", DynamicDeviceTemplateType.EMT_PI_LINE_ABC.value),
-        _build_native_device_spec("Bergeron line (ABC)", BlockType.EMT_BERGERON_LINE,
-                                  DynamicSimulationMode.EMT, DeviceType.LineDevice,
-                                  "Lines", DynamicDeviceTemplateType.EMT_BERGERON_LINE_ABC.value),
-        _build_native_device_spec("DC line", BlockType.EMT_DC_LINE,
-                                  DynamicSimulationMode.EMT, DeviceType.DCLineDevice,
-                                  "DC lines", DynamicDeviceTemplateType.EMT_DC_LINE.value),
-        _build_native_device_spec("Transformer", BlockType.TRAFO_EMT,
-                                  DynamicSimulationMode.EMT, DeviceType.Transformer2WDevice,
-                                  "Transformers", DynamicDeviceTemplateType.EMT_TRANSFORMER.value,
-                                  (DeviceType.Transformer2WDevice, DeviceType.Transformer3WDevice,
-                                   DeviceType.TransformerTypeDevice)),
-        _build_native_device_spec("XFMR", BlockType.XFMR_TRANSFORMER,
-                                  DynamicSimulationMode.EMT, DeviceType.Transformer2WDevice,
-                                  "Transformers", DynamicDeviceTemplateType.EMT_XFMR.value,
-                                  (DeviceType.Transformer2WDevice, DeviceType.Transformer3WDevice,
-                                   DeviceType.TransformerTypeDevice)),
-    ))
-
-    block_entries: tuple[tuple[str, BlockType, DeviceType, str], ...] = (
-        ("Simple generator", BlockType.EMT_GENERATOR, DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Voltage source EMT", BlockType.VOLTAGE_SOURCE_EMT, DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Current source EMT", BlockType.CURRENT_SOURCE_EMT, DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Controlled voltage source EMT", BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Controlled current source EMT", BlockType.CONTROLLED_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Balanced 3-phase voltage source EMT", BlockType.BALANCED_3PH_VOLTAGE_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Balanced 3-phase current source EMT", BlockType.BALANCED_3PH_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Controlled balanced 3-phase voltage source EMT", BlockType.CONTROLLED_BALANCED_3PH_VOLTAGE_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Controlled balanced 3-phase current source EMT", BlockType.CONTROLLED_BALANCED_3PH_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Arbitrary waveform voltage source EMT", BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Arbitrary waveform current source EMT", BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Step voltage source EMT", BlockType.STEP_VOLTAGE_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Step current source EMT", BlockType.STEP_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Ramp voltage source EMT", BlockType.RAMP_VOLTAGE_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Ramp current source EMT", BlockType.RAMP_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Double exponential current source EMT", BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Heidler current source EMT", BlockType.HEIDLER_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("CIGRE surge current source EMT", BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("PV power plant", BlockType.PV_POWER_PLANT_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Battery", BlockType.BATTERY_EMT, DeviceType.BatteryDevice, "Batteries"),
-        ("JMarti line", BlockType.EMT_JMARTI_LINE, DeviceType.LineDevice, "Lines"),
-        ("Switch EMT", BlockType.SWITCH_EMT, DeviceType.SwitchDevice, "Switches"),
-        ("Ground EMT", BlockType.GROUND_EMT, DeviceType.LoadDevice, "Loads and shunts"),
-        ("Grounding link EMT", BlockType.GROUNDING_LINK_EMT, DeviceType.LoadDevice, "Loads and shunts"),
-        ("Nonlinear resistor EMT", BlockType.NONLINEAR_RESISTOR_EMT, DeviceType.LoadDevice, "Loads and shunts"),
-        ("RLC combo", BlockType.RLC_COMBO_EMT, DeviceType.LoadDevice, "Loads and shunts"),
-        ("DC voltage source EMT", BlockType.DC_VOLTAGE_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("DC current source EMT", BlockType.DC_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Controlled DC voltage source EMT", BlockType.CONTROLLED_DC_VOLTAGE_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-        ("Controlled DC current source EMT", BlockType.CONTROLLED_DC_CURRENT_SOURCE_EMT,
-         DeviceType.GeneratorDevice, "Generators and sources"),
-    )
-    entry: tuple[str, BlockType, DeviceType, str]
-    for entry in block_entries:
-        label: str = entry[0]
-        block_type: BlockType = entry[1]
-        device_type: DeviceType = entry[2]
-        category_name: str = entry[3]
-        specs.append(_build_native_device_spec(
-            label=label,
-            source=block_type,
-            mode=DynamicSimulationMode.EMT,
-            device_type=device_type,
-            category_name=category_name,
-            unique_key=f"emt:native:{block_type.name}",
-        ))
-    return specs
+        return ("Synchronous and other generators",)
 
 
 def _international_standard_label(model: InternationalStandardModel) -> str:
@@ -1269,8 +944,18 @@ def build_international_standard_description(model: InternationalStandardModel) 
         description = "Round-rotor synchronous machine with power-law magnetic saturation"
     elif model == InternationalStandardModel.CIMTR1:
         description = "CIMTR1 induction-generator RMS model"
+    elif model == InternationalStandardModel.CIMTR2:
+        description = "CIMTR2 induction-motor RMS model with speed-dependent torque"
+    elif model == InternationalStandardModel.CIMTR3:
+        description = "CIMTR3 induction-generator RMS model with rotor-angle deviation"
+    elif model == InternationalStandardModel.CIMTR4:
+        description = "CIMTR4 induction-motor RMS model with rotor-angle deviation and speed-dependent torque"
+    elif model == InternationalStandardModel.CIM5:
+        description = "PSS/E CIM5 saturated induction-motor load RMS model"
+    elif model == InternationalStandardModel.CIM6:
+        description = "PSS/E CIM6 induction-motor load RMS model with polynomial torque"
     elif model == InternationalStandardModel.CIMW:
-        description = "CIMW induction-motor RMS model for a dynamic load"
+        description = "PSS/E CIMW induction-motor load RMS model with initialized-speed torque"
     elif model == InternationalStandardModel.GGOV1D:
         description = "Tracked fuel-valve governor with asymmetric speed deadband and turbine dynamics"
     elif model == InternationalStandardModel.GASTD:
@@ -1291,12 +976,16 @@ def build_international_standard_description(model: InternationalStandardModel) 
         description = "TGOV1D turbine-governor with asymmetric speed pickup and explicit turbine dynamics"
     elif model == InternationalStandardModel.GGOV1:
         description = "GGOV1 general-purpose turbine-governor model for synchronous generation"
+    elif model == InternationalStandardModel.BBGOV1:
+        description = "Brown-Boveri governor with step-gradient limiter and three steam turbine paths"
     elif model == InternationalStandardModel.IEEEG3:
         description = "Hydraulic governor with pilot-valve dynamics, transient droop and inverse water-column response"
     elif model == InternationalStandardModel.IEEEG3D:
         description = "Hydraulic governor with asymmetric speed deadband, pilot-valve dynamics and inverse water-column response"
     elif model == InternationalStandardModel.GAST:
         description = "Gas-turbine speed governor with fuel-valve dynamics and exhaust-temperature limiting"
+    elif model == InternationalStandardModel.GAST2A:
+        description = "Detailed gas-turbine governor with fuel-system, exhaust-temperature, and turbine dynamics"
     elif model == InternationalStandardModel.IEESGO:
         description = "Steam-turbine speed governor with chest, reheat and crossover power stages"
     elif model in tuple((InternationalStandardModel.GOVHYDRO4, InternationalStandardModel.HYGOV)):
@@ -1313,6 +1002,10 @@ def build_international_standard_description(model: InternationalStandardModel) 
         description = "Steam governor with asymmetric deadband, valve travel limits and four turbine stages"
     elif model in tuple((InternationalStandardModel.IEEEG1, InternationalStandardModel.IEEEG2)):
         description = f"{label} IEEE turbine-governor model for synchronous generation"
+    elif model == InternationalStandardModel.TGOV2:
+        description = "Steam turbine governor with reheat stages, damping and TI-relative fast valving"
+    elif model == InternationalStandardModel.TGOV4:
+        description = "Steam turbine governor with multivalve steam stages and boiler pressure dynamics"
     elif model in tuple((InternationalStandardModel.TGOV1, InternationalStandardModel.TGOV3)):
         description = f"{label} turbine-governor model for synchronous generation"
     elif model == InternationalStandardModel.IEEEVC_1981:
@@ -1323,14 +1016,23 @@ def build_international_standard_description(model: InternationalStandardModel) 
         description = "Cross-compound voltage sensing with shared and individual two-machine current corrections"
     elif model == InternationalStandardModel.CCOMP4A:
         description = "Four-unit reactive-current sharing with a bounded correction to terminal voltage"
+    elif model == InternationalStandardModel.CPAAUT:
+        description = "Bus-frequency washout and lag producing a bounded auxiliary power signal in MW"
+    elif model == InternationalStandardModel.WT12T1:
+        description = "Type 1/2 wind turbine one- or two-mass shaft driven by mechanical and electrical torque"
     elif model == InternationalStandardModel.REMCMP:
         description = "Remote bus voltage sensing without an artificial measurement delay"
     elif model == InternationalStandardModel.VRKUNDUR:
         description = "Kundur automatic voltage regulator model for a synchronous generator"
+    elif model == InternationalStandardModel.AC11C:
+        description = "IEEE AC11C filtered-PI excitation control with dual rectifier supplies and boost logic"
+    elif model == InternationalStandardModel.AC9C:
+        description = "IEEE AC9C PID excitation control with limiter routing, dual source and chopper selection"
     elif model in tuple((
             InternationalStandardModel.AC1A,
             InternationalStandardModel.AC6A,
             InternationalStandardModel.AC6C,
+            InternationalStandardModel.AC6C2,
             InternationalStandardModel.AC7B,
             InternationalStandardModel.AC7C,
             InternationalStandardModel.AC8C,
@@ -1347,7 +1049,9 @@ def build_international_standard_description(model: InternationalStandardModel) 
             InternationalStandardModel.ST5C,
             InternationalStandardModel.ST6B,
             InternationalStandardModel.ST6C,
+            InternationalStandardModel.ST8C,
             InternationalStandardModel.ST9C,
+            InternationalStandardModel.ST10C,
     )):
         description = f"{label} automatic voltage regulator and excitation-system model for a synchronous generator"
     elif model == InternationalStandardModel.IEEL:
@@ -1391,6 +1095,10 @@ def build_international_standard_description(model: InternationalStandardModel) 
         description = "Power stabilizer with double reset and fourth-order shaping"
     elif model == InternationalStandardModel.IEEEST:
         description = "Single-input stabilizer with polynomial filtering and terminal-voltage supervision"
+    elif model == InternationalStandardModel.PSS1A:
+        description = "IEEE PSS1A single-input stabilizer using the documented IEEEST coefficient map"
+    elif model == InternationalStandardModel.PSS4B:
+        description = "IEEE dual-input stabilizer with independently limited low, intermediate and high frequency bands"
     elif model == InternationalStandardModel.IEE2ST:
         description = "Dual-input stabilizer with independent transducers and three phase-compensation stages"
     elif model == InternationalStandardModel.BBSEX1:
@@ -1421,12 +1129,16 @@ def build_international_standard_description(model: InternationalStandardModel) 
         description = 'Compound-transformer excitation with capability on total field forcing.'
     elif model == InternationalStandardModel.IEEEX3:
         description = 'Compound-transformer excitation with capability on rectified transformer supply.'
+    elif model in (InternationalStandardModel.AC6C,InternationalStandardModel.AC6C2):
+        description = 'Two-stage brushless excitation with bounded regulator, clipped field-current feedback and selectable forcing limits.'
     elif model == InternationalStandardModel.AC7C:
         description = 'Cascaded PID/PI excitation with explicit takeover gates and compound or self-derived field power.'
     elif model == InternationalStandardModel.AC7B:
         description = 'Cascaded voltage PID and field PI with mixed field feedback, terminal supply and negative forcing capability.'
     elif model == InternationalStandardModel.ST6C:
         description = 'Current-limited PID field regulation with inner feedforward, bridge-command feedback and compound supply.'
+    elif model == InternationalStandardModel.ST8C:
+        description = 'Static excitation with voltage and field-current PI regulators, field-current feedback, and dual rectifier supplies.'
     elif model == InternationalStandardModel.DC4C:
         description = 'Compound-fed bounded PID regulation of a commutator exciter with loaded supply and field-rate feedback.'
     elif model == InternationalStandardModel.DC4B:
@@ -1445,6 +1157,8 @@ def build_international_standard_description(model: InternationalStandardModel) 
         description = 'Brushless excitation with shaped field-loss feedback and selectable excitation limiters.'
     elif model in (InternationalStandardModel.AC1C,InternationalStandardModel.AC2C):
         description = 'Brushless rotating excitation with selectable limiter insertion and a field-current ceiling.'
+    elif model == InternationalStandardModel.AC3C:
+        description = 'PID brushless excitation with independent over/under-excitation routing.'
     elif model == InternationalStandardModel.AC4C:
         description = 'Controlled bridge with selectable excitation gates and current-dependent capability'
     elif model == InternationalStandardModel.ESAC4A:
@@ -1521,6 +1235,10 @@ def build_international_standard_description(model: InternationalStandardModel) 
         description = "FRQTPA frequency trip relay model for generator protection"
     elif model == InternationalStandardModel.VTGTPA:
         description = "VTGTPA voltage trip relay model for generator protection"
+    elif model == InternationalStandardModel.FRQTPAT:
+        description = "PSS/E FRQTPAT frequency pickup and generator trip relay stages"
+    elif model == InternationalStandardModel.VTGTPAT:
+        description = "PSS/E VTGTPAT voltage pickup and generator trip relay stages"
     else:
         description = f"{label} international-standard RMS dynamic model"
 
@@ -1572,20 +1290,37 @@ def get_dynamic_library_international_standard_descriptors() -> Sequence[Interna
         InternationalStandardModel.CIMTR1, "CIMTR1", ("Induction machines",),
         "induction_machines", DeviceType.GeneratorDevice))
     descriptors.append(InternationalStandardTemplateDescriptor(
+        InternationalStandardModel.CIMTR2, "CIMTR2", ("Induction machines",),
+        "induction_machines", DeviceType.GeneratorDevice))
+    descriptors.append(InternationalStandardTemplateDescriptor(
+        InternationalStandardModel.CIMTR3, "CIMTR3", ("Induction machines",),
+        "induction_machines", DeviceType.GeneratorDevice))
+    descriptors.append(InternationalStandardTemplateDescriptor(
+        InternationalStandardModel.CIMTR4, "CIMTR4", ("Induction machines",),
+        "induction_machines", DeviceType.GeneratorDevice))
+    descriptors.append(InternationalStandardTemplateDescriptor(
         InternationalStandardModel.CIMW, "CIMW", ("Induction machines",),
+        "induction_machines", DeviceType.LoadDevice))
+    descriptors.append(InternationalStandardTemplateDescriptor(
+        InternationalStandardModel.CIM5, "CIM5", ("Induction machines",),
+        "induction_machines", DeviceType.LoadDevice))
+    descriptors.append(InternationalStandardTemplateDescriptor(
+        InternationalStandardModel.CIM6, "CIM6", ("Induction machines",),
         "induction_machines", DeviceType.LoadDevice))
 
     _append_international_standard_group(
         descriptors,
         (InternationalStandardModel.GASTD, InternationalStandardModel.IEESGOD, InternationalStandardModel.HYGOVD,
-         InternationalStandardModel.HYGOV2, InternationalStandardModel.HYGOV2D,
+         InternationalStandardModel.HYGOVR1, InternationalStandardModel.HYGOV2,
+         InternationalStandardModel.HYGOV2D,
          InternationalStandardModel.PIDGOV, InternationalStandardModel.PIDGOVD,
+         InternationalStandardModel.BBGOV1,
          InternationalStandardModel.TGOV1D, InternationalStandardModel.GGOV1, InternationalStandardModel.GGOV1D, InternationalStandardModel.GOVHYDRO4,
          InternationalStandardModel.GOVSTEAM1, InternationalStandardModel.GOVSTEAMEU,
          InternationalStandardModel.IVOGO, InternationalStandardModel.DEGOV, InternationalStandardModel.DEGOV1, InternationalStandardModel.DEGOV1D,
          InternationalStandardModel.HYGOV, InternationalStandardModel.IEEEG1, InternationalStandardModel.IEEEG1D, InternationalStandardModel.LCFB1,
-         InternationalStandardModel.IEEEG2, InternationalStandardModel.TGOV1,
-         InternationalStandardModel.TGOV3, InternationalStandardModel.GAST, InternationalStandardModel.IEEEG3, InternationalStandardModel.IEEEG3D,
+         InternationalStandardModel.IEEEG2, InternationalStandardModel.TGOV1, InternationalStandardModel.TGOV2,
+         InternationalStandardModel.TGOV3, InternationalStandardModel.TGOV4, InternationalStandardModel.GAST, InternationalStandardModel.GAST2A, InternationalStandardModel.IEEEG3, InternationalStandardModel.IEEEG3D,
          InternationalStandardModel.IEESGO),
         "Governors", "governors", None)
     _append_international_standard_group(
@@ -1595,10 +1330,17 @@ def get_dynamic_library_international_standard_descriptors() -> Sequence[Interna
         "Voltage compensators", "voltage_compensators", None)
     _append_international_standard_group(
         descriptors,
+        (InternationalStandardModel.CPAAUT,),
+        "Auxiliary signals", "auxiliary_signals", None)
+    _append_international_standard_group(
+        descriptors,
         (InternationalStandardModel.AC1A, InternationalStandardModel.AC1C,
-         InternationalStandardModel.AC6A, InternationalStandardModel.AC6C,
+         InternationalStandardModel.AC3C,
+         InternationalStandardModel.AC6A, InternationalStandardModel.ESAC6A,
+         InternationalStandardModel.AC6C, InternationalStandardModel.AC6C2,
          InternationalStandardModel.AC7B, InternationalStandardModel.AC7C,
          InternationalStandardModel.AC8B, InternationalStandardModel.AC8C,
+         InternationalStandardModel.AC9C, InternationalStandardModel.AC11C,
          InternationalStandardModel.BBSEX1, InternationalStandardModel.DC1A,
          InternationalStandardModel.DC1C, InternationalStandardModel.ESDC2A,
          InternationalStandardModel.EXAC1, InternationalStandardModel.EXST2,
@@ -1632,7 +1374,8 @@ def get_dynamic_library_international_standard_descriptors() -> Sequence[Interna
          InternationalStandardModel.ST5B, InternationalStandardModel.ST5C,
          InternationalStandardModel.ST6B, InternationalStandardModel.ST6C,
          InternationalStandardModel.ST7B, InternationalStandardModel.ST7C,
-         InternationalStandardModel.ST9C, InternationalStandardModel.VRKUNDUR,
+         InternationalStandardModel.ST8C, InternationalStandardModel.ST9C,
+         InternationalStandardModel.ST10C, InternationalStandardModel.VRKUNDUR,
          InternationalStandardModel.IEEEVC_1981),
         "Excitation systems", "excitation_systems", None)
     _append_international_standard_group(
@@ -1649,16 +1392,21 @@ def get_dynamic_library_international_standard_descriptors() -> Sequence[Interna
         (InternationalStandardModel.PSS1AOMEGA, InternationalStandardModel.PSS1APGEN,
          InternationalStandardModel.PSS2A, InternationalStandardModel.PSS2B,
          InternationalStandardModel.PSS2C, InternationalStandardModel.PSS3B,
+         InternationalStandardModel.PSS4B,
          InternationalStandardModel.PSS3C, InternationalStandardModel.PSS6C,
+         InternationalStandardModel.PSS7C,
          InternationalStandardModel.PSSKUNDUR, InternationalStandardModel.STAB1,
          InternationalStandardModel.STAB2A, InternationalStandardModel.STAB3,
          InternationalStandardModel.STAB4, InternationalStandardModel.STABNI, InternationalStandardModel.IVOST,
-         InternationalStandardModel.IEEEST, InternationalStandardModel.IEE2ST),
+         InternationalStandardModel.IEEEST, InternationalStandardModel.PSS1A,
+         InternationalStandardModel.IEE2ST, InternationalStandardModel.BEPSST,
+         InternationalStandardModel.OSTB2T, InternationalStandardModel.OSTB5T),
         "Power system stabilizers", "power_system_stabilizers", None)
     _append_international_standard_group(
         descriptors,
         (InternationalStandardModel.REECB, InternationalStandardModel.REECC,
-         InternationalStandardModel.REGCBCS, InternationalStandardModel.REPCA),
+         InternationalStandardModel.REGCBCS, InternationalStandardModel.REPCA,
+         InternationalStandardModel.WT12T1),
         "Renewable controls", "renewable_controls", None)
     _append_international_standard_group(
         descriptors,
@@ -1677,8 +1425,36 @@ def get_dynamic_library_international_standard_descriptors() -> Sequence[Interna
         descriptors, (InternationalStandardModel.BESSCBCURRENTSOURCENOPLANTCONTROL,),
         "Battery energy storage", "battery_energy_storage", DeviceType.BatteryDevice)
     _append_international_standard_group(
-        descriptors, (InternationalStandardModel.FRQTPA, InternationalStandardModel.VTGTPA),
+        descriptors, (InternationalStandardModel.FRQTPA, InternationalStandardModel.VTGTPA,
+                      InternationalStandardModel.FRQTPAT, InternationalStandardModel.VTGTPAT),
         "Protection relays", "protection_relays", None)
+    international_builders: dict[str, object] = get_international_model_builders()
+    family_labels: dict[str, str] = dict()
+    family_labels["common"] = "Common"
+    family_labels["excitation_limiters"] = "Excitation limiters"
+    family_labels["excitation_systems"] = "Excitation systems"
+    family_labels["governors"] = "Governors"
+    family_labels["induction_machines"] = "Induction machines"
+    family_labels["load_characteristics"] = "Load characteristics"
+    family_labels["power_system_stabilizers"] = "Power system stabilizers"
+    family_labels["synchronous_machines"] = "Synchronous machines"
+    family_labels["voltage_compensators"] = "Voltage compensators"
+    family_labels["wind_generation"] = "Wind generation"
+    model_key: str
+    for model_key in sorted(international_builders):
+        builder: object = international_builders[model_key]
+        module_parts: list[str] = builder.__module__.split(".")
+        family_label: str | None = family_labels.get(module_parts[-2], None)
+        if family_label is None:
+            raise ValueError(f"Unsupported international model family: {module_parts[-2]}")
+        else:
+            descriptors.append(InternationalStandardTemplateDescriptor(
+                model=InternationalStandardModel[model_key],
+                display_label=model_key,
+                category_path=(family_label,),
+                module_folder=module_parts[-2],
+                module_name=module_parts[-1],
+            ))
     return tuple(descriptors)
 
 
@@ -1699,6 +1475,10 @@ def get_dynamic_library_procedural_descriptors() -> Sequence[ProceduralBlockTemp
                                           ("Sampling and history",), ("u",), ("y",),
                                           (ProceduralBlockParameterSpec("delay", 0.0),
                                            ProceduralBlockParameterSpec("window", 0.01))),
+        ProceduralBlockTemplateDescriptor(ProceduralLogicType.WrappedDerivative, "Wrapped derivative",
+                                          ("Measurements and Units", "Frequency measurement"),
+                                          ("angle_rad",), ("rate_rad_per_s",),
+                                          (ProceduralBlockParameterSpec("maximum_rate", 5.0),)),
         ProceduralBlockTemplateDescriptor(ProceduralLogicType.HardSaturation, "Hard saturation",
                                           ("Limits and latches",), ("u",), ("y",),
                                           (ProceduralBlockParameterSpec("minimum", -1.0),
@@ -1715,6 +1495,9 @@ def get_dynamic_library_procedural_descriptors() -> Sequence[ProceduralBlockTemp
                                           ("Limits and latches",), ("condition",), ("y",),
                                           (ProceduralBlockParameterSpec("pickup_delay", 0.0),
                                            ProceduralBlockParameterSpec("dropoff_delay", 0.0))),
+        ProceduralBlockTemplateDescriptor(ProceduralLogicType.TimedPulse, "Timed pulse",
+                                          ("Limits and latches",), ("condition",), ("y",),
+                                          (ProceduralBlockParameterSpec("duration", 1.0),)),
         ProceduralBlockTemplateDescriptor(ProceduralLogicType.DelayedThresholdLatch,
                                           "Delayed threshold latch", ("Limits and latches",),
                                           ("monitored",), ("y",), tuple()),
@@ -1786,11 +1569,17 @@ def build_rms_control_library_branch() -> Dict[str, object]:
     standard_category_map: tuple[tuple[str, str], ...] = (
         ("Governors", "Governors"),
         ("Voltage compensators", "Reactive power and voltage"),
+        ("Auxiliary signals", "Auxiliary signals"),
         ("Excitation systems", "Exciters"),
         ("Excitation limiters", "Limiters"),
         ("Power system stabilizers", "Stabilizers"),
         ("Renewable controls", "Renewable controls"),
         ("Protection relays", "Protection"),
+        ("Common", "Auxiliary signals"),
+        ("Induction machines", "Machines and loads"),
+        ("Load characteristics", "Machines and loads"),
+        ("Synchronous machines", "Machines and loads"),
+        ("Wind generation", "Renewable controls"),
     )
     descriptor: InternationalStandardTemplateDescriptor
     for descriptor in get_dynamic_library_international_standard_descriptors():
@@ -1825,6 +1614,31 @@ def build_emt_control_library_branch() -> Dict[str, object]:
     ))
 
 
+def get_international_standard_device_category(
+        descriptor: InternationalStandardTemplateDescriptor,
+) -> tuple[str, ...]:
+    """Map a complete international model to the shared device categories.
+
+    :param descriptor: International-standard model registration.
+    :return: Device branch category shared with native models.
+    """
+    if descriptor.category_path[0] == "Induction machines":
+        return ("Induction machines",)
+    elif descriptor.device_type == DeviceType.GeneratorDevice:
+        if descriptor.category_path[0] == "Wind generation":
+            return ("Wind turbines",)
+        elif descriptor.category_path[0] == "Solar PV generation":
+            return ("PV generators",)
+        else:
+            return get_generator_technology_category(label=descriptor.display_label)
+    elif descriptor.device_type == DeviceType.BatteryDevice:
+        return ("Batteries",)
+    elif descriptor.device_type == DeviceType.LoadDevice:
+        return ("Loads",)
+    else:
+        return ("Other devices",)
+
+
 def build_device_library_branch(
         mode: DynamicSimulationMode,
         device_type: DeviceType | None,
@@ -1836,46 +1650,22 @@ def build_device_library_branch(
     :return: Nested device branch used by both editor and catalogue.
     """
     branch: Dict[str, object] = dict()
-    if mode == DynamicSimulationMode.RMS:
-        native_specs: List[LibraryDeviceTemplateSpec] = build_rms_native_device_specs()
-    elif mode == DynamicSimulationMode.EMT:
-        native_specs = build_emt_native_device_specs()
-    else:
-        native_specs = list()
-
-    spec: LibraryDeviceTemplateSpec
-    for spec in native_specs:
+    entry: object
+    for entry in get_template_catalogue_entries(mode=mode):
+        spec: LibraryDeviceTemplateSpec = LibraryDeviceTemplateSpec(
+            label=entry.label,
+            source=entry.source,
+            mode=entry.mode,
+            device_type=entry.device_type,
+            category_path=entry.category_path,
+            description=entry.description,
+            search_text=entry.search_text,
+            compatible_device_types=entry.compatible_device_types,
+        )
         if device_type is None or spec.is_compatible_with(device_type=device_type):
-            insert_library_leaf(
-                branch, spec.category_path,
-                LibraryLeafSpec(spec.label, spec, spec.search_text))
+            insert_library_leaf(branch, spec.category_path, LibraryLeafSpec(spec.label, spec, spec.search_text))
         else:
             pass
-
-    if mode == DynamicSimulationMode.RMS:
-        descriptor: InternationalStandardTemplateDescriptor
-        for descriptor in get_dynamic_library_international_standard_descriptors():
-            if descriptor.device_type is not None:
-                if device_type is None or descriptor.device_type == device_type:
-                    standard_spec: LibraryDeviceTemplateSpec = LibraryDeviceTemplateSpec(
-                        label=descriptor.display_label,
-                        source=descriptor,
-                        mode=DynamicSimulationMode.RMS,
-                        device_type=descriptor.device_type,
-                        category_path=("International standards", str(descriptor.category_path[0])),
-                        unique_key=f"rms:international:{descriptor.template_key}",
-                        description=build_international_standard_description(model=descriptor.model),
-                        search_text=descriptor.search_text,
-                    )
-                    insert_library_leaf(
-                        branch, standard_spec.category_path,
-                        LibraryLeafSpec(standard_spec.label, standard_spec, standard_spec.search_text))
-                else:
-                    pass
-            else:
-                pass
-    else:
-        pass
     return branch
 
 
@@ -1944,793 +1734,28 @@ def get_dynamic_library_device_specs(mode: DynamicSimulationMode) -> List[Librar
     :param mode: Dynamic simulation domain.
     :return: Device-template specifications in Library branch order.
     """
-    device_branch: Dict[str, object] = build_device_library_branch(mode=mode, device_type=None)
     specs: List[LibraryDeviceTemplateSpec] = list()
-    _collect_device_specs_from_branch(device_branch, specs)
+    entry: object
+    for entry in get_template_catalogue_entries(mode=mode):
+        specs.append(LibraryDeviceTemplateSpec(
+            label=entry.label,
+            source=entry.source,
+            mode=entry.mode,
+            device_type=entry.device_type,
+            category_path=entry.category_path,
+            description=entry.description,
+            search_text=entry.search_text,
+            compatible_device_types=entry.compatible_device_types,
+        ))
     return specs
 
 
-def get_catalogue_template_block_type(
-        template: RmsModelTemplate | EmtModelTemplate | FmuTemplate,
-        mode: DynamicSimulationMode,
-) -> BlockType | None:
-    """Resolve a saved catalogue template's native type from its stable code."""
-    if not template.code:
-        return None
-    spec: LibraryDeviceTemplateSpec
-    for spec in get_dynamic_library_device_specs(mode):
-        if spec.unique_key == template.code and isinstance(spec.source, BlockType):
-            return spec.source
-    return None
-
-
-def build_dynamic_library_device_template(
-        spec: LibraryDeviceTemplateSpec,
-        var_factory: VarFactory,
-) -> RmsModelTemplate | EmtModelTemplate | None:
-    """Materialize one complete device template from its Library registration.
-
-    :param spec: Canonical device-template specification.
-    :param var_factory: Factory allocating the symbolic variables.
-    :return: Fresh RMS or EMT template, or ``None`` when unsupported.
-    """
-    source: DynamicDeviceTemplateType | BlockType | InternationalStandardTemplateDescriptor = spec.source
-    if isinstance(source, InternationalStandardTemplateDescriptor):
-        template: RmsModelTemplate | EmtModelTemplate | None = load_international_standard_template(
-            descriptor=source,
-            var_factory=var_factory,
-        )
-    elif isinstance(source, BlockType):
-        builder: TemplateDefinition | None = create_default_template_builder(
-            var_factory=var_factory,
-            block_type=source,
-            item_name=spec.label,
-            api_object=None,
-        )
-        built_object: object | None
-        if builder is not None:
-            built_object = builder.eval()
-        else:
-            built_object = create_block_of_type(
-                var_factory=var_factory,
-                block_type=source,
-                item_name=spec.label,
-                api_object=None,
-            )
-        if isinstance(built_object, (RmsModelTemplate, EmtModelTemplate)):
-            template = built_object
-        elif isinstance(built_object, Block):
-            if spec.mode == DynamicSimulationMode.RMS:
-                rms_template: RmsModelTemplate = RmsModelTemplate()
-                rms_template.name = spec.label
-                rms_template.tpe = spec.device_type
-                rms_template.block = built_object
-                template = rms_template
-            elif spec.mode == DynamicSimulationMode.EMT:
-                emt_template: EmtModelTemplate = EmtModelTemplate()
-                emt_template.name = spec.label
-                emt_template.tpe = spec.device_type
-                emt_template.block = built_object
-                template = emt_template
-            else:
-                template = None
-        else:
-            template = None
-    elif source == DynamicDeviceTemplateType.RMS_COMPLETE_GENERATOR:
-        template = tem.get_complete_generator_template_rms(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_GENCLS:
-        template = tem.get_gencls_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_GENQEC:
-        template = tem.get_genqec_rms(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_GENROW:
-        template = tem.get_genrow_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_LINE:
-        template = tem.get_line_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_DC_LINE:
-        template = tem.build_dc_line_rms_v2(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_LOAD:
-        template = tem.get_load_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_TRANSFORMER_2W:
-        template = tem.get_transformer2w_rms(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_SHUNT:
-        template = tem.get_shunt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_PVD1:
-        template = tem.get_pvd1_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_PVD1_COMPLETE:
-        template = tem.get_pvd1_complete_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_PVD1_DC_MPPT:
-        template = tem.get_pvd1_dc_mppt_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_PVD1_DC_LINK_MPPT:
-        template = tem.get_pvd1_dc_link_mppt_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_PVD1_DC_LINK_BESS:
-        template = tem.get_pvd1_dc_link_bess_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_ESD1:
-        template = tem.get_esd1_rms_template(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_VOLTAGE_SOURCE:
-        template = tem.VoltageSourceBuild(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_GFL_CONVERTER:
-        template = tem.get_gfl_converter_rms(var_factory)
-    elif source == DynamicDeviceTemplateType.RMS_HVDC_VSC_GFL:
-        template = tem.build_hvdc_vsc_gfl_rms(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_COMPLETE_GENERATOR:
-        template = tem.get_complete_generator_template_emt(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_THEVENIN_GENERATOR:
-        template = tem.get_generator_thevenin_rl_emt_template_with_ref(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_IDEAL_CONVERTER:
-        template = tem.get_emt_ideal_converter(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_FULL_PSEUDO_CONVERTER:
-        template = tem.get_full_pseudo_emt_converter(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_SWITCHED_CONVERTER:
-        template = tem.get_switched_emt_converter(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_DC_LOAD:
-        template = tem.get_dc_load_emt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_DC_LINE:
-        template = tem.get_dc_line_with_power_input_emt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_TRANSFORMER:
-        template = tem.get_transformer_emt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_XFMR:
-        template = tem.get_xfmr_emt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_SHUNT_C_ABC:
-        template = tem.get_shunt_c_emt_template(var_factory, True, True, True)
-    elif source == DynamicDeviceTemplateType.EMT_SHUNT_L_ABC:
-        template = tem.get_shunt_l_emt_template(var_factory, True, True, True)
-    elif source == DynamicDeviceTemplateType.EMT_SHUNT_R_ABC:
-        template = tem.get_shunt_r_emt_template(var_factory, True, True, True)
-    elif source == DynamicDeviceTemplateType.EMT_EXPONENTIAL_LOAD_ABC:
-        template = tem.get_exponential_load_emt(var_factory, True, True, True)
-    elif source == DynamicDeviceTemplateType.EMT_ZIP_LOAD_ABC:
-        template = tem.get_load_ZIP_emt_template(var_factory, True, True, True)
-    elif source == DynamicDeviceTemplateType.EMT_PI_LINE_ABC:
-        template = tem.get_pi_line_emt_template(var_factory, False, True, True, True)
-    elif source == DynamicDeviceTemplateType.EMT_BERGERON_LINE_ABC:
-        template = tem.get_bergeron_line_emt_template(var_factory, False, True, True, True)
-    elif source == DynamicDeviceTemplateType.EMT_SINGLE_CAGE_INDUCTION_MOTOR:
-        template = tem.get_induction_motor_single_cage_emt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_DOUBLE_CAGE_INDUCTION_MOTOR:
-        template = tem.get_induction_motor_double_cage_emt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_BESS:
-        template = tem.get_bess_avm_grid_following_emt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_PV_GRID_FOLLOWING:
-        template = tem.get_pv_avm_grid_following_emt_template(var_factory)
-    elif source == DynamicDeviceTemplateType.EMT_GFM:
-        template = tem.get_gfm_emt_template(var_factory)
-    else:
-        template = None
-
-    if template is not None:
-        # A device registration is authoritative for host compatibility even
-        # when the underlying block builder is also usable as a control block.
-        # The same registration also owns the user-facing catalogue label. A
-        # builder's internal symbolic name must not leak into device selectors.
-        template.name = spec.label
-        template.tpe = spec.device_type
-        template.code = spec.unique_key
-    else:
-        pass
-    return template
-
-
 def build_basic_branch_skeleton() -> Dict[str, object]:
-    """Build the canonical empty hierarchy below ``Basic``.
+    """Return an empty Basic branch populated exclusively by engine catalogues.
 
-    The hierarchy lives beside the ``Devices`` and ``Controls`` registrations
-    so the complete dynamic-editor library can be inspected and maintained in
-    one module. Empty leaf collections reserve the requested semantic location
-    while the tree is populated; they are removed before it becomes visible.
-
-    :return: Ordered category tree whose leaf nodes are empty lists.
+    :return: Empty branch.
     """
-    # Mathematical operations are separated by behavior rather than by the
-    # implementation family from which a block happened to originate.
-    mathematical_functions: Dict[str, object] = dict((
-        ("Sum", list()),
-        ("Product", list()),
-        ("Gain", list()),
-        ("Affine", list()),
-        ("Polynomials", list()),
-        ("Minimum/Maximum", list()),
-        ("Absolute value", list()),
-        ("Sign", list()),
-        ("Square root", list()),
-        ("Power", list()),
-        ("Exponential and logarithms", list()),
-        ("Rounding and modulo", list()),
-        ("Trigonometric functions", list()),
-        ("Constants", list()),
-    ))
-
-    # State-bearing continuous blocks are kept apart from discrete memory so
-    # their numerical meaning is evident from the library path.
-    continuous_dynamics: Dict[str, object] = dict((
-        ("Integrators", list()),
-        ("Derivatives", list()),
-        ("Transfer functions", list()),
-        ("Filters", list()),
-        ("Delay approximations", list()),
-    ))
-    memory_and_discrete_time: Dict[str, object] = dict((
-        ("Sample and hold", list()),
-        ("Previous value", list()),
-        ("Exact time delay", list()),
-        ("Moving average", list()),
-    ))
-
-    # Event-generating comparators are distinguished from ordinary algebraic
-    # comparisons and from the switches that consume their results.
-    logic_and_events: Dict[str, object] = dict((
-        ("Logic gate", list()),
-        ("Comparator", list()),
-        ("Timed comparator", list()),
-        ("Selector / Switch", list()),
-        ("Edge detector", list()),
-        ("Latches and flip-flops", list()),
-        ("Timers", list()),
-    ))
-    limits_and_nonlinearities: Dict[str, object] = dict((
-        ("Saturation", list()),
-        ("Deadband", list()),
-        ("Rate limiter", list()),
-        ("Hysteresis", list()),
-    ))
-
-    # Sources are classified by the waveform users look for. Scalar constants
-    # belong with the other mathematical constants, while clocks have their
-    # own category instead of being presented incorrectly as steps.
-    sources: Dict[str, object] = dict((
-        ("Initial conditions", list()),
-        ("Simulation time", list()),
-        ("Periodic clocks", list()),
-        ("Pulse", list()),
-        ("Sine", list()),
-        ("Square", list()),
-        ("Triangle", list()),
-        ("Sawtooth", list()),
-    ))
-    lookup_tables: Dict[str, object] = dict((
-        ("1D lookup table", list()),
-        ("Inverse 1D lookup table", list()),
-        ("2D lookup table", list()),
-    ))
-    transforms: Dict[str, object] = dict((
-        ("Clarke", list()),
-        ("Park / dq0", list()),
-        ("Sequence components", list()),
-        ("RMS conversions", list()),
-    ))
-    complex_numbers: Dict[str, object] = dict((
-        ("Cartesian / polar conversion", list()),
-        ("Magnitude and angle", list()),
-        ("Conjugate", list()),
-        ("Arithmetic", list()),
-    ))
-    measurements: Dict[str, object] = dict((
-        ("Electrical measurements", list()),
-        ("Per-unit conversions", list()),
-        ("Unit conversions", list()),
-    ))
-    mechanical: Dict[str, object] = dict((("Drive train", list()),))
-
-    return dict((
-        ("Mathematical functions", mathematical_functions),
-        ("Continuous dynamics", continuous_dynamics),
-        ("Memory and discrete-time", memory_and_discrete_time),
-        ("Logic and events", logic_and_events),
-        ("Limits and nonlinearities", limits_and_nonlinearities),
-        ("Sources", sources),
-        ("Lookup tables", lookup_tables),
-        ("Transforms", transforms),
-        ("Complex numbers", complex_numbers),
-        ("Measurements and conversions", measurements),
-        ("Mechanical", mechanical),
-    ))
-
-
-def get_basic_lookup_table_category_path(descriptor: BasicBlockTemplateDescriptor) -> tuple[str, ...]:
-    """Return the dimensional lookup-table category for one descriptor.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :return: Path below ``Basic`` for the lookup implementation.
-    """
-    template_key: str = descriptor.template_key
-    inverse_keys: tuple[str, ...] = (
-        "inverse_lookup_array_object_linear",
-        "invlapprox",
-    )
-    matrix_keys: tuple[str, ...] = (
-        "lookup_matrix_linear",
-        "lookup_matrix_spline",
-        "lookup_matrix_object_linear",
-        "lookup_matrix_object_spline",
-        "lapprox2",
-        "sapprox2",
-    )
-    array_keys: tuple[str, ...] = (
-        "lookup_array_linear_noclipping",
-        "lookup_array_1x3_linear_fixed",
-        "lookup_array_1x3_linear_variable",
-        "lookup_array_1x4_linear_fixed",
-        "lookup_array_1x4_linear_variable",
-        "lookup_array_object_linear",
-        "lookup_array_object_linear_noclipping",
-        "lookup_array_object_spline",
-        "lapprox",
-        "lapproxext",
-        "sapprox",
-    )
-
-    # Every shipped lookup implementation is named explicitly. This prevents a
-    # future matrix or inverse implementation from silently landing in 1D.
-    if template_key in inverse_keys:
-        category_path: tuple[str, ...] = ("Lookup tables", "Inverse 1D lookup table")
-    elif template_key in matrix_keys:
-        category_path = ("Lookup tables", "2D lookup table")
-    elif template_key in array_keys:
-        category_path = ("Lookup tables", "1D lookup table")
-    else:
-        raise ValueError(f"Unclassified lookup-table template '{template_key}'")
-    return category_path
-
-
-def get_basic_mathematical_category_path(descriptor: BasicBlockTemplateDescriptor,
-                                         source_category: str) -> tuple[str, ...]:
-    """Classify a descriptor from the legacy mathematical families.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :param source_category: Legacy second-level mathematical category.
-    :return: Path below ``Basic`` for the mathematical behavior.
-    """
-    template_key: str = descriptor.template_key
-    scaling_gain_keys: tuple[str, ...] = (
-        "multiply_1_form_a", "multiply_k_form_a", "multiply_1_k_form_a",
-        "multiply_1_k1_k2", "multiply_1_form_b",
-        "multiply_1_k_form_b",
-        "multiply_k_form_b", "multiply_k1_k2_k3_form_a",
-        "multiply_k1_k2_k3_form_b", "multiply_k1_k2_form_a",
-        "multiply_k1_k2_form_b", "multiply_sqrt2", "multiply_sqrt3",
-    )
-    saturated_gain_keys: tuple[str, ...] = (
-        "multiply_1_k_p", "multiply_1_k1k2_p", "multiply_k_p",
-    )
-    trigonometric_keys: tuple[str, ...] = (
-        "acos", "asin", "atan", "atan2", "atan2d", "atand",
-        "cos", "cosd", "cosh", "coshd", "sin", "sind",
-        "sinh", "sinhd", "tan", "tand", "tanh", "tanhd",
-    )
-    polynomial_keys: tuple[str, ...] = (
-        "a_x_c1_x_c2", "ax_2_bx_c",
-    )
-    power_keys: tuple[str, ...] = (
-        "reciprocal", "reciprocal_fb", "x_2", "x_p",
-    )
-
-    if source_category == "Constants and Scaling":
-        category_path: tuple[str, ...] = ("Mathematical functions", "Constants")
-    elif source_category == "Scaling and Products":
-        if template_key == "bias":
-            category_path = ("Sources", "Initial conditions")
-        elif template_key == "mx_n":
-            category_path = ("Mathematical functions", "Affine")
-        elif template_key in polynomial_keys:
-            category_path = ("Mathematical functions", "Polynomials")
-        elif template_key in power_keys:
-            category_path = ("Mathematical functions", "Power")
-        elif template_key in saturated_gain_keys:
-            category_path = ("Limits and nonlinearities", "Saturation")
-        elif template_key in scaling_gain_keys:
-            category_path = ("Mathematical functions", "Gain")
-        else:
-            raise ValueError(f"Unclassified scaling template '{template_key}'")
-    elif template_key == "equal":
-        category_path = ("Logic and events", "Comparator")
-    elif template_key == "abs":
-        category_path = ("Mathematical functions", "Absolute value")
-    elif template_key == "sign":
-        category_path = ("Mathematical functions", "Sign")
-    elif template_key == "sqrt":
-        category_path = ("Mathematical functions", "Square root")
-    elif template_key in ("exp", "ln", "log"):
-        category_path = ("Mathematical functions", "Exponential and logarithms")
-    elif template_key in ("ceil", "floor", "frac", "modulo", "round"):
-        category_path = ("Mathematical functions", "Rounding and modulo")
-    elif template_key in trigonometric_keys:
-        category_path = ("Mathematical functions", "Trigonometric functions")
-    elif template_key in power_keys:
-        category_path = ("Mathematical functions", "Power")
-    else:
-        raise ValueError(f"Unclassified elementary-function template '{template_key}'")
-    return category_path
-
-
-def get_basic_waveform_category_path(descriptor: BasicBlockTemplateDescriptor,
-                                     source_category: str) -> tuple[str, ...]:
-    """Classify waveform, clock, and event-pulse descriptors.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :param source_category: Legacy waveform category.
-    :return: Path below ``Basic`` for the source or event behavior.
-    """
-    template_key: str = descriptor.template_key
-    timed_comparator_keys: tuple[str, ...] = (
-        "abs_in_greater_than_c_ip", "abs_in_less_than_c_ip",
-        "yi_equals_c_ip", "yi_greater_than_c_ip",
-        "yi_greater_than_or_equal_c_ip", "yi_less_than_c_ip",
-        "yi_less_than_or_equal_c_ip", "yi1_equals_yi2_ip",
-        "yi1_greater_than_or_equal_yi2_ip", "yi1_greater_than_yi2_ip",
-        "yi1_less_than_or_equal_yi2_ip", "yi1_less_than_yi2_ip",
-    )
-    pulse_logic_keys: tuple[str, ...] = (
-        "2_out_of_3_ip", "and2_ip", "and3_ip", "invert_logic_ip",
-        "not_ip", "or2_ip", "or3_ip",
-    )
-    clock_keys: tuple[str, ...] = (
-        "clock_t_0_par", "clock_t_0_sig", "clock_t_t0_par",
-        "clock_t_t0_sig", "clock_par", "clock_sig",
-    )
-
-    if template_key in ("sawtooth_wave_generator_ip", "sawtooth_wave_generator"):
-        category_path: tuple[str, ...] = ("Sources", "Sawtooth")
-    elif template_key in ("triangle_wave_generator", "triangle_wave_generator_ip"):
-        category_path = ("Sources", "Triangle")
-    elif template_key in ("square_wave_generator", "square_wave_generator_ip"):
-        category_path = ("Sources", "Square")
-    elif template_key in ("sine_wave_generator_t_t0", "sine_wave_generator"):
-        category_path = ("Sources", "Sine")
-    elif template_key == "pulse":
-        category_path = ("Sources", "Pulse")
-    elif template_key in ("time_form_a", "time_form_b"):
-        category_path = ("Sources", "Simulation time")
-    elif template_key in clock_keys:
-        category_path = ("Sources", "Periodic clocks")
-    elif template_key in ("timer_reset", "timer_reset_hold_reset_t0_reset_incfw"):
-        category_path = ("Logic and events", "Timers")
-    elif template_key in timed_comparator_keys:
-        category_path = ("Logic and events", "Timed comparator")
-    elif template_key in pulse_logic_keys:
-        category_path = ("Logic and events", "Logic gate")
-    else:
-        raise ValueError(
-            f"Unclassified waveform template '{template_key}' from '{source_category}'"
-        )
-    return category_path
-
-
-def get_basic_continuous_category_path(descriptor: BasicBlockTemplateDescriptor,
-                                       source_category: str) -> tuple[str, ...]:
-    """Classify legacy continuous-time descriptors by numerical behavior.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :param source_category: Legacy continuous-time category.
-    :return: Path below ``Basic`` for the continuous behavior.
-    """
-    template_key: str = descriptor.template_key
-    previous_value_keys: tuple[str, ...] = (
-        "lastvalue_form_a", "lastvalue_incbackward",
-        "lastvalue_incforward", "lastvalue_form_b",
-    )
-    delay_approximation_keys: tuple[str, ...] = (
-        "ke_st_bypass_incforward", "ke_st_incforward",
-        "pade_approximant_r12_incbackward", "pade_approximant_r12_incforward",
-        "e_s0_01_incforward", "e_st_bypass", "e_st_bypass_incbackward",
-        "e_st_bypass_incforward", "e_st_incbackward", "e_st_incforward",
-    )
-    derivative_keys: tuple[str, ...] = (
-        "s_1_st", "st_1_st_bypass_form_a", "st_1_st",
-        "st_1_st_bypass_form_b", "skt_1_st", "sktd_1_st",
-        "stb_1_sta_fb", "stld_1_stlg_fb", "sk_1_0_01s",
-        "sk_1_st_fb", "sk_1_st", "s_2k_1_st_2",
-    )
-    filter_keys: tuple[str, ...] = (
-        "s_w0_2_s_2",
-        "h0w0_q_s_w0_2_sw0_q_s_2", "butterworth_2nd_order",
-        "butterworth_3rd_order", "butterworth_2nd_order_rst_hold",
-        "butterworth_3rd_order_rst_hold",
-    )
-    integrator_keys_from_controllers: tuple[str, ...] = (
-        "k_s_p", "k_s_s", "k_s",
-    )
-    mathematical_gain_keys: tuple[str, ...] = (
-        "multiply_1_sqrt2", "multiply_1_sqrt3", "multiply_pi",
-        "multiply_sqrt_2_3", "multiply_sqrt_3_2", "multiply_sqrt_k1_k2",
-    )
-    minimum_maximum_keys: tuple[str, ...] = (
-        "max2", "max3", "max4", "min2", "min3", "min4",
-    )
-
-    if source_category == "Delays and Memory":
-        if template_key == "movingavg":
-            category_path: tuple[str, ...] = ("Memory and discrete-time", "Moving average")
-        elif template_key in previous_value_keys:
-            category_path = ("Memory and discrete-time", "Previous value")
-        elif template_key in delay_approximation_keys:
-            category_path = ("Continuous dynamics", "Delay approximations")
-        elif template_key == "delay":
-            category_path = ("Memory and discrete-time", "Exact time delay")
-        else:
-            raise ValueError(f"Unclassified delay or memory template '{template_key}'")
-    elif source_category == "Integrators and Derivatives":
-        if template_key in filter_keys:
-            # The legacy catalogue stored the undamped resonator beside
-            # integrators and derivatives, but its transfer function is a
-            # resonant filter and must be classified by behavior.
-            category_path = ("Continuous dynamics", "Filters")
-        elif template_key in derivative_keys:
-            category_path = ("Continuous dynamics", "Derivatives")
-        else:
-            # The remaining audited source records implement 1/s or 1/(sT)
-            # variants with reset, hold, freeze, and limit options.
-            category_path = ("Continuous dynamics", "Integrators")
-    elif template_key in minimum_maximum_keys:
-        category_path = ("Mathematical functions", "Minimum/Maximum")
-    elif template_key in ("picdro", "picdro_const"):
-        category_path = ("Logic and events", "Timed comparator")
-    elif template_key in mathematical_gain_keys:
-        category_path = ("Mathematical functions", "Gain")
-    elif template_key in filter_keys:
-        category_path = ("Continuous dynamics", "Filters")
-    elif template_key in derivative_keys:
-        category_path = ("Continuous dynamics", "Derivatives")
-    elif template_key in integrator_keys_from_controllers:
-        category_path = ("Continuous dynamics", "Integrators")
-    elif template_key == "1_2hs":
-        category_path = ("Mechanical", "Drive train")
-    elif source_category in ("Transfer Functions and Filters", "Controllers"):
-        # All non-exception records in these two audited legacy families are
-        # rational transfer functions or complete continuous controllers.
-        category_path = ("Continuous dynamics", "Transfer functions")
-    else:
-        raise ValueError(
-            f"Unclassified continuous template '{template_key}' from '{source_category}'"
-        )
-    return category_path
-
-
-def get_basic_logic_category_path(descriptor: BasicBlockTemplateDescriptor,
-                                  source_category: str) -> tuple[str, ...]:
-    """Classify legacy logical and event descriptors.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :param source_category: Legacy logical category.
-    :return: Path below ``Basic`` for the logical behavior.
-    """
-    template_key: str = descriptor.template_key
-    latch_keys: tuple[str, ...] = ("aflipflop", "flipflop", "bistable")
-    gate_keys: tuple[str, ...] = (
-        "and2", "and3", "and4", "eor", "nor", "not", "or2", "or3", "or4",
-    )
-    gate_memory_switch_keys: tuple[str, ...] = (
-        "switch_sig_2_1_not_eq_k_by_s_p", "switch_sw_not_equal_c_2s_1s",
-    )
-    enabled_integrator_keys: tuple[str, ...] = (
-        "1_s_enable", "1_s_enable_reset", "1_s_enable_reset_sig",
-    )
-    enabled_derivative_keys: tuple[str, ...] = ("st_1_st_enable",)
-    enabled_transfer_function_keys: tuple[str, ...] = ("1_1_st_enable",)
-    signal_enable_keys: tuple[str, ...] = (
-        "enable_1_sig_hold", "enable_1_sig",
-        "enable_2_sig_hold", "enable_2_sig",
-        "enable_3_sig_hold", "enable_3_sig",
-        "enable_4_sig_hold", "enable_4_sig",
-        "enable_5_sig_hold", "enable_5_sig",
-        "enable_6_sig_hold", "enable_7_sig_hold", "enable_8_sig_hold",
-        "enable_signal_fixed", "enable_signal",
-    )
-    if source_category == "Comparators":
-        category_path: tuple[str, ...] = ("Logic and events", "Comparator")
-    elif source_category == "Switching and Selection" or template_key in gate_memory_switch_keys:
-        category_path = ("Logic and events", "Selector / Switch")
-    elif template_key in enabled_integrator_keys:
-        category_path = ("Continuous dynamics", "Integrators")
-    elif template_key in enabled_derivative_keys:
-        category_path = ("Continuous dynamics", "Derivatives")
-    elif template_key in enabled_transfer_function_keys:
-        category_path = ("Continuous dynamics", "Transfer functions")
-    elif template_key in signal_enable_keys:
-        category_path = ("Logic and events", "Selector / Switch")
-    elif template_key == "edge_detector":
-        category_path = ("Logic and events", "Edge detector")
-    elif template_key == "monostable":
-        category_path = ("Logic and events", "Timers")
-    elif template_key in latch_keys:
-        category_path = ("Logic and events", "Latches and flip-flops")
-    elif template_key in gate_keys:
-        category_path = ("Logic and events", "Logic gate")
-    else:
-        raise ValueError(
-            f"Unclassified logic template '{template_key}' from '{source_category}'"
-        )
-    return category_path
-
-
-def get_basic_measurement_category_path(descriptor: BasicBlockTemplateDescriptor) -> tuple[str, ...]:
-    """Classify measurements separately from unit and per-unit conversions.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :return: Path below ``Basic`` for the measurement or conversion behavior.
-    """
-    template_key: str = descriptor.template_key
-    electrical_measurement_keys: tuple[str, ...] = (
-        "el_power", "pq_calculator", "accelerating_power_simple", "accelerating_power_ipb",
-    )
-    per_unit_conversion_keys: tuple[str, ...] = (
-        "power_base", "hz_p_u", "nm_p_u", "abs_p_u_par", "abs_p_u_sig",
-        "p_u_hz", "p_u_abs_par", "p_u_abs_sig", "p_u_rpm", "rpm_p_u",
-    )
-    unit_conversion_keys: tuple[str, ...] = (
-        "deg_rad", "rad_deg", "rad_s_rpm", "rpm_rad_s",
-    )
-
-    if template_key in electrical_measurement_keys:
-        category_path: tuple[str, ...] = ("Measurements and conversions", "Electrical measurements")
-    elif template_key in per_unit_conversion_keys:
-        category_path = ("Measurements and conversions", "Per-unit conversions")
-    elif template_key in unit_conversion_keys:
-        category_path = ("Measurements and conversions", "Unit conversions")
-    else:
-        raise ValueError(f"Unclassified measurement or conversion template '{template_key}'")
-    return category_path
-
-
-def get_basic_limit_category_path(descriptor: BasicBlockTemplateDescriptor,
-                                  source_category: str) -> tuple[str, ...]:
-    """Classify limiter and nonlinearity descriptors.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :param source_category: Legacy limit category.
-    :return: Path below ``Basic`` for the nonlinear behavior.
-    """
-    template_key: str = descriptor.template_key
-    deadband_keys: tuple[str, ...] = (
-        "deadband_p", "deadband_bypass", "deadband_discontinuous",
-        "deadband_offset_p", "deadband_offset_bypass", "deadband_stepped_p",
-        "deadband_stepped_bypass", "deadband",
-    )
-    rate_limiter_keys: tuple[str, ...] = (
-        "gradlim_const", "rate_limiter", "rate_limiter_base",
-        "rate_limiter_base_p_form_a", "rate_limiter_base_p_form_b",
-        "rate_limiter_base_p_form_c", "rate_limiter_p_form_a",
-        "rate_limiter_p_form_b", "rate_limiter_p_form_c", "rate_limiter_s",
-    )
-    if template_key in deadband_keys:
-        category_path: tuple[str, ...] = ("Limits and nonlinearities", "Deadband")
-    elif template_key == "backlash":
-        category_path = ("Limits and nonlinearities", "Hysteresis")
-    elif template_key in rate_limiter_keys:
-        category_path = ("Limits and nonlinearities", "Rate limiter")
-    elif source_category == "Limiters":
-        category_path = ("Limits and nonlinearities", "Saturation")
-    else:
-        raise ValueError(
-            f"Unclassified limit template '{template_key}' from '{source_category}'"
-        )
-    return category_path
-
-
-def get_basic_transform_category_path(descriptor: BasicBlockTemplateDescriptor) -> tuple[str, ...]:
-    """Classify coordinate, sequence, and RMS transform descriptors.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :return: Path below ``Basic`` for the transform behavior.
-    """
-    template_key: str = descriptor.template_key
-    clarke_keys: tuple[str, ...] = (
-        "clarke_transform_power_invariant", "clarke_transform",
-        "inverse_clarke_transform_pow_invariant", "inverse_clarke_transform",
-    )
-    park_keys: tuple[str, ...] = (
-        "inverse_park_transform_dq", "inverse_park_transform_dq0",
-        "park_transform_dq", "park_transform_dq0",
-        "abc_dq0_power_invariant_align_a_d", "abc_dq0_power_invariant_align_a_q",
-        "abc_dq0_power_variant_align_a_d", "abc_dq0_power_variant_align_a_q",
-        "dq0_abc_power_invariant_align_a_d", "dq0_abc_power_invariant_align_a_q",
-        "dq0_abc_power_variant_align_a_d", "dq0_abc_power_variant_align_a_q",
-    )
-    rms_keys: tuple[str, ...] = ("rms", "rms_value_p_u", "rms_value")
-    sequence_keys: tuple[str, ...] = ("balanced", "u_seq_ab0_u_abc")
-    if template_key in clarke_keys:
-        category_path: tuple[str, ...] = ("Transforms", "Clarke")
-    elif template_key in park_keys:
-        category_path = ("Transforms", "Park / dq0")
-    elif template_key in rms_keys:
-        category_path = ("Transforms", "RMS conversions")
-    elif template_key in sequence_keys:
-        category_path = ("Transforms", "Sequence components")
-    else:
-        raise ValueError(f"Unclassified transform template '{template_key}'")
-    return category_path
-
-
-def get_basic_complex_category_path(descriptor: BasicBlockTemplateDescriptor) -> tuple[str, ...]:
-    """Classify complex-number descriptors by their visible operation.
-
-    :param descriptor: Basic-block descriptor being classified.
-    :return: Path below ``Basic`` for the complex operation.
-    """
-    template_key: str = descriptor.template_key
-    if template_key in ("to_polar_complex", "to_rectangular_complex"):
-        category_path: tuple[str, ...] = ("Complex numbers", "Cartesian / polar conversion")
-    elif template_key == "mag_complex":
-        category_path = ("Complex numbers", "Magnitude and angle")
-    elif template_key == "conj_complex":
-        category_path = ("Complex numbers", "Conjugate")
-    elif template_key in ("add_complex", "div_complex", "mul_complex", "sub_complex"):
-        category_path = ("Complex numbers", "Arithmetic")
-    elif template_key in ("limit_p_complex", "limit_ppp_complex_with_prio"):
-        category_path = ("Limits and nonlinearities", "Saturation")
-    else:
-        raise ValueError(f"Unclassified complex template '{template_key}'")
-    return category_path
-
-
-def get_basic_library_category_path(descriptor: BasicBlockTemplateDescriptor) -> tuple[str, ...]:
-    """Translate catalog metadata into the canonical ``Basic`` tree.
-
-    The catalog retains its stable import metadata while this GUI-owned mapping
-    controls only where a draggable leaf is presented. This keeps persistence
-    and template materialization independent from library organization.
-
-    :param descriptor: Editor-ready catalog descriptor to place in the tree.
-    :return: Canonical path below ``Basic``.
-    """
-    source_path: tuple[str, ...] = tuple(descriptor.category_path)
-    if len(source_path) > 0 and source_path[0] == "Native":
-        source_path = source_path[1:]
-    else:
-        pass
-
-    if len(source_path) > 0:
-        primary_category: str = source_path[0]
-    else:
-        primary_category = ""
-    if len(source_path) > 1:
-        secondary_category: str = source_path[1]
-    else:
-        secondary_category = ""
-
-    if primary_category in ("Arrays and Matrices", "Lookup and Tables"):
-        category_path: tuple[str, ...] = get_basic_lookup_table_category_path(descriptor=descriptor)
-    elif primary_category == "Math and Functions":
-        category_path = get_basic_mathematical_category_path(
-            descriptor=descriptor,
-            source_category=secondary_category,
-        )
-    elif primary_category == "Waveforms and Time":
-        category_path = get_basic_waveform_category_path(
-            descriptor=descriptor,
-            source_category=secondary_category,
-        )
-    elif primary_category == "Continuous":
-        category_path = get_basic_continuous_category_path(
-            descriptor=descriptor,
-            source_category=secondary_category,
-        )
-    elif primary_category == "Logic and Events":
-        category_path = get_basic_logic_category_path(
-            descriptor=descriptor,
-            source_category=secondary_category,
-        )
-    elif primary_category == "Limits and Nonlinearities":
-        category_path = get_basic_limit_category_path(
-            descriptor=descriptor,
-            source_category=secondary_category,
-        )
-    elif primary_category == "Transforms":
-        category_path = get_basic_transform_category_path(descriptor=descriptor)
-    elif primary_category == "Complex":
-        category_path = get_basic_complex_category_path(descriptor=descriptor)
-    elif primary_category == "Mechanical":
-        category_path = ("Mechanical", "Drive train")
-    elif primary_category == "Control and Measurement" and secondary_category == "Controllers":
-        category_path = get_basic_continuous_category_path(
-            descriptor=descriptor,
-            source_category=secondary_category,
-        )
-    elif primary_category == "Control and Measurement" and secondary_category == "Measurements and Units":
-        category_path = get_basic_measurement_category_path(descriptor=descriptor)
-    else:
-        raise ValueError(
-            f"Unclassified basic-catalog path {source_path!r} for '{descriptor.template_key}'"
-        )
-    return category_path
+    return dict()
 
 
 def get_basic_procedural_category_path(
@@ -2754,13 +1779,16 @@ def get_basic_procedural_category_path(
         category_path = ("Memory and discrete-time", "Exact time delay")
     elif logic_tpe == ProceduralLogicType.MovingAverage:
         category_path = ("Memory and discrete-time", "Moving average")
+    elif logic_tpe == ProceduralLogicType.WrappedDerivative:
+        category_path = ("Measurements and conversions", "Electrical measurements")
     elif logic_tpe == ProceduralLogicType.HardSaturation:
         category_path = ("Limits and nonlinearities", "Saturation")
     elif logic_tpe == ProceduralLogicType.GradientLimiter:
         category_path = ("Limits and nonlinearities", "Rate limiter")
     elif logic_tpe in (ProceduralLogicType.FlipFlop, ProceduralLogicType.AnalogFlipFlop):
         category_path = ("Logic and events", "Latches and flip-flops")
-    elif logic_tpe in (ProceduralLogicType.PickupDropoff, ProceduralLogicType.DelayedThresholdLatch):
+    elif logic_tpe in (ProceduralLogicType.PickupDropoff, ProceduralLogicType.TimedPulse,
+                      ProceduralLogicType.DelayedThresholdLatch):
         category_path = ("Logic and events", "Timed comparator")
     elif logic_tpe == ProceduralLogicType.ResetOnRisingEdge:
         category_path = ("Logic and events", "Edge detector")
@@ -2777,94 +1805,6 @@ def get_basic_procedural_category_path(
     else:
         raise ValueError(f"Unclassified procedural Library type '{logic_tpe.name}'")
     return category_path
-
-
-def is_replaced_legacy_basic_descriptor(descriptor: BasicBlockTemplateDescriptor) -> bool:
-    """Return whether the Basic library omits one redundant legacy leaf.
-
-    The generated templates remain importable for saved-model compatibility.
-    Their draggable entries are suppressed when a canonical structural,
-    mathematical, or procedural block provides the same behavior, or when the
-    template is a no-op identity block.
-
-    :param descriptor: Basic catalog descriptor being considered for display.
-    :return: ``True`` when the legacy descriptor must stay out of the library.
-    """
-    replaced_template_keys: tuple[str, ...] = (
-        "1_sqrt2",
-        "2pi_form_a",
-        "2pi_form_b",
-        "2pi_form_c",
-        "2pi_form_d",
-        "2pi_form_e",
-        "abs",
-        "aflipflop",
-        "c_form_b",
-        "c_form_c",
-        "c_form_d",
-        "c_form_e",
-        "c_form_f",
-        "delay",
-        "e",
-        "flipflop",
-        "gradlim_const",
-        "inverse_lookup_array_object_linear",
-        "lastvalue_form_a",
-        "lastvalue_form_b",
-        "lookup_array_1x3_linear_fixed",
-        "lookup_array_1x3_linear_variable",
-        "lookup_array_1x4_linear_fixed",
-        "lookup_array_1x4_linear_variable",
-        "lookup_array_linear_noclipping",
-        "lookup_array_object_linear",
-        "lookup_array_object_linear_noclipping",
-        "lookup_array_object_spline",
-        "lookup_matrix_linear",
-        "lookup_matrix_object_linear",
-        "lookup_matrix_object_spline",
-        "lookup_matrix_spline",
-        "movingavg",
-        "max2",
-        "max3",
-        "max4",
-        "min2",
-        "min3",
-        "min4",
-        "multiply_1_form_b",
-        "multiply_1_sqrt2",
-        "multiply_1_sqrt3",
-        "multiply_k_form_a",
-        "multiply_k_form_b",
-        "multiply_pi",
-        "multiply_sqrt2",
-        "multiply_sqrt3",
-        "multiply_sqrt_2_3",
-        "multiply_sqrt_3_2",
-        "pi",
-        "pi_2",
-        "picdro_const",
-        "sqrt2",
-        "sqrt3",
-        "sqrt_2_3",
-        "sqrt_3_2",
-        "s_1_st",
-        "s_2k_1_st_2",
-        "sk_1_0_01s",
-        "sk_1_st",
-        "sk_1_st_fb",
-        "skt_1_st",
-        "sktd_1_st",
-        "st_1_st",
-        "st_1_st_bypass_form_a",
-        "st_1_st_bypass_form_b",
-        "st_1_st_enable",
-        "stb_1_sta_fb",
-        "stld_1_stlg_fb",
-        "time_form_a",
-    )
-    descriptor_type_id: int = int(descriptor.typ_id)
-    is_legacy_integrator: bool = 206 <= descriptor_type_id <= 292
-    return is_legacy_integrator or descriptor.template_key in replaced_template_keys
 
 
 def build_non_empty_library_branch(branch: Dict[str, object]) -> Dict[str, object]:
@@ -2999,24 +1939,16 @@ def build_basic_library_branch() -> Dict[str, object]:
         else:
             pass
 
-    # Catalog descriptors carry stable import identities. Only their visible
-    # paths are translated here, beside the rest of the Library registrations.
-    # Redundant wrappers stay loadable for legacy models but are not exposed as
-    # duplicate draggable entries.
+    # The engine catalogue owns every Basic category and leaf placement.
+    descriptors: list[BasicBlockTemplateDescriptor]
     descriptor: BasicBlockTemplateDescriptor
-    for descriptor in get_editor_ready_basic_block_catalog_descriptors():
-        if is_replaced_legacy_basic_descriptor(descriptor=descriptor):
-            pass
-        else:
-            if descriptor.template_key == "1_2hs":
-                descriptor_label: str = "Inertia integrator 1/(2Hs)"
-            else:
-                descriptor_label = descriptor.display_label
+    for descriptors in BASIC_BLOCK_CATALOGUE.values():
+        for descriptor in descriptors:
             insert_library_leaf(
                 branch=basic_branch,
-                category_path=get_basic_library_category_path(descriptor=descriptor),
+                category_path=tuple(descriptor.category_path),
                 leaf=LibraryLeafSpec(
-                    label=descriptor_label,
+                    label=descriptor.display_label,
                     payload=descriptor,
                     search_text=descriptor.search_text,
                 ),
@@ -3153,7 +2085,10 @@ def build_library_item_description(payload: object) -> str:
         else:
             pass
     elif isinstance(payload, InternationalStandardTemplateDescriptor):
-        description = build_international_standard_description(model=payload.model)
+        if isinstance(payload.model, InternationalStandardModel):
+            description = build_international_standard_description(model=payload.model)
+        else:
+            description = f"{payload.display_label} international-standard RMS equation block"
     elif isinstance(payload, LibraryDeviceTemplateSpec):
         description = payload.description
     elif isinstance(payload, RmsModelTemplate):
@@ -3301,6 +2236,8 @@ def build_block_type_description(block_type: BlockType) -> str:
         description = "Configurable EMT short-circuit fault with selectable phases and ground connection"
     elif block_type == BlockType.SWITCH_EMT:
         description = "Controlled ideal electrical switch for opening or closing an EMT branch"
+    elif block_type == BlockType.INTERCONNECTION:
+        description = "Exposes selected variables from another device dynamic model"
     elif block_type.name.startswith("MEASUREMENTS_"):
         description = f"Exposes the {block_type.value} network measurement as a dynamic-model signal"
     elif block_type == BlockType.CONST:
@@ -3469,7 +2406,7 @@ def set_library_item_icon(item: QtGui.QStandardItem, payload: object) -> None:
     elif isinstance(payload, BlockType):
         if payload == BlockType.FROM_GOTO:
             item.setIcon(QtGui.QIcon(":/Icons/icons/tree.png"))
-        elif payload == BlockType.INPUT_CONN or payload.name.startswith("MEASUREMENTS_"):
+        elif payload in (BlockType.INPUT_CONN, BlockType.INTERCONNECTION) or payload.name.startswith("MEASUREMENTS_"):
             item.setIcon(QtGui.QIcon(":/Icons/icons/measurement.png"))
         elif payload == BlockType.SUM:
             item.setIcon(QtGui.QIcon(":/Icons/icons/plus.png"))

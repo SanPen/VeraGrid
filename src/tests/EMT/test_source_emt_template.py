@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
@@ -7,11 +11,11 @@ import pytest
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.balanced_source_emt_template import get_balanced_3ph_voltage_source_emt_template
-from VeraGridEngine.Templates.Emt.source_emt_template import get_controlled_current_source_emt_template
-from VeraGridEngine.Templates.Emt.source_emt_template import get_controlled_voltage_source_emt_template
-from VeraGridEngine.Templates.Emt.source_emt_template import get_current_source_emt_template
-from VeraGridEngine.Templates.Emt.source_emt_template import get_voltage_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.balanced_source_emt_template import get_balanced_3ph_voltage_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.source_emt_template import get_controlled_current_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.source_emt_template import get_controlled_voltage_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.source_emt_template import get_current_source_emt_template
+from VeraGridEngine.Templates.Emt.sources.source_emt_template import get_voltage_source_emt_template
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
 

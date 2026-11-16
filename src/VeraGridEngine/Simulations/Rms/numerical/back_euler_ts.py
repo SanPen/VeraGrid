@@ -6,13 +6,13 @@
 import numpy as np
 import scipy.sparse as sp
 import time
-import scipy.sparse as sp
-from scipy.sparse import csc_matrix
 
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
-from VeraGridEngine.Utils.Sparse.csc import pack_4_by_4_scipy
-from VeraGridEngine.basic_structures import Vec, Mat
+from VeraGridEngine.Utils.Sparse.sparse_solve import SparseProviderLinearSolver, solve_sparse_system_once
+from VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend import SuperLUSparseBackendProvider
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
+from VeraGridEngine.basic_structures import Vec, Mat
 
 
 class BackEulerImplicitTensygrid:
@@ -21,6 +21,8 @@ class BackEulerImplicitTensygrid:
     """
     __slots__ = (
         "problem",
+        "_sparse_solver_backend_provider",
+        "_sparse_linear_solver",
         "t0",
         "h",
         "max_iter_0",
@@ -34,12 +36,24 @@ class BackEulerImplicitTensygrid:
                  t0: float,
                  t_end: float,
                  h: float,
-                 max_iter: int) -> None:
-        """
+                 max_iter: int, sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None) -> None:
+        """:param problem:
 
-        :param problem:
+        :param sparse_solver_backend_provider: Optional resolved LU provider; inherit the problem binding when absent, then use the existing SuperLU default. Factors belong to this numerical phase.
+        :return: None; initialize an independent numerical phase.
         """
         self.problem = problem
+        self._sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = sparse_solver_backend_provider
+        # A direct constructor inherits the problem's already-resolved selection.
+        if self._sparse_solver_backend_provider is None and isinstance(problem, RmsProblemTemplate):
+            self._sparse_solver_backend_provider = problem.get_sparse_solver_backend_provider()
+        else:
+            pass
+        resolved_provider: SparseLinearSolverBackendProvider = (
+            SuperLUSparseBackendProvider() if self._sparse_solver_backend_provider is None
+            else self._sparse_solver_backend_provider)
+        # Each temporal integrator owns its own factors; projections own another phase.
+        self._sparse_linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(resolved_provider)
         self.t0 = t0
         self.h = h
         self.max_iter_0 = max_iter
@@ -73,41 +87,8 @@ class BackEulerImplicitTensygrid:
                            x: Vec,
                            dx: Vec,
                            h: float) -> sp.csc_matrix:
-        """
-        :param x: vector or variables' values
-        :param dx: vector of diff values
-        :param h: step
-        :return:
-        """
-
-        """
-                  state Var    algeb var
-        state eq |I - h * J11 | - h* J12  |    | ∆ state var|    | ∆ state eq |
-                 |            |           |    |            |    |            |
-                 -------------------------- x  |------------|  = |------------|
-        algeb eq |J21         | J22       |    | ∆ algeb var|    | ∆ algeb eq |
-                 |            |           |    |            |    |            |
-        """
-
-        # returns only j22 if no states, returns J if states
-        if self.problem.get_states_number() == 0:
-            j22: sp.csc_matrix = self.problem.get_j22(x, dx, h)
-            return j22
-
-        j11_val: csc_matrix = self.problem.get_j11(x, dx, h)
-        j12_val: csc_matrix = self.problem.get_j12(x, dx, h)
-        j21_val: csc_matrix = self.problem.get_j21(x, dx, h)
-        j22_val: csc_matrix = self.problem.get_j22(x, dx, h)
-
-        I = sp.eye(m=self.problem.get_states_number(), n=self.problem.get_states_number())
-        j11: sp.csc_matrix = (I - h * j11_val).tocsc()
-        j12: sp.csc_matrix = - h * j12_val
-        j21: sp.csc_matrix = j21_val
-        j22: sp.csc_matrix = j22_val
-
-        J = pack_4_by_4_scipy(j11, j12, j21, j22)
-
-        return J
+        """Return the problem's Backward Euler Newton matrix."""
+        return self.problem.get_jacobian(x, dx, h)
 
     def simulate(self):
         """
@@ -170,7 +151,7 @@ class BackEulerImplicitTensygrid:
                 ### print info ###
                 if step_idx == 0:
                     Jf = self._jacobian_implicit(x_new, dx, self.h)
-                    delta = sp.linalg.spsolve(Jf, -rhs)
+                    delta: Vec = solve_sparse_system_once(Jf, -rhs, self._sparse_solver_backend_provider, self._sparse_linear_solver)
                     if converged:
                         # print("System well initialized.")
                         # print(f"x is {x_new}")
@@ -192,7 +173,7 @@ class BackEulerImplicitTensygrid:
 
                     solved = False
                     linear_start = time.time()
-                    delta = sp.linalg.spsolve(Jf, -rhs)
+                    delta: Vec = solve_sparse_system_once(Jf, -rhs, self._sparse_solver_backend_provider, self._sparse_linear_solver)
                     linear_end = time.time()
                     timings["linear_solver_time"] += linear_end - linear_start
                     solved = np.all(np.isfinite(delta))

@@ -1,0 +1,483 @@
+﻿********************************************************************************
+*
+* DIgSILENT (R) DGS Export V1.8.4
+* Copyright (C) DIgSILENT GmbH 2026. All rights reserved.
+*
+* DIgSILENT (C) PowerFactory V24.0.2.0
+*
+* Date:     11/10/2026 05:06
+* Project:  VeraGrid DGS Genstat Options 20261110 (Study Case: CtrlFP_Pmed_Drate_descendente)
+*
+********************************************************************************
+
+
+$$General;FID(a:40);Descr(a:40);Val(a:255)
+  1;Version;7.0
+
+
+$$BlkDef;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);isMacro(i);level(i);sUpLimPar:SIZEROW(i);sUpLimPar:0(a);sUpLimInp:SIZEROW(i);sLowLimPar:SIZEROW(i);sLowLimPar:0(a);sLowLimInp:SIZEROW(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);sStates:SIZEROW(i);sStates:0(a);sParams:SIZEROW(i);sParams:0(a);sIntern:SIZEROW(i);sIntern:0(a);sAddEquat:SIZEROW(i);sAddEquat:0(a);sAddEquat:1(a);sAddEquat:2(a);sAddEquat:3(a);sAddEquat:4(a);sAddEquat:5(a);sAddEquat:6(a);sAddEquat:7(a);sAddEquat:8(a);sAddEquat:9(a);sAddEquat:10(a);sAddEquat:11(a);sAddEquat:12(a);sAddEquat:13(a);sAddEquat:14(a);sAddEquat:15(a);sAddEquat:16(a);sAddEquat:17(a);sAddEquat:18(a);sAddEquat:19(a);sAddEquat:20(a);sAddEquat:21(a);sAddEquat:22(a);sAddEquat:23(a);sAddEquat:24(a);sAddEquat:25(a);sAddEquat:26(a);sAddEquat:27(a);sAddEquat:28(a);sAddEquat:29(a);sAddEquat:30(a);sAddEquat:31(a);sAddEquat:32(a);sAddEquat:33(a);sAddEquat:34(a);sAddEquat:35(a);sAddEquat:36(a);sAddEquat:37(a);sAddEquat:38(a);sAddEquat:39(a);sAddEquat:40(a);sAddEquat:41(a);sAddEquat:42(a);sAddEquat:43(a);sAddEquat:44(a);sAddEquat:45(a);sAddEquat:46(a);sAddEquat:47(a);sAddEquat:48(a);sAddEquat:49(a);sAddEquat:50(a);sAddEquat:51(a);sAddEquat:52(a);sAddEquat:53(a);sAddEquat:54(a);sAddEquat:55(a);sAddEquat:56(a);sAddEquat:57(a);sAddEquat:58(a);sAddEquat:59(a);sAddEquat:60(a);sAddEquat:61(a);sAddEquat:62(a);sAddEquat:63(a);sAddEquat:64(a);sAddEquat:65(a);sAddEquat:66(a);sAddEquat:67(a);sAddEquat:68(a);sAddEquat:69(a);sAddEquat:70(a);sAddEquat:71(a);sAddEquat:72(a);sAddEquat:73(a);sAddEquat:74(a);sAddEquat:75(a);sAddEquat:76(a);sAddEquat:77(a);sAddEquat:78(a);sAddEquat:79(a);sAddEquat:80(a);sAddEquat:81(a);sAddEquat:82(a);sAddEquat:83(a);sAddEquat:84(a);sAddEquat:85(a);sAddEquat:86(a);sAddEquat:87(a);sAddEquat:88(a);sAddEquat:89(a);sAddInter:SIZEROW(i);sAddParam:SIZEROW(i);cOutput:SIZEROW(i);cOutput:0(a);cInput:SIZEROW(i);cInput:0(a);cStates:SIZEROW(i);cStates:0(a);cParams:SIZEROW(i);cParams:0(a);cIntern:SIZEROW(i);cIntern:0(a)
+  2;C;1;;1;5;0;;0;0;;0;1;yo;0;;0;;0;;0;;2;! Functionality: Outputs 1.;yo = 1.0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;0;;0;;0;;0;
+  3;C;PPC;;0;7;0;;0;0;;0;1;Pref,Qref,PFref;0;;0;;0;;1;Fmeas,MX_P,MX_Q,MX_V;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;Pref,Qref,PFref;0;;0;;0;;1;Fmeas,MX_P,MX_Q,MX_V
+  4;C;PPC_FINAL2;;0;4;1;PPC_QMAX,PPC_SP_QMAX,VMAX,PPC_SP_PMAX,PPC_PMAX;0;1;PPC_QMIN,PPC_SP_QMIN,VMIN,PPC_SP_PMIN,PPC_PMIN;0;1;PTOT_INV,QTOT_INV;1;DESHAB_FCOR,MX_F,SP_PPID,MX_P,Vbase_VDPID,MX_V,SP_VPID,FP_CONV,SP_FPPID,MX_Q,SP_QPID;1;xfp,xq,xqv,xv,xp,x_mx_p,x_mx_q,x_mx_v,x_ptot,x_qtot;1;KP_QFPPID,KI_QFPPID,KP_QPID,KI_QPID,KP_QVPID,KI_QVPID,KP_VPID,KI_VPID,cM1,cM2,dT,cHzTrS1r,cHzTrI1r,cHzTrS1,cHzTrI1,cHzTrS2,cHzTrI2,SPDEC_FPPID,SPINC_FPPID,dT2,SPDEC_PPID,SPINC_PPID,SPDEC_QPID,SPINC_QPID,dT3,SPDEC_VPID,SPINC_VPID,dT1,KP_PPID,KI_PPID,OFFSET_WIN_PPID,OFFSET_RATE_PPID,Tp,Tq,Tv,Tg,MODO_Q,FXVD_dVTS1,FXVD_dVTS2,FXVD_dVTI1,FXVD_dVTI2,FX_QMIN_VD,FX_QMAX_VD,Tft,Tfv,MODO_VQ;1;acM1,acM2,MX_F_OLD,FlagS,FlagI,SP_OFFSET_F_OLD,cDec2,cInc2,SP_FPPID_OLD,cDec,cInc,SP_PPID_OLD,cDec3,cInc3,SP_QPID_OLD,cDec1,cInc1,SP_VPID_OLD,oYmax,oYmin,pvs,pvi,E_P,cRate,oYmin_LIM_OLD,oYmax_LIM_OLD,oYmin_LIM,oYmax_LIM,cM3,cM4,VTrS1,VTrS2,VTrI1,VTrI2,dx,E_Q,E_QFP,E_QV,E_V,FI,MX_P_FILT,MX_Q_FILT,MX_V_FILT,PTOT_INV_RAW,QTOT_INV1,QTOT_INV2,QTOT_INV3,QTOT_INV4,QTOT_INV_RAW,SP_FPPID_SRLIM,SP_OFFSET_F,SP_OFFSET_FCOR,SP_PPID_COMP,SP_PPID_FCOR,SP_PPID_SRLIM,SP_QFPPID,SP_QPID_LIM,SP_QPID_SRLIM,SP_QVPID,SP_VPID_LIM,SP_VPID_SRLIM,TAN_FI,Vref_Simulada,cero,o1,o2,yi;90;"inc(x_ptot)= PTOT_INV ";" ";inc(xp)= PTOT_INV;inc(x_mx_p)= MX_P;inc(DESHAB_FCOR)=0;"inc(SP_PPID)=MX_P-SP_OFFSET_FCOR ";inc(MX_F)=60;inc(x_qtot)=QTOT_INV;;inc(xqv)=QTOT_INV;"    ";"inc(xv)=QTOT_INV ";inc(x_mx_v)=MX_V;inc(SP_VPID)=MX_V;;!inc(Vbase_VDPID)=lim_const(selfix(abs(MX_Q)<=0.001,MX_V,selfix(MX_Q>=0.001,(MX_Q/(FX_QMAX_VD/(FXVD_dVTS2-FXVD_dVTS1)))+MX_V+FXVD_dVTS1,(MX_Q/(FX_QMAX_VD/(FXVD_dVTS2-FXVD_dVTS1)))+MX_V-FXVD_dVTS1)),0.8,1.2);;!inc(Vbase_VDPID)=lim_const(selfix(abs(MX_Q)<=0.001,MX_V,selfix(MX_Q>=0.001,(MX_V/(1+(FXVD_dVTS2-FXVD_dVTS1)*MX_Q/FX_QMAX_VD))-FXVD_dVTS1,(MX_V/(1+(FXVD_dVTS2-FXVD_dVTS1)*MX_Q/FX_QMAX_VD))+FXVD_dVTS1)),0.8,1.2);;!inc(Vbase_VDPID)=lim_const(selfix(abs(MX_Q)<=0.001,MX_V,selfix(MX_Q>=0.001,((MX_V-FXVD_dVTS1)/(1-(FXVD_dVTS2-FXVD_dVTS1)*MX_Q/FX_QMAX_VD)),((MX_V+FXVD_dVTS1)/(1-(FXVD_dVTS2-FXVD_dVTS1)*MX_Q/FX_QMAX_VD)))),0.8,1.2);;inc(Vbase_VDPID)=lim_const(selfix(abs(MX_Q)<=0.001,MX_V,selfix(MX_Q>=0.001,((MX_V+FXVD_dVTS1)/(1-(FXVD_dVTS2-FXVD_dVTS1)*(MX_Q/FX_QMAX_VD))),((MX_V-FXVD_dVTS1)/(1-(FXVD_dVTS2-FXVD_dVTS1)*(MX_Q/FX_QMAX_VD))))),0.8,1.2);;"inc(xfp)=QTOT_INV     ";inc(SP_FPPID)=cos(atan(-(MX_Q/MX_P)));inc(FP_CONV)=selfix(MX_Q>=0,1,0);;inc(xq)=QTOT_INV;"inc(x_mx_q)=MX_Q  ";inc(SP_QPID)=MX_Q;;;"vardef(KP_QFPPID)='-';'Kp ctrl FP'";"vardef(KI_QFPPID)='-';'Ki ctrl FP'";"vardef(KP_QPID)='-';'Kp ctrl Q'";"vardef(KI_QPID)='-';'Ki ctrl Q'";"vardef(KP_QVPID)='-';'Kp ctrl QV'";"vardef(KI_QVPID)='-';'Ki ctrl QV'";"vardef(KP_VPID)='-';'Kp ctrl V'";"vardef(KI_VPID)='-';'Ki ctrl V'";"vardef(cM1)='p.u/Hz';'pendiente 1 control F'";"vardef(cM2)='p.u/Hz';'pendiente 2 control F'";"vardef(dT)='s';'cte tiempo ctrl F'";"vardef(cHzTrS1r)='[Hz]';'limite superior 1r'";"vardef(cHzTrI1r)='[Hz]';'limite inferior 1r'";"vardef(cHzTrS1)='[Hz]';'limite superior 1'";"vardef(cHzTrI1)='[Hz]';'limite inferior 1'";"vardef(cHzTrS2)='[Hz]';'limite superior 2'";"vardef(cHzTrI2)='[Hz]';'limite inferior 2'";"vardef(SPDEC_FPPID)='p.u.';'rampa decrecimiento ctrl FP'";"vardef(SPINC_FPPID)='p.u.';'rampa incremento ctrl FP'";"vardef(dT2)='s';'cte tiempo ctrl FP'";"vardef(SPDEC_PPID)='p.u.';'rampa decrecimiento P'";"vardef(SPINC_PPID)='p.u.';'rampa incremento P'";"vardef(SPDEC_QPID)='p.u.';'rampa decrecimiento ctrl Q'";"vardef(SPINC_QPID)='p.u.';'rampa incremento ctrl Q'";"vardef(dT3)='s';'cte tiempo ctrl Q'";"vardef(SPDEC_VPID)='p.u.';'rampa decrecimiento ctrl V'";"vardef(SPINC_VPID)='p.u.';'rampa incremento ctrl V'";"vardef(dT1)='s';'cte tiempo ctrl V'";"vardef(KP_PPID)='-';'Kp ctrl P'";"vardef(KI_PPID)='-';'Ki ctrl P'";"vardef(OFFSET_WIN_PPID)='p.u.';'offset P'";"vardef(OFFSET_RATE_PPID)='p.u./s';'offset P rate'";"vardef(Tp)='s';'retardo medicion P'";"vardef(Tq)='s';'retardo medicion Q'";"vardef(Tv)='s';'retardo medicion V'";"vardef(Tg)='s';'retardo envio señal P a inversores'";"vardef(MODO_Q)='0/1/2/3';'modo de control Q'";"vardef(FXVD_dVTS1)='[p.u.]';'banda muerta superior control VQ'";"vardef(FXVD_dVTS2)='[p.u.]';'saturacion limite superior control VQ'";"vardef(FXVD_dVTI1)='[p.u.]';'banda muerta inferior control VQ'";"vardef(FXVD_dVTI2)='[p.u.]';'saturacion limite inferior control VQ'";"vardef(FX_QMIN_VD)='[p.u.]';'Minimo aporte reactivo reactivo control VQ'";"vardef(FX_QMAX_VD)='[p.u.]';'Maximo aporte reactivo reactivo control VQ'";"vardef(Vbase_VDPID)='[p.u.]';'Vref del control VQ'";"vardef(Tft)='s';'retardo envio señal Q a inversores'";"vardef(Tfv)='s';'limite derivada envio Q a inversores'";"vardef(PPC_QMIN)='p.u.';'minima Q inversores'";"vardef(PPC_SP_QMIN)='p.u.';'minima Q POI'";"vardef(VMIN)='s';'tension minima'";"vardef(PPC_SP_PMIN)='p.u.';'minima P POI'";"vardef(PPC_PMIN)='p.u.';'minima P POI'";"vardef(PPC_QMAX)='p.u.';'maxima Q inversores'";"vardef(PPC_SP_QMAX)='p.u.';'maxima Q POI'";"vardef(VMAX)='Hz';'tension maxima'";"vardef(PPC_SP_PMAX)='p.u.';'maxima P POI'";"vardef(PPC_PMAX)='p.u.';'maxima P inverosres'";"vardef(MODO_VQ)='0/1';'Modo ctrl VQ simulado/real'";;0;0;1;PTOT_INV,QTOT_INV;1;DESHAB_FCOR,MX_F,SP_PPID,MX_P,Vbase_VDPID,MX_V,SP_VPID,FP_CONV,SP_FPPID,MX_Q,SP_QPID;1;xfp,xq,xqv,xv,xp,x_mx_p,x_mx_q,x_mx_v,x_ptot,x_qtot;1;KP_QFPPID,KI_QFPPID,KP_QPID,KI_QPID,KP_QVPID,KI_QVPID,KP_VPID,KI_VPID,cM1,cM2,dT,cHzTrS1r,cHzTrI1r,cHzTrS1,cHzTrI1,cHzTrS2,cHzTrI2,SPDEC_FPPID,SPINC_FPPID,dT2,SPDEC_PPID,SPINC_PPID,SPDEC_QPID,SPINC_QPID,dT3,SPDEC_VPID,SPINC_VPID,dT1,KP_PPID,KI_PPID,OFFSET_WIN_PPID,OFFSET_RATE_PPID,Tp,Tq,Tv,Tg,MODO_Q,FXVD_dVTS1,FXVD_dVTS2,FXVD_dVTI1,FXVD_dVTI2,FX_QMIN_VD,FX_QMAX_VD,Tft,Tfv,MODO_VQ;1;acM1,acM2,MX_F_OLD,FlagS,FlagI,SP_OFFSET_F_OLD,cDec2,cInc2,SP_FPPID_OLD,cDec,cInc,SP_PPID_OLD,cDec3,cInc3,SP_QPID_OLD,cDec1,cInc1,SP_VPID_OLD,oYmax,oYmin,pvs,pvi,E_P,cRate,oYmin_LIM_OLD,oYmax_LIM_OLD,oYmin_LIM,oYmax_LIM,cM3,cM4,VTrS1,VTrS2,VTrI1,VTrI2,dx,E_Q,E_QFP,E_QV,E_V,FI,MX_P_FILT,MX_Q_FILT,MX_V_FILT,PTOT_INV_RAW,QTOT_INV1,QTOT_INV2,QTOT_INV3,QTOT_INV4,QTOT_INV_RAW,SP_FPPID_SRLIM,SP_OFFSET_F,SP_OFFSET_FCOR,SP_PPID_COMP,SP_PPID_FCOR,SP_PPID_SRLIM,SP_QFPPID,SP_QPID_LIM,SP_QPID_SRLIM,SP_QVPID,SP_VPID_LIM,SP_VPID_SRLIM,TAN_FI,Vref_Simulada,cero,o1,o2,yi
+  5;C;(1+sTb)/(1+sTa);287;1;4;0;;0;0;;0;1;yo;1;yi;1;x;1;Tb,Ta;1;dx;5;limits(Ta)=(0,);dx=(yi-x)/Ta;x.=dx;yo=x+Tb*dx;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;Tb,Ta;1;dx
+  6;C;-1;287;1;4;0;;0;0;;0;1;yo;1;yi;0;;0;;0;;1;yo=-yi;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  7;C;0;287;1;4;0;;0;0;;0;1;yo;0;;0;;0;;0;;1;yo=0.0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;0;;0;;0;;0;
+  8;C;1/(1+sT);287;1;4;0;;0;0;;0;1;yo;1;yi;1;x;1;T;0;;6;! First order lag block with time constant T;! if T=0, block is bypassed (yo=yi);limits(T)=[0,);x.=select(T>0,(yi-x)/T,0.0);yo=select(T>0,x,yi);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;T;0;
+  9;C;Compensacion_de_frecuencia;287;0;4;0;;0;0;;0;1;SP_OFFSET_F;1;MX_F;0;;1;cM1,cM2,dT,cHzTrS1r,cHzTrI1r,cHzTrS1,cHzTrI1,cHzTrS2,cHzTrI2;1;acM1,acM2,MX_F_OLD,FlagS,FlagI,SP_OFFSET_F_OLD;37;acM1=abs(cM1);acM2=abs(cM2);inc(SP_OFFSET_F_OLD)=0;;MX_F_OLD=delay(MX_F,dT);SP_OFFSET_F_OLD=delay(SP_OFFSET_F,dT);;FlagS=select(MX_F > cHzTrS1r,1,0);FlagI=select(MX_F < cHzTrI1r,1,0);;;SP_OFFSET_F=select(FlagS=1,;& select(MX_F>=MX_F_OLD,;& select({MX_F > cHzTrS1r}.and.{MX_F <= cHzTrS1},;& 0,;& select({MX_F > cHzTrS1}.and.{MX_F <= cHzTrS2},;& -1*acM1*(MX_F-cHzTrS1),;& -1*acM2*(MX_F-cHzTrS2)-1*acM1*(cHzTrS2-cHzTrS1))),;& SP_OFFSET_F_OLD),;& select(FlagI=1,;& select(MX_F<=MX_F_OLD,;& select({MX_F < cHzTrI1r}.and.{MX_F >=cHzTrI1},;& 0,;& select({MX_F > cHzTrI2}.and. {MX_F <= cHzTrI1},;& -1*acM1*(MX_F-cHzTrI1),;& -1*acM2*(MX_F-cHzTrI2)-1*acM1*(cHzTrI2-cHzTrI1))),;& SP_OFFSET_F_OLD),;& 0));;"        ";"             ";"               ";"               ";;"        ";"  ";"   ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;SP_OFFSET_F;1;MX_F;0;;1;cM1,cM2,dT,cHzTrS1r,cHzTrI1r,cHzTrS1,cHzTrI1,cHzTrS2,cHzTrI2;1;acM1,acM2,MX_F_OLD,FlagS,FlagI,SP_OFFSET_F_OLD
+  10;C;Droop Q(Vmed);287;0;4;0;;0;0;;0;1;SP_QVPID;1;Vbase_VDPID,MX_V_FILT;0;;1;FXVD_dVTS1,FXVD_dVTS2,FXVD_dVTI1,FXVD_dVTI2,FX_QMIN_VD,FX_QMAX_VD;1;cM1,cM2,VTrS1,VTrS2,VTrI1,VTrI2;27;;;VTrS1= Vbase_VDPID+ abs(FXVD_dVTS1);VTrS2= Vbase_VDPID+ abs(FXVD_dVTS2);VTrI1= Vbase_VDPID- abs(FXVD_dVTI1);VTrI2= Vbase_VDPID- abs(FXVD_dVTI2);;cM1=select(abs(VTrS2-VTrS1)> 0.0001,;& -1.0*abs(FX_QMIN_VD/((VTrS2-VTrS1)*Vbase_VDPID)),;& 0);;cM2=select(abs(VTrI2-VTrI1)> 0.0001,;& -1.0*abs(FX_QMAX_VD/((VTrI2-VTrI1)*Vbase_VDPID)),;& 0);;SP_QVPID_RAW=select({MX_V_FILT <= VTrS1}.and.{MX_V_FILT >= VTrI1},;& 0,;& select({MX_V_FILT > VTrS1}.and.{MX_V_FILT <= VTrS2},;& cM1*(MX_V_FILT-VTrS1),;& select(MX_V_FILT > VTrS2,;& FX_QMIN_VD,;& select({MX_V_FILT > VTrI2} .and. {MX_V_FILT <= VTrI1},;& cM2*(MX_V_FILT-VTrI1),;& FX_QMAX_VD))));;SP_QVPID=lim(SP_QVPID_RAW,FX_QMIN_VD,FX_QMAX_VD);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;SP_QVPID;1;Vbase_VDPID,MX_V_FILT;0;;1;FXVD_dVTS1,FXVD_dVTS2,FXVD_dVTI1,FXVD_dVTI2,FX_QMIN_VD,FX_QMAX_VD;1;cM1,cM2,VTrS1,VTrS2,VTrI1,VTrI2
+  11;C;Limits;287;1;4;1;y_max;0;1;y_min;0;1;yo;1;yi;0;;0;;0;;1;yo=lim(yi,y_min,y_max);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  12;C;Llave Selectora;287;0;4;0;;0;0;;0;1;out;1;i0,i1,i2,i3;0;;1;sel;0;;1;out=select(sel=0,i0,select(sel=1,i1,select(sel=2,i2,select(sel=3,i3,0))));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;out;1;i0,i1,i2,i3;0;;1;sel;0;
+  13;C;PI Anti-WindUp con limimitacion dinámica;287;1;4;1;PPC_PMAX;0;1;PPC_PMIN;0;1;PTOT_INV_RAW;1;SP_PPID_COMP,MX_P_FILT;1;x;1;KP_PPID,KI_PPID,OFFSET_WIN_PPID,OFFSET_RATE_PPID,dT;1;oYmax,oYmin,pvs,pvi,E_P,cRate,oYmin_LIM_OLD,oYmax_LIM_OLD,oYmin_LIM,oYmax_LIM;49;" ! Proportional-Integral (PI) block with anti-windup limits";"  ";;inc(oYmin_LIM)=pvs;inc(oYmax_LIM)=pvs;inc(oYmax_LIM_OLD)=pvs;;pvs= MX_P_FILT + OFFSET_WIN_PPID;pvi= MX_P_FILT - OFFSET_WIN_PPID;;"oYmax=select(pvs <= PPC_PMIN ,PPC_PMIN, ";& select( {pvs > PPC_PMIN}.and.{pvs < PPC_PMAX},;& pvs,;& PPC_PMAX ));;"oYmin=select(pvi <= PPC_PMIN ,PPC_PMIN, ";& select( {pvi > PPC_PMIN}.and.{pvi < PPC_PMAX},;& pvi,;& PPC_PMAX ));;"cRate=abs(OFFSET_RATE_PPID);";;"oYmin_LIM_OLD=delay(oYmin_LIM,dT)    ";"oYmax_LIM_OLD=delay(oYmax_LIM,dT) ";;oYmin_LIM=select( ((oYmin-oYmin_LIM_OLD)/dT)>cRate,;& oYmin_LIM_OLD+cRate*dT,;& select(((oYmin-oYmin_LIM_OLD)/dT) <-cRate,;& oYmin_LIM_OLD-cRate*dT,;& oYmin));"  ";oYmax_LIM=select( ((oYmax-oYmax_LIM_OLD)/dT)>cRate,;& oYmax_LIM_OLD+cRate*dT,;& select(((oYmax-oYmax_LIM_OLD)/dT) <-cRate,;& oYmax_LIM_OLD-cRate*dT,;& oYmax));;;E_P = SP_PPID_COMP - MX_P_FILT;"  ";x.=KI_PPID*E_P;PTOT_INV_RAW =lim(KP_PPID*E_P+limstate(x,oYmin_LIM-999,oYmax_LIM+999),oYmin_LIM-999,oYmax_LIM);;;!ymed = gradlim_const(yi,-crate,crate);;!ymax=ymde+0.1;;!yo = lim(yi*KP+limstate(x,ymin,ymax),ymin,tmax);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;PTOT_INV_RAW;1;SP_PPID_COMP,MX_P_FILT;1;x;1;KP_PPID,KI_PPID,OFFSET_WIN_PPID,OFFSET_RATE_PPID,dT;1;oYmax,oYmin,pvs,pvi,E_P,cRate,oYmin_LIM_OLD,oYmax_LIM_OLD,oYmin_LIM,oYmax_LIM
+  14;C;SlewRateLimiter_FP;287;0;4;0;;0;0;;0;1;SP_FPPID_LIM;1;SP_FPPID;0;;1;SPDEC_FPPID,SPINC_FPPID,dT;1;cDec,cInc,SP_FPPID_OLD;14;"inc(SP_FPPID_OLD)=SP_FPPID   ";;cDec=abs(SPDEC_FPPID);cInc=abs(SPINC_FPPID);;"SP_FPPID_OLD=delay(SP_FPPID_LIM,dT)   ";;!SP_FPPID_LIM=select(((SP_FPPID-SP_FPPID_OLD)/dT)>cInc,;!& SP_FPPID_OLD+(cInc*dT),;!& select(((SP_FPPID-SP_FPPID_OLD)/dT)<-cDec,;!& SP_FPPID_OLD-(cDec*dT),;!& SP_FPPID));;SP_FPPID_LIM = gradlim_const(SP_FPPID,-abs(SPDEC_FPPID),abs(SPINC_FPPID));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;SP_FPPID_LIM;1;SP_FPPID;0;;1;SPDEC_FPPID,SPINC_FPPID,dT;1;cDec,cInc,SP_FPPID_OLD
+  15;C;SlewRateLimiter_P;287;0;4;0;;0;0;;0;1;SP_PPID_LIM;1;SP_PPID;0;;1;SPDEC_PPID,SPINC_PPID,dT;1;cDec,cInc,SP_PPID_OLD;14;"inc(SP_PPID_OLD)=SP_PPID    ";;cDec=abs(SPDEC_PPID);cInc=abs(SPINC_PPID);;"!SP_PPID_OLD=delay(SP_PPID_LIM,dT)  ";;!SP_PPID_LIM=select(((SP_PPID-SP_PPID_OLD)/dT)>cInc,;!& SP_PPID_OLD+(cInc*dT),;!& select(((SP_PPID-SP_PPID_OLD)/dT)<-cDec,;!& SP_PPID_OLD-(cDec*dT),;!& SP_PPID));;SP_PPID_LIM = gradlim_const(SP_PPID,-abs(SPDEC_PPID),abs(SPINC_PPID));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;SP_PPID_LIM;1;SP_PPID;0;;1;SPDEC_PPID,SPINC_PPID,dT;1;cDec,cInc,SP_PPID_OLD
+  16;C;SlewRateLimiter_Q;287;0;4;0;;0;0;;0;1;SP_QPID_LIM;1;SP_QPID;0;;1;SPDEC_QPID,SPINC_QPID,dT;1;cDec,cInc,SP_QPID_OLD;14;"inc(SP_QPID_OLD)=SP_QPID    ";;cDec=abs(SPDEC_QPID);cInc=abs(SPINC_QPID);;"SP_QPID_OLD=delay(SP_QPID_LIM,dT)  ";;!SP_QPID_LIM=select(((SP_QPID-SP_QPID_OLD)/dT)>cInc,;!& SP_QPID_OLD+(cInc*dT),;!& select(((SP_QPID-SP_QPID_OLD)/dT)<-cDec,;!& SP_QPID_OLD-(cDec*dT),;!& SP_QPID));;SP_QPID_LIM = gradlim_const(SP_QPID,-abs(SPDEC_QPID),abs(SPINC_QPID));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;SP_QPID_LIM;1;SP_QPID;0;;1;SPDEC_QPID,SPINC_QPID,dT;1;cDec,cInc,SP_QPID_OLD
+  17;C;SlewRateLimiter_V;287;0;4;0;;0;0;;0;1;SP_VPID_LIM;1;SP_VPID;0;;1;SPDEC_VPID,SPINC_VPID,dT;1;cDec,cInc,SP_VPID_OLD;14;"inc(SP_VPID_OLD)=SP_VPID    ";;cDec=abs(SPDEC_VPID);cInc=abs(SPINC_VPID);;"SP_VPID_OLD=delay(SP_VPID_LIM,dT)   ";;!SP_VPID_LIM=select(((SP_VPID-SP_VPID_OLD)/dT)>cInc,;!& SP_VPID_OLD+(cInc*dT),;!& select(((SP_VPID-SP_VPID_OLD)/dT)<-cDec,;!& SP_VPID_OLD-(cDec*dT),;! SP_VPID));;SP_VPID_LIM = gradlim_const(SP_VPID,-abs(SPDEC_VPID),abs(SPINC_VPID));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;SP_VPID_LIM;1;SP_VPID;0;;1;SPDEC_VPID,SPINC_VPID,dT;1;cDec,cInc,SP_VPID_OLD
+  18;C;[Kp+Ki/s];287;1;4;1;y_max;0;1;y_min;0;1;yo;1;yi;1;x;1;Kp,Ki;0;;5;! Proportional-Integral (PI) block with anti-windup limits;;x.=Ki*yi;yo=lim(Kp*yi+limstate(x,y_min,y_max),y_min,y_max);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;Kp,Ki;0;
+  19;C;acos();287;1;4;0;;0;0;;0;1;yo;1;yi;0;;0;;0;;1;yo=acos(yi);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  20;C;tan();287;1;4;0;;0;0;;0;1;yo;1;yi;0;;0;;0;;1;yo=tan(yi);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  21;C;PQ_ctrl_DSL;;0;7;1;Pmax,Iqmax,Idmax,rl_P_up,rl_Q_up;0;1;Iqmin,Idmin,rl_P_down,rl_Q_down;0;1;id,iq;1;Pref,Qref,PFref,P_meas,Q_meas,u_meas,f_meas,VRT_Flag;1;xufil,xPfil,xQfil,Qx1,Px1,xrl_P,xrl_Q;1;Tufil,TPQfil,Droop,fdb,fn,ModeQ,PF_enable,array_PFP,array_QU;1;PFP,PF_enable_s,P_meas1,Pctrl,Pref_rl,Q_PFP_Mode,Q_PF_Mode,Q_QU_Mode,Qref_rl,ctrl,dP,dP_rpf,f,o2,o3,o4,u_meas1,ufilt,ufilt1,ufilt2,xVRT,yi,yi2,yi3,yi4,yi5,yi6;43;!Condiciones iniciales control;inc(Qx1)=-iq;inc(Px1)=id;inc(xrl_P)=P_meas;!inc(xrl_Q)=-iq*max(u_meas,0.01);Aux=select(ModeQ=4,Q_QU_Mode,-iq*max(u_meas,0.01));inc(xrl_Q)=Aux;inc(PFref) = cos(atan(Q_meas/P_meas));;;!Condiciones iniciales referencia;inc(Qref)=Q_meas;inc(Pref)=P_meas;!Condiciones iniciales medición;inc(xufil)=u_meas;inc(xPfil)=P_meas;inc(xQfil)=Q_meas;;;;;!Parámetros de medición;"vardef(TPQfil)='s';'Tiempo de medición PQ'";"vardef(Tufil)='s';'Tiempo de medición Tensión'";;;!Parámetros de estatismo;"vardef(PF_enable)='0/1';'Habilitar PF'";"vardef(Droop)='%';'Estatismo PF'";"vardef(fdb)='Hz';'Banda muerta PF'";"vardef(fn)='Hz';'Frecuencia nominal'";"vardef(ModeQ)='1/2/3/4';'1:Q/2:PF/3:PFP/4:Qu'";"vardef(Iqmin)='[p.u.]';'límite inferior Iq'";"vardef(Iqmax)='[p.u.]';'límite superior Iq'";;"vardef(Idmin)='[p.u.]';'límite inferior Id'";"vardef(Idmax)='[p.u.]';'límite superior Id'";"vardef(rl_P_up)='[p.u./s]';'tasa toma de carga'";"vardef(rl_P_down)='[p.u./s]';'tasa de descarga'";"vardef(rl_Q_up)='[p.u./s]';'tasa toma de aporteQ'";"vardef(rl_Q_down)='[p.u./s]';'tasa de absorciónQ'";"vardef(Pmax)='[p.u.]';'Potencia máxima'";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;id,iq;1;Pref,Qref,PFref,P_meas,Q_meas,u_meas,f_meas,VRT_Flag;1;xufil,xPfil,xQfil,Qx1,Px1,xrl_P,xrl_Q;1;Tufil,TPQfil,Droop,fdb,fn,ModeQ,PF_enable,array_PFP,array_QU;1;PFP,PF_enable_s,P_meas1,Pctrl,Pref_rl,Q_PFP_Mode,Q_PF_Mode,Q_QU_Mode,Qref_rl,ctrl,dP,dP_rpf,f,o2,o3,o4,u_meas1,ufilt,ufilt1,ufilt2,xVRT,yi,yi2,yi3,yi4,yi5,yi6
+  22;C;0;288;1;5;0;;0;0;;0;1;yo;0;;0;;0;;0;;2;! Functionality: Outputs a constant zero value.;yo = 0.0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;0;;0;;0;;0;
+  23;C;C;288;1;5;0;;0;0;;0;1;yo;0;;0;;1;C;0;;2;! Functionality: Outputs a constant value, defined by parameter C.;yo = C;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;0;;0;;1;C;0;
+  24;C;DSL_Model_Type1;288;0;7;0;;0;0;;0;1;Q_QU_Mode;1;u_meas;0;;1;array_QU;0;;2;Q_QU_Mode = lapprox(u_meas,array_QU);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;Q_QU_Mode;1;u_meas;0;;1;array_QU;0;
+  25;C;Limiter;288;1;4;1;up;0;1;down;0;1;yo;1;yi;0;;0;;0;;1;yo=lim(yi,down,up);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  26;C;Max_2;288;1;4;0;;0;0;;0;1;yo;1;yi1,yi2;0;;0;;0;;1;yo=max(yi1,yi2);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi1,yi2;0;;0;;0;
+  27;C;Multiply (-1);288;1;5;0;;0;0;;0;1;yo;1;yi;0;;0;;0;;2;! Functionality: Multiplies the input by -1.;yo = -yi;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;0;;0;;0;
+  28;C;PFP_ctrl;288;0;7;0;;0;0;;0;1;Q_PFP_Mode;1;P_meas;0;;1;array_PFP;1;PFP;5;PFP = lapprox(P_meas,array_PFP);;Q_PFP_Mode = tan(acos(PFP))*P_meas;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;Q_PFP_Mode;1;P_meas;0;;1;array_PFP;1;PFP
+  29;C;PF_ctrl;288;0;7;0;;0;0;;0;1;Q_Pf_Mode;1;PFref,P_meas;0;;0;;0;;1;Q_Pf_Mode = tan(acos(PFref))*P_meas;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;Q_Pf_Mode;1;PFref,P_meas;0;;0;;0;
+  30;C;PT1;288;1;4;0;;0;0;;0;1;yo;1;yi;1;x;1;K,T;0;;4;limits(T)=(0,);x.=(yi-x)/T;yo=K*x;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;K,T;0;
+  31;C;PT1aw;288;1;4;1;hilim;0;1;lolim;0;1;yo;1;yi,xVRT;1;x;1;K,T;0;;4;limits(T)=(0,);x.=select(.not.xVRT=2,(K*yi-x)/T,0.0);yo=limstate(x,lolim,hilim);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi,xVRT;1;x;1;K,T;0;
+  32;C;RPF;288;0;7;0;;0;0;;0;1;dP;1;f;0;;1;Droop,fdb,fn;0;;2;dP = select(abs(1-f)*fn>fdb,(100/Droop)*((1+fdb/fn)-f), 0);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;dP;1;f;0;;1;Droop,fdb,fn;0;
+  33;C;Ratelimiter;288;1;4;1;up;0;1;down;0;1;yo;1;yi;1;x;0;;0;;5;"limits(up)=(0,)      ";limits(down)=(,0);x.=lim((yi-x)/0.005,down,up) ! T = 5ms;yo=x;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;0;;0;
+  34;C;Select_4;288;1;4;0;;0;0;;0;1;yo;1;yi1,yi2,yi3,yi4,ctrl;0;;0;;0;;1;yo=select(ctrl=1,yi1,select(ctrl=2,yi2,select(ctrl=3,yi3,select(ctrl=4,yi4,0))));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi1,yi2,yi3,yi4,ctrl;0;;0;;0;
+  35;C;SUN2000 215KTL;;0;7;0;;0;0;;0;0;;0;;0;;0;;1;"PFref,P_meas,Pref,Q_meas,Qref,VRT_Flag,cosref;sinref,f,f_meas,id,id_ref,iq,iq_ref,u_meas";0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;0;;0;;0;;0;;1;"PFref,P_meas,Pref,Q_meas,Qref,VRT_Flag,cosref;sinref,f,f_meas,id,id_ref,iq,iq_ref,u_meas"
+  36;C;Selector;;0;7;0;;0;0;;0;1;y0;1;y1,y2;0;;1;MODO_VQ;0;;1;y0=select(MODO_VQ>0,y2,y1);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;y0;1;y1,y2;0;;1;MODO_VQ;0;
+  37;C;idq_lim_DSL_V4;;0;7;1;Ramp_i,Ramp_i_lvrt;0;0;;0;1;id_ref,iq_ref,VRT_Flag;1;id,iq,u_meas;1;ux1,idx1,iqx1,xidrlim;1;imax,Smax,imaxsy,idlim,IqPre,Tmu,LVRT_th,HVRT_th,Kfactor,Tsupiq,Uclear,Tu,Tccd,Tccq;1;iq_lim_fault,iq_lim_normal,id_lim_normal,id_lim_fault,iqli,idli,set_f,reset_f,VRT_Flagp,LVRT_FLAG,HVRT_FLAG,VRT_FLAG_0,up,set_fl,reset_fl,VRT_FlagP,u_Freeze,resetLVRT,resetHVRT,ctrl_rlmd,up1,ctrl_rlmd1,VRT_Flag1,diq_VRT,u_meas1,yi,yi1,yi2;31;! Entradas;inc(ux1)=u_meas;inc(id)= id_ref;;inc(diq_VRT)=0;inc(iq)=iq_ref;inc(VRT_Flag)=0;inc(VRT_Flag1)=0;inc(idx1)=id_ref;inc(iqx1)=iq_ref;inc(xidrlim)=id_ref;;;!imax,Smax,imaxsy,idlim;!LVRT_th,HVRT_th,Kfactor;"vardef(Tmu)='[s]';'Tiempo de medición de tensión'";"vardef(Tu)='[s]';'Constante de tiempo tensión pre falla'";"vardef(imax)='[p.u.]';'Imax'";"vardef(Smax)='[p.u.]';'Smax'";"vardef(imaxsy)='[p.u.]';'Iqmax sym fault'";"vardef(idlim)='[p.u.]';'Idmax sym fault'";"vardef(LVRT_th)='[p.u.]';'Umbral LVRT'";"vardef(HVRT_th)='[p.u.]';'Umbral HVRT'";"vardef(Kfactor)='[-]';'Kfactor VRT'";"vardef(Tsupiq)='[s]';'Tiempo aporte posfalla'";"vardef(Uclear)='[p.u.]';'Histeresis de tensión recuperación de falla'";"vardef(IqPre)='[0-1]';'Almacenar Iq prefalla'";"vardef(Tccd)='[s]';'Tiempo de respuesta id inversor'";"vardef(Tccq)='[s]';'Tiempo de respuesta iq inversor'";"vardef(Ramp_i)='[p.u./s]';'Rampa de recuperación id'";"vardef(Ramp_i_lvrt)='[p.u./s]';'Rampa de recuperación id en falla'";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;id_ref,iq_ref,VRT_Flag;1;id,iq,u_meas;1;ux1,idx1,iqx1,xidrlim;1;imax,Smax,imaxsy,idlim,IqPre,Tmu,LVRT_th,HVRT_th,Kfactor,Tsupiq,Uclear,Tu,Tccd,Tccq;1;iq_lim_fault,iq_lim_normal,id_lim_normal,id_lim_fault,iqli,idli,set_f,reset_f,VRT_Flagp,LVRT_FLAG,HVRT_FLAG,VRT_FLAG_0,up,set_fl,reset_fl,VRT_FlagP,u_Freeze,resetLVRT,resetHVRT,ctrl_rlmd,up1,ctrl_rlmd1,VRT_Flag1,diq_VRT,u_meas1,yi,yi1,yi2
+  38;C;Limiter_idq;289;0;7;0;;0;0;;0;1;id_ref,iq_ref;1;id,iq,diq_VRT,VRT_Flag1,VRT_Flag,u_meas;0;;1;imax,Smax,imaxsy,idlim,IqPre;1;iq_lim_fault,iq_lim_normal,id_lim_normal,id_lim_fault,iqli,idli,set_f,reset_f,VRT_Flagp;24;;iqp=delay(iq,0.05) ! Estado de iq previo;VRT_Flagp = delay(VRT_Flag,0.05) !Estado de VRT_Flag previo;;set_f = {{VRT_Flagp=0}.and.{VRT_Flag=2}}! Set para tomar valor previo a la falla de iq;reset_f = {{VRT_Flagp=1}.and.{VRT_Flag=0}} ! Reseteo del valor de iq previo a la falla;;iq_Freeze = select(IqPre<0.5,iq, aflipflop(iqp,set_f ,reset_f) )! Almacenar valor de iq prefalla;;iq_lim_normal = min(imax,Smax/u_meas) !Límite iq operación normal Prioridad de Q,mínimo entre imax y Smax/u_meas;id_lim_normal = sqrt(sqr(min(imax,Smax/u_meas))-sqr(iq))! Límite id operación normal, mínimo entre imax y ((Smax/u_meas)**2 - iq**2)**1/2;iq_lim_fault = imaxsy ! Límite iq en falla;id_lim_fault = max(min(sqrt(sqr(1)-sqr(diq_VRT+iq_Freeze)),id),idlim) !Límite id en falla;;;;;iqli=select(VRT_Flag=2,select(VRT_Flag1=1,iq_lim_fault,0.6),iq_lim_normal)! Para eventos LVRT límite es iq_lim_fault, para HVRT es 0.6 iq;idli=select(VRT_Flag=2,select(VRT_Flag1=1,id_lim_fault,sqrt(1-sqr(0.6))),id_lim_normal)! Para eventos LVRT límite es id_lim_fault, para HVRT es (1**2-0.6**2)**1/2;;iq_ref =lim(select(VRT_Flag>0.5,diq_VRT+iq_Freeze,iq),-iqli,iqli) ! Si se está en falla o postfalla, se suma diq a la iq prefalla, si no, iq_ref es iq;id_ref = lim(id,0,idli) ! Se limita id a idli;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;id_ref,iq_ref;1;id,iq,diq_VRT,VRT_Flag1,VRT_Flag,u_meas;0;;1;imax,Smax,imaxsy,idlim,IqPre;1;iq_lim_fault,iq_lim_normal,id_lim_normal,id_lim_fault,iqli,idli,set_f,reset_f,VRT_Flagp
+  39;C;PT1;289;1;4;0;;0;0;;0;1;yo;1;yi;1;x;1;K,T;0;;4;limits(T)=(0,);x.=(yi-x)/T;yo=K*x;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi;1;x;1;K,T;0;
+  40;C;Ratelimiter;289;1;4;1;up,up_lvrt;0;1;down;0;1;yo;1;yi,VRT_Flag1,VRT_Flag;1;x;1;Tsupiq;1;ctrl_rlmd,up1,ctrl_rlmd1;18;ctrl_rlmd1 = picdro(VRT_Flag1>0.5,0,Tsupiq);ctrl_rlmd = VRT_Flag;;;;"up1= select(ctrl_rlmd =2.and.ctrl_rlmd1=1,up_lvrt,up) ";;"limits(up1)=(0,)      ";limits(down)=(,0);;;x.=lim((yi-x)/0.005,down,up1) ! T = 5ms;;yo=select(ctrl_rlmd1=1,x,yi);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;yo;1;yi,VRT_Flag1,VRT_Flag;1;x;1;Tsupiq;1;ctrl_rlmd,up1,ctrl_rlmd1
+  41;C;VRT;289;0;7;0;;0;0;;0;1;diq,VRT_FLAG_1,VRT_FLAG;1;u_meas;0;;1;LVRT_th,HVRT_th,Kfactor,Tsupiq,Uclear,Tu;1;LVRT_FLAG,HVRT_FLAG,VRT_FLAG_0,up,set_fl,reset_fl,VRT_FlagP,u_Freeze,resetLVRT,resetHVRT;39;;t = time()<-0.005 !Para resetear los fliflops en los primeros pasos de simulación.;;"setLVRT = u_meas<LVRT_th ";resetLVRT=u_meas>(LVRT_th+Uclear);;setHVRT = u_meas>HVRT_th;resetHVRT=u_meas<(HVRT_th-Uclear);;;LVRT_FLAG = flipflop(setLVRT.and..not.t,resetLVRT.or.t);!LVRT_FLAG = select(setLVRT.and..not.t,1,select(resetLVRT.or.t,0,0));;HVRT_FLAG = flipflop(setHVRT.and..not.t,resetHVRT.or.t);;VRT_FLAG_0 = picdro(select(LVRT_FLAG,1, select(HVRT_FLAG,1, 0))>0.5,0.005,0)! Detección LVRT o HVRT con retraso de 0.005 s;;VRT_FLAG =abs(VRT_FLAG_0)+picdro(abs(VRT_FLAG_0)>0.5,0,Tsupiq)!Out vale 2 durante falla, vale 1 postfalla durante Tsupiq vale 0 operación normal;;VRT_FLAG_1 = LVRT_FLAG - HVRT_FLAG !Out Define si es evento LVRT o HVRT;;;up=delay(u_meas,Tu)! Definición de tensión prefalla;VRT_FlagP = delay(VRT_FLAG,0.05) !Estado previo de VRT_Flag;;set_fl = {{VRT_FlagP=0}.and.{VRT_FLAG=2}} ! set para el fliflop de tensión prefalla, cambio de VRT_FLAG de 0 a 2;reset_fl = {{VRT_FlagP=1}.and.{VRT_FLAG=0}}! reset para el flipflip de tensión prefalla, cambio de VRT_FLAG de 1 a 0;;u_Freeze = aflipflop(up,set_fl ,reset_fl) !Obtener tensión pre falla;!Cálculo del delta iq para fallas, e  inyección postfalla.;!inc(diq_LVRT)=0;!inc(diq_HVRT)=0;diq = select(LVRT_FLAG>0.5,-Kfactor*(u_Freeze-u_meas), select(HVRT_FLAG,-Kfactor*(u_Freeze-u_meas),select(VRT_FLAG=1,-Kfactor*(u_Freeze-u_meas),0)));!diq_LVRT = select(LVRT_FLAG>0.5.and.u_Freeze>1,0,select(LVRT_FLAG>0.5.and.u_Freeze<=1,-Kfactor*(u_Freeze-u_meas),select(VRT_FLAG=1,-Kfactor*(u_Freeze-u_meas),0)));!diq_HVRT = select(HVRT_FLAG,-Kfactor*(u_Freeze-u_meas),select(VRT_FLAG=1,-Kfactor*(u_Freeze-u_meas),0));;!diq = diq_LVRT+diq_HVRT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;diq,VRT_FLAG_1,VRT_FLAG;1;u_meas;0;;1;LVRT_th,HVRT_th,Kfactor,Tsupiq,Uclear,Tu;1;LVRT_FLAG,HVRT_FLAG,VRT_FLAG_0,up,set_fl,reset_fl,VRT_FlagP,u_Freeze,resetLVRT,resetHVRT
+  42;C;Señales;294;0;5;0;;0;0;;0;1;u0;0;;0;;1;Curva,array_u1_t,array_u2_t,array_u3_t;0;;2;;u0 = lapprox(time(),select(Curva=1,array_u1_t,select(Curva=2,array_u2_t,array_u3_t)));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;1;u0;0;;0;;1;Curva,array_u1_t,array_u2_t,array_u3_t;0;
+  43;C;prot_DSL;;0;7;0;;0;0;;0;0;;1;u,yHz;1;x_u,x_f;1;enable,UV1,UV2,UV3,OV1,OV2,UF1,UF2,OF1,OF2,tUV1,tUV2,tUV3,tOV1,tOV2,tUF1,tUF2,tOF1,tOF2,LVRT_th,HVRT_th,array_HVRT,array_LVRT,Tfilt;1;f,uf;24;inc(x_u) = u;inc(x_f) = yHz;"vardef(Tfilt)='s';'Cte de tiempo de medicion'";"vardef(enable)='-';'Habilitar protecciones (0:Off | 1:On)'";"vardef(UV1)='pu';'Seteo subtension UV1'";"vardef(tUV1)='s';'Retardo seteo subtension tUV1'";"vardef(UV2)='pu';'Seteo subtension UV2'";"vardef(tUV2)='s';'Retardo seteo subtension tUV2'";"vardef(UV3)='pu';'Seteo subtension UV3'";"vardef(tUV3)='s';'Retardo seteo subtension tUV3'";"vardef(OV1)='pu';'Seteo sobretension OV1'";"vardef(tOV1)='s';'Retardo seteo sobretension tOV1'";"vardef(OV2)='pu';'Seteo sobretension OV2'";"vardef(tOV2)='s';'Retardo seteo sobretension tOV2'";"vardef(UF1)='Hz';'Seteo subfrecuencia UF1'";"vardef(tUF1)='s';'Retardo seteo subfrecuencia tUF1'";"vardef(UF2)='Hz';'Seteo subfrecuencia UF2'";"vardef(tUF2)='s';'Retardo seteo subfrecuencia tUF2'";"vardef(OF1)='Hz';'Seteo sobrefrecuencia OF1'";"vardef(tOF1)='s';'Retardo seteo sobrefrecuencia tOF1'";"vardef(OF2)='Hz';'Seteo sobretension OF2'";"vardef(tOF2)='s';'Retardo seteo sobrefrecuencia tOF2'";"vardef(LVRT_th)='[p.u.]';'Umbral LVRT'";"vardef(HVRT_th)='[p.u.]';'Umbral HVRT'";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;0;;1;u,yHz;1;x_u,x_f;1;enable,UV1,UV2,UV3,OV1,OV2,UF1,UF2,OF1,OF2,tUV1,tUV2,tUV3,tOV1,tOV2,tUF1,tUF2,tOF1,tOF2,LVRT_th,HVRT_th,array_HVRT,array_LVRT,Tfilt;1;f,uf
+  44;C;Marco_RED;294;0;5;0;;0;0;;0;0;;0;;0;;0;;1;u0;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;0;;0;;0;;0;;1;u0
+  45;C;Red ex1;;0;6;0;;0;0;;0;0;;0;;0;;0;;1;F0Hz;0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;0;0;;0;;0;;0;;1;F0Hz
+
+
+$$BlkFrom;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sSig:SIZEROW(i);sSig:0(a)
+  46;C;f_meas(2);21;1;f_measu
+  47;C;ufilt(1);21;1;ufil
+  48;C;ufilt(3);21;1;ufil
+  49;C;ufilt(4);21;1;ufil
+
+
+$$BlkGoto;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sSig:SIZEROW(i);sSig:0(a)
+  50;C;Goto;21;1;TEST
+  51;C;f_meas(1);21;1;f_measu
+  52;C;ufilt(2);21;1;ufil
+
+
+$$BlkMul;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  53;C;MultiplierP;4
+
+
+$$BlkRef;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);cdisName(a);sUpLimPar:SIZEROW(i);sUpLimPar:0(a);sLowLimPar:SIZEROW(i);sLowLimPar:0(a);sParams:SIZEROW(i);sParams:0(a);sStates:SIZEROW(i);sStates:0(a);sIntern:SIZEROW(i);sIntern:0(a);state:SIZEROW(i);param:SIZEROW(i)
+  54;C;ACOS_de_FP;4;19;acos();0;;0;;0;;0;;0;;0;0
+  55;C;Block Reference(2);4;2;1;0;;0;;0;;0;;0;;0;0
+  56;C;Block Reference(3);4;36;Selector;0;;0;;1;MODO_VQ;0;;0;;0;0
+  57;C;Block Reference;4;7;0;0;;0;;0;;0;;0;;0;0
+  58;C;Comp_Frec;4;9;Compensacion_de_frecuencia;0;;0;;1;cM1,cM2,dT,cHzTrS1r,cHzTrI1r,cHzTrS1,cHzTrI1,cHzTrS2,cHzTrI2;0;;1;acM1,acM2,MX_F_OLD,FlagS,FlagI,SP_OFFSET_F_OLD;0;0
+  59;C;DT1_QTOT_INV;4;5;(1+sTb)/(1+sTa);0;;0;;1;Tft,Tfv;1;x_qtot;1;dx;0;0
+  60;C;DroopQ_Vmed;4;10;Droop Q(Vmed);0;;0;;1;FXVD_dVTS1,FXVD_dVTS2,FXVD_dVTI1,FXVD_dVTI2,FX_QMIN_VD,FX_QMAX_VD;0;;1;cM3,cM4,VTrS1,VTrS2,VTrI1,VTrI2;0;0
+  61;C;Limitador_SP_Q;4;11;Limits;1;PPC_SP_QMAX;1;PPC_SP_QMIN;0;;0;;0;;0;0
+  62;C;Limitador_V;4;11;Limits;1;VMAX;1;VMIN;0;;0;;0;;0;0
+  63;C;Limiter_SP_P;4;11;Limits;1;PPC_SP_PMAX;1;PPC_SP_PMIN;0;;0;;0;;0;0
+  64;C;Limiter_SP_Q_FP;4;11;Limits;1;PPC_SP_QMAX;1;PPC_SP_QMIN;0;;0;;0;;0;0
+  65;C;Llave_selectora;4;12;Llave Selectora;0;;0;;1;MODO_Q;0;;0;;0;0
+  66;C;Negacion;4;6;-1;0;;0;;0;;0;;0;;0;0
+  67;C;PI_AntiWindUp_FP;4;18;[Kp+Ki/s];1;PPC_QMAX;1;PPC_QMIN;1;KP_QFPPID,KI_QFPPID;1;xfp;0;;0;0
+  68;C;PI_AntiWindUp_Lim_din;4;13;PI Anti-WindUp con limimitacion dinámica;1;PPC_PMAX;1;PPC_PMIN;1;KP_PPID,KI_PPID,OFFSET_WIN_PPID,OFFSET_RATE_PPID,dT;1;xp;1;oYmax,oYmin,pvs,pvi,E_P,cRate,oYmin_LIM_OLD,oYmax_LIM_OLD,oYmin_LIM,oYmax_LIM;0;0
+  69;C;PI_AntiWindUp_Q;4;18;[Kp+Ki/s];1;PPC_QMAX;1;PPC_QMIN;1;KP_QPID,KI_QPID;1;xq;0;;0;0
+  70;C;PI_AntiWindUp_Q_Vmed;4;18;[Kp+Ki/s];1;PPC_QMAX;1;PPC_QMIN;1;KP_QVPID,KI_QVPID;1;xqv;0;;0;0
+  71;C;PI_AntiWindUp_V;4;18;[Kp+Ki/s];1;PPC_QMAX;1;PPC_QMIN;1;KP_VPID,KI_VPID;1;xv;0;;0;0
+  72;C;PT1_MX_P_FILT;4;8;1/(1+sT);0;;0;;1;Tp;1;x_mx_p;0;;0;0
+  73;C;PT1_MX_Q_FILT;4;8;1/(1+sT);0;;0;;1;Tq;1;x_mx_q;0;;0;0
+  74;C;PT1_MX_V_FILT;4;8;1/(1+sT);0;;0;;1;Tv;1;x_mx_v;0;;0;0
+  75;C;PT1_PTOT_INV;4;8;1/(1+sT);0;;0;;1;Tg;1;x_ptot;0;;0;0
+  76;C;Slew_Rate_Limiter_FP;4;14;SlewRateLimiter_FP;0;;0;;1;SPDEC_FPPID,SPINC_FPPID,dT2;0;;1;cDec2,cInc2,SP_FPPID_OLD;0;0
+  77;C;Slew_Rate_Limiter_P;4;15;SlewRateLimiter_P;0;;0;;1;SPDEC_PPID,SPINC_PPID,dT;0;;1;cDec,cInc,SP_PPID_OLD;0;0
+  78;C;Slew_Rate_Limiter_Q;4;16;SlewRateLimiter_Q;0;;0;;1;SPDEC_QPID,SPINC_QPID,dT3;0;;1;cDec3,cInc3,SP_QPID_OLD;0;0
+  79;C;Slew_Rate_Limiter_V;4;17;SlewRateLimiter_V;0;;0;;1;SPDEC_VPID,SPINC_VPID,dT1;0;;1;cDec1,cInc1,SP_VPID_OLD;0;0
+  80;C;TAN_de_FI;4;20;tan();0;;0;;0;;0;;0;;0;0
+  81;C;Block Reference(1);21;30;PT1;0;;0;;1;1,TPQfil;1;xPfil;0;;0;0
+  82;C;Block Reference(10);21;34;Select_4;0;;0;;0;;0;;0;;0;0
+  83;C;Block Reference(11);21;24;DSL_Model_Type1;0;;0;;1;array_QU;0;;0;;0;0
+  84;C;Block Reference(12);21;23;C;0;;0;;1;ModeQ;0;;0;;0;0
+  85;C;Block Reference(13);21;27;-1;0;;0;;0;;0;;0;;0;0
+  86;C;Block Reference(14);21;28;PFP_ctrl;0;;0;;1;array_PFP;0;;1;PFP;0;0
+  87;C;Block Reference(15);21;31;PT1aw;1;Iqmax;1;Iqmin;1;1,0.01;1;Qx1;0;;0;0
+  88;C;Block Reference(16);21;33;Ratelimiter;1;rl_P_up;1;rl_P_down;0;;1;xrl_P;0;;0;0
+  89;C;Block Reference(17);21;33;Ratelimiter;1;rl_Q_up;1;rl_Q_down;0;;1;xrl_Q;0;;0;0
+  90;C;Block Reference(18);21;22;0;0;;0;;0;;0;;0;;0;0
+  91;C;Block Reference(19);21;25;Limiter;1;Pmax;1;-1;0;;0;;0;;0;0
+  92;C;Block Reference(2);21;30;PT1;0;;0;;1;1,TPQfil;1;xQfil;0;;0;0
+  93;C;Block Reference(3);21;32;RPF;0;;0;;1;Droop,fdb,fn;0;;0;;0;0
+  94;C;Block Reference(4);21;31;PT1aw;1;Idmax;1;Idmin;1;1,0.01;1;Px1;0;;0;0
+  95;C;Block Reference(5);21;23;C;0;;0;;1;PF_enable;0;;0;;0;0
+  96;C;Block Reference(6);21;22;0;0;;0;;0;;0;;0;;0;0
+  97;C;Block Reference(7);21;26;Max_2;0;;0;;0;;0;;0;;0;0
+  98;C;Block Reference(8);21;23;C;0;;0;;1;0.01;0;;0;;0;0
+  99;C;Block Reference(9);21;29;PF_ctrl;0;;0;;0;;0;;0;;0;0
+  100;C;Block Reference;21;30;PT1;0;;0;;1;1,Tufil;1;xufil;0;;0;0
+  101;C;Block Reference(2);37;38;Limiter_idq;0;;0;;1;imax,Smax,imaxsy,idlim,IqPre;0;;1;iq_lim_fault,iq_lim_normal,id_lim_normal,id_lim_fault,iqli,idli,set_f,reset_f,VRT_Flagp;0;0
+  102;C;Block Reference(3);37;39;PT1;0;;0;;1;1,Tmu;1;ux1;0;;0;0
+  103;C;Block Reference(4);37;41;VRT;0;;0;;1;LVRT_th,HVRT_th,Kfactor,Tsupiq,Uclear,Tu;0;;1;LVRT_FLAG,HVRT_FLAG,VRT_FLAG_0,up,set_fl,reset_fl,VRT_FlagP,u_Freeze,resetLVRT,resetHVRT;0;0
+  104;C;Block Reference(5);37;39;PT1;0;;0;;1;1,Tccq;1;iqx1;0;;0;0
+  105;C;Block Reference(6);37;40;Ratelimiter;1;Ramp_i,Ramp_i_lvrt;1;-100;1;Tsupiq;1;xidrlim;1;ctrl_rlmd,up1,ctrl_rlmd1;0;0
+  106;C;Block Reference;37;39;PT1;0;;0;;1;1,Tccd;1;idx1;0;;0;0
+
+
+$$BlkSig;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);inodfrom(i);iconfrom(i);inodto(i);iconto(i);pnodfrom(p);pnodto(p)
+  107;C;Fmeas;3;1;2;3;1;240;237
+  108;C;MX_P;3;0;2;0;1;238;237
+  109;C;MX_Q;3;1;2;1;1;238;237
+  110;C;MX_V;3;0;2;2;1;239;237
+  111;C;PFref;3;2;2;2;2;237;3
+  112;C;Pref;3;0;2;0;2;237;3
+  113;C;Qref;3;1;2;1;2;237;3
+  114;C;DESHAB_FCOR;4;0;1;0;0;4;
+  115;C;E_Q;4;2;0;0;1;254;69
+  116;C;E_QFP;4;2;0;0;1;255;67
+  117;C;E_QV;4;2;0;0;1;256;70
+  118;C;E_V;4;2;0;0;1;257;71
+  119;C;FI;4;0;2;0;1;54;80
+  120;C;FP_CONV;4;7;1;0;0;4;
+  121;C;MX_F;4;1;1;0;1;4;58
+  122;C;MX_P;4;3;1;0;1;4;72
+  123;C;MX_P_FILT(1);4;0;2;1;0;72;53
+  124;C;MX_P_FILT;4;0;2;1;1;72;68
+  125;C;MX_Q;4;9;1;0;1;4;73
+  126;C;MX_Q_FILT(1);4;0;2;1;0;73;255
+  127;C;MX_Q_FILT(2);4;0;2;1;0;73;256
+  128;C;MX_Q_FILT;4;0;2;3;0;73;254
+  129;C;MX_V;4;5;1;0;1;4;74
+  130;C;MX_V_FILT(2);4;-1;0;-1;0;;
+  131;C;MX_V_FILT;4;0;2;1;1;56;60
+  132;C;MX_V_FILT2(1);4;0;2;3;0;74;257
+  133;C;MX_V_FILT2(2);4;0;2;1;1;74;56
+  134;C;MX_V_FILT2;4;0;2;-1;0;74;
+  135;C;PTOT_INV;4;0;2;0;2;75;4
+  136;C;PTOT_INV_RAW;4;0;2;0;1;68;75
+  137;C;QTOT_INV;4;0;2;1;2;59;4
+  138;C;QTOT_INV1;4;0;2;0;1;70;65
+  139;C;QTOT_INV2;4;0;2;1;1;71;65
+  140;C;QTOT_INV3;4;0;2;2;1;67;65
+  141;C;QTOT_INV4;4;0;2;3;1;69;65
+  142;C;QTOT_INV_RAW;4;0;2;0;1;65;59
+  143;C;Q_FP;4;-1;0;0;1;;
+  144;C;SP_FPPID;4;8;1;0;1;4;76
+  145;C;SP_FPPID_SRLIM;4;0;2;0;1;76;54
+  146;C;SP_OFFSET_F;4;0;2;2;0;58;
+  147;C;SP_OFFSET_FCOR;4;3;0;3;0;;258
+  148;C;SP_PPID;4;2;1;0;1;4;77
+  149;C;SP_PPID_COMP;4;0;2;0;1;63;68
+  150;C;SP_PPID_FCOR;4;2;0;0;1;258;63
+  151;C;SP_PPID_SRLIM;4;0;2;0;0;77;258
+  152;C;SP_QFPPID;4;3;0;0;1;;64
+  153;C;SP_QPID;4;10;1;0;1;4;78
+  154;C;SP_QPID_LIM;4;0;2;0;0;61;254
+  155;C;SP_QPID_SRLIM;4;0;2;0;1;78;61
+  156;C;SP_QVPID;4;0;2;0;0;60;256
+  157;C;SP_VPID;4;6;1;0;1;4;79
+  158;C;SP_VPID_LIM;4;0;2;0;0;62;257
+  159;C;SP_VPID_SRLIM;4;0;2;0;1;79;62
+  160;C;TAN_FI;4;0;2;0;0;80;53
+  161;C;Vbase_VDPID;4;4;1;0;1;4;60
+  162;C;Vref_Simulada;4;0;2;0;1;55;56
+  163;C;cero;4;0;2;1;0;57;
+  164;C;o1;4;0;2;0;0;64;255
+  165;C;o2;4;0;2;2;0;66;
+  166;C;yi(1);4;2;0;1;0;53;
+  167;C;yi;4;2;0;0;1;53;66
+  168;C;PF_enable_s;21;0;2;0;0;95;
+  169;C;PFref;21;2;1;0;1;21;99
+  170;C;P_meas;21;3;1;0;1;21;81
+  171;C;P_meas1(1);21;0;2;0;1;81;86
+  172;C;P_meas1;21;0;2;1;1;81;99
+  173;C;Pctrl;21;0;2;0;0;91;
+  174;C;Pref;21;0;1;0;1;21;88
+  175;C;Pref_rl;21;0;2;0;0;88;259
+  176;C;Q_PFP_Mode;21;0;2;2;1;86;82
+  177;C;Q_PF_Mode;21;0;2;1;1;99;82
+  178;C;Q_QU_Mode;21;0;2;3;1;83;82
+  179;C;Q_meas;21;4;1;0;1;21;92
+  180;C;Qref;21;1;1;0;1;21;82
+  181;C;Qref_rl;21;0;2;0;0;89;
+  182;C;VRT_Flag;21;7;1;1;1;21;87
+  183;C;ctrl;21;0;2;4;1;84;82
+  184;C;dP;21;0;2;1;0;93;
+  185;C;dP_rpf;21;3;0;3;0;;259
+  186;C;f;21;0;0;0;1;46;93
+  187;C;f_meas;21;6;1;0;0;21;51
+  188;C;id;21;0;2;0;2;94;21
+  189;C;iq;21;0;2;1;2;85;21
+  190;C;o2;21;0;2;2;0;96;
+  191;C;o3;21;0;2;0;0;97;52
+  192;C;o4;21;0;2;0;0;92;50
+  193;C;u_meas;21;5;1;0;1;21;100
+  194;C;u_meas1;21;0;0;0;1;49;83
+  195;C;ufilt;21;0;0;3;0;47;
+  196;C;ufilt1;21;0;0;3;0;48;
+  197;C;ufilt2;21;0;2;0;1;100;97
+  198;C;xVRT;21;0;2;1;1;90;94
+  199;C;yi;21;2;0;0;1;;87
+  200;C;yi2;21;0;2;1;1;98;97
+  201;C;yi3;21;0;2;0;1;87;85
+  202;C;yi4;21;2;0;0;1;;94
+  203;C;yi5;21;0;2;0;1;82;89
+  204;C;yi6;21;2;0;0;1;259;91
+  205;C;PFref;35;2;2;2;1;242;243
+  206;C;P_meas;35;0;2;3;1;244;243
+  207;C;Pref;35;0;2;0;1;242;243
+  208;C;Q_meas;35;1;2;4;1;244;243
+  209;C;Qref;35;1;2;1;1;242;243
+  210;C;VRT_Flag;35;2;2;7;1;241;243
+  211;C;"cosref;sinref";35;1;2;2;1;249;245
+  212;C;f;35;1;2;1;1;248;246
+  213;C;f_meas;35;0;2;6;1;248;243
+  214;C;id;35;0;2;0;1;243;241
+  215;C;id_ref;35;0;2;0;1;241;245
+  216;C;iq;35;1;2;1;1;243;241
+  217;C;iq_ref;35;1;2;1;1;241;245
+  218;C;u_meas(1);35;0;2;2;1;247;241
+  219;C;u_meas(2);35;0;2;0;1;247;246
+  220;C;u_meas;35;0;2;5;1;247;243
+  221;C;VRT_Flag(1);37;2;2;2;2;103;37
+  222;C;VRT_Flag(2);37;2;2;2;1;103;105
+  223;C;VRT_Flag;37;2;2;4;1;103;101
+  224;C;VRT_Flag1(1);37;1;2;1;1;103;105
+  225;C;VRT_Flag1;37;1;2;3;1;103;101
+  226;C;diq_VRT;37;0;2;2;1;103;101
+  227;C;id;37;0;1;0;1;37;101
+  228;C;id_ref;37;0;2;0;2;105;37
+  229;C;iq;37;1;1;1;1;37;101
+  230;C;iq_ref;37;0;2;1;2;104;37
+  231;C;u_meas;37;2;1;0;1;37;102
+  232;C;u_meas1(1);37;0;2;5;1;102;101
+  233;C;u_meas1;37;0;2;0;1;102;103
+  234;C;yi;37;0;2;0;1;101;106
+  235;C;yi1;37;1;2;0;1;101;104
+  236;C;yi2;37;0;2;0;1;106;105
+
+
+$$BlkSlot;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sUpLimInp:SIZEROW(i);sLowLimInp:SIZEROW(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);element(p);filtmod(a:80)
+  237;C;PPC_Final;3;0;0;1;PTOT_INV,QTOT_INV,PFref;1;MX_P,MX_Q,MX_V,MX_F;;ElmPpc*
+  238;C;PQ_meas;3;0;0;1;p,q;0;;;StaPqmea*
+  239;C;V_meas;3;0;0;1;u;0;;;StaVmea*
+  240;C;frec_meas;3;0;0;1;fmeas,Fmeas;0;;;ElmPhi*
+  241;C;Curr_limiter;35;0;0;1;id_ref,iq_ref,VRT_Flag;1;id,iq,u_meas;;ElmDsl*
+  242;C;PPC;35;0;0;1;Pref,Qref,PFref;0;;;*
+  243;C;PQ_controller;35;0;0;1;id,iq;1;Pref,Qref,PFref,P_meas,Q_meas,u_meas,f_meas,VRT_Flag;;ElmDsl*
+  244;C;PQ_meas;35;0;0;1;p,q;0;;;StaPqmea*
+  245;C;PV_Converter;35;0;0;0;;1;"id_ref,iq_ref,cosref;sinref";;ElmGenstat*
+  246;C;Protection;35;0;0;1;prot;1;u,yHz;;ElmDsl*
+  247;C;V_meas;35;0;0;1;u;0;;;StaVmea*
+  248;C;frec_meas;35;0;0;1;fmeas,Fmeas;0;;;ElmPhi*
+  249;C;phi_meas;35;0;0;1;"Fmeas,cosphi;sinphi";0;;;ElmPhi*
+  250;C;GEN_AC;44;0;0;0;;1;u0;;*
+  251;C;Señales;44;0;0;1;u0;0;;;*
+  252;C;Mediciones;45;0;0;1;y1;0;;;*
+  253;C;Red;45;0;0;0;;1;Ul0;;*ElmVac
+
+
+$$BlkSum;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iInput0(i);iInput1(i);iInput2(i);iInput3(i)
+  254;C;Summation Point(1);4;0;2;2;1
+  255;C;Summation Point(2);4;0;1;2;2
+  256;C;Summation Point(3);4;0;1;2;2
+  257;C;Summation Point(5);4;0;2;2;1
+  258;C;Summation Point;4;0;2;2;0
+  259;C;Summation Point(2);21;0;2;2;0
+
+
+$$ElmComp;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);outserv(i);typ_id(p);contents:SIZEROW(i);dat_src(a:6);pblk:SIZEROW(i);pblk:0(p);pblk:1(p);pblk:2(p);pblk:3(p);pblk:4(p);pblk:5(p);pblk:6(p);pblk:7(p);pblk:8(p);pelm:SIZEROW(i);pelm:0(p);pelm:1(p);pelm:2(p);pelm:3(p);pelm:4(p);pelm:5(p);pelm:6(p);pelm:7(p);pelm:8(p)
+  260;C;Generador fallas;275;0;44;0;MAN;2;250;251;;;;;;;;2;285;265;;;;;;;
+  261;C;PPC;275;0;3;0;MAN;4;238;239;240;237;;;;;;4;;367;;266;;;;;
+  262;C;Red ext(2);275;1;45;0;MAN;2;252;253;;;;;;;;2;;286;;;;;;;
+  263;C;frame AMD;275;0;35;0;MAN;9;244;245;247;248;249;243;246;241;242;9;;270;368;;;267;269;268;261
+
+
+$$ElmCoup;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);on_off(i);aUsage(a:4);nphase(i);nneutral(i);chr_name(a:40);for_name(a:100)
+  264;C;CB_AMD;275;;1;cbk;3;0;;
+
+
+$$ElmDsl;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);outserv(i);params:SIZEROW(i);params:0(r);params:1(r);params:2(r);params:3(r);params:4(r);params:5(r);params:6(r);params:7(r);params:8(r);params:9(r);params:10(r);params:11(r);params:12(r);params:13(r);params:14(r);params:15(r);params:16(r);params:17(r);params:18(r);params:19(r);params:20(r);params:21(r);params:22(r);params:23(r);params:24(r);params:25(r);params:26(r);params:27(r);params:28(r);params:29(r);params:30(r);params:31(r);params:32(r);params:33(r);params:34(r);params:35(r);params:36(r);params:37(r);params:38(r);params:39(r);params:40(r);params:41(r);params:42(r);params:43(r);params:44(r);params:45(r);params:46(r);params:47(r);params:48(r);params:49(r);params:50(r);params:51(r);params:52(r);params:53(r);params:54(r);params:55(r);pelm:SIZEROW(i);pelm:0(p);pelm:1(p);signal:SIZEROW(i);signal:0(a);signal:1(a);parameterNames:SIZEROW(i);parameterNames:0(a);oarrmat:SIZEROW(i);iAstabint(i)
+  265;C;Señales;260;42;0;1;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2;;;2;;;1;Curva;0;0
+  266;C;Common_Model_ PPC_FINAL;263;4;0;56;0.2;0.7;0.3;0.5;0;0.5;2;6;0.36264;0.36264;0.01;60;60;60.03;59.97;63;57.5;30;-30;0.001;-0.00233333333333;0.00233333333333;6.06;6.06;0.001;1000;1000;0.001;0.15;0.3;1;100;0.01;0.01;0.01;0.01;3;0.01;0.35;0.01;0.35;-0.5;0.5;0.01;0.01;1;-0.45;-0.3626;0.92;0;0;0.45;0.3626;1.5;1;2;2;;;2;;;1;KP_QFPPID,KI_QFPPID,KP_QPID,KI_QPID,KP_QVPID,KI_QVPID,KP_VPID,KI_VPID,cM1,cM2,dT,cHzTrS1r,cHzTrI1r,cHzTrS1,cHzTrI1,cHzTrS2,cHzTrI2,SPDEC_FPPID,SPINC_FPPID,dT2,SPDEC_PPID,SPINC_PPID,SPDEC_QPID,SPINC_QPID,dT3,SPDEC_VPID,SPINC_VPID,dT1,KP_PPID,KI_PPID,OFFSET_WIN_PPID,OFFSET_RATE_PPID,Tp,Tq,Tv,Tg,MODO_Q,FXVD_dVTS1,FXVD_dVTS2,FXVD_dVTI1,FXVD_dVTI2,FX_QMIN_VD,FX_QMAX_VD,Tft,Tfv,MODO_VQ,PPC_QMIN,PPC_SP_QMIN,VMIN,PPC_SP_PMIN,PPC_PMIN,PPC_QMAX,PPC_SP_QMAX,VMAX,PPC_SP_PMAX,PPC_PMAX;0;0
+  267;C;PQ_ctrl;263;21;0;16;0.01;0.01;5;0.03;60;1;0;-2;-2;-10;-10;1;1.1;1.1;10;10;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2;;;2;;;1;Tufil,TPQfil,Droop,fdb,fn,ModeQ,PF_enable,Iqmin,Idmin,rl_P_down,rl_Q_down,Pmax,Iqmax,Idmax,rl_P_up,rl_Q_up;0;0
+  268;C;idq_lim;263;37;0;16;1;1;1;1;0;0.01;0.85;1.2;2.21;0.5;0;0.1;0.001;0.001;1;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2;;;2;;;1;imax,Smax,imaxsy,idlim,IqPre,Tmu,LVRT_th,HVRT_th,Kfactor,Tsupiq,Uclear,Tu,Tccd,Tccq,Ramp_i,Ramp_i_lvrt;0;0
+  269;C;prot;263;43;1;22;1;0.8;0.6;0;1.15;1.25;57;54;63;66;2.15;1.75;0;2.65;0.65;0.65;0.01;0.65;0.01;0.85;1.2;0.01;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2;;;2;;;1;enable,UV1,UV2,UV3,OV1,OV2,UF1,UF2,OF1,OF2,tUV1,tUV2,tUV3,tOV1,tOV2,tUF1,tUF2,tOF1,tOF2,LVRT_th,HVRT_th,Tfilt;0;0
+
+
+$$ElmGenstat;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);outserv(i);sgn(r);cosn(r);cCategory(a);av_mode(a);mode_inp(a:6);pgini(r);qgini(r);sgini(r);cosgini(r);pf_recap(i);phtech(i);ngnum(i);ip_ctrl(i);usetp(r);phiini(r);Kpf(r);scale0(r);Tdelay(r);iAstabint(i);iSimModel(i)
+  270;C;AMD_PV_Converter_CT_EQ;277;0;0.215;1;Photovoltaic;constq;PQ;0;0;0;1;0;0;37;0;1;0;0;1;0.01;1;4
+
+
+$$ElmLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);dline(r);fline(r);GPScoords:MATRIX(a);nlnum(i);inAir(i);outserv(i);c:R1(r);c:X1(r);c:B1(r);c:R0(r);c:X0(r);c:B0(r);c:G1(r);c:G0(r);i_dist(i);chr_name(a:40);pStoch(p);for_name(a:100);GPScoords:SIZEROW:SIZEROW(i);GPScoords:SIZECOL:SIZEROW(i)
+  271;C;AMD_CT_EQ;277;371;1;1;;1;0;0;0.09075;0.052975;74.09459;0.227136;0.160657;74.09459;0;0;0;;;;0;0
+  272;C;LA_AMD;275;372;5.28;1;;1;0;0;1.446934;1.589565;36.20987;4.956418;9.275862;11.41574;0;0;0;;;;0;0
+  273;C;LS_AMD;275;;0.34;1;;1;0;0;0.039601;0.046959;25.18733;0.381317;0.636702;25.18733;0;0;0;;;;0;0
+
+
+$$ElmLod;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);mode_inp(a:6);slini(r);plini(r);qlini(r);coslini(r);pf_recap(i);scale0(r);i_scale(i);outserv(i);classif(a:40);i_sym(i);plinir(r);plinis(r);plinit(r);qlinir(r);qlinis(r);qlinit(r);phtech(a);chr_name(a:40);for_name(a:100)
+  274;C;AMD_SA_Planta;277;;PC;0;0;0;1;0;1;0;0;;0;0;0;0;0;0;0;3PH-'D';;
+
+
+$$ElmNet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);pDiagram(p);for_name(a:100)
+  275;C;Grid;;60;344;
+
+
+$$ElmShnt;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);systp(i);ctech(i);shtype(i);ushnm(r);mode_inp(a:6);qcapn(r);ncapx(i);ncapa(i);outserv(i);qrean(r);qtotn(r);tandc(r);fres(r);greaf0(r);grea(r);bcap(r);xrea(r);rrea(r);gparac(r);iswitch(i);imldc(a:2);usetp_mx(r);usetp_mn(r);qsetp_mx(r);qsetp_mn(r);iQorient(i);ilcph(i);chr_name(a:40);rpara(r);i_cont(i);cgnd(i)
+  276;C;AMD_C_34.5_Planta;277;0;1;2;34.5;DEF;0.5;20;1;0;0;0.5;0;0;0;0;420.0798;1.5;0;0;0;V;1.05;0.95;0;0;0;0;;0;0;0
+
+
+$$ElmSite;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sType(a:160);GPSlat(r);GPSlon(r)
+  277;C;AMD_Composite Network;275;;0;0
+
+
+$$ElmTerm;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);systype(i);iUsage(i);uknom(r);unknom(r);iminus(i);outserv(i);GPSlat(r);GPSlon(r);vtarget(r);cpZone(p);cpSubstat(p);ivpriority(i);dvmin(r);dvmax(r);chr_name(a:40);cpArea(p);cpGrid(p);cpSite(p);phtech(i);for_name(a:100)
+  278;C;AMD_LV_CT_EQ;277;;0;0;0.8;0.461880;0;0;0;0;1;;;-1;-5;5;;;275;277;0;
+  279;C;AMD_MV_CT;277;;0;0;34.5;19.91858;0;0;0;0;1;;;-1;-5;5;;;275;277;0;
+  280;C;AMD_MV_EQ;277;;0;0;34.5;19.91858;0;0;0;0;1;;;-1;-5;5;;;275;277;0;
+  281;C;Apoyo_Entroque;275;;0;0;34.5;19.91858;0;0;0;0;1;;;-1;-5;5;;;275;;0;
+  282;C;PC_AMD_34.5;275;;0;0;34.5;19.91858;0;0;0;0;1;;;-1;-5;5;;;275;;0;
+  283;C;SE_proyecto;275;;0;0;34.5;19.91858;0;0;0;0;1;;;-1;-5;5;;;275;;0;
+
+
+$$ElmTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);ntnum(i);outserv(i);nntap(i);i_auto(i);ntrcn(i);usetp(r);usp_low(r);usp_up(r);t2ldc(i);cgnd_h(i);cgnd_l(i);i_eahv(i);i_ealv(i);c:nntap(i);p_rem(p);cpCtrlNode(p);uset_mode(i);sernum(a:40);constr(i);chr_name(a:40);ratfac(r);for_name(a:100)
+  284;C;Trafo_AMD_EQ;277;373;4;0;0;0;0;1;0.99;1.01;0;0;0;0;0;0;;280;0;;0;;1;
+
+
+$$ElmVac;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);for_name(a:100);outserv(i);itype(i);Pload(r);Qload(r);Pgen(r);Qgen(r);Pzload(r);Qzload(r)
+  285;C;Hueco_AMD;275;;1;0;0;0;0;0;0;0
+  286;C;SDL;275;;0;0;0;0;0;0;0;0
+
+
+$$IntFolder;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iopt_typ(i)
+  287;C;Used Macros;4;0
+  288;C;Used Macros;21;0
+  289;C;Used Macros;37;0
+  290;C;Layers;343;0
+  291;C;Settings;343;0
+  292;C;Layers;344;0
+  293;C;Settings;344;0
+  294;C;Generador_Señales;295;0
+  295;C;User Defined Models;296;0
+  296;C;Library;345;1
+  297;C;Linea34.5kV;298;1
+  298;C;Typos_test;;1
+
+
+$$IntGrf;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iCol(i);iVis(i);iLevel(i);rCenterX(r);rCenterY(r);sSymNam(a:80);pDataObj(p);iRot(i);rSizeX(r);rSizeY(r);sAttr:SIZEROW(i);iCollapsed(i);iIndLS(i)
+  299;C;Graphical Net Object1;343;-16777216;1;1;100.625;153.125;TermStrip;279;0;2.666667;1;0;1;1
+  300;C;Graphical Net Object10;343;-16777216;1;1;96.25;183.75;d_lin;273;0;1;1;0;1;1
+  301;C;Graphical Net Object11;343;-16777216;0;1;87.43134;161.875;TBDummy;273;0;1;1;0;1;1
+  302;C;Graphical Net Object12;343;-16777216;0;1;90.25999;149.0432;TBDummy;271;0;1;1;0;1;1
+  303;C;Graphical Net Object13;343;-16777216;0;1;90.55315;132.4225;TBDummy;271;0;1;1;0;1;1
+  304;C;Graphical Net Object14;343;-16777216;0;1;114.2906;148.75;TBDummy;274;0;1;1;0;1;1
+  305;C;Graphical Net Object15;343;-16777216;0;1;131.4745;149.1898;TBDummy;276;0;1;1;0;1;1
+  306;C;Graphical Net Object16;343;-16777216;0;1;89.38287;121.6204;TBDummy;284;0;1;1;0;1;1
+  307;C;Graphical Net Object19;343;-16777216;0;1;89.35998;105.1144;TBDummy;284;0;1;1;0;1;1
+  308;C;Graphical Net Object2;343;-16777216;1;1;80.9375;126.875;TermStrip;280;0;1.166667;1;0;1;1
+  309;C;Graphical Net Object20;343;-16777216;1;1;78.75;83.125;d_genstat;270;0;1;1;0;1;1
+  310;C;Graphical Net Object21;343;-16777216;0;1;94.13306;86.40767;TBDummy;270;0;1;1;0;1;1
+  311;C;Graphical Net Object3;343;-16777216;1;1;80.9375;96.25;TermStrip;278;0;1.166667;1;0;1;1
+  312;C;Graphical Net Object5;343;-16777216;1;1;78.75;140;d_lin;271;180;1;1;0;1;1
+  313;C;Graphical Net Object7;343;-16777216;1;1;78.75;113.75;d_tr2;284;0;1;1;0;1;1
+  314;C;Graphical Net Object8;343;-16777216;1;1;131.25;135.625;d_shunt;276;0;1;1;0;1;1
+  315;C;Graphical Net Object9;343;-16777216;1;1;113.75;135.625;d_load;274;0;1;1;0;1;1
+  316;C;Graphical Net Object1(1);344;-16777216;1;1;161.875;126.875;TermStrip;282;90;0.666666;1;0;1;1
+  317;C;Graphical Net Object1;344;-16777216;1;1;196.875;126.875;TermStrip;283;90;0.666666;1;0;1;1
+  318;C;Graphical Net Object11;344;-16777216;0;1;92.19775;135.4538;TBDummy;273;0;1;1;0;1;1
+  319;C;Graphical Net Object13;344;-16777216;1;1;214.375;122.5;d_vac;285;90;1;1;0;1;1
+  320;C;Graphical Net Object2;344;-16777216;1;1;214.375;131.25;d_vac;286;90;1;1;0;1;1
+  321;C;Graphical Net Object4;344;-16777216;1;1;181.5625;126.875;d_couple;264;90;1;1;0;1;1
+  322;C;Graphical Net Object6;344;-16777216;1;1;122.5;126.875;ShortTermStrip;281;90;1;1;0;1;1
+  323;C;Graphical Net Object7(1);344;-16777216;1;1;144.375;126.875;d_lin;272;90;1;1;0;1;1
+  324;C;Graphical Net Object7;344;-16777216;1;1;74.375;126.875;SiteRect;277;0;2;2;0;1;1
+  325;C;Graphical Net Object8;344;-16777216;1;1;102.8175;126.875;d_lin;273;270;1;1;0;1;1
+  326;C;Graphical Net Object9;344;-16777216;0;1;114.8338;135.6155;TBDummy;273;0;1;1;0;1;1
+
+
+$$IntGrfcon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);rX:SIZEROW(i);rX:0(r);rX:1(r);rY:SIZEROW(i);rY:0(r);rY:1(r);iDatConNr(i);iLinSt(i);rLinWd(r)
+  327;C;GCO_1;300;2;96.25;96.25;2;183.75;153.125;1;1;0
+  328;C;GCO_1;309;2;78.75;78.75;2;87.5;96.25;0;1;0
+  329;C;GCO_1;312;2;78.75;78.75;2;140;126.875;0;1;0
+  330;C;GCO_2;312;2;78.75;78.75;2;140;153.125;1;1;0
+  331;C;GCO_1;313;2;78.75;78.75;2;118.125;126.875;0;1;0
+  332;C;GCO_2;313;2;78.75;78.75;2;109.375;96.25;1;1;0
+  333;C;GCO_1;314;2;131.25;131.25;2;140;153.125;0;1;0
+  334;C;GCO_1;315;2;113.75;113.75;2;140;153.125;0;1;0
+  335;C;GCO_1;319;2;210;196.875;2;122.5;122.5;0;1;0
+  336;C;GCO_1;320;2;210;196.875;2;131.25;131.25;0;1;0
+  337;C;GCO_1;321;2;179.375;161.875;2;126.875;126.875;0;1;0
+  338;C;GCO_2;321;2;183.75;196.875;2;126.875;126.875;1;1;0
+  339;C;GCO_1;323;2;144.375;122.5;2;126.875;126.875;0;1;0
+  340;C;GCO_2;323;2;144.375;161.875;2;126.875;126.875;1;1;0
+  341;C;GCO_1;325;2;102.8175;122.5;2;126.875;126.875;0;1;0
+  342;C;GCO_2;325;2;102.8175;83.135;2;126.875;126.875;1;1;0
+
+
+$$IntGrfnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snap_on(i);ortho_on(i);pDataFolder(p);iType(i);rScalFac(r);rXFak(r);rYFak(r);rRTopXc(r);rRTopYc(r);rLBotXc(r);rLBotYc(r)
+  343;C;AMD_Composite Network;;1;1;277;3;100000;1;1;0;0;0;0
+  344;C;Grid;;1;1;275;0;100000;1;1;0;0;0;0
+
+
+$$IntTemplate;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  345;C;Generador fallas;
+
+
+$$StaCubic;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_bus(i);obj_id(p);it2p1(i);it2p2(i);it2p3(i);cPhInfo(a);chr_name(a:40);for_name(a:100)
+  346;C;Cub_3;278;0;270;0;1;2;abc;;
+  347;C;Cub_4;278;1;284;0;1;2;abc;;
+  348;C;Cub_1;279;1;271;0;1;2;abc;;
+  349;C;Cub_2;279;0;276;0;1;2;abc;;
+  350;C;Cub_3;279;0;274;0;1;2;abc;;
+  351;C;Cub_4;279;1;273;0;1;2;abc;;
+  352;C;Cub_1;280;0;271;0;1;2;abc;;
+  353;C;Cub_2;280;0;284;0;1;2;abc;;
+  354;C;Cub_1;281;0;272;0;1;2;abc;;
+  355;C;Cub_2;281;0;273;0;1;2;abc;;
+  356;C;Cub_2;282;1;272;0;1;2;abc;;
+  357;C;Cub_StaCtrl;282;0;264;0;1;2;abc;;
+  358;C;Cub_1;283;0;286;0;1;2;abc;;
+  359;C;Cub_2;283;1;264;0;1;2;abc;;
+  360;C;Cub_3;283;0;285;0;1;2;abc;;
+
+
+$$StaSwitch;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);on_off(i);typ_id(p);aUsage(a);iUse(i);for_name(a:100)
+  361;C;Switch;354;1;;cbk;1;
+  362;C;Switch;355;1;;cbk;1;
+  363;C;Switch;356;1;;cbk;1;
+  364;C;Switch;357;1;;cbk;1;
+  365;C;Switch;358;1;;cbk;1;
+  366;C;Switch;360;1;;cbk;1;
+
+
+$$StaVmea;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);pbusbar(p);pbusbar2(p);outserv(i);i_mode(i);iOutput(i);iUdcOutput(i);iFreq(i);freqOutput(i);nominalFreq(r);meatech(i);nphase(i);it2p(i);it2p2(i);samplingFreq(r);samplesPerPeriod(i);samplesPerWindow(i);windowLength(r);rateLim(r);clockPeriod(r);chr_name(a:40)
+  367;C;Voltage Measurement POI;261;357;;0;1;0;0;0;0;60;0;3;0;0;1200;20;100;0.083333;100;0.016666;
+  368;C;Voltage Measurement;263;278;;0;1;0;0;0;0;60;0;3;0;0;1200;20;100;0.083333;100;0.016666;
+
+
+$$TypCon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sline(r);ncsub(i);dsubc(r);rpha(r);diaco(r);erpha(r);diatub(r);iskin(i);tmax(r);uline(r);iopt_inp(a:6);alpha(r);rpha_tmax(r);mlei(a:20)
+  369;C;AAAC_246.9_kcmil_semiaislado;297;0.396;1;0.1;0.2678;26.13;5.19;16;1;75;35;mat;0;0.05;Al
+  370;C;Mensajero7#8;297;0.37331;1;0.1;1.463;9.78;3;16;1;80;34.5;mat;0;0.05;Al
+
+
+$$TypLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uline(r);sline(r);InomAir(r);cohl_(i);rline(r);xline(r);rline0(r);xline0(r);Ithr(r);tmax(r);rtemp(r);systp(i);nlnph(i);nneutral(i);frnom(r);mlei(a:4);bline(r);bline0(r);c:rline(r);c:xline(r);c:bline(r);gline(r);gline0(r);aohl_(a:6);cline(r);cline0(r);chr_name(a:40);for_name(a:100)
+  371;C;XLPE 1x120RM 35 kV ir;298;34.5;0.298;0.298;0;0.09075;0.052975;0.227136;0.160657;11.3;90;250;0;3;0;60;Al;74.09459;74.09459;0.09075;0.052975;74.09459;0;0;cab;0.196542;0.196542;;
+
+
+$$TypTow;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);nlear(i);nlcir(i);gearth(r);i_mode(i);pcond_e:SIZEROW(i);pcond_e:0(p);nphas:SIZEROW(i);nphas:0(r);ktrto:SIZEROW(i);ktrto:0(r);pcond_c:SIZEROW(i);pcond_c:0(p);xy_e:SIZEROW(i);xy_e:SIZECOL(i);xy_e:0:0(r);xy_e:0:1(r);xy_c:SIZEROW(i);xy_c:SIZECOL(i);xy_c:0:0(r);xy_c:0:1(r);xy_c:0:2(r);xy_c:0:3(r);xy_c:0:4(r);xy_c:0:5(r);R_c0:SIZEROW(i);R_c0:SIZECOL(i);R_c0:0:0(r);X_c0:SIZEROW(i);X_c0:SIZECOL(i);X_c0:0:0(r);R_c1:SIZEROW(i);R_c1:SIZECOL(i);R_c1:0:0(r);X_c1:SIZEROW(i);X_c1:SIZECOL(i);X_c1:0:0(r);B_c0:SIZEROW(i);B_c0:SIZECOL(i);B_c0:0:0(r);B_c1:SIZEROW(i);B_c1:SIZECOL(i);B_c1:0:0(r);G_c0:SIZEROW(i);G_c0:SIZECOL(i);G_c0:0:0(r);G_c1:SIZEROW(i);G_c1:SIZECOL(i);G_c1:0:0(r)
+  372;C;246.9_Compacta_sencilla;297;60;1;1;40;0;1;370;1;3;1;0;1;369;1;2;2.1;16;1;6;2.2425;2.1;1.9575;15.80081416;15.55399692;15.80081416;1;1;0.93871544055331;1;1;1.75679184555966;1;1;0.27404049732509;1;1;0.30105404878026;1;1;2.16207245786415;1;1;6.85792953437089;1;1;0;1;1;0
+
+
+$$TypTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);nt2ph(i);strn(r);frnom(r);utrn_h(r);utrn_l(r);uktr(r);pcutr(r);uk0tr(r);ur0tr(r);tr2cn_h(a:4);tr2cn_l(a:4);nt2ag(r);curmg(r);pfe(r);zx0hl_n(r);itapch(i);tap_side(i);dutap(r);phitr(r);nntap0(i);ntpmn(i);ntpmx(i);manuf(a:40);itapzdep(i);iIntPola(i);uktmn(r);uktmx(r);pcutmn(r);pcutmx(r);ukrtmn(r);ukrtmx(r);itrdl(r);itrdl_lv(r);itrdr(r);itrdr_lv(r);chr_name(a:40);for_name(a:100)
+  373;C;2-Winding Transformer Type(2);;3;6.5;60;34.5;0.8;7.98;72;0.85;0;D;YN;11;0.136;7;100;1;0;2.5;0;0;-3;3;;0;0;0;0;0;0;0;0;0.5;0.5;0.5;0.5;;

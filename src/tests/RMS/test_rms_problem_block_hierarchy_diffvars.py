@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import VeraGridEngine.api as gce
@@ -8,9 +12,9 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 
 
 def _build_minimal_pf_grid_with_generator(generator_block: Block) -> tuple[gce.MultiCircuit, object]:

@@ -1,0 +1,28 @@
+* Portable macro with filtered/unfiltered producers sharing a declared output name.
+$$General;FID(a:40);Descr(a:40);Val(a:40)
+1;Version;6.0
+$$BlkDef;FID(a:40);OP(a:1);loc_name(a:80);isMacro(i);level(i);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a);sAddEquat:SIZEROW(i);sAddEquat:0(a);cOutput(a);cInput(a)
+FRAME;C;Frame;0;0;1;filtered,unfiltered;1;u;0;;filtered,unfiltered;u
+MACRO;C;Measure;1;7;1;filtered,unfiltered;1;u;0;;filtered,unfiltered;u
+CALC;C;Calc;0;0;1;Vdc_out;1;x;1;Vdc_out=2*x;Vdc_out;x
+FILTER;C;Filter;0;0;1;Vdc_out;1;x;1;Vdc_out=3*x;Vdc_out;x
+$$ElmComp;FID(a:40);loc_name(a:80);typ_id(p);pblk:SIZEROW(i);pblk:0(p);pelm:SIZEROW(i);pelm:0(p)
+ROOT;Routing example;FRAME;1;SLOT;1;DSL
+$$BlkSlot;FID(a:40);OP(a:1);loc_name(a:80);element(p);filtmod(a:80);sOutput:SIZEROW(i);sOutput:0(a);sInput:SIZEROW(i);sInput:0(a)
+SLOT;C;Measure;DSL;ElmDsl;1;filtered,unfiltered;1;u
+$$ElmDsl;FID(a:40);loc_name(a:80);fold_id(p);typ_id(p)
+DSL;Measure;ROOT;MACRO
+$$BlkRef;FID(a:40);OP(a:1);typ_id(p);cdisName(a)
+calc;C;CALC;Calc
+filter;C;FILTER;Filter
+$$BlkFrom;FID(a:40);OP(a:1);sSig:SIZEROW(i);sSig:0(a);loc_name(a:80)
+reader;C;1;Vdc_out0;Read raw voltage
+reader2;C;1;Vdc_out0;Read raw voltage for filter
+$$BlkGoto;FID(a:40);OP(a:1);loc_name(a:80);sSig:SIZEROW(i)
+writer;C;Raw voltage;0
+$$BlkSig;FID(a:40);OP(a:1);inodfrom(i);loc_name(a:80);iconfrom(i);inodto(i);iconto(i);pnodfrom(p);pnodto(p)
+input;C;0;u;1;0;1;MACRO;calc
+route_in;C;0;Vdc_out0;2;0;0;calc;writer
+route_out;C;0;unfiltered;0;1;2;reader;MACRO
+route_filter;C;0;raw_input;0;0;1;reader2;filter
+filtered_out;C;0;filtered;2;0;2;filter;MACRO

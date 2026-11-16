@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent measured-power and frequency-bias response of an outer turbine controller."""
 from __future__ import annotations
@@ -5,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.governors.lcfb1 import (
+from VeraGridEngine.Templates.Rms.governors.lcfb1 import (
     TurbineLoadControllerParameters, build_lcfb1_template)
 from VeraGridEngine.Utils.Symbolic.block import Block
 from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller, linearized_response

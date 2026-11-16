@@ -16,8 +16,8 @@ from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
 
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
-from VeraGridEngine.Templates.Rms.load_frequency_dependent import FrequencyLoadBuild
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Rms.load_characteristics.load_frequency_dependent import FrequencyLoadBuild
 
 from VeraGridEngine.IO.fmu.model import build_model_snapshot, reconstruct_block
 

@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 0
 - Top-level function count: 2
-- Representative imports: time, scipy, numpy, VeraGridEngine.Utils.NumericalMethods.sparse_solve, VeraGridEngine.Utils.Sparse.csc2, VeraGridEngine.Simulations.Derivatives.ac_jacobian, VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions, VeraGridEngine.DataStructures.numerical_circuit, VeraGridEngine.Simulations.PowerFlow.power_flow_results, VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions, VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls, VeraGridEngine.basic_structures
+- Representative imports: time, scipy, numpy, VeraGridEngine.Utils.Sparse.sparse_solve, VeraGridEngine.Utils.Sparse.csc2, VeraGridEngine.Simulations.Derivatives.ac_jacobian, VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions, VeraGridEngine.DataStructures.numerical_circuit, VeraGridEngine.Simulations.PowerFlow.power_flow_results, VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions, VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls, VeraGridEngine.basic_structures
 
 ## Function: mu(Ybus, J, incS, dV, dx, block1_idx, block2_idx, block3_idx)
 

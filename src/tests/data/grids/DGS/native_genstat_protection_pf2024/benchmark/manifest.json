@@ -1,0 +1,24 @@
+{
+  "job_id": "565c9de627c241f39307ae422ed27b32",
+  "powerfactory_version": "24.0.2.0",
+  "files": [
+    {
+      "file": "genstat_bench_model_2.dgs",
+      "sha256": "812a3bdcec83fff42f74cc807ba77429cb56a109ce9d894a12be5141909e5b4d",
+      "iSimModel": 2,
+      "export_code": 0
+    },
+    {
+      "file": "genstat_bench_model_4.dgs",
+      "sha256": "490189a89ac76d12dc9fd731c37a5a20563a9bba3d0811d31b162c2d413ac743",
+      "iSimModel": 4,
+      "export_code": 0
+    },
+    {
+      "file": "genstat_bench_model_1.dgs",
+      "sha256": "23a4089dfe8419461ebc22b7ff919e71134cd09e024c8e3ce25dec9264616162",
+      "iSimModel": 1,
+      "export_code": 0
+    }
+  ]
+}

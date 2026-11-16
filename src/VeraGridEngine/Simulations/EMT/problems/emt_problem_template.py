@@ -7,10 +7,12 @@ from abc import ABC
 import numpy as np
 from typing import Any, Dict, List, Optional, Protocol, Tuple
 
+from VeraGridEngine.enumerations import SparseSolver
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.jit_compiler import ProceduralExpressionCompiler, RuntimeParameterCompiler
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, hard_sat, heaviside, piecewise, get_expression_vars
-from VeraGridEngine.basic_structures import Vec
+from VeraGridEngine.basic_structures import IntVec, Vec
 from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
 from VeraGridEngine.Devices import MultiCircuit
@@ -241,6 +243,34 @@ def _implements_commit_boundary_api(boundary_updater: Any) -> bool:
             pass
     return False
 
+
+class BoundaryUpdaterCapabilities:
+    """
+    Optional APIs of one boundary updater, resolved once per simulation.
+
+    The forced-event and step-resolution checks inspect dir(), which lists every attribute of a large problem
+    object; solvers resolve the capabilities once, when they choose the updater, instead of on every substep.
+    This relies on the optional APIs being defined by the updater's class, not added to an instance during a run.
+    """
+
+    __slots__ = ("forced_event_time", "step_resolution", "commit_boundary")
+
+    def __init__(self, boundary_updater: Any) -> None:
+        """
+        Resolve the optional APIs of a boundary updater.
+
+        :param boundary_updater: Boundary updater instance, or None.
+        """
+        if boundary_updater is None:
+            self.forced_event_time: bool = False
+            self.step_resolution: bool = False
+            self.commit_boundary: bool = False
+        else:
+            self.forced_event_time = _implements_forced_event_time_api(boundary_updater)
+            self.step_resolution = _implements_step_resolution_api(boundary_updater)
+            self.commit_boundary = _implements_commit_boundary_api(boundary_updater)
+
+
 def _emt_event_spec_time_sort_key(event_spec: Dict[str, float | str | None]) -> float:
     """
     Return the sorting key of one EMT runtime-event specification.
@@ -273,24 +303,51 @@ def get_solver_forced_event_time(
         boundary_updater: EmtBoundaryUpdateProtocol | None,
         t_prev: float,
         t_target: float,
+        capabilities: BoundaryUpdaterCapabilities | None = None,
 ) -> float | None:
     """
     Query the next forced-alignment event time if the updater exposes it.
 
     Legacy boundary updaters that only implement ``update()`` are treated as
     having no forced event alignment requirements.
+
+    :param boundary_updater: Effective boundary updater used by the solver.
+    :param t_prev: Last accepted time.
+    :param t_target: Macro-step target time.
+    :param capabilities: Capabilities of ``boundary_updater`` resolved once per simulation; inspected here when None.
+    :return: Next forced event time, or None.
     """
     if boundary_updater is None:
         return None
     else:
         pass
 
-    if _implements_forced_event_time_api(boundary_updater):
+    implements_api: bool
+    if capabilities is None:
+        implements_api = _implements_forced_event_time_api(boundary_updater)
+    else:
+        implements_api = capabilities.forced_event_time
+
+    if implements_api:
         pass
     else:
         return None
 
     next_time: float | None = boundary_updater.get_next_forced_event_time(float(t_prev), float(t_target))
+
+    # An event already accepted at the previous boundary can appear up to a
+    # fraction of a nanosecond above t_prev when the event clock and solver grid
+    # use different floating-point recurrences.
+    # Integrating that near-zero interval leaves rotating states unable to
+    # advance at floating-point precision and makes Newton stall. Ask for the
+    # next event after the coincident boundary instead.
+    coincidence_tol = 1.0e-9
+    if next_time is not None and next_time <= float(t_prev) + coincidence_tol:
+        next_time = boundary_updater.get_next_forced_event_time(
+            float(t_prev) + coincidence_tol, float(t_target),
+        )
+        if next_time is not None and next_time <= float(t_prev) + coincidence_tol:
+            next_time = None
 
     if next_time is None:
         return None
@@ -304,6 +361,7 @@ def resolve_solver_boundary_step(
         params: Vec,
         committed_time: float | None = None,
         committed_state: Vec | None = None,
+        capabilities: BoundaryUpdaterCapabilities | None = None,
 ) -> float | None:
     """Resolve a prepared external boundary step when the updater supports it.
 
@@ -315,22 +373,38 @@ def resolve_solver_boundary_step(
     :param params: Full runtime-parameter vector receiving resolved outputs.
     :param committed_time: Accepted boundary time for sample-and-hold runtimes.
     :param committed_state: Accepted state for sample-and-hold inputs.
+    :param capabilities: Capabilities of ``boundary_updater`` resolved once per simulation; inspected here, only when
+        needed, when None.
     :return: Earlier state-event retry time, or ``None``.
     """
 
     if boundary_updater is None:
         retry_time: float | None = None
     else:
-        if _implements_step_resolution_api(boundary_updater):
+        step_resolution: bool
+        if capabilities is None:
+            step_resolution = _implements_step_resolution_api(boundary_updater)
+        else:
+            step_resolution = capabilities.step_resolution
+
+        if step_resolution:
             retry_time = boundary_updater.resolve_step(
                 accepted=accepted,
                 params=params,
             )
         else:
             retry_time = None
+    commit_boundary: bool
     if (accepted and retry_time is None and boundary_updater is not None
-            and committed_time is not None and committed_state is not None
-            and _implements_commit_boundary_api(boundary_updater)):
+            and committed_time is not None and committed_state is not None):
+        if capabilities is None:
+            commit_boundary = _implements_commit_boundary_api(boundary_updater)
+        else:
+            commit_boundary = capabilities.commit_boundary
+    else:
+        commit_boundary = False
+
+    if commit_boundary:
         boundary_updater.commit_boundary(float(committed_time), committed_state, params)
     else:
         pass
@@ -420,6 +494,11 @@ class EmtProblemTemplate(ABC):
         "sys_block",
         "grid",
         "_glob_time",
+        "_sparse_solver_backend_provider",
+        "_requested_sparse_solver",
+        "_external_sparse_plugin_name",
+        "_external_sparse_plugin_directory",
+        "_allow_internal_sparse_fallback",
         "_newton_trace_collector",
         "_init_eqs_flat",
         "_diff_init_eqs_flat",
@@ -481,7 +560,11 @@ class EmtProblemTemplate(ABC):
                  vars_glob_name2uid: Dict[str, int] | None = None,
                  progress_signal: DummySignal | None = None,
                  progress_text: DummySignal | None = None,
-                 )->None:
+                 sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None,
+                 sparse_solver: SparseSolver | None = None,
+                 external_plugin_name: str = "",
+                 external_plugin_directory: str = "",
+                 allow_internal_fallback: bool = True) -> None:
         """
         Initialize the EMT problem template.
 
@@ -492,9 +575,20 @@ class EmtProblemTemplate(ABC):
         :param init_eqs_flat: Optional pre-collected initialization equations.
         :param diff_init_eqs_flat: Optional pre-collected differential initialization equations.
         :param vars_glob_name2uid: Optional pre-collected variable-name lookup.
+        :param sparse_solver_backend_provider: Available phase factory resolved before initialization.
+        :param sparse_solver: Requested LU enum retained independently of an effective fallback.
+        :param external_plugin_name: Plugin name used to resolve the supplied provider.
+        :param external_plugin_directory: Exact directory override supplied to the registry.
+        :param allow_internal_fallback: Whether resolution permitted an internal fallback.
         :return: None
         """
         super().__init__()
+        # Generic problems remain unconfigured until a helper receives options.
+        self._sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = sparse_solver_backend_provider
+        self._requested_sparse_solver: SparseSolver | None = sparse_solver
+        self._external_sparse_plugin_name: str = external_plugin_name
+        self._external_sparse_plugin_directory: str = external_plugin_directory
+        self._allow_internal_sparse_fallback: bool = allow_internal_fallback
         self.sys_block: Block = sys_block
         existing_grid: MultiCircuit | None
         try:
@@ -1441,6 +1535,21 @@ class EmtProblemTemplate(ABC):
         """
         return self._diff_vars
 
+    def get_diff_base_var_indices(self) -> IntVec:
+        """
+        Return the variable index of the base variable of every differential, in differential-index order.
+
+        :return: Base variable index per differential; -1 when the differential has no base among the variables.
+        """
+        indices: IntVec = np.full(self._n_diff, -1, dtype=np.int64)
+        differential: Var
+        for differential in self._diff_vars:
+            if differential.base_var is not None:
+                indices[self._uid2idx_diff[differential.uid]] = self._uid2idx_vars.get(differential.base_var.uid, -1)
+            else:
+                pass
+        return indices
+
 
     def get_parameters_values(self)-> List[Const]:
         """
@@ -1812,3 +1921,48 @@ class EmtProblemTemplate(ABC):
     @property
     def event_parameters_eqs(self) -> List[Any]:
         return self._event_parameters_eqs
+
+    def get_sparse_solver_backend_provider(
+            self, sparse_solver: SparseSolver | None = None,
+            external_plugin_name: str = "", external_plugin_directory: str = "",
+            allow_internal_fallback: bool = True) -> SparseLinearSolverBackendProvider | None:
+        """Read the provider only when the complete resolution request matches.
+
+        :param sparse_solver: Requested LU enum; None reads the current binding.
+        :param external_plugin_name: Plugin name supplied to the existing registry.
+        :param external_plugin_directory: Exact plugin directory override.
+        :param allow_internal_fallback: Current permission to use an internal fallback.
+        :return: Matching provider, including its effective fallback, or None.
+        """
+        if sparse_solver is None:
+            return self._sparse_solver_backend_provider
+        else:
+            # Strict policy and plugin changes must re-enter the registry even
+            # when the requested enum and previous effective backend coincide.
+            if (sparse_solver == self._requested_sparse_solver
+                    and external_plugin_name == self._external_sparse_plugin_name
+                    and external_plugin_directory == self._external_sparse_plugin_directory
+                    and allow_internal_fallback == self._allow_internal_sparse_fallback):
+                return self._sparse_solver_backend_provider
+            else:
+                return None
+
+    def set_sparse_solver_backend_provider(
+            self, provider: SparseLinearSolverBackendProvider,
+            sparse_solver: SparseSolver | None = None,
+            external_plugin_name: str = "", external_plugin_directory: str = "",
+            allow_internal_fallback: bool = True) -> None:
+        """Bind a resolved provider and its complete request before a phase starts.
+
+        :param provider: Available provider selected by the existing options policy.
+        :param sparse_solver: Requested enum; defaults to the effective provider.
+        :param external_plugin_name: Plugin name used for this resolution.
+        :param external_plugin_directory: Exact plugin directory override used.
+        :param allow_internal_fallback: Whether resolution permitted internal fallback.
+        :return: None; the binding owns no numeric factors or mutable options.
+        """
+        self._sparse_solver_backend_provider = provider
+        self._requested_sparse_solver = provider.get_solver_type() if sparse_solver is None else sparse_solver
+        self._external_sparse_plugin_name = external_plugin_name
+        self._external_sparse_plugin_directory = external_plugin_directory
+        self._allow_internal_sparse_fallback = allow_internal_fallback

@@ -13,7 +13,9 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 from VeraGridEngine.IO.base.base_circuit import BaseCircuit
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, CgmesRecoveryMode
 from VeraGridEngine.IO.cim.cgmes.cgmes_typing import CGMES_ASSETS
+from VeraGridEngine.IO.cim.cgmes.dynamics.schema import DY_CLASS_DICT
 from VeraGridEngine.IO.cim.cgmes.cgmes_data_parser import CgmesDataParser
+from VeraGridEngine.IO.cim.cgmes.dynamics.assets import CgmesDynamicsAssets
 from VeraGridEngine.enumerations import CGMESVersions
 
 
@@ -149,7 +151,7 @@ def find_attribute(obj: CGMES_ASSETS,
     :param association_inverse_dict:
     :return:
     """
-    return association_inverse_dict.get((obj.tpe, property_name))
+    return association_inverse_dict.get((obj.__class__.__name__, property_name))
 
 
 def merge_class_dict(target_dict: Dict[str, object],
@@ -609,8 +611,16 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                     referenced_object.used = True
 
                                 # set the referenced object in the property
-                                element.set_declared_property_value(prop_name=property_name,
-                                                                    prop_value=referenced_object)
+                                if cim_prop.multiplicity is not None and cim_prop.multiplicity.endswith('..n'):
+                                    element.set_declared_property_value(
+                                        prop_name=property_name,
+                                        prop_value=[referenced_object],
+                                    )
+                                else:
+                                    element.set_declared_property_value(
+                                        prop_name=property_name,
+                                        prop_value=referenced_object,
+                                    )
                                 # register the inverse reference
                                 ref_attribute = find_attribute(obj=element,
                                                                property_name=property_name,
@@ -677,7 +687,12 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                                                         prop_value=None)
 
                                     deferred_reference_queue.append((element, class_name, property_name, v, is_ambiguous))
-                            if len(referenced_object_list) > 1:
+                            if cim_prop.multiplicity is not None and cim_prop.multiplicity.endswith('..n'):
+                                element.set_declared_property_value(
+                                    prop_name=property_name,
+                                    prop_value=list(referenced_object_list),
+                                )
+                            elif len(referenced_object_list) > 1:
                                 element.set_declared_property_value(prop_name=property_name,
                                                                     prop_value=list(referenced_object_list))
                             elif len(referenced_object_list) == 1:
@@ -712,11 +727,12 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
     # modify the elements_by_type here adding the elements from the boundary set
     # all_elements_dict was modified in the previous loop
     for referenced_object in added_from_the_boundary_set:
-        objects_list_ = elements_by_type.get(referenced_object.tpe, None)
+        referenced_class_name: str = referenced_object.__class__.__name__
+        objects_list_ = elements_by_type.get(referenced_class_name, None)
         if objects_list_:
             objects_list_.append(referenced_object)
         else:
-            elements_by_type[referenced_object.tpe] = [referenced_object]
+            elements_by_type[referenced_class_name] = [referenced_object]
 
     if len(deferred_reference_queue) > 0:
         retry_reference_context = ReferenceResolutionContext(
@@ -1037,6 +1053,7 @@ class CgmesCircuit(BaseCircuit):
         "progress_func",
         "cgmes_assets",
         "ncp_assets",
+        "dynamics_assets",
         "classes",
         "all_objects_dict",
         "all_objects_dict_boundary",
@@ -1082,19 +1099,18 @@ class CgmesCircuit(BaseCircuit):
             raise NotImplemented(f"Unrecognized CGMES version {cgmes_version}")
 
         self.ncp_assets = NcpAssets()
+        self.dynamics_assets = CgmesDynamicsAssets(cgmes_version=cgmes_version)
         merge_class_dict(target_dict=self.cgmes_assets.class_dict,
                          source_dict=self.ncp_assets.class_dict,
                          logger=logger)
         merge_association_inverse_dict(target_dict=self.cgmes_assets.association_inverse_dict,
                                        source_dict=self.ncp_assets.association_inverse_dict)
-        for class_name in self.ncp_assets.class_dict.keys():
-            list_name: str = class_name + "_list"
-            if hasattr(self.cgmes_assets, list_name):
-                pass
-            else:
-                setattr(self.cgmes_assets, list_name, list())
-
-            # classes to read, theo others are ignored
+        merge_class_dict(target_dict=self.cgmes_assets.class_dict,
+                         source_dict=self.dynamics_assets.class_dict,
+                         logger=logger)
+        merge_association_inverse_dict(target_dict=self.cgmes_assets.association_inverse_dict,
+                                       source_dict=self.dynamics_assets.association_inverse_dict)
+        # The generated DY objects live in their own typed asset lists.
         self.classes = [key for key, _ in self.cgmes_assets.class_dict.items()]
 
         # dictionary with all objects, useful to find repeated ID's
@@ -1208,13 +1224,27 @@ class CgmesCircuit(BaseCircuit):
         :return: Nothing
         """
         for class_name, elements in self.elements_by_type.items():
-            list_name = class_name + '_list'
-            if hasattr(self.cgmes_assets, list_name):
-                target_list = getattr(self.cgmes_assets, list_name)
+            target_list = self.dynamics_assets.lists.get(class_name, None)
+            if target_list is not None:
                 target_list.clear()
                 target_list.extend(elements)
             else:
-                print('Missing list:', list_name)
+                target_list: List[CGMES_ASSETS] | None = None
+                ncp_class: object | None = self.ncp_assets.class_dict.get(class_name, None)
+                circuit_class: object | None = self.cgmes_assets.class_dict.get(class_name, None)
+                if ncp_class is not None and circuit_class is ncp_class:
+                    target_list = self.ncp_assets.__getattribute__(class_name + '_list')
+                elif self.cgmes_version == CGMESVersions.v2_4_15:
+                    target_list = self.cgmes_assets.__getattribute__(class_name + '_list')
+                elif self.cgmes_version == CGMESVersions.v3_0_0:
+                    target_list = self.cgmes_assets.__getattribute__(class_name + '_list')
+                else:
+                    pass
+                if target_list is not None:
+                    target_list.clear()
+                    target_list.extend(elements)
+                else:
+                    print('Missing list:', class_name + '_list')
 
     def set_data(self, data: Dict[str, Dict[str, Dict[str, str]]], boundary_set: Dict[str, Dict[str, Dict[str, str]]]):
         """
@@ -1236,7 +1266,7 @@ class CgmesCircuit(BaseCircuit):
             if not hasattr(self, key + '_list'):
                 print('self.{0}_list: List[{0}] = list()'.format(key))
 
-    def add(self, elm: CGMES_ASSETS):
+    def add(self, elm: CGMES_ASSETS) -> bool:
         """
         Add generic object to the circuit
         :param elm: any CGMES object
@@ -1249,30 +1279,45 @@ class CgmesCircuit(BaseCircuit):
         """
 
         # find if the element was added before
+        elm_class_name: str = elm.__class__.__name__
         collided = self.all_objects_dict.get(elm.rdfid, None)
 
         if collided is not None:
             self.logger.add_error("RDFID collision, element not added",
-                                  device_class=elm.tpe,
+                                  device_class=elm_class_name,
                                   device=elm.rdfid,
-                                  comment="Collided object {0}:{1} ({2})".format(collided.tpe,
+                                  comment="Collided object {0}:{1} ({2})".format(collided.__class__.__name__,
                                                                                  collided.rdfid,
                                                                                  collided.shortName))
             return False
 
         self.all_objects_dict[elm.rdfid] = elm
 
-        if elm.tpe in self.elements_by_type:
-            self.elements_by_type[elm.tpe].append(elm)
+        if elm_class_name in self.elements_by_type:
+            self.elements_by_type[elm_class_name].append(elm)
         else:
-            self.elements_by_type[elm.tpe] = [elm]
+            self.elements_by_type[elm_class_name] = [elm]
 
         # add to its list
-        list_name = elm.tpe + '_list'
-        if hasattr(self.cgmes_assets, list_name):
-            getattr(self.cgmes_assets, list_name).append(elm)
+        dynamics_list = self.dynamics_assets.lists.get(elm_class_name, None)
+        if dynamics_list is not None:
+            dynamics_list.append(elm)
         else:
-            print('Missing list:', list_name)
+            if isinstance(elm, tuple(DY_CLASS_DICT.values())):
+                pass
+            else:
+                native_list: List[CGMES_ASSETS]
+                ncp_class: object | None = self.ncp_assets.class_dict.get(elm_class_name, None)
+                circuit_class: object | None = self.cgmes_assets.class_dict.get(elm_class_name, None)
+                if ncp_class is not None and circuit_class is ncp_class:
+                    native_list = self.ncp_assets.__getattribute__(elm_class_name + '_list')
+                elif self.cgmes_version == CGMESVersions.v2_4_15:
+                    native_list = self.cgmes_assets.__getattribute__(elm_class_name + '_list')
+                elif self.cgmes_version == CGMESVersions.v3_0_0:
+                    native_list = self.cgmes_assets.__getattribute__(elm_class_name + '_list')
+                else:
+                    native_list = list()
+                native_list.append(elm)
 
         return True
 
@@ -1323,6 +1368,8 @@ class CgmesCircuit(BaseCircuit):
         """
         self.all_objects_dict = dict()
         self.elements_by_type = dict()
+        for object_list in self.dynamics_assets.lists.values():
+            object_list.clear()
 
     @staticmethod
     def check_type(xml, class_types, starters=None, enders=None):
@@ -1572,7 +1619,7 @@ class CgmesCircuit(BaseCircuit):
             if is_loop:
                 self.logger.add_warning(msg="Linking loop",
                                         device=elm.rdfid,
-                                        device_class=elm.tpe,
+                                        device_class=elm.__class__.__name__,
                                         value=str(len(visited)))
 
     def get_circular_references(self) -> List[List[CGMES_ASSETS]]:

@@ -288,15 +288,49 @@ Typical assumptions are:
 So DGS import is best understood as "bring the electrical model into VeraGrid", not "reproduce the full
 PowerFactory project database exactly".
 
+For balanced AC/DC power flow, native `ElmVsc` converters retain their AC,
+positive DC and negative DC terminals. DC voltage targets are converted from
+the converter's pole-to-pole voltage base to the connected bus base. Two-level
+converters do not use stored MMC arm parameters. A supported remote Q reference
+uses the existing converter control and the measured passive-branch flow;
+solved PowerFactory powers are not substituted for configured targets.
+The current native `.veragrid` loader does not restore VSC control references
+to transformers. For these remote Q cases, import the DGS again before solving;
+reopening a saved native file loses the measurement reference. At an empty
+two-branch boundary, a closed ideal AC switch's terminal powers and currents
+are recovered by KCL after topology reduction.
+
+Three-phase `ElmVac` voltage sources use an `ExternalGrid` reference at the source.
+When the export declares series impedance, it is retained between the source
+and its terminal. Two-terminal `ElmDcibi` sources with zero internal conductance and
+capacitance become paired fixed-axis `CurrentInjection` devices. Their currents
+retain their signs on negative DC poles. Explicit DC `ElmSind` resistance data
+are converted from ohms to the existing `DcLine` representation. Blocked IGBT
+valves with no leakage or antiparallel conduction become open switches; DC
+capacitors with zero conductance also remain open in steady state. These static
+equivalents do not represent semiconductor switching or capacitor dynamics.
+
+An isolated floating DC pole pair receives a mathematical voltage reference
+when its current balance and absence of earth connections permit it. This does
+not change the buses' physical grounding. Unreferenced disconnected chopper
+nodes do not have uniquely determined absolute potentials.
+
+Scalar line records declaring `ElmLne.i_dist=1` are converted to their exact
+distributed-parameter equivalent pi circuit at the exported length. The existing
+line R/X/G/B parameters carry that equivalent; `i_dist=0` retains the ordinary
+pi circuit.
+
 Without explicit VSC import, voltage-droop `ElmSvs` elements (`i_ctrl=1`, `i_droop!=0`)
-become [StaticGenerator](devices/static_generator.md) devices in Q-V droop mode.
-`Srated`, `ddroop` and `usetp` retain the existing VSC curve's rating, percentage
-and local voltage reference; P/Q references remain zero. Positive-sequence and
-ABC power flow evaluate this curve inside the nonlinear solve; ABC uses `abs(U1)`
-and positive-sequence current. Other SVC modes and the explicit VSC import route
-keep their existing mappings. The voltage clamps are 0.9 and 1.1 pu by default;
-the VSC curve currently does not clip reactive power. Native `.veragrid` files
-retain these settings; DGS export does not yet represent this static-generator control.
+become [ControllableShunt](devices/controllable_shunt.md) devices in Q-V droop mode.
+`Srated` and `ddroop` set `Qdroop = 100 * Srated / ddroop`. The capacitor and
+reactor bank define the susceptance limits. The DGS control node and voltage target
+set the reference. Positive-sequence power flow supports remote voltage measurement.
+ABC power flow uses local `abs(U1)` and adjusts one physical AB/BC/CA susceptance,
+which retains I2 and blocks terminal I0. The explicit VSC import route uses its
+converter droop settings. Native `.veragrid` files retain the shunt settings.
+The reverse DGS exporter does not yet represent this shunt droop control.
+Reimport the original DGS to replace older SVC equivalents saved as static generators;
+generic static generators and batteries with droop keep their existing current-source model.
 
 Voltage-controlled `ElmSvs` without droop remains a
 [ControllableShunt](devices/controllable_shunt.md), with its physical AB/BC/CA connection.
@@ -305,6 +339,11 @@ voltage magnitudes can differ. The bank's available capacitor/reactor data deter
 the nominal susceptance limits using the same range as the existing VSC import route;
 native `qmin` alone is a single capacitor step. Reimport the DGS to refresh those limits
 and the connection. The control uses existing solvers and Jacobian routines.
+
+Discrete controllable shunts use their actual cumulative step admittance in ABC;
+step zero contributes exactly zero. Each device occupies its own NABC block.
+Locked shunts retain explicit phase admittances when supplied, otherwise they use
+the scalar G/B value and their connection.
 
 Without explicit VSC import, `ElmGenstat` elements with `av_mode=constv`, including wind units,
 use the existing PV generator model and retain their active-power and voltage setpoints.
@@ -327,8 +366,10 @@ capability. Remote U1 control and missing phases are rejected explicitly.
 U1 generators automatically use `R2 + j*X2`. The existing `conn` property determines
 the homopolar response: **Yg** uses `R0 + j*X0`, whereas **Y** and **D** block terminal
 zero-sequence current. There are no separate switches for using the impedances. All
-required impedances are in system-base pu and must be finite and nonzero; missing data
-and legacy near-zero short-circuit placeholders are rejected before the U1 calculation.
+required impedances are in system-base pu. Z2 must be finite and nonzero. For Yg,
+an exactly zero effective Z0 imposes the physical condition U0 = 0; its I0 is
+determined by terminal KCL. Nonfinite impedances and nonzero magnitudes below
+1e-12 pu are rejected before the U1 calculation.
 Supply physical sequence data for three-phase voltage-controlled generators. The explicit
 neutral connection **Yn** is not supported by this U1 controller and is rejected rather
 than interpreted as a direct earth connection. Connection and impedance data persist
@@ -336,12 +377,17 @@ in native VeraGrid files. Balanced positive-sequence power flow and the ideal AB
 retain their existing equations.
 
 The ABC solver reuses the Fortescue transformation to form the passive admittance
-`Yabc = T * diag(Y0, 0, Y2) * inverse(T)`, with `Y2 = 1/Z2` and `Y0 = 1/Z0` for Yg,
+`Yabc = T * diag(Y0, 0, Y2) * inverse(T)`, with `Y2 = 1/Z2` and `Y0 = 1/Z0` for finite nonzero Yg impedances,
 or `Y0 = 0` for Y/D. It adds `-Yabc * Uabc` to the controlled positive-sequence
 current. The positive-sequence source compensates the powers absorbed by these passive
 responses so that the specified P and solved/limited Q remain **total terminal powers**.
 The positive-sequence PV source is not replaced by a passive `1/Z1` shunt. A blocked
-zero-sequence path means `Y0 = 0`, not `Z0 = 0`.
+zero-sequence path means `Y0 = 0`, not `Z0 = 0`. An ideal Yg Z0 = 0 has no finite
+admittance stamp: the ABC formulation eliminates its unknown common current from
+KCL and imposes U0 = 0. This is a physical source condition, distinct from choosing
+a reference for a floating voltage mode. Colocated ideal sources share one condition;
+KCL determines their total I0. No artificial impedance is introduced. At U0 = 0,
+this current contributes no terminal power. The existing Jacobian routines are unchanged.
 
 Fixed-PQ `ElmGenstat` devices imported as `StaticGenerator` use the same connection
 and impedance conversion. Without explicit phase powers, ABC injects positive-sequence
@@ -358,8 +404,8 @@ Their connection and sequence impedances use the same conversion as other
 I0/I2 response, following the fixed-PQ convention above. Positive P discharges into
 the network; negative P charges. Manually created voltage-controlled batteries
 reuse the generator U1 controller and its total-terminal-power convention, including
-Q limits and colocated generators/shunts. Supply finite, nonzero Z2 and, for Yg, Z0
-for both battery modes. The storage identity, energy parameters and profiles remain
+Q limits and colocated generators/shunts. Both battery modes require finite, nonzero
+Z2 and use the same finite-Z0 or ideal U0 = 0 treatment for Yg. The storage identity, energy parameters and profiles remain
 available; this snapshot electrical model does not simulate state-of-charge evolution.
 
 Storage records with `av_mode=vdroop` instead become `StaticGenerator` devices with
@@ -383,14 +429,44 @@ or missing/invalid impedance data also produce import warnings; required impedan
 must be completed before running U1 power flow. Other phase technologies and externally
 controlled negative-sequence currents are outside this passive three-phase model.
 
+For synchronous machines (`ElmSym` / `TypSym`), export `nslty`, `r0sy`, `x0sy`,
+`r2sy` and `x2sy` from the type, and `cgnd`, `iintgnd`, `resy`, `xesy` and `bus1n`
+from the element. The element variable identifiers are `e:cgnd`, `e:iintgnd`,
+`e:resy`, `e:xesy` and `e:bus1n`. All sequence impedances are converted using
+`Z_system = Z_machine * Sbase/sgn * (ugn/Vnom_bus)^2`.
+For a grounded YN machine without an explicit neutral conductor, the importer adds
+`3 * (resy + j*xesy) / Zbase_bus` to Z0; `resy` and `xesy` are in ohms.
+D and isolated Y block terminal I0. An explicit neutral remains unsupported by the
+U1 controller. Older exports with missing connection/grounding fields retain the
+legacy grounded assumption with a warning. An exported zero impedance is preserved
+as zero, distinct from an absent field; it is not replaced with an assumed value.
+
+In ABC power flow, synchronous PQ machines use the same passive sequence response
+as PV machines: `I2 = -U2/Z2` and, for Yg with finite nonzero Z0,
+`I0 = -U0/Z0_effective`. Exactly zero effective Z0 instead imposes U0 = 0 as above.
+The positive-sequence current preserves **total terminal P/Q**: in system pu,
+`S1 = (P + j*Q)/Sbase - U0*conj(I0) - U2*conj(I2)` and `I1 = conj(S1/U1)`.
+PQ fixes P and Q; PV instead solves Q to meet the U1 setpoint. This differs from
+the positive-sequence power convention of fixed-Q `ElmGenstat`/storage equivalents.
+Both synchronous modes require valid passive sequence impedances for the actual
+connection; selecting PQ does not bypass those checks or create an earth path.
+
 An older DGS without these optional columns cannot reproduce the corresponding sequence
 response; re-export the required fields or supply verified data manually. Missing or
 invalid required impedances produce a diagnostic identifying
 **Z0 or Z2**, the affected generator and the resistance/reactance fields to check.
 The three-phase GUI displays the simulation error log instead of suggesting a missing
-slack when the engine has reported such an error. DGS reactive-limit import behaviour
-is unchanged; inspect the imported generator's Q limits
-before enabling them. These additions do not establish complete PowerFactory equivalence
+slack when the engine has reported such an error.
+
+Synchronous fixed reactive limits `q_min/q_max` are in pu on the machine's nominal
+`sgn` (MVA), so the importer multiplies them by `sgn`, independently of `qgini`
+and the system base. `iqtype=1` selects the type limits; otherwise the element
+limits apply. Explicit zero limits remain zero. Parallel machines retain these
+per-machine limits. Export `ElmSym.iqtype` and `q_min/q_max` from both `ElmSym`
+and `TypSym` to preserve that selection. If the type is missing, the importer warns and retains the
+raw limits, which must be checked before enabling Q-limit control. This conversion
+does not add support for capability curves or enable limits that were disabled
+in the load-flow settings. These additions do not establish complete PowerFactory equivalence
 for other equipment or control functions.
 
 Lines defined by `TypLne` sequence parameters use the line length, connected-bus voltage base
@@ -442,17 +518,30 @@ can hide an incorrect machine Q. The general ABC device-Q result partition remai
 unimplemented; its zero-filled per-generator tables are not machine Q measurements.
 
 For three-phase two-winding transformers, `TypTr2.nt2ag` is imported as
-`vector_group_number` (0 to 11). In ABC power flow it specifies the **total**
+`vector_group_number` (0 to 11). In ABC and positive-sequence power flow it specifies the **total**
 positive-sequence HV-to-LV lag in steps of 30 degrees, rather than an additional
 shift on top of the winding connection. Clock 0 therefore gives no structural
 shift, including for Y-D and D-Y connections; clock 1 gives a 30-degree lag and
-clock 11 a 30-degree lead. The negative sequence rotates in the opposite direction.
-The existing zero-sequence connection and neutral paths are preserved. The clock
+clock 11 a 30-degree lead. In ABC the negative sequence rotates in the opposite direction,
+preserving the zero-sequence connection and neutral paths. The clock
 direction is reversed when LV is the from terminal, and the existing `tap_phase`
 remains separate. Applying a transformer catalogue template also copies its clock.
-This corrects the previous ABC behaviour, which ignored the clock and imposed an
-implicit winding shift. Single-phase transformer primitives and the balanced
-power-flow equations are unchanged.
+The shared `get_clock_phase()` derives the oriented angle from this existing field.
+Positive-sequence compilation stores that derived fixed angle in passive branch data;
+the electrical tap angle is its sum with the existing changer angle. Changer profiles,
+limits, discrete positions, OPF results supplied to a power flow and reported changer angles retain their own
+reference. The full control formulation reuses this same sum for admittances and
+derivative inputs, including branches with fixed changer settings. Single-phase
+transformer primitives retain their existing winding representation.
+The current Linear AC (`LACPF`) approximation does not represent fixed clock
+displacements and rejects active transformers with a nonzero clock explicitly;
+use Newton-Raphson or Linear (DC) power flow for these models.
+
+On a fresh ABC solve, the solver propagates initial angles from the slack buses
+using the positive-sequence projections of the existing NABC terminal admittance
+blocks. This accounts for transformer clocks and taps, including the 3W arms.
+It supplies only an initial guess: network equations and Jacobians are unchanged.
+Explicit voltage guesses and `use_stored_guess=True` bypass this initialization.
 
 Three-winding transformers use their existing internal bus and three `Winding`
 branches in ABC power flow. Export `TypTr3.uk0hm`, `uk0ml`, `uk0hl` and
@@ -460,7 +549,8 @@ branches in ABC power flow. Export `TypTr3.uk0hm`, `uk0ml`, `uk0hl` and
 The pairwise percentages are converted on the smaller rating of each pair before
 forming the star equivalent. Negative-sequence leakage uses `Z2 = Z1` for this
 passive PF model. Each winding clock is its terminal lag relative to the common
-internal reference, so terminal-to-terminal shifts are clock differences.
+internal reference, so terminal-to-terminal shifts are clock differences in both
+ABC and positive-sequence power flow.
 The existing winding fields retain these values when saving a native model;
 DGS export reconstructs the zero-sequence pairwise tests and connections.
 See [Transformer3W](devices/transformer_3w.md) for supported connections and limits.

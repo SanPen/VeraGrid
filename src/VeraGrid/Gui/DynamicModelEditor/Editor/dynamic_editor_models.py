@@ -27,7 +27,7 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.Utils.Symbolic.symbolic_io import duplicate_block_vars_uid
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import (
@@ -222,8 +222,6 @@ def copy_block_state(source_block: Block, target_block: Block) -> None:
     target_block.procedural_logic = source_block.procedural_logic
     target_block.connection_intents = source_block.connection_intents
     target_block.dynamic_model_contract = source_block.dynamic_model_contract
-    target_block._modal_template_kind = source_block._modal_template_kind
-    target_block._modal_template_config = source_block._modal_template_config
     target_block._jmarti_fit_bundle = source_block._jmarti_fit_bundle
     target_block._jmarti_runtime_data = source_block._jmarti_runtime_data
     target_block.diagram = source_block.diagram

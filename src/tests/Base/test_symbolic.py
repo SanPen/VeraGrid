@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 import ast
 import copy
@@ -8,16 +12,16 @@ import numpy as np
 from typing import Any, Callable, Dict
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, SymbolicVector
+from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import build_explicit_init_graph
 from VeraGridEngine.Utils.Symbolic.jit_compiler import SubexpressionAnalyzer
 from VeraGridEngine.Utils.Symbolic.compare_expressions_structure import DAGNode, structural_hash, to_dag
 from VeraGridEngine.Utils.Symbolic.block import (
     Block,
     DynamicModelContract,
-    RmsPhysicalMeasurementPoint,
     RmsPhysicalMeterKind,
     RmsTerminalPowerContribution,
     RmsTerminalSide,
-    collect_rms_physical_measurement_points,
+    dynamic_model_contract_from_data,
 )
 from VeraGridEngine.Utils.Symbolic.symbolic_io import (
     duplicate_block,
@@ -33,10 +37,64 @@ from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagram
 from VeraGridEngine.Devices.Dynamic.var_factory import Connection, VarFactory
 from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.procedural_logic import AnalogFlipFlopLogic, ProceduralLogicCodec, aflipflop
+from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_models import copy_block_state
+from tests.symbolic_block_roundtrip import parse_saved_blocks
 
 # -----------------------------------------------------------------------------
 # Atomic & basic operations
 # -----------------------------------------------------------------------------
+
+def test_seeded_equipment_output_breaks_explicit_initialization_cycle() -> None:
+    """A solved Q boundary seeds susceptance without reinitializing Q from it."""
+    q = sym.Var("Qsvs")
+    b = sym.Var("bsvs")
+    model = Block(
+        name="SVC",
+        algebraic_vars=[q, b],
+        algebraic_eqs=[q - b],
+        init_eqs={q: b, b: q},
+        post_init_seed_eqs={b: q, q: b},
+        external_mapping={VarPowerFlowReferenceType.Vm: None, VarPowerFlowReferenceType.Q: q},
+    )
+    equations, _, order, _ = build_explicit_init_graph(
+        model, preserved_var_uids={q.uid},
+    )
+    assert q not in equations
+    assert equations[b] is q
+    assert order == [b]
+
+
+def test_unrelated_explicit_initialization_cycle_still_raises() -> None:
+    """A seed without a declared physical boundary must not hide a cycle."""
+    a = sym.Var("a")
+    b = sym.Var("b")
+    model = Block(
+        name="unrelated cycle",
+        algebraic_vars=[a, b],
+        init_eqs={a: b, b: a},
+        external_mapping={VarPowerFlowReferenceType.Q: a},
+    )
+    with pytest.raises(RuntimeError, match="Cycle detected"):
+        build_explicit_init_graph(model, preserved_var_uids={a.uid})
+
+
+def test_seeded_equipment_boundary_handles_intermediate_initializer() -> None:
+    """The known power-flow output can break a longer declared seed loop."""
+    q = sym.Var("Q")
+    b = sym.Var("susceptance")
+    intermediate = sym.Var("intermediate")
+    model = Block(
+        name="equipment",
+        algebraic_vars=[q, b, intermediate],
+        init_eqs={q: intermediate, intermediate: b, b: q},
+        post_init_seed_eqs={b: q},
+        external_mapping={VarPowerFlowReferenceType.Q: q},
+    )
+    equations, _, order, _ = build_explicit_init_graph(
+        model, preserved_var_uids={q.uid},
+    )
+    assert q not in equations
+    assert [var.uid for var in order] == [b.uid, intermediate.uid]
 
 @pytest.mark.parametrize("use_jit", (False, True))
 def test_complex_projection_derivatives_match_real_coordinate_finite_difference(use_jit: bool) -> None:
@@ -767,8 +825,6 @@ def test_duplicate_block_preserves_parent_child_variable_links_with_new_uids() -
         inequalities=[x < parent_signal],
         boolean_guards={guard: x > parent_signal},
     )
-    child.dynamic_model_contract.dgs_elmsym_speed_var_uid = x.uid
-    child.dynamic_model_contract.dgs_explicit_initialization_uids = set((x.uid,))
     parent: Block = Block(
         children=[child],
         algebraic_vars=[parent_signal],
@@ -804,18 +860,9 @@ def test_duplicate_block_preserves_parent_child_variable_links_with_new_uids() -
     assert isinstance(copied_guard_condition, sym.Comparison)
     assert copied_guard_condition.lhs is copied_x
     assert copied_guard_condition.rhs is copied_parent_signal
-    assert copied_child.dynamic_model_contract.dgs_elmsym_speed_var_uid == copied_x.uid
-    assert copied_child.dynamic_model_contract.dgs_explicit_initialization_uids == set((copied_x.uid,))
     assert target_vf.get_var(copied_x.non_mutable_uid) is copied_x
     assert target_vf.get_diff_var(copied_dx.non_mutable_uid) is copied_dx
 
-    parent.dynamic_model_contract.dgs_elmsym_speed_var_uid = -1
-    with pytest.raises(KeyError, match="UID '-1' is not reachable"):
-        duplicate_block(parent, VarFactory())
-    parent.dynamic_model_contract.dgs_elmsym_speed_var_uid = None
-    child.dynamic_model_contract.dgs_explicit_initialization_uids.add(-1)
-    with pytest.raises(KeyError, match="UID '-1' is not reachable"):
-        duplicate_block(parent, VarFactory())
 
 
 def test_duplicate_block_preserves_expression_only_external_variables() -> None:
@@ -900,6 +947,38 @@ def test_var_factory_parse_var_dict_accepts_legacy_missing_identity_half() -> No
     assert parsed_var.non_mutable_uid == 55
 
 
+def _save_block_parser_fixture(block: Block) -> tuple[dict[str, Any], BlockSaver]:
+    """Prepare canonical symbolic tables and an editable root record.
+
+    :param block: Test model whose variables and constants must survive parsing.
+    :return: Independent root record and its corresponding symbolic tables.
+    """
+    saver: BlockSaver = BlockSaver(VarFactory())
+    saver.save_block(block)
+    records: dict[int, dict[str, Any]] = copy.deepcopy(saver.get_blocks())
+    return records[block.uid], saver
+
+
+def _parse_test_block(data: dict[str, Any], saver: BlockSaver,
+                      procedural_logic_codec: ProceduralLogicCodec | None = None,
+                      logger: Logger | None = None) -> Block:
+    """Reconstruct one test root through the public collection parser.
+
+    :param data: Editable canonical root record.
+    :param saver: Symbolic tables produced before editing the block record.
+    :param procedural_logic_codec: Optional procedural declaration decoder.
+    :param logger: Optional sink for recoverable legacy-data diagnostics.
+    :return: The single reconstructed root.
+    """
+    parser: BlockParser = BlockParser(VarFactory(), logger, procedural_logic_codec)
+    records: dict[int, dict[str, Any]] = copy.deepcopy(saver.get_blocks())
+    root_block_uid: int = data["uid"]
+    records[root_block_uid] = data
+    roots: list[Block] = parse_saved_blocks(parser=parser, saver=saver, data=records)
+    assert len(roots) == 1
+    return roots[0]
+
+
 def test_block_saver_parser_roundtrip_preserves_declarative_procedural_logic() -> None:
     """
     Check that block saver/parser preserve declarative procedural logic.
@@ -928,58 +1007,45 @@ def test_block_saver_parser_roundtrip_preserves_declarative_procedural_logic() -
                                     output=out)],
         name="legacy_runtime_block",
     )
-    block.dynamic_model_contract.dgs_elmsvs_runtime_adapter = True
-    block.dynamic_model_contract.dgs_elmsvs_remote_voltage_var_uid = x.uid
-    block.dynamic_model_contract.dgs_explicit_initialization_uids = set((x.uid,))
-    block.dynamic_model_contract.dgs_equipment_owned_signal_names = list(("u",))
-    block.dynamic_model_contract.explicit_init_excluded_var_names = list(("x",))
-    block.dynamic_model_contract.explicit_init_override_init_exprs["x"] = (
-        x + sym.Const(3.0)
-    )
+    source_data: dict[str, Any]
+    saver: BlockSaver
+    source_data, saver = _save_block_parser_fixture(block)
 
-    direct_restored: Block = Block.parse(
-        data=block.to_dict(),
+    direct_restored: Block = _parse_test_block(saver=saver,
+        data=copy.deepcopy(source_data),
         procedural_logic_codec=ProceduralLogicCodec(),
     )
     direct_restored_x: sym.Var = direct_restored.algebraic_vars[0]
-    direct_override: sym.Expr = (
-        direct_restored.dynamic_model_contract.explicit_init_override_init_exprs["x"]
-    )
-    assert direct_restored.dynamic_model_contract.dgs_elmsvs_runtime_adapter
-    assert (
-        direct_restored.dynamic_model_contract.dgs_elmsvs_remote_voltage_var_uid
-        == direct_restored_x.uid
-    )
-    assert isinstance(direct_override, sym.BinOp)
-    assert direct_override.left.uid == direct_restored_x.uid
     assert direct_restored_x.ref is VarPowerFlowReferenceType.Vm
-    assert direct_restored_x.network_conn
+    # Symbolic archives retain the physical reference and shared identity;
+    # network_conn is a runtime flag absent from their variable records.
+    assert direct_restored_x.network_conn is False
     assert direct_restored_x.shared_ref is not None
     assert direct_restored_x.shared_ref.name == "shared-x"
     assert direct_restored_x.shared_ref.uid == x.shared_ref.uid
 
-    truncated_data: dict[str, object] = block.to_dict()
+    truncated_data: dict[str, object] = copy.deepcopy(source_data)
     truncated_contract: object = truncated_data["dynamic_model_contract"]
     assert isinstance(truncated_contract, dict)
-    truncated_contract.pop("dgs_elmsvs_runtime_adapter")
-    with pytest.raises(KeyError, match="dgs_elmsvs_runtime_adapter"):
-        Block.parse(
+    truncated_contract.pop("modal_template_kind")
+    with pytest.raises(KeyError, match="modal_template_kind"):
+        _parse_test_block(saver=saver,
             data=truncated_data,
             procedural_logic_codec=ProceduralLogicCodec(),
         )
 
-    invalid_uid_data: dict[str, object] = block.to_dict()
+    invalid_uid_data: dict[str, object] = copy.deepcopy(source_data)
     invalid_uid_contract: object = invalid_uid_data["dynamic_model_contract"]
     assert isinstance(invalid_uid_contract, dict)
     invalid_uid_contract["dgs_elmsvs_remote_voltage_var_uid"] = -1
-    with pytest.raises(KeyError, match="UID '-1' is not reachable"):
-        Block.parse(
+    with pytest.raises(KeyError, match="extra"):
+        _parse_test_block(saver=saver,
             data=invalid_uid_data,
             procedural_logic_codec=ProceduralLogicCodec(),
         )
 
     saver: BlockSaver = BlockSaver(vf)
-    saver.save_block(block, main=True)
+    saver.save_block(block)
 
     # The archive writer JSON-encodes the complete block table.  This check
     # prevents runtime procedural-logic objects from silently causing the
@@ -987,39 +1053,28 @@ def test_block_saver_parser_roundtrip_preserves_declarative_procedural_logic() -
     json.dumps(saver.get_blocks())
 
     parser_without_codec: BlockParser = BlockParser(VarFactory())
-    parser_without_codec.parse_consts(saver.get_const_to_save())
-    parser_without_codec.parse_vars(saver.get_vars_to_save())
-    parser_without_codec.parse_diff_vars(saver.get_diff_vars_to_save())
     with pytest.raises(ValueError, match="requires an explicit codec"):
-        parser_without_codec.parse_block(saver.get_blocks(), block.uid)
+        parse_saved_blocks(
+            parser=parser_without_codec,
+            saver=saver,
+            data=saver.get_blocks(),
+        )
 
     parser: BlockParser = BlockParser(
         var_factory=VarFactory(),
         procedural_logic_codec=ProceduralLogicCodec(),
     )
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-    restored: Block = parser.parse_block(saver.get_blocks(), block.uid)
+    restored: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
 
     assert len(restored.discrete_eqs) == 1
     assert len(restored.mode_dict) == 1
     assert len(restored.procedural_logic) == 1
     assert isinstance(restored.procedural_logic[0], AnalogFlipFlopLogic)
     restored_x: sym.Var = restored.algebraic_vars[0]
-    restored_override: sym.Expr = (
-        restored.dynamic_model_contract.explicit_init_override_init_exprs["x"]
-    )
-    assert restored.dynamic_model_contract.dgs_elmsvs_runtime_adapter
-    assert (
-        restored.dynamic_model_contract.dgs_elmsvs_remote_voltage_var_uid
-        == restored_x.uid
-    )
-    assert restored.dynamic_model_contract.dgs_explicit_initialization_uids == set(
-        (restored_x.uid,)
-    )
-    assert isinstance(restored_override, sym.BinOp)
-    assert restored_override.left is restored_x
     assert len(restored.inequalities) == 1
     restored_inequality: sym.Expr | sym.Comparison = restored.inequalities[0]
     assert isinstance(restored_inequality, sym.Comparison)
@@ -1063,24 +1118,25 @@ def test_rms_terminal_power_contract_roundtrips_and_fails_closed() -> None:
         ("scale_bounds_by_gain", True),
     ))
 
-    persisted_data: dict[str, object] = block.to_dict()
+    source_data: dict[str, Any]
+    saver: BlockSaver
+    source_data, saver = _save_block_parser_fixture(block)
+    persisted_data: dict[str, object] = copy.deepcopy(source_data)
     contract_data = persisted_data["dynamic_model_contract"]
     assert isinstance(contract_data, dict)
-    assert contract_data["version"] == 8
-    assert contract_data["emt_finite_reciprocal_source_mode_var_uid"] is None
+    assert contract_data["version"] == 15
+    assert "emt_finite_reciprocal_source_mode_var_uid" not in contract_data
     assert "rms_terminal_power_contributions" not in contract_data
-    restored: Block = Block.parse(data=persisted_data)
+    restored: Block = _parse_test_block(saver=saver, data=persisted_data)
     copied: Block = copy.deepcopy(block)
     saver: BlockSaver = BlockSaver(var_factory)
-    saver.save_block(block, main=True)
+    saver.save_block(block)
     parser: BlockParser = BlockParser(var_factory=VarFactory())
-    parser.parse_consts(saver.get_const_to_save())
-    parser.parse_vars(saver.get_vars_to_save())
-    parser.parse_diff_vars(saver.get_diff_vars_to_save())
-    symbolic_io_restored: Block = parser.parse_block(
-        blocks_data=saver.get_blocks(),
-        main_block_uid=block.uid,
-    )
+    symbolic_io_restored: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
     assert restored.modal_template_kind == "configurable_integrator"
     assert restored.modal_template_config == block.modal_template_config
     assert copied.modal_template_kind == "configurable_integrator"
@@ -1088,22 +1144,23 @@ def test_rms_terminal_power_contract_roundtrips_and_fails_closed() -> None:
     assert symbolic_io_restored.modal_template_kind == "configurable_integrator"
     assert symbolic_io_restored.modal_template_config == block.modal_template_config
 
-    # Both branches used version seven. Exercise both parsers so absent branch
-    # declarations stay at their typed defaults despite stale top-level metadata.
+    # Both branches used version seven. Exercise the editable fixture and direct
+    # flat table so absent declarations keep their typed defaults.
     has_modal_fields: bool
     for has_modal_fields in (False, True):
-        version_seven_data: dict[str, object] = block.to_dict()
+        version_seven_data: dict[str, object] = copy.deepcopy(source_data)
         version_seven_contract: object = version_seven_data["dynamic_model_contract"]
         assert isinstance(version_seven_contract, dict)
         version_seven_contract["version"] = 7
+        version_seven_contract["emt_finite_reciprocal_source_mode_var_uid"] = None
         if has_modal_fields:
-            version_seven_contract.pop("emt_finite_reciprocal_source_mode_var_uid")
+            version_seven_contract.pop("emt_finite_reciprocal_source_mode_var_uid", None)
         else:
             version_seven_contract.pop("modal_template_kind")
             version_seven_contract.pop("modal_template_config")
-        version_seven_restored: Block = Block.parse(data=version_seven_data)
-        assert version_seven_restored.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid is None
-        assert version_seven_restored.to_dict()["dynamic_model_contract"]["version"] == 8
+        version_seven_restored: Block = _parse_test_block(saver=saver, data=version_seven_data)
+        assert "emt_finite_reciprocal_source_mode_var_uid" not in version_seven_restored.dynamic_model_contract.to_data()
+        assert version_seven_restored.to_dict()["dynamic_model_contract"]["version"] == 15
         if has_modal_fields:
             assert version_seven_restored.modal_template_kind == block.modal_template_kind
             assert version_seven_restored.modal_template_config == block.modal_template_config
@@ -1114,13 +1171,11 @@ def test_rms_terminal_power_contract_roundtrips_and_fails_closed() -> None:
         version_seven_blocks: dict[int, dict[str, object]] = copy.deepcopy(saver.get_blocks())
         version_seven_blocks[block.uid]["dynamic_model_contract"] = version_seven_contract
         version_seven_parser: BlockParser = BlockParser(var_factory=VarFactory())
-        version_seven_parser.parse_consts(saver.get_const_to_save())
-        version_seven_parser.parse_vars(saver.get_vars_to_save())
-        version_seven_parser.parse_diff_vars(saver.get_diff_vars_to_save())
-        version_seven_io_restored: Block = version_seven_parser.parse_block(
-            blocks_data=version_seven_blocks,
-            main_block_uid=block.uid,
-        )
+        version_seven_io_restored: Block = parse_saved_blocks(
+            parser=version_seven_parser,
+            saver=saver,
+            data=version_seven_blocks,
+        )[0]
         assert version_seven_io_restored.modal_template_kind == version_seven_restored.modal_template_kind
         assert version_seven_io_restored.modal_template_config == version_seven_restored.modal_template_config
     else:
@@ -1129,90 +1184,75 @@ def test_rms_terminal_power_contract_roundtrips_and_fails_closed() -> None:
     assert "rms_terminal_power_contributions" not in DynamicModelContract.__slots__
 
     # Version 1 predates both formulation-specific terminal contracts.
-    legacy_data: dict[str, object] = block.to_dict()
+    legacy_data: dict[str, object] = copy.deepcopy(source_data)
     legacy_contract: object = legacy_data["dynamic_model_contract"]
     assert isinstance(legacy_contract, dict)
     legacy_contract["version"] = 1
-    legacy_contract.pop("emt_finite_reciprocal_source_mode_var_uid")
-    legacy_contract.pop("emt_terminal_current_contributions")
-    legacy_contract.pop("emt_internal_grounding_link")
-    legacy_contract.pop("rms_physical_measurement_point")
+    legacy_contract.pop("emt_finite_reciprocal_source_mode_var_uid", None)
+    legacy_contract.pop("emt_internal_grounding_link", None)
     legacy_contract.pop("modal_template_kind")
     legacy_contract.pop("modal_template_config")
-    legacy_restored: Block = Block.parse(data=legacy_data)
-    assert (
-        legacy_restored.dynamic_model_contract.emt_terminal_current_contributions
-        == list()
-    )
+    legacy_restored: Block = _parse_test_block(saver=saver, data=legacy_data)
 
     # Version 2 retains the RMS declaration and predates only the EMT field.
-    version_two_data: dict[str, object] = block.to_dict()
+    version_two_data: dict[str, object] = copy.deepcopy(source_data)
     version_two_contract: object = version_two_data["dynamic_model_contract"]
     assert isinstance(version_two_contract, dict)
     version_two_contract["version"] = 2
-    version_two_contract.pop("emt_finite_reciprocal_source_mode_var_uid")
+    version_two_contract.pop("emt_finite_reciprocal_source_mode_var_uid", None)
     version_two_contract["rms_terminal_power_contributions"] = [
         contribution.to_data() for contribution in legacy_contributions
     ]
-    version_two_contract.pop("emt_terminal_current_contributions")
-    version_two_contract.pop("emt_internal_grounding_link")
-    version_two_contract.pop("rms_physical_measurement_point")
+    version_two_contract.pop("emt_internal_grounding_link", None)
     version_two_contract.pop("modal_template_kind")
     version_two_contract.pop("modal_template_config")
-    version_two_restored: Block = Block.parse(data=version_two_data)
-    assert (
-        version_two_restored.dynamic_model_contract.emt_terminal_current_contributions
-        == list()
-    )
+    version_two_restored: Block = _parse_test_block(saver=saver, data=version_two_data)
 
     # Version 3 includes both terminal contracts but predates typed grounding.
-    version_three_data: dict[str, object] = block.to_dict()
+    version_three_data: dict[str, object] = copy.deepcopy(source_data)
     version_three_contract: object = version_three_data["dynamic_model_contract"]
     assert isinstance(version_three_contract, dict)
     version_three_contract["version"] = 3
-    version_three_contract.pop("emt_finite_reciprocal_source_mode_var_uid")
+    version_three_contract.pop("emt_finite_reciprocal_source_mode_var_uid", None)
     version_three_contract["rms_terminal_power_contributions"] = [
         contribution.to_data() for contribution in legacy_contributions
     ]
-    version_three_contract.pop("emt_internal_grounding_link")
-    version_three_contract.pop("rms_physical_measurement_point")
+    version_three_contract.pop("emt_internal_grounding_link", None)
     version_three_contract.pop("modal_template_kind")
     version_three_contract.pop("modal_template_config")
-    version_three_restored: Block = Block.parse(data=version_three_data)
-    assert not version_three_restored.dynamic_model_contract.emt_internal_grounding_link
+    version_three_restored: Block = _parse_test_block(saver=saver, data=version_three_data)
+    assert "emt_internal_grounding_link" not in version_three_restored.dynamic_model_contract.to_data()
 
     # Version 4 includes typed grounding but predates physical meter identity.
-    version_four_data: dict[str, object] = block.to_dict()
+    version_four_data: dict[str, object] = copy.deepcopy(source_data)
     version_four_contract: object = version_four_data["dynamic_model_contract"]
     assert isinstance(version_four_contract, dict)
     version_four_contract["version"] = 4
-    version_four_contract.pop("emt_finite_reciprocal_source_mode_var_uid")
+    version_four_contract.pop("emt_finite_reciprocal_source_mode_var_uid", None)
     version_four_contract["rms_terminal_power_contributions"] = [
         contribution.to_data() for contribution in legacy_contributions
     ]
-    version_four_contract.pop("rms_physical_measurement_point")
     version_four_contract.pop("modal_template_kind")
     version_four_contract.pop("modal_template_config")
-    version_four_restored: Block = Block.parse(data=version_four_data)
-    assert version_four_restored.dynamic_model_contract.rms_physical_measurement_point is None
+    version_four_restored: Block = _parse_test_block(saver=saver, data=version_four_data)
 
     # Version 6 predates both branches' version-seven declarations.
-    version_six_data: dict[str, object] = block.to_dict()
+    version_six_data: dict[str, object] = copy.deepcopy(source_data)
     version_six_contract: object = version_six_data["dynamic_model_contract"]
     assert isinstance(version_six_contract, dict)
     version_six_contract["version"] = 6
-    version_six_contract.pop("emt_finite_reciprocal_source_mode_var_uid")
+    version_six_contract.pop("emt_finite_reciprocal_source_mode_var_uid", None)
     version_six_contract.pop("modal_template_kind")
     version_six_contract.pop("modal_template_config")
-    version_six_restored: Block = Block.parse(data=version_six_data)
+    version_six_restored: Block = _parse_test_block(saver=saver, data=version_six_data)
     assert version_six_restored.modal_template_kind is None
     assert version_six_restored.modal_template_config is None
 
-    malformed_data: dict[str, object] = block.to_dict()
+    malformed_data: dict[str, object] = copy.deepcopy(source_data)
     malformed_contract: object = malformed_data["dynamic_model_contract"]
     assert isinstance(malformed_contract, dict)
     malformed_contract["version"] = 5
-    malformed_contract.pop("emt_finite_reciprocal_source_mode_var_uid")
+    malformed_contract.pop("emt_finite_reciprocal_source_mode_var_uid", None)
     malformed_contract["rms_terminal_power_contributions"] = [
         contribution.to_data() for contribution in legacy_contributions
     ]
@@ -1226,265 +1266,77 @@ def test_rms_terminal_power_contract_roundtrips_and_fails_closed() -> None:
     assert isinstance(malformed_first, dict)
     malformed_first["active_power_reference"] = VarPowerFlowReferenceType.Vm.value
     with pytest.raises(ValueError, match="from-terminal active power"):
-        Block.parse(data=malformed_data)
+        _parse_test_block(saver=saver, data=malformed_data)
 
 
-def test_rms_physical_measurement_point_roundtrips_and_indexes_by_fid() -> None:
-    """Persist selected meter signals and expose a transient global FID index.
-
-    :return: None.
-    """
-    active_power: sym.Var = sym.Var(name="p_meter")
-    reactive_power: sym.Var = sym.Var(name="q_meter")
-    internal_filter_state: sym.Var = sym.Var(name="meter_internal")
-    meter_block: Block = Block(
-        name="meter",
-        algebraic_vars=list((
-            active_power,
-            reactive_power,
-            internal_filter_state,
-        )),
-        algebraic_eqs=list((
-            active_power,
-            reactive_power,
-            internal_filter_state,
-        )),
-        out_vars=list((active_power, reactive_power)),
-    )
-    meter_block.dynamic_model_contract.rms_physical_measurement_point = (
-        RmsPhysicalMeasurementPoint(
-            source_fid="meter-fid",
-            target_fid="branch-fid",
-            terminal_side=RmsTerminalSide.TO,
-            meter_kind=RmsPhysicalMeterKind.POWER,
-            output_signal_names=tuple(("p", "q")),
-            output_var_uids=tuple((active_power.uid, reactive_power.uid)),
-        )
-    )
-    root_block: Block = Block(
-        name="global_measurement_root",
-        children=list((meter_block,)),
-    )
-    restored_root: Block = Block.parse(data=root_block.to_dict())
-    measurement_by_fid: dict[str, RmsPhysicalMeasurementPoint] = (
-        collect_rms_physical_measurement_points(block=restored_root)
-    )
-    restored_point: RmsPhysicalMeasurementPoint = measurement_by_fid["meter-fid"]
-
-    assert restored_point.get_target_fid() == "branch-fid"
-    assert restored_point.get_terminal_side() is RmsTerminalSide.TO
-    assert restored_point.get_meter_kind() is RmsPhysicalMeterKind.POWER
-    assert restored_point.get_output_signal_names() == tuple(("p", "q"))
-    assert len(restored_point.get_output_var_uids()) == 2
-
-    duplicated_root: Block = duplicate_block(root_block, VarFactory())
-    duplicated_point_by_fid: dict[str, RmsPhysicalMeasurementPoint] = (
-        collect_rms_physical_measurement_points(block=duplicated_root)
-    )
-    duplicated_point: RmsPhysicalMeasurementPoint = duplicated_point_by_fid[
-        "meter-fid"
-    ]
-    duplicated_meter: Block = duplicated_root.children[0]
-    duplicated_output_uids: tuple[int, ...] = tuple(
-        output_var.uid for output_var in duplicated_meter.out_vars
-    )
-    assert duplicated_point.get_output_var_uids() == duplicated_output_uids
-    assert duplicated_output_uids != tuple((active_power.uid, reactive_power.uid))
-
-    invalid_meter_child: Block = copy.deepcopy(meter_block)
-    invalid_internal_var: sym.Var = invalid_meter_child.algebraic_vars[2]
-    invalid_meter_child.dynamic_model_contract.rms_physical_measurement_point = (
-        RmsPhysicalMeasurementPoint(
-            source_fid="invalid-child-meter",
-            target_fid="branch-fid",
-            terminal_side=RmsTerminalSide.TO,
-            meter_kind=RmsPhysicalMeterKind.POWER,
-            output_signal_names=tuple(("internal",)),
-            output_var_uids=tuple((invalid_internal_var.uid,)),
-        )
-    )
-    invalid_child_root: Block = Block(children=list((invalid_meter_child,)))
-    with pytest.raises(KeyError, match="outputs owned by the declaring Block"):
-        duplicate_block(invalid_child_root, VarFactory())
-
-    duplicate_root: Block = Block(
-        children=list((meter_block, copy.deepcopy(meter_block))),
-    )
-    with pytest.raises(ValueError, match="meter-fid.*duplicated"):
-        collect_rms_physical_measurement_points(block=duplicate_root)
-
-    malformed_data: dict[str, object] = root_block.to_dict()
-    malformed_children: object = malformed_data["children"]
-    assert isinstance(malformed_children, list)
-    malformed_meter: object = malformed_children[0]
-    assert isinstance(malformed_meter, dict)
-    malformed_contract: object = malformed_meter["dynamic_model_contract"]
-    assert isinstance(malformed_contract, dict)
-    malformed_point: object = malformed_contract["rms_physical_measurement_point"]
-    assert isinstance(malformed_point, dict)
-    malformed_point["output_var_uids"] = list((
-        internal_filter_state.uid,
-        reactive_power.uid,
-    ))
-    with pytest.raises(KeyError, match="outputs owned by the declaring Block"):
-        Block.parse(data=malformed_data)
-
-    parent_owned_data: dict[str, object] = root_block.to_dict()
-    parent_contract: object = parent_owned_data["dynamic_model_contract"]
-    parent_children: object = parent_owned_data["children"]
-    assert isinstance(parent_contract, dict)
-    assert isinstance(parent_children, list)
-    parent_meter_data: object = parent_children[0]
-    assert isinstance(parent_meter_data, dict)
-    parent_meter_contract: object = parent_meter_data["dynamic_model_contract"]
-    assert isinstance(parent_meter_contract, dict)
-    child_point_data: object = parent_meter_contract[
-        "rms_physical_measurement_point"
-    ]
-    parent_contract["rms_physical_measurement_point"] = copy.deepcopy(
-        child_point_data
-    )
-    with pytest.raises(KeyError, match="outputs owned by the declaring Block"):
-        Block.parse(data=parent_owned_data)
 
 
-def test_dynamic_model_contract_rejects_incoherent_persistence_states() -> None:
-    """Reject incomplete adapters and contradictory runtime declarations.
-
-    :return: Nothing.
-    """
-    variable: sym.Var = sym.Var(name="x")
-
-    incomplete_elmsym: Block = Block(
-        algebraic_vars=list((variable,)),
-        algebraic_eqs=list((variable,)),
-    )
-    incomplete_elmsym.dynamic_model_contract.dgs_elmsym_runtime_adapter = True
-    with pytest.raises(ValueError, match="Completed ElmSym adapter contract is incomplete"):
-        incomplete_elmsym.to_dict()
-
-    incomplete_elmsvs: Block = Block(
-        algebraic_vars=list((variable,)),
-        algebraic_eqs=list((variable,)),
-    )
-    incomplete_elmsvs.dynamic_model_contract.dgs_elmsvs_runtime_adapter = True
-    with pytest.raises(ValueError, match="ElmSvs adapter contract is incomplete"):
-        incomplete_elmsvs.to_dict()
-
-    incomplete_genstat: Block = Block(
-        algebraic_vars=list((variable,)),
-        algebraic_eqs=list((variable,)),
-    )
-    incomplete_genstat.dynamic_model_contract.dgs_elmgenstat_runtime_adapter = True
-    with pytest.raises(ValueError, match="ElmGenstat adapter contract is incomplete"):
-        incomplete_genstat.to_dict()
-
-    conflicting_adapters: Block = Block()
-    conflicting_adapters.dynamic_model_contract.dgs_elmsym_runtime_adapter_pending = True
-    conflicting_adapters.dynamic_model_contract.dgs_elmsvs_runtime_adapter = True
-    with pytest.raises(ValueError, match="conflicting equipment adapters"):
-        conflicting_adapters.to_dict()
-
-    incomplete_ideal_connector: Block = Block()
-    incomplete_ideal_connector.dynamic_model_contract.rms_ideal_ac_connector = True
-    with pytest.raises(ValueError, match="RMS ideal AC connector contract is incomplete"):
-        incomplete_ideal_connector.to_dict()
-
-    incomplete_ideal_transformer: Block = Block()
-    incomplete_ideal_transformer.dynamic_model_contract.rms_ideal_transformer = True
-    with pytest.raises(ValueError, match="RMS ideal transformer contract is incomplete"):
-        incomplete_ideal_transformer.to_dict()
-
-    conflicting_ideal_models: Block = Block()
-    conflicting_ideal_models.dynamic_model_contract.rms_ideal_ac_connector = True
-    conflicting_ideal_models.dynamic_model_contract.rms_ideal_transformer = True
-    with pytest.raises(ValueError, match="mutually exclusive"):
-        conflicting_ideal_models.to_dict()
-
-    mismatched_shells: Block = Block()
-    mismatched_shells.dynamic_model_contract.runtime_equipment_shell_sync_names = list(("x",))
-    with pytest.raises(ValueError, match="names and UIDs must have equal lengths"):
-        mismatched_shells.to_dict()
-
-    incomplete_regc: Block = Block()
-    incomplete_regc.dynamic_model_contract.dgs_open_standard_regc_current_pll = True
-    with pytest.raises(ValueError, match="requires a complete ElmGenstat adapter"):
-        incomplete_regc.to_dict()
-
-    duplicate_names: Block = Block()
-    duplicate_names.dynamic_model_contract.runtime_measurement_shell_sync_names = list(("x", "x"))
-    with pytest.raises(ValueError, match="non-empty and unique"):
-        duplicate_names.to_dict()
-
-    unreachable_override: Block = Block()
-    unreachable_override.dynamic_model_contract.explicit_init_override_init_exprs["x"] = variable
-    with pytest.raises(KeyError, match="override UID"):
-        unreachable_override.to_dict()
 
 
-def test_block_saver_rejects_incoherent_dynamic_model_contract() -> None:
-    """Reject an invalid runtime contract at the canonical file boundary.
-
-    :return: Nothing.
-    """
-    variable: sym.Var = sym.Var(name="x")
-    block: Block = Block(
-        algebraic_vars=list((variable,)),
-        algebraic_eqs=list((variable,)),
-    )
-    block.dynamic_model_contract.dgs_elmsvs_runtime_adapter = True
-    saver: BlockSaver = BlockSaver(VarFactory())
-
-    with pytest.raises(ValueError, match="ElmSvs adapter contract is incomplete"):
-        saver.save_block(block, main=True)
 
 
 @pytest.mark.parametrize(
     "invalid_resistance",
     (math.nan, math.inf, -math.inf, 0.0, -1.0),
 )
-def test_dynamic_model_contract_rejects_invalid_open_resistance(
+def test_dynamic_model_contract_rejects_removed_fields_in_current_schema(
         invalid_resistance: float,
 ) -> None:
-    """Reject non-finite and non-positive logical-actuator resistance.
+    """Reject removed import fields in the current persistent schema.
 
     :param invalid_resistance: Invalid serialized resistance value.
     :return: Nothing.
     """
-    source_data: dict[str, object] = Block().to_dict()
+    source_data: dict[str, Any]
+    saver: BlockSaver
+    source_data, saver = _save_block_parser_fixture(Block())
     source_contract: object = source_data["dynamic_model_contract"]
     assert isinstance(source_contract, dict)
     source_contract["dgs_logical_actuator_root_id"] = "root-fid"
     source_contract["dgs_open_resistance_ohm"] = invalid_resistance
 
-    with pytest.raises((ValueError, TypeError)):
-        Block.parse(data=source_data)
+    with pytest.raises(KeyError, match="extra"):
+        _parse_test_block(saver=saver, data=source_data)
 
 
-def test_block_parse_rejects_malformed_structural_fields() -> None:
-    """Reject malformed containers before reconstructing a partial block graph.
+def test_block_parser_handles_malformed_structural_fields() -> None:
+    """Reject unusable containers and diagnose recoverable invalid references.
 
     :return: None.
     """
     source_block: Block = Block(name="typed persistence boundary")
+    source_data: dict[str, Any]
+    saver: BlockSaver
+    source_data, saver = _save_block_parser_fixture(source_block)
 
-    # Expression collections must remain ordered declarative records.
-    malformed_sequence_data: dict[str, object] = source_block.to_dict()
-    malformed_sequence_data["state_vars"] = dict()
-    with pytest.raises(TypeError, match="field 'state_vars' must be a list"):
-        Block.parse(data=malformed_sequence_data)
+    # A non-iterable variable collection cannot be reconstructed.
+    malformed_sequence_data: dict[str, object] = copy.deepcopy(source_data)
+    malformed_sequence_data["state_vars"] = None
+    with pytest.raises(TypeError, match="not iterable"):
+        _parse_test_block(saver=saver, data=malformed_sequence_data)
 
-    # Child declarations cannot retain arbitrary imported objects.
-    malformed_child_data: dict[str, object] = source_block.to_dict()
+    # The archive parser skips invalid child links and reports the lost edge.
+    malformed_child_data: dict[str, object] = copy.deepcopy(source_data)
     malformed_child_data["children"] = list((None,))
-    with pytest.raises(TypeError, match="field 'children' item 0"):
-        Block.parse(data=malformed_child_data)
+    logger: Logger = Logger()
+    restored: Block = _parse_test_block(saver=saver, data=malformed_child_data, logger=logger)
+    assert restored.children == list()
+    assert logger.warning_count() == 1
+    assert "Missing child dynamic block" in str(logger)
 
-    # Scalar identity fields are validated before the final constructor runs.
-    malformed_name_data: dict[str, object] = source_block.to_dict()
-    malformed_name_data["name"] = 17
-    with pytest.raises(TypeError, match="field 'name' must be a string"):
-        Block.parse(data=malformed_name_data)
+    # Invalid root identities cannot materialize a block. Unlike the old
+    # Block.parse name check, this is the collection parser's identity boundary.
+    malformed_identity_data: dict[str, object] = copy.deepcopy(source_data)
+    malformed_identity_data["uid"] = "invalid-root-uid"
+    identity_logger: Logger = Logger()
+    parser: BlockParser = BlockParser(VarFactory(), logger=identity_logger)
+    assert parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=dict(((source_block.uid, malformed_identity_data),)),
+    ) == list()
+    assert identity_logger.warning_count() == 1
+    assert "Invalid dynamic block UID" in str(identity_logger)
 
 
 def test_block_parsers_migrate_legacy_frequency_mapping() -> None:
@@ -1495,17 +1347,20 @@ def test_block_parsers_migrate_legacy_frequency_mapping() -> None:
     source_factory: VarFactory = VarFactory()
     frequency: sym.Var = source_factory.add_var("frequency")
     source_block: Block = Block(
-        algebraic_vars=list([frequency]),
+        parameters=dict(((frequency, sym.Const(50.0)),)),
         api_obj_mapping=dict({ParamPowerFlowReferenceType.freq: frequency}),
         name="legacy_frequency_mapping",
     )
 
-    # Exercise the declarative Block parser after replacing the current key
-    # with the spelling emitted by older saved dynamic-model files.
-    declarative_data: Dict[str, Any] = source_block.to_dict()
+    # Exercise an editable root record after replacing the current key with the
+    # spelling emitted by older saved dynamic-model files.
+    source_data: dict[str, Any]
+    saver: BlockSaver
+    source_data, saver = _save_block_parser_fixture(source_block)
+    declarative_data: Dict[str, Any] = copy.deepcopy(source_data)
     declarative_mapping: Dict[str, Any] = declarative_data["api_obj_mapping"]
     declarative_mapping["fn"] = declarative_mapping.pop(ParamPowerFlowReferenceType.freq.value)
-    declarative_restored: Block = Block.parse(data=declarative_data)
+    declarative_restored: Block = _parse_test_block(saver=saver, data=declarative_data)
     declarative_frequency: sym.Var | None = declarative_restored.api_obj_mapping.get(
         ParamPowerFlowReferenceType.freq,
         None,
@@ -1514,20 +1369,21 @@ def test_block_parsers_migrate_legacy_frequency_mapping() -> None:
     assert declarative_frequency is not None
     assert declarative_frequency.uid == frequency.uid
 
-    # Exercise the legacy UID-based parser because historical project files
-    # use this second persistence representation as well.
+    # Exercise a flat UID-based block table because historical project files
+    # use this persistence representation as well.
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
     legacy_blocks: Dict[int, Dict[str, Any]] = copy.deepcopy(saver.get_blocks())
     legacy_block_data: Dict[str, Any] = legacy_blocks[source_block.uid]
     legacy_mapping: Dict[str, int | None] = legacy_block_data["api_obj_mapping"]
     legacy_mapping["fn"] = legacy_mapping.pop(ParamPowerFlowReferenceType.freq.value)
 
     legacy_parser: BlockParser = BlockParser(VarFactory(), logger=Logger())
-    legacy_parser.parse_consts(saver.get_const_to_save())
-    legacy_parser.parse_vars(saver.get_vars_to_save())
-    legacy_parser.parse_diff_vars(saver.get_diff_vars_to_save())
-    legacy_restored: Block = legacy_parser.parse_block(legacy_blocks, source_block.uid)
+    legacy_restored: Block = parse_saved_blocks(
+        parser=legacy_parser,
+        saver=saver,
+        data=legacy_blocks,
+    )[0]
     legacy_frequency: sym.Var | None = legacy_restored.api_obj_mapping.get(
         ParamPowerFlowReferenceType.freq,
         None,
@@ -1553,16 +1409,17 @@ def test_block_parser_only_warns_for_broken_optional_mapping_references() -> Non
         name="optional_mapping_block",
     )
     saver: BlockSaver = BlockSaver(source_factory)
-    saver.save_block(source_block, main=True)
+    saver.save_block(source_block)
 
     # Parse the explicit legacy nulls first. They represent optional empty
     # mapping slots and therefore must not interrupt file opening with warnings.
     null_logger: Logger = Logger()
     null_parser: BlockParser = BlockParser(VarFactory(), logger=null_logger)
-    null_parser.parse_consts(saver.get_const_to_save())
-    null_parser.parse_vars(saver.get_vars_to_save())
-    null_parser.parse_diff_vars(saver.get_diff_vars_to_save())
-    restored_block: Block = null_parser.parse_block(saver.get_blocks(), source_block.uid)
+    restored_block: Block = parse_saved_blocks(
+        parser=null_parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
 
     assert null_logger.warning_count() == 0
     assert restored_block.api_obj_mapping == dict()
@@ -1580,10 +1437,11 @@ def test_block_parser_only_warns_for_broken_optional_mapping_references() -> Non
 
     broken_logger: Logger = Logger()
     broken_parser: BlockParser = BlockParser(VarFactory(), logger=broken_logger)
-    broken_parser.parse_consts(saver.get_const_to_save())
-    broken_parser.parse_vars(saver.get_vars_to_save())
-    broken_parser.parse_diff_vars(saver.get_diff_vars_to_save())
-    broken_parser.parse_block(broken_blocks, source_block.uid)
+    parse_saved_blocks(
+        parser=broken_parser,
+        saver=saver,
+        data=broken_blocks,
+    )
 
     assert broken_logger.warning_count() == 2
     assert {entry.device_property for entry in broken_logger.entries} == {
@@ -1772,3 +1630,281 @@ def test_ordered_emission_preserves_uid_randomness_and_output_aliasing(use_jit: 
     singular: sym.Expr = sym.Func(sym.BinOp(sym.Const(0), "**", sym.Const(0)), "floor")
     derivative: sym.Expr = singular.diff(x)
     assert isinstance(derivative, sym.Const) and derivative.value == 0
+
+
+def _modal_template_block() -> tuple[Block, VarFactory]:
+    """Build a block carrying modal template metadata.
+
+    :return: Block and the variable factory that owns its variables.
+    """
+    var_factory: VarFactory = VarFactory()
+    value: sym.Var = var_factory.add_var(name="modal_x")
+    block: Block = Block(algebraic_vars=list((value,)), algebraic_eqs=list((value,)))
+    block.modal_template_kind = "configurable_integrator"
+    block.modal_template_config = dict((("scaling", "GAIN"), ("scale_bounds_by_gain", True)))
+    return block, var_factory
+
+
+def _make_version_six_contract(contract: object) -> None:
+    """Turn a current contract record into the version-6 shape that had no modal fields.
+
+    :param contract: Dynamic-model contract record, edited in place.
+    :return: None.
+    """
+    assert isinstance(contract, dict)
+    contract["version"] = 6
+    contract.pop("modal_template_kind")
+    contract.pop("modal_template_config")
+    contract.pop("emt_finite_reciprocal_source_mode_var_uid", None)
+
+
+def _parse_through_symbolic_io(block_records: dict[str, object], saver: BlockSaver) -> Block:
+    """Parse saved block records with the symbolic IO parser.
+
+    :param block_records: Block records to parse (possibly edited).
+    :param saver: Saver that produced the variables and constants.
+    :return: Parsed block.
+    """
+    parser: BlockParser = BlockParser(var_factory=VarFactory())
+    return parse_saved_blocks(parser=parser, saver=saver, data=block_records)[0]
+
+
+def test_modal_template_is_stored_only_in_the_contract() -> None:
+    """Modal metadata lives in the dynamic-model contract and new records carry no top-level copy.
+
+    :return: None.
+    """
+    block: Block
+    var_factory: VarFactory
+    block, var_factory = _modal_template_block()
+    source_data: dict[str, Any]
+    saver: BlockSaver
+    source_data, saver = _save_block_parser_fixture(block)
+    data: dict[str, object] = copy.deepcopy(source_data)
+    assert "modal_template_kind" not in data
+    assert "modal_template_config" not in data
+    contract_data: object = data["dynamic_model_contract"]
+    assert isinstance(contract_data, dict)
+    assert contract_data["modal_template_kind"] == "configurable_integrator"
+    assert contract_data["modal_template_config"] == block.modal_template_config
+    saver: BlockSaver = BlockSaver(var_factory)
+    saver.save_block(block)
+    record: object = saver.get_blocks()[block.uid]
+    assert isinstance(record, dict)
+    assert "modal_template_kind" not in record
+    assert "modal_template_config" not in record
+    block.modal_template_kind = None
+    block.modal_template_config = None
+    assert block.dynamic_model_contract.modal_template_kind is None
+    assert block.dynamic_model_contract.modal_template_config is None
+    cleared_data: dict[str, Any]
+    cleared_data, saver = _save_block_parser_fixture(block)
+    assert _parse_test_block(saver=saver, data=cleared_data).modal_template_kind is None
+
+
+def test_modal_template_legacy_keys_fill_null_contract_fields() -> None:
+    """Legacy top-level keys fill each null contract field, and a non-null contract value wins.
+
+    :return: None.
+    """
+    block: Block
+    var_factory: VarFactory
+    block, var_factory = _modal_template_block()
+    expected_config: Dict[str, object] = dict((("scaling", "GAIN"), ("scale_bounds_by_gain", True)))
+
+    source_data: dict[str, Any]
+    saver: BlockSaver
+    source_data, saver = _save_block_parser_fixture(block)
+    version_six: dict[str, object] = copy.deepcopy(source_data)
+    _make_version_six_contract(version_six["dynamic_model_contract"])
+    version_six["modal_template_kind"] = "configurable_integrator"
+    version_six["modal_template_config"] = dict(expected_config)
+    restored: Block = _parse_test_block(saver=saver, data=version_six)
+    assert restored.modal_template_kind == "configurable_integrator"
+    assert restored.modal_template_config == expected_config
+    assert restored.dynamic_model_contract.modal_template_config == expected_config
+
+    resaved: dict[str, object] = copy.deepcopy(source_data)
+    resaved_contract: object = resaved["dynamic_model_contract"]
+    assert isinstance(resaved_contract, dict)
+    resaved_contract["modal_template_kind"] = None
+    resaved_contract["modal_template_config"] = None
+    resaved["modal_template_kind"] = "configurable_integrator"
+    resaved["modal_template_config"] = dict(expected_config)
+    restored = _parse_test_block(saver=saver, data=resaved)
+    assert restored.modal_template_kind == "configurable_integrator"
+    assert restored.modal_template_config == expected_config
+
+    without_contract: dict[str, object] = copy.deepcopy(source_data)
+    without_contract.pop("dynamic_model_contract")
+    without_contract["modal_template_kind"] = "configurable_integrator"
+    without_contract["modal_template_config"] = dict(expected_config)
+    restored = _parse_test_block(saver=saver, data=without_contract)
+    assert restored.modal_template_kind == "configurable_integrator"
+    assert restored.modal_template_config == expected_config
+
+    conflicting: dict[str, object] = copy.deepcopy(source_data)
+    conflicting["modal_template_kind"] = "startup_freeze_integrator"
+    conflicting["modal_template_config"] = dict((("scaling", "NONE"),))
+    restored = _parse_test_block(saver=saver, data=conflicting)
+    assert restored.modal_template_kind == "configurable_integrator"
+    assert restored.modal_template_config == expected_config
+
+    per_field: dict[str, object] = copy.deepcopy(source_data)
+    per_field_contract: object = per_field["dynamic_model_contract"]
+    assert isinstance(per_field_contract, dict)
+    per_field_contract["modal_template_config"] = None
+    per_field["modal_template_kind"] = "startup_freeze_integrator"
+    per_field["modal_template_config"] = dict(expected_config)
+    restored = _parse_test_block(saver=saver, data=per_field)
+    assert restored.modal_template_kind == "configurable_integrator"
+    assert restored.modal_template_config == expected_config
+
+    saver: BlockSaver = BlockSaver(var_factory)
+    saver.save_block(block)
+    saved_records: dict[str, object] = copy.deepcopy(saver.get_blocks())
+    saved_record: object = saved_records[block.uid]
+    assert isinstance(saved_record, dict)
+    _make_version_six_contract(saved_record["dynamic_model_contract"])
+    saved_record["modal_template_kind"] = "configurable_integrator"
+    saved_record["modal_template_config"] = dict(expected_config)
+    parsed: Block = _parse_through_symbolic_io(saved_records, saver)
+    assert parsed.modal_template_kind == "configurable_integrator"
+    assert parsed.modal_template_config == expected_config
+
+    resaved_records: dict[str, object] = copy.deepcopy(saver.get_blocks())
+    resaved_record: object = resaved_records[block.uid]
+    assert isinstance(resaved_record, dict)
+    resaved_record_contract: object = resaved_record["dynamic_model_contract"]
+    assert isinstance(resaved_record_contract, dict)
+    resaved_record_contract["modal_template_kind"] = None
+    resaved_record_contract["modal_template_config"] = None
+    resaved_record["modal_template_kind"] = "configurable_integrator"
+    resaved_record["modal_template_config"] = dict(expected_config)
+    parsed = _parse_through_symbolic_io(resaved_records, saver)
+    assert parsed.modal_template_kind == "configurable_integrator"
+    assert parsed.modal_template_config == expected_config
+
+
+def test_modal_template_legacy_keys_are_validated_like_the_contract() -> None:
+    """Malformed legacy top-level keys raise TypeError, also when the contract value wins.
+
+    :return: None.
+    """
+    block: Block
+    var_factory: VarFactory
+    block, var_factory = _modal_template_block()
+    source_data: dict[str, Any]
+    saver: BlockSaver
+    source_data, saver = _save_block_parser_fixture(block)
+    nested: dict[str, object] = copy.deepcopy(source_data)
+    nested["modal_template_config"] = dict((("scaling", dict((("inner", 1),))),))
+    with pytest.raises(TypeError):
+        _parse_test_block(saver=saver, data=nested)
+    version_six: dict[str, object] = copy.deepcopy(source_data)
+    _make_version_six_contract(version_six["dynamic_model_contract"])
+    version_six["modal_template_config"] = dict((("scaling", list((1, 2))),))
+    with pytest.raises(TypeError):
+        _parse_test_block(saver=saver, data=version_six)
+    wrong_kind: dict[str, object] = copy.deepcopy(source_data)
+    wrong_kind["modal_template_kind"] = 7
+    with pytest.raises(TypeError):
+        _parse_test_block(saver=saver, data=wrong_kind)
+    saver: BlockSaver = BlockSaver(var_factory)
+    saver.save_block(block)
+    saved_records: dict[str, object] = copy.deepcopy(saver.get_blocks())
+    saved_record: object = saved_records[block.uid]
+    assert isinstance(saved_record, dict)
+    saved_record["modal_template_config"] = dict((("scaling", dict((("inner", 1),))),))
+    with pytest.raises(TypeError):
+        _parse_through_symbolic_io(saved_records, saver)
+
+
+def test_modal_template_survives_block_copies() -> None:
+    """Deep copy, duplicate_block and the editor's copy_block_state keep the metadata in the contract.
+
+    :return: None.
+    """
+    block: Block
+    var_factory: VarFactory
+    block, var_factory = _modal_template_block()
+    copied: Block = copy.deepcopy(block)
+    assert copied.modal_template_kind == block.modal_template_kind
+    assert copied.modal_template_config == block.modal_template_config
+    assert copied.modal_template_config is not block.modal_template_config
+    duplicated: Block = duplicate_block(block=block, var_factory=var_factory)
+    assert duplicated.modal_template_kind == block.modal_template_kind
+    assert duplicated.modal_template_config == block.modal_template_config
+    target_value: sym.Var = var_factory.add_var(name="modal_target")
+    target: Block = Block(algebraic_vars=list((target_value,)), algebraic_eqs=list((target_value,)))
+    copy_block_state(block, target)
+    assert target.modal_template_kind == block.modal_template_kind
+    assert target.modal_template_config == block.modal_template_config
+
+
+def test_dynamic_model_contract_contains_only_retained_runtime_fields() -> None:
+    """Keep the persistent contract limited to the two supported declarations.
+
+    :return: None.
+    """
+    fields: set[str] = set((
+        "modal_template_kind", "modal_template_config",
+    ))
+    contract: DynamicModelContract = DynamicModelContract()
+    payload: dict[str, object] = contract.to_data()
+    assert set(DynamicModelContract.__slots__) == fields
+    assert set(payload) == fields | set(("version",))
+    assert payload["version"] == 15
+    with pytest.raises(AttributeError):
+        contract.dgs_elmsym_runtime_adapter = True
+    restored: DynamicModelContract = dynamic_model_contract_from_data(payload)
+    assert restored.to_data() == payload
+
+
+def test_legacy_dynamic_model_contract_discards_import_metadata_on_resave() -> None:
+    """Load old import declarations while preserving retained runtime settings.
+
+    :return: None.
+    """
+    legacy: dict[str, object] = DynamicModelContract().to_data()
+    legacy["version"] = 8
+    legacy["emt_finite_reciprocal_source_mode_var_uid"] = None
+    legacy["dgs_elmsym_runtime_adapter"] = True
+    legacy["dgs_elmsym_speed_var_uid"] = 123
+    legacy["dgs_open_resistance_ohm"] = 99999.0
+    legacy["explicit_init_excluded_var_names"] = list(("boundary",))
+    legacy["emt_internal_grounding_link"] = True
+    legacy["modal_template_kind"] = "example"
+    legacy["modal_template_config"] = dict(gain=2.0)
+    restored: DynamicModelContract = dynamic_model_contract_from_data(legacy)
+    current: dict[str, object] = restored.to_data()
+    assert current["version"] == 15
+    assert "explicit_init_excluded_var_names" not in current
+    assert "emt_internal_grounding_link" not in current
+    assert restored.modal_template_config == dict(gain=2.0)
+    assert "dgs_elmsym_runtime_adapter" not in current
+    assert "dgs_elmsym_speed_var_uid" not in current
+    assert "dgs_open_resistance_ohm" not in current
+    legacy["unexpected_field"] = True
+    with pytest.raises(KeyError, match="extra"):
+        dynamic_model_contract_from_data(legacy)
+
+
+@pytest.mark.parametrize("grounding", (False, True))
+def test_version_thirteen_discards_grounding_flag(grounding: bool) -> None:
+    """Discard historical grounding flags and reject them in the current schema.
+
+    :param grounding: Historical flag value to discard.
+    :return: None.
+    """
+    legacy: dict[str, object] = DynamicModelContract().to_data()
+    legacy["version"] = 13
+    legacy["emt_finite_reciprocal_source_mode_var_uid"] = None
+    legacy["emt_internal_grounding_link"] = grounding
+    restored: DynamicModelContract = dynamic_model_contract_from_data(legacy)
+    assert restored.to_data() == DynamicModelContract().to_data()
+    # Current records must not silently accept retired declarations.
+    legacy["version"] = 15
+    legacy.pop("emt_finite_reciprocal_source_mode_var_uid")
+    with pytest.raises(KeyError, match="emt_internal_grounding_link"):
+        dynamic_model_contract_from_data(legacy)

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import numpy as np
@@ -14,12 +18,12 @@ from VeraGridEngine.Simulations.Rms.initialization import PseudoTransientInitPro
 from VeraGridEngine.Simulations.Rms.numerical.pseudo_transient import PseudoTransient, PseudoTransientOptions
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, Const, log
 from tests.RMS.test_rms_terminal_power_assembly import build_supported_vectorized_ac_load_case
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.block_helpers import to_explicit
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.enumerations import DynamicIntegrationMethod

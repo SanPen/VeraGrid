@@ -117,7 +117,7 @@ select an arbitrary native device.
 | SUB | Resolves bus selections for MON/CON; records named membership and participation weights on the source report. Preserves native RAW area/zone membership. | Node selectors, power-dependent exclusions and unresolved participation references need further mappings. Named selections are not fabricated as native areas. |
 | MON | Resolves explicit branches and supported endpoint/subsystem selections to native `monitor_loading` flags, including supported exclusions. | No complete interface/voltage-monitor translation. Ownership/kV filters, three-winding selections and source-specific rating semantics are not a complete native study definition. |
 | CON | Creates native `ContingencyGroup` and `Contingency` objects for supported branch/machine OPEN/CLOSE operations, representable bus operations and ordinary SINGLE branch outages with exclusions/categories. Leaves base-case equipment state unchanged. | Unsupported events reject the entire explicit group. Bus outages involving loads/shunts, other automatic directives and more complex event semantics need additional mappings. Reliability metadata may remain source-only. |
-| DYR | Installs connected native generator RMS assemblies using the reviewed bindings listed below. | No automatic model-name-to-template matching. Unsupported/invalid neighboring models block host activation rather than create an incomplete controlled plant. |
+| DYR | Installs connected native generator assemblies and restricted PSS/E 35.2 CIM5/CIM6/CIMW load-motor templates. CIM and restricted CMLD static-only bindings expand the documented load scopes, initialize from the solved load point and reject overlaps or unresolved targets. | CIM/CMLD support is limited to reviewed 35.2 layouts. CMLD currently accepts only a static branch with zero motor/electronic fractions, no feeder/transformer terms or LTC, unity fixed taps and zero frequency coefficients; full composite behavior remains unsupported. PSS/E reserved relay action codes and cross-release/runtime trajectory equivalence remain unreviewed. Unsupported/invalid neighboring generator models block host activation rather than create an incomplete controlled plant. |
 | SEQ | Converts machine sequence impedances and neutral impedances to native bases; applies line zero-sequence fields, fixed-shunt data and supported simple two-winding zero-sequence connections. | Included machine GSUs, complex transformer neutral/core equivalents, three-winding equivalents and additional fault representations remain unsupported/partial. Simple connection codes supported are 1/2/4 and 11/12/14 without separate neutral networks; reverse-grounded 3/13 lacks a native connection representation. |
 | ROP | Applies supported hard normal bus voltage bounds, independent generator dispatch limits and polynomial fuel costs with the fuel multiplier. | No full OPF constraint translation: shared dispatch coupling, soft/emergency limits, reserves, interfaces and non-polynomial costs remain reported. Table-only UPDATE records require explicit generator-dispatch rows to reapply the affected native limits/costs. |
 | GCP | Populates native reactive capability curves, inserts documented implicit origins and orders motor points for native interpolation. Respects non-conventional operating-mode restrictions on activating curves. | UPDATE points with omitted ordinates are not guessed. A stored curve does not override operating modes whose limits follow another source rule. |
@@ -130,6 +130,17 @@ updates retain omitted values. See the ROP and GCP limits above before relying o
 incremental auxiliary files.
 
 ### Reviewed DYR bindings
+
+The five ordinary CMLD suffixes parse as `USRLOD` wrappers with the PSS/E 35.2
+§9.6 allocation (`IC=12`, `NI=2`, `NC=133`, `NS=27`, `NV=146`, reserved
+`ICON=48`). Their bus/owner/zone/area/all `IT` selectors and explicit or
+wildcard load IDs are preserved. The five ACMT `USRLOD` contracts are also
+parsed, but remain unbound. A restricted static-only CMLD binding
+is active when all dynamic fractions, feeder/transformer terms, LTC and
+frequency coefficients are disabled, fixed taps are unity, and source power
+factor matches the RAW solved load. The motors, electronic load, protections,
+feeder/transformer behavior and load MVA-base allocation are not implemented;
+unsupported configurations are rejected. No other release layout is inferred.
 
 [dyr_to_veragrid.py](dyr_to_veragrid.py) uses existing VeraGrid RMS template
 builders and equations. Bindings explicitly map source constants and controller
@@ -144,6 +155,9 @@ not modified by import.
 | GENTRA | Field-transient salient-pole machine | Three states, direct-axis transient-flux saturation and explicit stator saliency. Saturation requires two positive factors or two zeros; a single-zero pair remains unsupported. `AF` is retained as source network-iteration data; it does not alter the native coupled DAE. |
 | GENSAL | Salient-pole synchronous machine | Uses the native five-state machine with an explicit network bridge; it is not replaced by GENROU. |
 | GENSAE | Salient-pole machine with two-axis power-law saturation | Five genuine differential states. A single quadrature subtransient-flux state consumes the resultant-flux saturation factor; no quadrature transient circuit or small replacement time constant. Both zeros disable saturation; single-zero pairs are rejected. |
+| GAST2A | Detailed gas turbine-governor | Matching 33.10 and 35.2 direct records have 31 ordered CONs. A native 13-state template follows the documented paths; its paired-lag delay approximation and machine operating point still need validation before binding. Profiles 34/36 are gated; see the [GAST2A source review](../../../../trunk/dynamics/model_research/GAST2A.md). |
+| PSS7C | IEEE 421.5-2016 dual-input stabilizer | Native 19-state ramp-tracking/canonical realization and restricted 35.2 `USRMDL` binding. Supports selectors 1/3/5 (speed, machine-base power, bus voltage); frequency, accelerating-power, voltage-derivative and compensated-frequency selector 7 remain rejected. Profiles 33/34/36 are gated. |
+| OSTB2T / OSTB5T | Ontario Hydro delta-omega stabilizers | Matching 33.10 and 35.2 records preserve 20 ordered CONs. The native filter and timed S1 switching behavior remain pending; profiles 34/36 are gated. |
 | DEGOV, DEGOV1 | Delayed engine governors | Matching 33/35 records, inherited 34 and provisional 36. Electronic control box, bounded fuel actuator and combustion transport history. Separate throttle/electrical feedback, machine torque output and equilibrium seeds. Positive denominator times and TD required; delay resolution depends on accepted solver steps. |
 | DEGOV1D / DEGOV1DU | Deadband engine governors | Direct 35/36 layout versus explicit 33-only USRMDL allocation contract. Continuous asymmetric speed deadband and optional turbine-rating conversion. The 33 heading spelling DEGOVIDU is not invented as a callable alias. See [research](../../../../trunk/dynamics/model_research/DELAYED_ENGINE_GOVERNORS.md). |
 | TGOV1 | Turbine governor | Converts droop, power limits and damping to the connected machine/system bases. |
@@ -165,11 +179,12 @@ not modified by import.
 | BBSEX1 | Static excitation with bounded regulator feedback | Explicit zero/nonzero supplementary routing, positive-feedback realization of regulator lead/lag, fixed internal limits and actual terminal-voltage-scaled field limits. Uses the supplied 33.10/35.2 diagrams; an independent simulator diagram with different routing/filtering is not substituted. Native fresh construction now has an explicit terminal-voltage port; saved graphs retain their own equations. |
 | BUDCZT | Independently limited parallel PI excitation | Separate integral/total-PI limits and actuator/exciter states. Explicit release-owned TA/TE orders: 33 J+5=TA/J+6=TE; 35 J+5=TE/J+6=TA. Profile 34 stays unsupported because its order is unverified; 36 provisionally inherits 35. Ordering follows supplied sheets; native export confirmation remains pending. |
 | ESST1A | Terminal-fed static excitation with selectable gates | Two explicit UEL/VOS ICONs and eighteen constants match the supplied 33/35 sheets. Three UEL locations, two stabilizer summations, two phase compensators, field-current limiting, delivered-field rate feedback and actual terminal-voltage capability. Source OEL conversion remains pending; an absent gate uses exact bypass. Native crossed-capability convention applies the commutation ceiling last; source-runtime priority in that region is unverified. |
-| PSS2C | Four-phase dual-input ramp tracking | Six ICONs and twenty-nine CONs are reviewed in 35, provisionally inherited by 36; earlier layouts remain unsupported. Four phase stages and actual M*N ramp memories. Requires PSSON<0, positive first washouts and reviewed speed/power/voltage selectors; hysteresis and compensated-frequency input remain unsupported. |
+| PSS2C | Four-phase dual-input ramp tracking | Six ICONs and twenty-nine CONs are reviewed in 35, provisionally inherited by 36; earlier layouts remain unsupported. Four phase stages and actual M*N ramp memories. Machine-base PSSON/PSSOFF hysteresis is supported; compensated-frequency input and unreviewed selectors remain unsupported. |
 | PSS3B | Quadratic dual-input stabilizer | Four ICONs and seventeen CONs match both supplied releases. Independent signed input gains/lags/washouts, optional common washout and two exact quadratic phase ratios. Zero-time bypasses preserve actual constant bias. Uses reviewed selected-measurement infrastructure; other measurement types remain unsupported. |
 | DC1C / DC2C | Bounded rotating excitation with selectable limiter routing | Explicit profile-35 seventeen-CON/two-ICON layouts; provisional 36 inheritance, earlier profiles unsupported. Separate field-memory upper/lower stops, quadratic saturation, phase compensation and field-rate feedback. DC2C scales regulator capability with terminal voltage. Either saturation-sample order is accepted for explicit capability. Automatic KE/capability selectors remain unsupported. |
 | IVOST | Rational electrical-power stabilizer | Matching supplied 33/35 twenty-one-CON layouts, inherited 34 and provisional 36. System-base PELEC directly feeds tracked first/second rational stages and an externally clipped final stage. Actual steady auxiliary bias is preserved. Ambiguous zero-origin, free zero-gain integral and bounded positive-lead PI source degenerations remain declined. |
 | IVOGO | Rational speed governor | Matching supplied 33/35 twenty-one-CON layouts; backward symbolic load balance supports stable stages and load-holding integrators. Mechanical power and shaft torque are separate; source connection converts speed/base exactly once. Shares the explicit rational source-degeneration restrictions. See [research](../../../../trunk/dynamics/model_research/RATIONAL_FILTER_CONTROLS.md). |
+| AC6C / AC6C2 | Two-stage brushless excitation | Supplied 35 twenty-five-CON/two- or three-ICON layouts; 36 provisional, earlier direct records unreviewed. Bounded second lead-lag, clipped field-current feedback, separate fixed or terminal-scaled forcing limits and loaded rotating field. See [research](../../../../trunk/dynamics/model_research/TWO_STAGE_BRUSHLESS_EXCITATION.md). |
 | AC7C | Selectable cascaded brushless excitation | Supplied 35 thirty-three-CON/six-ICON layout; 36 provisional, older profiles unreviewed. Compound or live-EFD self-excitation, independent PID/PI limits and five takeover points. Ambiguous source KP=0 rectified-potential semantics are declined. See [research](../../../../trunk/dynamics/model_research/CASCADED_BRUSHLESS_EXCITATION.md). |
 | AC7B | Cascaded brushless PID/PI excitation | Matching supplied 33/35 twenty-seven-CON layouts; 34 inherited, 36 provisional. Independent loop limits, mixed field/current feedback, VFE rate feedback, KP=0 unity-supply bypass and negative forcing floor. Actual auxiliary bias and either saturation-sample order are supported. See [research](../../../../trunk/dynamics/model_research/CASCADED_BRUSHLESS_EXCITATION.md). |
 | DC4C | Compound-fed commutator PID excitation | Supplied 35 twenty-four-CON/four-ICON schema; 36 provisional. Loaded winding-current supply, post-PID limiter gates, separate fixed amplifier bounds and field-rate feedback. KE=0 automatic calibration remains unreviewed. See [research](../../../../trunk/dynamics/model_research/COMPOUND_COMMUTATOR_EXCITATION.md). |
@@ -227,6 +242,7 @@ not modified by import.
 | STABNI | Power stabilizer | Double reset and fourth-order shaping; zero transducer time removes that state. |
 | IEEEST | Single-input stabilizer | Full quadratic-over-fourth-order input filter, two phase stages, reset or unity-numerator mode, output saturation and compensated-voltage supervision. Reviewed selectors: rotor speed deviation, machine-base electrical power, local/remote bus voltage. |
 | IEE2ST | Dual-input stabilizer | Two signed-gain transducers add before reset and three phase stages. Each selector independently supports the reviewed measurements above, including two remote bus voltages. |
+| OSTB2T | Ontario Hydro delta-omega stabilizer | Speed washout and two lead-lag stages, TANG-filtered terminal-voltage path, output limits and TSEAL/T-ON/T-OFF S1 switching. Reviewed 33.10/35.2 local speed, terminal-voltage and field-voltage host inputs. |
 | COMP | Reactive voltage compensator | Uses the signed convention `Vc = abs(Vt - j*Xe*It)` with machine-base current. |
 | IEEEVC | Complex voltage compensator | Uses the existing rectangular `abs(Vt + (Rc+j*Xc)*It)` component with explicit machine-base current conversion. |
 | REMCMP | Remote voltage measurement | Connects to a live native AC-bus voltage; explicit external network connections survive runtime duplication and circuit copying. |
@@ -250,8 +266,9 @@ They are registered in the native engine catalogue and the dynamic editor. Sourc
 record layouts and identifiers remain in the import layer.
 
 `COMPCC` and `CCOMP4A` now also have native algebraic templates and physical
-phasor/sharing tests, but their DYR bindings remain pending: mixed identifier
-headers and cross-machine references require additional integration. A native
+phasor/sharing tests. Their 35.2 DYR headers now parse the second bus and the
+three bus/machine-ID pairs, respectively, in source order. DYR bindings remain
+pending on cross-machine current and exciter-reference integration. A native
 template existing is not the same status as an activated file-import binding.
 
 The nine DC excitation bindings share native physical stages with explicit
@@ -280,7 +297,28 @@ Supervision uses the host excitation system's compensated voltage independently
 of remote stabilizer signal selection. Either IEE2ST input can be disabled with
 selector zero; a direct IEEEST zero selector is not documented.
 The PSS1A sheet specifies an IEEEST parameter correspondence and writes an
-IEEEST record; it is not evidence for a direct `PSS1A` record grammar.
+IEEEST record; it is not evidence for a direct `PSS1A` record grammar. The
+native PSS1A catalogue template uses that exact coefficient map and the existing
+IEEEST physical equations. Source DYR assignments therefore remain IEEEST.
+The AC8BBU2 sheet specifies a 35.2 `USRMDL` allocation of `4,0,5,35,7,9` and
+lists five ICONs, 35 CONs, seven states and nine VARs. That release-owned source
+layout is parsed and validated. Its sheet does not provide the vendor exciter's
+equations or control diagram, so no native binding is enabled; profiles 33, 34
+and 36 remain unreviewed.
+PSS4B has matching 75-CON direct schemas in the supplied 33.10 section 3.11
+and 35.2 section 3.12 sheets. Its native 32-state template follows the three
+band diagram: local rotor-speed deviation feeds low/intermediate filters, and
+generator electrical power on MBASE feeds the high-frequency path. Those two
+signals connect to the native stabilizer and the output enters the exciter's
+supplementary-voltage sum. Stored and runtime operating-point checks pass in
+both releases. Profiles 34 and 36 remain gated pending their own layout evidence.
+
+ST9C has a restricted direct binding for the supplied 35.2 §6.84 layout. The
+import converts THETAP to radians, connects live machine terminal phasors and
+the optional PSS output, and initializes from machine field voltage and the
+loaded compound supply. Separate OEL/UEL records are rejected because the
+native ST9C template lacks their selected takeover gates; releases 33, 34 and
+36 remain unreviewed.
 
 ### PSS/E library mapping inventory
 
@@ -350,23 +388,195 @@ The 35.2 main library also documents supplied user-model interfaces such as
 `USRMDL`; inclusion here does not mean the name always appears directly in the
 simple `BUS, MODEL, ID, CON...` DYR grammar. Header/ICON layouts must be mapped too.
 
+`MAXEX2` has matching direct-record schemas in PSS/E 33.10 section 5.2 and
+35.2 section 5.3: one mode ICON and ten ordered CONs. Its reviewed binding maps
+the documented EFD/IFD selector and constants to the native reset integrator,
+then connects the selected field measurement and voltage offset for AC6A/ESAC6A
+hosts. Other exciter hosts and the 34/36 layouts remain unreviewed.
+
+`MAXEX1` has matching ten-CON EFD-only calling sequences in PSS/E 33.10
+section 5.1 and 35.2 section 5.2. Although both sheets list an ICON status,
+their DYR invocation omits ICONs; the parser therefore follows the explicit
+ten-CON call syntax. The binding uses the shared inverse-time template in fixed
+EFD mode and connects to AC6A/ESAC6A hosts. Other host exciters and profiles
+34/36 remain unreviewed.
+
+`ST6B` has direct 33.10 section 6.60 and 35.2 section 6.79 schemas with one
+OEL ICON and sixteen CONs, plus a connected four-state native template. The
+restricted importer uses terminal voltage for sensed voltage and `VB`, because
+the DYR records have no independent-supply selector. It rejects external OEL2C
+and MNLEX1 controllers: the source diagram has separate HV/LV gate paths and two
+OEL entry positions that the native template does not yet reproduce. Profiles
+34/36 remain unreviewed; see
+[`EXCITERS.md`](../../../../trunk/dynamics/model_research/EXCITERS.md#next-static-pid-family-st6bst6c-research-boundary).
+
 #### Main library: PSS/E 35.2
 
 “Pending” means no reviewed active import binding, including records that can be
-retained by the parser. “Schema only” marks the three additional named constant
-schemas already implemented. Comma-separated variants are listed individually;
+retained by the parser. Layout schemas are listed separately from reviewed
+bindings. Comma-separated variants are listed individually;
 their different bus/owner/zone/area/all scopes must not be collapsed into one
 unconditional per-device assignment.
 
+AC3C's 35.2 sheet has a 28-CON PID table and a 22-CON sample record. The parser
+retains either documented length; the native template is not bound because
+the manual's PID state allocation and active record contract remain unresolved.
+
+`CPAAUT` now has a native two-state washout/lag template and a 33.10/35.2
+auxiliary DYR schema. Its source header identifies a target device type, signal
+slot and bus; the generator-only DYR assembler cannot attach that signal yet.
+The native template and parsed record therefore remain unbound until an
+auxiliary-device signal connection path exists. The parser validates the
+POM-defined quoted DC/FACTS device name, DVTYP 1–4, and SGNDX limits of 4 for
+two-terminal DC, 12 for multi-terminal DC, 2 for VSC DC, and 1 for FACTS.
+Those selectors are source-contract checks, not an implemented DC/FACTS host.
+
+`CGEN1` has matching 33.10 and 35.2 source sheets with 27 direct CONs and no
+ICONs. The parser preserves the three d-axis rotor branches, three q-axis rotor
+branches, and their source order. PSS/E 34 and 36 remain gated; native
+equivalent-circuit equations, operating-point initialization and machine-host
+binding are still pending.
+
+`OEL2C` has a 35.2 schema with two ICONs and 41 CONs, and its native
+template has the documented eight states and one signal input. The source
+diagram's `SW1` selects fixed versus inverse ramp rates, and the native template
+already carries that selector. Its measured-signal input was disconnected from
+the filter equation; this is now corrected and covered by a focused regression.
+
+`UEL2C` now has a PSS/E 35.2 section 4.6 schema with four ICONs and 47 ordered
+CONs. The 33.10 inventory does not contain this identifier, and profile 36 is
+left unsupported without its own source sheet. The reviewed 35.2 binding
+requires one ST7C exciter, connects its post-gate `Vref_FBs` output to UEL2C's
+VFB input, and initializes the voltage/power filter states from the live
+machine operating point. The native template expresses the source's
+piecewise-linear lookup as symbolic algebra, including linear end-segment
+extrapolation. Its third-quadrant selection can either mirror the curve across
+the reactive-power axis or extrapolate the first segment, matching ICON M+2.
+The native template maps the two exponent ICONs and all 25 non-curve CONs
+through `Uel2cParameters`, including the VULMIN/VULMAX final output clamp.
+Its gain-reduction selector exposes fixed KFIX for ICON M+3 position A (1) and
+live KADJ for position B (2). The connected template/runtime assembly passes
+power-flow residual checks. Zero filter and lead-lag times and VBIAS=0 are
+rejected by the current graph realization. Release 36 remains unreviewed.
+The 35.2 sheet distinguishes the DYR ICON encoding (1=fixed, 2=inverse) from
+the block's internal `SW1` encoding (0=fixed, nonzero=inverse), as shown in
+the equation note and diagram. The adapter must translate ICON 1/2 to native
+0/1 rather than copy the source integer. `IFDRATED` is an additional PSS/E
+record field not present in the IEEE block equations. The native template now
+retains it as a parameter for source round-trip/binding; its interaction with
+`KSCALE` still needs a release-specific decision. The importer binds all 41
+CONs and routes selected Efd, Ifd, or VFE feedback into the limiter. Its VOEL
+output is summed through the AC6A/ESAC6A supplementary-voltage path.
+
+`TGOV3` now has matching 33.10/35.2 eighteen-CON layouts and a connected
+six-state DYR assembly. `TGOV3D` adds its documented asymmetric `DBH`/`DBL`
+speed deadband and optional `TRATE` base; positive `TRATE` is converted through
+MW to the machine/system base, while zero selects machine MVA. Its 35.2 direct
+record and the separate 33.10 `TGOV3DU` wrapper are both connected to the same
+native kernel. The intercept-valve flow follows linear interpolation of the
+three points in the PSS/E plot, and its out-of-record `TI` runtime event
+defaults to 9999 seconds. Those are explicit restrictions; PSS/E 34 remains
+unreviewed.
+
+The 33.10 `TGOV3DU` wrapper has a separate 21-CON, six-state user schema. Its
+documented five-count `USRMDL` header omits the zero ICON count; the parser
+handles that form only for this release-owned wrapper. The wrapper is bound
+with the same TGOV3 fast-valving and curve limitations.
+
+`TGOV2` now has a four-state native template and matching 33.10/35.2
+eleven-CON parser layouts. Its steam stages, speed damping, absolute TI-relative
+fast-valving boundaries, and generator-base conversion are connected by the
+DYR importer. The source DYR record provides the eleven CONs; the model-library
+`TI` VAR defaults to zero because it is not part of that record.
+
+WESGOV is bound to the sampled native governor for 33.10 and 35.2 direct
+nine-CON records; WESGOVDU uses its separate 33.10 `USRMDL` allocation, and
+WESGOVD uses the 35.2 direct twelve-CON layout. The implementation samples
+speed and filtered electrical power independently, applies a sampled PI with
+per-sample `ALIM`, and passes the command through the two mechanical lags.
+Conversion and focused sample/hold tests cover these three layouts. PSS/E 34
+and 36 layouts remain unverified and are not inferred.
+
+`BBGOV1` now has exact 17-CON schemas for PSS/E 33.10 section 7.1 and 35.2
+section 7.1, plus a native seven-state governor template. The source diagram's
+`SWITCH` selects filtered electrical-power feedback at zero and valve-output
+feedback when nonzero. Both feedback routes bind to the governor input and pass
+stored/runtime generator-equilibrium checks with nonzero machine losses.
+Profiles 34/36 remain gated because matching source layouts have not been
+reviewed.
+
+The 35.2 `AC6A` and `ESAC6A` records parse the 23-CON order explicitly listed
+in sections 6.6 and 6.30. AC6A's sample record ending at `J+20` conflicts with
+its table through `J+22`; the parser follows the field table and requires all
+23 values. Both source variants bind to their separate native limiter
+realizations and connect to a field-dynamic machine with independent PSS/UEL
+paths and power-flow initialization. ESAC6A uses the original downstream
+output clip; AC6A uses the revised output-tracking limiter. PSS/E 33/34
+contracts remain unverified.
+
+The 35.2 `OEL2C` record parses the two ICON selectors and 41 ordered CONs
+listed in ModelLibrary section 5.4 and maps every CON to the native template.
+Its importer translates `SW1` from 1/2 to 0/1, connects the selected Efd, Ifd,
+or VFE signal, and sums VOEL with the AC6A/ESAC6A supplementary-voltage input.
+The binding is restricted to those two exciters. `IFDRATED` is retained as a
+source parameter; its relationship to `KSCALE` remains unresolved. The native
+timer uses the RMS reserved `glob_time` name; event-driven timer initialization
+and 33/34 record layouts remain unverified.
+
+The 35.2 `PSS6C` record maps all 30 CONs and its channel ICONs to the native
+template. Both channels currently support local rotor-speed deviation or
+machine-base electrical power, with their source limits and power-flow state
+seeds applied. Bus-frequency, accelerating-power, bus-voltage, derivative and
+remote-bus selections are rejected until their live RMS signals are reviewed.
+PSS/E 33/34 layouts remain unverified.
+
+The 35.2 `PSS7C` `USRMDL` allocation (`3,0,6,32,19,5`) maps all 32 CONs and
+both selected measurement channels. The native implementation retains the
+fixed 19-state allocation, applies independent input limits and washouts, the
+M/N ramp tracker and IEEE canonical phase compensation, then gates the clipped
+output with the documented PSSON/PSSOFF machine-power hysteresis. Selectors
+1/3/5 are connected for local speed, machine-base power and local/remote bus
+voltage. Frequency, accelerating power and voltage derivative are rejected;
+selector 7 requires the not-yet-reviewed compensated-frequency signal path.
+Profiles 33/34/36 remain gated, and no PSS/E trajectory comparison is claimed.
+
+The PSS/E 35.2 `AC9C` and `AC11C` records have explicit ordered parser schemas
+(four ICONs/42 CONs and five ICONs/36 CONs). AC11C now has a native nine-state
+template and a restricted 35.2 exciter binding with both rectifier supplies,
+boost switching, limiter selectors, live terminal phasors, and machine operating-
+point initialization. Stored and runtime templates are checked at a power-flow
+equilibrium. Profiles 33, 34, and 36 remain gated without matching source layouts.
+AC9C now has a restricted 35.2 binding for both documented power-stage modes and
+OEL/UEL selector positions 1/2. It maps both SW1 supply choices and initializes
+from live machine phasors and solved field current. Chopper initialization
+selects among its three documented voltage regions and seeds the consistent
+PI operating point. Position 3, separate external OEL/UEL records, and profiles
+33/34/36 remain unsupported.
+The AC11C data sheet repeats the `J+11` label for `VRMIN`; the parser preserves
+the listed row order and this source-index typo remains documented for review.
+AC9C's seven-state native controller connects the compensated-voltage
+transducer, PID and limiter gates, field-current PI, controlled bridge, dual
+rectifier-source network, freewheel feedback, power-stage selector and rotating
+exciter. Bridge output `VA` and selector output `VR` remain distinct; `VR` feeds
+the exciter. The binding maps source constants by row position because J+19 is
+minimum freewheel feedback despite repeating `KE`, while J+23 is exciter-field
+`KE`; the parser names J+19 `VFWMIN`. The archived independent reference
+documents freewheel clipping and the three limiter locations, but PSS/E only
+describes ICON positions 1 and 2. Position 3 remains unsupported. Both SW1
+sources and thyristor/chopper stages are mapped. Chopper records require
+`VAMIN > VLIM1` to fix the upper stage branch during initialization. Separate
+external OEL/UEL records are rejected because their active takeover
+initialization is not represented.
+
 | Model family | Reviewed bindings | Pending bindings |
 | --- | --- | --- |
-| Generator Models | `GENCLS`, `GENROE`, `GENROU`, `GENSAE`, `GENSAL`, `GENTRA` | `CBEST`, `CDSMS1`, `CGEN1`, `CIMTR1`, `CIMTR2`, `CIMTR3`, `CIMTR4`, `CSMEST`, `CSTATT`, `CSVGN1`, `CSVGN3`, `CSVGN4`, `CSVGN5`, `CSVGN6`, `FRECHG`, `GENDCO`, `GENTPJ1`, `PLBVF1` |
-| Compensator Models | `COMP`, `IEEEVC`, `REMCMP` | `CCOMP4A` (native template; import pending), `COMPCC` (native template; import pending) |
-| Stabilizer Models | `IEE2ST`, `IEEEST` (reviewed selectors only), `PSS2A`, `PSS2B` (reviewed selectors only), `STAB1`, `STAB2A`, `STAB3`, `STAB4`, `STABNI`, `PSS2C`, `PSS3B`, `IVOST` | `BEPSST`, `OSTB2T`, `OSTB5T`, `PSS1A` (documented through IEEEST), `PSS4B`, `PSS6C`, `PSS7C`, `PTIST1`, `PTIST3`, `ST2CUT`, `STBSVC`, `SYNAXBU1` |
-| Minimum Excitation Limiter Models | `MNLEX1`, `MNLEX2`, `MNLEX3` | `UEL1`, `UEL2`, `UEL2C` |
-| Maximum Excitation Limiter Models | — | `BASOELU2`, `MAXEX1`, `MAXEX2`, `OEL2C`, `OEL5CU1` |
-| Excitation System Models | `ESAC1A`, `ESAC2A`, `ESAC3A`, `ESAC4A`, `ESAC5A`, `ESDC1A`, `ESDC2A`, `ESST3A`, `EXAC1`, `EXAC1A`, `EXAC2`, `EXAC3`, `EXAC4`, `EXBAS`, `EXDC2`, `EXST1`, `EXST2`, `IEEET1`, `IEEET2`, `IEET1A`, `IEEEX1`, `IEEEX2`, `IEEX2A`, `SCRX`, `SEXS`, `IEEET4`, `IEEET5`, `IEEEX4`, `IEET5A`, `ESAC8B`, `EXST2A`, `ESST2A`, `BBSEX1`, `BUDCZT`, `ESST1A`, `IEEET3`, `IEEEX3`, `DC1C`, `DC2C`, `AC4C`, `DC3A`, `DC4B`, `AC1C`, `AC2C`, `AC5C`, `ST1C`, `ST7B`, `ST7C`, `ESST4B`, `IEET1B`, `EXNI`, `EXPIC1`, `ST4C`, `AC8B`, `ST5B`, `ST5C`, `AC8C`, `DC4C`, `ST6C`, `AC7B`, `AC7C` | `AC3C`, `AC6A`, `AC6C`, `AC6C2`, `AC8BBU2`, `AC9C`, `AC11C`, `CELIN`, `EMAC1T`, `ESAC6A`, `ESURRY`, `EX2000`, `EXELI`, `EXNEBB`, `EXST3`, `IVOEX`, `OEX12T`, `OEX3T`, `REXSY1`, `REXSYS`, `ST6B`, `ST8C`, `ST9C`, `ST10C`, `URHIDT`, `URST5T` |
-| Turbine-Governor Models | `IVOGO`, `DEGOV`, `DEGOV1`, `DEGOV1D`, `GASTD`, `IEESGOD`, `HYGOVD`, `TGOV1D`, `GAST`, `GGOV1`, `GGOV1D` (restricted configurations), `HYGOV`, `IEEEG1`, `IEEEG1D`, `IEEEG2`, `IEEEG3`, `IEEEG3D`, `IEESGO`, `TGOV1`, `HYGOV2`, `HYGOV2D`, `PIDGOV`, `PIDGOVD` | `BBGOV1`, `CRCMGV`, `GAST2A`, `GAST2ADU`, `GASTWD`, `GASTWDD`, `GOVSTEAMEUU`, `HYGOVM`, `HYGOVR1`, `HYGOVT`, `HYG3`, `H6E1`, `PWTBD1`, `SGT8HM1`, `SGT8HS1`, `SGT2E1`, `SITGT1`, `SHAF25`, `TGOV2`, `TGOV3`, `TGOV3D`, `TGOV4`, `TGOV5`, `TURCZT`, `TWDM1T`, `TWDM2T`, `URCSCT`, `URGS3T`, `WEHGOV`, `WESGOV`, `WESGOVD`, `WPIDHY`, `WPIDHYDU`, `WSHYDD`, `WSHYGP`, `WSIEG1` |
+| Generator Models | `GENCLS`, `GENROE`, `GENROU`, `GENSAE`, `GENSAL`, `GENTRA`, `CIMTR1` (35.2; unsaturated double cage; zero GSU impedance), `CIMTR2` (35.2; unsaturated double cage; zero GSU impedance), `CIMTR3` (35.2; in-service only), `CIMTR4` (35.2; in-service only) | `CBEST`, `CDSMS1`, `CGEN1`, `CSMEST`, `CSTATT`, `CSVGN1`, `CSVGN3`, `CSVGN4`, `CSVGN5`, `CSVGN6`, `FRECHG`, `GENDCO`, `GENTPJ1`, `PLBVF1` |
+| Compensator Models | `COMP`, `IEEEVC`, `REMCMP`, `CCOMP4A` (35.2 linked-machine current feedback; requires four active DYR machine templates and zero GSU impedance) | `COMPCC` (native template; import pending) |
+| Stabilizer Models | `BEPSST` (33.10/35.2 PSS path; ITS=0; selectors 1/3/5), `IEE2ST`, `IEEEST` (reviewed selectors only), `OSTB2T` (33.10/35.2), `OSTB5T` (33.10/35.2), `PSS2A`, `PSS2B` (reviewed selectors only), `PSS4B` (33.10/35.2), `STAB1`, `STAB2A`, `STAB3`, `STAB4`, `STABNI`, `PSS2C`, `PSS3B`, `IVOST`, `PSS6C` (35.2; restricted), `PSS7C` (35.2; selectors 1/3/5) | `PSS1A` (documented through IEEEST), `PTIST1`, `PTIST3`, `ST2CUT`, `STBSVC`, `SYNAXBU1` |
+| Minimum Excitation Limiter Models | `MNLEX1`, `MNLEX2`, `MNLEX3`, `UEL1` (33.10/35.2 direct layout; restricted host initialization) | `UEL2`, `UEL2C` |
+| Maximum Excitation Limiter Models | `MAXEX1` (33.10/35.2 EFD-only; AC6A/ESAC6A host), `MAXEX2` (reviewed selectors; AC6A/ESAC6A host) | `BASOELU2`, `OEL2C`, `OEL5CU1` |
+| Excitation System Models | `ESAC1A`, `ESAC2A`, `ESAC3A`, `ESAC4A`, `ESAC5A`, `ESDC1A`, `ESDC2A`, `ESST3A`, `EXAC1`, `EXAC1A`, `EXAC2`, `EXAC3`, `EXAC4`, `EXBAS`, `EXDC2`, `EXST1`, `EXST2`, `IEEET1`, `IEEET2`, `IEET1A`, `IEEEX1`, `IEEEX2`, `IEEX2A`, `SCRX`, `SEXS`, `IEEET4`, `IEEET5`, `IEEEX4`, `IEET5A`, `ESAC8B`, `EXST2A`, `ESST2A`, `BBSEX1`, `BUDCZT`, `ESST1A`, `IEEET3`, `IEEEX3`, `DC1C`, `DC2C`, `AC4C`, `DC3A`, `DC4B`, `AC1C`, `AC2C`, `AC5C`, `ST1C`, `ST7B`, `ST7C`, `ESST4B`, `IEET1B`, `EXNI`, `EXPIC1`, `ST4C`, `AC8B`, `ST5B`, `ST5C`, `AC8C`, `DC4C`, `ST6C`, `AC6C`, `AC6C2`, `AC6A`, `AC7B`, `AC7C`, `ST9C` (35.2 without separate OEL/UEL records), `AC11C` (restricted 35.2 nine-state/dual-source binding), `AC9C` (restricted 35.2 dual power-stage/direct-selector binding), `ST8C` (restricted 35.2 dual-channel field-current binding), `ST10C` (restricted 35.2 all-summation/terminal-fed binding) | `AC3C`, `AC8BBU2`, `CELIN`, `EMAC1T`, `ESAC6A`, `ESURRY`, `EX2000`, `EXELI`, `EXNEBB`, `EXST3`, `IVOEX`, `OEX12T`, `OEX3T`, `REXSY1`, `REXSYS`, `ST6B`, `URHIDT`, `URST5T` |
+| Turbine-Governor Models | `IVOGO`, `DEGOV`, `DEGOV1`, `DEGOV1D`, `GASTD`, `IEESGOD`, `HYGOVD`, `TGOV1D`, `GAST`, `GGOV1`, `GGOV1D` (restricted configurations), `HYGOV`, `IEEEG1`, `IEEEG1D`, `IEEEG2`, `IEEEG3`, `IEEEG3D`, `IEESGO`, `TGOV1`, `TGOV2`, `TGOV3`, `TGOV3D` (chart-interpolated flow; TI event defaults disabled), `HYGOV2`, `HYGOV2D`, `HYGOVR1` (35.2; identity gate curve; positive PMIN restriction), `PIDGOV`, `PIDGOVD` | `BBGOV1`, `CRCMGV`, `GAST2A`, `GAST2ADU`, `GASTWD`, `GASTWDD`, `GOVSTEAMEUU`, `HYGOVM`, `HYGOVT`, `HYG3`, `H6E1`, `PWTBD1`, `SGT8HM1`, `SGT8HS1`, `SGT2E1`, `SITGT1`, `SHAF25`, `TGOV4`, `TGOV5`, `TURCZT`, `TWDM1T`, `TWDM2T`, `URCSCT`, `URGS3T`, `WEHGOV`, `WESGOV`, `WESGOVD`, `WPIDHY`, `WPIDHYDU`, `WSHYDD`, `WSHYGP`, `WSIEG1` |
 | Turbine Load Controller Models | `LCFB1` (enabled measured-power loop with single-shaft IEEEG1) | — |
 | Load Characteristic Models | — | `ACMTBLU1`, `ACMTOWU1`, `ACMTZNU1`, `ACMTARU1`, `ACMTALU1`, `CIM5BL`, `CIM5OW`, `CIM5ZN`, `CIM5AR`, `CIM5AL`, `CIM6BL`, `CIM6OW`, `CIM6ZN`, `CIM6AR`, `CIM6AL`, `CIMWBL`, `CIMWOW`, `CIMWZN`, `CIMWAR`, `CIMWAL`, `CLODBL`, `CLODOW`, `CLODZN`, `CLODAR`, `CLODAL`, `CMLDBLU2`, `CMLDOWU2`, `CMLDZNU2`, `CMLDARU2`, `CMLDALU2`, `CMLDBLDGU2`, `CMLDOWDGU2`, `CMLDZNDGU2`, `CMLDARDGU2`, `CMLDALDGU2`, `EXTLBL`, `EXTLOW`, `EXTLZN`, `EXTLAR`, `EXTLAL`, `IEELBL`, `IEELOW`, `IEELZN`, `IEELAR`, `IEELAL`, `LDFRBL`, `LDFROW`, `LDFRZN`, `LDFRAR`, `LDFRAL` |
 | Load Relay Models | — | `DLSHBL`, `DLSHOW`, `DLSHZN`, `DLSHAR`, `DLSHAL`, `LDS3BL`, `LDS3OW`, `LDS3ZN`, `LDS3AR`, `LDS3AL`, `LDSHBL`, `LDSHOW`, `LDSHZN`, `LDSHAR`, `LDSHAL`, `LDSTBL`, `LDSTOW`, `LDSTZN`, `LDSTAR`, `LDSTAL`, `LVS3BL`, `LVS3OW`, `LVS3ZN`, `LVS3AR`, `LVS3AL`, `LVSHBL`, `LVSHOW`, `LVSHZN`, `LVSHAR`, `LVSHAL`, `UVUFBLU1`, `UVUFOWU1`, `UVUFZNU1`, `UVUFARU1`, `UVUFALU1` |
@@ -395,6 +605,21 @@ unconditional per-device assignment.
 | Machine Other Models | — | `TSTGOV1`, `GetGenSeqCURU` |
 | Branch Other Models | — | `GetBrnSeqCURU` |
 
+PSS/E 33.10 and 35.2 `MINS` records for `FRQTPAT` and `VTGTPAT` carry three ICONs
+(measurement bus, generator bus, machine ID) and four CONs (lower/upper
+threshold, pickup delay, breaker delay). Their typed DYR schemas preserve those
+fields; release 34 remains unreviewed. Dedicated FRQTPAT/VTGTPAT RMS
+relay-stage templates are registered.
+Conversion remains pending because remote-bus measurement and generator-trip
+action semantics are not yet connected to the PSS/E machine host.
+
+PSS/E 35.2 `REECC1` uses five ICONs and 45 CONs for battery electrical control.
+The importer connects it with a same-machine `REGCA1` record and the native SOC
+stage for local Q, PF or voltage control. It requires positive `T` (corrected
+from the 35.2 table's `<0` typo in the 35.3 Release Notes), local measurement,
+and no wind mechanical controls. Remote measurements and `Paux` auxiliary
+signal routing are not covered; profiles 33/34/36 remain unreviewed.
+
 The 35.2 composite-load chapter's overview names `CMLDOWDGU2`, while its contents
 and some sheet headings repeat `CMLDOWU2` in that DER family. The inventory uses
 `CMLDOWDGU2` from the overview and retains `CMLDOWU2` in the ordinary composite-load
@@ -405,18 +630,21 @@ as an alias.
 #### Additional legacy names: PSS/E 33.10
 
 These 38 names do not occur in the 35.2 main-library inventory above. They are
-separate source identifiers; nine governor wrappers now have reviewed profile-33 bindings. Similar modern names are not proof of an
-alias or identical ICON/CON layout; any rename/equivalence must be established
-from the applicable data sheets and source exports.
+separate source identifiers. Eleven governor wrappers, CCOMP4U1, several
+renewable converter/plant wrappers, and the Type 3 wind wrappers have reviewed
+profile-33 bindings; the generated MODEL_COVERAGE.csv carries the live status
+for every listed name. Similar modern names are not proof of an alias or
+identical ICON/CON layout; any rename/equivalence must be established from the
+applicable data sheets and source exports.
 
-Reviewed legacy names: `GGOV1DU`, `IEEEG1SDU`, `IEEEG3DU`, `GASTDU`, `IEESGODU`, `HYGOVDU`, `TGOV1DU`, `HYGOV2DU`, `PIDGOVDU` (explicit profile-33 wrappers).
+Reviewed legacy names: `GGOV1DU`, `IEEEG1SDU`, `IEEEG3DU`, `GASTDU`, `IEESGODU`, `HYGOVDU`, `TGOV1DU`, `HYGOV2DU`, `PIDGOVDU`, `TGOV3DU` (explicit profile-33 wrappers).
 
-| Model family in 33.10 | Additional pending identifiers |
+| Model family in 33.10 | Additional legacy identifiers (review status is in MODEL_COVERAGE.csv) |
 | --- | --- |
 | Generator | `GENTPJU1`, `PLBVFU1` |
 | Compensator | `CCOMP4U1` |
 | Excitation System | `USAC6AU` |
-| Turbine-Governor | `DEGOVIDU`, `GASTWDDU`, `HYGOVRU`, `PWTBDU1`, `TGOV3DU`, `WESGOVDU` |
+| Turbine-Governor | `DEGOVIDU`, `GASTWDDU`, `HYGOVRU`, `PWTBDU1`, `WESGOVDU` |
 | Load Characteristic | `CMLDALU1`, `CMLDARU1`, `CMLDBLU1`, `CMLDOWU1`, `CMLDZNU1` |
 | VSC dc Line | `HVDCPLU1` |
 | FACTS Device | `SVSMO3U2` |
@@ -491,6 +719,70 @@ library inventory. The following table accounts for all 39 source mappings:
 | Governor substitution | `GGOV1` → `TGOV1` |
 | Same-name stabilizer destinations | `IEEEST`, `ST2CUT` |
 | Same-name renewable/control destinations | `REGCA1`, `REECA1`, `REECB1`, `REPCA1`, `WTDTA1`, `WTARA1`, `WTPTA1`, `WTTQA1` |
+
+The native renewable current-source host connects generator current commands
+to the RMS network with explicit machine/system MVA bases. Restricted
+`REGCA1`/`REECA1` source assemblies are now bound for polar RMS, `KHV=0`, local
+direct-power constant-Q, constant-power-factor, local-voltage or coordinated
+Q/V control; local `REPCA1`/`REPCAU1` P/Q control is optional where its Q path
+does not conflict with REECA1 mode selection.
+Nonzero REGCA1 `KHV` still requires the source network-iteration procedure, so
+that setting rejects the whole assembly. `ACCEL` remains source numerical
+metadata and is not made a physical state. The
+REECA1 partial controller now connects VDL curves, P/Q priority, voltage
+measurement, active-power order, local Q/pf control, and immediate voltage
+support to that converter core. Coordinated Q/V and local-voltage PI control
+are also connected with fault-state freezing and live current capability.
+The 35.2 WTDTA1 record and 33.10 WTDTAU1 wrapper now bind in the local
+renewable assembly, supply generator speed to REECA1 `PFLAG=1`, and receive
+live generator electrical power on machine MVA base. The native
+mechanical-power input is seeded from solved generator power unless WTARA1
+is present; profile 36 remains gated.
+An optional WTARA1 aerodynamic stage now feeds that mechanical-power input
+from blade pitch and a power-flow mechanical-power seed. Its 35.2 direct
+record and 33.10 WTARAU1 wrapper bind with WTDTA1; profile 36 remains gated.
+The optional WTTQA1 native torque stage reads live Pe and WTDTA1 speed,
+freezes its PI memory under the REECA1 voltage-dip flag, and supplies a
+speed-multiplied power reference to REECA1 `PFLAG=0`. Its 35.2 direct record
+and 33.10 machine-other WTTQAU1 wrapper bind with WTDTA1.
+The optional WTPTA1 pitch stage reads WTDTA1 turbine speed, WTTQA1 speed
+reference, REECA1 Pord and the plant Pref input, then feeds its rate-limited
+blade angle to WTARA1. Its 35.2 direct record and 33.10 WTPTAU1 wrapper bind
+when the WTDTA1, WTARA1 and WTTQA1 hosts are present; profile 36 remains gated.
+The optional REPCA1/REPCTA1 active plant path filters generator-local power,
+applies frequency droop when enabled, and sends bounded PI Pref to REECA1
+or WTTQA1 respectively. Frequency and operator order remain explicit event
+inputs. The 35.2 REPCTA1 record and 33.10 REPCTAU1 wrapper are bound only with
+the required WTTQA1 Type 3 torque path; nonlocal measurements, frequency
+response and profile 36 remain gated. The optional reactive path selects filtered generator-local Q,
+filtered `Vreg+Kc*Qgen` (`VCFLAG=0`), or generator-local line-drop voltage
+`|Vreg-(Rc+jXc)Igen|` (`VCFLAG=1`). Its bounded, voltage-frozen PI and
+output lead-lag send Qext to REECA1 constant-Q control. Nonlocal bus/branch
+measurements remain pending.
+The optional REECA1 Pref slew stage applies `dPmax`/`dPmin` before the PFLAG
+branch. Its 1 ms tracking layer approximates the source rate-limiter macro,
+which has no published internal time constant. Other REECA1 selector
+combinations, remote measurements, REPCA1 frequency response and phasor-host
+base mapping remain restricted. The
+35.2 direct records have schemas for `REGCA1` (1 ICON, 14 CONs),
+`REECA1` (6 ICONs, 45 CONs), `WT1G1` (10 CONs), `WT2G1` (19 CONs),
+`WT2E1` (6 CONs), `WTDTA1` (5 CONs),
+`WT12T1` (5 CONs), `WTARA1` (2 CONs), `WT12A1` (8 CONs),
+`WTTQA1` (1 ICON, 15 CONs), `WTPTA1` (10 CONs), and
+`REPCA1`/`REPCTA1` (7 ICONs, 27 CONs,
+including a quoted branch circuit ID). The separate 33.10 `USRMDL` wrappers
+have schemas for `REGCAU1` (101,1,1,14,3,4), `REECAU1`
+(102,0,6,45,6,9), `WTDTAU1` (103,0,0,5,4,3), `WTARAU1`
+(105,0,0,2,0,1), `WTPTAU1` (104,0,0,10,3,1),
+`WTTQAU1` (505,0,1,15,3,3), and
+`REPCAU1`/`REPCTAU1` (107,0,7,27,7,9); supported REGCAU1, REECAU1 and
+REPCAU1 subsets now activate through the connected source assembly. Other
+listed wind records remain parse-only.
+The distinct 35.2 `WT12A1U_B` active-stall `USRMDL` wrapper is also
+parse-only under its 105,0,1,14,3,2 allocation; it is not an alias of
+direct `WT12A1`. Its native ramp/filter component now owns a sampled-duration
+one-shot switch. Source conversion remains pending Type 1/2 machine wiring
+and connected event validation.
 
 **A YAML entry is not proof of exact model support.** The snapshot explicitly
 marks GENSAL/ESAC6A and other substitutions with TODO comments. GENSAL fills
@@ -602,10 +894,10 @@ model name, and never hide unsupported source semantics inside native devices.
 The maintained [research folder](../../../../trunk/dynamics/model_research/README.md)
 contains the impact-based backlog, downloaded public technical reports and papers,
 checksums, exact URLs, release distinctions and implementation/test evidence.
-Current reviewed coverage is 118/445 identifiers; 327 inventory entries remain
-pending. Downloaded documents and existing native templates do not count as
-reviewed import bindings. Native catalogue size is 155 entries, including models
-without reviewed DYR mappings.
+Current reviewed coverage is generated from the live binding/schema code and
+recorded in the adjacent CSV ledger. Downloaded documents, parser schemas and
+existing native templates do not count as reviewed import bindings. Native
+catalogue availability remains independent of reviewed DYR mappings.
 
 Fuel-governor equation derivation and compatibility limits are maintained in the
 [GGOV1 research note](../../../../trunk/dynamics/model_research/GGOV1.md), including
@@ -632,3 +924,9 @@ multiplicative variants, source calibration restrictions and independent checks.
 The [cascaded/PID hydraulic family note](../../../../trunk/dynamics/model_research/HYDRAULIC_GOVERNORS.md)
 records control-loop equations, source allocation contracts, water-model limits,
 curve conventions, power bases and focused verification evidence.
+
+PSS/E 33.10 and 35.2 TGOV4 now have matching parser schemas for three ICONs and
+52 ordered CONs. TGOV5 now preserves its matching 49-CON layouts and linked
+machine header in both profiles. This is parse-only coverage; neither model has
+a native template or connected import binding. Profiles 34/36 remain gated.
+See [the steam-governor source review](../../../../trunk/dynamics/model_research/STEAM_GOVERNORS.md).

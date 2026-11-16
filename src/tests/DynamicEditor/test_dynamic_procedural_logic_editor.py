@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Regression tests for the typed retained-mode and procedural-logic editor."""
 
 from __future__ import annotations
@@ -50,10 +54,11 @@ from VeraGridEngine.Utils.procedural_logic import (
     ThreePhaseCarrierSampledModulationLogic,
     TimeDelayLogic,
     ValveStateLogic,
+    WrappedDerivativeLogic,
 )
-from VeraGridEngine.Templates.BasicBlockCatalog import (
+from VeraGridEngine.Templates.template_catalogue import (
     BasicBlockTemplateDescriptor,
-    get_editor_ready_basic_block_catalog_descriptors,
+    get_basic_block_catalog_descriptors,
     load_basic_block_catalog_template,
 )
 
@@ -213,6 +218,21 @@ def test_every_existing_procedural_type_roundtrips_through_typed_drafts() -> Non
     assert [entry.logic_tpe for entry in rebuilt] == [entry.logic_tpe for entry in block.procedural_logic]
 
 
+def test_wrapped_derivative_keeps_optional_rate_empty() -> None:
+    """Keep the engine's unbounded derivative choice through the editor draft.
+
+    :return: None.
+    """
+    source: Var = Var("angle")
+    block: Block = Block(name="wrapped_derivative")
+    block.procedural_logic.append(WrappedDerivativeLogic("rate", source, None, "rate_logic"))
+    drafts: RuntimeLogicDraftCollection = RuntimeLogicDraftCollection(block)
+    namespace: Dict[str, Expr] = {"angle": source}
+    rebuilt: ProceduralLogicBase = build_runtime_logic_entry(drafts.get_entries()[0], namespace)
+    assert isinstance(rebuilt, WrappedDerivativeLogic)
+    assert rebuilt.maximum_rate_expr is None
+
+
 def test_every_procedural_type_roundtrips_through_model_code() -> None:
     """Python code must preserve every concrete Engine procedural entry type.
 
@@ -239,7 +259,7 @@ def test_every_catalogue_runtime_entry_opens_as_a_valid_typed_draft() -> None:
     """Every draggable catalogue block with procedural logic must validate in the modal editor."""
     validated_entry_count: int = 0
     descriptor: BasicBlockTemplateDescriptor
-    for descriptor in get_editor_ready_basic_block_catalog_descriptors():
+    for descriptor in get_basic_block_catalog_descriptors():
         var_factory: VarFactory = VarFactory()
         template: EmtModelTemplate = load_basic_block_catalog_template(
             descriptor=descriptor,

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from types import SimpleNamespace
 
 import VeraGridEngine.api as vge
@@ -468,6 +472,8 @@ def test_single_phase_transformer_dd_non_auto_phases_ab():
 
     res = vge.power_flow3ph(grid=grid, options=vge.PowerFlowOptions(solver_type=SolverType.NR,
                                                                     retry_with_other_methods=False))
+
+    assert res.converged
 
     U_reference = 2 * 0.8516 / np.sqrt(3)
     U_result = np.abs(res.voltage_A[2] - res.voltage_B[2]) / np.sqrt(3)

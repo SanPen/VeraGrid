@@ -46,6 +46,11 @@ def convert_controllable_shunt(elm: ControllableShunt,
     :param add_three_phase_data: Export explicit three-phase fields when available.
     :return: GSLV controllable shunt.
     """
+    if elm.control_mode in shunt_control_mode_dict:
+        pass
+    else:
+        raise ValueError(f'GSLV has no {elm.control_mode} shunt control: {elm.name}')
+
     if not isinstance(elm.g_steps, np.ndarray):
         raise TypeError(f"ControllableShunt.g_steps must be np.ndarray, got {type(elm.g_steps)}")
     else:

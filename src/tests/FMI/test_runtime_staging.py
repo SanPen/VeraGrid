@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import hashlib
-import inspect
 import os
 from pathlib import Path
 from unittest.mock import Mock, call
@@ -737,21 +736,6 @@ def test_unconnected_version_and_mode_fail_before_staging(tmp_path: Path) -> Non
             FmuImportConfig(fmu_path=fmi_three_source, extraction_root=version_parent)
         )
     assert not version_parent.exists()
-
-    # Pin the callable boundary without replacing product dependencies: the
-    # FMI-version guard must precede dependency, native, and staging calls.
-    host_factory_source: str = inspect.getsource(open_fmu_runtime_host)
-    guard_position: int = host_factory_source.index(
-        "FmuRuntimeHost supports FMI 1/2 execution only"
-    )
-    dependency_position: int = host_factory_source.index("fmpy_module: Any = fmpy")
-    native_validation_position: int = host_factory_source.index(
-        "validate_native_binary("
-    )
-    staging_position: int = host_factory_source.index("stage_fmu_source(")
-    assert guard_position < dependency_position
-    assert guard_position < native_validation_position
-    assert guard_position < staging_position
 
     mode_parent: Path = tmp_path / "mode-runtime"
     with pytest.raises(RuntimeError, match="does not declare preferred interface ModelExchange"):

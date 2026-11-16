@@ -10,8 +10,11 @@ import scipy.sparse as sp
 import time
 import hashlib
 from scipy.linalg import lu_factor, lu_solve
-from scipy.sparse.linalg import SuperLU, splu
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
+from VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend import SuperLUSparseBackendProvider
+from VeraGridEngine.Utils.Sparse.sparse_solve import SparseFactorizationManager
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
+    BoundaryUpdaterCapabilities,
     EmtBoundaryUpdateProtocol,
     EmtProblemTemplate,
     get_solver_forced_event_time,
@@ -34,7 +37,6 @@ from VeraGridEngine.basic_structures import Vec, Mat, IntVec, CscMat
 
 DenseFactorization = Tuple[Any, Any]
 DenseSolveBundle = Tuple[DenseFactorization, np.ndarray]
-SparseSolveBundle = Tuple[SuperLU, CscMat]
 
 
 class SymbolicCompiledNumbaKernelCache:
@@ -374,7 +376,7 @@ def _dense_lu_bundle_matrix(bundle: DenseSolveBundle) -> np.ndarray:
     return bundle[1]
 
 
-def _sparse_lu_bundle_solve(bundle: SparseSolveBundle, rhs: Vec) -> Vec:
+def _sparse_lu_bundle_solve(bundle: tuple[SparseFactorizationManager | None, CscMat], rhs: Vec) -> Vec:
     """
     Solve one sparse LU system.
 
@@ -382,10 +384,13 @@ def _sparse_lu_bundle_solve(bundle: SparseSolveBundle, rhs: Vec) -> Vec:
     :param rhs: Right-hand side vector.
     :return: Solution vector.
     """
-    return bundle[0].solve(rhs)
+    if bundle[0] is None:
+        raise RuntimeError("Sparse JIT factors are unavailable")
+    else:
+        return bundle[0].solve(rhs).copy()
 
 
-def _sparse_lu_bundle_fallback(bundle: SparseSolveBundle, rhs: Vec) -> Vec:
+def _sparse_lu_bundle_fallback(bundle: tuple[SparseFactorizationManager | None, CscMat], rhs: Vec) -> Vec:
     """
     Solve one sparse fallback least-squares system.
 
@@ -396,7 +401,7 @@ def _sparse_lu_bundle_fallback(bundle: SparseSolveBundle, rhs: Vec) -> Vec:
     return sparse_lsqr_fallback(bundle[1], rhs)
 
 
-def _sparse_lu_bundle_matrix(bundle: SparseSolveBundle) -> CscMat:
+def _sparse_lu_bundle_matrix(bundle: tuple[SparseFactorizationManager | None, CscMat]) -> CscMat:
     """
     Return the sparse Jacobian matrix stored in one LU bundle.
 
@@ -591,7 +596,8 @@ class JitSymbolicSolver:
         '_residual_buffer', '_trial_state_buffer', '_trial_residual_buffer', '_trial_residual_evaluator',
         '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time',
         '_max_residual_inf_fail', '_max_state_residual_inf_fail', '_cancel_checker', '_progress_signal',
-        '_newton_tolerance', '_use_compiled_runtime_parameters'
+        '_newton_tolerance', '_use_compiled_runtime_parameters',
+        '_sparse_solver_backend_provider', '_sparse_factor_manager'
     ]
 
     def __init__(self,
@@ -610,7 +616,7 @@ class JitSymbolicSolver:
                  progress_signal: DummySignal | None = None,
                  cancel_checker: Callable[[], bool] | None = None,
                  newton_tolerance: float = 1.0e-6,
-                 use_compiled_runtime_parameters: bool = True)-> None:
+                 use_compiled_runtime_parameters: bool = True, sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None)-> None:
         """
         :param problem: The DAE problem definition.
         :param t0: Initial time.
@@ -621,6 +627,7 @@ class JitSymbolicSolver:
         :param dense_threshold: Threshold to switch between dense and sparse linear solvers.
         :param verbose: Print compilation and simulation timings.
         :param newton_max_iter: Maximum Newton iterations per local EMT substep.
+        :param sparse_solver_backend_provider: Available LU phase factory, or inherit the configured problem.
         :param newton_tolerance: Absolute infinity-norm tolerance for Newton residual convergence.
         :param progress_signal: Optional progress signal updated during the simulation loop.
         :type progress_signal: DummySignal | None
@@ -629,6 +636,18 @@ class JitSymbolicSolver:
         """
         self.jit_compiler = None
         self.problem = problem
+        # Direct construction inherits a configured problem; a generic problem
+        # without options retains the historical SuperLU default.
+        self._sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = sparse_solver_backend_provider
+        if self._sparse_solver_backend_provider is None and isinstance(problem, EmtProblemTemplate):
+            self._sparse_solver_backend_provider = problem.get_sparse_solver_backend_provider()
+        else:
+            pass
+        if self._sparse_solver_backend_provider is None:
+            self._sparse_solver_backend_provider = SuperLUSparseBackendProvider()
+        else:
+            pass
+        self._sparse_factor_manager: SparseFactorizationManager | None = None
         self._use_compiled_runtime_parameters: bool = bool(use_compiled_runtime_parameters)
         self.t0 = t0
         self.h = h
@@ -1011,6 +1030,8 @@ class JitSymbolicSolver:
             pass
 
         active_boundary_updater = resolve_solver_boundary_updater(self.problem, boundary_updater, float(self.t0))
+        # Optional updater APIs are resolved once instead of on every substep.
+        boundary_capabilities: BoundaryUpdaterCapabilities = BoundaryUpdaterCapabilities(active_boundary_updater)
 
         self.t[0] = self.t0
         self.y[0, :] = x0.copy()
@@ -1020,20 +1041,41 @@ class JitSymbolicSolver:
         dx_prev = dx0.copy()
         x_prev2 = x0.copy()
         bdf2_startup_pending: bool = method == DynamicIntegrationMethod.DaeBDF2
+        trapezoidal_restart_pending: bool = False
         # Kernels index history by runtime variable; dy has canonical diff slots.
-        base_slopes: Vec = np.zeros(x_prev.size if bdf2_startup_pending else 0, dtype=np.float64)
-        diff_base_indices: IntVec = np.full(dx_prev.size if bdf2_startup_pending else 0, -1, dtype=np.int64)
+        n_diff: int = len(self.diff_vars)
+        base_slopes: Vec = np.zeros(x_prev.size, dtype=np.float64)
+        diff_base_indices: IntVec = np.full(dx_prev.size, -1, dtype=np.int64)
+        differential: Var
+        for differential in self.diff_vars:
+            if differential.base_var is not None:
+                diff_index: int = self.problem.uid2idx_diff[differential.uid]
+                diff_base_indices[diff_index] = self.problem.uid2idx_vars.get(differential.base_var.uid, -1)
+            else:
+                pass
+        # Differentials with a base variable and their base rows, so the history update needs no per-element loop.
+        diff_rows_with_base: IntVec = np.flatnonzero(diff_base_indices >= 0)
+        diff_base_rows: IntVec = diff_base_indices[diff_rows_with_base]
+        kernel_derivatives: Vec = base_slopes
         if bdf2_startup_pending:
-            differential: Var
-            for differential in self.diff_vars:
-                if differential.base_var is not None:
-                    diff_index: int = self.problem.uid2idx_diff[differential.uid]
-                    diff_base_indices[diff_index] = self.problem.uid2idx_vars.get(differential.base_var.uid, -1)
-                else:
-                    pass
-            kernel_derivatives: Vec = base_slopes
-        else:
+            pass
+        elif n_diff == 0:
+            # Without declared differentials the caller's vector already is the history in runtime-variable order.
             kernel_derivatives = dx_prev
+        else:
+            kernel_derivatives[diff_base_rows] = dx_prev[diff_rows_with_base]
+        # Trapezoidal kernels read a history for every state: a state without a declared differential would keep zero.
+        if method == DynamicIntegrationMethod.DaeTrapezoidal and n_diff > 0:
+            missing_states: IntVec = np.setdiff1d(np.arange(n_states), diff_base_rows)
+            if missing_states.size > 0:
+                raise ValueError(
+                    "The trapezoidal rule needs a declared differential for every state once any is declared; "
+                    f"missing for {list([self.state_vars[i].name for i in missing_states])}"
+                )
+            else:
+                pass
+        else:
+            pass
         x_iter = x0.copy()
         trial_x = self._trial_state_buffer
         trial_res = self._trial_residual_buffer
@@ -1058,7 +1100,8 @@ class JitSymbolicSolver:
 
         startup_method: DynamicIntegrationMethod = DynamicIntegrationMethod.DaeBackEuler
         startup_jac_key: str = f"{startup_method}_{is_sparse}"
-        if bdf2_startup_pending:
+        if bdf2_startup_pending or (method == DynamicIntegrationMethod.DaeTrapezoidal
+                                    and active_boundary_updater is not None):
             if startup_method not in self.jit_kernels:
                 self.build_jit_kernel(startup_method)
             else:
@@ -1136,6 +1179,7 @@ class JitSymbolicSolver:
                     active_boundary_updater,
                     t_local_prev,
                     t_step_target,
+                    capabilities=boundary_capabilities,
                 )
 
                 if forced_event_time is None:
@@ -1167,7 +1211,7 @@ class JitSymbolicSolver:
 
                 effective_method = (
                     startup_method
-                    if bdf2_startup_pending
+                    if bdf2_startup_pending or trapezoidal_restart_pending
                     else method
                 )
                 kernel_list_eff = self.jit_kernels[effective_method]
@@ -1186,8 +1230,15 @@ class JitSymbolicSolver:
                 if active_boundary_updater is None:
                     state_event_retry_time: float | None = None
                 else:
+                    # A forced event is a discontinuity at the *end* of this
+                    # substep. Integrate up to it with the left-limit modes;
+                    # committing the new modes here applies a PWM edge over
+                    # the interval that precedes the edge.
+                    boundary_eval_time = float(t_curr)
+                    if forced_event_time is not None:
+                        boundary_eval_time -= min(1.0e-10, 0.5 * h_eff)
                     state_event_retry_time = active_boundary_updater.update(
-                        t_curr,
+                        boundary_eval_time,
                         x_prev,
                         full_params,
                     )
@@ -1204,13 +1255,13 @@ class JitSymbolicSolver:
                 # The factorization cache is local to the substep because the
                 # Jacobian depends on the current state, parameters and h_eff.
                 cached_lu_dense: DenseSolveBundle | None = None
-                cached_lu_sparse: SparseSolveBundle | None = None
+                cached_lu_sparse: tuple[SparseFactorizationManager | None, CscMat] | None = None
 
                 if i == 0 and is_first_local_step and effective_method == DynamicIntegrationMethod.DaeTrapezoidal:
                     self._predictor.predict(
                         x_iter=x_iter,
                         x_prev=x_prev,
-                        dx_prev=dx_prev,
+                        dx_prev=kernel_derivatives,
                         h=h_eff,
                         pred_method=self.pred_method,
                     )
@@ -1290,7 +1341,7 @@ class JitSymbolicSolver:
                             n_eqs=n_eqs,
                             x_iter=x_iter,
                             x_prev=x_prev,
-                            dx_prev=dx_prev,
+                            dx_prev=kernel_derivatives,
                             debug_info=self._residual_debug_info,
                             step_idx=i,
                             iter_idx=k,
@@ -1336,7 +1387,25 @@ class JitSymbolicSolver:
                                 pass
 
                             try:
-                                cached_lu_sparse = (splu(J_final), J_final)
+                                if self._sparse_factor_manager is None:
+                                    sparse_matrix: CscMat = J_final.copy()
+                                    sparse_matrix.sum_duplicates()
+                                    sparse_matrix.sort_indices()
+                                    self._sparse_factor_manager = SparseFactorizationManager(
+                                        sparse_matrix, sparse_matrix.data, self._sparse_solver_backend_provider)
+                                    factors_current: bool = False
+                                else:
+                                    if cached_lu_sparse is None:
+                                        # Preserve the numerical owner's explicit cache invalidation.
+                                        self._sparse_factor_manager.invalidate()
+                                    else:
+                                        pass
+                                    factors_current = self._sparse_factor_manager.update_matrix(J_final)
+                                if not factors_current:
+                                    self._sparse_factor_manager.factorize()
+                                else:
+                                    pass
+                                cached_lu_sparse = (self._sparse_factor_manager, J_final)
                             except (FloatingPointError, OverflowError, ZeroDivisionError, ValueError, RuntimeError):
                                 if diagnostics_enabled and diag_cfg.enable_fallback:
                                     cached_lu_sparse = (None, J_final)  # type: ignore[arg-type]
@@ -1366,7 +1435,7 @@ class JitSymbolicSolver:
                                 delta = sparse_solve(cached_lu_sparse, -res, ctx)
                             else:
                                 assert cached_lu_sparse is not None
-                                delta = cached_lu_sparse[0].solve(-res)
+                                delta = _sparse_lu_bundle_solve(cached_lu_sparse, -res)
                         except (FloatingPointError, OverflowError, ZeroDivisionError, ValueError, RuntimeError):
                             substep_numerical_failure = True
                             break
@@ -1425,6 +1494,7 @@ class JitSymbolicSolver:
                         params=full_params,
                         committed_time=float(t_curr),
                         committed_state=x_iter,
+                        capabilities=boundary_capabilities,
                     )
                 else:
                     pass
@@ -1436,6 +1506,18 @@ class JitSymbolicSolver:
                     pass
 
                 if substep_converged and state_event_retry_time is None:
+                    # Trapezoidal history describes the left derivative at a
+                    # discontinuity. Recover a consistent right derivative with
+                    # one backward-Euler substep before resuming trapezoidal.
+                    # This also resolves algebraic jumps in inductive networks,
+                    # where evaluating the RHS at the old algebraic state is
+                    # insufficient. Rejected candidates must not consume restart.
+                    if method == DynamicIntegrationMethod.DaeTrapezoidal:
+                        trapezoidal_restart_pending = forced_event_time is not None
+                    if forced_event_time is not None and active_boundary_updater is not None:
+                        # Publish the right-limit modes only after accepting
+                        # the left-limit solution at the event boundary.
+                        active_boundary_updater.update(float(t_curr), x_iter, full_params)
                     # A post-acceptance native sample may publish new held
                     # outputs. Retain them for the next aligned sub-step.
                     ev_params[:] = full_params[:n_event_params]
@@ -1469,18 +1551,26 @@ class JitSymbolicSolver:
                                     pass
                             bdf2_startup_pending = False
                         elif effective_method == DynamicIntegrationMethod.DaeTrapezoidal:
-                            dx_prev[:n_states] = (
-                                    (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states])
-                                    - dx_prev[:n_states]
-                            )
-                        elif effective_method == DynamicIntegrationMethod.DaeBackEuler:
+                            if n_diff == 0:
+                                dx_prev[:n_states] = (
+                                        (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states])
+                                        - dx_prev[:n_states]
+                                )
+                            else:
+                                kernel_derivatives[diff_base_rows] = (
+                                        (2.0 / h_eff) * (x_iter[diff_base_rows] - x_prev[diff_base_rows])
+                                        - kernel_derivatives[diff_base_rows]
+                                )
+                                dx_prev[diff_rows_with_base] = kernel_derivatives[diff_base_rows]
+                        elif n_diff == 0:
                             dx_prev[:n_states] = (
                                     (x_iter[:n_states] - x_prev[:n_states]) / h_eff
                             )
                         else:
-                            dx_prev[:n_states] = (
-                                    (x_iter[:n_states] - x_prev[:n_states]) / h_eff
+                            kernel_derivatives[diff_base_rows] = (
+                                    (x_iter[diff_base_rows] - x_prev[diff_base_rows]) / h_eff
                             )
+                            dx_prev[diff_rows_with_base] = kernel_derivatives[diff_base_rows]
 
                     if not substep_numerical_failure:
                         x_prev2[:] = x_prev

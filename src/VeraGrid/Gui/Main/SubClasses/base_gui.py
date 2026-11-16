@@ -354,6 +354,14 @@ class BaseMainGui(QMainWindow):
         self.ui.mainTabWidget.setEnabled(not val)
         self.ui.menuBar.setEnabled(not val)
         self.ui.toolBar.setEnabled(not val)
+        operator_view_window: QtWidgets.QMainWindow | QtWidgets.QDialog | None = self.window_manager.get(
+            key='operator_view',
+        )
+        if isinstance(operator_view_window, QtWidgets.QWidget):
+            # The operator window reads the circuit while the simulation owns its state.
+            operator_view_window.setEnabled(not val)
+        else:
+            pass
 
     def lock_ui_toggle(self):
         """

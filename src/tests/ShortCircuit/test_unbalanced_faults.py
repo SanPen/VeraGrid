@@ -4,10 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import os
+import scipy.sparse as sp
 
 from VeraGridEngine.api import *
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.enumerations import FaultType
+from VeraGridEngine.enumerations import WindingType
+from VeraGridEngine.Simulations.ShortCircuitStudies.NumericalMethods.short_circuit_sequences import compute_admittances_seq
 
 
 def test_unbalanced_short_circuit():
@@ -68,6 +71,27 @@ def test_unbalanced_short_circuit():
     assert v0_ok
     assert v1_ok
     assert v2_ok
+
+
+def test_sequence_admittance_supports_every_winding_pair() -> None:
+    """Build every sequence matrix for every canonical transformer winding pair."""
+    cf: sp.csc_matrix = sp.csc_matrix(([1.0], ([0], [0])), shape=(1, 2))
+    ct: sp.csc_matrix = sp.csc_matrix(([1.0], ([0], [1])), shape=(1, 2))
+    connection_from: WindingType
+    connection_to: WindingType
+    for connection_from in WindingType:
+        for connection_to in WindingType:
+            sequence: int
+            for sequence in (0, 1, 2):
+                admittance = compute_admittances_seq(
+                    R=np.array([0.01]), X=np.array([0.1]), G=np.zeros(1), B=np.zeros(1),
+                    tap_module=np.ones(1), vtap_f=np.ones(1), vtap_t=np.ones(1), tap_angle=np.zeros(1),
+                    Cf=cf, Ct=ct, Yshunt_bus=np.zeros(2, dtype=complex),
+                    conn_f=np.array([connection_from.idx()]), conn_t=np.array([connection_to.idx()]),
+                    vector_group_number=np.array([1]), seq=sequence,
+                )
+                assert admittance.Ybus.shape == (2, 2)
+                assert np.isfinite(admittance.Ybus.data).all()
 
 
 def test_three_phase_line_fault_sequence_dispatch() -> None:

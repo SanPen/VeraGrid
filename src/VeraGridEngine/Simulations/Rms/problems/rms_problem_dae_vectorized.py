@@ -31,9 +31,10 @@ from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import (
 )
 from VeraGridEngine.Simulations.Rms.initialization import init_pseudo_transient, _select_rms_initialization_method
 from VeraGridEngine.Simulations.Rms.initialization_rms import run_rms_consistent_initialization
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import (
+    RmsProblemTemplate,
+)
 from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import (
-    StaticParameterMappingDiagnostics,
     assign_static_api_object_mapping_for_device,
     get_api_parameter_initial_value_by_uid,
     resolve_constant_parameter_initial_value,
@@ -45,7 +46,7 @@ from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler, ProceduralExpressionCompiler, RMSCompilerVec
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import get_bus_rms_algebraic_vars
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import get_bus_rms_algebraic_vars
 from VeraGridEngine.Utils.procedural_logic import build_boundary_updater_from_block, ProceduralExpressionMode
 from VeraGridEngine.Utils.procedural_logic_contract import ManufacturerNativeRuntimeSessionProtocol
 from VeraGridEngine.IO.fmu.co_simulation import (
@@ -351,7 +352,6 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         "_constant_parameters_equiv_class_dict",
         "_parameters_values",
         "_static_parameters_values_mapping",
-        "_static_parameter_mapping_diagnostics",
         "_runtime_all_parameters_source",
         "_runtime_all_eqs_source",
         "_runtime_continuous_parameters",
@@ -380,8 +380,10 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         "_rhs_algeb_energy_balance_fn",
         "_j11_fn_by_types",
         "_j12_fn_by_types",
+        "_j13_fn_by_types",
         "_j21_fn_by_types",
         "_j22_fn_by_types",
+        "_j23_fn_by_types",
         "_jbalance_fn",
         "_jbalance_state_fn",
         "_balance_equations",
@@ -427,12 +429,16 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         "_dx_gather_idx",
         "_vp_gather_idx",
         "_cp_gather_idx",
+        "_rhs_state_scatter_idx",
+        "_rhs_algeb_scatter_idx",
         "_input_matrices_by_model",
         "_model_algebraic_eq_start_idx",
         "_model_state_eq_start_idx",
         "_jac_algeb_col_off",
         "_jac_state_col_off",
         "_jac_global_data",
+        "_raw_partial_fns_by_type",
+        "_raw_balance_fns",
         "_prof_timings",
         "block_composition_dict",
         "equivalence_dict",
@@ -458,17 +464,13 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         :param logger: Logger
         """
         super().__init__(progress_signal=progress_signal,
-                         progress_text=progress_text)
+                         progress_text=progress_text,
+                         sparse_solver=options.sparse_solver,
+                         logger=logger)
 
         # The driver owns the logger. Direct problem construction may remain
         # silent without changing any numerical mapping behavior.
         self.logger: Logger | None = logger
-        self._static_parameter_mapping_diagnostics: StaticParameterMappingDiagnostics = (
-            StaticParameterMappingDiagnostics(
-                logger=self.logger,
-                simulation_mode=DynamicSimulationMode.RMS,
-            )
-        )
         self.grid: MultiCircuit = grid
         self.power_flow_results: PowerFlowResults = pf_results
         self.Sf = self.power_flow_results.Sf / self.grid.Sbase
@@ -513,10 +515,16 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         # Each entry: (csc_template, scatter_map)
         # scatter_map[model_type] -> array (nnz_type, n_inst) of global data indices
         self._jac_global_data: Dict[str, Tuple[sp.csc_matrix, Dict[int, np.ndarray]]] = dict()
+        self._raw_partial_fns_by_type = {}
+        self._j13_fn_by_types = {}
+        self._j23_fn_by_types = {}
+        self._raw_balance_fns = None
 
         # mapping from model uid â†’ global start index of its state equations
         self._model_state_eq_start_idx: Dict[int, int] = dict()
         self._model_algebraic_eq_start_idx: Dict[int, int] = dict()
+        self._rhs_state_scatter_idx: Dict[int, np.ndarray] = dict()
+        self._rhs_algeb_scatter_idx: Dict[int, np.ndarray] = dict()
 
         # when vectorizing this will be a list of lists
         self._state_vars: List[Var] = list()
@@ -698,7 +706,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                                                             device=elm,
                                                             mdl=elm.rms_model,
                                                             problem_mapping=self._static_parameters_values_mapping,
-                                                            logger=self._static_parameter_mapping_diagnostics)
+                                                            logger=self.logger)
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
@@ -801,7 +809,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                             max_iter=max(500, int(self.options.max_iter)),
                             tol=min(1e-8, self.options.tolerance),
                             verbose=bool(self.options.verbose > 0),
-                        )
+                            sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
 
                 # add model to system block
                 self.sys_block.add(elm.rms_model)
@@ -836,7 +844,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                                                             device=elm,
                                                             mdl=mdl,
                                                             problem_mapping=self._static_parameters_values_mapping,
-                                                            logger=self._static_parameter_mapping_diagnostics)
+                                                            logger=self.logger)
 
 
                 St_vsc = self.power_flow_results.St_vsc / self.grid.Sbase
@@ -999,7 +1007,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                         max_iter=max(500, int(self.options.max_iter)),
                         tol=min(1e-8, self.options.tolerance),
                         verbose=bool(self.options.verbose > 0),
-                    )
+                        sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
 
                 else:
                     raise ValueError("Not implemented initialization method")
@@ -1029,7 +1037,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                     device=elm,
                     mdl=elm.rms_model,
                     problem_mapping=self._static_parameters_values_mapping,
-                    logger=self._static_parameter_mapping_diagnostics,
+                    logger=self.logger,
                 )
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
@@ -1119,7 +1127,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                         max_iter=100,
                         tol=min(1e-5, self.options.tolerance),
                         verbose=bool(self.options.verbose > 0),
-                    )
+                        sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
 
                 else:
                     raise ValueError("Not implemented initialization method")
@@ -1444,8 +1452,14 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
         t0 = _tic()
         # here we iterate throurgh equivalence_dict and fill the self._rhs_by_types
+        raw_names = ("j11_raw", "j12_raw", "j13_raw",
+                     "j21_raw", "j22_raw", "j23_raw")
+        self._raw_partial_fns_by_type = {name: {} for name in raw_names}
+        self._j13_fn_by_types = self._raw_partial_fns_by_type["j13_raw"]
+        self._j23_fn_by_types = self._raw_partial_fns_by_type["j23_raw"]
         for model_type in self.equivalence_dict.keys():
-            if  self._algebraic_eqs_equiv_class_dict[model_type] or self._state_eqs_equiv_class_dict[model_type]:
+            if (self._algebraic_eqs_equiv_class_dict.get(model_type)
+                    or self._state_eqs_equiv_class_dict.get(model_type)):
 
                 rms_compiler = RMSCompilerVec(
                     variables=self._state_vars_equiv_class_dict[model_type] + self._algebraic_vars_equiv_class_dict[model_type],
@@ -1462,24 +1476,24 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                     timings["RHS state"] = _toc(t0)
 
                     t0 = _tic()
-                    j11_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j11_" + str(model_type))
+                    j11_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j11_" + str(model_type), independent_partials=True)
                     timings["J11 (dF/dx)"] = _toc(t0)
 
                     t0 = _tic()
-                    j12_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j12_" + str(model_type))
+                    j12_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j12_" + str(model_type), independent_partials=True)
                     timings["J12 (dF/dy)"] = _toc(t0)
 
                     t0 = _tic()
-                    j21_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j21_" + str(model_type))
+                    j21_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j21_" + str(model_type), independent_partials=True)
                     timings["J21 (dG/dx)"] = _toc(t0)
 
                     t0 = _tic()
-                    j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
+                    j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type), independent_partials=True)
                     timings["J22 (dG/dy)"] = _toc(t0)
 
                 else:
                     t0 = _tic()
-                    j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
+                    j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type), independent_partials=True)
                     timings["J22 only (no states)"] = _toc(t0)
 
                     rhs_state_fn = None
@@ -1495,14 +1509,40 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 self._j21_fn_by_types[model_type] = j21_fn
                 self._j22_fn_by_types[model_type] = j22_fn
 
+                if self._diff_vars:
+                    state_eqs = self._state_eqs_equiv_class_dict[model_type]
+                    algebraic_eqs = self._algebraic_eqs_equiv_class_dict[model_type]
+                    state_vars = self._state_vars_equiv_class_dict[model_type]
+                    algebraic_vars = self._algebraic_vars_equiv_class_dict[model_type]
+                    diff_vars = self._diff_vars_equiv_class_dict[model_type]
+                    for name, fn in (("j11_raw", j11_fn), ("j12_raw", j12_fn),
+                                     ("j21_raw", j21_fn), ("j22_raw", j22_fn)):
+                        self._raw_partial_fns_by_type[name][model_type] = fn
+                    raw_specs = ()
+                    if diff_vars:
+                        raw_specs += (("j13_raw", state_eqs, diff_vars),
+                                      ("j23_raw", algebraic_eqs, diff_vars))
+                    for name, equations, variables in raw_specs:
+                        self._raw_partial_fns_by_type[name][model_type] = (
+                            rms_compiler.compile_sparse_jacobian(
+                                equations, variables, name + "_" + str(model_type),
+                                independent_partials=True))
+
         self._rhs_algeb_energy_balance_fn = rms_compiler_all_models.compile_rhs(self._balance_equations, "rhs_algeb_balance")
         if len(self._balance_equations) > 0:
             self._jbalance_fn = rms_compiler_all_models.compile_sparse_jacobian(
-                self._balance_equations, self._algebraic_vars, "j_balance"
+                self._balance_equations, self._algebraic_vars, "j_balance", independent_partials=True
             )
             self._jbalance_state_fn = rms_compiler_all_models.compile_sparse_jacobian(
-                self._balance_equations, self._state_vars, "j_balance_state"
+                self._balance_equations, self._state_vars, "j_balance_state", independent_partials=True
             )
+        self._raw_balance_fns = None
+        if self._diff_vars and self._balance_equations:
+            self._raw_balance_fns = (
+                self._jbalance_state_fn, self._jbalance_fn,
+                rms_compiler_all_models.compile_sparse_jacobian(
+                    self._balance_equations, self._diff_vars, "j_balance_diff_raw",
+                    independent_partials=True))
 
         if self.options.verbose > 0:
             print(f"Model compiled with {self._n_vars} variables")
@@ -1515,9 +1555,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
         variable_parameters_init = np.ones(self.get_variable_parameter_number())
 
-        # TODO: think about this thing of calling twice here
         self._variable_parameters_values = self._event_params_fn(variable_parameters_init, 0.0)
-        self._variable_parameters_values = self._event_params_fn(self._variable_parameters_values, 0.0)
         self._mode_runtime_initialized_uids = set()
         if self.get_all_vars_number() > 0 and self.get_variable_parameter_number() > 0:
             self._initialize_latched_mode_defaults(t=0.0, x=self.get_x0())
@@ -1544,7 +1582,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             for initial_parameter in self._variable_parameters:
                 self.event_params_init_dict[initial_parameter.uid] = float(
                     self._variable_parameters_values[self._uid2idx_event_params[initial_parameter.uid]])
-            consistency_converged: bool = run_rms_consistent_initialization(problem=self, options=self.options, logger=self.logger)
+            consistency_converged: bool = run_rms_consistent_initialization(problem=self, options=self.options, logger=self.logger, sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
             if consistency_converged:
                 pass
             else:
@@ -1566,11 +1604,18 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         # index mapping per (local_col, instance) from _x_gather_idx instead
         # of using a single offset per instance.
         block_specs = [
-            ("j11", "_j11_fn_by_types", "_model_state_eq_start_idx", False, False),
-            ("j12", "_j12_fn_by_types", "_model_state_eq_start_idx", False, True),
-            ("j21", "_j21_fn_by_types", "_model_algebraic_eq_start_idx", True, False),
-            ("j22", "_j22_fn_by_types", "_model_algebraic_eq_start_idx", True, True),
+            ("j11", "_j11_fn_by_types", "_model_state_eq_start_idx", False, False, False),
+            ("j12", "_j12_fn_by_types", "_model_state_eq_start_idx", False, True, False),
+            ("j21", "_j21_fn_by_types", "_model_algebraic_eq_start_idx", True, False, False),
+            ("j22", "_j22_fn_by_types", "_model_algebraic_eq_start_idx", True, True, False),
         ]
+        if self._diff_vars:
+            block_specs.extend((name, None,
+                                "_model_algebraic_eq_start_idx" if name.startswith("j2")
+                                else "_model_state_eq_start_idx",
+                                name.startswith("j2"), name in ("j12_raw", "j22_raw"),
+                                name in ("j13_raw", "j23_raw"))
+                               for name in self._raw_partial_fns_by_type)
 
         # Map block to the wrk_vars list used during compilation
         wrt_vars_key = {
@@ -1579,9 +1624,19 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             "j21": "_state_vars_equiv_class_dict",
             "j22": "_algebraic_vars_equiv_class_dict",
         }
+        if self._diff_vars:
+            wrt_vars_key.update({
+                "j11_raw": "_state_vars_equiv_class_dict",
+                "j12_raw": "_algebraic_vars_equiv_class_dict",
+                "j13_raw": "_diff_vars_equiv_class_dict",
+                "j21_raw": "_state_vars_equiv_class_dict",
+                "j22_raw": "_algebraic_vars_equiv_class_dict",
+                "j23_raw": "_diff_vars_equiv_class_dict",
+            })
 
-        for block_name, fn_key, row_key, algeb_rows, algeb_cols in block_specs:
-            fn_dict = getattr(self, fn_key)
+        for block_name, fn_key, row_key, algeb_rows, algeb_cols, diff_cols in block_specs:
+            fn_dict = (self._raw_partial_fns_by_type[block_name] if fn_key is None
+                       else getattr(self, fn_key))
             row_off_dict = getattr(self, row_key)
 
             entries = []
@@ -1605,8 +1660,8 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
                 # Build column index map: (lc, inst) -> global column index
                 wrt_vars_list = getattr(self, wrt_vars_key[block_name]).get(model_type, [])
-                uid2pos = self._uid2idx_vars_vec.get(model_type, {})
-                x_gather = self._x_gather_idx.get(model_type)
+                uid2pos = (self._uid2idx_diff_vec if diff_cols else self._uid2idx_vars_vec).get(model_type, {})
+                x_gather = (self._dx_gather_idx if diff_cols else self._x_gather_idx).get(model_type)
                 if x_gather is None:
                     continue
                 col_idx = np.zeros((n_cols_type, n_inst), dtype=np.intp)
@@ -1631,7 +1686,8 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             # (row, col) entries, which would shrink the data array and break
             # the scatter-map indexing.  Entries are already sorted by (col, row).
             n_rows_global = n_algebraic if algeb_rows else n_states
-            n_cols_global = n_algebraic if algeb_cols else n_states
+            n_cols_global = (self.get_diff_var_number() if diff_cols else
+                             (n_algebraic if algeb_cols else n_states))
 
             if entries:
                 nnz_total = len(entries)
@@ -1679,14 +1735,14 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         )
         self._block_boundary_updater = self._procedural_logic_updater
     def resolve_manufacturer_native_boundary(self, t: float, x: Vec) -> None:
-        """Advance due manufacturer controllers after an accepted RMS step.
+        """Commit procedural assignments and native controllers after an accepted RMS step.
 
         :param t: Accepted RMS boundary time.
         :param x: Accepted state and algebraic vector.
         :return: None.
         """
         updater: BlockProceduralLogicUpdater | None = self._block_boundary_updater
-        if updater is not None and self._manufacturer_native_runtime_session is not None:
+        if updater is not None:
             if self._constant_params is None:
                 constant_params: Vec = np.zeros(0, dtype=float)
             else:
@@ -1696,6 +1752,12 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             self._variable_parameters_values[:] = full_params[:self.get_variable_parameter_number()]
         else:
             pass
+    def get_forced_event_times(self) -> list[float]:
+        """Include aligned symbolic parameter events from the active group."""
+        return sorted({float(event.time) for event in
+                       self._get_rms_events_for_group(self._active_events_group)
+                       if event.force_step_alignment})
+
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
         t_mode = _get_next_forced_mode_event_time(self._scheduled_mode_events, t_prev, t_target)
 
@@ -2141,7 +2203,6 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             mode_snapshot = ev_param[runtime_mode_slice].copy()
 
         updated = self._event_params_fn(ev_param, t)
-        updated = self._event_params_fn(updated, t)
 
         if runtime_mode_slice.start == runtime_mode_slice.stop:
             return updated
@@ -2962,6 +3023,20 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 var_equiv[eq_list[0]] = eq_list
 
             n_inst = len(self.equivalence_dict.get(model_type, [])) + 1
+            model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
+            for equations, starts, target in (
+                (self._state_eqs_equiv_class_dict, self._model_state_eq_start_idx,
+                 self._rhs_state_scatter_idx),
+                (self._algebraic_eqs_equiv_class_dict, self._model_algebraic_eq_start_idx,
+                 self._rhs_algeb_scatter_idx),
+            ):
+                n_eqs = len(equations.get(model_type, ()))
+                target[model_type] = (
+                    np.asarray(
+                        [np.arange(starts[uid], starts[uid] + n_eqs) for uid in model_uids],
+                        dtype=np.intp,
+                    ).T if n_eqs else np.empty((0, n_inst), dtype=np.intp)
+                )
 
             # x variables
             n_vars = len(self._uid2idx_vars_vec.get(model_type, {}))
@@ -3037,11 +3112,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 if rhs_state.ndim == 1:
                     rhs_state = rhs_state.reshape(-1, 1)
                 # fill complete_rhs_state
-                model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
-                n_eqs = rhs_state.shape[0]
-                for inst_idx, uid in enumerate(model_uids):
-                    start = self._model_state_eq_start_idx[uid]
-                    complete_rhs_state[start:start + n_eqs] = rhs_state[:, inst_idx]
+                complete_rhs_state[self._rhs_state_scatter_idx[model_type]] = rhs_state
                 self._prof_timings['rhs_state_filler_total'] = self._prof_timings.get('rhs_state_filler_total', 0.0) + _t1 - _t0
                 self._prof_timings['rhs_state_scatter_total'] = self._prof_timings.get('rhs_state_scatter_total', 0.0) + time.time() - _t1
 
@@ -3063,11 +3134,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             _t1 = time.time()
             if rhs_algeb.ndim == 1:
                 rhs_algeb = rhs_algeb.reshape(-1, 1)
-            model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
-            n_eqs = rhs_algeb.shape[0]
-            for inst_idx, uid in enumerate(model_uids):
-                start = self._model_algebraic_eq_start_idx[uid]
-                complete_rhs_algeb[start:start + n_eqs] = rhs_algeb[:, inst_idx]
+            complete_rhs_algeb[self._rhs_algeb_scatter_idx[model_type]] = rhs_algeb
             self._prof_timings['rhs_algeb_filler_total'] = self._prof_timings.get('rhs_algeb_filler_total', 0.0) + _t1 - _t0
             self._prof_timings['rhs_algeb_scatter_total'] = self._prof_timings.get('rhs_algeb_scatter_total', 0.0) + time.time() - _t1
 
@@ -3087,7 +3154,8 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         csc_template.data[:] = 0.0
 
         _t0 = time.time()
-        fn_dict = getattr(self, fn_key)
+        fn_dict = (self._raw_partial_fns_by_type[fn_key] if fn_key.endswith("_raw")
+                   else getattr(self, fn_key))
         for model_type, fn in fn_dict.items():
             if fn is None:
                 continue
@@ -3156,6 +3224,44 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         # Reuse the supported vectorized residual assembly without duplicating equations.
         return self.rhs_algebraic_vec(x=x, dx=dx)
 
+    def evaluate_rhs(self, x: Vec, dx: Vec):
+        """Gather once for both vectorized RHS blocks."""
+        self.update_input_matrices_by_model(x, dx)
+        algebraic = self.rhs_algebraic_vec(x, dx)
+        state = self.rhs_state_vec() if self.get_states_number() else None
+        return state, algebraic
+
+    def evaluate_jacobian_blocks(self, x: Vec, dx: Vec, h: float):
+        """Gather once and evaluate the vectorized equation Jacobian blocks."""
+        self.update_input_matrices_by_model(x, dx)
+        if not self.get_states_number():
+            return None, None, None, self.get_j22_vec(x, dx, h)
+        return (self.get_j11_vec(h), self.get_j12_vec(h),
+                self.get_j21_vec(h), self.get_j22_vec(x, dx, h))
+
+    def supports_derivative_jacobian_partials(self) -> bool:
+        return True
+
+    def evaluate_jacobian_partials(self, x: Vec, dx: Vec,
+                                   derivative_base_indices: np.ndarray | None = None):
+        if not self.get_diff_var_number():
+            return super().evaluate_jacobian_partials(x, dx, derivative_base_indices)
+        self.update_input_matrices_by_model(x, dx)
+        blocks = [self._fill_jacobian_block(name, name, 0.0).copy()
+                  for name in ("j11_raw", "j12_raw", "j13_raw",
+                               "j21_raw", "j22_raw", "j23_raw")]
+        if self._raw_balance_fns is not None:
+            n_model_rows = self._n_algebraic - len(self._balance_equations)
+            for block_index, balance_fn in ((3, self._raw_balance_fns[0]),
+                                            (4, self._raw_balance_fns[1]),
+                                            (5, self._raw_balance_fns[2])):
+                balance = balance_fn(x, dx, self._variable_parameters_values,
+                                     self._constant_params, 0.0)
+                top = sp.csc_matrix((n_model_rows, blocks[block_index].shape[1]))
+                blocks[block_index] = (blocks[block_index]
+                                       + sp.vstack((top, balance), format="csc")).tocsc()
+        return tuple(blocks)
+
     def get_j22(self, x: Vec, dx: Vec, h: float) -> sp.csc_matrix:
         """Evaluate the algebraic Jacobian through the vectorized owner.
 
@@ -3199,7 +3305,6 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         )
 
         n_states = self.get_states_number()
-        n_diff = self.get_diff_var_number()
         vp = self._variable_parameters_values
         cp = self._constant_params
 
@@ -3207,7 +3312,9 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         E_value = np.zeros((n_vars, n_vars))
         E_partial = E_call(x, dx, vp, cp, h=0).toarray()
 
-        E_value[:, :n_diff] = E_partial
+        for j, dvar in enumerate(xdot):
+            col_idx = self._uid2idx_vars[dvar.base_var.uid]
+            E_value[:, col_idx] += E_partial[:, j]
         E_value[:n_states, :n_states] -= np.eye(n_states, dtype=E_value.dtype)
 
         return E_value

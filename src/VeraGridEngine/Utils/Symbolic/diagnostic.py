@@ -347,11 +347,15 @@ def maybe_check_index1(
     :param logger: Optional logger.
     :return: Estimated pivot-ratio indicator or ``None`` when the check is skipped.
     """
-    cfg = config or NewtonDiagnosticsConfig()
-    log = logger or logging.getLogger(__name__)
+    cfg: NewtonDiagnosticsConfig = config if config is not None else NewtonDiagnosticsConfig()
 
+    # Disabled checks must avoid both matrix inspection and repeated logger lookup.
     if not cfg.enable_index1_check:
         return None
+    else:
+        pass
+
+    log: logging.Logger = logger if logger is not None else logging.getLogger(__name__)
 
     n_total: int = int(jacobian.shape[0])
     n_alg: int = n_total - int(n_state)

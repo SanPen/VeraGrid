@@ -1,16 +1,25 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent two-input transfer functions, structural bypasses and clipping checks."""
 from __future__ import annotations
+
 
 import json
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.ramp_tracking_stabilizer import (
+from VeraGridEngine.Templates.Rms.power_system_stabilizers.ramp_tracking_stabilizer import (
     RampStabilizerKind, RampStabilizerParameters, StabilizerInterface, build_ramp_tracking_stabilizer)
+from VeraGridEngine.Templates.Rms.power_system_stabilizers.pss2c import build_pss2c_template
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import Const
+from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
+from VeraGridEngine.Utils.procedural_logic import PickupDropoffLogic
 from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller, linearized_response
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 @pytest.mark.parametrize('kind', tuple(RampStabilizerKind))
@@ -103,6 +112,29 @@ def test_limited_stabilizer_input_and_output_limits_are_independent() -> None:
     assert output == pytest.approx(.01)
 
 
+def test_pss2c_zero_first_washouts_are_exact_bypasses() -> None:
+    """PSS2C permits zero first washout times and retains the input steady bias."""
+    parameters: RampStabilizerParameters = RampStabilizerParameters(
+        washout_times=(0., 0., 0., 0.), transducer_times=(0., 0.),
+        ramp_m=0, ramp_n=0,
+        phase_times=((0., 0.), (0., 0.), (0., 0.)), fourth_phase=(0., 0.))
+    block: Block = build_ramp_tracking_stabilizer(VarFactory(), 'pss2c_zero_washout',
+        RampStabilizerKind.LIMITED_FOUR_PHASE, parameters).block
+    assert len(block.state_vars) == 0
+    values: dict[int, float] = initialized_values(block)
+    values[block.in_vars[0].uid] = .2
+    values[block.in_vars[1].uid] = .4
+    assert np.isfinite(block.out_vars[0].eval_uid(values))
+
+
+def test_two_phase_stabilizer_still_requires_positive_first_washouts() -> None:
+    """PSS2A/B-style structures retain their established positive washout requirement."""
+    parameters: RampStabilizerParameters = RampStabilizerParameters(washout_times=(0., 0., 2., 0.))
+    with pytest.raises(ValueError, match='washout'):
+        build_ramp_tracking_stabilizer(VarFactory(), 'two_phase_zero_washout',
+            RampStabilizerKind.TWO_PHASE, parameters)
+
+
 @pytest.mark.parametrize('interface', tuple(StabilizerInterface))
 @pytest.mark.parametrize('kind', tuple(RampStabilizerKind))
 def test_ramp_tracking_graph_persistence(kind: RampStabilizerKind, interface: StabilizerInterface) -> None:
@@ -114,7 +146,7 @@ def test_ramp_tracking_graph_persistence(kind: RampStabilizerKind, interface: St
     block: Block = build_ramp_tracking_stabilizer(VarFactory(), 'tracking', kind,
         RampStabilizerParameters(ramp_m=2, ramp_n=2), interface).block
     payload: dict[str, object] = json.loads(json.dumps(block.to_dict()))
-    restored: Block = Block.parse(payload)
+    restored: Block = roundtrip_block(block)
     assert json.loads(json.dumps(restored.to_dict())) == payload
     assert len(restored.in_vars) == (2 if interface == StabilizerInterface.SELECTED_SIGNALS else 3)
 
@@ -129,3 +161,17 @@ def test_ramp_tracking_invalid_orders_are_rejected(m: int, n: int) -> None:
     with pytest.raises(ValueError, match='orders'):
         build_ramp_tracking_stabilizer(VarFactory(), 'tracking', RampStabilizerKind.TWO_PHASE,
             RampStabilizerParameters(ramp_m=m, ramp_n=n))
+
+
+def test_pss2c_power_hysteresis_uses_separate_on_and_off_thresholds() -> None:
+    """The PSS2C latch picks up at PSSON and drops at PSSOFF."""
+    template = build_pss2c_template(VarFactory(), 'pss2c_logic', pss_on=.08, pss_off=.04,
+        interface=StabilizerInterface.SELECTED_SIGNALS)
+    block: Block = template.block
+    logic: PickupDropoffLogic = block.procedural_logic[0]
+    enabled: Var = next(variable for variable in block.mode_dict)
+    power: Var = block.in_vars[2]
+    assert logic.bool_expr.eval_uid({power.uid:.06, enabled.uid:0.}) == 0.
+    assert logic.bool_expr.eval_uid({power.uid:.09, enabled.uid:0.}) == 1.
+    assert logic.bool_expr.eval_uid({power.uid:.06, enabled.uid:1.}) == 1.
+    assert logic.bool_expr.eval_uid({power.uid:.03, enabled.uid:1.}) == 0.

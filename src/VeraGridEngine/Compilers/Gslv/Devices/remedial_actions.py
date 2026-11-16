@@ -1,9 +1,11 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+
 from __future__ import annotations
 
-from VeraGridEngine.Compilers.Gslv.activation import (
-    contingency_ops_type_dict, pg, remedial_action_property_dict,
-)
+from VeraGridEngine.Compilers.Gslv.activation import contingency_ops_type_dict, pg, remedial_action_property_dict
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 
 

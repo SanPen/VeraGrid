@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent loop responses, fuel conversion, controller tracking and servo-limit evidence."""
 from __future__ import annotations
@@ -5,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.governors.ggov1 import (
+from VeraGridEngine.Templates.Rms.governors.ggov1 import (
     GovernorDroopFeedback, FuelFlowCharacteristic, TrackedGovernorParameters, build_ggov1_template)
 from VeraGridEngine.Utils.Symbolic.block import Block
 from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller, linearized_response
@@ -122,7 +126,6 @@ def test_supervisory_reset_uses_electrical_power(feedback: GovernorDroopFeedback
     TrackedGovernorParameters(governor_gains=(0.,1.,0.)),
     TrackedGovernorParameters(governor_gains=(1.,1.,1.),derivative_time=0),
     TrackedGovernorParameters(valve_limits=(0.,1.1)),
-    TrackedGovernorParameters(load_gains=(1.,0.)),
     TrackedGovernorParameters(turbine_times=(.1,0.)),
     TrackedGovernorParameters(temperature_times=(.1,0.)),
 ))
@@ -136,13 +139,14 @@ def test_unreviewed_or_invalid_fuel_settings_are_rejected(setting: TrackedGovern
 
 
 @pytest.mark.parametrize('opening', (False,True))
-def test_load_output_slew_limits(opening: bool) -> None:
+@pytest.mark.parametrize('load_gains', ((1.,1.), (1.,0.)))
+def test_load_output_slew_limits(opening: bool, load_gains: tuple[float, float]) -> None:
     """The total PI demand, including proportional measurement response, obeys independent slew bounds.
 
     :param opening: Increasing rather than decreasing fuel demand.
     """
     block: Block = build_ggov1_template(VarFactory(), 'fuel', TrackedGovernorParameters(
-        load_time=.2, load_rates=(-.03,.04))).block
+        load_time=.2, load_gains=load_gains, load_rates=(-.03,.04))).block
     values: dict[int,float] = initialized_values(block)
     states: np.ndarray = np.asarray([values[var.uid] for var in block.state_vars])
     measurement_index: int = next(index for index,var in enumerate(block.state_vars) if var.name.startswith('LoadMeasuredPu_'))

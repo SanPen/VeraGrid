@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import numpy as np
@@ -62,6 +66,23 @@ class SingularStandardSmallSignalProblem:
         :return: ``None`` because the matrix contains no algebraic variables.
         """
         return None
+
+
+class AlgebraicOnlySmallSignalProblem:
+    """Minimal RMS problem without differential states."""
+
+    def get_states_number(self) -> int:
+        return 0
+
+
+def test_compute_state_matrix_rejects_algebraic_only_problem() -> None:
+    """Report a missing dynamic model before requesting absent state Jacobians."""
+    with pytest.raises(ValueError, match="at least one differential RMS state"):
+        compute_state_matrix(
+            problem=AlgebraicOnlySmallSignalProblem(),
+            x=np.zeros(0),
+            dx=np.zeros(0),
+        )
 
 
 class AlgebraicallySingularStandardSmallSignalProblem:

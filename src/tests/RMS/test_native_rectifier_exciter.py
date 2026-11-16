@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Live bridge-supply and reverse-field-current behavior of a static exciter."""
 from __future__ import annotations
@@ -6,7 +10,7 @@ import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.excitation_systems.scrx import build_scrx_template
+from VeraGridEngine.Templates.Rms.excitation_systems.scrx import build_scrx_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller
 
@@ -63,7 +67,7 @@ def test_instantaneous_rectifier_regulator_has_no_inverse_time() -> None:
 ))
 def test_rectifier_curve_and_jacobian_all_regions(loading: float, expected: float, slope: float) -> None:
     """Blocked square-root branches remain finite in both function and symbolic Jacobian."""
-    from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import _esst3a_fex
+    from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import _esst3a_fex
     from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var
     current: Var = VarFactory().add_var('NormalizedCurrent')
     factor: Expr = _esst3a_fex(current)

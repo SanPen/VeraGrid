@@ -1,0 +1,202 @@
+{
+  "powerfactory_version": "24.0.2.0",
+  "dgs_version": "7.0",
+  "export_date": "2026-11-10",
+  "format": "ASCII File",
+  "additional_parameters": "/external",
+  "scope": "Native field and RMS import checks; no simulation reference validation",
+  "files": [
+    {
+      "file": "vsc_lookup_tables.dgs",
+      "baseline": "vsc_lookup_tables.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": null,
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "8d80ddc02eb94e12bc67a87d21eab98d",
+      "sha256": "662cb0f95bfd3a8b572f72719eb45b6d63dff0b9844a0cc6cd3cb1c85fc50eea",
+      "bytes": 1185047,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "genstat_lookup_tables.dgs",
+      "baseline": "genstat_lookup_tables.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        }
+      },
+      "change": null,
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "8d80ddc02eb94e12bc67a87d21eab98d",
+      "sha256": "88a7c892f1fa6ac66c6633167d89408ac763a19d93bb0c5d19990cf75f5cfc1a",
+      "bytes": 59792,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 44,
+        "BlkFrom": 4,
+        "BlkGoto": 3,
+        "BlkMul": 1,
+        "BlkRef": 53,
+        "BlkSig": 130,
+        "BlkSlot": 17,
+        "BlkSum": 6,
+        "ElmComp": 4,
+        "ElmCoup": 1,
+        "ElmDsl": 5,
+        "ElmGenstat": 1,
+        "ElmLne": 3,
+        "ElmLod": 1,
+        "ElmNet": 1,
+        "ElmShnt": 1,
+        "ElmSite": 1,
+        "ElmTerm": 6,
+        "ElmTr2": 1,
+        "ElmVac": 2,
+        "IntFolder": 12,
+        "IntGrf": 28,
+        "IntGrfcon": 16,
+        "IntGrfnet": 2,
+        "IntTemplate": 1,
+        "StaCubic": 15,
+        "StaSwitch": 6,
+        "StaVmea": 2,
+        "TypCon": 2,
+        "TypLne": 1,
+        "TypTow": 1,
+        "TypTr2": 1
+      }
+    }
+  ]
+}

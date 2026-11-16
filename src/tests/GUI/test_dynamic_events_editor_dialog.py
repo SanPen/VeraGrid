@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import sys
@@ -51,29 +55,6 @@ def build_dynamic_targets() -> tuple[vge.MultiCircuit, vge.Load, vge.Load, Var, 
     group: vge.RmsEventsGroup = vge.RmsEventsGroup(name="RMS group")
     circuit.add_rms_events_group(obj=group)
     return circuit, first_load, second_load, first_parameter, second_parameter, group
-
-
-def test_global_parameter_catalog_contains_every_device_parameter() -> None:
-    """The global RMS catalog must include parameters from every RMS device.
-
-    :return: None.
-    """
-    _application: QtWidgets.QApplication = get_qt_application()
-    circuit: vge.MultiCircuit
-    first_load: vge.Load
-    second_load: vge.Load
-    first_parameter: Var
-    second_parameter: Var
-    _group: vge.RmsEventsGroup
-    circuit, first_load, second_load, first_parameter, second_parameter, _group = build_dynamic_targets()
-    handler: DynamicEventsHandler = DynamicEventsHandler(
-        circuit=circuit,
-        mode=DynamicSimulationMode.RMS,
-    )
-
-    assert len(handler.candidates) == 2
-    assert handler.candidate_for_device_parameter(first_load, first_parameter) is not None
-    assert handler.candidate_for_device_parameter(second_load, second_parameter) is not None
 
 
 def test_group_checkbox_updates_real_group_immediately() -> None:

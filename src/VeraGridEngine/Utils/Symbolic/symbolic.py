@@ -36,7 +36,7 @@ def _new_uid() -> int:
 # -----------------------------------------------------------------------------
 
 
-def _to_expr(val: Any) -> "Expr":
+def _to_expr(val: "Expr | NUMBER | None") -> "Expr":
     """
 
     returns an expression
@@ -146,7 +146,7 @@ class Comparison:
     def __repr__(self) -> str:
         return f"Comparison(lhs={self.lhs!r}, op={self.op!r}, rhs={self.rhs!r})"
 
-    def subs(self, mapping: Dict[Any, "Expr"]) -> "Comparison":
+    def subs(self, mapping: Dict["Expr | str", "Expr"]) -> "Comparison":
         rhs_expr: Expr = _to_expr(self.rhs)
         return Comparison(self.lhs.subs(mapping), self.op, rhs_expr.subs(mapping))
 
@@ -219,7 +219,7 @@ class Expr:
         """
         return self
 
-    def subs(self, mapping: Dict[Any, "Expr"]) -> "Expr":
+    def subs(self, mapping: Dict["Expr | str", "Expr"]) -> "Expr":
         """
         substitute variables
         :param mapping:
@@ -260,34 +260,34 @@ class Expr:
     # ------------------------------------------------------------------
     # Operator helpers
     # ------------------------------------------------------------------
-    def __add__(self, other: Any) -> Expr:
+    def __add__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(self, "+", _to_expr(other))
 
-    def __radd__(self, other: Any) -> Expr:
+    def __radd__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(_to_expr(other), "+", self)
 
-    def __sub__(self, other: Any) -> Expr:
+    def __sub__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(self, "-", _to_expr(other))
 
-    def __rsub__(self, other: Any) -> Expr:
+    def __rsub__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(_to_expr(other), "-", self)
 
-    def __mul__(self, other: Any) -> Expr:
+    def __mul__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(self, "*", _to_expr(other))
 
-    def __rmul__(self, other: Any) -> Expr:
+    def __rmul__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(_to_expr(other), "*", self)
 
-    def __truediv__(self, other: Any) -> Expr:
+    def __truediv__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(self, "/", _to_expr(other))
 
-    def __rtruediv__(self, other: Any) -> Expr:
+    def __rtruediv__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(_to_expr(other), "/", self)
 
-    def __pow__(self, other: Any) -> Expr:
+    def __pow__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(self, "**", _to_expr(other))
 
-    def __rpow__(self, other: Any) -> Expr:
+    def __rpow__(self, other: "Expr | NUMBER | None") -> Expr:
         return BinOp(_to_expr(other), "**", self)
 
     def __neg__(self) -> "Expr":
@@ -378,7 +378,7 @@ class Const(Expr):
     def _diff1(self, var: Var | str, dt: Var | None = None) -> "Expr":
         return Const(0)
 
-    def subs(self, mapping: Dict[Any, Expr]) -> Expr:
+    def subs(self, mapping: Dict["Expr | str", Expr]) -> Expr:
         if self in mapping:
             return mapping[self]
         if self.name in mapping:
@@ -907,8 +907,10 @@ class BinOp(Expr):
                 else:
                     return v * (u ** (v - Const(1))) * du
             else:
-                # general exponent: u**v = exp(v*log u)
-                return self * (dv * log(u) + du * v / u)
+                # exponent depending on var: d(u**v) = v*u**(v-1)*du + u**v*log(u)*dv;
+                # the base partial has no log or division, so it stays finite at negative
+                # and zero bases wherever u**v is real
+                return v * (u ** (v - Const(1))) * du + self * log(u) * dv
         raise ValueError("Unsupported operator for diff")
 
     def simplify(self) -> Expr:
@@ -993,7 +995,7 @@ class BinOp(Expr):
 
         return BinOp(l, self.op, r)
 
-    def subs(self, mapping: Dict[Any, Expr]) -> Expr:
+    def subs(self, mapping: Dict["Expr | str", Expr]) -> Expr:
         """
         Substitution
         :param mapping: mapping of variables to expressions
@@ -1113,7 +1115,7 @@ class UnOp(Expr):
             return Const(-opr.value)
         return UnOp(self.op, opr)
 
-    def subs(self, mapping: Dict[Any, Expr]) -> Expr:
+    def subs(self, mapping: Dict["Expr | str", Expr]) -> Expr:
         """
 
         :param mapping:
@@ -1310,6 +1312,58 @@ def _evaluate_binary_function(name: str, arg1: NUMBER, arg2: NUMBER) -> NUMBER:
         raise ValueError(f"Unknown binary function '{name}'")
 
 
+def _binary_function_to_ad_python(name: str, arg1: str, derivative1: str,
+                                  arg2: str, derivative2: str) -> Tuple[str, str]:
+    """Emit binary values and JVPs using the symbolic derivative conventions.
+
+    :param name: Supported binary symbolic function name.
+    :param arg1: Source for the first argument value.
+    :param derivative1: Source for its directional derivative.
+    :param arg2: Source for the second argument value.
+    :param derivative2: Source for its directional derivative.
+    :return: Value source and directional derivative source.
+    """
+    if name not in ("min", "max", "atan2"):
+        raise NotImplementedError(f"Binary function '{name}' is not supported in AD")
+    else:
+        pass
+    value: str = _binary_function_to_python(name, arg1, arg2)
+    zero_sources: Tuple[str, ...] = ("0.0", "0", "0.00", "(-0.0)")
+    first_zero: bool = derivative1 in zero_sources
+    second_zero: bool = derivative2 in zero_sources
+    derivative: str
+    if first_zero and second_zero:
+        # Constant arguments do not evaluate a possibly singular derivative formula.
+        derivative = "0.0"
+    elif name == "atan2":
+        numerator: str
+        if first_zero:
+            numerator = f"(-({arg1}) * ({derivative2}))"
+        elif second_zero:
+            numerator = f"(({arg2}) * ({derivative1}))"
+        else:
+            numerator = f"(({arg2}) * ({derivative1}) - ({arg1}) * ({derivative2}))"
+        # Preserve the true singularity at the origin rather than adding an epsilon.
+        derivative = f"({numerator} / (({arg1}) ** 2 + ({arg2}) ** 2))"
+    else:
+        first_gate: str
+        second_gate: str
+        if name == "min":
+            first_gate = f"_heaviside(({arg2}) - ({arg1}))"
+            second_gate = f"_heaviside(({arg1}) - ({arg2}))"
+        else:
+            first_gate = f"_heaviside(({arg1}) - ({arg2}))"
+            second_gate = f"_heaviside(({arg2}) - ({arg1}))"
+        # H(0)=0 matches Func2._diff1(), including equal limiter arguments.
+        if first_zero:
+            derivative = f"({second_gate} * ({derivative2}))"
+        elif second_zero:
+            derivative = f"({first_gate} * ({derivative1}))"
+        else:
+            derivative = f"({first_gate} * ({derivative1}) + {second_gate} * ({derivative2}))"
+    return value, derivative
+
+
 def _binary_function_to_python(name: str, arg1: str, arg2: str) -> str:
     """
     Emit the NumPy source for one binary symbolic function.
@@ -1406,7 +1460,7 @@ class Func(Expr):
         else:
             return _differentiate_unary_function(self.op, u, du)
 
-    def subs(self, mapping: Dict[Any, "Expr"]) -> "Expr":
+    def subs(self, mapping: Dict["Expr | str", "Expr"]) -> "Expr":
         if self in mapping:
             return mapping[self]
         return Func(self.arg.subs(mapping), self.op)
@@ -1738,7 +1792,7 @@ def f_exc(In: Expr) -> Expr:
     return b + c + d
 
 
-def piecewise(time_var: Expr, t_events: np.ndarray, new_values: np.ndarray, default_value: Any) -> Expr:
+def piecewise(time_var: Expr, t_events: np.ndarray, new_values: np.ndarray, default_value: "Expr | NUMBER | None") -> Expr:
     """
     Symbolic piecewise function.
     Returns default_value before the first event, then switches to
@@ -1873,7 +1927,7 @@ class Func2(Expr):
         # return simplified symbolic form
         return Func2(self.name, a_s, b_s)
 
-    def subs(self, mapping: Dict[Any, "Expr"]) -> "Expr":
+    def subs(self, mapping: Dict["Expr | str", "Expr"]) -> "Expr":
         """
 
         substitude
@@ -2028,7 +2082,7 @@ def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const | Comparison:
         else:
             obj = Const(data["value"])
     elif t == "Var":
-        non_mutable_uid_value: object = data.get("non_mutable_uid", data["uid"])
+        non_mutable_uid_value: Any = data.get("non_mutable_uid", data["uid"])
         if isinstance(non_mutable_uid_value, int) and not isinstance(non_mutable_uid_value, bool):
             non_mutable_uid: int = non_mutable_uid_value
         else:
@@ -2038,7 +2092,7 @@ def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const | Comparison:
 
         # Preserve the optional physical-network meaning of every variable.
         # Missing fields keep legacy dictionaries readable.
-        reference_name_data: object = data.get("reference", None)
+        reference_name_data: Any = data.get("reference", None)
         if reference_name_data is None:
             reference: VarPowerFlowReferenceType | None = None
         elif (
@@ -2051,18 +2105,18 @@ def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const | Comparison:
                 f"Unknown power-flow variable reference '{reference_name_data}'"
             )
 
-        network_conn_data: object = data.get("network_conn", False)
+        network_conn_data: Any = data.get("network_conn", False)
         if isinstance(network_conn_data, bool):
             network_conn: bool = network_conn_data
         else:
             raise TypeError("Variable network_conn must be a boolean")
 
-        shared_reference_data: object = data.get("shared_reference", None)
+        shared_reference_data: Any = data.get("shared_reference", None)
         if shared_reference_data is None:
             shared_reference: SharedVarReferenceType | None = None
         elif isinstance(shared_reference_data, dict):
-            shared_reference_name: object = shared_reference_data.get("name", None)
-            shared_reference_uid: object = shared_reference_data.get("uid", None)
+            shared_reference_name: Any = shared_reference_data.get("name", None)
+            shared_reference_uid: Any = shared_reference_data.get("uid", None)
             if (
                     isinstance(shared_reference_name, str)
                     and isinstance(shared_reference_uid, int)
@@ -2224,9 +2278,11 @@ def _precedence(expr: Expr) -> int:
         # Python exponentiation binds more tightly than unary negation.
         return 25
     elif isinstance(expr, Const):
-        # A negative literal is a unary expression in Python, so a power base
-        # needs parentheses just as a symbolic negation does. Keep its exact repr.
-        if repr(expr.value).startswith("-"):
+        # A negative literal is a unary expression in Python, so a power operand
+        # needs parentheses just as a symbolic negation does. Decide by the sign
+        # of the value: numpy scalars print a call form in repr (np.float64(-2.0))
+        # but keep the sign in str, and -0.0 keeps it in both.
+        if str(expr.value).startswith("-") or repr(expr.value).startswith("-"):
             return 25
         else:
             return 100
@@ -2480,6 +2536,47 @@ def get_expression_vars(expr: Expr, vars_found: Optional[List[Var]] = None) -> L
     # Todo: add comparisions
 
     return vars_found
+
+
+def event_parameter_assignments(eqs: List[Expr], names: Dict[int, str],
+                                input_name: str) -> list[tuple[int, Dict[int, str]]]:
+    """Return output indices and bindings for a single ordered evaluation.
+
+    A parameter's reference to itself reads the incoming value. References to
+    other parameters read their freshly computed values.
+    """
+    index_by_binding = {f"{input_name}[{i}]": i for i in range(len(eqs))}
+    indices = {uid: index_by_binding[name] for uid, name in names.items()
+               if name in index_by_binding}
+
+    dependencies = []
+    dependency_uids = []
+    dependents = [[] for _ in eqs]
+    for i, eq in enumerate(eqs):
+        referenced = {var.uid: indices[var.uid] for var in get_expression_vars(eq)
+                      if var.uid in indices and indices[var.uid] != i}
+        deps = set(referenced.values())
+        dependency_uids.append(referenced)
+        dependencies.append(deps)
+        for dep in deps:
+            dependents[dep].append(i)
+
+    ready = [i for i, deps in enumerate(dependencies) if not deps]
+    order = []
+    while ready:
+        i = ready.pop()
+        order.append(i)
+        for dependent in dependents[i]:
+            dependencies[dependent].remove(i)
+            if not dependencies[dependent]:
+                ready.append(dependent)
+
+    if len(order) != len(eqs):
+        cyclic = [i for i, deps in enumerate(dependencies) if deps]
+        raise ValueError(f"Cyclic event-parameter dependencies at indices {cyclic}")
+
+    return [(i, {uid: f"out[{index}]" for uid, index in dependency_uids[i].items()})
+            for i in order]
 
 
 def _get_binop_symbol(op_node: ast.operator) -> str | None:

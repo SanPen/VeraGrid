@@ -1,7 +1,11 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.xfmr_emt_template import get_xfmr_emt_template
+from VeraGridEngine.Templates.Emt.transformers.xfmr_emt_template import get_xfmr_emt_template
 from VeraGridEngine.enumerations import BlockType
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, WindingType
 

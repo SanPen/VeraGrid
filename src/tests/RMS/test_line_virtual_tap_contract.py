@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Physical terminal powers, mapping and solved startup of the polar Line."""
 
 from pathlib import Path
@@ -16,10 +20,10 @@ from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType,
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.IO.file_save import FileSave
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized import BackEulerImplicitIntegrationVec
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import RmsProblemDaeVec
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
 from tests.RMS.test_rms_terminal_power_assembly import build_supported_vectorized_ac_load_case
@@ -167,7 +171,7 @@ def test_polar_line_virtual_tap_pf_initialization(from_ratio: float, to_ratio: f
     assert max(abs(float(equation.eval_uid(bindings))) for equation in child.algebraic_eqs) <= 1.0e-10
     problem: RmsProblemDaeVec = RmsProblemDaeVec(grid=grid, options=RmsOptions(), pf_results=pf)
     problem.set_events_group(rms_events_group=RmsEventsGroup())
-    solver: BackEulerImplicitIntegrationVec = BackEulerImplicitIntegrationVec(
+    solver: BackEulerImplicitIntegration = BackEulerImplicitIntegration(
         problem=problem, t0=0.0, t_end=0.001, h=0.001, max_iter=25)
     times: np.ndarray
     values: np.ndarray

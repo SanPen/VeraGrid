@@ -1,0 +1,58 @@
+{
+  "file": "src/tests/data/grids/DGS/native_genstat_protection_pf2024/benchmark/genstat_bench_model_2.dgs",
+  "frequency_hz": 50.0,
+  "load_flow_converged": true,
+  "initial_finite": true,
+  "initial_vector_size": 20,
+  "projection_converged": true,
+  "projection_residual": 1.2202080509199353e-09,
+  "largest_residuals": [
+    {
+      "index": 0,
+      "residual": 9.71445146547012e-17,
+      "equation": "(Pf) - ((u) * ((((((Vm) / (vtap_f)) ** (2)) * ((g) + ((gsh) / (2)))) - ((((g) * ((Vm) / (vtap_f))) * ((Vm) / (vtap_t))) * (cos((Va) - (Va))))) + ((((b) * ((Vm) / (vtap_f))) * ((Vm) / (vtap_t))) * (cos(((Va) - (Va)) + (1.5707963267948966))))))"
+    },
+    {
+      "index": 6,
+      "residual": -1.1102230246251565e-16,
+      "equation": "((E_internal) * (cos(A_internal))) - ((((Vm) * (cos(Va))) + ((R1) * (Ir))) - ((X1) * (Ii)))"
+    },
+    {
+      "index": 2,
+      "residual": 1.27675647831893e-15,
+      "equation": "(Pt) - ((u) * ((((((Vm) / (vtap_t)) ** (2)) * ((g) + ((gsh) / (2)))) - ((((g) * ((Vm) / (vtap_t))) * ((Vm) / (vtap_f))) * (cos((Va) - (Va))))) + ((((b) * ((Vm) / (vtap_t))) * ((Vm) / (vtap_f))) * (cos(((Va) - (Va)) + (1.5707963267948966))))))"
+    },
+    {
+      "index": 3,
+      "residual": -1.4467593789646571e-15,
+      "equation": "(Qt) - ((u) * ((((((Vm) / (vtap_t)) ** (2)) * (((-(bsh)) / (2)) - (b))) - ((((g) * ((Vm) / (vtap_t))) * ((Vm) / (vtap_f))) * (sin((Va) - (Va))))) + ((((b) * ((Vm) / (vtap_t))) * ((Vm) / (vtap_f))) * (sin(((Va) - (Va)) + (1.5707963267948966))))))"
+    },
+    {
+      "index": 1,
+      "residual": 1.7763568394002505e-15,
+      "equation": "(Qf) - ((u) * ((((((Vm) / (vtap_f)) ** (2)) * (((-(bsh)) / (2)) - (b))) - ((((g) * ((Vm) / (vtap_f))) * ((Vm) / (vtap_t))) * (sin((Va) - (Va))))) + ((((b) * ((Vm) / (vtap_f))) * ((Vm) / (vtap_t))) * (sin(((Va) - (Va)) + (1.5707963267948966))))))"
+    },
+    {
+      "index": 18,
+      "residual": 7.816663982751493e-15,
+      "equation": "((-1.0) * (Qf)) + ((1.0) * (Q))"
+    },
+    {
+      "index": 17,
+      "residual": -7.041322525047633e-10,
+      "equation": "((-1.0) * (Pt)) + ((1.0) * (Pg))"
+    },
+    {
+      "index": 16,
+      "residual": -1.2202080509199353e-09,
+      "equation": "((-1.0) * (Qt)) + ((1.0) * (Qg))"
+    }
+  ],
+  "state_equilibrium_residual": 0.0,
+  "first_step": {
+    "initialized": true,
+    "converged": true,
+    "finite": true,
+    "samples": 2
+  }
+}

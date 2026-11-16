@@ -3478,6 +3478,12 @@ class MeasurementsItem(QGraphicsRectItem):
 
 
 
+class InterconnectionItem(MeasurementsItem):
+    """Display device-to-device references with the measurement port mechanics."""
+
+    __slots__ = ()
+
+
 class ProtectedConnectionBlockItem(BlockItem):
     __slots__ = ()
 

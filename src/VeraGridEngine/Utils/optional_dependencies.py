@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Diagnostics for failures confined to optional third-party imports."""
 
 from importlib.metadata import PackageNotFoundError, version
@@ -28,5 +32,5 @@ def optional_dependency_failure(package_name: str, error: Exception) -> str:
             f"{package_name} {installed_version} could not initialize: {error}. "
             "Install a compatible version in this Python environment and restart VeraGrid"
         )
-        warnings.warn(f"Optional integration disabled: {reason}", stacklevel=2)
+        # warnings.warn(f"Optional integration disabled: {reason}", stacklevel=2)
         return reason

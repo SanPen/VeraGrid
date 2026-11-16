@@ -8,7 +8,6 @@ import numpy as np
 import numba as nb
 import scipy.sparse as sp
 from typing import Union, Tuple, List
-from VeraGridEngine.enumerations import WindingsConnection
 from VeraGridEngine.basic_structures import ObjVec, Vec, CxVec, IntVec
 
 
@@ -330,10 +329,7 @@ def compute_admittances(R: Vec,
                         tap_angle: Vec,
                         Cf: sp.csc_matrix,
                         Ct: sp.csc_matrix,
-                        Yshunt_bus: CxVec,
-                        conn: IntVec,
-                        seq: int,
-                        add_windings_phase: bool = False) -> AdmittanceMatrices:
+                        Yshunt_bus: CxVec) -> AdmittanceMatrices:
     """
     Compute the complete admittance matrices for the general power flow methods (Newton-Raphson based)
 
@@ -348,71 +344,16 @@ def compute_admittances(R: Vec,
     :param Cf: Connectivity branch-bus "from" with the branch states computed
     :param Ct: Connectivity branch-bus "to" with the branch states computed
     :param Yshunt_bus: array of shunts equivalent power per bus, from the shunt devices (p.u.)
-    :param seq: Sequence [0, 1, 2]
-    :param conn: array of windings connections codes (numpy array of WindingsConnection values)
-    :param add_windings_phase: Add the phases of the transformer windings (for short circuits mainly)
     :return: Admittance instance
     """
     # form the admittance matrices
     ys = 1.0 / (R + 1.0j * (X + 1e-20))  # series admittance
     ysh_2 = (G + 1j * B) / 2.0  # shunt admittance
 
-    # compose the primitives
-    if add_windings_phase:
-
-        r30_deg = np.exp(1.0j * np.pi / 6.0)
-
-        if seq == 0:  # zero sequence
-            # add always the shunt term, the series depends on the connection
-            # one ys vector for the from side, another for the to side, and the shared one
-            ysf = np.zeros(len(ys), dtype=complex)
-            yst = np.zeros(len(ys), dtype=complex)
-            ysft = np.zeros(len(ys), dtype=complex)
-
-            for i, con in enumerate(conn):
-                if con == WindingsConnection.GG.idx():
-                    ysf[i] = ys[i]
-                    yst[i] = ys[i]
-                    ysft[i] = ys[i]
-                elif con == WindingsConnection.GD.idx():
-                    ysf[i] = ys[i]
-
-            yff = (ysf + ysh_2) / (tap_module * tap_module * vtap_f * vtap_f)
-            yft = -ysft / (tap_module * np.exp(-1.0j * tap_angle) * vtap_f * vtap_t)
-            ytf = -ysft / (tap_module * np.exp(+1.0j * tap_angle) * vtap_t * vtap_f)
-            ytt = (yst + ysh_2) / (vtap_t * vtap_t)
-
-        elif seq == 2:  # negative sequence
-            # only need to include the phase shift of +-30 degrees
-            factor_psh = np.array([r30_deg
-                                   if con == WindingsConnection.GD.idx() or con == WindingsConnection.SD.idx() else 1
-                                   for con in conn])
-
-            yff = (ys + ysh_2) / (tap_module * tap_module * vtap_f * vtap_f)
-            yft = -ys / (tap_module * np.exp(+1.0j * tap_angle) * vtap_f * vtap_t) * np.conj(factor_psh)
-            ytf = -ys / (tap_module * np.exp(-1.0j * tap_angle) * vtap_t * vtap_f) * factor_psh
-            ytt = (ys + ysh_2) / (vtap_t * vtap_t)
-
-        elif seq == 1:  # positive sequence
-
-            # only need to include the phase shift of +-30 degrees
-            factor_psh = np.array([r30_deg
-                                   if con == WindingsConnection.GD.idx() or con == WindingsConnection.SD.idx() else 1.0
-                                   for con in conn])
-
-            yff = (ys + ysh_2) / (tap_module * tap_module * vtap_f * vtap_f)
-            yft = -ys / (tap_module * np.exp(-1.0j * tap_angle) * vtap_f * vtap_t) * factor_psh
-            ytf = -ys / (tap_module * np.exp(1.0j * tap_angle) * vtap_t * vtap_f) * np.conj(factor_psh)
-            ytt = (ys + ysh_2) / (vtap_t * vtap_t)
-        else:
-            raise Exception('Unsupported sequence when computing the admittance matrix sequence={}'.format(seq))
-
-    else:  # original
-
-        yff = (ys + ysh_2) / (tap_module * tap_module * vtap_f * vtap_f)
-        yft = -ys / (tap_module * np.exp(-1.0j * tap_angle) * vtap_f * vtap_t)
-        ytf = -ys / (tap_module * np.exp(1.0j * tap_angle) * vtap_t * vtap_f)
-        ytt = (ys + ysh_2) / (vtap_t * vtap_t)
+    yff = (ys + ysh_2) / (tap_module * tap_module * vtap_f * vtap_f)
+    yft = -ys / (tap_module * np.exp(-1.0j * tap_angle) * vtap_f * vtap_t)
+    ytf = -ys / (tap_module * np.exp(1.0j * tap_angle) * vtap_t * vtap_f)
+    ytt = (ys + ysh_2) / (vtap_t * vtap_t)
 
     # compose the matrices
     Yf = sp.diags(yff) * Cf + sp.diags(yft) * Ct
@@ -551,7 +492,7 @@ def _build_Ybus(nbus: int, nbr: int, F: IntVec, T: IntVec,
 
     # ---------- sort (col,row) ---------------------------------------
     key = cols_raw * nbus + rows_raw
-    order = np.argsort(key)  # stable already because it is C
+    order = np.argsort(key, kind="mergesort")  # mergesort is the stable sort numba compiles
 
     rows_s = rows_raw[order]
     cols_s = cols_raw[order]

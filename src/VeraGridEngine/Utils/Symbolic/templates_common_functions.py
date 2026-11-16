@@ -5,14 +5,13 @@
 
 from __future__ import annotations
 #
-from typing import Any, List, Dict, Iterable, NamedTuple
+from typing import Dict, Iterable, List, NamedTuple, TYPE_CHECKING
 #
 from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlowReferenceType
-from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Devices.Dynamic.var_factory import Connection, VarFactory
 
 from VeraGridEngine.Utils.Symbolic.block import (Block,
                                                  Var,
-                                                 Const,
                                                  find_matching_dynamic_connection_intent,
                                                  normalize_dynamic_connection_intents,
                                                  rehash_block_tree_var_keyed_dicts)
@@ -20,12 +19,14 @@ from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConn
                                                                      DynamicConnectionIntentDirection,
                                                                      DynamicConnectionIntentOrigin)
 from VeraGridEngine.enumerations import DeviceType
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import (BusEmtTemplate,
-                                                           get_bus_emt_template,
-                                                           get_bus_mask,
-                                                           get_bus_emt_algebraic_vars)
 from VeraGridEngine.Devices.Parents.dynamic_bus_parent import EmtBusConnectionSide
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
+    from VeraGridEngine.Devices.Substation.bus import Bus
+    from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+else:
+    pass
 
 
 def _find_block_by_uid(root_block: Block,
@@ -80,7 +81,7 @@ def _find_root_var_by_ref(root_block: Block,
     return None
 
 
-def _is_branch_like_device(device: Any) -> bool:
+def _is_branch_like_device(device: "DynamicDevice") -> bool:
     """
     Return whether one device uses two-terminal EMT branch semantics.
 
@@ -104,7 +105,7 @@ def _is_branch_like_device(device: Any) -> bool:
         return False
 
 
-def _build_supported_root_intent_refs_for_device(device: Any) -> tuple[List[VarPowerFlowReferenceType], List[VarPowerFlowReferenceType]]:
+def _build_supported_root_intent_refs_for_device(device: "DynamicDevice") -> tuple[List[VarPowerFlowReferenceType], List[VarPowerFlowReferenceType]]:
     """
     Return the supported root input/output references for one EMT device.
 
@@ -160,7 +161,7 @@ def _build_supported_root_intent_refs_for_device(device: Any) -> tuple[List[VarP
     return input_refs, output_refs
 
 
-def _prune_saved_root_io_vars_to_supported_contract(device: Any) -> None:
+def _prune_saved_root_io_vars_to_supported_contract(device: "DynamicDevice") -> None:
     """
     Remove saved root IO vars that are no longer part of the live device contract.
 
@@ -226,7 +227,7 @@ def _prune_saved_root_io_vars_to_supported_contract(device: Any) -> None:
     model.out_vars = pruned_out_vars
 
 
-def _prune_saved_branch_root_contract_side(device: Any,
+def _prune_saved_branch_root_contract_side(device: "DynamicDevice",
                                            side: EmtBusConnectionSide) -> None:
     """
     Prune one saved branch root contract side against its live bus shell.
@@ -356,7 +357,7 @@ def _prune_saved_branch_root_contract_side(device: Any,
             model.external_mapping[side_output_ref] = None
 
 
-def _build_live_root_contract_refs(device: Any) -> tuple[List[VarPowerFlowReferenceType], List[VarPowerFlowReferenceType]]:
+def _build_live_root_contract_refs(device: "DynamicDevice") -> tuple[List[VarPowerFlowReferenceType], List[VarPowerFlowReferenceType]]:
     """
     Build the exact currently available root refs for one live device contract.
 
@@ -442,7 +443,7 @@ def _build_live_root_contract_refs(device: Any) -> tuple[List[VarPowerFlowRefere
     return input_refs, output_refs
 
 
-def _build_live_branch_side_root_contract_refs(device: Any,
+def _build_live_branch_side_root_contract_refs(device: "DynamicDevice",
                                                side: EmtBusConnectionSide) -> tuple[List[VarPowerFlowReferenceType], List[VarPowerFlowReferenceType]]:
     """
     Build the exact currently available root refs for one branch side.
@@ -508,7 +509,7 @@ def _build_live_branch_side_root_contract_refs(device: Any,
     return input_refs, output_refs
 
 
-def _ensure_saved_root_io_vars_for_live_contract(device: Any,
+def _ensure_saved_root_io_vars_for_live_contract(device: "DynamicDevice",
                                                  var_factory: VarFactory) -> None:
     """
     Recreate missing saved root IO vars required by the current live contract.
@@ -580,7 +581,7 @@ def _ensure_saved_root_io_vars_for_live_contract(device: Any,
             model.external_mapping[root_ref] = new_var
 
 
-def _ensure_saved_branch_root_contract_side(device: Any,
+def _ensure_saved_branch_root_contract_side(device: "DynamicDevice",
                                             side: EmtBusConnectionSide,
                                             var_factory: VarFactory) -> None:
     """
@@ -636,7 +637,7 @@ def _ensure_saved_branch_root_contract_side(device: Any,
             model.external_mapping[root_ref] = new_var
 
 
-def _rebuild_saved_branch_root_contract_from_live_sides(device: Any,
+def _rebuild_saved_branch_root_contract_from_live_sides(device: "DynamicDevice",
                                                         var_factory: VarFactory) -> None:
     """
     Rebuild the saved branch root IO contract directly from the current live side contracts.
@@ -713,7 +714,7 @@ def _rebuild_saved_branch_root_contract_from_live_sides(device: Any,
     _normalize_saved_branch_root_contract_from_live_sides(device=device)
 
 
-def _restore_legacy_saved_branch_interface_references(device: Any) -> None:
+def _restore_legacy_saved_branch_interface_references(device: "DynamicDevice") -> None:
     """
     Restore missing root-IO references from a legacy external mapping.
 
@@ -786,7 +787,7 @@ def _restore_legacy_saved_branch_interface_references(device: Any) -> None:
                     pass
 
 
-def _clear_saved_branch_root_external_mapping(device: Any) -> None:
+def _clear_saved_branch_root_external_mapping(device: "DynamicDevice") -> None:
     """
     Clear every branch root external-mapping entry before rebuilding the live contract.
 
@@ -826,7 +827,7 @@ def _clear_saved_branch_root_external_mapping(device: Any) -> None:
         model.external_mapping[mapping_ref] = None
 
 
-def _prune_saved_root_external_mapping_to_live_contract(device: Any) -> None:
+def _prune_saved_root_external_mapping_to_live_contract(device: "DynamicDevice") -> None:
     """
     Clear saved root external-mapping entries that are not in the live contract.
 
@@ -903,7 +904,7 @@ def _prune_saved_root_external_mapping_to_live_contract(device: Any) -> None:
                 model.external_mapping[reference] = None
 
 
-def _normalize_saved_branch_root_contract_from_live_sides(device: Any) -> None:
+def _normalize_saved_branch_root_contract_from_live_sides(device: "DynamicDevice") -> None:
     """
     Rebuild one saved branch external mapping from currently materialized side refs.
 
@@ -1045,7 +1046,7 @@ def _connection_exists_in_var_factory(var_factory: VarFactory,
     :param target_var: Target variable.
     :return: ``True`` when the connection already exists.
     """
-    existing_connection: Any
+    existing_connection: Connection
 
     for existing_connection in var_factory.get_connections_dict().get(source_var.non_mutable_uid, list()):
         if existing_connection.non_mutable_uid == target_var.non_mutable_uid:
@@ -1056,7 +1057,7 @@ def _connection_exists_in_var_factory(var_factory: VarFactory,
     return False
 
 
-def seed_template_derived_dynamic_connection_intents(device: Any) -> None:
+def seed_template_derived_dynamic_connection_intents(device: "DynamicDevice") -> None:
     """
     Record template-derived root-interface intents for one template-backed EMT model.
 
@@ -1143,7 +1144,7 @@ def seed_template_derived_dynamic_connection_intents(device: Any) -> None:
     normalize_dynamic_connection_intents(model)
 
 
-def seed_branch_template_derived_dynamic_connection_intents(device: Any) -> None:
+def seed_branch_template_derived_dynamic_connection_intents(device: "DynamicDevice") -> None:
     """
     Record template-derived root-interface intents for one branch-like EMT template.
 
@@ -1158,7 +1159,7 @@ def seed_branch_template_derived_dynamic_connection_intents(device: Any) -> None
     seed_template_derived_dynamic_connection_intents(device=device)
 
 
-def rematerialize_saved_dynamic_connection_intents(device: Any,
+def rematerialize_saved_dynamic_connection_intents(device: "DynamicDevice",
                                                    var_factory: VarFactory) -> None:
     """
     Restore active symbolic root-interface connections from persisted intent records.
@@ -1238,8 +1239,8 @@ def rematerialize_saved_dynamic_connection_intents(device: Any,
                         pass
 
 
-def reconcile_saved_emt_model_against_current_topology(device: Any,
-                                                       grid: Any,
+def reconcile_saved_emt_model_against_current_topology(device: "DynamicDevice",
+                                                       grid: "MultiCircuit",
                                                        var_factory: VarFactory) -> None:
     """
     Synchronize one saved EMT device model against the current static topology.
@@ -1308,7 +1309,7 @@ class EmtBusShellSyncResult(NamedTuple):
     voltage_vars: Dict[VarPowerFlowReferenceType, Var | None]
 
 
-def _build_bus_shell_voltage_mapping(bus: Any) -> Dict[VarPowerFlowReferenceType, Var | None]:
+def _build_bus_shell_voltage_mapping(bus: "Bus") -> Dict[VarPowerFlowReferenceType, Var | None]:
     """
     Build the authoritative bus-voltage mapping for one live EMT shell.
 
@@ -1335,6 +1336,8 @@ def _detect_bus_shell_ac_mask(bus_model: Block) -> List[bool] | None:
     :param model: Bus EMT shell to inspect.
     :return: Mask ordered as ``[N, A, B, C]``, or ``None`` when malformed.
     """
+    from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_algebraic_vars
+
     try:
         get_bus_emt_algebraic_vars(bus_model)
     except (AttributeError, TypeError, ValueError):
@@ -1350,7 +1353,7 @@ def _detect_bus_shell_ac_mask(bus_model: Block) -> List[bool] | None:
     ])
 
 
-def _bus_shell_matches_expected_voltage_contract(bus: Any,
+def _bus_shell_matches_expected_voltage_contract(bus: "Bus",
                                                  model: Block,
                                                  expected_mask: List[bool] | None,
                                                  old_mask: List[bool] | None) -> bool:
@@ -1531,8 +1534,8 @@ def _rebind_emt_terminal(model: Block, bus_model: Block,
     model.out_vars = outputs
 
 
-def synchronize_emt_bus_shell_with_grid(bus: Any,
-                                        grid: Any,
+def synchronize_emt_bus_shell_with_grid(bus: "Bus",
+                                        grid: "MultiCircuit",
                                         var_factory: VarFactory) -> EmtBusShellSyncResult:
     """Rebuild a stale bus and reconnect non-empty device models found in the grid.
 
@@ -1541,6 +1544,8 @@ def synchronize_emt_bus_shell_with_grid(bus: Any,
     :param var_factory: Factory owning connected device variables.
     :return: Whether the bus was rebuilt and its previous and current masks.
     """
+    from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template, get_bus_mask
+
     expected_mask: List[bool] | None = None
     old_mask: List[bool] | None = None
     old_model: Block = bus.emt_model
@@ -1555,7 +1560,7 @@ def synchronize_emt_bus_shell_with_grid(bus: Any,
     rebuild_required: bool = old_model.empty() or not _bus_shell_matches_expected_voltage_contract(
         bus=bus, model=old_model, expected_mask=expected_mask, old_mask=old_mask)
     endpoints: List[tuple[Block, EmtBusConnectionSide]] = list()
-    device: Any
+    device: DynamicDevice
     model: Block
     side: EmtBusConnectionSide
     if rebuild_required:
@@ -1590,7 +1595,7 @@ def synchronize_emt_bus_shell_with_grid(bus: Any,
                                  new_mask=expected_mask, voltage_vars=_build_bus_shell_voltage_mapping(bus=bus))
 
 
-def _has_materialized_emt_model(device: Any) -> bool:
+def _has_materialized_emt_model(device: "DynamicDevice") -> bool:
     """
     Check whether one device already owns one materialized EMT model.
 
@@ -1610,7 +1615,7 @@ def _has_materialized_emt_model(device: Any) -> bool:
         return False
 
 
-def register_saved_emt_model_vars_for_device(device: Any,
+def register_saved_emt_model_vars_for_device(device: "DynamicDevice",
                                              var_factory: VarFactory) -> None:
     """
     Register the vars of one saved EMT model block in the shared variable factory.
@@ -1676,7 +1681,7 @@ def register_saved_emt_model_vars_for_device(device: Any,
                 registered_diff_uids.add(model_var.non_mutable_uid)
 
 
-def unregister_saved_emt_model_var_connections_for_device(device: Any,
+def unregister_saved_emt_model_var_connections_for_device(device: "DynamicDevice",
                                                           var_factory: VarFactory) -> None:
     """
     Remove saved EMT var-factory connection edges currently associated to one device.
@@ -1695,9 +1700,9 @@ def unregister_saved_emt_model_var_connections_for_device(device: Any,
     previous_device_var_uids: set[int] = set()
     connected_uid: int
     outgoing_uid: int
-    existing_connections: list[Any]
-    kept_connections: list[Any]
-    connection: Any
+    existing_connections: list[Connection]
+    kept_connections: list[Connection]
+    connection: Connection
 
     if previous_device_vars is None:
         return
@@ -1728,7 +1733,7 @@ def unregister_saved_emt_model_var_connections_for_device(device: Any,
             pass
 
 
-def unify_saved_emt_model_root_contract(device: Any) -> None:
+def unify_saved_emt_model_root_contract(device: "DynamicDevice") -> None:
     """
     Unify one saved EMT model root external mapping with the actual root IO vars.
 
@@ -1853,7 +1858,7 @@ def unify_saved_emt_model_root_contract(device: Any) -> None:
     model.out_vars = pruned_out_vars
 
 
-def synchronize_saved_emt_root_contract_identity(device: Any) -> None:
+def synchronize_saved_emt_root_contract_identity(device: "DynamicDevice") -> None:
     """
     Copy propagated root IO identities into the saved EMT external mapping.
 
@@ -1929,7 +1934,7 @@ def synchronize_saved_emt_root_contract_identity(device: Any) -> None:
     rehash_block_tree_var_keyed_dicts(root_block=model)
 
 
-def synchronize_saved_emt_root_contract_from_bus(device: Any) -> None:
+def synchronize_saved_emt_root_contract_from_bus(device: "DynamicDevice") -> None:
     """
     Copy live bus-shell identities into the saved EMT root contract.
 
@@ -2010,7 +2015,7 @@ def synchronize_saved_emt_root_contract_from_bus(device: Any) -> None:
     rehash_block_tree_var_keyed_dicts(root_block=model)
 
 
-def synchronize_saved_rms_root_mappings_from_children(device: Any) -> None:
+def synchronize_saved_rms_root_mappings_from_children(device: "DynamicDevice") -> None:
     """Synchronize the live child RMS interface into the saved model root.
 
     Models assembled in the Dynamic Editor store complete device templates as
@@ -2093,8 +2098,8 @@ def synchronize_saved_rms_root_mappings_from_children(device: Any) -> None:
                 pass
 
 
-def ensure_bus_emt_model_matches_grid_mask(bus: Any,
-                                           grid: Any,
+def ensure_bus_emt_model_matches_grid_mask(bus: "Bus",
+                                           grid: "MultiCircuit",
                                            var_factory: VarFactory) -> bool:
     """
     Ensure one bus EMT shell matches the current grid-derived phase contract.
@@ -2116,8 +2121,8 @@ def ensure_bus_emt_model_matches_grid_mask(bus: Any,
     return sync_result.changed
 
 
-def initialize_bus_emt_from_grid_with_fallback(bus: Any,
-                                               grid: Any,
+def initialize_bus_emt_from_grid_with_fallback(bus: "Bus",
+                                               grid: "MultiCircuit",
                                                var_factory: VarFactory) -> None:
     """
     Initialize one bus EMT shell from the grid using the safe fallback mask.
@@ -2132,6 +2137,8 @@ def initialize_bus_emt_from_grid_with_fallback(bus: Any,
     :param var_factory: Shared variable factory.
     :return: None.
     """
+    from VeraGridEngine.Templates.Emt.buses.bus_emt_template import BusEmtTemplate, get_bus_mask
+
     bus.emt_model = BusEmtTemplate(
         vf=var_factory,
         mask=get_bus_mask(grid=grid, bus=bus),
@@ -2189,7 +2196,7 @@ def connect_line_rms_from(
 
     normalize_branch_rms_root_contract_from(mdl1=mdl1, mdl2=mdl2)
 
-def connect_models_power_flow(mdl1: Block, mdl2: Block, var_factory: VarFactory):
+def connect_models_power_flow(mdl1: Block, mdl2: Block, var_factory: VarFactory) -> None:
     """
     This function substitutes input variables for output variables to connect two rms models
     :param mdl1:
@@ -2436,6 +2443,7 @@ def normalize_single_bus_rms_root_contract(mdl1: Block, mdl2: Block) -> None:
 
     normalize_rms_root_contract(mdl2=mdl2, var_mapping=var_mapping)
 
+
 def connect_line_phasor_rms_from(mdl1: Block, mdl2: Block, var_factory:VarFactory):
     """
     Connect phasor RMS models for the 'from' end of a line.
@@ -2609,7 +2617,7 @@ def _connect_rms_bus_voltage_reference(
     return True
 
 
-def connect_bus_variables_rms(device: Any,
+def connect_bus_variables_rms(device: "DynamicDevice",
                               model: Block,
                               var_factory: VarFactory | None) -> None:
     """Connect one RMS device model to the voltage variables of its buses.
@@ -2623,6 +2631,8 @@ def connect_bus_variables_rms(device: Any,
     :param var_factory: Shared symbolic variable factory, when available.
     :return: None.
     """
+    from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
+
     if device.device_type == DeviceType.VscDevice:
         # A VeraGrid VSC is oriented from its positive DC bus to its AC bus.
         # Its RMS template therefore combines Vf_dc (and, for a bipolar VSC,
@@ -2746,6 +2756,7 @@ def connect_bus_variables_rms(device: Any,
     elif device.device_type in [DeviceType.BranchDevice,
                                 DeviceType.LineDevice,
                                 DeviceType.Transformer2WDevice,
+                                DeviceType.WindingDevice,
                                 DeviceType.Transformer3WDevice,
                                 DeviceType.HVDCLineDevice,
                                 DeviceType.SwitchDevice,
@@ -2794,7 +2805,7 @@ def connect_bus_variables_rms(device: Any,
         if var_factory is not None:
             connect_models_power_flow(device.bus.rms_model, model, var_factory)
 
-def connect_pending_injection_bus_variables_emt(bus: Any,
+def connect_pending_injection_bus_variables_emt(bus: "Bus",
                                                 var_factory: VarFactory) -> None:
     """
     Connect deferred single-bus EMT devices once one bus shell exists.
@@ -2809,7 +2820,7 @@ def connect_pending_injection_bus_variables_emt(bus: Any,
     :return: None.
     """
     pending_devices = bus.get_pending_emt_devices()
-    pending_device: Any
+    pending_device: DynamicDevice
 
     for pending_device in pending_devices:
         if bus.emt_model.empty():
@@ -2824,7 +2835,7 @@ def connect_pending_injection_bus_variables_emt(bus: Any,
                 bus.remove_pending_emt_device(pending_device)
 
 
-def initialize_bus_emt_from_local_device_context(bus: Any,
+def initialize_bus_emt_from_local_device_context(bus: "Bus",
                                                  var_factory: VarFactory) -> None:
     """
     Materialize one minimal EMT bus shell from the local bus context.
@@ -2839,6 +2850,8 @@ def initialize_bus_emt_from_local_device_context(bus: Any,
     :param var_factory: Shared symbolic variable factory.
     :return: None.
     """
+    from VeraGridEngine.Templates.Emt.buses.bus_emt_template import BusEmtTemplate
+
     default_mask: list[bool]
 
     if bus.is_dc:
@@ -2852,9 +2865,9 @@ def initialize_bus_emt_from_local_device_context(bus: Any,
                                    name=f"{bus.name}_emt").block
 
 
-def _connect_branch_emt_model_to_bus(device: Any,
+def _connect_branch_emt_model_to_bus(device: "DynamicDevice",
                                      model: Block,
-                                     bus: Any,
+                                     bus: "Bus",
                                      side: EmtBusConnectionSide,
                                      var_factory: VarFactory) -> None:
     """
@@ -2890,7 +2903,7 @@ def _connect_branch_emt_model_to_bus(device: Any,
             else:
                 pass
 
-def attach_emt_model_to_buses(device: Any,
+def attach_emt_model_to_buses(device: "DynamicDevice",
                               model: Block,
                               var_factory: VarFactory) -> None:
     """
@@ -2968,11 +2981,11 @@ def attach_emt_model_to_buses(device: Any,
             synchronize_saved_emt_root_contract_from_bus(device=device)
 
 
-def connect_bus_variables_emt(device: Any,
+def connect_bus_variables_emt(device: "DynamicDevice",
                               model: Block,
                               var_factory: VarFactory | None,
                               allow_deferred_connection: bool = False,
-                              grid: Any | None = None) -> None:
+                              grid: "MultiCircuit" | None = None) -> None:
     """
     connect the bus variables of the model with the api_object bus variables
     :param device:
@@ -2984,7 +2997,7 @@ def connect_bus_variables_emt(device: Any,
     :param allow_deferred_connection:
     :type allow_deferred_connection:
     :param grid: Owning circuit used for immediate EMT rebinding after bus rebuilds.
-    :type grid: Any | None
+    :type grid: MultiCircuit | None
     :return:
     :rtype:
     """
@@ -3057,7 +3070,7 @@ def connect_bus_variables_emt(device: Any,
                                   var_factory=var_factory)
 
 
-def set_rms_model(device: Any, model:Block, var_factory: VarFactory):
+def set_rms_model(device: "DynamicDevice", model: Block, var_factory: VarFactory) -> None:
     """
     Set the RMS model
     :return:
@@ -3445,7 +3458,7 @@ def connect_vsc_emt_to(mdl1: Block, mdl2: Block, var_factory:VarFactory, is_dc_b
         var_factory.add_connections([inpt], [outp])
 
 
-def set_emt_model(device: Any, model: Block, var_factory: VarFactory):
+def set_emt_model(device: "DynamicDevice", model: Block, var_factory: VarFactory) -> None:
     """
     Sets the EMT model for a given device, connects it to the bus(es),
     and stores the same hierarchical runtime shape used by GUI assignment.

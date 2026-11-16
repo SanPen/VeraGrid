@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 0
 - Top-level function count: 1
-- Representative imports: time, numpy, typing, VeraGridEngine.basic_structures, VeraGridEngine.Utils.NumericalMethods.common, VeraGridEngine.Utils.NumericalMethods.sparse_solve, VeraGridEngine.basic_structures
+- Representative imports: time, numpy, typing, VeraGridEngine.basic_structures, VeraGridEngine.Utils.NumericalMethods.common, VeraGridEngine.Utils.Sparse.sparse_solve, VeraGridEngine.basic_structures
 
 ## Function: newton_raphson(func, func_args, x0, tol, max_iter, trust, verbose, logger)
 

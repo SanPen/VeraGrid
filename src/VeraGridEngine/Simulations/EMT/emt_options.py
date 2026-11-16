@@ -10,6 +10,7 @@ from VeraGridEngine.Simulations.options_template import OptionsTemplate
 from VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver import StructuralCompiledWarmupPolicy
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtInitializationMethod, EmtSolverTypes, EmtProblemTypes, SparseSolver
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
+from VeraGridEngine.Utils.Sparse.sparse_solve import get_default_sparse_lu_solver
 
 
 
@@ -150,7 +151,7 @@ class EmtOptions(OptionsTemplate):
                  newton_backtracking_min_alpha: float = 1e-4,
                  newton_backtracking_max_iter: int = 6,
                  compiled_warmup_policy: StructuralCompiledWarmupPolicy = StructuralCompiledWarmupPolicy.Adaptive,
-                 sparse_solver: SparseSolver = SparseSolver.SuperLU,
+                 sparse_solver: SparseSolver | None = None,
                  external_sparse_solver_directory: str = "",
                  external_sparse_solver_plugin_name: str = "",
                  allow_internal_sparse_fallback: bool = True,
@@ -225,7 +226,11 @@ class EmtOptions(OptionsTemplate):
         self.newton_backtracking_min_alpha = newton_backtracking_min_alpha
         self.newton_backtracking_max_iter = newton_backtracking_max_iter
         self.compiled_warmup_policy: StructuralCompiledWarmupPolicy = compiled_warmup_policy
-        self.sparse_solver: SparseSolver = sparse_solver
+        # None selects the default factorisation-reusing solver: KLU when installed, otherwise SuperLU.
+        if sparse_solver is None:
+            self.sparse_solver: SparseSolver = get_default_sparse_lu_solver()
+        else:
+            self.sparse_solver = sparse_solver
         self.external_sparse_solver_directory: str = external_sparse_solver_directory
         self.external_sparse_solver_plugin_name: str = external_sparse_solver_plugin_name
         self.allow_internal_sparse_fallback: bool = allow_internal_sparse_fallback

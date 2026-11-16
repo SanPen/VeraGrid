@@ -11,7 +11,7 @@ from scipy.sparse import csc_matrix, random, hstack, vstack
 from scipy.sparse import rand
 from scipy.sparse.linalg import MatrixRankWarning, spsolve as spsolve_scipy
 from VeraGridEngine.Utils.Sparse.csc2 import (sp_slice, sp_slice_rows, csc_stack_2d_ff, scipy_to_mat, spsolve_csc,
-                                              extend, CSC, csc_multiply_ff, csc_add_ff)
+                                              extend, CSC, csc_multiply_ff, csc_add_ff, mat_to_scipy)
 
 
 def get_scipy_random_matrix(m: int | None = None, n: int | None = None) -> csc_matrix:
@@ -130,6 +130,19 @@ def test_spsolve() -> None:
 
         except RuntimeError:
             ok_a = False
+
+
+def test_csc_add_ff_takes_more_rows_than_columns() -> None:
+    """The workspace follows the rows, so a tall sum stays within bounds and matches scipy."""
+    a: csc_matrix = rand(300, 7, density=0.3, format="csc", random_state=1)
+    b: csc_matrix = rand(300, 7, density=0.3, format="csc", random_state=2)
+    expected: np.ndarray = (2.0 * a - 0.5 * b).toarray()
+    # The interpreted kernel checks its own indexing, so a workspace shorter than the rows raises IndexError here;
+    # the compiled scatter it calls may already have written past that workspace, so the process can still crash
+    checked: csc_matrix = mat_to_scipy(csc_add_ff.py_func(scipy_to_mat(a), scipy_to_mat(b), 2.0, -0.5))
+    assert np.allclose(checked.toarray(), expected)
+    result: csc_matrix = mat_to_scipy(csc_add_ff(scipy_to_mat(a), scipy_to_mat(b), 2.0, -0.5))
+    assert np.allclose(result.toarray(), expected)
 
 
 def test_extend():

@@ -10,7 +10,7 @@ from typing import Any, Dict
 import numba as nb
 from numba import types
 import numpy as np
-from scipy.sparse import csc_matrix
+from scipy.sparse import spmatrix
 from scipy.sparse.linalg import SuperLU, splu
 
 from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import (
@@ -18,7 +18,7 @@ from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface impo
     SparseLinearSolverBackend,
     SparseLinearSolverBackendProvider,
 )
-from VeraGridEngine.basic_structures import Vec
+from VeraGridEngine.basic_structures import CscMat, Vec
 from VeraGridEngine.enumerations import SparseSolver
 
 
@@ -121,7 +121,7 @@ class SuperLUFactorizationHandle(SparseLinearFactorizationHandle):
     def __init__(
             self,
             lu_obj: SuperLU,
-            active_matrix: csc_matrix,
+            active_matrix: CscMat,
             ordered_bundle_active: bool,
             has_persistent_ordering: bool,
             inverse_column_perm: np.ndarray,
@@ -143,7 +143,7 @@ class SuperLUFactorizationHandle(SparseLinearFactorizationHandle):
         :rtype: None
         """
         self._lu_obj: SuperLU = lu_obj
-        self._active_matrix: csc_matrix = active_matrix
+        self._active_matrix: CscMat = active_matrix
         self._ordered_bundle_active: bool = ordered_bundle_active
         self._has_persistent_ordering: bool = has_persistent_ordering
         self._inverse_column_perm: np.ndarray = inverse_column_perm
@@ -166,7 +166,7 @@ class SuperLUFactorizationHandle(SparseLinearFactorizationHandle):
         else:
             out_solution[:] = raw_solution
 
-    def get_active_matrix(self) -> csc_matrix:
+    def get_active_matrix(self) -> CscMat:
         """
         Return the sparse matrix associated with the current factorization.
 
@@ -194,7 +194,7 @@ class SuperLUSparseBackend(SparseLinearSolverBackend):
         "_stats",
     ]
 
-    def __init__(self, base_matrix: csc_matrix, base_data: Vec) -> None:
+    def __init__(self, base_matrix: CscMat, base_data: Vec) -> None:
         """
         Build the SuperLU EMT sparse backend.
 
@@ -208,10 +208,10 @@ class SuperLUSparseBackend(SparseLinearSolverBackend):
         n_cols: int = int(base_matrix.shape[1])
         identity_perm: np.ndarray = np.arange(n_cols, dtype=np.int32)
 
-        self._base_matrix: csc_matrix = base_matrix
+        self._base_matrix: CscMat = base_matrix
         self._base_data: Vec = base_data
         self._base_indptr_i32: np.ndarray = np.asarray(base_matrix.indptr, dtype=np.int32)
-        self._ordered_matrix: csc_matrix | None = None
+        self._ordered_matrix: CscMat | None = None
         self._ordered_data: Vec | None = None
         self._ordered_indptr_i32: np.ndarray | None = None
         self._column_perm: np.ndarray = identity_perm.copy()
@@ -296,7 +296,7 @@ class SuperLUSparseBackend(SparseLinearSolverBackend):
                     inverse_perm[int(self._column_perm[perm_index])] = perm_index
                     perm_index += 1
 
-                ordered_matrix: csc_matrix = self._base_matrix[:, self._column_perm].copy()
+                ordered_matrix: CscMat = self._base_matrix[:, self._column_perm].copy()
                 self._ordered_matrix = ordered_matrix
                 self._ordered_data = ordered_matrix.data
                 self._ordered_indptr_i32 = np.asarray(ordered_matrix.indptr, dtype=np.int32)
@@ -306,7 +306,7 @@ class SuperLUSparseBackend(SparseLinearSolverBackend):
         else:
             return
 
-    def factorize(self, matrix: csc_matrix, analysis_handle: object | None) -> SparseLinearFactorizationHandle:
+    def factorize(self, matrix: CscMat, analysis_handle: object | None) -> SparseLinearFactorizationHandle:
         """
         Factorize the current EMT Jacobian.
 
@@ -317,7 +317,7 @@ class SuperLUSparseBackend(SparseLinearSolverBackend):
         :return: SuperLU factorization handle.
         :rtype: SparseLinearFactorizationHandle
         """
-        _unused_matrix: csc_matrix = matrix
+        _unused_matrix: CscMat = matrix
         _unused_analysis_handle: object | None = analysis_handle
         lu_obj: SuperLU
 
@@ -331,7 +331,7 @@ class SuperLUSparseBackend(SparseLinearSolverBackend):
             )
             lu_obj = splu(self._ordered_matrix, permc_spec="NATURAL")
             self._stats["ordering_reuses"] += 1.0
-            active_matrix: csc_matrix = self._ordered_matrix
+            active_matrix: CscMat = self._ordered_matrix
             ordered_bundle_active: bool = True
         else:
             lu_obj = splu(self._base_matrix, permc_spec="COLAMD")
@@ -392,7 +392,7 @@ class SuperLUSparseBackendProvider(SparseLinearSolverBackendProvider):
         """
         return True
 
-    def create_backend(self, base_matrix: csc_matrix, base_data: Vec) -> SparseLinearSolverBackend:
+    def create_backend(self, base_matrix: CscMat, base_data: Vec) -> SparseLinearSolverBackend:
         """
         Create the internal SuperLU sparse backend.
 
@@ -404,3 +404,17 @@ class SuperLUSparseBackendProvider(SparseLinearSolverBackendProvider):
         :rtype: SparseLinearSolverBackend
         """
         return SuperLUSparseBackend(base_matrix=base_matrix, base_data=base_data)
+
+    def solve_once(self, matrix: spmatrix, rhs: Vec) -> Vec:
+        """
+        Solve one sparse linear system with SciPy SuperLU, keeping no state.
+
+        Factorises the caller's matrix directly (no copy and no persistent ordering),
+        exactly as the one-shot SuperLU solve always has; a singular matrix raises
+        RuntimeError.
+
+        :param matrix: Square sparse system matrix.
+        :param rhs: Right-hand side vector.
+        :return: Solution vector.
+        """
+        return splu(matrix).solve(rhs)

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from pathlib import Path
@@ -22,7 +26,7 @@ from VeraGridEngine.IO.fmu.fmu_device_integration import (
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import Const
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import get_shunt_r_emt_template
 from VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_driver import SmallSignalStabilityEmtDriver
 from VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_options import SmallSignalStabilityEmtOptions
 from VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_results import SmallSignalStabilityEmtResults

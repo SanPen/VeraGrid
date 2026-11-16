@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent transfer-function and switching checks for polynomial stabilizers."""
 from __future__ import annotations
@@ -6,7 +10,7 @@ import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.power_system_stabilizers.ieeest import (
+from VeraGridEngine.Templates.Rms.power_system_stabilizers.ieeest import (
     IeeestParameters, build_ieeest_template,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -76,7 +80,7 @@ def test_dual_input_stabilizer_transfer(channel: int, frequency: float, reset_nu
                                         phase_times: tuple[tuple[float, float], tuple[float, float], tuple[float, float]],
                                         state_count: int) -> None:
     """Both signed measurement paths independently reproduce the full six-stage transfer."""
-    from VeraGridEngine.Templates.Rms.international_standards.power_system_stabilizers.iee2st import (
+    from VeraGridEngine.Templates.Rms.power_system_stabilizers.iee2st import (
         Iee2stParameters, build_iee2st_template,
     )
     settings: Iee2stParameters = Iee2stParameters(gains=(2, -3), transducer_times=transducer_times,

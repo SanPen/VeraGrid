@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import numpy as np
@@ -23,13 +27,13 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDa
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
-from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import (
+from VeraGridEngine.Templates.Emt.load_characteristics.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import (
     get_generator_thevenin_rl_emt_template_with_ref,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block, build_name_to_var_lookup
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, symbolic_to_string
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 from VeraGridEngine.enumerations import (

@@ -9,12 +9,17 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
-from VeraGridEngine.enumerations import DynamicEventTransitionType, ParamPowerFlowReferenceType
+from VeraGridEngine.enumerations import DynamicEventTransitionType, DynamicSimulationMode, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy
+from VeraGridEngine.Utils.procedural_logic import (
+    BlockProceduralLogicUpdater,
+    ProceduralExpressionMode,
+    build_boundary_updater_from_block,
+)
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, RmsInitializationMethod, DeviceType
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
@@ -47,6 +52,7 @@ from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import (
     assign_static_api_object_mapping_for_device,
     get_api_parameter_initial_value_by_uid,
+    resolve_constant_parameter_initial_value,
 )
 from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.IO.fmu.co_simulation import (
@@ -178,6 +184,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
         "_constant_params",
         "_parameters_values",
         "_variable_parameters_values",
+        "_procedural_logic_updater",
         "_glob_time",
         "_event_params_fn",
         "_rhs_state_fn",
@@ -185,8 +192,10 @@ class RmsProblemPhasor(RmsProblemTemplate):
         "_derivative_fn",
         "_j11_fn",
         "_j12_fn",
+        "_j13_fn",
         "_j21_fn",
         "_j22_fn",
+        "_j23_fn",
         "_vars_info",
         "_fmu_cs_adapters",
         "_fmu_cs_initialized",
@@ -211,7 +220,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
         :param logger: Caller-owned diagnostics; when absent, create a local Logger.
         :return: None; initialize the existing phasor problem instance.
         """
-        super().__init__()
+        super().__init__(progress_signal=progress_signal,
+                         sparse_solver=options.sparse_solver, logger=logger)
 
         # Keep constructor diagnostics in the logger already owned by the driver.
         self.logger: Logger = logger if logger is not None else Logger()
@@ -232,10 +242,13 @@ class RmsProblemPhasor(RmsProblemTemplate):
         self._state_vars: List[Var] = list()
         self._state_eqs: List[Expr] = list()
         self._diff_vars: List[Var] = list()
+        self._j13_fn = None
+        self._j23_fn = None
         self._variable_parameters: List[Var] = list()
         self._event_parameters_eqs: List[Expr | Const] = list()
         self._constant_parameters: List[Var] = list()
         self._parameters_values: List[Const] = list()
+        self._procedural_logic_updater: BlockProceduralLogicUpdater | None = None
         self._fmu_cs_adapters: List[object] = list()
         self._fmu_cs_initialized: bool = False
         self._fmu_me_adapters: List[object] = list()
@@ -470,7 +483,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
                             VARS_NAME=self.VARS_NAME,
                             DIFF_NAME=self.DIFF_NAME,
                             CONSTANT_PARAMS_NAME=self.CONSTANT_PARAMS_NAME,
-                        )
+                            sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
                     else:
                         raise ValueError("Not implemented initialization method")
 
@@ -621,7 +634,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
                         VARS_NAME=self.VARS_NAME,
                         DIFF_NAME=self.DIFF_NAME,
                         CONSTANT_PARAMS_NAME=self.CONSTANT_PARAMS_NAME,
-                    )
+                        sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
 
                 else:
                     raise ValueError("Not implemented initialization method")
@@ -725,7 +738,12 @@ class RmsProblemPhasor(RmsProblemTemplate):
                     # the broader temporary device mapping or source model.
                     del mapped_load_values
                 else:
-                    pass
+                    # Source models need their static MVA and device parameters before block unification.
+                    assign_static_api_object_mapping_for_device(
+                        grid=grid, device=elm, mdl=elm.rms_model,
+                        problem_mapping=self._static_parameters_values_mapping,
+                        logger=self.logger,
+                    )
                 elm.rms_model.unify_blocks()
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
@@ -835,8 +853,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
                         CONSTANT_PARAMS_NAME=self.CONSTANT_PARAMS_NAME,
                         dtau0=1e0,
                         max_iter=1000,
-                        tol=1e-6
-                    )
+                        tol=1e-6,
+                        sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
                 else:
                     raise ValueError("Not implemented initialization method")
 
@@ -1027,6 +1045,14 @@ class RmsProblemPhasor(RmsProblemTemplate):
             self._j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs, self._algebraic_vars, "j22")
             timings["J22 only (no states)"] = _toc(t0)
 
+        if self._diff_vars:
+            t0 = _tic()
+            self._j13_fn = rms_compiler.compile_sparse_jacobian(
+                self._state_eqs, self._diff_vars, "j13", independent_partials=True)
+            self._j23_fn = rms_compiler.compile_sparse_jacobian(
+                self._algebraic_eqs, self._diff_vars, "j23", independent_partials=True)
+            timings["Derivative Jacobian partials"] = _toc(t0)
+
         if options.verbose > 0:
             print(f"Model compiled with {self._n_vars} variables")
             print("\nCompilation timing summary:")
@@ -1034,16 +1060,18 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 print(f"  {k:30s}: {v:8.4f} s")
             print(f"\nTotal JIT compile time: {sum(timings.values()):.4f} s")
 
-        # Replay numeric histories at the initial time, while preserving the
-        # existing two evaluations used to initialize retained Expr baselines.
-        self.reset_boundary_update_state()
-
         self._constant_params = np.array([const.value for const in self._parameters_values])
+        self._procedural_logic_updater = build_boundary_updater_from_block(
+            problem=self,
+            expression_mode=ProceduralExpressionMode.Interpreted,
+        )
+        # Replay numeric histories and initialize retained procedural modes.
+        self.reset_boundary_update_state()
 
         # Replay and its complete UID snapshot precede global consistency.
         if self.options.initialization_method in (
                 RmsInitializationMethod.ConsistentNewton, RmsInitializationMethod.Auto):
-            consistency_converged: bool = run_rms_consistent_initialization(problem=self, options=self.options, logger=self.logger)
+            consistency_converged: bool = run_rms_consistent_initialization(problem=self, options=self.options, logger=self.logger, sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
             if consistency_converged:
                 pass
             else:
@@ -1138,28 +1166,40 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 self._alias_names_dict[ep.uid] = f"{self.CONSTANT_PARAMS_NAME}_{self._n_params}"
                 self._uid2idx_params[ep.uid] = self._n_params
                 self._constant_parameters.append(ep)
-                self._parameters_values.append(const)
+                resolved_value: Const = resolve_constant_parameter_initial_value(
+                    device=elm,
+                    simulation_mode=DynamicSimulationMode.RMS,
+                    root_block=elm.rms_model,
+                    owner_block=block_item,
+                    parameter=ep,
+                    declared_value=const,
+                    problem_mapping=self._static_parameters_values_mapping,
+                )
+                self._parameters_values.append(resolved_value)
                 self._n_params += 1
 
             # m is for variable parameters
-            for ep, eq in block_item.event_dict.items():
-                k = len(self._variable_parameters)
-                if ep.uid in self._uid2idx_event_params:
-                    raise ValueError(f"Event parameter '{ep.name}' (uid={ep.uid}) is already registered in the system. "
-                                   f"Previous device may have created a duplicate event parameter.")
-                self._compiler_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{k}]"
-                self._alias_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{k}"
-                self._uid2idx_event_params[ep.uid] = k
-                self._variable_parameters.append(ep)
-                # The problem owns initial event values; the original equation
-                # remains available to persistence and later model inspection.
-                mapped_initial_value: Const | None = get_api_parameter_initial_value_by_uid(
-                    parameter=ep, problem_mapping=self._static_parameters_values_mapping)
-                if mapped_initial_value is None:
-                    self._event_parameters_eqs.append(eq)
-                else:
-                    self._event_parameters_eqs.append(mapped_initial_value)
-                self._n_event_params += 1
+            parameter_dict: Dict[Var, Expr | Const]
+            ep: Var
+            eq: Expr | Const
+            for parameter_dict in (block_item.event_dict, block_item.mode_dict):
+                for ep, eq in parameter_dict.items():
+                    k: int = len(self._variable_parameters)
+                    if ep.uid in self._uid2idx_event_params:
+                        raise ValueError(f"Event parameter '{ep.name}' (uid={ep.uid}) is already registered in the system. "
+                                         f"Previous device may have created a duplicate event parameter.")
+                    self._compiler_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{k}]"
+                    self._alias_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{k}"
+                    self._uid2idx_event_params[ep.uid] = k
+                    self._variable_parameters.append(ep)
+                    # Runtime modes and event parameters share the initializer vector.
+                    mapped_initial_value: Const | None = get_api_parameter_initial_value_by_uid(
+                        parameter=ep, problem_mapping=self._static_parameters_values_mapping)
+                    if mapped_initial_value is None:
+                        self._event_parameters_eqs.append(eq)
+                    else:
+                        self._event_parameters_eqs.append(mapped_initial_value)
+                    self._n_event_params += 1
 
             # l is for differential vars
             for v in block_item.diff_vars:
@@ -1453,11 +1493,23 @@ class RmsProblemPhasor(RmsProblemTemplate):
         :return: Earliest FMI event in ``(t_prev, t_target]`` or ``None``.
         """
 
-        return get_next_rms_fmu_me_event_time(
+        fmu_time: float | None = get_next_rms_fmu_me_event_time(
             problem=self,
             t_prev=t_prev,
             t_target=t_target,
         )
+        if self._procedural_logic_updater is None:
+            return fmu_time
+        else:
+            procedural_time: float | None = self._procedural_logic_updater.get_next_forced_event_time(
+                t_prev, t_target,
+            )
+            if fmu_time is None:
+                return procedural_time
+            elif procedural_time is None:
+                return fmu_time
+            else:
+                return min(fmu_time, procedural_time)
 
     def _run_explicit_initialization(
             self, mdl: Block, derivative_guess: Dict[int, float | int | complex | None],
@@ -1599,6 +1651,12 @@ class RmsProblemPhasor(RmsProblemTemplate):
             self._variable_parameters_values[parameter_index] = _evaluate_rms_runtime_parameter_value_from_events(
                 base_value=float(self._variable_parameters_values[parameter_index]),
                 event_list=events, t_curr=t)
+        if self._procedural_logic_updater is not None and x_snapshot is not None:
+            full_params: Vec = np.concatenate((self._variable_parameters_values.copy(), self._constant_params))
+            self._procedural_logic_updater.update(float(t), x_snapshot, full_params)
+            self._variable_parameters_values[:] = full_params[:self.get_variable_parameter_number()]
+        else:
+            pass
 
     def reset_boundary_update_state(self, t0: float = 0.0) -> None:
         """Reinitialize symbolic dependence and numeric replay at the requested time.
@@ -1609,8 +1667,18 @@ class RmsProblemPhasor(RmsProblemTemplate):
         # Preserve the established two evaluations for dependent expressions;
         # the same path also applies procedural histories on initialization.
         self._variable_parameters_values = np.ones(self.get_variable_parameter_number())
+        if self._procedural_logic_updater is not None:
+            self._procedural_logic_updater.reset()
+        else:
+            pass
         self.update_variable_params(float(t0))
         self.update_variable_params(float(t0))
+        if self._procedural_logic_updater is not None:
+            full_params: Vec = np.concatenate((self._variable_parameters_values.copy(), self._constant_params))
+            self._procedural_logic_updater.initialize_modes(float(t0), self.get_x0(), full_params)
+            self._variable_parameters_values[:] = full_params[:self.get_variable_parameter_number()]
+        else:
+            pass
         # Preserve the complete startup snapshot, including retained Expr
         # baselines and events before zero, without modifying source models.
         if t0 == 0.0:
@@ -1810,7 +1878,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
         # its compiled algebraic rows against this exact prepared snapshot.
         if self.options.initialization_method in (
                 RmsInitializationMethod.ConsistentNewton, RmsInitializationMethod.Auto):
-            consistency_converged: bool = run_rms_consistent_initialization(problem=self, options=self.options, logger=self.logger)
+            consistency_converged: bool = run_rms_consistent_initialization(problem=self, options=self.options, logger=self.logger, sparse_solver_backend_provider=self.get_sparse_solver_backend_provider())
             if consistency_converged:
                 pass
             else:

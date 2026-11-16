@@ -31,7 +31,7 @@ from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearMulti
 from VeraGridEngine.Utils.MIP.selected_interface import LpModel, LpExp, LpVar
 
 class BusVariables(Protocol):
-    """Describe the bus arrays shared by standard and strict NTC results."""
+    """Describe the bus arrays supplied by the NTC formulation."""
     __slots__ = ()
     Pinj: ObjMat
     Va: ObjMat
@@ -39,7 +39,7 @@ class BusVariables(Protocol):
 
 
 class ConverterVariables(Protocol):
-    """Describe converter powers supplied by either NTC formulation."""
+    """Describe converter powers supplied by the NTC formulation."""
     __slots__ = ()
     flows: ObjMat
 
@@ -69,7 +69,7 @@ class BranchVariables(Protocol):
 
 
 class BaseVariables(Protocol):
-    """Describe the existing standard/strict containers without circular imports."""
+    """Describe the NTC containers without circular imports."""
     __slots__ = ()
     bus_vars: BusVariables
     branch_vars: BranchVariables
@@ -973,13 +973,13 @@ class CompactState:
                 b: float = slope * min(owner.net.upper[ref] - owner.net.lower[local], np.pi / 2)
                 selectors: tuple[LpVar | None, LpVar | None] = add_clipped_flow(
                     prob, self.variables[k], constant + linear_dot(owner.prob, row, self.variables),
-                    item.rate, p0 + min(a, b), p0 + max(a, b), f'{prefix}_droop_{k}', binary=owner.strict)
+                    item.rate, p0 + min(a, b), p0 + max(a, b), f'{prefix}_droop_{k}', binary=not owner.consider_slacks)
                 self.upper_selectors[k] = selectors[0]
                 self.lower_selectors[k] = selectors[1]
             self.exact = True
             # With penalized limits the selectors start relaxed and the solve loop locks them at a
             # physical region, so contingencies add no binaries. 
-            self.relaxed = not owner.strict
+            self.relaxed = owner.consider_slacks
             added += 1
         else:
             pass  # The exact clipped controller equations are already present.
@@ -995,7 +995,7 @@ class CompactState:
         for branch in rows:
             if not self.rows[branch] and not self.out_mask[branch]:
                 expression = self.flow_constant(base, branch) + linear_dot(owner.prob, self.flow_row(branch), self.variables)
-                if owner.strict:
+                if not owner.consider_slacks:
                     up: float | LpVar = 0.0
                     dn: float | LpVar = 0.0
                 else:
@@ -1021,7 +1021,7 @@ class CompactContingencies:
         'contingencies',
         'prob',
         'logger',
-        'strict',
+        'consider_slacks',
         'mip_feasibility_tolerance',
         'vsc_control_lookup',
         'hvdc_control_lookup',
@@ -1044,18 +1044,18 @@ class CompactContingencies:
                  multi_contingencies: LinearMultiContingencies,
                  prob: LpModel,
                  logger: Logger,
-                 strict: bool = False,
+                 consider_slacks: bool = True,
                  droop_tolerance_mw: float = 0.1,
                  absorb_islands: bool = False,
                  worsening_tolerance: float = 0.02) -> None:
         """Initialize shared responses and fixed-capacity contingency bookkeeping.
 
         :param nc: Compiled numerical circuit for the current time step.
-        :param base_vars: Existing standard or strict NTC variable containers.
+        :param base_vars: Existing NTC variable containers.
         :param multi_contingencies: Selected and compiled contingency groups.
         :param prob: Solver model owning the symbolic expressions.
         :param logger: Destination for diagnostics and certification failures.
-        :param strict: Enforce hard contingency limits instead of penalized overload slacks.
+        :param consider_slacks: Add penalized overload slacks instead of hard contingency limits.
         :param droop_tolerance_mw: Solved droop law tolerance in MW. 
         :param absorb_islands: Absorb every part a contingency cuts off, even where converters could
                                rebalance it. Used only as the feasibility retry.
@@ -1071,7 +1071,7 @@ class CompactContingencies:
         self.contingencies: LinearMultiContingencies = multi_contingencies
         self.prob: LpModel = prob
         self.logger: Logger = logger
-        self.strict: bool = strict
+        self.consider_slacks: bool = consider_slacks
         self.mip_feasibility_tolerance: float = droop_tolerance_mw / nc.Sbase
         self.worsening_tolerance: float = worsening_tolerance
         self.vsc_control_lookup: dict[int, Control] = dict()

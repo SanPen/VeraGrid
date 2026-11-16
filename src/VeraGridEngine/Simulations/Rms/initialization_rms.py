@@ -15,6 +15,8 @@ import scipy.optimize as spo
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
 
+from VeraGridEngine.Utils.Sparse.sparse_solve import SparseProviderLinearSolver, resolve_sparse_lu_provider
+from VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend import SuperLUSparseBackendProvider
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -22,9 +24,9 @@ from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.basic_structures import Vec, Logger
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, SymbolicVector
 from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
-from VeraGridEngine.Utils.NumericalMethods.sparse_lu_selection import solve_sparse_system_once
-from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
-from VeraGridEngine.enumerations import RmsInitializationMethod, VarPowerFlowReferenceType
+from VeraGridEngine.Utils.Sparse.sparse_solve import solve_sparse_system_once
+from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Const, Expr, Var
+from VeraGridEngine.enumerations import RmsInitializationMethod, VarPowerFlowReferenceType, SparseSolver
 
 
 class RmsInitializationProblem(Protocol):
@@ -53,6 +55,15 @@ class RmsInitializationProblem(Protocol):
     DIFF_NAME: str
     VARIABLE_PARAMS_NAME: str
     CONSTANT_PARAMS_NAME: str
+
+    def get_sparse_solver_backend_provider(
+            self, sparse_solver: SparseSolver | None = None) -> SparseLinearSolverBackendProvider | None:
+        """Read the assembled problem's provider binding without owning factors.
+
+        :param sparse_solver: Requested enum, or None to read the current binding.
+        :return: Matching resolved provider, or None when the problem is unconfigured.
+        """
+        ...
 
     def get_x0(self) -> np.ndarray:
         """Return startup variables in the assembled global UID order.
@@ -137,7 +148,7 @@ def solve_rms_newton_correction(
         residual: Vec,
         reference_column: int | None,
         sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None,
-) -> Vec:
+        linear_solver: SparseProviderLinearSolver | None = None) -> Vec:
     """Solve one RMS Newton system while fixing an explicit gauge coordinate.
 
     AC RMS systems can retain one global voltage-angle coordinate while exposing
@@ -149,7 +160,8 @@ def solve_rms_newton_correction(
     :param residual: Residual vector whose correction is required.
     :param reference_column: Optional Jacobian column of the fixed gauge value.
     :param sparse_solver_backend_provider: Sparse LU provider for the direct
-        solves; None keeps SciPy spsolve.
+        solves; None keeps SciPy spsolve without a resident session.
+    :param linear_solver: Phase-owned resident factors, or None for the exact one-shot API.
     :return: Finite direct correction when the system is square or has one known
         gauge coordinate; otherwise the minimum-norm least-squares correction.
     """
@@ -158,7 +170,7 @@ def solve_rms_newton_correction(
     correction: Vec
 
     if row_count == column_count:
-        correction = solve_sparse_system_once(jacobian, -residual, sparse_solver_backend_provider)
+        correction = solve_sparse_system_once(jacobian, -residual, sparse_solver_backend_provider, linear_solver=linear_solver)
     else:
         has_single_reference_coordinate: bool = (
             row_count + 1 == column_count
@@ -209,10 +221,24 @@ def solve_rms_newton_correction(
                 equilibrated_jacobian,
                 -equilibrated_residual,
                 sparse_solver_backend_provider,
-            )
+                linear_solver=linear_solver)
             correction = column_scaling * equilibrated_correction
         else:
-            correction = sp.linalg.lsqr(jacobian, -residual)[0]
+            # Rectangular imported controller systems can mix very small
+            # machine constraints with high-gain controller equations. LSQR's
+            # default tolerances can stop before the Newton correction satisfies
+            # those constraints, stalling otherwise consistent initialization.
+            # Row scaling preserves the exact solution set and the minimum-norm
+            # choice for underdetermined systems; do not move fixed state values.
+            row_magnitudes = np.asarray(np.abs(jacobian).max(axis=1).toarray()).ravel()
+            row_magnitudes[row_magnitudes < 1.0e-14] = 1.0
+            row_scaling = 1.0 / row_magnitudes
+            correction = sp.linalg.lsqr(
+                sp.diags(row_scaling, format="csc") @ jacobian,
+                -residual * row_scaling,
+                atol=1.0e-12, btol=1.0e-12, conlim=1.0e12,
+                iter_lim=max(1000, 10 * min(row_count, column_count)),
+            )[0]
 
     return correction
 
@@ -223,7 +249,7 @@ def project_initial_algebraic_state(
         differential_values: Vec,
         tolerance: float,
         max_iter: int,
-) -> Tuple[Vec, bool, float]:
+        sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None) -> Tuple[Vec, bool, float]:
     """Project an RMS initial vector onto its algebraic constraint manifold.
 
     Explicit ``inc(...)`` equations seed controller states, while the remaining
@@ -236,6 +262,7 @@ def project_initial_algebraic_state(
     :param differential_values: Initial differential-variable values.
     :param tolerance: Required infinity norm of the algebraic residual.
     :param max_iter: Maximum Newton projection iterations.
+    :param sparse_solver_backend_provider: Optional resolved LU provider; inherit the matching problem binding before the existing SuperLU default.
     :return: Projected vector, convergence flag, and final residual norm.
     """
     projected_values: Vec = initial_values.copy()
@@ -247,6 +274,15 @@ def project_initial_algebraic_state(
     else:
         pass
 
+    # Direct helpers inherit selection, while every phase owns separate factors.
+    if sparse_solver_backend_provider is None:
+        sparse_solver_backend_provider = problem.get_sparse_solver_backend_provider()
+    else:
+        pass
+    projection_provider: SparseLinearSolverBackendProvider = (
+        SuperLUSparseBackendProvider() if sparse_solver_backend_provider is None
+        else sparse_solver_backend_provider)
+    linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(projection_provider)
     residual_inf: float = float(np.linalg.norm(residual, np.inf))
     iteration: int = 0
 
@@ -268,7 +304,7 @@ def project_initial_algebraic_state(
             jacobian=jacobian,
             residual=residual,
             reference_column=algebraic_reference_column,
-        )
+            sparse_solver_backend_provider=projection_provider, linear_solver=linear_solver)
 
         if np.all(np.isfinite(delta)):
             pass
@@ -438,8 +474,14 @@ def _max_abs_value(values: np.ndarray) -> float:
 def _solve_square_linear_system(
         matrix: sp.csc_matrix,
         rhs: np.ndarray,
-) -> np.ndarray:
-    """Solve a square Newton system with dense and sparse fallbacks."""
+        linear_solver: SparseProviderLinearSolver | None = None) -> np.ndarray:
+    """Solve current coefficients without changing the established dense threshold.
+
+    :param matrix: Square real reduced Jacobian.
+    :param rhs: Current scaled right-hand side.
+    :param linear_solver: This initialization's resident sparse phase, if supplied.
+    :return: Dense/direct correction or the existing LSQR singular recovery.
+    """
     if matrix.shape[0] <= 48:
         try:
             return np.linalg.solve(matrix.toarray(), rhs)
@@ -448,7 +490,7 @@ def _solve_square_linear_system(
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("error")
-            return spla.spsolve(matrix, rhs)
+            return solve_sparse_system_once(matrix, rhs, None, linear_solver)
     except Exception:
         return np.asarray(spla.lsqr(matrix, rhs)[0], dtype=np.float64)
 
@@ -456,8 +498,14 @@ def _solve_square_linear_system(
 def _solve_equilibrated_linear_system(
         matrix: sp.csc_matrix,
         rhs: np.ndarray,
-) -> np.ndarray:
-    """Solve a square system after row and column equilibration."""
+        linear_solver: SparseProviderLinearSolver | None = None) -> np.ndarray:
+    """Retain L2 row/column scaling around the same initialization's LU session.
+
+    :param matrix: Original reduced square coefficients.
+    :param rhs: Original reduced right-hand side.
+    :param linear_solver: Resident sparse phase, without changing dense fallback.
+    :return: Correction descaled into the original reduced coordinates.
+    """
     squared = matrix.multiply(matrix)
     row_scale = np.maximum(
         np.sqrt(np.asarray(squared.sum(axis=1)).ravel()),
@@ -471,7 +519,7 @@ def _solve_equilibrated_linear_system(
     equilibrated = (
         row_scaled @ sp.diags(1.0 / column_scale, format="csc")
     ).tocsc()
-    scaled_step = _solve_square_linear_system(equilibrated, rhs / row_scale)
+    scaled_step: np.ndarray = _solve_square_linear_system(equilibrated, rhs / row_scale, linear_solver=linear_solver)
     return scaled_step / column_scale
 
 
@@ -484,8 +532,25 @@ def _solve_initialization_problem(
         dx: np.ndarray,
         runtime_params: np.ndarray,
         constant_params: np.ndarray,
-) -> bool:
-    """Compile and solve the RMS consistency equations."""
+        linear_solver: SparseProviderLinearSolver | None = None,
+        ptc_linear_solver: SparseProviderLinearSolver | None = None) -> bool:
+    """Compile and solve the RMS consistency equations.
+
+    :param linear_solver: Optional sparse LU session for the Newton corrections; None resolves one from the options.
+    :param ptc_linear_solver: Optional sparse LU session for the pseudo-transient corrections, whose pattern differs
+        from the Newton one; None resolves one from the options.
+    """
+    if linear_solver is None:
+        # Direct helper callers receive the same option policy as the public entry.
+        linear_solver = SparseProviderLinearSolver(
+            resolve_sparse_lu_provider(problem.options.sparse_solver, None))
+    else:
+        pass
+    if ptc_linear_solver is None:
+        ptc_linear_solver = SparseProviderLinearSolver(
+            resolve_sparse_lu_provider(problem.options.sparse_solver, None))
+    else:
+        pass
     residual_fn = SymbolicVector(
         eqs=residual_eqs,
         compiler_names_dict=problem.get_compiler_names_dict(),
@@ -531,8 +596,8 @@ def _solve_initialization_problem(
             else:
                 pass
             delta = _solve_square_linear_system(
-                jacobian(reduced_x), -current_residual
-            )
+                jacobian(reduced_x), -current_residual,
+                linear_solver=linear_solver)
             if not np.all(np.isfinite(delta)):
                 break
             alpha = 1.0
@@ -626,7 +691,7 @@ def _solve_initialization_problem(
             delta = _solve_equilibrated_linear_system(
                 linear_matrix,
                 -ptc_residual,
-            )
+                linear_solver=ptc_linear_solver)
             if not np.all(np.isfinite(delta)):
                 dtau = max(dtau_min, 0.5 * dtau)
                 continue
@@ -667,7 +732,7 @@ def run_rms_consistent_initialization(
         problem: RmsInitializationProblem,
         options: RmsOptions,
         logger: Logger | None = None,
-) -> bool:
+        sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None) -> bool:
     """Accept RMS consistency only against the original finite prepared snapshot.
 
     Seeded differential coordinates remain fixed. Missing-state equations retain
@@ -678,10 +743,23 @@ def run_rms_consistent_initialization(
     :param options: Selected ConsistentNewton/Auto/PTC mode and required tolerance.
         PTC retains its existing PF anchors and finite seeded states.
     :param logger: Optional caller-owned diagnostics for rejected initialization.
+    :param sparse_solver_backend_provider: Optional explicit provider; inherit a matching problem binding before resolving unavailable selection and logging.
     :return: True for a finite accepted candidate; False for Auto failure without writeback.
     :raises RuntimeError: If strict consistency or initial finiteness fails.
     :raises ValueError: If the selected method is unsupported.
     """
+    resolved_provider: SparseLinearSolverBackendProvider | None = sparse_solver_backend_provider
+    if resolved_provider is None:
+        resolved_provider = problem.get_sparse_solver_backend_provider(options.sparse_solver)
+    else:
+        pass
+    if resolved_provider is None:
+        resolved_provider = resolve_sparse_lu_provider(options.sparse_solver, logger)
+    else:
+        pass
+    # Newton and pseudo-transient corrections have different patterns, so each keeps its own factors.
+    linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(resolved_provider)
+    ptc_linear_solver: SparseProviderLinearSolver = SparseProviderLinearSolver(resolved_provider)
     if options.initialization_method not in (
             RmsInitializationMethod.ConsistentNewton, RmsInitializationMethod.Auto,
             RmsInitializationMethod.PseudoTransient):
@@ -726,7 +804,8 @@ def run_rms_consistent_initialization(
         unknown_vars, residual_eqs, state_equilibrium_mask = payload
         converged = _solve_initialization_problem(
             problem=problem, unknown_vars=unknown_vars, residual_eqs=residual_eqs,
-            state_equilibrium_mask=state_equilibrium_mask, x=x, dx=dx, runtime_params=runtime_params, constant_params=constant_params)
+            state_equilibrium_mask=state_equilibrium_mask, x=x, dx=dx, runtime_params=runtime_params, constant_params=constant_params,
+            linear_solver=linear_solver, ptc_linear_solver=ptc_linear_solver)
 
     # The caller has prepared this exact runtime snapshot and assembled full-g evaluator.
     # Reuse its original rows after the gauge-conditioned solve; do not compile a second copy.
@@ -735,6 +814,75 @@ def run_rms_consistent_initialization(
     accepted: bool = bool(
         converged and np.all(np.isfinite(x)) and np.all(np.isfinite(original_residual))
         and original_residual_norm <= options.tolerance)
+    exc_ac3a_outside_bounds: bool = False
+    if accepted:
+        # The AC3A field and amplifier stops are operating-point constraints.
+        # Check the solved candidate before it replaces the prepared snapshot.
+        exc_ac3a_blocks: List[Block] = list()
+        for runtime_block in problem.sys_block.get_all_blocks():
+            if runtime_block.name.startswith('ExcAC3A_'):
+                exc_ac3a_blocks.append(runtime_block)
+            else:
+                pass
+        if len(exc_ac3a_blocks) > 0:
+            bound_values: Dict[int, float] = dict()
+            for variable_collection in (problem.state_vars, problem.algebraic_vars):
+                for variable in variable_collection:
+                    variable_index: int | None = problem.uid2idx_vars.get(variable.uid, None)
+                    if variable_index is not None:
+                        bound_values[variable.uid] = float(x[variable_index])
+                    else:
+                        pass
+            for parameter_uid, parameter_index in problem.uid2idx_event_params.items():
+                bound_values[parameter_uid] = float(runtime_params[parameter_index])
+            for runtime_block in exc_ac3a_blocks:
+                for parameter_variable, parameter_value in runtime_block.event_dict.items():
+                    if isinstance(parameter_value, Const) and isinstance(parameter_value.value, (int, float)):
+                        bound_values[parameter_variable.uid] = float(parameter_value.value)
+                    else:
+                        pass
+                for parameter_variable, parameter_value in runtime_block.parameters.items():
+                    if isinstance(parameter_value, Const) and isinstance(parameter_value.value, (int, float)):
+                        bound_values[parameter_variable.uid] = float(parameter_value.value)
+                    else:
+                        pass
+                for inequality in runtime_block.inequalities:
+                    lhs_expression: Expr = inequality.lhs
+                    rhs_expression: Expr | float = inequality.rhs
+                    rhs_dependencies: List[Var] = (
+                        rhs_expression.get_vars() if isinstance(rhs_expression, Expr) else list()
+                    )
+                    if (
+                            all(variable.uid in bound_values for variable in lhs_expression.get_vars())
+                            and all(variable.uid in bound_values for variable in rhs_dependencies)
+                    ):
+                        lhs_value: float = float(lhs_expression.eval_uid(bound_values))
+                        rhs_value: float = (
+                            float(rhs_expression.eval_uid(bound_values))
+                            if isinstance(rhs_expression, Expr) else float(rhs_expression)
+                        )
+                        if not np.isfinite(lhs_value) or not np.isfinite(rhs_value):
+                            exc_ac3a_outside_bounds = True
+                        elif inequality.op is CmpOp.LE:
+                            exc_ac3a_outside_bounds = (
+                                exc_ac3a_outside_bounds or lhs_value > rhs_value + options.tolerance
+                            )
+                        elif inequality.op is CmpOp.GE:
+                            exc_ac3a_outside_bounds = (
+                                exc_ac3a_outside_bounds or lhs_value < rhs_value - options.tolerance
+                            )
+                        else:
+                            pass
+                    else:
+                        exc_ac3a_outside_bounds = True
+        else:
+            pass
+        if exc_ac3a_outside_bounds:
+            accepted = False
+        else:
+            pass
+    else:
+        pass
     if accepted:
         _apply_solution(problem, x)
         return True
@@ -754,8 +902,9 @@ def run_rms_consistent_initialization(
         return False
     else:
         error_message: str = (
-            "RMS consistent Newton initialization did not converge; "
-            "simulation construction is stopping."
+            "ExcAC3A operating bounds reject the initialized candidate."
+            if exc_ac3a_outside_bounds else
+            "RMS consistent Newton initialization did not converge; simulation construction is stopping."
         )
         if logger is None:
             pass

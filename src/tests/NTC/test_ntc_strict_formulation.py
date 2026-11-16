@@ -53,7 +53,7 @@ def test_ntc_ultra_simple() -> None:
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -99,7 +99,7 @@ def test_ntc_ieee_14() -> None:
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -172,7 +172,7 @@ def test_issue_372_1():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -274,7 +274,7 @@ def test_issue_372_2():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -388,7 +388,7 @@ def test_issue_372_3():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -514,7 +514,7 @@ def test_issue_372_4():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=False,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -612,7 +612,7 @@ def test_issue_372_5():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -737,7 +737,7 @@ def test_ntc_pmode_saturation() -> None:
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -815,7 +815,7 @@ def test_ntc_areas_connected_only_through_hvdc() -> None:
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=False,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -882,7 +882,7 @@ def test_ntc_vsc():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -937,7 +937,7 @@ def test_ntc_vsc_contingencies():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=False,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1025,7 +1025,7 @@ def test_2_node_several_conditions_ntc():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1064,7 +1064,7 @@ def test_2_node_several_conditions_ntc():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1101,7 +1101,7 @@ def test_2_node_several_conditions_ntc():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1140,7 +1140,7 @@ def test_2_node_several_conditions_ntc():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1180,7 +1180,7 @@ def test_2_node_several_conditions_ntc():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1223,7 +1223,7 @@ def test_hvdc_lines_tests():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=True,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1274,7 +1274,7 @@ def test_activs_2000():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=False,
         consider_contingencies=False,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1303,7 +1303,7 @@ def test_activs_2000():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=False,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1388,7 +1388,7 @@ def test_activs_2000_acdc():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=False,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )
@@ -1438,7 +1438,7 @@ def test_activs_2000_acdc_ts():
         branch_rating_contribution=1.0,
         monitor_only_ntc_load_rule_branches=False,
         consider_contingencies=True,
-        strict_formulation=True,
+        consider_slacks=False,
         opf_options=opf_options,
         lin_options=lin_options
     )

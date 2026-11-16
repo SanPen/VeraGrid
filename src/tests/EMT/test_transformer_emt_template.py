@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import numpy as np
@@ -11,7 +15,7 @@ from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import assi
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.Templates.Emt.transformer_emt_template import get_series_transformer_emt_template
+from VeraGridEngine.Templates.Emt.transformers.transformer_emt_template import get_series_transformer_emt_template
 from VeraGridEngine.Topology.admittance_matrices import AdmittanceMatrices, compute_admittances
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, eval_uid
 from VeraGridEngine.enumerations import ParamPowerFlowReferenceType
@@ -69,7 +73,6 @@ def test_series_transformer_matches_static_fixed_tap(
         tap_module=np.array((tap_module,)), vtap_f=np.ones(1), vtap_t=np.ones(1),
         tap_angle=np.zeros(1), Cf=csc_matrix(np.array(((1.0, 0.0),))),
         Ct=csc_matrix(np.array(((0.0, 1.0),))), Yshunt_bus=np.zeros(2, dtype=complex),
-        conn=np.zeros(1, dtype=int), seq=1,
     )
     static_voltages: np.ndarray = np.array((voltage_from, voltage_to))
     np.testing.assert_allclose(static.Yf @ static_voltages, np.array((expected_from,)), rtol=1e-10, atol=1e-12)

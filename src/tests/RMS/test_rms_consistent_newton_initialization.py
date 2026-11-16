@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 import numpy as np
 import pytest
@@ -8,11 +12,11 @@ from tests.RMS.test_rms_terminal_power_assembly import (
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
-from VeraGridEngine.Templates.Rms.transformer_rms_template import get_transformer2w_rms
+from VeraGridEngine.Templates.Rms.transformers.transformer_rms_template import get_transformer2w_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 from VeraGridEngine.api import power_flow
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import BusRmsTemplate
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import BusRmsTemplate
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
@@ -180,12 +184,83 @@ class _MissingStateInitializationProblem(_ScalarRmsInitializationProblem):
         return np.asarray((initial_value,), dtype=np.float64)
 
 
+class _ExcAC3AFeasibilityProblem(_ScalarRmsInitializationProblem):
+    """Scalar consistency fixture with an optional ExcAC3A-named bound.
+
+    :param target: Algebraic root to project to.
+    :param exc_ac3a_name: Whether the target variable carries the CGMES model prefix.
+    """
+
+    __slots__ = ("target",)
+
+    def __init__(self, target: float, exc_ac3a_name: bool) -> None:
+        """Set a scalar root and an inequality that bounds it above three.
+
+        :param target: Exact root of the scalar algebraic residual.
+        :param exc_ac3a_name: Select the model-specific or ordinary variable name.
+        """
+        super().__init__()
+        variable_name: str = "VePu_ExcAC3A_fixture" if exc_ac3a_name else "ordinary_y"
+        self.y = Var(variable_name)
+        self.target: float = target
+        self.options = RmsOptions(
+            initialization_method=RmsInitializationMethod.ConsistentNewton,
+            tolerance=1.0e-10,
+            max_iter=20,
+        )
+        self.init_guess = {self.y.uid: 9.0}
+        self.sys_block = Block(
+            name="ExcAC3A_fixture" if exc_ac3a_name else "ordinary_fixture",
+            inequalities=[self.y >= 0.0, self.y <= 3.0],
+        )
+        self.algebraic_vars = [self.y]
+        self.algebraic_eqs = [self.y - Const(target)]
+        self.uid2idx_vars = {self.y.uid: 0}
+
+    def rhs_algebraic(self, values: np.ndarray, diff_values: np.ndarray) -> np.ndarray:
+        """Evaluate the scalar target residual.
+
+        :param values: Candidate scalar variable.
+        :param diff_values: Empty derivative vector.
+        :return: Candidate minus its target.
+        """
+        return np.asarray((values[0] - self.target,), dtype=np.float64)
+
+
 def test_consistent_newton_is_an_rms_initialization_option() -> None:
     """Expose the global solver as an RMS initialization choice.
 
     :return: None.
     """
     assert "ConsistentNewton" in RmsInitializationMethod.list()
+
+
+@pytest.mark.parametrize(
+    "target,exc_ac3a_name,expected",
+    ((2.0, True, True), (4.0, True, False), (4.0, False, True)),
+)
+def test_exc_ac3a_operating_bounds_gate_only_matching_candidates(
+        target: float,
+        exc_ac3a_name: bool,
+        expected: bool,
+) -> None:
+    """Reject only out-of-range candidates carrying ExcAC3A bound variables.
+
+    :param target: Scalar algebraic root.
+    :param exc_ac3a_name: Whether model-specific filtering should apply.
+    :param expected: Expected consistency acceptance.
+    """
+    problem: _ExcAC3AFeasibilityProblem = _ExcAC3AFeasibilityProblem(
+        target=target,
+        exc_ac3a_name=exc_ac3a_name,
+    )
+    if expected:
+        assert run_rms_consistent_initialization(problem, problem.options)
+        assert problem.init_guess[problem.y.uid] == pytest.approx(target)
+    else:
+        with pytest.raises(RuntimeError, match="ExcAC3A operating bounds"):
+            run_rms_consistent_initialization(problem, problem.options)
+        assert problem.init_guess[problem.y.uid] == 9.0
 
 
 @pytest.mark.parametrize("method", (RmsInitializationMethod.ConsistentNewton, RmsInitializationMethod.Auto, RmsInitializationMethod.PseudoTransient))
@@ -640,8 +715,7 @@ def test_phasor_initial_event_snapshot_matches_replay(
     dependent: Var = grid.var_factory.add_var("retained line expression")
     declaration: Expr = reactive + Const(-0.127)
     grid.lines[0].rms_model.event_dict[dependent] = declaration
-    # These unused line parameters expose a third-evaluation bug without
-    # changing the electrical fixture or its existing two-pass replay policy.
+    # The dependency-ordered event compiler resolves this chain in one pass.
     chain_a: Var = grid.var_factory.add_var("retained chain a")
     chain_b: Var = grid.var_factory.add_var("retained chain b")
     chain_c: Var = grid.var_factory.add_var("retained chain c")
@@ -669,7 +743,7 @@ def test_phasor_initial_event_snapshot_matches_replay(
     assert initial[problem.uid2idx_event_params[power.uid]] == pytest.approx(-0.16)
     assert initial[problem.uid2idx_event_params[dependent.uid]] == pytest.approx(-0.18)
     assert problem.event_parameters_eqs0[problem.uid2idx_event_params[dependent.uid]] is declaration
-    expected_chain: tuple[float, ...] = (3.0, 3.0, 2.0)
+    expected_chain: tuple[float, ...] = (4.0, 3.0, 2.0)
     expected_value: float
     for chain_variable, chain_declaration, expected_value in zip(chain_variables, chain_declarations, expected_chain):
         assert initial[problem.uid2idx_event_params[chain_variable.uid]] == expected_value

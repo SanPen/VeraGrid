@@ -11,6 +11,7 @@ from VeraGridEngine.DataStructures.branch_parent_data import BranchParentData
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
 from VeraGridEngine.Utils.compare import compare_arr
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, BoolVec, Logger
+from VeraGridEngine.enumerations import WindingType
 
 
 class PassiveBranchData(BranchParentData):
@@ -41,7 +42,8 @@ class PassiveBranchData(BranchParentData):
         "phN",
         "conn_f",
         "conn_t",
-        "conn",
+        "vector_group_number",
+        "is_transformer",
         "Yff3",
         "Yft3",
         "Ytf3",
@@ -72,9 +74,13 @@ class PassiveBranchData(BranchParentData):
         self.G2: Vec = np.zeros(self.nelm, dtype=float)
         self.B2: Vec = np.zeros(self.nelm, dtype=float)
 
-        self.conn: IntVec = np.zeros(self.nelm,  dtype=int)
-        self.conn_f: IntVec = np.zeros(self.nelm,  dtype=int)
-        self.conn_t: IntVec = np.zeros(self.nelm,  dtype=int)
+        # Lines have no winding declaration; preserve the historical GG sequence model.
+        self.conn_f: IntVec = np.full(self.nelm, WindingType.GroundedStar.idx(), dtype=int)
+        self.conn_t: IntVec = np.full(self.nelm, WindingType.GroundedStar.idx(), dtype=int)
+        # Lines do not rotate symmetrical components; transformers overwrite this at compilation.
+        self.vector_group_number: IntVec = np.zeros(self.nelm, dtype=int)
+        # Sequence defaults apply to every branch, but only transformers ground a phase-domain neutral.
+        self.is_transformer: BoolVec = np.zeros(self.nelm, dtype=bool)
 
         self.m_taps = SparseObjectArray(n=self.nelm)
         self.tau_taps = SparseObjectArray(n=self.nelm)
@@ -130,9 +136,11 @@ class PassiveBranchData(BranchParentData):
         data.G2 = self.G2[elm_idx]
         data.B2 = self.B2[elm_idx]
 
-        data.conn = self.conn[elm_idx]  # winding connection
         data.conn_f = self.conn_f[elm_idx]
         data.conn_t = self.conn_t[elm_idx]
+        # Islands retain each branch clock so their sequence matrices preserve transformer rotation.
+        data.vector_group_number = self.vector_group_number[elm_idx]
+        data.is_transformer = self.is_transformer[elm_idx]
 
         data.m_taps = self.m_taps.slice(elm_idx)
         data.tau_taps = self.tau_taps.slice(elm_idx)
@@ -178,9 +186,11 @@ class PassiveBranchData(BranchParentData):
         data.G2 = self.G2.copy()
         data.B2 = self.B2.copy()
 
-        data.conn = self.conn.copy()  # winding connection
         data.conn_f = self.conn_f.copy()
         data.conn_t = self.conn_t.copy()
+        # Contingency copies must retain the same sequence reference transformation.
+        data.vector_group_number = self.vector_group_number.copy()
+        data.is_transformer = self.is_transformer.copy()
 
         data.m_taps = self.m_taps.copy()
         data.tau_taps = self.tau_taps.copy()
@@ -230,3 +240,4 @@ class PassiveBranchData(BranchParentData):
         compare_arr(self.G0, other.G0, tol, 'BranchData', 'g0', logger)
         compare_arr(self.virtual_tap_f, other.virtual_tap_f, tol, 'BranchData', 'vtap_f', logger)
         compare_arr(self.virtual_tap_t, other.virtual_tap_t, tol, 'BranchData', 'vtap_t', logger)
+        compare_arr(self.vector_group_number, other.vector_group_number, tol, 'BranchData', 'vector_group_number', logger)

@@ -1,0 +1,257 @@
+<mxfile host="Electron">
+  <diagram name="Página-1" id="lJz131OyOF8MTXsTIJEw">
+    <mxGraphModel dx="1975" dy="1226" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" value="RMS/ EMT Simulation" vertex="1">
+          <mxGeometry height="80" width="160" x="160" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-3" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="FMI" vertex="1">
+          <mxGeometry height="100" width="80" x="80" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-9" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-4" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="IEEE/CIGRE" vertex="1">
+          <mxGeometry height="100" width="80" x="200" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-6" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="VeraGrid Binary Model" vertex="1">
+          <mxGeometry height="100" width="80" x="320" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-8" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-10" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-12" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;" value="Device" vertex="1">
+          <mxGeometry height="60" width="120" x="180" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=30;" value="Scripting" vertex="1">
+          <mxGeometry height="30" width="60" x="50" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The script assigns the Binary models to the devices" vertex="1">
+          <mxGeometry height="30" width="110" x="320" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The simulation consumes the binary models" vertex="1">
+          <mxGeometry height="30" width="90" x="340" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" value="RMS/ EMT Simulation" vertex="1">
+          <mxGeometry height="80" width="160" x="690" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-17" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="FMI" vertex="1">
+          <mxGeometry height="100" width="80" x="610" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-18" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-19" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="IEEE/CIGRE" vertex="1">
+          <mxGeometry height="100" width="80" x="730" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-20" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="VeraGrid Binary Model" vertex="1">
+          <mxGeometry height="100" width="80" x="850" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-21" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-22" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-23" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;" value="Device" vertex="1">
+          <mxGeometry height="60" width="120" x="710" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=30;" value="First tme GUI loading" vertex="1">
+          <mxGeometry height="30" width="325" x="580" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-26" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The user assigns the Binary models to the devices" vertex="1">
+          <mxGeometry height="30" width="110" x="850" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-27" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The simulation consumes the binary models" vertex="1">
+          <mxGeometry height="30" width="90" x="870" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-28" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="FMI" vertex="1">
+          <mxGeometry height="100" width="80" x="80" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-29" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-30" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="IEEE/CIGRE" vertex="1">
+          <mxGeometry height="100" width="80" x="200" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-31" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="VeraGrid Binary Model" vertex="1">
+          <mxGeometry height="100" width="80" x="320" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-32" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-33" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-41" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;" value="Device" vertex="1">
+          <mxGeometry height="60" width="120" x="180" y="855" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-35" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=30;" value="Save .VeraGrid file" vertex="1">
+          <mxGeometry height="30" width="270" x="50" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-36" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The script assigns the Binary models to the devices" vertex="1">
+          <mxGeometry height="30" width="110" x="320" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-37" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="These are located at the HDD&lt;div&gt;at Desktop&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="110" x="420" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-38" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="60" y="940" as="sourcePoint" />
+            <mxPoint x="140" y="940" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-39" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Save VeraGrid file" vertex="1">
+          <mxGeometry height="30" width="80" x="10" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-40" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value=".VeraGrid" vertex="1">
+          <mxGeometry height="100" width="80" x="200" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-42" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="All binary dependencies are saved inside the .VeraGrid file" vertex="1">
+          <mxGeometry height="30" width="110" x="300" y="1045" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-43" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=30;" value="Open .VeraGrid file" vertex="1">
+          <mxGeometry height="30" width="270" x="650" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-50" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;defaultLabelBackgroundColor=page;entryX=0.5;entryY=0.083;entryDx=0;entryDy=0;entryPerimeter=0;" target="r6RqpObHuXh7AiaaQQpX-62">
+          <mxGeometry relative="1" x="-0.817" as="geometry">
+            <mxPoint x="770" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-44" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value=".VeraGrid" vertex="1">
+          <mxGeometry height="100" width="80" x="730" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-45" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="All binary dependencies are saved inside the .VeraGrid file" vertex="1">
+          <mxGeometry height="30" width="110" x="830" y="675" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-51" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" value="RMS/ EMT Simulation" vertex="1">
+          <mxGeometry height="80" width="160" x="690" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-52" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="FMI&lt;br&gt;(copy)" vertex="1">
+          <mxGeometry height="100" width="80" x="610" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-53" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-59">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-54" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="IEEE/CIGRE&lt;div&gt;(copy)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="80" x="730" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-55" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="VeraGrid Binary Model&lt;div&gt;(copy)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="80" x="850" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-56" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-59">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-57" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-59">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-58" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-59" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;" value="Device" vertex="1">
+          <mxGeometry height="60" width="120" x="710" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-60" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The program assigns the Binary models to the devices" vertex="1">
+          <mxGeometry height="30" width="110" x="850" y="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-61" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The simulation consumes the binary models" vertex="1">
+          <mxGeometry height="30" width="90" x="870" y="1175" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-63" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;defaultLabelBackgroundColor=page;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="775.5" y="840" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-62" parent="1" style="image;aspect=fixed;html=1;align=center;fontSize=12;image=img/lib/azure2/general/Folder_Blank.svg;points=[[0.5,0.083,0],[0.5,1,0],[0.003,0.5,0],[0.998,0.554,0],[0.99,0.114,0],[0.987,0.996,0],[0.013,0.996,0],[0.013,0.004,0]];labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="56.00000000000001" width="69" x="741" y="765" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-64" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Temp/Model_idtag" vertex="1">
+          <mxGeometry height="30" width="60" x="850" y="778" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-65" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Desktop" vertex="1">
+          <mxGeometry height="30" width="60" x="420" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-67" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Desktop" vertex="1">
+          <mxGeometry height="30" width="60" x="960" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-68" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" value="RMS/ EMT Simulation" vertex="1">
+          <mxGeometry height="80" width="160" x="1200" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-69" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="FMI" vertex="1">
+          <mxGeometry height="100" width="80" x="1120" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-70" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-76">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-71" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="IEEE/CIGRE" vertex="1">
+          <mxGeometry height="100" width="80" x="1240" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-72" parent="1" style="shape=card;whiteSpace=wrap;html=1;" value="VeraGrid Binary Model" vertex="1">
+          <mxGeometry height="100" width="80" x="1360" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-73" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-76">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-74" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-76">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-75" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-76" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-68">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-76" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;" value="Device" vertex="1">
+          <mxGeometry height="60" width="120" x="1220" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-77" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=30;" value="Substitute a model" vertex="1">
+          <mxGeometry height="30" width="325" x="1090" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-78" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The user assigns the Binary models to the devices" vertex="1">
+          <mxGeometry height="30" width="110" x="1360" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-79" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="The simulation consumes the binary models" vertex="1">
+          <mxGeometry height="30" width="90" x="1380" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-80" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Desktop" vertex="1">
+          <mxGeometry height="30" width="60" x="1470" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-81" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=30;" value="Custom models catalogue" vertex="1">
+          <mxGeometry height="30" width="405" x="1115" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-86" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-82" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-85">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-82" parent="1" style="image;aspect=fixed;html=1;align=center;fontSize=12;image=img/lib/azure2/general/Folder_Blank.svg;points=[[0.5,0.083,0],[0.5,1,0],[0.003,0.5,0],[0.998,0.554,0],[0.99,0.114,0],[0.987,0.996,0],[0.013,0.996,0],[0.013,0.004,0]];labelPerimeter=1;" value="" vertex="1">
+          <mxGeometry height="56.00000000000001" width="69" x="1218" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-83" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="~/.VeraGrid/Dynamic/Catalogue" vertex="1">
+          <mxGeometry height="30" width="190" x="1305" y="656" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-85" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;fillColor=#008a00;fontColor=#ffffff;strokeColor=#005700;" value="Device" vertex="1">
+          <mxGeometry height="60" width="120" x="1192.5" y="821" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-87" edge="1" parent="1" source="r6RqpObHuXh7AiaaQQpX-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.003;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;" target="r6RqpObHuXh7AiaaQQpX-82">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-88" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Load from the catalogue folder" vertex="1">
+          <mxGeometry height="30" width="100" x="1260" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="r6RqpObHuXh7AiaaQQpX-89" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Save to the catalogue folder" vertex="1">
+          <mxGeometry height="30" width="100" x="1070" y="730" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

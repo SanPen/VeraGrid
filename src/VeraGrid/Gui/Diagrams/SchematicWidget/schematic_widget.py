@@ -4504,7 +4504,7 @@ class SchematicWidget(BaseDiagramWidget):
         :param max_flow:
         :return:
         """
-        if hvdc_Pf is None:
+        if hvdc_Pf is None or hvdc_loading is None:
             return
 
         hvdc_sending_power_norm = np.abs(hvdc_Pf) / (max_flow + 1e-20)
@@ -6063,6 +6063,43 @@ class SchematicWidget(BaseDiagramWidget):
                                       loading_cmap=loading_cmap,
                                       cmap=cmap,
                                       max_flow=max_flow)
+
+    def colour_by_voltage(self, colour_buses: bool = True, colour_lines: bool = True) -> None:
+        """Colour visible buses and electrical branches by ranked nominal voltage.
+
+        Internal/hidden buses do not define levels. Winding connections therefore
+        inherit the visible winding terminal voltage, not the artificial star bus.
+        Branches between two visible voltage levels use the higher endpoint level.
+        """
+        items = [item for item in self.items() if item is not None]
+        visible_buses = {}
+        for item in items:
+            if isinstance(item, BusGraphicItem) and item.isVisible():
+                bus = item.api_object
+                if bus is not None and bus.graphic_type != BusGraphicType.Internal:
+                    voltage = float(bus.Vnom)
+                    if np.isfinite(voltage) and voltage > 0:
+                        visible_buses[bus.idtag] = voltage
+
+        palette = ("#ff0000", "#0000ff", "#00ff00", "#ffff00")
+        levels = sorted(set(visible_buses.values()), reverse=True)
+        colours = {voltage: QColor(palette[min(index, 3)]) for index, voltage in enumerate(levels)}
+        for item in items:
+            device = item.api_object
+            if device is None or not item.isVisible():
+                continue
+            if isinstance(item, BusGraphicItem) and colour_buses:
+                voltage = visible_buses.get(device.idtag)
+                if voltage is not None:
+                    item.set_tile_color(colours[voltage])
+            elif isinstance(item, LineGraphicTemplateItem) and colour_lines:
+                endpoints = (getattr(device, "bus_from", None), getattr(device, "bus_to", None))
+                voltages = [visible_buses[bus.idtag] for bus in endpoints
+                            if bus is not None and bus.idtag in visible_buses]
+                if voltages:
+                    item.set_colour(colours[max(voltages)], w=item.width, style=item.style)
+        if colour_lines:
+            self._sync_multiwinding_transformer_result_colours()
 
     def recolour(self, use_api_color: bool):
         """

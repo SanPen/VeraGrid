@@ -46,13 +46,11 @@ from __future__ import annotations
 from typing import Any, Dict, List, Set, Tuple, TYPE_CHECKING, Union
 
 import numpy as np
-
-from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Injections.load import Load
-from VeraGridEngine.Templates.Emt.line_matrix_conversion import build_physical_line_matrices_from_stored_admittances
+from VeraGridEngine.Templates.Emt.line.line_matrix_conversion import build_physical_line_matrices_from_stored_admittances
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.basic_structures import Logger
@@ -71,114 +69,6 @@ from VeraGridEngine.Devices.Parents.editable_device import GCProp
 if TYPE_CHECKING:
     import VeraGridEngine.Devices as dev
     from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-
-
-class StaticParameterMappingDiagnostics:
-    """Attach one simulation domain to driver-owned mapping diagnostics.
-
-    This lightweight context never owns log entries. It only forwards mapping
-    warnings to the logger created by the RMS or EMT driver and supplies the
-    correct simulation-domain label. A ``None`` logger keeps direct low-level
-    mapper use functional without manufacturing a problem-local logger.
-
-    :param logger: Driver-owned logger, or ``None`` for silent low-level use.
-    :param simulation_mode: Dynamic simulation domain requesting the mapping.
-    """
-
-    __slots__ = (
-        "_logger",
-        "_simulation_mode",
-    )
-
-    def __init__(
-            self,
-            logger: Logger | None,
-            simulation_mode: DynamicSimulationMode,
-    ) -> None:
-        self._logger: Logger | None = logger
-        self._simulation_mode: DynamicSimulationMode = simulation_mode
-
-    def add_warning(
-            self,
-            message: str,
-            device_name: str,
-            value: str,
-            expected_value: str,
-            device_property: str,
-    ) -> None:
-        """Forward one mapping warning with the correct RMS or EMT label.
-
-        :param message: Human-readable mapping diagnostic.
-        :param device_name: Static device associated with the dynamic model.
-        :param value: Actual mapping state that caused the warning.
-        :param expected_value: Expected mapping contract.
-        :param device_property: Dynamic-model property involved in the warning.
-        :return: None.
-        """
-        if self._logger is None:
-            # Silent utility calls still execute the complete numerical mapping;
-            # only the unavailable diagnostic sink is omitted.
-            pass
-        else:
-            self._logger.add_warning(
-                msg=message,
-                device=device_name,
-                value=value,
-                expected_value=expected_value,
-                device_class=self._simulation_mode.value,
-                device_property=device_property,
-            )
-
-    def add_info(
-            self,
-            message: str,
-            device_name: str,
-            value: str,
-            expected_value: str,
-            device_property: str,
-    ) -> None:
-        """Forward one mapping information entry with its simulation label.
-
-        Information entries expose intentional source precedence without
-        turning a valid mapping contract into a warning.
-
-        :param message: Human-readable mapping diagnostic.
-        :param device_name: Static device associated with the dynamic model.
-        :param value: Resolved mapping and overridden declaration.
-        :param expected_value: Documented source-precedence contract.
-        :param device_property: Dynamic-model property involved in the entry.
-        :return: None.
-        """
-        if self._logger is None:
-            # Silent utility calls keep the same numerical result while
-            # omitting diagnostics that have no driver-owned destination.
-            pass
-        else:
-            self._logger.add_info(
-                msg=message,
-                device=device_name,
-                value=value,
-                expected_value=expected_value,
-                device_class=self._simulation_mode.value,
-                device_property=device_property,
-            )
-
-    def get_logger(self) -> Logger | None:
-        """Return the driver-owned logger without transferring ownership.
-
-        Device helpers that already implement their own diagnostics can use
-        the same driver logger while the mapping context remains responsible
-        only for adding the RMS or EMT domain to mapping-specific warnings.
-
-        :return: Driver-owned logger, or ``None`` for silent utility use.
-        """
-        if self._logger is None:
-            return None
-        else:
-            return self._logger
-
-
-StaticParameterMappingDiagnosticSink = Logger | StaticParameterMappingDiagnostics
 
 
 class StaticParameterMappingCandidate:
@@ -258,7 +148,7 @@ class StaticParameterMappingValues(dict[Var, Const]):
 
     def finalize_candidates(
             self,
-            logger: StaticParameterMappingDiagnosticSink | None,
+            logger: Logger | None,
             device_name: str,
     ) -> None:
         """Select final UID values and report incompatible API references.
@@ -295,19 +185,22 @@ class StaticParameterMappingValues(dict[Var, Const]):
                 # than two semantic sources disagree.
                 pass
             else:
-                add_static_mapping_warning(
-                    logger=logger,
-                    device_name=device_name,
-                    message="Conflicting API-object initial values target the same symbolic parameter; later value skipped.",
-                    value=(
-                        f"uid={parameter_uid}; "
-                        + f"kept={selected_candidate.block_name}:{selected_candidate.source_key}:"
-                        + f"{selected_candidate.value.value}; "
-                        + f"skipped={candidate.block_name}:{candidate.source_key}:{candidate.value.value}"
-                    ),
-                    expected_value="Every mapping source for one symbolic UID must resolve to the same initial value.",
-                    device_property="model template api_obj_mapping",
-                )
+                if logger is not None:
+                    logger.add_warning(
+                        device=device_name,
+                        msg="Conflicting API-object initial values target the same symbolic parameter; later value skipped.",
+                        value=(
+                                f"uid={parameter_uid}; "
+                                + f"kept={selected_candidate.block_name}:{selected_candidate.source_key}:"
+                                + f"{selected_candidate.value.value}; "
+                                + f"skipped={candidate.block_name}:{candidate.source_key}:{candidate.value.value}"
+                        ),
+                        expected_value="Every mapping source for one symbolic UID must resolve to the same initial value.",
+                        device_property="model template api_obj_mapping",
+                        device_class="Dynamic parameter mapping",
+                    )
+                else:
+                    pass
                 reported_conflicts.add(parameter_uid)
 
         # Replace intermediate last-write values with the selected final value
@@ -316,378 +209,12 @@ class StaticParameterMappingValues(dict[Var, Const]):
         for final_candidate in selected_candidates_by_uid.values():
             self[final_candidate.parameter] = final_candidate.value
 
-# devices_static_params_mapping: Dict[DeviceType, List[ParamPowerFlowReferenceType]] = {
-#     DeviceType.LoadDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.injection_connection_type,
-#         ParamPowerFlowReferenceType.Pl0,
-#         ParamPowerFlowReferenceType.Ql0,
-#         ParamPowerFlowReferenceType.Pl0_A,
-#         ParamPowerFlowReferenceType.Pl0_B,
-#         ParamPowerFlowReferenceType.Pl0_C,
-#         ParamPowerFlowReferenceType.Ql0_A,
-#         ParamPowerFlowReferenceType.Ql0_B,
-#         ParamPowerFlowReferenceType.Ql0_C,
-#         ParamPowerFlowReferenceType.load_g_pu,
-#         ParamPowerFlowReferenceType.load_b_pu,
-#         ParamPowerFlowReferenceType.load_ga_pu,
-#         ParamPowerFlowReferenceType.load_gb_pu,
-#         ParamPowerFlowReferenceType.load_gc_pu,
-#         ParamPowerFlowReferenceType.load_ba_pu,
-#         ParamPowerFlowReferenceType.load_bb_pu,
-#         ParamPowerFlowReferenceType.load_bc_pu,
-#         ParamPowerFlowReferenceType.load_ir_pu,
-#         ParamPowerFlowReferenceType.load_ii_pu,
-#         ParamPowerFlowReferenceType.load_ira_pu,
-#         ParamPowerFlowReferenceType.load_irb_pu,
-#         ParamPowerFlowReferenceType.load_irc_pu,
-#         ParamPowerFlowReferenceType.load_iia_pu,
-#         ParamPowerFlowReferenceType.load_iib_pu,
-#         ParamPowerFlowReferenceType.load_iic_pu,
-#         ParamPowerFlowReferenceType.load_contract_power_pu,
-#         ParamPowerFlowReferenceType.Pl0,
-#         ParamPowerFlowReferenceType.g,
-#         ParamPowerFlowReferenceType.Pl0_A,
-#         ParamPowerFlowReferenceType.Pl0_B,
-#         ParamPowerFlowReferenceType.Pl0_C,
-#         ParamPowerFlowReferenceType.Ql0_A,
-#         ParamPowerFlowReferenceType.Ql0_B,
-#         ParamPowerFlowReferenceType.Ql0_C,
-#         ParamPowerFlowReferenceType.omega_base,
-#     ],
-#     DeviceType.StaticGeneratorDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.injection_connection_type,
-#         ParamPowerFlowReferenceType.Pl0,
-#         ParamPowerFlowReferenceType.Ql0,
-#         ParamPowerFlowReferenceType.Pl0_A,
-#         ParamPowerFlowReferenceType.Pl0_B,
-#         ParamPowerFlowReferenceType.Pl0_C,
-#         ParamPowerFlowReferenceType.Ql0_A,
-#         ParamPowerFlowReferenceType.Ql0_B,
-#         ParamPowerFlowReferenceType.Ql0_C,
-#         ParamPowerFlowReferenceType.Pl0_A,
-#         ParamPowerFlowReferenceType.Pl0_B,
-#         ParamPowerFlowReferenceType.Pl0_C,
-#         ParamPowerFlowReferenceType.Ql0_A,
-#         ParamPowerFlowReferenceType.Ql0_B,
-#         ParamPowerFlowReferenceType.Ql0_C,
-#         ParamPowerFlowReferenceType.omega_base,
-#         ParamPowerFlowReferenceType.static_generator_snom_mva,
-#     ],
-#     DeviceType.ExternalGridDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.injection_connection_type,
-#         ParamPowerFlowReferenceType.Pl0,
-#         ParamPowerFlowReferenceType.Pl0_A,
-#         ParamPowerFlowReferenceType.Pl0_B,
-#         ParamPowerFlowReferenceType.Pl0_C,
-#         ParamPowerFlowReferenceType.Ql0_A,
-#         ParamPowerFlowReferenceType.Ql0_B,
-#         ParamPowerFlowReferenceType.Ql0_C,
-#         ParamPowerFlowReferenceType.omega_base,
-#         ParamPowerFlowReferenceType.Ql0,
-#         ParamPowerFlowReferenceType.external_grid_vm_pu,
-#         ParamPowerFlowReferenceType.external_grid_va_rad,
-#         ParamPowerFlowReferenceType.external_grid_mode_code,
-#     ],
-#     DeviceType.ShuntDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.injection_connection_type,
-#         ParamPowerFlowReferenceType.shunt_g_pu,
-#         ParamPowerFlowReferenceType.shunt_b_pu,
-#         ParamPowerFlowReferenceType.shunt_g0_pu,
-#         ParamPowerFlowReferenceType.shunt_b0_pu,
-#         ParamPowerFlowReferenceType.shunt_ga_pu,
-#         ParamPowerFlowReferenceType.shunt_gb_pu,
-#         ParamPowerFlowReferenceType.shunt_gc_pu,
-#         ParamPowerFlowReferenceType.shunt_ba_pu,
-#         ParamPowerFlowReferenceType.shunt_bb_pu,
-#         ParamPowerFlowReferenceType.shunt_bc_pu,
-#     ],
-#     DeviceType.ControllableShuntDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.injection_connection_type,
-#         ParamPowerFlowReferenceType.shunt_g_pu,
-#         ParamPowerFlowReferenceType.shunt_b_pu,
-#         ParamPowerFlowReferenceType.shunt_g0_pu,
-#         ParamPowerFlowReferenceType.shunt_b0_pu,
-#         ParamPowerFlowReferenceType.shunt_ga_pu,
-#         ParamPowerFlowReferenceType.shunt_gb_pu,
-#         ParamPowerFlowReferenceType.shunt_gc_pu,
-#         ParamPowerFlowReferenceType.shunt_ba_pu,
-#         ParamPowerFlowReferenceType.shunt_bb_pu,
-#         ParamPowerFlowReferenceType.shunt_bc_pu,
-#         ParamPowerFlowReferenceType.controllable_shunt_step,
-#         ParamPowerFlowReferenceType.controllable_shunt_vset_pu,
-#         ParamPowerFlowReferenceType.controllable_shunt_vmin_pu,
-#         ParamPowerFlowReferenceType.controllable_shunt_vmax_pu,
-#         ParamPowerFlowReferenceType.controllable_shunt_gmin_pu,
-#         ParamPowerFlowReferenceType.controllable_shunt_gmax_pu,
-#         ParamPowerFlowReferenceType.controllable_shunt_bmin_pu,
-#         ParamPowerFlowReferenceType.controllable_shunt_bmax_pu,
-#         ParamPowerFlowReferenceType.controllable_shunt_control_mode_code,
-#     ],
-#     DeviceType.CurrentInjectionDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.injection_connection_type,
-#         ParamPowerFlowReferenceType.current_injection_ir_pu,
-#         ParamPowerFlowReferenceType.current_injection_ii_pu,
-#         ParamPowerFlowReferenceType.current_injection_ira_pu,
-#         ParamPowerFlowReferenceType.current_injection_irb_pu,
-#         ParamPowerFlowReferenceType.current_injection_irc_pu,
-#         ParamPowerFlowReferenceType.current_injection_iia_pu,
-#         ParamPowerFlowReferenceType.current_injection_iib_pu,
-#         ParamPowerFlowReferenceType.current_injection_iic_pu,
-#     ],
-#     DeviceType.GeneratorDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.injection_connection_type,
-#         ParamPowerFlowReferenceType.omega_base,
-#         ParamPowerFlowReferenceType.ws,
-#         ParamPowerFlowReferenceType.R1,
-#         ParamPowerFlowReferenceType.X1,
-#         ParamPowerFlowReferenceType.X0,
-#         ParamPowerFlowReferenceType.generator_p_pu,
-#         ParamPowerFlowReferenceType.generator_q_pu,
-#         ParamPowerFlowReferenceType.Pmin,
-#         ParamPowerFlowReferenceType.Pmax,
-#         ParamPowerFlowReferenceType.generator_qmin_pu,
-#         ParamPowerFlowReferenceType.generator_qmax_pu,
-#         ParamPowerFlowReferenceType.generator_power_factor,
-#         ParamPowerFlowReferenceType.generator_vset_pu,
-#         ParamPowerFlowReferenceType.generator_snom_mva,
-#         ParamPowerFlowReferenceType.generator_r0_pu,
-#         ParamPowerFlowReferenceType.generator_r2_pu,
-#         ParamPowerFlowReferenceType.generator_x2_pu,
-#         ParamPowerFlowReferenceType.generator_control_mode,
-#         ParamPowerFlowReferenceType.generator_enabled_dispatch,
-#         ParamPowerFlowReferenceType.generator_must_run,
-#         ParamPowerFlowReferenceType.generator_use_reactive_power_curve,
-#         ParamPowerFlowReferenceType.generator_device_sbase_mva,
-#         ParamPowerFlowReferenceType.freq,
-#     ],
-#     DeviceType.BatteryDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.injection_connection_type,
-#         ParamPowerFlowReferenceType.omega_base,
-#         ParamPowerFlowReferenceType.ws,
-#         ParamPowerFlowReferenceType.R1,
-#         ParamPowerFlowReferenceType.X1,
-#         ParamPowerFlowReferenceType.X0,
-#         ParamPowerFlowReferenceType.generator_p_pu,
-#         ParamPowerFlowReferenceType.generator_q_pu,
-#         ParamPowerFlowReferenceType.Pmin,
-#         ParamPowerFlowReferenceType.Pmax,
-#         ParamPowerFlowReferenceType.generator_qmin_pu,
-#         ParamPowerFlowReferenceType.generator_qmax_pu,
-#         ParamPowerFlowReferenceType.generator_power_factor,
-#         ParamPowerFlowReferenceType.generator_vset_pu,
-#         ParamPowerFlowReferenceType.generator_snom_mva,
-#         ParamPowerFlowReferenceType.generator_r0_pu,
-#         ParamPowerFlowReferenceType.generator_r2_pu,
-#         ParamPowerFlowReferenceType.generator_x2_pu,
-#         ParamPowerFlowReferenceType.generator_control_mode,
-#         ParamPowerFlowReferenceType.generator_enabled_dispatch,
-#         ParamPowerFlowReferenceType.generator_must_run,
-#         ParamPowerFlowReferenceType.generator_use_reactive_power_curve,
-#         ParamPowerFlowReferenceType.generator_device_sbase_mva,
-#         ParamPowerFlowReferenceType.freq,
-#         ParamPowerFlowReferenceType.battery_enom_mwh,
-#         ParamPowerFlowReferenceType.battery_soc_0_pu,
-#         ParamPowerFlowReferenceType.battery_max_soc_pu,
-#         ParamPowerFlowReferenceType.battery_min_soc_pu,
-#         ParamPowerFlowReferenceType.battery_charge_efficiency_pu,
-#         ParamPowerFlowReferenceType.battery_discharge_efficiency_pu,
-#         ParamPowerFlowReferenceType.battery_charge_per_cycle_pu,
-#         ParamPowerFlowReferenceType.battery_discharge_per_cycle_pu,
-#     ],
-#     DeviceType.VscDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.branch_rate_mva,
-#         ParamPowerFlowReferenceType.branch_temp_base_deg_c,
-#         ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
-#         ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
-#         ParamPowerFlowReferenceType.Sbase,
-#         ParamPowerFlowReferenceType.omega_base,
-#         ParamPowerFlowReferenceType.converter_control_mode_1,
-#         ParamPowerFlowReferenceType.converter_control_mode_2,
-#         ParamPowerFlowReferenceType.converter_control_target_1,
-#         ParamPowerFlowReferenceType.converter_control_target_2,
-#         ParamPowerFlowReferenceType.alpha1,
-#         ParamPowerFlowReferenceType.alpha2,
-#         ParamPowerFlowReferenceType.alpha3,
-#         ParamPowerFlowReferenceType.vsc_kdp_pu,
-#         ParamPowerFlowReferenceType.vsc_min_ac_voltage_pu,
-#     ],
-#     DeviceType.DCLineDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.branch_rate_mva,
-#         ParamPowerFlowReferenceType.branch_temp_base_deg_c,
-#         ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
-#         ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
-#         ParamPowerFlowReferenceType.g,
-#         ParamPowerFlowReferenceType.b,
-#         ParamPowerFlowReferenceType.bsh,
-#         ParamPowerFlowReferenceType.dc_line_r_pu,
-#         ParamPowerFlowReferenceType.dc_line_length_km,
-#     ],
-#     DeviceType.Transformer2WDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.branch_rate_mva,
-#         ParamPowerFlowReferenceType.branch_temp_base_deg_c,
-#         ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
-#         ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
-#         ParamPowerFlowReferenceType.omega_base,
-#         ParamPowerFlowReferenceType.transformer_rated_power_mva,
-#         ParamPowerFlowReferenceType.transformer_winding1_rated_voltage_ll_kv,
-#         ParamPowerFlowReferenceType.transformer_winding2_rated_voltage_ll_kv,
-#         ParamPowerFlowReferenceType.transformer_connection_clock,
-#         ParamPowerFlowReferenceType.transformer_open_circuit_current_pct,
-#         ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw,
-#         ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct,
-#         ParamPowerFlowReferenceType.transformer_short_circuit_resistance_pct,
-#         ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw,
-#         ParamPowerFlowReferenceType.tap_module,
-#         ParamPowerFlowReferenceType.transformer_nominal_voltage_ratio,
-#         ParamPowerFlowReferenceType.transformer_total_voltage_ratio,
-#         ParamPowerFlowReferenceType.transformer_tap_ratio,
-#         ParamPowerFlowReferenceType.transformer_winding1_resistance_pu,
-#         ParamPowerFlowReferenceType.transformer_winding2_resistance_pu,
-#         ParamPowerFlowReferenceType.transformer_winding1_inductance_pu_s,
-#         ParamPowerFlowReferenceType.transformer_winding2_inductance_pu_s,
-#         ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s,
-#         ParamPowerFlowReferenceType.transformer_magnetizing_conductance_pu,
-#     ],
-#     DeviceType.WindingDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.branch_rate_mva,
-#         ParamPowerFlowReferenceType.branch_temp_base_deg_c,
-#         ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
-#         ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
-#         ParamPowerFlowReferenceType.omega_base,
-#         ParamPowerFlowReferenceType.transformer_rated_power_mva,
-#         ParamPowerFlowReferenceType.transformer_winding1_rated_voltage_ll_kv,
-#         ParamPowerFlowReferenceType.transformer_winding2_rated_voltage_ll_kv,
-#         ParamPowerFlowReferenceType.transformer_connection_clock,
-#         ParamPowerFlowReferenceType.transformer_open_circuit_current_pct,
-#         ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw,
-#         ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct,
-#         ParamPowerFlowReferenceType.transformer_short_circuit_resistance_pct,
-#         ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw,
-#         ParamPowerFlowReferenceType.tap_module,
-#         ParamPowerFlowReferenceType.transformer_nominal_voltage_ratio,
-#         ParamPowerFlowReferenceType.transformer_total_voltage_ratio,
-#         ParamPowerFlowReferenceType.transformer_tap_ratio,
-#         ParamPowerFlowReferenceType.transformer_winding1_resistance_pu,
-#         ParamPowerFlowReferenceType.transformer_winding2_resistance_pu,
-#         ParamPowerFlowReferenceType.transformer_winding1_inductance_pu_s,
-#         ParamPowerFlowReferenceType.transformer_winding2_inductance_pu_s,
-#         ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s,
-#         ParamPowerFlowReferenceType.transformer_magnetizing_conductance_pu,
-#     ],
-#     DeviceType.LineDevice: [
-#         ParamPowerFlowReferenceType.device_active,
-#         ParamPowerFlowReferenceType.branch_rate_mva,
-#         ParamPowerFlowReferenceType.branch_temp_base_deg_c,
-#         ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
-#         ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
-#         ParamPowerFlowReferenceType.line_length_km,
-#     ],
-#     DeviceType.HVDCLineDevice: [],
-#     DeviceType.SeriesReactanceDevice: [],
-#     DeviceType.SwitchDevice: [],
-#     DeviceType.UpfcDevice: [],
-# }
-
-
-def add_static_mapping_warning(
-        logger: StaticParameterMappingDiagnosticSink | None,
-        device_name: str,
-        message: str,
-        value: str,
-        expected_value: str,
-        device_property: str,
-) -> None:
-    """
-    Add one diagnostic warning for a static mapping issue.
-
-    :param logger: Optional driver logger or simulation-aware diagnostic context.
-    :param device_name: Device name used in diagnostics.
-    :param message: Warning message.
-    :param value: Actual problematic value.
-    :param expected_value: Expected value or condition.
-    :param device_property: Device property involved in the warning.
-    :return: None.
-    """
-    if logger is None:
-        # The mapper can be used in small unit tests without a driver logger.
-        # In that case, invalid optional mappings are skipped silently.
-        pass
-    elif isinstance(logger, StaticParameterMappingDiagnostics):
-        logger.add_warning(
-            message=message,
-            device_name=device_name,
-            value=value,
-            expected_value=expected_value,
-            device_property=device_property,
-        )
-    else:
-        logger.add_warning(
-            msg=message,
-            device=device_name,
-            value=value,
-            expected_value=expected_value,
-            device_class="Dynamic parameter mapping",
-            device_property=device_property,
-        )
-
-
-def add_static_mapping_info(
-        logger: StaticParameterMappingDiagnosticSink | None,
-        device_name: str,
-        message: str,
-        value: str,
-        expected_value: str,
-        device_property: str,
-) -> None:
-    """Add one information entry describing static-mapping precedence.
-
-    :param logger: Optional driver logger or simulation-aware diagnostic context.
-    :param device_name: Device name used in diagnostics.
-    :param message: Information message.
-    :param value: Resolved mapping and overridden declaration.
-    :param expected_value: Documented source-precedence contract.
-    :param device_property: Device property involved in the information entry.
-    :return: None.
-    """
-    if logger is None:
-        # Low-level mapping remains usable without manufacturing a logger.
-        pass
-    elif isinstance(logger, StaticParameterMappingDiagnostics):
-        logger.add_info(
-            message=message,
-            device_name=device_name,
-            value=value,
-            expected_value=expected_value,
-            device_property=device_property,
-        )
-    else:
-        logger.add_info(
-            msg=message,
-            device=device_name,
-            value=value,
-            expected_value=expected_value,
-            device_class="Dynamic parameter mapping",
-            device_property=device_property,
-        )
-
 
 def assign_api_mapping_value_if_present(
         mdl: Block,
         key: ParamPowerFlowReferenceType,
         value: float,
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         device_name: str,
         problem_mapping: Dict[Var, Const] | None = None,
 ) -> bool:
@@ -713,7 +240,7 @@ def assign_api_mapping_value_if_present(
     :return: ``True`` if the value was assigned, ``False`` otherwise.
     """
     assigned: bool = False
-    #TODO: is it necessary copy or not?
+    # TODO: is it necessary copy or not?
     api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var] = mdl.api_obj_mapping
 
     # The mapping is optional: a model receives only the parameter values it
@@ -727,39 +254,45 @@ def assign_api_mapping_value_if_present(
         target_is_continuous_runtime: bool = target in mdl.event_dict
         target_is_discrete_runtime: bool = target in mdl.mode_dict
         declaration_count: int = (
-            int(target_is_constant)
-            + int(target_is_continuous_runtime)
-            + int(target_is_discrete_runtime)
+                int(target_is_constant)
+                + int(target_is_continuous_runtime)
+                + int(target_is_discrete_runtime)
         )
 
         if declaration_count > 1:
-            add_static_mapping_warning(
-                logger=logger,
-                device_name=device_name,
-                message="Scripted model-template mapping conflict: API mapping target has multiple parameter roles; value skipped.",
-                value=f"{mdl.name}: {key} -> {target.name}",
-                expected_value=(
-                    "Declare the mapped variable in exactly one of Block.parameters, "
-                    + "Block.event_dict or Block.mode_dict."
-                ),
-                device_property="model template api_obj_mapping",
-            )
+            if logger is not None:
+                logger.add_warning(
+                    device=device_name,
+                    msg="Scripted model-template mapping conflict: API mapping target has multiple parameter roles; value skipped.",
+                    value=f"{mdl.name}: {key} -> {target.name}",
+                    expected_value=(
+                            "Declare the mapped variable in exactly one of Block.parameters, "
+                            + "Block.event_dict or Block.mode_dict."
+                    ),
+                    device_property="model template api_obj_mapping",
+                    device_class="Dynamic parameter mapping",
+                )
+            else:
+                pass
             assigned = False
         elif declaration_count == 0:
             # API mappings are owner-local. A wrapper must not borrow a target
             # declared by a descendant because recursive discovery visits the
             # actual owner in both RMS and EMT.
-            add_static_mapping_warning(
-                logger=logger,
-                device_name=device_name,
-                message="Scripted model-template mapping conflict: API mapping target is not declared by the same block; value skipped.",
-                value=f"{mdl.name}: {key} -> {target.name}",
-                expected_value=(
-                    "Declare the mapped variable in the same block's parameters, "
-                    + "event_dict or mode_dict collection."
-                ),
-                device_property="model template api_obj_mapping",
-            )
+            if logger is not None:
+                logger.add_warning(
+                    device=device_name,
+                    msg="Scripted model-template mapping conflict: API mapping target is not declared by the same block; value skipped.",
+                    value=f"{mdl.name}: {key} -> {target.name}",
+                    expected_value=(
+                            "Declare the mapped variable in the same block's parameters, "
+                            + "event_dict or mode_dict collection."
+                    ),
+                    device_property="model template api_obj_mapping",
+                    device_class="Dynamic parameter mapping",
+                )
+            else:
+                pass
             assigned = False
         else:
             # Keep the value in the flat problem-side mapping. The destination
@@ -846,11 +379,10 @@ def get_api_mapping_keys_for_parameter(
         for mapping_key, mapping_target in candidate_block.api_obj_mapping.items():
             if mapping_target is None:
                 pass
+            elif mapping_target.uid == parameter.uid:
+                mapping_keys.append(mapping_key)
             else:
-                if mapping_target.uid == parameter.uid:
-                    mapping_keys.append(mapping_key)
-                else:
-                    pass
+                pass
 
     return mapping_keys
 
@@ -876,12 +408,7 @@ def resolve_parameter_initial_expression(
         problem_mapping=problem_mapping,
     )
 
-    if mapped_expression is None:
-        resolved_expression: Expr | Const = declared_expression
-    else:
-        resolved_expression = mapped_expression
-
-    return resolved_expression
+    return declared_expression if mapped_expression is None else mapped_expression
 
 
 def resolve_constant_parameter_initial_value(
@@ -942,9 +469,9 @@ def resolve_constant_parameter_initial_value(
             mapping_diagnostic: str = "the parameter is not targeted by any api_obj_mapping entry"
         else:
             mapping_diagnostic = (
-                "api_obj_mapping targets it through ["
-                + ", ".join(mapping_names)
-                + "], but the problem-local mapper produced no value"
+                    "api_obj_mapping targets it through ["
+                    + ", ".join(mapping_names)
+                    + "], but the problem-local mapper produced no value"
             )
 
         raise ValueError(
@@ -1014,9 +541,9 @@ def resolve_runtime_parameter_initial_expression(
                 mapping_diagnostic: str = "no api_obj_mapping entry targets the parameter"
             else:
                 mapping_diagnostic = (
-                    "api_obj_mapping references ["
-                    + ", ".join(mapping_names)
-                    + "], but no concrete initial value was resolved"
+                        "api_obj_mapping references ["
+                        + ", ".join(mapping_names)
+                        + "], but no concrete initial value was resolved"
                 )
 
             raise ValueError(
@@ -1066,7 +593,7 @@ def build_api_parameter_initial_values_by_uid(
 def report_api_mapping_overrides_for_block(
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         device_name: str,
         reported_uids: Set[int],
 ) -> None:
@@ -1097,9 +624,9 @@ def report_api_mapping_overrides_for_block(
             target_is_continuous_runtime: bool = target in mdl.event_dict
             target_is_discrete_runtime: bool = target in mdl.mode_dict
             declaration_count: int = (
-                int(target_is_constant)
-                + int(target_is_continuous_runtime)
-                + int(target_is_discrete_runtime)
+                    int(target_is_constant)
+                    + int(target_is_continuous_runtime)
+                    + int(target_is_discrete_runtime)
             )
 
             if declaration_count != 1:
@@ -1132,20 +659,20 @@ def report_api_mapping_overrides_for_block(
                 else:
                     declaration_is_overridden = True
 
-                if declaration_is_overridden and mapped_value is not None:
-                    add_static_mapping_info(
-                        logger=logger,
-                        device_name=device_name,
-                        message="API-object initial value overrides the model-template fallback.",
+                if declaration_is_overridden and mapped_value is not None and logger is not None:
+                    logger.add_info(
+                        device=device_name,
+                        msg="API-object initial value overrides the model-template fallback.",
                         value=(
-                            f"{mdl.name}: {key} -> {target.name}; "
-                            + f"API={mapped_value.value}; template={declared_value}"
+                                f"{mdl.name}: {key} -> {target.name}; "
+                                + f"API={mapped_value.value}; template={declared_value}"
                         ),
                         expected_value=(
-                            "api_obj_mapping is authoritative during initialization; "
-                            + "remove the mapping to use the model-template declaration."
+                                "api_obj_mapping is authoritative during initialization; "
+                                + "remove the mapping to use the model-template declaration."
                         ),
                         device_property="model template api_obj_mapping",
+                        device_class="Dynamic parameter mapping",
                     )
                 else:
                     pass
@@ -1162,50 +689,13 @@ def api_mapping_has_any_key(
     :param keys: API-object enum keys to test.
     :return: ``True`` if any key is present in ``mdl.api_obj_mapping``.
     """
-    has_key: bool = False
-    api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var] = mdl.api_obj_mapping
-
-    if isinstance(api_obj_mapping, dict):
-        key_index: int = 0
-
-        while key_index < len(keys):
-            key: ParamPowerFlowReferenceType = keys[key_index]
-
-            if key in api_obj_mapping:
-                # Do not break the loop: keeping the loop explicit avoids control
-                # flow surprises and follows the local style constraints.
-                has_key = True
-            else:
-                pass
-
-            key_index += 1
-    else:
-        has_key = False
-
-    return has_key
-
-
-def _float_or_zero(value: float | None) -> float:
-    """
-    Return one scalar value, replacing ``None`` with zero.
-
-    :param value: Optional scalar value.
-    :return: Float scalar with ``None`` mapped to ``0.0``.
-    """
-    out: float
-
-    if value is None:
-        out = 0.0
-    else:
-        out = float(value)
-
-    return out
+    return isinstance(mdl.api_obj_mapping, dict) and any(key in mdl.api_obj_mapping for key in keys)
 
 
 def _abc_values_are_meaningful(
-        phase_a: float | None,
-        phase_b: float | None,
-        phase_c: float | None,
+        phase_a: float,
+        phase_b: float,
+        phase_c: float,
 ) -> bool:
     """
     Return whether explicit ABC values should override balanced fallback.
@@ -1220,48 +710,18 @@ def _abc_values_are_meaningful(
     :param phase_c: Phase-C scalar.
     :return: ``True`` when explicit phase values should be used.
     """
-    value_a: float = _float_or_zero(phase_a)
-    value_b: float = _float_or_zero(phase_b)
-    value_c: float = _float_or_zero(phase_c)
-    meaningful: bool
-
-    if abs(value_a) > 0.0:
-        meaningful = True
-    else:
-        if abs(value_b) > 0.0:
-            meaningful = True
-        else:
-            if abs(value_c) > 0.0:
-                meaningful = True
-            else:
-                meaningful = False
-
-    return meaningful
-
-
-def balanced_to_abc_power(total_value: float | None) -> np.ndarray:
-    """
-    Split one balanced total scalar equally into explicit ABC values.
-
-    :param total_value: Balanced total scalar.
-    :return: ABC array with one third of the total in each phase.
-    """
-    total_scalar: float = _float_or_zero(total_value)
-    phase_scalar: float = total_scalar / 3.0
-    phase_values: np.ndarray = np.zeros(3, dtype=np.float64)
-
-    phase_values[0] = phase_scalar
-    phase_values[1] = phase_scalar
-    phase_values[2] = phase_scalar
-
-    return phase_values
+    return (
+        abs(phase_a) > 0.0
+        or abs(phase_b) > 0.0
+        or abs(phase_c) > 0.0
+    )
 
 
 def _resolve_explicit_or_balanced_abc_values(
-        phase_a: float | None,
-        phase_b: float | None,
-        phase_c: float | None,
-        total_value: float | None,
+        phase_a: float,
+        phase_b: float,
+        phase_c: float,
+        total_value: float,
 ) -> np.ndarray:
     """
     Resolve one ABC quantity from explicit phase values or from a balanced total.
@@ -1272,16 +732,10 @@ def _resolve_explicit_or_balanced_abc_values(
     :param total_value: Balanced total scalar used as fallback.
     :return: Explicit ABC array.
     """
-    phase_values: np.ndarray = np.zeros(3, dtype=np.float64)
-
     if _abc_values_are_meaningful(phase_a=phase_a, phase_b=phase_b, phase_c=phase_c):
-        phase_values[0] = _float_or_zero(phase_a)
-        phase_values[1] = _float_or_zero(phase_b)
-        phase_values[2] = _float_or_zero(phase_c)
+        return np.array((phase_a, phase_b, phase_c), dtype=np.float64)
     else:
-        phase_values = balanced_to_abc_power(total_value=total_value)
-
-    return phase_values
+        return np.full(3, total_value / 3.0, dtype=np.float64)
 
 
 def abc_to_nabc(phase_values_abc: np.ndarray) -> np.ndarray:
@@ -1293,24 +747,21 @@ def abc_to_nabc(phase_values_abc: np.ndarray) -> np.ndarray:
     """
     phase_values_nabc: np.ndarray = np.zeros(4, dtype=np.float64)
 
-    phase_values_nabc[0] = 0.0
-    phase_values_nabc[1] = float(phase_values_abc[0])
-    phase_values_nabc[2] = float(phase_values_abc[1])
-    phase_values_nabc[3] = float(phase_values_abc[2])
+    phase_values_nabc[1:] = phase_values_abc
 
     return phase_values_nabc
 
 
-def get_load_power_phase_values_pu_abc(load: Union[dev.Load|dev.StaticGenerator],
-                                       grid: MultiCircuit) -> Tuple[np.ndarray, np.ndarray]:
+def get_load_power_phase_values_pu_abc(load: Union[dev.Load | dev.StaticGenerator],
+                                       Sbase: float) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Return explicit ABC active/reactive load powers in p.u. on ``grid.Sbase``.
+    Return explicit ABC active/reactive load powers in p.u. on ``Sbase``.
 
     Explicit phase values are used when they are meaningfully populated.
     Otherwise, the balanced total values are split equally among phases.
 
     :param load: Load-like static device.
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :return: Pair ``(p_abc_pu, q_abc_pu)``.
     """
     # Only Load balanced totals use the kW flag; explicit phases remain MW/MVAr.
@@ -1327,19 +778,19 @@ def get_load_power_phase_values_pu_abc(load: Union[dev.Load|dev.StaticGenerator]
         phase_c=load.Qc,
         total_value=load.Q / unit_scale,
     )
-    p_pu_abc: np.ndarray = p_mw_abc / float(grid.Sbase)
-    q_pu_abc: np.ndarray = q_mvar_abc / float(grid.Sbase)
+    p_pu_abc: np.ndarray = p_mw_abc / Sbase
+    q_pu_abc: np.ndarray = q_mvar_abc / Sbase
 
     return p_pu_abc, q_pu_abc
 
 
-def get_load_impedance_phase_values_pu_abc(load: dev.Load, grid: MultiCircuit) -> Tuple[np.ndarray, np.ndarray]:
+def get_load_impedance_phase_values_pu_abc(load: dev.Load, Sbase: float) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Return explicit ABC ZIP-impedance powers in p.u. on ``grid.Sbase``.
+    Return explicit ABC ZIP-impedance powers in p.u. on ``Sbase``.
 
     :param load: Load-like static device exposing ``G``/``B`` totals and
         ``G1``/``G2``/``G3`` plus ``B1``/``B2``/``B3`` phase values.
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :return: Pair ``(g_abc_pu, b_abc_pu)``.
     """
     g_mw_abc: np.ndarray = _resolve_explicit_or_balanced_abc_values(
@@ -1354,19 +805,19 @@ def get_load_impedance_phase_values_pu_abc(load: dev.Load, grid: MultiCircuit) -
         phase_c=load.B3,
         total_value=load.B,
     )
-    g_pu_abc: np.ndarray = g_mw_abc / float(grid.Sbase)
-    b_pu_abc: np.ndarray = b_mvar_abc / float(grid.Sbase)
+    g_pu_abc: np.ndarray = g_mw_abc / Sbase
+    b_pu_abc: np.ndarray = b_mvar_abc / Sbase
 
     return g_pu_abc, b_pu_abc
 
 
-def get_load_current_phase_values_pu_abc(load: dev.Load, grid: MultiCircuit) -> Tuple[np.ndarray, np.ndarray]:
+def get_load_current_phase_values_pu_abc(load: dev.Load, Sbase: float) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Return explicit ABC ZIP-current powers in p.u. on ``grid.Sbase``.
+    Return explicit ABC ZIP-current powers in p.u. on ``Sbase``.
 
     :param load: Load-like static device exposing ``Ir``/``Ii`` totals and
         ``Ir1``/``Ir2``/``Ir3`` plus ``Ii1``/``Ii2``/``Ii3`` phase values.
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :return: Pair ``(ir_abc_pu, ii_abc_pu)``.
     """
     ir_mw_abc: np.ndarray = _resolve_explicit_or_balanced_abc_values(
@@ -1381,13 +832,13 @@ def get_load_current_phase_values_pu_abc(load: dev.Load, grid: MultiCircuit) -> 
         phase_c=load.Ii3,
         total_value=load.Ii,
     )
-    ir_pu_abc: np.ndarray = ir_mw_abc / float(grid.Sbase)
-    ii_pu_abc: np.ndarray = ii_mvar_abc / float(grid.Sbase)
+    ir_pu_abc: np.ndarray = ir_mw_abc / Sbase
+    ii_pu_abc: np.ndarray = ii_mvar_abc / Sbase
 
     return ir_pu_abc, ii_pu_abc
 
 
-def get_shunt_phase_values_pu_abc(shunt: dev.Shunt, grid: MultiCircuit) -> Tuple[np.ndarray, np.ndarray]:
+def get_shunt_phase_values_pu_abc(shunt: dev.Shunt, Sbase: float) -> Tuple[np.ndarray, np.ndarray]:
     """
     Return explicit ABC shunt conductance/susceptance powers in p.u.
 
@@ -1395,7 +846,7 @@ def get_shunt_phase_values_pu_abc(shunt: dev.Shunt, grid: MultiCircuit) -> Tuple
     balanced totals are split equally among phases.
 
     :param shunt: Shunt-like static device.
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :return: Pair ``(g_abc_pu, b_abc_pu)``.
     """
     g_mw_abc: np.ndarray = _resolve_explicit_or_balanced_abc_values(
@@ -1410,21 +861,21 @@ def get_shunt_phase_values_pu_abc(shunt: dev.Shunt, grid: MultiCircuit) -> Tuple
         phase_c=shunt.Bc,
         total_value=shunt.B,
     )
-    g_pu_abc: np.ndarray = g_mw_abc / float(grid.Sbase)
-    b_pu_abc: np.ndarray = b_mvar_abc / float(grid.Sbase)
+    g_pu_abc: np.ndarray = g_mw_abc / Sbase
+    b_pu_abc: np.ndarray = b_mvar_abc / Sbase
 
     return g_pu_abc, b_pu_abc
 
 
 def get_current_injection_phase_values_pu_abc(
         current_injection: dev.CurrentInjection,
-        grid: MultiCircuit,
+        Sbase: float,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Return explicit ABC current-injection powers in p.u. on ``grid.Sbase``.
+    Return explicit ABC current-injection powers in p.u. on ``Sbase``.
 
     :param current_injection: Current-injection static device.
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :return: Pair ``(ir_abc_pu, ii_abc_pu)``.
     """
     ir_mw_abc: np.ndarray = _resolve_explicit_or_balanced_abc_values(
@@ -1439,8 +890,8 @@ def get_current_injection_phase_values_pu_abc(
         phase_c=current_injection.Ii3,
         total_value=current_injection.Ii,
     )
-    ir_pu_abc: np.ndarray = ir_mw_abc / float(grid.Sbase)
-    ii_pu_abc: np.ndarray = ii_mvar_abc / float(grid.Sbase)
+    ir_pu_abc: np.ndarray = ir_mw_abc / Sbase
+    ii_pu_abc: np.ndarray = ii_mvar_abc / Sbase
 
     return ir_pu_abc, ii_pu_abc
 
@@ -1557,139 +1008,10 @@ def build_device_direct_dyn_ref_keys(device: ALL_DEV_TYPES) -> List[ParamPowerFl
     return direct_keys
 
 
-def _get_direct_phase_property_value(device: ALL_DEV_TYPES, property_name: str) -> float:
-    """
-    Return one explicit phase-property value without reflection.
-
-    The unified mapper keeps the automatic direct-mapping stage, but the
-    repository rules forbid reflective access such as ``getattr``. This helper
-    therefore resolves every supported phase property through explicit branches
-    so the mapping remains refactorable and statically inspectable.
-
-    :param device: Static device instance.
-    :param property_name: Static property name.
-    :return: Numerical property value.
-    """
-    value: float
-
-    if property_name == "Pa":
-        value = float(device.Pa)
-    else:
-        if property_name == "Pb":
-            value = float(device.Pb)
-        else:
-            if property_name == "Pc":
-                value = float(device.Pc)
-            else:
-                if property_name == "Qa":
-                    value = float(device.Qa)
-                else:
-                    if property_name == "Qb":
-                        value = float(device.Qb)
-                    else:
-                        if property_name == "Qc":
-                            value = float(device.Qc)
-                        else:
-                            if property_name == "G1":
-                                value = float(device.G1)
-                            else:
-                                if property_name == "G2":
-                                    value = float(device.G2)
-                                else:
-                                    if property_name == "G3":
-                                        value = float(device.G3)
-                                    else:
-                                        if property_name == "B1":
-                                            value = float(device.B1)
-                                        else:
-                                            if property_name == "B2":
-                                                value = float(device.B2)
-                                            else:
-                                                if property_name == "B3":
-                                                    value = float(device.B3)
-                                                else:
-                                                    if property_name == "Ir1":
-                                                        value = float(device.Ir1)
-                                                    else:
-                                                        if property_name == "Ir2":
-                                                            value = float(device.Ir2)
-                                                        else:
-                                                            if property_name == "Ir3":
-                                                                value = float(device.Ir3)
-                                                            else:
-                                                                if property_name == "Ii1":
-                                                                    value = float(device.Ii1)
-                                                                else:
-                                                                    if property_name == "Ii2":
-                                                                        value = float(device.Ii2)
-                                                                    else:
-                                                                        if property_name == "Ii3":
-                                                                            value = float(device.Ii3)
-                                                                        else:
-                                                                            if property_name == "Ga":
-                                                                                value = float(device.Ga)
-                                                                            else:
-                                                                                if property_name == "Gb":
-                                                                                    value = float(device.Gb)
-                                                                                else:
-                                                                                    if property_name == "Gc":
-                                                                                        value = float(device.Gc)
-                                                                                    else:
-                                                                                        if property_name == "Ba":
-                                                                                            value = float(device.Ba)
-                                                                                        else:
-                                                                                            if property_name == "Bb":
-                                                                                                value = float(device.Bb)
-                                                                                            else:
-                                                                                                if property_name == "Bc":
-                                                                                                    value = float(device.Bc)
-                                                                                                else:
-                                                                                                    value = 0.0
-
-    return value
-
-
-def _get_direct_total_property_value(device: ALL_DEV_TYPES, total_property_name: str) -> float:
-    """
-    Return one explicit total-property value without reflection.
-
-    The phase fallback path needs the balanced total associated with one phase
-    property. Resolving it explicitly avoids dynamic attribute access while
-    keeping the historical balanced fallback semantics identical.
-
-    :param device: Static device instance.
-    :param total_property_name: Total-property name.
-    :return: Numerical property value.
-    """
-    value: float
-
-    if total_property_name == "P":
-        value = float(device.P)
-    else:
-        if total_property_name == "Q":
-            value = float(device.Q)
-        else:
-            if total_property_name == "G":
-                value = float(device.G)
-            else:
-                if total_property_name == "B":
-                    value = float(device.B)
-                else:
-                    if total_property_name == "Ir":
-                        value = float(device.Ir)
-                    else:
-                        if total_property_name == "Ii":
-                            value = float(device.Ii)
-                        else:
-                            value = 0.0
-
-    return value
-
-
 def _resolve_direct_phase_power_value(
         device: ALL_DEV_TYPES,
         property_name: str,
-        grid: MultiCircuit,
+        Sbase: float,
 ) -> float:
     """
     Resolve one direct phase value with balanced fallback preserved.
@@ -1703,7 +1025,7 @@ def _resolve_direct_phase_power_value(
 
     :param device: Static device instance.
     :param property_name: Static phase-property name.
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :return: Per-unit phase quantity.
     """
     total_property_name: str | None = None
@@ -1711,152 +1033,122 @@ def _resolve_direct_phase_power_value(
 
     if property_name == "Pa":
         total_property_name = "P"
+    elif property_name == "Pb":
+        total_property_name = "P"
+    elif property_name == "Pc":
+        total_property_name = "P"
+    elif property_name == "Qa":
+        total_property_name = "Q"
+    elif property_name == "Qb":
+        total_property_name = "Q"
+    elif property_name == "Qc":
+        total_property_name = "Q"
+    elif property_name == "G1":
+        total_property_name = "G"
+    elif property_name == "G2":
+        total_property_name = "G"
+    elif property_name == "G3":
+        total_property_name = "G"
+    elif property_name == "B1":
+        total_property_name = "B"
+    elif property_name == "B2":
+        total_property_name = "B"
+    elif property_name == "B3":
+        total_property_name = "B"
+    elif property_name == "Ir1":
+        total_property_name = "Ir"
+    elif property_name == "Ir2":
+        total_property_name = "Ir"
+    elif property_name == "Ir3":
+        total_property_name = "Ir"
+    elif property_name == "Ii1":
+        total_property_name = "Ii"
+    elif property_name == "Ii2":
+        total_property_name = "Ii"
+    elif property_name == "Ii3":
+        total_property_name = "Ii"
+    elif property_name == "Ga":
+        total_property_name = "G"
+    elif property_name == "Gb":
+        total_property_name = "G"
+    elif property_name == "Gc":
+        total_property_name = "G"
+    elif property_name == "Ba":
+        total_property_name = "B"
+    elif property_name == "Bb":
+        total_property_name = "B"
+    elif property_name == "Bc":
+        total_property_name = "B"
     else:
-        if property_name == "Pb":
-            total_property_name = "P"
-        else:
-            if property_name == "Pc":
-                total_property_name = "P"
-            else:
-                if property_name == "Qa":
-                    total_property_name = "Q"
-                else:
-                    if property_name == "Qb":
-                        total_property_name = "Q"
-                    else:
-                        if property_name == "Qc":
-                            total_property_name = "Q"
-                        else:
-                            if property_name == "G1":
-                                total_property_name = "G"
-                            else:
-                                if property_name == "G2":
-                                    total_property_name = "G"
-                                else:
-                                    if property_name == "G3":
-                                        total_property_name = "G"
-                                    else:
-                                        if property_name == "B1":
-                                            total_property_name = "B"
-                                        else:
-                                            if property_name == "B2":
-                                                total_property_name = "B"
-                                            else:
-                                                if property_name == "B3":
-                                                    total_property_name = "B"
-                                                else:
-                                                    if property_name == "Ir1":
-                                                        total_property_name = "Ir"
-                                                    else:
-                                                        if property_name == "Ir2":
-                                                            total_property_name = "Ir"
-                                                        else:
-                                                            if property_name == "Ir3":
-                                                                total_property_name = "Ir"
-                                                            else:
-                                                                if property_name == "Ii1":
-                                                                    total_property_name = "Ii"
-                                                                else:
-                                                                    if property_name == "Ii2":
-                                                                        total_property_name = "Ii"
-                                                                    else:
-                                                                        if property_name == "Ii3":
-                                                                            total_property_name = "Ii"
-                                                                        else:
-                                                                            if property_name == "Ga":
-                                                                                total_property_name = "G"
-                                                                            else:
-                                                                                if property_name == "Gb":
-                                                                                    total_property_name = "G"
-                                                                                else:
-                                                                                    if property_name == "Gc":
-                                                                                        total_property_name = "G"
-                                                                                    else:
-                                                                                        if property_name == "Ba":
-                                                                                            total_property_name = "B"
-                                                                                        else:
-                                                                                            if property_name == "Bb":
-                                                                                                total_property_name = "B"
-                                                                                            else:
-                                                                                                if property_name == "Bc":
-                                                                                                    total_property_name = "B"
-                                                                                                else:
-                                                                                                    total_property_name = None
+        total_property_name = None
 
     if total_property_name is None:
         explicit_phase_is_meaningful = True
+    elif property_name in ("Pa", "Pb", "Pc"):
+        explicit_phase_is_meaningful = _abc_values_are_meaningful(
+            phase_a=device.Pa,
+            phase_b=device.Pb,
+            phase_c=device.Pc,
+        )
+    elif property_name in ("Qa", "Qb", "Qc"):
+        explicit_phase_is_meaningful = _abc_values_are_meaningful(
+            phase_a=device.Qa,
+            phase_b=device.Qb,
+            phase_c=device.Qc,
+        )
+    elif property_name in ("G1", "G2", "G3"):
+        explicit_phase_is_meaningful = _abc_values_are_meaningful(
+            phase_a=device.G1,
+            phase_b=device.G2,
+            phase_c=device.G3,
+        )
+    elif property_name in ("B1", "B2", "B3"):
+        explicit_phase_is_meaningful = _abc_values_are_meaningful(
+            phase_a=device.B1,
+            phase_b=device.B2,
+            phase_c=device.B3,
+        )
+    elif property_name in ("Ir1", "Ir2", "Ir3"):
+        explicit_phase_is_meaningful = _abc_values_are_meaningful(
+            phase_a=device.Ir1,
+            phase_b=device.Ir2,
+            phase_c=device.Ir3,
+        )
+    elif property_name in ("Ii1", "Ii2", "Ii3"):
+        explicit_phase_is_meaningful = _abc_values_are_meaningful(
+            phase_a=device.Ii1,
+            phase_b=device.Ii2,
+            phase_c=device.Ii3,
+        )
+    elif property_name in ("Ga", "Gb", "Gc"):
+        explicit_phase_is_meaningful = _abc_values_are_meaningful(
+            phase_a=device.Ga,
+            phase_b=device.Gb,
+            phase_c=device.Gc,
+        )
+    elif property_name in ("Ba", "Bb", "Bc"):
+        explicit_phase_is_meaningful = _abc_values_are_meaningful(
+            phase_a=device.Ba,
+            phase_b=device.Bb,
+            phase_c=device.Bc,
+        )
     else:
-        if property_name in ("Pa", "Pb", "Pc"):
-            explicit_phase_is_meaningful = _abc_values_are_meaningful(
-                phase_a=float(device.Pa),
-                phase_b=float(device.Pb),
-                phase_c=float(device.Pc),
-            )
-        else:
-            if property_name in ("Qa", "Qb", "Qc"):
-                explicit_phase_is_meaningful = _abc_values_are_meaningful(
-                    phase_a=float(device.Qa),
-                    phase_b=float(device.Qb),
-                    phase_c=float(device.Qc),
-                )
-            else:
-                if property_name in ("G1", "G2", "G3"):
-                    explicit_phase_is_meaningful = _abc_values_are_meaningful(
-                        phase_a=float(device.G1),
-                        phase_b=float(device.G2),
-                        phase_c=float(device.G3),
-                    )
-                else:
-                    if property_name in ("B1", "B2", "B3"):
-                        explicit_phase_is_meaningful = _abc_values_are_meaningful(
-                            phase_a=float(device.B1),
-                            phase_b=float(device.B2),
-                            phase_c=float(device.B3),
-                        )
-                    else:
-                        if property_name in ("Ir1", "Ir2", "Ir3"):
-                            explicit_phase_is_meaningful = _abc_values_are_meaningful(
-                                phase_a=float(device.Ir1),
-                                phase_b=float(device.Ir2),
-                                phase_c=float(device.Ir3),
-                            )
-                        else:
-                            if property_name in ("Ii1", "Ii2", "Ii3"):
-                                explicit_phase_is_meaningful = _abc_values_are_meaningful(
-                                    phase_a=float(device.Ii1),
-                                    phase_b=float(device.Ii2),
-                                    phase_c=float(device.Ii3),
-                                )
-                            else:
-                                if property_name in ("Ga", "Gb", "Gc"):
-                                    explicit_phase_is_meaningful = _abc_values_are_meaningful(
-                                        phase_a=float(device.Ga),
-                                        phase_b=float(device.Gb),
-                                        phase_c=float(device.Gc),
-                                    )
-                                else:
-                                    if property_name in ("Ba", "Bb", "Bc"):
-                                        explicit_phase_is_meaningful = _abc_values_are_meaningful(
-                                            phase_a=float(device.Ba),
-                                            phase_b=float(device.Bb),
-                                            phase_c=float(device.Bc),
-                                        )
-                                    else:
-                                        explicit_phase_is_meaningful = True
+        explicit_phase_is_meaningful = True
 
     if explicit_phase_is_meaningful:
-        return _get_direct_phase_property_value(device=device, property_name=property_name) / float(grid.Sbase)
+        return device.get_value_by_name(prop_name=property_name, t_idx=None) / Sbase
     else:
         # Preserve phase MW and other ZIP/device units; normalize only Load P/Q totals.
         unit_scale: float = 1000.0 if (
-            isinstance(device, Load) and device.use_kw and total_property_name in ("P", "Q")
+                isinstance(device, Load) and device.use_kw and total_property_name in ("P", "Q")
         ) else 1.0
-        return _get_direct_total_property_value(
-            device=device, total_property_name=str(total_property_name)) / (3.0 * float(grid.Sbase) * unit_scale)
+
+        return (device.get_value_by_name(prop_name=str(total_property_name), t_idx=None)
+                / (3.0 * Sbase * unit_scale))
 
 
 def resolve_direct_dyn_ref_value(
-        grid: MultiCircuit,
+        Sbase: float,
         device: ALL_DEV_TYPES,
         key: ParamPowerFlowReferenceType,
         property_name: str,
@@ -1871,7 +1163,7 @@ def resolve_direct_dyn_ref_value(
     aliases intentionally return ``None`` so the historical explicit code path
     remains responsible for them.
 
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :param device: Static device instance.
     :param key: Dynamic reference requested by the template.
     :param property_name: Static property name declared in the schema.
@@ -1883,10 +1175,7 @@ def resolve_direct_dyn_ref_value(
     # device-specific fallback remains responsible for the reduced model.
     if raw_value is None:
         return None
-    else:
-        pass
-
-    if key == ParamPowerFlowReferenceType.g or key == ParamPowerFlowReferenceType.b:
+    elif key == ParamPowerFlowReferenceType.g or key == ParamPowerFlowReferenceType.b:
         # Branch-like devices may expose scalar g/b template keys whose meaning
         # depends on the target dynamic model contract. For RMS phasor line
         # templates these are derived series admittance terms, not direct copies
@@ -1894,10 +1183,7 @@ def resolve_direct_dyn_ref_value(
         # device-specific mapper keeps the automatic dyn-ref path restricted to
         # genuinely direct assignments.
         return None
-    else:
-        pass
-
-    if key in (
+    elif key in (
             ParamPowerFlowReferenceType.branch_rate_mva,
             ParamPowerFlowReferenceType.branch_temp_base_deg_c,
             ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
@@ -1916,160 +1202,147 @@ def resolve_direct_dyn_ref_value(
         # The unified mapper therefore leaves them to the explicit per-device
         # handlers so the historical solver-specific meaning is preserved.
         return None
-    else:
-        pass
-
-    if key == ParamPowerFlowReferenceType.device_active:
+    elif key == ParamPowerFlowReferenceType.device_active:
         return 1.0 if bool(raw_value) else 0.0
+    elif key == ParamPowerFlowReferenceType.injection_connection_type:
+        return shunt_connection_code(raw_value)
+    elif key == ParamPowerFlowReferenceType.external_grid_mode_code:
+        return external_grid_mode_code(raw_value)
+    elif key == ParamPowerFlowReferenceType.controllable_shunt_control_mode_code:
+        return controllable_shunt_mode_code(raw_value)
+    elif key == ParamPowerFlowReferenceType.converter_control_mode_1:
+        return converter_control_code(raw_value)
+    elif key == ParamPowerFlowReferenceType.converter_control_mode_2:
+        return converter_control_code(raw_value)
+    elif key == ParamPowerFlowReferenceType.generator_control_mode:
+        return 1.0 if bool(device.is_controlled) else 0.0
+    elif key in (
+            ParamPowerFlowReferenceType.generator_enabled_dispatch,
+            ParamPowerFlowReferenceType.generator_must_run,
+            ParamPowerFlowReferenceType.generator_use_reactive_power_curve,
+    ):
+        return 1.0 if bool(raw_value) else 0.0
+    elif key in (
+            ParamPowerFlowReferenceType.Pl0,
+            ParamPowerFlowReferenceType.Ql0,
+            ParamPowerFlowReferenceType.load_g_pu,
+            ParamPowerFlowReferenceType.load_b_pu,
+            ParamPowerFlowReferenceType.load_ir_pu,
+            ParamPowerFlowReferenceType.load_ii_pu,
+            ParamPowerFlowReferenceType.load_contract_power_pu,
+            ParamPowerFlowReferenceType.current_injection_ir_pu,
+            ParamPowerFlowReferenceType.current_injection_ii_pu,
+            ParamPowerFlowReferenceType.shunt_g_pu,
+            ParamPowerFlowReferenceType.shunt_b_pu,
+            ParamPowerFlowReferenceType.shunt_g0_pu,
+            ParamPowerFlowReferenceType.shunt_b0_pu,
+            ParamPowerFlowReferenceType.generator_p_pu,
+            ParamPowerFlowReferenceType.generator_q_pu,
+            ParamPowerFlowReferenceType.Pmin,
+            ParamPowerFlowReferenceType.Pmax,
+            ParamPowerFlowReferenceType.generator_qmin_pu,
+            ParamPowerFlowReferenceType.generator_qmax_pu,
+            ParamPowerFlowReferenceType.controllable_shunt_gmin_pu,
+            ParamPowerFlowReferenceType.controllable_shunt_gmax_pu,
+            ParamPowerFlowReferenceType.controllable_shunt_bmin_pu,
+            ParamPowerFlowReferenceType.controllable_shunt_bmax_pu,
+    ):
+        return float(raw_value) / Sbase
+    elif key in (
+            ParamPowerFlowReferenceType.Pl0_A,
+            ParamPowerFlowReferenceType.Pl0_B,
+            ParamPowerFlowReferenceType.Pl0_C,
+            ParamPowerFlowReferenceType.Ql0_A,
+            ParamPowerFlowReferenceType.Ql0_B,
+            ParamPowerFlowReferenceType.Ql0_C,
+            ParamPowerFlowReferenceType.load_ga_pu,
+            ParamPowerFlowReferenceType.load_gb_pu,
+            ParamPowerFlowReferenceType.load_gc_pu,
+            ParamPowerFlowReferenceType.load_ba_pu,
+            ParamPowerFlowReferenceType.load_bb_pu,
+            ParamPowerFlowReferenceType.load_bc_pu,
+            ParamPowerFlowReferenceType.load_ira_pu,
+            ParamPowerFlowReferenceType.load_irb_pu,
+            ParamPowerFlowReferenceType.load_irc_pu,
+            ParamPowerFlowReferenceType.load_iia_pu,
+            ParamPowerFlowReferenceType.load_iib_pu,
+            ParamPowerFlowReferenceType.load_iic_pu,
+            ParamPowerFlowReferenceType.current_injection_ira_pu,
+            ParamPowerFlowReferenceType.current_injection_irb_pu,
+            ParamPowerFlowReferenceType.current_injection_irc_pu,
+            ParamPowerFlowReferenceType.current_injection_iia_pu,
+            ParamPowerFlowReferenceType.current_injection_iib_pu,
+            ParamPowerFlowReferenceType.current_injection_iic_pu,
+            ParamPowerFlowReferenceType.shunt_ga_pu,
+            ParamPowerFlowReferenceType.shunt_gb_pu,
+            ParamPowerFlowReferenceType.shunt_gc_pu,
+            ParamPowerFlowReferenceType.shunt_ba_pu,
+            ParamPowerFlowReferenceType.shunt_bb_pu,
+            ParamPowerFlowReferenceType.shunt_bc_pu,
+    ):
+        return _resolve_direct_phase_power_value(
+            device=device,
+            property_name=property_name,
+            Sbase=Sbase,
+        )
+    elif key in (
+            ParamPowerFlowReferenceType.R1,
+            ParamPowerFlowReferenceType.X1,
+            ParamPowerFlowReferenceType.X0,
+            ParamPowerFlowReferenceType.generator_power_factor,
+            ParamPowerFlowReferenceType.generator_vset_pu,
+            ParamPowerFlowReferenceType.generator_snom_mva,
+            ParamPowerFlowReferenceType.generator_r0_pu,
+            ParamPowerFlowReferenceType.generator_r2_pu,
+            ParamPowerFlowReferenceType.generator_x2_pu,
+            ParamPowerFlowReferenceType.battery_enom_mwh,
+            ParamPowerFlowReferenceType.battery_soc_0_pu,
+            ParamPowerFlowReferenceType.battery_max_soc_pu,
+            ParamPowerFlowReferenceType.battery_min_soc_pu,
+            ParamPowerFlowReferenceType.battery_charge_efficiency_pu,
+            ParamPowerFlowReferenceType.battery_discharge_efficiency_pu,
+            ParamPowerFlowReferenceType.battery_discharge_per_cycle_pu,
+            ParamPowerFlowReferenceType.branch_rate_mva,
+            ParamPowerFlowReferenceType.branch_temp_base_deg_c,
+            ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
+            ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
+            ParamPowerFlowReferenceType.alpha1,
+            ParamPowerFlowReferenceType.alpha2,
+            ParamPowerFlowReferenceType.alpha3,
+            ParamPowerFlowReferenceType.converter_control_target_1,
+            ParamPowerFlowReferenceType.converter_control_target_2,
+            ParamPowerFlowReferenceType.vsc_kdp_pu,
+            ParamPowerFlowReferenceType.vsc_min_ac_voltage_pu,
+            ParamPowerFlowReferenceType.dc_line_r_pu,
+            ParamPowerFlowReferenceType.dc_line_l_pu_seconds,
+            ParamPowerFlowReferenceType.dc_line_length_km,
+            ParamPowerFlowReferenceType.transformer_rated_power_mva,
+            ParamPowerFlowReferenceType.transformer_winding1_rated_voltage_ll_kv,
+            ParamPowerFlowReferenceType.transformer_winding2_rated_voltage_ll_kv,
+            ParamPowerFlowReferenceType.transformer_connection_clock,
+            ParamPowerFlowReferenceType.transformer_open_circuit_current_pct,
+            ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw,
+            ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct,
+            ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw,
+            ParamPowerFlowReferenceType.tap_module,
+            ParamPowerFlowReferenceType.static_generator_snom_mva,
+            ParamPowerFlowReferenceType.external_grid_vm_pu,
+            ParamPowerFlowReferenceType.external_grid_va_rad,
+            ParamPowerFlowReferenceType.controllable_shunt_step,
+            ParamPowerFlowReferenceType.controllable_shunt_vset_pu,
+            ParamPowerFlowReferenceType.controllable_shunt_vmin_pu,
+            ParamPowerFlowReferenceType.controllable_shunt_vmax_pu,
+            ParamPowerFlowReferenceType.line_length_km,
+            ParamPowerFlowReferenceType.r,
+            ParamPowerFlowReferenceType.l,
+            ParamPowerFlowReferenceType.g,
+            ParamPowerFlowReferenceType.b,
+            ParamPowerFlowReferenceType.bsh,
+            ParamPowerFlowReferenceType.gFe,
+    ):
+        return float(raw_value)
     else:
-        if key == ParamPowerFlowReferenceType.injection_connection_type:
-            return shunt_connection_code(raw_value)
-        else:
-            if key == ParamPowerFlowReferenceType.external_grid_mode_code:
-                return external_grid_mode_code(raw_value)
-            else:
-                if key == ParamPowerFlowReferenceType.controllable_shunt_control_mode_code:
-                    return controllable_shunt_mode_code(raw_value)
-                else:
-                    if key == ParamPowerFlowReferenceType.converter_control_mode_1:
-                        return converter_control_code(raw_value)
-                    else:
-                        if key == ParamPowerFlowReferenceType.converter_control_mode_2:
-                            return converter_control_code(raw_value)
-                        else:
-                            if key == ParamPowerFlowReferenceType.generator_control_mode:
-                                return 1.0 if bool(device.is_controlled) else 0.0
-                            else:
-                                if key in (
-                                        ParamPowerFlowReferenceType.generator_enabled_dispatch,
-                                        ParamPowerFlowReferenceType.generator_must_run,
-                                        ParamPowerFlowReferenceType.generator_use_reactive_power_curve,
-                                ):
-                                    return 1.0 if bool(raw_value) else 0.0
-                                else:
-                                    if key in (
-                                            ParamPowerFlowReferenceType.Pl0,
-                                            ParamPowerFlowReferenceType.Ql0,
-                                            ParamPowerFlowReferenceType.load_g_pu,
-                                            ParamPowerFlowReferenceType.load_b_pu,
-                                            ParamPowerFlowReferenceType.load_ir_pu,
-                                            ParamPowerFlowReferenceType.load_ii_pu,
-                                            ParamPowerFlowReferenceType.load_contract_power_pu,
-                                            ParamPowerFlowReferenceType.current_injection_ir_pu,
-                                            ParamPowerFlowReferenceType.current_injection_ii_pu,
-                                            ParamPowerFlowReferenceType.shunt_g_pu,
-                                            ParamPowerFlowReferenceType.shunt_b_pu,
-                                            ParamPowerFlowReferenceType.shunt_g0_pu,
-                                            ParamPowerFlowReferenceType.shunt_b0_pu,
-                                            ParamPowerFlowReferenceType.generator_p_pu,
-                                            ParamPowerFlowReferenceType.generator_q_pu,
-                                            ParamPowerFlowReferenceType.Pmin,
-                                            ParamPowerFlowReferenceType.Pmax,
-                                            ParamPowerFlowReferenceType.generator_qmin_pu,
-                                            ParamPowerFlowReferenceType.generator_qmax_pu,
-                                            ParamPowerFlowReferenceType.controllable_shunt_gmin_pu,
-                                            ParamPowerFlowReferenceType.controllable_shunt_gmax_pu,
-                                            ParamPowerFlowReferenceType.controllable_shunt_bmin_pu,
-                                            ParamPowerFlowReferenceType.controllable_shunt_bmax_pu,
-                                    ):
-                                        return float(raw_value) / float(grid.Sbase)
-                                    else:
-                                        if key in (
-                                                ParamPowerFlowReferenceType.Pl0_A,
-                                                ParamPowerFlowReferenceType.Pl0_B,
-                                                ParamPowerFlowReferenceType.Pl0_C,
-                                                ParamPowerFlowReferenceType.Ql0_A,
-                                                ParamPowerFlowReferenceType.Ql0_B,
-                                                ParamPowerFlowReferenceType.Ql0_C,
-                                                ParamPowerFlowReferenceType.load_ga_pu,
-                                                ParamPowerFlowReferenceType.load_gb_pu,
-                                                ParamPowerFlowReferenceType.load_gc_pu,
-                                                ParamPowerFlowReferenceType.load_ba_pu,
-                                                ParamPowerFlowReferenceType.load_bb_pu,
-                                                ParamPowerFlowReferenceType.load_bc_pu,
-                                                ParamPowerFlowReferenceType.load_ira_pu,
-                                                ParamPowerFlowReferenceType.load_irb_pu,
-                                                ParamPowerFlowReferenceType.load_irc_pu,
-                                                ParamPowerFlowReferenceType.load_iia_pu,
-                                                ParamPowerFlowReferenceType.load_iib_pu,
-                                                ParamPowerFlowReferenceType.load_iic_pu,
-                                                ParamPowerFlowReferenceType.current_injection_ira_pu,
-                                                ParamPowerFlowReferenceType.current_injection_irb_pu,
-                                                ParamPowerFlowReferenceType.current_injection_irc_pu,
-                                                ParamPowerFlowReferenceType.current_injection_iia_pu,
-                                                ParamPowerFlowReferenceType.current_injection_iib_pu,
-                                                ParamPowerFlowReferenceType.current_injection_iic_pu,
-                                                ParamPowerFlowReferenceType.shunt_ga_pu,
-                                                ParamPowerFlowReferenceType.shunt_gb_pu,
-                                                ParamPowerFlowReferenceType.shunt_gc_pu,
-                                                ParamPowerFlowReferenceType.shunt_ba_pu,
-                                                ParamPowerFlowReferenceType.shunt_bb_pu,
-                                                ParamPowerFlowReferenceType.shunt_bc_pu,
-                                        ):
-                                            return _resolve_direct_phase_power_value(
-                                                device=device,
-                                                property_name=property_name,
-                                                grid=grid,
-                                            )
-                                        else:
-                                            if key in (
-                                                    ParamPowerFlowReferenceType.R1,
-                                                    ParamPowerFlowReferenceType.X1,
-                                                    ParamPowerFlowReferenceType.X0,
-                                                    ParamPowerFlowReferenceType.generator_power_factor,
-                                                    ParamPowerFlowReferenceType.generator_vset_pu,
-                                                    ParamPowerFlowReferenceType.generator_snom_mva,
-                                                    ParamPowerFlowReferenceType.generator_r0_pu,
-                                                    ParamPowerFlowReferenceType.generator_r2_pu,
-                                                    ParamPowerFlowReferenceType.generator_x2_pu,
-                                                    ParamPowerFlowReferenceType.battery_enom_mwh,
-                                                    ParamPowerFlowReferenceType.battery_soc_0_pu,
-                                                    ParamPowerFlowReferenceType.battery_max_soc_pu,
-                                                    ParamPowerFlowReferenceType.battery_min_soc_pu,
-                                                    ParamPowerFlowReferenceType.battery_charge_efficiency_pu,
-                                                    ParamPowerFlowReferenceType.battery_discharge_efficiency_pu,
-                                                    ParamPowerFlowReferenceType.battery_discharge_per_cycle_pu,
-                                                    ParamPowerFlowReferenceType.branch_rate_mva,
-                                                    ParamPowerFlowReferenceType.branch_temp_base_deg_c,
-                                                    ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
-                                                    ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
-                                                    ParamPowerFlowReferenceType.alpha1,
-                                                    ParamPowerFlowReferenceType.alpha2,
-                                                    ParamPowerFlowReferenceType.alpha3,
-                                                    ParamPowerFlowReferenceType.converter_control_target_1,
-                                                    ParamPowerFlowReferenceType.converter_control_target_2,
-                                                    ParamPowerFlowReferenceType.vsc_kdp_pu,
-                                                    ParamPowerFlowReferenceType.vsc_min_ac_voltage_pu,
-                                                    ParamPowerFlowReferenceType.dc_line_r_pu,
-                                                    ParamPowerFlowReferenceType.dc_line_l_pu_seconds,
-                                                    ParamPowerFlowReferenceType.dc_line_length_km,
-                                                    ParamPowerFlowReferenceType.transformer_rated_power_mva,
-                                                    ParamPowerFlowReferenceType.transformer_winding1_rated_voltage_ll_kv,
-                                                    ParamPowerFlowReferenceType.transformer_winding2_rated_voltage_ll_kv,
-                                                    ParamPowerFlowReferenceType.transformer_connection_clock,
-                                                    ParamPowerFlowReferenceType.transformer_open_circuit_current_pct,
-                                                    ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw,
-                                                    ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct,
-                                                    ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw,
-                                                    ParamPowerFlowReferenceType.tap_module,
-                                                    ParamPowerFlowReferenceType.static_generator_snom_mva,
-                                                    ParamPowerFlowReferenceType.external_grid_vm_pu,
-                                                    ParamPowerFlowReferenceType.external_grid_va_rad,
-                                                    ParamPowerFlowReferenceType.controllable_shunt_step,
-                                                    ParamPowerFlowReferenceType.controllable_shunt_vset_pu,
-                                                    ParamPowerFlowReferenceType.controllable_shunt_vmin_pu,
-                                                    ParamPowerFlowReferenceType.controllable_shunt_vmax_pu,
-                                                    ParamPowerFlowReferenceType.line_length_km,
-                                                    ParamPowerFlowReferenceType.r,
-                                                    ParamPowerFlowReferenceType.l,
-                                                    ParamPowerFlowReferenceType.g,
-                                                    ParamPowerFlowReferenceType.b,
-                                                    ParamPowerFlowReferenceType.bsh,
-                                                    ParamPowerFlowReferenceType.gFe,
-                                            ):
-                                                return float(raw_value)
-                                            else:
-                                                return None
+        return None
 
 
 def assign_direct_dyn_ref_properties_for_device(
@@ -2077,7 +1350,7 @@ def assign_direct_dyn_ref_properties_for_device(
         device: ALL_DEV_TYPES,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
 ) -> Set[ParamPowerFlowReferenceType]:
     """
     Automatically assign the direct property-backed dynamic references.
@@ -2094,58 +1367,48 @@ def assign_direct_dyn_ref_properties_for_device(
     :param logger: Optional logger.
     :return: Set of keys assigned automatically.
     """
-    direct_keys_by_device_type: Dict[DeviceType, List[ParamPowerFlowReferenceType]] | None = None
-    direct_keys: List[ParamPowerFlowReferenceType] | None = None
+
     dyn_ref_to_prop: Dict[ParamPowerFlowReferenceType, "GCProp"] = build_device_dyn_ref_property_lookup(device=device)
     assigned_keys: Set[ParamPowerFlowReferenceType] = set()
     key: ParamPowerFlowReferenceType
 
-    if isinstance(grid, MultiCircuit):
-        direct_keys_by_device_type = grid.get_devices_static_params_mapping()
-    else:
-        direct_keys_by_device_type = None
+    direct_keys_by_device_type: Dict[
+        DeviceType, List[ParamPowerFlowReferenceType]] = grid.get_devices_static_params_mapping()
 
-    if direct_keys_by_device_type is None:
-        direct_keys = build_device_direct_dyn_ref_keys(device=device)
-    else:
-        direct_keys = direct_keys_by_device_type.get(device.device_type, None)
+    direct_keys = direct_keys_by_device_type.get(device.device_type, None)
 
     if direct_keys is None:
         return assigned_keys
     else:
-        pass
 
-    for key in direct_keys:
-        prop: GCProp | None = dyn_ref_to_prop.get(key, None)
+        for key in direct_keys:
+            prop: GCProp | None = dyn_ref_to_prop.get(key, None)
 
-        if prop is None:
-            pass
-        else:
-            raw_value: Any = device.get_property_value(prop=prop, t_idx=None)
-            resolved_value: float | None = resolve_direct_dyn_ref_value(
-                grid=grid,
-                device=device,
-                key=key,
-                property_name=prop.name,
-                raw_value=raw_value,
-            )
-
-            if resolved_value is None:
+            if prop is None:
                 pass
             else:
-                if assign_api_mapping_value_if_present(
-                        mdl=mdl,
-                        key=key,
-                        value=resolved_value,
-                        logger=logger,
-                        device_name=str(device.name),
-                        problem_mapping=problem_mapping,
-                ):
+                raw_value: Any = device.get_property_value(prop=prop, t_idx=None)
+                resolved_value: float | None = resolve_direct_dyn_ref_value(
+                    Sbase=grid.Sbase,
+                    device=device,
+                    key=key,
+                    property_name=prop.name,
+                    raw_value=raw_value,
+                )
+
+                if resolved_value is None:
+                    pass
+                elif assign_api_mapping_value_if_present(mdl=mdl,
+                                                       key=key,
+                                                       value=resolved_value,
+                                                       logger=logger,
+                                                       device_name=str(device.name),
+                                                       problem_mapping=problem_mapping):
                     assigned_keys.add(key)
                 else:
                     pass
 
-    return assigned_keys
+        return assigned_keys
 
 
 def assign_static_api_object_mapping_for_device(
@@ -2153,7 +1416,7 @@ def assign_static_api_object_mapping_for_device(
         device: ALL_DEV_TYPES,
         mdl: Block,
         problem_mapping: Dict[Var, Const] | None = None,
-        logger: StaticParameterMappingDiagnosticSink | None = None,
+        logger: Logger | None = None,
 ) -> None:
     """Resolve device-backed initial values for a complete block hierarchy.
 
@@ -2166,7 +1429,7 @@ def assign_static_api_object_mapping_for_device(
     :param device: Static grid device associated with the dynamic model.
     :param mdl: Root block of the RMS or EMT model hierarchy.
     :param problem_mapping: Destination for resolved initial values.
-    :param logger: Optional driver logger or simulation-aware diagnostics context.
+    :param logger: Optional driver logger.
     :return: None.
     """
     destination_mapping: Dict[Var, Const]
@@ -2222,7 +1485,7 @@ def _assign_static_api_object_mapping_for_block(
         device: ALL_DEV_TYPES,
         mdl: Block,
         problem_mapping: Dict[Var, Const] | None = None,
-        logger: StaticParameterMappingDiagnosticSink | None = None,
+        logger: Logger | None = None,
 ) -> None:
     """
     Assign API-object parameter initial values for one dynamic-model block.
@@ -2236,7 +1499,7 @@ def _assign_static_api_object_mapping_for_block(
     :param device: Static grid device owning the EMT model.
     :param mdl: Owner block requesting device-backed initial values.
     :param problem_mapping: Dictionary that stores each parameter with its initial value.
-    :param logger: Optional driver logger or simulation-aware diagnostics context.
+    :param logger: Optional driver logger.
     :return: None.
     """
     direct_assigned_keys: Set[ParamPowerFlowReferenceType] = set()
@@ -2248,9 +1511,9 @@ def _assign_static_api_object_mapping_for_block(
 
     # Grid bases are available to any device declaring these static mappings.
     for reference, value in (
-        (ParamPowerFlowReferenceType.freq, float(grid.fBase)),
-        (ParamPowerFlowReferenceType.omega_base, 2.0 * np.pi * float(grid.fBase)),
-        (ParamPowerFlowReferenceType.ws, 2.0 * np.pi * float(grid.fBase)),
+            (ParamPowerFlowReferenceType.freq, grid.fBase),
+            (ParamPowerFlowReferenceType.omega_base, 2.0 * np.pi * grid.fBase),
+            (ParamPowerFlowReferenceType.ws, 2.0 * np.pi * grid.fBase),
     ):
         assign_api_mapping_value_if_present(
             mdl=mdl,
@@ -2271,206 +1534,207 @@ def _assign_static_api_object_mapping_for_block(
 
     api_obj_mapping: Dict = mdl.api_obj_mapping
 
-    if isinstance(api_obj_mapping, dict):
-        if len(api_obj_mapping) == 0:
-            pass
-        else:
-            # The dispatch is based on the static device type, not on the EMT
-            # template name. The template only selects a subset of keys.
-            device_type: DeviceType = device.device_type
+    if len(api_obj_mapping) > 0:
+        # The dispatch is based on the static device type, not on the EMT
+        # template name. The template only selects a subset of keys.
+        device_type: DeviceType = device.device_type
 
-            if device_type == DeviceType.LoadDevice:
-                assign_load_static_api_mapping(
-                    grid=grid,
-                    load=device,
+        if device_type == DeviceType.LoadDevice:
+            assign_load_static_api_mapping(
+                grid=grid,
+                load=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.StaticGeneratorDevice:
+            assign_static_generator_static_api_mapping(
+                grid=grid,
+                static_generator=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.ExternalGridDevice:
+            assign_external_grid_static_api_mapping(
+                grid=grid,
+                external_grid=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.ShuntDevice:
+            assign_shunt_static_api_mapping(
+                Sbase=grid.Sbase,
+                shunt=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.ControllableShuntDevice:
+            assign_controllable_shunt_static_api_mapping(
+                Sbase=grid.Sbase,
+                controllable_shunt=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.CurrentInjectionDevice:
+            assign_current_injection_static_api_mapping(
+                grid=grid,
+                current_injection=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.GeneratorDevice:
+            assign_generator_static_api_mapping(
+                grid=grid,
+                generator=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.BatteryDevice:
+            assign_battery_static_api_mapping(
+                grid=grid,
+                battery=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.VscDevice:
+            assign_vsc_static_api_mapping(
+                grid=grid,
+                vsc=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.DCLineDevice:
+            if isinstance(device, DcLine):
+                assign_dc_line_static_api_mapping(
+                    Sbase=grid.Sbase,
+                    dc_line=device,
                     mdl=mdl,
                     problem_mapping=problem_mapping,
                     logger=logger,
                     direct_assigned_keys=direct_assigned_keys,
                 )
-            elif device_type == DeviceType.StaticGeneratorDevice:
-                assign_static_generator_static_api_mapping(
-                    grid=grid,
-                    static_generator=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.ExternalGridDevice:
-                assign_external_grid_static_api_mapping(
-                    grid=grid,
-                    external_grid=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.ShuntDevice:
-                assign_shunt_static_api_mapping(
-                    grid=grid,
-                    shunt=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.ControllableShuntDevice:
-                assign_controllable_shunt_static_api_mapping(
-                    grid=grid,
-                    controllable_shunt=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.CurrentInjectionDevice:
-                assign_current_injection_static_api_mapping(
-                    grid=grid,
-                    current_injection=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.GeneratorDevice:
-                assign_generator_static_api_mapping(
-                    grid=grid,
-                    generator=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.BatteryDevice:
-                assign_battery_static_api_mapping(
-                    grid=grid,
-                    battery=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.VscDevice:
-                assign_vsc_static_api_mapping(
-                    grid=grid,
-                    vsc=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.DCLineDevice:
-                if isinstance(device, DcLine):
-                    assign_dc_line_static_api_mapping(
-                        grid=grid,
-                        dc_line=device,
-                        mdl=mdl,
-                        problem_mapping=problem_mapping,
-                        logger=logger,
-                        direct_assigned_keys=direct_assigned_keys,
-                    )
-                else:
-                    add_static_mapping_warning(
-                        logger=logger,
-                        device_name=str(device.name),
-                        message="DCLineDevice static mapping skipped because the object type is not DcLine.",
-                        value=str(device_type),
-                        expected_value="DcLine instance",
-                        device_property="device_type",
-                    )
-            elif device_type == DeviceType.Transformer2WDevice:
-                if isinstance(device, Transformer2W):
-                    assign_transformer2w_static_api_mapping(
-                        grid=grid,
-                        transformer=device,
-                        mdl=mdl,
-                        problem_mapping=problem_mapping,
-                        logger=logger,
-                        direct_assigned_keys=direct_assigned_keys,
-                    )
-                else:
-                    add_static_mapping_warning(
-                        logger=logger,
-                        device_name=str(device.name),
-                        message="Transformer2WDevice static mapping skipped because the object type is not Transformer2W.",
-                        value=str(device_type),
-                        expected_value="Transformer2W instance",
-                        device_property="device_type",
-                    )
-            elif device_type == DeviceType.WindingDevice:
-                if isinstance(device, Transformer2W):
-                    assign_transformer2w_static_api_mapping(
-                        grid=grid,
-                        transformer=device,
-                        mdl=mdl,
-                        problem_mapping=problem_mapping,
-                        logger=logger,
-                        direct_assigned_keys=direct_assigned_keys,
-                    )
-                else:
-                    add_static_mapping_warning(
-                        logger=logger,
-                        device_name=str(device.name),
-                        message="WindingDevice static mapping skipped because the object type is not Transformer2W-compatible.",
-                        value=str(device_type),
-                        expected_value="Transformer2W-compatible instance",
-                        device_property="device_type",
-                    )
-            elif device_type == DeviceType.LineDevice:
-                assign_line_static_api_mapping(
-                    grid=grid,
-                    line=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.HVDCLineDevice:
-                assign_hvdc_line_static_api_mapping(
-                    hvdc_line=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                )
-            elif device_type == DeviceType.SeriesReactanceDevice:
-                assign_series_reactance_static_api_mapping(
-                    series_reactance=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                )
-            elif device_type == DeviceType.SwitchDevice:
-                assign_switch_static_api_mapping(
-                    switch=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
-                    direct_assigned_keys=direct_assigned_keys,
-                )
-            elif device_type == DeviceType.UpfcDevice:
-                assign_upfc_static_api_mapping(
-                    upfc=device,
-                    mdl=mdl,
-                    problem_mapping=problem_mapping,
-                    logger=logger,
+            elif logger is not None:
+                logger.add_warning(
+                    device=str(device.name),
+                    msg="DCLineDevice static mapping skipped because the object type is not DcLine.",
+                    value=str(device_type),
+                    expected_value="DcLine instance",
+                    device_property="device_type",
+                    device_class="Dynamic parameter mapping",
                 )
             else:
-                # Compatibility fallback: older branch-like models may expose
-                # line matrix keys even if their device_type is more generic.
-                # The fallback activates only when the EMT template explicitly
-                # requests line-matrix keys.
-                if api_mapping_has_any_key(mdl=mdl, keys=get_all_line_matrix_keys()):
-                    assign_line_static_api_mapping(
-                        grid=grid,
-                        line=device,
-                        mdl=mdl,
-                        problem_mapping=problem_mapping,
-                        logger=logger,
-                        direct_assigned_keys=direct_assigned_keys,
-                    )
-                else:
-                    pass
+                pass
+        elif device_type == DeviceType.Transformer2WDevice:
+            if isinstance(device, Transformer2W):
+                assign_transformer2w_static_api_mapping(
+                    grid=grid,
+                    transformer=device,
+                    mdl=mdl,
+                    problem_mapping=problem_mapping,
+                    logger=logger,
+                    direct_assigned_keys=direct_assigned_keys,
+                )
+            elif logger is not None:
+                logger.add_warning(
+                    device=str(device.name),
+                    msg="Transformer2WDevice static mapping skipped because the object type is not Transformer2W.",
+                    value=str(device_type),
+                    expected_value="Transformer2W instance",
+                    device_property="device_type",
+                    device_class="Dynamic parameter mapping",
+                )
+            else:
+                pass
+        elif device_type == DeviceType.WindingDevice:
+            if isinstance(device, Transformer2W):
+                assign_transformer2w_static_api_mapping(
+                    grid=grid,
+                    transformer=device,
+                    mdl=mdl,
+                    problem_mapping=problem_mapping,
+                    logger=logger,
+                    direct_assigned_keys=direct_assigned_keys,
+                )
+            elif logger is not None:
+                logger.add_warning(
+                    device=str(device.name),
+                    msg="WindingDevice static mapping skipped because the object type is not Transformer2W-compatible.",
+                    value=str(device_type),
+                    expected_value="Transformer2W-compatible instance",
+                    device_property="device_type",
+                    device_class="Dynamic parameter mapping",
+                )
+            else:
+                pass
+        elif device_type == DeviceType.LineDevice:
+            assign_line_static_api_mapping(
+                grid=grid,
+                line=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+            )
+        elif device_type == DeviceType.HVDCLineDevice:
+            assign_hvdc_line_static_api_mapping(
+                hvdc_line=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+            )
+        elif device_type == DeviceType.SeriesReactanceDevice:
+            assign_series_reactance_static_api_mapping(
+                series_reactance=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+            )
+        elif device_type == DeviceType.SwitchDevice:
+            assign_switch_static_api_mapping(
+                switch=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+                direct_assigned_keys=direct_assigned_keys,
+            )
+        elif device_type == DeviceType.UpfcDevice:
+            assign_upfc_static_api_mapping(
+                upfc=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+            )
+        # Compatibility fallback: older branch-like models may expose
+        # line matrix keys even if their device_type is more generic.
+        # The fallback activates only when the EMT template explicitly
+        # requests line-matrix keys.
+        elif api_mapping_has_any_key(mdl=mdl, keys=get_all_line_matrix_keys()):
+            assign_line_static_api_mapping(
+                grid=grid,
+                line=device,
+                mdl=mdl,
+                problem_mapping=problem_mapping,
+                logger=logger,
+            )
+        else:
+            pass
+
     else:
         pass
 
@@ -2523,18 +1787,17 @@ def xfmr_connection_matrix(winding_tpe: WindingType) -> np.ndarray:
             WindingType.FloatingStar,
     ):
         matrix = np.eye(3, dtype=float)
+    elif winding_tpe == WindingType.Delta:
+        matrix = np.array(
+            [
+                [1.0, 0.0, -1.0],
+                [-1.0, 1.0, 0.0],
+                [0.0, -1.0, 1.0],
+            ],
+            dtype=float,
+        ) / np.sqrt(3.0)
     else:
-        if winding_tpe == WindingType.Delta:
-            matrix = np.array(
-                [
-                    [1.0, 0.0, -1.0],
-                    [-1.0, 1.0, 0.0],
-                    [0.0, -1.0, 1.0],
-                ],
-                dtype=float,
-            ) / np.sqrt(3.0)
-        else:
-            matrix = np.eye(3, dtype=float)
+        matrix = np.eye(3, dtype=float)
 
     return matrix
 
@@ -2551,25 +1814,24 @@ def xfmr_phase_permutation_matrix(clock: int) -> np.ndarray:
 
     if shift == 0:
         matrix = np.eye(3, dtype=float)
+    elif shift == 1:
+        matrix = np.array(
+            [
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+                [1.0, 0.0, 0.0],
+            ],
+            dtype=float,
+        )
     else:
-        if shift == 1:
-            matrix = np.array(
-                [
-                    [0.0, 1.0, 0.0],
-                    [0.0, 0.0, 1.0],
-                    [1.0, 0.0, 0.0],
-                ],
-                dtype=float,
-            )
-        else:
-            matrix = np.array(
-                [
-                    [0.0, 0.0, 1.0],
-                    [1.0, 0.0, 0.0],
-                    [0.0, 1.0, 0.0],
-                ],
-                dtype=float,
-            )
+        matrix = np.array(
+            [
+                [0.0, 0.0, 1.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+            ],
+            dtype=float,
+        )
 
     return matrix
 
@@ -2632,7 +1894,7 @@ def assign_3x3_static_matrix(
         mdl: Block,
         matrix: np.ndarray,
         keys: List[List[ParamPowerFlowReferenceType]],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         device_name: str,
         problem_mapping: Dict[Var, Const],
 ) -> None:
@@ -2720,10 +1982,15 @@ def compute_transformer_equivalent_circuit_values(
     :param eps_value: Numerical guard constant.
     :return: Tuple ``(r1, r2, l1, l2, mutual_inductance, g_core)``.
     """
+    # An additive epsilon on an ordinary tap ratio perturbs the large
+    # magnetizing inductance enough to change the much smaller leakage term.
+    # Guard only genuinely near-zero ratios.
+    ratio_eff: float = total_voltage_ratio if abs(total_voltage_ratio) > eps_value else (eps_value if total_voltage_ratio >= 0.0 else -eps_value)
+    ratio_square_eff: float = ratio_eff * ratio_eff
     r1_value: float = 0.5 * transformer_r_pu
-    r2_value: float = 0.5 * transformer_r_pu / (total_voltage_ratio_square + eps_value)
+    r2_value: float = 0.5 * transformer_r_pu / ratio_square_eff
     leakage_l_primary: float = 0.5 * transformer_x_pu / (omega_base + eps_value)
-    leakage_l_secondary: float = leakage_l_primary / (total_voltage_ratio_square + eps_value)
+    leakage_l_secondary: float = leakage_l_primary / ratio_square_eff
     x_magnetizing: float
 
     if abs(transformer_b_pu) > eps_value:
@@ -2738,8 +2005,8 @@ def compute_transformer_equivalent_circuit_values(
         x_magnetizing = max(1.0e7, 1.0e6 * max(abs(transformer_x_pu), 1.0))
 
     magnetizing_l_primary: float = x_magnetizing / (omega_base + eps_value)
-    magnetizing_l_secondary: float = magnetizing_l_primary / (total_voltage_ratio_square + eps_value)
-    mutual_inductance: float = magnetizing_l_primary / (total_voltage_ratio + eps_value)
+    magnetizing_l_secondary: float = magnetizing_l_primary / ratio_square_eff
+    mutual_inductance: float = magnetizing_l_primary / ratio_eff
     l1_value: float = leakage_l_primary + magnetizing_l_primary
     l2_value: float = leakage_l_secondary + magnetizing_l_secondary
     g_core: float = transformer_g_pu
@@ -2985,9 +2252,9 @@ def build_uncoupled_line_static_matrices(
     :param omega_base: Base angular frequency.
     :return: Tuple ``(R, L, C)`` in EMT per-unit form.
     """
-    r_value: float = float(line.R)
-    x_value: float = float(line.X)
-    b_value: float = float(line.B)
+    r_value: float = line.R
+    x_value: float = line.X
+    b_value: float = line.B
 
     r_full: np.ndarray = np.zeros((3, 3), dtype=np.float64)
     x_full: np.ndarray = np.zeros((3, 3), dtype=np.float64)
@@ -3018,10 +2285,10 @@ def build_line_static_matrices(
     :return: Tuple ``(R, L, C, G)`` in reduced active-phase coordinates. C and
         physical G are per-terminal half-shunts; R and L are total series values.
     """
-    frequency_base: float = float(grid.fBase)
+    frequency_base: float = grid.fBase
     omega_base: float = 2.0 * np.pi * frequency_base
-    voltage_base: float = float(line.bus_from.Vnom) * 1.0e3
-    sbase_va: float = float(grid.Sbase) * 1.0e6
+    voltage_base: float = line.bus_from.Vnom * 1.0e3
+    sbase_va: float = grid.Sbase * 1.0e6
     zbase: float = (voltage_base * voltage_base) / sbase_va
     ybase: float = 1.0 / zbase
     r_full: np.ndarray
@@ -3039,7 +2306,7 @@ def build_line_static_matrices(
     # because all of those paths can populate ``ys`` and ``ysh`` consistently.
     z_phys, y_phys = build_physical_line_matrices_from_stored_admittances(
         line=line,
-        sbase_mva=float(grid.Sbase),
+        sbase_mva=grid.Sbase,
     )
 
     if z_phys is None or y_phys is None:
@@ -3085,10 +2352,7 @@ def build_line_static_matrices(
 
     if matrix_size == len(active_indices):
         return r_full, l_full, c_full, g_full
-    else:
-        pass
-
-    if matrix_size == 4:
+    elif matrix_size == 4:
         reduced_selector: np.ndarray = np.array(active_indices, dtype=int)
         r_reduced: np.ndarray = r_full[np.ix_(reduced_selector, reduced_selector)]
         l_reduced: np.ndarray = l_full[np.ix_(reduced_selector, reduced_selector)]
@@ -3106,7 +2370,7 @@ def validate_line_static_matrices(
         c_full: np.ndarray,
         g_full: np.ndarray,
         n_active: int,
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
 ) -> bool:
     """
     Validate reduced line matrix dimensions before assignment.
@@ -3125,53 +2389,65 @@ def validate_line_static_matrices(
     device_name: str = str(line.name)
 
     if r_full.shape != expected_shape:
-        add_static_mapping_warning(
-            logger=logger,
-            device_name=device_name,
-            message="Line static mapping skipped because R matrix shape is inconsistent.",
-            value=str(r_full.shape),
-            expected_value=str(expected_shape),
-            device_property="line_static_matrix_shape",
-        )
+        if logger is not None:
+            logger.add_warning(
+                device=device_name,
+                msg="Line static mapping skipped because R matrix shape is inconsistent.",
+                value=str(r_full.shape),
+                expected_value=str(expected_shape),
+                device_property="line_static_matrix_shape",
+                device_class="Dynamic parameter mapping",
+            )
+        else:
+            pass
         valid = False
     else:
         pass
 
     if l_full.shape != expected_shape:
-        add_static_mapping_warning(
-            logger=logger,
-            device_name=device_name,
-            message="Line static mapping skipped because L matrix shape is inconsistent.",
-            value=str(l_full.shape),
-            expected_value=str(expected_shape),
-            device_property="line_static_matrix_shape",
-        )
+        if logger is not None:
+            logger.add_warning(
+                device=device_name,
+                msg="Line static mapping skipped because L matrix shape is inconsistent.",
+                value=str(l_full.shape),
+                expected_value=str(expected_shape),
+                device_property="line_static_matrix_shape",
+                device_class="Dynamic parameter mapping",
+            )
+        else:
+            pass
         valid = False
     else:
         pass
 
     if c_full.shape != expected_shape:
-        add_static_mapping_warning(
-            logger=logger,
-            device_name=device_name,
-            message="Line static mapping skipped because C matrix shape is inconsistent.",
-            value=str(c_full.shape),
-            expected_value=str(expected_shape),
-            device_property="line_static_matrix_shape",
-        )
+        if logger is not None:
+            logger.add_warning(
+                device=device_name,
+                msg="Line static mapping skipped because C matrix shape is inconsistent.",
+                value=str(c_full.shape),
+                expected_value=str(expected_shape),
+                device_property="line_static_matrix_shape",
+                device_class="Dynamic parameter mapping",
+            )
+        else:
+            pass
         valid = False
     else:
         pass
 
     if g_full.shape != expected_shape:
-        add_static_mapping_warning(
-            logger=logger,
-            device_name=device_name,
-            message="Line physical conductance mapping skipped because G matrix shape is inconsistent.",
-            value=str(g_full.shape),
-            expected_value=str(expected_shape),
-            device_property="line_static_matrix_shape",
-        )
+        if logger is not None:
+            logger.add_warning(
+                device=device_name,
+                msg="Line physical conductance mapping skipped because G matrix shape is inconsistent.",
+                value=str(g_full.shape),
+                expected_value=str(expected_shape),
+                device_property="line_static_matrix_shape",
+                device_class="Dynamic parameter mapping",
+            )
+        else:
+            pass
         valid = False
     else:
         pass
@@ -3184,7 +2460,7 @@ def assign_common_injection_static_api_mapping(
         device: ALL_DEV_TYPES,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
 ) -> None:
     """
     Assign static parameters inherited from ``InjectionParent``.
@@ -3216,7 +2492,7 @@ def assign_common_branch_static_api_mapping(
         device: ALL_DEV_TYPES,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
 ) -> None:
     """
     Assign contract-sensitive static parameters inherited from ``BranchParent``.
@@ -3236,7 +2512,7 @@ def assign_common_branch_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.branch_rate_mva,
-        value=float(device.rate),
+        value=device.rate,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3244,7 +2520,7 @@ def assign_common_branch_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.branch_temp_base_deg_c,
-        value=float(device.temp_base),
+        value=device.temp_base,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3252,7 +2528,7 @@ def assign_common_branch_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
-        value=float(device.temp_oper),
+        value=device.temp_oper,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3260,19 +2536,20 @@ def assign_common_branch_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
-        value=float(device.alpha),
+        value=device.alpha,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
     )
 
-#TODO Generalize unit settings for global
+
+# TODO Generalize unit settings for global
 def assign_load_static_api_mapping(
         grid: MultiCircuit,
         load: dev.Load,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -3287,15 +2564,15 @@ def assign_load_static_api_mapping(
     :return: None.
     """
     device_name: str = str(load.name)
-    sbase: float = float(grid.Sbase)
+    sbase: float = grid.Sbase
 
     if load.bus.is_dc:
         # DC loads follow the same ZIP semantics as the generic load device.
         # The constant-power term stays in ``Pl0`` and the impedance term stays
         # in ``g`` so the EMT and RMS representations preserve the user-declared
         # physical meaning instead of silently rewriting one term into another.
-        dc_p_value: float = float(load.P) / sbase
-        dc_g_value: float = float(load.G) / sbase
+        dc_p_value: float = load.P / sbase
+        dc_g_value: float = load.G / sbase
 
         assign_api_mapping_value_if_present(
             mdl=mdl,
@@ -3314,13 +2591,13 @@ def assign_load_static_api_mapping(
             problem_mapping=problem_mapping,
         )
     else:
-        omega_base: float = 2.0 * np.pi * float(grid.fBase)
+        omega_base: float = 2.0 * np.pi * grid.fBase
         # Balanced AC references represent generation-positive per-unit power.
         # Normalize source units without changing the physical Load fields.
         unit_scale: float = 1000.0 if load.use_kw else 1.0
         if load.active:
-            ac_p_value: float = -float(load.P) / (sbase * unit_scale)
-            ac_q_value: float = -float(load.Q) / (sbase * unit_scale)
+            ac_p_value: float = -load.P / (sbase * unit_scale)
+            ac_q_value: float = -load.Q / (sbase * unit_scale)
         else:
             # This is the initial runtime baseline, not a continuous clamp:
             # later explicit events may replace these set-points.
@@ -3357,7 +2634,7 @@ def assign_static_generator_static_api_mapping(
         static_generator: dev.StaticGenerator,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -3370,11 +2647,11 @@ def assign_static_generator_static_api_mapping(
     :return: None.
     """
     device_name: str = str(static_generator.name)
-    omega_base: float = 2.0 * np.pi * float(grid.fBase)
+    omega_base: float = 2.0 * np.pi * grid.fBase
     phase_p_pu_abc: np.ndarray
     phase_q_pu_abc: np.ndarray
 
-    phase_p_pu_abc, phase_q_pu_abc = get_load_power_phase_values_pu_abc(load=static_generator, grid=grid)
+    phase_p_pu_abc, phase_q_pu_abc = get_load_power_phase_values_pu_abc(load=static_generator, Sbase=grid.Sbase)
 
     assign_common_injection_static_api_mapping(
         grid=grid,
@@ -3386,7 +2663,7 @@ def assign_static_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.Pl0,
-        value=float(static_generator.P) / float(grid.Sbase),
+        value=static_generator.P / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3394,7 +2671,7 @@ def assign_static_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.Ql0,
-        value=float(static_generator.Q) / float(grid.Sbase),
+        value=static_generator.Q / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3458,7 +2735,7 @@ def assign_static_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.static_generator_snom_mva,
-        value=float(static_generator.Snom),
+        value=static_generator.Snom,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3470,7 +2747,7 @@ def assign_external_grid_static_api_mapping(
         external_grid: dev.ExternalGrid,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -3482,7 +2759,7 @@ def assign_external_grid_static_api_mapping(
     :param logger: Optional logger.
     :return: None.
     """
-    omega_base: float = 2.0 * np.pi * float(grid.fBase)
+    omega_base: float = 2.0 * np.pi * grid.fBase
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.omega_base,
@@ -3494,17 +2771,17 @@ def assign_external_grid_static_api_mapping(
 
 
 def assign_shunt_static_api_mapping(
-        grid: MultiCircuit,
+        Sbase: float,
         shunt: dev.Shunt,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
     Assign static Shunt parameters exposed by ``mdl.api_obj_mapping``.
 
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :param shunt: Shunt device.
     :param mdl: EMT block.
     :param logger: Optional logger.
@@ -3518,8 +2795,8 @@ def assign_shunt_static_api_mapping(
     # values become system-per-unit conductance and susceptance.
     device_name: str = str(shunt.name)
     for key, value in (
-            (ParamPowerFlowReferenceType.g, float(shunt.G) / float(grid.Sbase)),
-            (ParamPowerFlowReferenceType.b, float(shunt.B) / float(grid.Sbase)),
+            (ParamPowerFlowReferenceType.g, shunt.G / Sbase),
+            (ParamPowerFlowReferenceType.b, shunt.B / Sbase),
     ):
         assign_api_mapping_value_if_present(
             mdl=mdl,
@@ -3534,7 +2811,7 @@ def assign_shunt_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.shunt_g_pu,
-        value=float(shunt.G) / float(grid.Sbase),
+        value=shunt.G / Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3542,7 +2819,7 @@ def assign_shunt_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.shunt_b_pu,
-        value=float(shunt.B) / float(grid.Sbase),
+        value=shunt.B / Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3550,18 +2827,18 @@ def assign_shunt_static_api_mapping(
 
 
 def assign_controllable_shunt_static_api_mapping(
-        grid: MultiCircuit,
+        Sbase: float,
         controllable_shunt: dev.ControllableShunt,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
     Assign static ControllableShunt parameters exposed by ``mdl.api_obj_mapping``.
 
     :param problem_mapping:
-    :param grid: Static network model.
+    :param Sbase: System power base in MVA.
     :param controllable_shunt: Controllable shunt device.
     :param mdl: EMT block.
     :param logger: Optional logger.
@@ -3569,7 +2846,7 @@ def assign_controllable_shunt_static_api_mapping(
     """
     device_name: str = str(controllable_shunt.name)
     assign_shunt_static_api_mapping(
-        grid=grid,
+        Sbase=Sbase,
         shunt=controllable_shunt,
         mdl=mdl,
         problem_mapping=problem_mapping,
@@ -3583,7 +2860,7 @@ def assign_current_injection_static_api_mapping(
         current_injection: dev.CurrentInjection,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -3595,10 +2872,7 @@ def assign_current_injection_static_api_mapping(
     :param logger: Optional logger.
     :return: None.
     """
-    if direct_assigned_keys is None:
-        pass
-    else:
-        pass
+    pass
 
 
 def assign_generator_static_api_mapping(
@@ -3606,7 +2880,7 @@ def assign_generator_static_api_mapping(
         generator: dev.Generator,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -3620,7 +2894,7 @@ def assign_generator_static_api_mapping(
     :return: None.
     """
     device_name: str = str(generator.name)
-    omega_base: float = 2.0 * np.pi * float(grid.fBase)
+    omega_base: float = 2.0 * np.pi * grid.fBase
 
     assign_common_injection_static_api_mapping(
         grid=grid,
@@ -3633,7 +2907,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.Sbase,
-        value=float(grid.Sbase),
+        value=grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3658,7 +2932,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_p_pu,
-        value=float(generator.P) / float(grid.Sbase),
+        value=generator.P / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3666,7 +2940,27 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_q_pu,
-        value=float(generator.Q) / float(grid.Sbase),
+        value=generator.Q / grid.Sbase,
+        logger=logger,
+        device_name=device_name,
+        problem_mapping=problem_mapping,
+    )
+    # Compatibility for archives produced before the DGS ElmSym fallback was
+    # changed to generator_p_pu/generator_q_pu.  The old fallback used the
+    # generic fixed-injection Pl0/Ql0 contract.  Assignment remains opt-in:
+    # normal generator templates expose neither key and are unaffected.
+    assign_api_mapping_value_if_present(
+        mdl=mdl,
+        key=ParamPowerFlowReferenceType.Pl0,
+        value=generator.P / grid.Sbase,
+        logger=logger,
+        device_name=device_name,
+        problem_mapping=problem_mapping,
+    )
+    assign_api_mapping_value_if_present(
+        mdl=mdl,
+        key=ParamPowerFlowReferenceType.Ql0,
+        value=generator.Q / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3674,7 +2968,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.Pmin,
-        value=float(generator.Pmin) / float(grid.Sbase),
+        value=generator.Pmin / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3682,7 +2976,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.Pmax,
-        value=float(generator.Pmax) / float(grid.Sbase),
+        value=generator.Pmax / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3690,7 +2984,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_qmin_pu,
-        value=float(generator.Qmin) / float(grid.Sbase),
+        value=generator.Qmin / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3698,7 +2992,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_qmax_pu,
-        value=float(generator.Qmax) / float(grid.Sbase),
+        value=generator.Qmax / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3706,7 +3000,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_power_factor,
-        value=float(generator.Pf),
+        value=generator.Pf,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3714,7 +3008,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_vset_pu,
-        value=float(generator.Vset),
+        value=generator.Vset,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3722,7 +3016,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_snom_mva,
-        value=float(generator.Snom),
+        value=generator.Snom,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3730,7 +3024,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.pv_rated_power_pu,
-        value=float(generator.Snom) / float(grid.Sbase),
+        value=generator.Snom / grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3738,7 +3032,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_r0_pu,
-        value=float(generator.R0),
+        value=generator.R0,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3746,7 +3040,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_r2_pu,
-        value=float(generator.R2),
+        value=generator.R2,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3754,7 +3048,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_x2_pu,
-        value=float(generator.X2),
+        value=generator.X2,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3794,7 +3088,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.generator_device_sbase_mva,
-        value=float(generator.Sbase),
+        value=generator.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3802,7 +3096,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.freq,
-        value=float(generator.freq),
+        value=generator.freq,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3810,7 +3104,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.R1,
-        value=float(generator.R1),
+        value=generator.R1,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3818,7 +3112,7 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.X1,
-        value=float(generator.X1),
+        value=generator.X1,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3826,21 +3120,13 @@ def assign_generator_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.X0,
-        value=float(generator.X0),
+        value=generator.X0,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
     )
 
-
-    # The source helper emits physical-model diagnostics through the driver's
-    # logger, while the mapping context owns only mapping-specific metadata.
-    source_mapping_logger: Logger | None
-    if isinstance(logger, StaticParameterMappingDiagnostics):
-        source_mapping_logger = logger.get_logger()
-    else:
-        source_mapping_logger = logger
-    assign_thevenin_source_static_api_mapping(generator, mdl, problem_mapping, source_mapping_logger)
+    assign_thevenin_source_static_api_mapping(generator, mdl, problem_mapping, logger)
 
 
 def assign_thevenin_source_static_api_mapping(
@@ -3864,12 +3150,12 @@ def assign_thevenin_source_static_api_mapping(
     """
     if (ParamPowerFlowReferenceType.thevenin_source_r0_pu in mdl.api_obj_mapping
             or ParamPowerFlowReferenceType.thevenin_source_x0_pu in mdl.api_obj_mapping):
-        r1: float = float(generator.R1)
-        x1: float = float(generator.X1)
-        r0: float = float(generator.R0)
-        x0: float = float(generator.X0)
-        r2: float = float(generator.R2)
-        x2: float = float(generator.X2)
+        r1: float = generator.R1
+        x1: float = generator.X1
+        r0: float = generator.R0
+        x0: float = generator.X0
+        r2: float = generator.R2
+        x2: float = generator.X2
         missing_zero: bool = r0 == 1.0e-20 and x0 == 1.0e-20
         missing_negative: bool = r2 == 1.0e-20 and x2 == 1.0e-20
         reason: str = ""
@@ -3897,13 +3183,15 @@ def assign_thevenin_source_static_api_mapping(
                 r0 = r1
                 x0 = x1
                 if logger is not None:
-                    logger.add_warning("Thevenin ABC source: absent Z0 defaults; using runtime Z0 = Z1", device=generator.name)
+                    logger.add_warning("Thevenin ABC source: absent Z0 defaults; using runtime Z0 = Z1",
+                                       device=generator.name)
                 else:
                     pass
             else:
                 pass
             if missing_negative and logger is not None:
-                logger.add_warning("Thevenin ABC source: absent Z2 defaults; assuming reciprocal Z2 = Z1", device=generator.name)
+                logger.add_warning("Thevenin ABC source: absent Z2 defaults; assuming reciprocal Z2 = Z1",
+                                   device=generator.name)
             else:
                 pass
             assign_api_mapping_value_if_present(
@@ -3923,7 +3211,7 @@ def assign_battery_static_api_mapping(
         battery: dev.Battery,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -3948,7 +3236,7 @@ def assign_battery_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.battery_enom_mwh,
-        value=float(battery.Enom),
+        value=battery.Enom,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3956,7 +3244,7 @@ def assign_battery_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.battery_soc_0_pu,
-        value=float(battery.soc_0),
+        value=battery.soc_0,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3964,7 +3252,7 @@ def assign_battery_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.battery_max_soc_pu,
-        value=float(battery.max_soc),
+        value=battery.max_soc,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3972,7 +3260,7 @@ def assign_battery_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.battery_min_soc_pu,
-        value=float(battery.min_soc),
+        value=battery.min_soc,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3980,7 +3268,7 @@ def assign_battery_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.battery_charge_efficiency_pu,
-        value=float(battery.charge_efficiency),
+        value=battery.charge_efficiency,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3988,7 +3276,7 @@ def assign_battery_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.battery_discharge_efficiency_pu,
-        value=float(battery.discharge_efficiency),
+        value=battery.discharge_efficiency,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -3996,7 +3284,7 @@ def assign_battery_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.battery_charge_per_cycle_pu,
-        value=float(battery.charge_per_cycle),
+        value=battery.charge_per_cycle,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4004,7 +3292,7 @@ def assign_battery_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.battery_discharge_per_cycle_pu,
-        value=float(battery.discharge_per_cycle),
+        value=battery.discharge_per_cycle,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4016,7 +3304,7 @@ def assign_vsc_static_api_mapping(
         vsc: dev.VSC,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -4034,12 +3322,12 @@ def assign_vsc_static_api_mapping(
     :return: None.
     """
     device_name: str = str(vsc.name)
-    omega_base: float = 2.0 * np.pi * float(grid.fBase)
+    omega_base: float = 2.0 * np.pi * grid.fBase
 
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.Sbase,
-        value=float(grid.Sbase),
+        value=grid.Sbase,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4059,7 +3347,7 @@ def assign_vsc_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.alpha1,
-        value=float(vsc.alpha1),
+        value=vsc.alpha1,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4067,7 +3355,7 @@ def assign_vsc_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.alpha2,
-        value=float(vsc.alpha2),
+        value=vsc.alpha2,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4075,7 +3363,7 @@ def assign_vsc_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.alpha3,
-        value=float(vsc.alpha3),
+        value=vsc.alpha3,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4083,17 +3371,17 @@ def assign_vsc_static_api_mapping(
 
 
 def assign_dc_line_static_api_mapping(
-        grid: MultiCircuit,
+        Sbase: float,
         dc_line: DcLine,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
     Assign static DC-line parameters exposed by ``mdl.api_obj_mapping``.
 
-    :param grid: Circuit providing the system power base.
+    :param Sbase: System power base in MVA.
     :param dc_line: DC line device.
     :param mdl: DC line EMT block.
     :param logger: Optional logger.
@@ -4101,19 +3389,11 @@ def assign_dc_line_static_api_mapping(
     """
     device_name: str = str(dc_line.name)
     eps_value: float = 1.0e-12
-    resistance_value: float = float(dc_line.R_corrected)
+    resistance_value: float = dc_line.R_corrected
     conductance_value: float = 1.0 / max(abs(resistance_value), eps_value)
-    dynamic_values_logger: Logger | None
-    if isinstance(logger, StaticParameterMappingDiagnostics):
-        # The DC-line helper emits its own physical-model warning, therefore
-        # it receives the original driver logger rather than mapping metadata.
-        dynamic_values_logger = logger.get_logger()
-    else:
-        dynamic_values_logger = logger
-
     dynamic_values: Tuple[float, float] = dc_line.get_dynamic_values_pu_seconds(
-        Sbase=float(grid.Sbase),
-        logger=dynamic_values_logger,
+        Sbase=Sbase,
+        logger=logger,
     )
 
     assign_common_branch_static_api_mapping(
@@ -4158,7 +3438,7 @@ def assign_dc_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.dc_line_l_pu_seconds,
-        value=float(dynamic_values[0]),
+        value=dynamic_values[0],
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4166,7 +3446,7 @@ def assign_dc_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.dc_line_length_km,
-        value=float(dc_line.length),
+        value=dc_line.length,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4178,7 +3458,7 @@ def assign_transformer2w_static_api_mapping(
         transformer: Transformer2W,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -4193,7 +3473,7 @@ def assign_transformer2w_static_api_mapping(
     """
 
     assign_api_mapping_value_if_present(
-        mdl=mdl, key=ParamPowerFlowReferenceType.Sbase, value=float(grid.Sbase),
+        mdl=mdl, key=ParamPowerFlowReferenceType.Sbase, value=grid.Sbase,
         logger=logger, device_name=str(transformer.name), problem_mapping=problem_mapping,
     )
 
@@ -4208,7 +3488,7 @@ def assign_transformer2w_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.r,
-        value=float(transformer.R),
+        value=transformer.R,
         logger=logger,
         device_name=transformer.name,
         problem_mapping=problem_mapping,
@@ -4216,24 +3496,24 @@ def assign_transformer2w_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.x,
-        value=float(transformer.X),
+        value=transformer.X,
         logger=logger,
         device_name=transformer.name,
         problem_mapping=problem_mapping,
     )
     needs_series_admittance: bool = (
-        ParamPowerFlowReferenceType.g in mdl.api_obj_mapping
-        or ParamPowerFlowReferenceType.b in mdl.api_obj_mapping
+            ParamPowerFlowReferenceType.g in mdl.api_obj_mapping
+            or ParamPowerFlowReferenceType.b in mdl.api_obj_mapping
     )
     if needs_series_admittance:
-        series_impedance_square: float = float(
+        series_impedance_square: float = (
             transformer.R ** 2 + transformer.X ** 2
         )
         if series_impedance_square > 1.0e-24:
             assign_api_mapping_value_if_present(
                 mdl=mdl,
                 key=ParamPowerFlowReferenceType.g,
-                value=float(transformer.R / series_impedance_square),
+                value=transformer.R / series_impedance_square,
                 logger=logger,
                 device_name=transformer.name,
                 problem_mapping=problem_mapping,
@@ -4241,26 +3521,28 @@ def assign_transformer2w_static_api_mapping(
             assign_api_mapping_value_if_present(
                 mdl=mdl,
                 key=ParamPowerFlowReferenceType.b,
-                value=float(-transformer.X / series_impedance_square),
+                value=-transformer.X / series_impedance_square,
                 logger=logger,
                 device_name=transformer.name,
                 problem_mapping=problem_mapping,
             )
-        else:
-            add_static_mapping_warning(
-                logger=logger,
-                device_name=str(transformer.name),
-                message="Transformer series admittance requires non-zero impedance.",
+        elif logger is not None:
+            logger.add_warning(
+                device=str(transformer.name),
+                msg="Transformer series admittance requires non-zero impedance.",
                 value=series_impedance_square,
                 expected_value="R squared plus X squared greater than 1e-24",
                 device_property="R/X",
+                device_class="Dynamic parameter mapping",
             )
+        else:
+            pass
     else:
         pass
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.bsh,
-        value=float(transformer.B),
+        value=transformer.B,
         logger=logger,
         device_name=transformer.name,
         problem_mapping=problem_mapping,
@@ -4268,7 +3550,7 @@ def assign_transformer2w_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.gFe,
-        value=float(transformer.G),
+        value=transformer.G,
         logger=logger,
         device_name=transformer.name,
         problem_mapping=problem_mapping,
@@ -4277,7 +3559,7 @@ def assign_transformer2w_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.vtap_f,
-        value=float(vtap_f),
+        value=vtap_f,
         logger=logger,
         device_name=transformer.name,
         problem_mapping=problem_mapping,
@@ -4286,7 +3568,7 @@ def assign_transformer2w_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.vtap_t,
-        value=float(vtap_t),
+        value=vtap_t,
         logger=logger,
         device_name=transformer.name,
         problem_mapping=problem_mapping,
@@ -4294,7 +3576,7 @@ def assign_transformer2w_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.tap_module,
-        value=float(transformer.tap_module),
+        value=transformer.tap_module,
         logger=logger,
         device_name=transformer.name,
         problem_mapping=problem_mapping,
@@ -4302,7 +3584,7 @@ def assign_transformer2w_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.tap_phase,
-        value=float(transformer.tap_phase),
+        value=transformer.tap_phase,
         logger=logger,
         device_name=transformer.name,
         problem_mapping=problem_mapping,
@@ -4310,31 +3592,31 @@ def assign_transformer2w_static_api_mapping(
 
     device_name: str = str(transformer.name)
     eps_value: float = 1.0e-12
-    omega_base: float = 2.0 * np.pi * float(grid.fBase)
-    sn_value: float = max(float(transformer.Sn), 1.0e-9)
-    pcu_kw_value: float = max(float(transformer.Pcu), 0.0)
-    pfe_kw_value: float = max(float(transformer.Pfe), 0.0)
-    i0_pct_value: float = max(float(transformer.I0), 0.0)
+    omega_base: float = 2.0 * np.pi * grid.fBase
+    sn_value: float = max(transformer.Sn, 1.0e-9)
+    pcu_kw_value: float = max(transformer.Pcu, 0.0)
+    pfe_kw_value: float = max(transformer.Pfe, 0.0)
+    i0_pct_value: float = max(transformer.I0, 0.0)
     hv_nominal_kv: float
     lv_nominal_kv: float
 
-    if transformer.HV is not None and float(transformer.HV) > eps_value:
-        hv_nominal_kv = float(transformer.HV)
+    if transformer.HV is not None and transformer.HV > eps_value:
+        hv_nominal_kv = transformer.HV
     else:
-        hv_nominal_kv = float(transformer.bus_from.Vnom)
+        hv_nominal_kv = transformer.bus_from.Vnom
 
-    if transformer.LV is not None and float(transformer.LV) > eps_value:
-        lv_nominal_kv = float(transformer.LV)
+    if transformer.LV is not None and transformer.LV > eps_value:
+        lv_nominal_kv = transformer.LV
     else:
-        lv_nominal_kv = float(transformer.bus_to.Vnom)
+        lv_nominal_kv = transformer.bus_to.Vnom
 
-    tap_module_value: float = float(transformer.tap_module)
+    tap_module_value: float = transformer.tap_module
     if abs(tap_module_value) <= eps_value:
         tap_module_value = 1.0
     else:
         pass
 
-    tap_phase_value: float = float(transformer.tap_phase)
+    tap_phase_value: float = transformer.tap_phase
 
     if abs(lv_nominal_kv) > eps_value:
         nominal_voltage_ratio: float = hv_nominal_kv / lv_nominal_kv
@@ -4343,13 +3625,13 @@ def assign_transformer2w_static_api_mapping(
 
     total_voltage_ratio: float = nominal_voltage_ratio * tap_module_value
     total_voltage_ratio_square: float = total_voltage_ratio * total_voltage_ratio
-    transformer_r_pu: float = float(transformer.R)
-    transformer_x_pu: float = float(transformer.X)
-    transformer_g_pu: float = float(transformer.G)
-    transformer_b_pu: float = float(transformer.B)
+    transformer_r_pu: float = transformer.R
+    transformer_x_pu: float = transformer.X
+    transformer_g_pu: float = transformer.G
+    transformer_b_pu: float = transformer.B
 
-    if float(transformer.Vsc) > 0.0:
-        vsc_pct_value: float = float(transformer.Vsc)
+    if transformer.Vsc > 0.0:
+        vsc_pct_value: float = transformer.Vsc
     else:
         vsc_pct_value = 100.0 * np.sqrt(
             max(
@@ -4486,14 +3768,17 @@ def assign_transformer2w_static_api_mapping(
 
     if transformer_equivalent_circuit_values_are_requested(mdl=mdl):
         if abs(tap_phase_value) > eps_value:
-            add_static_mapping_warning(
-                logger=logger,
-                device_name=device_name,
-                message="Transformer equivalent-circuit derived values skipped because tap_phase is non-zero.",
-                value=str(tap_phase_value),
-                expected_value="tap_phase close to zero",
-                device_property="tap_phase",
-            )
+            if logger is not None:
+                logger.add_warning(
+                    device=device_name,
+                    msg="Transformer equivalent-circuit derived values skipped because tap_phase is non-zero.",
+                    value=str(tap_phase_value),
+                    expected_value="tap_phase close to zero",
+                    device_property="tap_phase",
+                    device_class="Dynamic parameter mapping",
+                )
+            else:
+                pass
         else:
             r1_value: float
             r2_value: float
@@ -4516,14 +3801,17 @@ def assign_transformer2w_static_api_mapping(
             determinant_value = l1_value * l2_value - mutual_inductance * mutual_inductance
 
             if determinant_value <= eps_value:
-                add_static_mapping_warning(
-                    logger=logger,
-                    device_name=device_name,
-                    message="Transformer equivalent-circuit derived inductance values skipped because the inductance matrix is non-physical.",
-                    value=str(determinant_value),
-                    expected_value="positive inductance matrix determinant",
-                    device_property="transformer_equivalent_circuit",
-                )
+                if logger is not None:
+                    logger.add_warning(
+                        device=device_name,
+                        msg="Transformer equivalent-circuit derived inductance values skipped because the inductance matrix is non-physical.",
+                        value=str(determinant_value),
+                        expected_value="positive inductance matrix determinant",
+                        device_property="transformer_equivalent_circuit",
+                        device_class="Dynamic parameter mapping",
+                    )
+                else:
+                    pass
             else:
                 assign_api_mapping_value_if_present(
                     mdl=mdl,
@@ -4599,8 +3887,7 @@ def assign_line_static_api_mapping(
         line: dev.Line,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
-        direct_assigned_keys: Set[ParamPowerFlowReferenceType],
+        logger: Logger | None,
 ) -> None:
     """
     Assign static line R, Linv and C parameters exposed by ``api_obj_mapping``.
@@ -4642,7 +3929,7 @@ def assign_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.g,
-        value=float(line.R / (line.R ** 2 + line.X ** 2)),
+        value=line.R / (line.R ** 2 + line.X ** 2),
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4650,7 +3937,7 @@ def assign_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.r,
-        value=float(line.R),
+        value=line.R,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4658,7 +3945,7 @@ def assign_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.l,
-        value=float(line.X),
+        value=line.X,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4666,7 +3953,7 @@ def assign_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.line_length_km,
-        value=float(line.length),
+        value=line.length,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4674,7 +3961,7 @@ def assign_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.b,
-        value=float(-line.X / (line.R ** 2 + line.X ** 2)),
+        value=-line.X / (line.R ** 2 + line.X ** 2),
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4682,7 +3969,7 @@ def assign_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.bsh,
-        value=float(line.B),
+        value=line.B,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4691,7 +3978,7 @@ def assign_line_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowReferenceType.shunt_g_pu,
-        value=float(line.G),
+        value=line.G,
         logger=logger,
         device_name=device_name,
         problem_mapping=problem_mapping,
@@ -4701,14 +3988,17 @@ def assign_line_static_api_mapping(
     n_active: int = len(active_indices)
 
     if n_active == 0:
-        add_static_mapping_warning(
-            logger=logger,
-            device_name=device_name,
-            message="Line static mapping skipped because no physical phases are active.",
-            value="0 active phases",
-            expected_value="at least one active phase",
-            device_property="line_phases",
-        )
+        if logger is not None:
+            logger.add_warning(
+                device=device_name,
+                msg="Line static mapping skipped because no physical phases are active.",
+                value="0 active phases",
+                expected_value="at least one active phase",
+                device_property="line_phases",
+                device_class="Dynamic parameter mapping",
+            )
+        else:
+            pass
     else:
         r_full: np.ndarray
         l_full: np.ndarray
@@ -4752,9 +4042,9 @@ def assign_line_static_api_mapping(
             pass
 
         legacy_matrices_requested: bool = (
-            api_mapping_has_any_key(mdl=mdl, keys=flatten_matrix_keys(get_line_r_keys()))
-            or api_mapping_has_any_key(mdl=mdl, keys=flatten_matrix_keys(get_line_linv_keys()))
-            or api_mapping_has_any_key(mdl=mdl, keys=flatten_matrix_keys(get_line_c_keys()))
+                api_mapping_has_any_key(mdl=mdl, keys=flatten_matrix_keys(get_line_r_keys()))
+                or api_mapping_has_any_key(mdl=mdl, keys=flatten_matrix_keys(get_line_linv_keys()))
+                or api_mapping_has_any_key(mdl=mdl, keys=flatten_matrix_keys(get_line_c_keys()))
         )
         if matrices_are_valid and legacy_matrices_requested:
             linv_full: np.ndarray
@@ -4767,14 +4057,17 @@ def assign_line_static_api_mapping(
                 linv_full = np.linalg.inv(l_full)
             except np.linalg.LinAlgError:
                 determinant_value: float = float(np.linalg.det(l_full))
-                add_static_mapping_warning(
-                    logger=logger,
-                    device_name=device_name,
-                    message="Line static mapping skipped because inductance matrix is singular.",
-                    value=str(determinant_value),
-                    expected_value="invertible inductance matrix",
-                    device_property="line_inductance_matrix",
-                )
+                if logger is not None:
+                    logger.add_warning(
+                        device=device_name,
+                        msg="Line static mapping skipped because inductance matrix is singular.",
+                        value=str(determinant_value),
+                        expected_value="invertible inductance matrix",
+                        device_property="line_inductance_matrix",
+                        device_class="Dynamic parameter mapping",
+                    )
+                else:
+                    pass
             else:
                 r_keys: List[List[ParamPowerFlowReferenceType]] = get_line_r_keys()
                 linv_keys: List[List[ParamPowerFlowReferenceType]] = get_line_linv_keys()
@@ -4860,7 +4153,7 @@ def assign_hvdc_line_static_api_mapping(
         hvdc_line: dev.HvdcLine,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
 ) -> None:
     """
     Intentionally leave HVDC-line static mapping as a no-op.
@@ -4873,32 +4166,56 @@ def assign_hvdc_line_static_api_mapping(
     :param logger: Optional logger.
     :return: None.
     """
-    if logger is None:
-        pass
-    else:
-        pass
+    pass
 
 
 def assign_series_reactance_static_api_mapping(
         series_reactance: dev.SeriesReactance,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
 ) -> None:
-    """
-    Intentionally leave series-reactance static mapping as a no-op.
+    """Map a series reactor to its physical RMS series admittance.
 
-    Reachability exists in the EMT builder, but there is no established EMT
-    template/static-key contract for ``SeriesReactance`` yet.
-
-    :param series_reactance: Series-reactance device.
-    :param mdl: EMT block.
-    :param problem_mapping: Dictionary with static parameters and their values
-    :param logger: Optional logger.
+    :param series_reactance: Static reactor on the circuit per-unit base.
+    :param mdl: Symbolic block exposing the requested static parameters.
+    :param problem_mapping: Resolved parameter initial values.
+    :param logger: Optional initialization diagnostics.
     :return: None.
     """
-    if logger is None:
-        pass
+    device_name: str = str(series_reactance.name)
+    resistance: float = float(series_reactance.R)
+    reactance: float = float(series_reactance.X)
+    impedance_square: float = resistance * resistance + reactance * reactance
+    assign_common_branch_static_api_mapping(
+        device=series_reactance, mdl=mdl, problem_mapping=problem_mapping, logger=logger)
+    # Series reactors have no shunt admittance or nominal-voltage tap ratio.
+    # Populate only requested keys, preserving the shared mapper's ownership checks.
+    key: ParamPowerFlowReferenceType
+    value: float
+    for key, value in (
+            (ParamPowerFlowReferenceType.r, resistance),
+            (ParamPowerFlowReferenceType.l, reactance),
+            (ParamPowerFlowReferenceType.bsh, 0.0),
+            (ParamPowerFlowReferenceType.shunt_g_pu, 0.0),
+            (ParamPowerFlowReferenceType.vtap_f, 1.0),
+            (ParamPowerFlowReferenceType.vtap_t, 1.0)):
+        assign_api_mapping_value_if_present(
+            mdl=mdl, key=key, value=value, logger=logger,
+            device_name=device_name, problem_mapping=problem_mapping)
+    if impedance_square > 0.0:
+        for key, value in (
+                (ParamPowerFlowReferenceType.g, resistance / impedance_square),
+                (ParamPowerFlowReferenceType.b, -reactance / impedance_square)):
+            assign_api_mapping_value_if_present(
+                mdl=mdl, key=key, value=value, logger=logger,
+                device_name=device_name, problem_mapping=problem_mapping)
+    elif logger is not None and api_mapping_has_any_key(
+            mdl, list((ParamPowerFlowReferenceType.g, ParamPowerFlowReferenceType.b))):
+        # A zero-impedance branch needs the ideal-connector equations; a finite
+        # admittance fallback would silently change the physical circuit.
+        logger.add_error(msg="Zero-impedance series reactor requires an ideal connector model",
+                         device=device_name)
     else:
         pass
 
@@ -4907,7 +4224,7 @@ def assign_switch_static_api_mapping(
         switch: dev.Switch,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
         direct_assigned_keys: Set[ParamPowerFlowReferenceType],
 ) -> None:
     """
@@ -4926,8 +4243,8 @@ def assign_switch_static_api_mapping(
     :return: None.
     """
     device_name: str = str(switch.name)
-    resistance_value: float = float(switch.R)
-    reactance_value: float = float(switch.X)
+    resistance_value: float = switch.R
+    reactance_value: float = switch.X
     impedance_sq_value: float = resistance_value * resistance_value + reactance_value * reactance_value
     eps_value: float = 1.0e-12
     conductance_value: float
@@ -4967,7 +4284,7 @@ def assign_upfc_static_api_mapping(
         upfc: dev.UPFC,
         mdl: Block,
         problem_mapping: Dict[Var, Const],
-        logger: StaticParameterMappingDiagnosticSink | None,
+        logger: Logger | None,
 ) -> None:
     """
     Intentionally leave UPFC static mapping as a no-op.
@@ -4981,7 +4298,4 @@ def assign_upfc_static_api_mapping(
     :param logger: Optional logger.
     :return: None.
     """
-    if logger is None:
-        pass
-    else:
-        pass
+    pass

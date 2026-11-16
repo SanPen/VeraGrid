@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import numpy as np
@@ -8,17 +12,15 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized import BackEulerImplicitIntegrationVec
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized import BackEulerImplicitIntegrationFullVec
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import RmsProblemDaeVec
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_full_vectorized import RmsProblemDaeFullVec
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Templates.BasicBlockCatalog import get_basic_block_catalog_descriptor_by_key
-from VeraGridEngine.Templates.BasicBlockCatalog import load_basic_block_catalog_template
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.template_catalogue import BASIC_BLOCKS_BY_KEY
+from VeraGridEngine.Templates.template_catalogue import load_basic_block_catalog_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.jit_compiler import ProceduralExpressionCompiler
 from VeraGridEngine.Utils.procedural_logic import (
@@ -65,7 +67,7 @@ def _build_procedural_catalog_load_rms_template(vf: VarFactory,
     p_ref_const = vf.add_var(f"P_ref_const_{name}")
     q_ref_const = vf.add_var(f"Q_ref_const_{name}")
 
-    enable_descriptor = get_basic_block_catalog_descriptor_by_key()["enable_signal"]
+    enable_descriptor = BASIC_BLOCKS_BY_KEY["enable_signal"]
     enable_template = load_basic_block_catalog_template(enable_descriptor, vf, name=f"{name} enable")
     enable_block = enable_template.block
     enable_param = next(iter(enable_block.event_dict.keys()))
@@ -118,7 +120,7 @@ def test_rms_update_variable_params_applies_catalog_procedural_logic() -> None:
     :return: None.
     """
 
-    descriptor: object = get_basic_block_catalog_descriptor_by_key()["enable_signal_fixed"]
+    descriptor: object = BASIC_BLOCKS_BY_KEY["enable_signal_fixed"]
     template: object = load_basic_block_catalog_template(descriptor, VarFactory())
     problem: RmsProblemDae = RmsProblemDae.__new__(RmsProblemDae)
     runtime_parameters: list[Var] = list(template.block.event_dict.keys())
@@ -272,23 +274,10 @@ def test_rms_catalog_procedural_logic_changes_load_output_during_real_simulation
     )
     problem.set_events_group(events_group)
 
-    # Each formulation exposes the numerical interface of its matching solver.
-    solver: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec
-    if isinstance(problem, RmsProblemDaeVec):
-        solver = BackEulerImplicitIntegrationVec(
-            problem=problem, t0=0.0, t_end=rms_options.simulation_time,
-            h=rms_options.time_step, max_iter=rms_options.max_iter,
-        )
-    elif isinstance(problem, RmsProblemDaeFullVec):
-        solver = BackEulerImplicitIntegrationFullVec(
-            problem=problem, t0=0.0, t_end=rms_options.simulation_time,
-            h=rms_options.time_step, max_iter=rms_options.max_iter,
-        )
-    else:
-        solver = BackEulerImplicitIntegration(
-            problem=problem, t0=0.0, t_end=rms_options.simulation_time,
-            h=rms_options.time_step, max_iter=rms_options.max_iter,
-        )
+    solver = BackEulerImplicitIntegration(
+        problem=problem, t0=0.0, t_end=rms_options.simulation_time,
+        h=rms_options.time_step, max_iter=rms_options.max_iter,
+    )
 
     time_s, state_traj, well_initialized, converged = solver.simulate()
 

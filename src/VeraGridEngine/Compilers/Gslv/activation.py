@@ -15,7 +15,6 @@ from VeraGridEngine.enumerations import (
     BusMode,
     ShuntConnectionType,
     WindingType,
-    WindingsConnection,
     HvdcControlType,
     ContingencyMethod,
     ContingencyOperationTypes,
@@ -150,22 +149,15 @@ try:
             }
 
             winding_type_dict = {
-                WindingType.GroundedStar: pg.WindingType.GroundedStar,
                 WindingType.NeutralStar: pg.WindingType.NeutralStar,
+                WindingType.FloatingStar: pg.WindingType.FloatingStar,
+                WindingType.GroundedStar: pg.WindingType.GroundedStar,
                 WindingType.Delta: pg.WindingType.Delta,
-                WindingType.GroundedZigZag: pg.WindingType.ZigZag,
-                WindingType.FloatingZigZag: pg.WindingType.ZigZag,
-                WindingType.NeutralZigZag: pg.WindingType.ZigZag,
+                WindingType.NeutralZigZag: pg.WindingType.NeutralZigZag,
+                WindingType.FloatingZigZag: pg.WindingType.FloatingZigZag,
+                WindingType.GroundedZigZag: pg.WindingType.GroundedZigZag,
             }
 
-            windings_connection_dict = {
-                WindingsConnection.GG: pg.WindingsConnection.GG,
-                WindingsConnection.GS: pg.WindingsConnection.GS,
-                WindingsConnection.GD: pg.WindingsConnection.GD,
-                WindingsConnection.SS: pg.WindingsConnection.SS,
-                WindingsConnection.SD: pg.WindingsConnection.SD,
-                WindingsConnection.DD: pg.WindingsConnection.DD,
-            }
             GSLV_AVAILABLE = True
         else:
             GSLV_UNAVAILABLE_REASON = "pygslv has no valid license"
@@ -195,7 +187,6 @@ if not GSLV_AVAILABLE:
     bus_type_dict = dict()
     shunt_connection_type_dict = dict()
     winding_type_dict = dict()
-    windings_connection_dict = dict()
 
     if GSLV_UNAVAILABLE_REASON != "pygslv is not installed":
         warnings.warn(f"GSLV disabled: {GSLV_UNAVAILABLE_REASON}", stacklevel=2)

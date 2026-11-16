@@ -24,7 +24,6 @@ from VeraGridEngine.Utils.Symbolic.diagnostic import (
     dense_lstsq_fallback,
     maybe_apply_backtracking,
     maybe_check_index1,
-    sparse_lsqr_fallback,
     with_newton_diagnostics,
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import BinOp, Const, Expr, Func, UnOp, Var
@@ -32,16 +31,21 @@ from VeraGridEngine.Utils.Symbolic.jit_compiler import (
     EagerEquationCompiler, _compile_to_file, _fingerprint_codegen_expr, _StructuralExpressionContext,
 )
 from VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend import (
-    SuperLUSparseBackendProvider,
     _permute_csc_data_by_columns,
     _scatter_permuted_solution_to_original_order,
 )
+from VeraGridEngine.Utils.NumericalMethods.newton_factor_reuse import (
+    get_adaptive_recompute_threshold, needs_confirming_correction,
+    confirms_with_fresh_factors, factorization_inputs_changed, needs_factor_refresh,
+)
+from VeraGridEngine.Utils.Sparse.sparse_solve import (
+    SparseFactorizationManager as StructuralCompiledSparseFactorizationManager,
+)
 from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import (
-    SparseLinearFactorizationHandle,
-    SparseLinearSolverBackend,
     SparseLinearSolverBackendProvider,
 )
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
+    BoundaryUpdaterCapabilities,
     EmtBoundaryUpdateProtocol,
     EmtProblemTemplate,
     get_solver_forced_event_time,
@@ -50,7 +54,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
 )
 from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
-from VeraGridEngine.basic_structures import Mat, Vec
+from VeraGridEngine.basic_structures import IntVec, Mat, Vec
 
 
 Float64Vector = npt.NDArray[np.float64]
@@ -869,39 +873,59 @@ def _fill_full_parameter_buffer(
         index += 1
 
 
-@nb.jit(cache=True, fastmath=True)
-def _max_abs_diff_vectors(left_values: Float64Vector, right_values: Float64Vector) -> float:
+def _reject_states_without_trapezoidal_history(method: DynamicIntegrationMethod, state_vars: List[Var],
+                                               diff_base_var_indices: IntVec) -> None:
     """
-    Return the maximum absolute difference between two vectors.
+    Reject a trapezoidal model that declares differentials but leaves some state without one.
 
-    :param left_values: Left vector.
-    :type left_values: Float64Vector
-    :param right_values: Right vector.
-    :type right_values: Float64Vector
-    :return: Maximum absolute difference.
-    :rtype: float
+    The trapezoidal kernels read a derivative history for every state, and a state without a declared differential
+    would keep a zero history. A model that declares no differential keeps the caller's runtime-order vector as its
+    history. The other rules do not read the history in their kernels; backward Euler reads it only as the
+    predictor's initial guess.
+
+    :param method: Requested integration rule.
+    :param state_vars: State variables in runtime order.
+    :param diff_base_var_indices: Base variable index per differential, -1 without base.
+    :return: None.
+    :raises ValueError: When the rule is trapezoidal, at least one differential is declared and some state has no
+        declared differential.
     """
-    max_value: float = 0.0
+    missing_states: IntVec
+    if method == DynamicIntegrationMethod.DaeTrapezoidal and diff_base_var_indices.size > 0:
+        missing_states = np.setdiff1d(np.arange(len(state_vars)), diff_base_var_indices)
+        if missing_states.size > 0:
+            raise ValueError(
+                "The trapezoidal rule needs a declared differential for every state once any is declared; "
+                f"missing for {list([state_vars[i].name for i in missing_states])}"
+            )
+        else:
+            pass
+    else:
+        pass
+
+
+@nb.jit(cache=True, fastmath=False)
+def _all_finite(values: Float64Vector) -> bool:
+    """
+    Return whether every entry of a vector is finite.
+
+    It replaces np.all(np.isfinite(values)) in the Newton loops without allocating a mask. It is compiled without
+    fastmath, which would let the compiler assume finite values and fold the check away.
+
+    :param values: Vector to inspect.
+    :type values: Float64Vector
+    :return: True when no entry is NaN or infinite.
+    :rtype: bool
+    """
     index: int = 0
 
-    while index < left_values.shape[0]:
-        diff_value: float = left_values[index] - right_values[index]
-
-        if diff_value < 0.0:
-            diff_value = -diff_value
+    while index < values.shape[0]:
+        if np.isfinite(values[index]):
+            index += 1
         else:
-            diff_value = diff_value
+            return False
 
-        if diff_value > max_value:
-            max_value = diff_value
-        else:
-            max_value = max_value
-
-        index += 1
-
-    return max_value
-
-
+    return True
 
 
 def _warmup_compiled_numba_helpers() -> None:
@@ -927,6 +951,7 @@ def _warmup_compiled_numba_helpers() -> None:
     sample_data_idx: Int32Vector = np.array([0, 1], dtype=np.int32)
 
     _max_abs_value(sample_vector)
+    _all_finite(sample_vector)
     _copy_negated_vector(sample_vector, sample_out_vector)
     _fill_full_parameter_buffer(sample_runtime_params, sample_static_params, sample_full_params)
     _permute_csc_data_by_columns(sample_source_data, sample_indptr, sample_perm, sample_indptr, sample_target_data)
@@ -1985,152 +2010,6 @@ class StructuralCompiledSparseADJacobian:
         return dict(self._build_stats)
 
 
-class StructuralCompiledSparseFactorizationManager:
-    """
-    Sparse linear-solve manager for ``StructuralCompiledSolver``.
-
-    The manager keeps the current numeric factorization alive across time steps,
-    caches one column ordering once it has been discovered, and reuses
-    persistent numeric buffers so the solver hot loop does not rebuild sparse
-    matrix shells.
-    """
-
-    __slots__ = ["_base_matrix", "_backend", "_analysis_handle", "_cached_handle", "_solution_buffer", "_stats"]
-
-    def __init__(self,
-                 base_matrix: csc_matrix,
-                 base_data: Vec,
-                 backend_provider: SparseLinearSolverBackendProvider | None = None) -> None:
-        """
-        Create the sparse factorization manager.
-
-        :param base_matrix: Reusable Jacobian CSC shell in original variable order.
-        :type base_matrix: csc_matrix
-        :param base_data: Reusable CSC numeric buffer of ``base_matrix``.
-        :type base_data: Vec
-        :return: None
-        :rtype: None
-        """
-        n_cols: int = int(base_matrix.shape[1])
-        resolved_provider: SparseLinearSolverBackendProvider
-
-        if backend_provider is None:
-            resolved_provider = SuperLUSparseBackendProvider()
-        else:
-            resolved_provider = backend_provider
-
-        self._base_matrix: csc_matrix = base_matrix
-        self._backend: SparseLinearSolverBackend = resolved_provider.create_backend(base_matrix, base_data)
-        self._analysis_handle: Any | None = None
-        self._cached_handle: SparseLinearFactorizationHandle | None = None
-        self._solution_buffer: Vec = np.zeros(n_cols, dtype=np.float64)
-        self._stats: Dict[str, float] = {
-            "numeric_factorizations": 0.0,
-            "invalidations": 0.0,
-            "solve_calls": 0.0,
-            "fallback_solves": 0.0,
-        }
-
-        if self._backend.supports_symbolic_analysis_reuse():
-            self._analysis_handle = self._backend.analyze(base_matrix)
-        else:
-            self._analysis_handle = None
-
-    def invalidate(self) -> None:
-        """
-        Drop the current numeric factorization while keeping all persistent shells.
-
-        :return: None
-        :rtype: None
-        """
-        self._cached_handle = None
-        self._stats["invalidations"] += 1.0
-
-    def has_factorization(self) -> bool:
-        """
-        Return whether one numeric factorization is currently cached.
-
-        :return: ``True`` when a factorization is available.
-        :rtype: bool
-        """
-        return self._cached_handle is not None
-
-    def factorize(self) -> SparseLinearFactorizationHandle:
-        """
-        Factorize the current Jacobian numeric values.
-
-        :return: Active sparse factorization handle.
-        :rtype: SparseLinearFactorizationHandle
-        """
-        self._cached_handle = self._backend.factorize(self._base_matrix, self._analysis_handle)
-        self._stats["numeric_factorizations"] += 1.0
-        return self._cached_handle
-
-    def solve(self, rhs: Vec) -> Vec:
-        """
-        Solve the linear system using the current numeric factorization.
-
-        :param rhs: Right-hand side vector.
-        :type rhs: Vec
-        :return: Solution buffer in original solver order.
-        :rtype: Vec
-        """
-        self._stats["solve_calls"] += 1.0
-
-        if self._cached_handle is None:
-            self._solution_buffer[:] = 0.0
-        else:
-            self._cached_handle.solve_into(rhs, self._solution_buffer)
-
-        return self._solution_buffer
-
-    def solve_fallback(self, rhs: Vec) -> Vec:
-        """
-        Solve the linear system with an iterative sparse fallback.
-
-        :param rhs: Right-hand side vector.
-        :type rhs: Vec
-        :return: Solution buffer in original solver order.
-        :rtype: Vec
-        """
-        # The active matrix may be column-permuted by the backend; the base shell
-        # shares the factorised Jacobian values in original order, so the
-        # least-squares solution needs no backend-specific un-permutation.
-        raw_solution: Vec = np.asarray(sparse_lsqr_fallback(self._base_matrix, rhs), dtype=np.float64)
-        self._stats["fallback_solves"] += 1.0
-
-        self._solution_buffer[:] = raw_solution
-
-        return self._solution_buffer
-
-    def get_active_matrix(self) -> csc_matrix:
-        """
-        Return the matrix used by the active numeric factorization path.
-
-        :return: Active sparse matrix.
-        :rtype: csc_matrix
-        """
-        if self._cached_handle is None:
-            return self._base_matrix
-        else:
-            return self._cached_handle.get_active_matrix()
-
-    def get_stats(self) -> Dict[str, float]:
-        """
-        Return cumulative factorization-manager statistics.
-
-        :return: Cumulative statistics dictionary.
-        :rtype: Dict[str, float]
-        """
-        merged_stats: Dict[str, float] = dict(self._stats)
-        backend_stats: Dict[str, float] = self._backend.get_backend_stats()
-
-        for key, value in backend_stats.items():
-            merged_stats[key] = float(value)
-
-        return merged_stats
-
-
 class StructuralCompiledSolver:
     """
     Standalone structural EMT solver with eager kernels and reusable buffers.
@@ -2152,6 +2031,7 @@ class StructuralCompiledSolver:
         "_state_vars",
         "_algebraic_vars",
         "_diff_vars",
+        "_diff_base_var_indices",
         "_state_eqs",
         "_algebraic_eqs",
         "_sorted_vars",
@@ -2180,6 +2060,8 @@ class StructuralCompiledSolver:
         "_vectorized_ready",
         "_backend_warmup_done",
         "_last_macro_newton_iterations",
+        "_confirming_base_state",
+        "_last_factorization_step",
         "_last_sim_loop_time",
         "_last_runtime_stats",
         "_predictor",
@@ -2300,6 +2182,8 @@ class StructuralCompiledSolver:
             variable_obj: Var = self._sorted_vars[variable_index]
             self._uid2idx_vars[variable_obj.uid] = variable_index
             variable_index += 1
+        self._diff_base_var_indices: IntVec = self._problem.get_diff_base_var_indices()
+        _reject_states_without_trapezoidal_history(self._method, self._state_vars, self._diff_base_var_indices)
 
         # The residual and right-hand-side buffers are persistent across all Newton iterations.
         self._residual_buffer = np.zeros(self._n_vars, dtype=np.float64)
@@ -2323,8 +2207,12 @@ class StructuralCompiledSolver:
             dtype=np.float64,
         )
         self._has_factorization_parameter_snapshot = False
+        # Substep size of the retained factorization, compared with the current one on every substep.
+        self._last_factorization_step: float = 0.0
         self._delta_buffer = np.zeros(self._n_vars, dtype=np.float64)
         self._trial_state_buffer = np.zeros(self._n_vars, dtype=np.float64)
+        # Passing iterate kept while its confirming correction runs.
+        self._confirming_base_state: Vec = np.zeros(self._n_vars, dtype=np.float64)
         self._trial_residual_buffer = np.zeros(self._n_vars, dtype=np.float64)
         self._trial_residual_evaluator = StructuralCompiledResidualTrialEvaluator()
 
@@ -2576,7 +2464,8 @@ class StructuralCompiledSolver:
 
         if full_warmup_enabled:
             warmup_x: Vec = self._problem.get_x0().copy()
-            warmup_dx: Vec = self._problem.get_dx0().copy()
+            # Kernel history is in runtime-variable order.
+            warmup_dx: Vec = np.zeros(self._n_vars, dtype=np.float64)
             warmup_x2: Vec = warmup_x.copy()
             warmup_runtime_params: Vec = self._problem.event_params_values.copy()
             warmup_full_params: Vec = self._full_parameter_buffer
@@ -2763,22 +2652,23 @@ class StructuralCompiledSolver:
             dx_prev = np.array(dx0, dtype=np.float64, copy=True)
 
         active_boundary_updater = resolve_solver_boundary_updater(self._problem, boundary_updater, float(self._t0))
+        # Optional updater APIs are resolved once instead of on every substep.
+        boundary_capabilities: BoundaryUpdaterCapabilities = BoundaryUpdaterCapabilities(active_boundary_updater)
 
         x_prev2: Vec = x_prev.copy()
         # Compiler history is in runtime-variable order, public dy in diff UID order.
-        base_slopes: Vec = np.zeros(x_prev.size if bdf2_startup_pending else 0, dtype=np.float64)
-        diff_base_indices: np.ndarray = np.full(dx_prev.size if bdf2_startup_pending else 0, -1, dtype=np.int64)
+        base_slopes: Vec = np.zeros(x_prev.size, dtype=np.float64)
+        # Differentials with a base variable and their base rows, so the history update needs no per-element loop.
+        diff_rows_with_base: np.ndarray = np.flatnonzero(self._diff_base_var_indices >= 0)
+        diff_base_rows: np.ndarray = self._diff_base_var_indices[diff_rows_with_base]
+        kernel_derivatives: Vec = base_slopes
         if bdf2_startup_pending:
-            differential: Var
-            for differential in self._diff_vars:
-                if differential.base_var is not None:
-                    diff_index: int = self._problem.uid2idx_diff[differential.uid]
-                    diff_base_indices[diff_index] = self._uid2idx_vars.get(differential.base_var.uid, -1)
-                else:
-                    pass
-            kernel_derivatives: Vec = base_slopes
-        else:
+            pass
+        elif self._n_diff == 0:
+            # Without declared differentials the caller's vector already is the history in runtime-variable order.
             kernel_derivatives = dx_prev
+        else:
+            kernel_derivatives[diff_base_rows] = dx_prev[diff_rows_with_base]
         x_iter: Vec = x_prev.copy()
         trial_state: Vec = self._trial_state_buffer
         trial_residual: Vec = self._trial_residual_buffer
@@ -2841,6 +2731,8 @@ class StructuralCompiledSolver:
         dense_factorization_count: int = 0
         factorization_reuse_hits: int = 0
         forced_factorization_invalidations: int = 0
+        inherited_factor_retries: int = 0
+        confirming_corrections_discarded: int = 0
 
         if diagnostics_enabled:
             dense_solve = with_newton_diagnostics(
@@ -2902,6 +2794,7 @@ class StructuralCompiledSolver:
                     active_boundary_updater,
                     float(t_local_prev),
                     float(t_step_target),
+                    capabilities=boundary_capabilities,
                 )
 
                 if forced_event_time is None:
@@ -2974,19 +2867,15 @@ class StructuralCompiledSolver:
                 last_res_norm: float = 1.0
                 cached_lu_dense: DenseSolveBundle | None = None
 
+                # Retained factors are dropped when the step size, or on an aligned substep the parameters, moved since they
+                # were computed.
                 if sparse_factor_manager is None:
                     pass
                 else:
-                    if is_aligned_substep and sparse_factor_manager.has_factorization():
-                        params_changed: bool = True
-
-                        if self._has_factorization_parameter_snapshot:
-                            params_changed = _max_abs_diff_vectors(
-                                full_params,
-                                self._last_factorization_parameter_snapshot,
-                            ) > 1.0e-14
-                        else:
-                            params_changed = True
+                    if sparse_factor_manager.has_factorization():
+                        params_changed: bool = factorization_inputs_changed(
+                            self._has_factorization_parameter_snapshot, is_aligned_substep, full_params,
+                            self._last_factorization_parameter_snapshot, h_eff, self._last_factorization_step)
 
                         if params_changed:
                             sparse_factor_manager.invalidate()
@@ -2998,165 +2887,208 @@ class StructuralCompiledSolver:
 
                 # The first trapezoidal step benefits from a cheap explicit predictor.
                 if step_index == 0 and is_first_local_step and self._method == DynamicIntegrationMethod.DaeTrapezoidal:
-                    self._predictor.predict(x_iter, x_prev, dx_prev, h_eff, self._pred_method)
+                    self._predictor.predict(x_iter, x_prev, kernel_derivatives, h_eff, self._pred_method)
                 else:
                     pass
 
-                substep_converged: bool = state_event_retry_time is not None
-                newton_index: int = 0
-                while (
-                    state_event_retry_time is None
-                    and newton_index <= self._newton_max_iter
-                ):
-                    # Check in Python, outside fastmath, before assembling a candidate.
-                    if not np.all(np.isfinite(x_iter)):
-                        break
-                    else:
-                        pass
-                    ctx: NewtonSolveContext | None = None
-                    # Residual assembly is fully in-place and reuses the grouped work buffers.
-                    self._residual_assembler.evaluate(
-                        x_iter,
-                        full_params,
-                        x_prev,
-                        kernel_derivatives,
-                        h_eff,
-                        x_prev2,
-                        self._residual_buffer,
-                    )
-                    res_norm: float = _max_abs_value(self._residual_buffer)
-
-                    # The compiled norm may hide NaN entries; inspect the full buffer.
-                    if not np.all(np.isfinite(self._residual_buffer)):
-                        break
-                    else:
-                        pass
-
-                    if res_norm < self._newton_tolerance:
-                        substep_converged = True
-                        break
-                    else:
-                        pass
-
-                    # Validate the last iterate even when the correction budget is exhausted.
-                    if newton_index >= self._newton_max_iter:
-                        break
-                    else:
-                        pass
-
-                    if diagnostics_enabled:
-                        ctx = NewtonSolveContext(
-                            t=float(t_curr),
-                            step_idx=int(step_index),
-                            newton_iter=int(newton_index),
-                            phase="jit_structural_compiled",
-                            method=str(effective_method),
-                        )
-                        ctx.res_norm_inf = res_norm
-                    else:
-                        pass
-
-                    if self._last_macro_newton_iterations <= 2:
-                        adaptive_recompute_threshold: float = 0.8
-                    elif self._last_macro_newton_iterations <= 4:
-                        adaptive_recompute_threshold = 0.6
-                    else:
-                        adaptive_recompute_threshold = 0.5
-
-                    recompute_factorization: bool = (
-                        (cached_lu_dense is None and (sparse_factor_manager is None or not sparse_factor_manager.has_factorization()))
-                        or (newton_index > 0 and (res_norm / (last_res_norm + 1e-16)) > adaptive_recompute_threshold)
-                    )
-
-                    if recompute_factorization:
-                        # The Jacobian numeric values are written directly into CSC storage.
-                        cached_jacobian: csc_matrix = self._jacobian_evaluator.evaluate(
+                # A substep that fails on factors inherited from an earlier substep is retried once from the
+                # accepted history with fresh factors, as a per-substep factorization would have started it.
+                inherited_factors: bool = sparse_factor_manager is not None and sparse_factor_manager.has_factorization()
+                attempt: int
+                for attempt in range(2):
+                    substep_converged: bool = state_event_retry_time is not None
+                    # Whether the confirming correction of this substep already ran, whether its result is still
+                    # unchecked, and whether it refreshes the factors.
+                    confirming_correction_done: bool = False
+                    confirming_correction_pending: bool = False
+                    confirming_with_fresh_factors: bool = False
+                    newton_index: int = 0
+                    while (
+                        state_event_retry_time is None
+                        and newton_index <= self._newton_max_iter
+                    ):
+                        # Check outside fastmath before assembling a candidate.
+                        if not _all_finite(x_iter):
+                            if confirming_correction_pending:
+                                # A non-finite confirming correction is discarded; the passing iterate is kept.
+                                x_iter[:] = self._confirming_base_state
+                                confirming_corrections_discarded += 1
+                                substep_converged = True
+                            else:
+                                pass
+                            break
+                        else:
+                            pass
+                        ctx: NewtonSolveContext | None = None
+                        # Residual assembly is fully in-place and reuses the grouped work buffers.
+                        self._residual_assembler.evaluate(
                             x_iter,
                             full_params,
                             x_prev,
                             kernel_derivatives,
                             h_eff,
                             x_prev2,
+                            self._residual_buffer,
                         )
-                        jacobian_eval_count += 1
+                        res_norm: float = _max_abs_value(self._residual_buffer)
+
+                        # The compiled norm may hide NaN entries; inspect the full buffer.
+                        if not _all_finite(self._residual_buffer):
+                            if confirming_correction_pending:
+                                x_iter[:] = self._confirming_base_state
+                                confirming_corrections_discarded += 1
+                                substep_converged = True
+                            else:
+                                pass
+                            break
+                        else:
+                            pass
+
+                        if res_norm < self._newton_tolerance:
+                            if needs_confirming_correction(use_dense_solver, confirming_correction_done, newton_index,
+                                                           self._newton_max_iter):
+                                confirming_correction_done = True
+                                confirming_correction_pending = True
+                                confirming_with_fresh_factors = confirms_with_fresh_factors(res_norm, last_res_norm)
+                                self._confirming_base_state[:] = x_iter
+                            else:
+                                substep_converged = True
+                                break
+                        elif confirming_correction_pending:
+                            # The confirming correction left the residual above the tolerance: keep the passing iterate.
+                            x_iter[:] = self._confirming_base_state
+                            confirming_corrections_discarded += 1
+                            substep_converged = True
+                            break
+                        else:
+                            pass
+
+                        # Validate the last iterate even when the correction budget is exhausted.
+                        if newton_index >= self._newton_max_iter:
+                            break
+                        else:
+                            pass
+
+                        if diagnostics_enabled:
+                            ctx = NewtonSolveContext(
+                                t=float(t_curr),
+                                step_idx=int(step_index),
+                                newton_iter=int(newton_index),
+                                phase="jit_structural_compiled",
+                                method=str(effective_method),
+                                res_norm_inf=res_norm,
+                            )
+                        else:
+                            pass
+
+                        adaptive_recompute_threshold: float = get_adaptive_recompute_threshold(self._last_macro_newton_iterations)
+
+                        recompute_factorization: bool = (
+                                (cached_lu_dense is None and (sparse_factor_manager is None or not sparse_factor_manager.has_factorization()))
+                                or needs_factor_refresh(newton_index, res_norm, last_res_norm, adaptive_recompute_threshold,
+                                                        self._newton_tolerance, self._newton_max_iter - newton_index)
+                                or (confirming_correction_pending and confirming_with_fresh_factors)
+                        )
+
+                        if recompute_factorization:
+                            # The Jacobian numeric values are written directly into CSC storage.
+                            cached_jacobian: csc_matrix = self._jacobian_evaluator.evaluate(
+                                x_iter,
+                                full_params,
+                                x_prev,
+                                kernel_derivatives,
+                                h_eff,
+                                x_prev2,
+                            )
+                            jacobian_eval_count += 1
+
+                            if use_dense_solver:
+                                dense_jacobian: np.ndarray = cached_jacobian.toarray()
+
+                                if diagnostics_enabled and ctx is not None:
+                                    maybe_check_index1(dense_jacobian, self._n_state, ctx=ctx, config=diag_cfg)
+                                else:
+                                    pass
+
+                                cached_lu_dense = (lu_factor(dense_jacobian), dense_jacobian)
+                                dense_factorization_count += 1
+                            else:
+                                if diagnostics_enabled and ctx is not None:
+                                    maybe_check_index1(cached_jacobian, self._n_state, ctx=ctx, config=diag_cfg)
+                                else:
+                                    pass
+
+                                if sparse_factor_manager is None:
+                                    raise RuntimeError("Missing sparse factorization manager in sparse StructuralCompiled path")
+                                else:
+                                    sparse_factor_manager.factorize(
+                                        force_new=(confirming_correction_pending and confirming_with_fresh_factors))
+                                    self._last_factorization_parameter_snapshot[:] = full_params
+                                    self._last_factorization_step = h_eff
+                                    self._has_factorization_parameter_snapshot = True
+
+                                cached_lu_dense = None
+                        else:
+                            factorization_reuse_hits += 1
+
+                        # The right-hand side is also written in place to avoid creating -res arrays.
+                        _copy_negated_vector(self._residual_buffer, self._linear_rhs_buffer)
 
                         if use_dense_solver:
-                            dense_jacobian = cached_jacobian.toarray()
-
-                            if diagnostics_enabled and ctx is not None:
-                                maybe_check_index1(dense_jacobian, self._n_state, ctx=ctx, config=diag_cfg)
+                            if cached_lu_dense is None:
+                                self._delta_buffer[:] = 0.0
+                                delta: Vec = self._delta_buffer
                             else:
-                                pass
-
-                            cached_lu_dense = (lu_factor(dense_jacobian), dense_jacobian)
-                            dense_factorization_count += 1
+                                if diagnostics_enabled and ctx is not None:
+                                    assert dense_solve is not None
+                                    self._delta_buffer[:] = dense_solve(cached_lu_dense, self._linear_rhs_buffer, ctx)
+                                    delta = self._delta_buffer
+                                else:
+                                    self._delta_buffer[:] = lu_solve(cached_lu_dense[0], self._linear_rhs_buffer)
+                                    delta = self._delta_buffer
                         else:
-                            if diagnostics_enabled and ctx is not None:
-                                maybe_check_index1(cached_jacobian, self._n_state, ctx=ctx, config=diag_cfg)
-                            else:
-                                pass
-
-                            if sparse_factor_manager is None:
-                                raise RuntimeError("Missing sparse factorization manager in sparse StructuralCompiled path")
-                            else:
-                                sparse_factor_manager.factorize()
-                                self._last_factorization_parameter_snapshot[:] = full_params
-                                self._has_factorization_parameter_snapshot = True
-
-                            cached_lu_dense = None
-                    else:
-                        factorization_reuse_hits += 1
-
-                    # The right-hand side is also written in place to avoid creating -res arrays.
-                    _copy_negated_vector(self._residual_buffer, self._linear_rhs_buffer)
-
-                    if use_dense_solver:
-                        if cached_lu_dense is None:
-                            self._delta_buffer[:] = 0.0
-                            delta: Vec = self._delta_buffer
-                        else:
-                            if diagnostics_enabled and ctx is not None:
-                                assert dense_solve is not None
-                                self._delta_buffer[:] = dense_solve(cached_lu_dense, self._linear_rhs_buffer, ctx)
+                            if sparse_factor_manager is None or not sparse_factor_manager.has_factorization():
+                                self._delta_buffer[:] = 0.0
                                 delta = self._delta_buffer
                             else:
-                                self._delta_buffer[:] = lu_solve(cached_lu_dense[0], self._linear_rhs_buffer)
-                                delta = self._delta_buffer
-                    else:
-                        if sparse_factor_manager is None or not sparse_factor_manager.has_factorization():
-                            self._delta_buffer[:] = 0.0
-                            delta = self._delta_buffer
+                                if diagnostics_enabled and ctx is not None:
+                                    assert sparse_solve is not None
+                                    delta = sparse_solve(sparse_factor_manager, self._linear_rhs_buffer, ctx)
+                                else:
+                                    delta = sparse_factor_manager.solve(self._linear_rhs_buffer)
+
+                        if diag_cfg.enable_backtracking:
+                            self._trial_residual_evaluator.set_context(
+                                self._residual_assembler,
+                                full_params,
+                                x_prev,
+                                kernel_derivatives,
+                                h_eff,
+                                x_prev2,
+                            )
+
+                            maybe_apply_backtracking(
+                                x_iter,
+                                delta,
+                                res_norm,
+                                trial_state,
+                                trial_residual,
+                                evaluate_residual=self._trial_residual_evaluator.evaluate,
+                                config=diag_cfg,
+                            )
                         else:
-                            if diagnostics_enabled and ctx is not None:
-                                assert sparse_solve is not None
-                                delta = sparse_solve(sparse_factor_manager, self._linear_rhs_buffer, ctx)
-                            else:
-                                delta = sparse_factor_manager.solve(self._linear_rhs_buffer)
+                            x_iter += delta
 
-                    if diag_cfg.enable_backtracking:
-                        self._trial_residual_evaluator.set_context(
-                            self._residual_assembler,
-                            full_params,
-                            x_prev,
-                            kernel_derivatives,
-                            h_eff,
-                            x_prev2,
-                        )
+                        last_res_norm = res_norm
+                        newton_index += 1
 
-                        maybe_apply_backtracking(
-                            x_iter,
-                            delta,
-                            res_norm,
-                            trial_state,
-                            trial_residual,
-                            evaluate_residual=self._trial_residual_evaluator.evaluate,
-                            config=diag_cfg,
-                        )
+                    if substep_converged or not inherited_factors or attempt > 0 or state_event_retry_time is not None:
+                        break
                     else:
-                        x_iter += delta
-
-                    last_res_norm = res_norm
-                    newton_index += 1
+                        x_iter[:] = x_prev
+                        last_res_norm = 1.0
+                        sparse_factor_manager.invalidate()
+                        inherited_factor_retries += 1
 
                 if not substep_converged:
                     converged = False
@@ -3174,6 +3106,7 @@ class StructuralCompiledSolver:
                         params=full_params,
                         committed_time=float(t_curr),
                         committed_state=x_iter,
+                        capabilities=boundary_capabilities,
                     )
                 else:
                     pass
@@ -3198,7 +3131,11 @@ class StructuralCompiledSolver:
                 else:
                     # Differential history is updated only for an accepted
                     # continuous interval or its post-event re-solve.
-                    self._last_macro_newton_iterations = int(newton_index)
+                    # The confirming correction does not count toward the adaptive refresh threshold.
+                    if confirming_correction_done:
+                        self._last_macro_newton_iterations = int(newton_index) - 1
+                    else:
+                        self._last_macro_newton_iterations = int(newton_index)
 
                     if self._method == DynamicIntegrationMethod.DaeBDF2:
                         # Both histories are still immutable accepted states here.
@@ -3206,22 +3143,29 @@ class StructuralCompiledSolver:
                             base_slopes[:] = (x_iter - x_prev) / h_eff
                         else:
                             base_slopes[:] = (1.5 * x_iter - 2.0 * x_prev + 0.5 * x_prev2) / h_eff
-                        base_index: int
-                        for diff_index, base_index in enumerate(diff_base_indices):
-                            if base_index >= 0:
-                                dx_prev[diff_index] = base_slopes[base_index]
-                            else:
-                                pass
+                        dx_prev[diff_rows_with_base] = base_slopes[diff_base_rows]
                         bdf2_startup_pending = False
                     elif self._method == DynamicIntegrationMethod.DaeTrapezoidal:
-                        dx_prev[:self._n_state] = (
-                            (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
-                            - dx_prev[:self._n_state]
-                        )
-                    else:
+                        if self._n_diff == 0:
+                            dx_prev[:self._n_state] = (
+                                (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
+                                - dx_prev[:self._n_state]
+                            )
+                        else:
+                            kernel_derivatives[diff_base_rows] = (
+                                (2.0 / h_eff) * (x_iter[diff_base_rows] - x_prev[diff_base_rows])
+                                - kernel_derivatives[diff_base_rows]
+                            )
+                            dx_prev[diff_rows_with_base] = kernel_derivatives[diff_base_rows]
+                    elif self._n_diff == 0:
                         dx_prev[:self._n_state] = (
                             x_iter[:self._n_state] - x_prev[:self._n_state]
                         ) / h_eff
+                    else:
+                        kernel_derivatives[diff_base_rows] = (
+                            x_iter[diff_base_rows] - x_prev[diff_base_rows]
+                        ) / h_eff
+                        dx_prev[diff_rows_with_base] = kernel_derivatives[diff_base_rows]
 
                     x_prev2[:] = x_prev
 
@@ -3268,6 +3212,8 @@ class StructuralCompiledSolver:
             "dense_factorizations": float(dense_factorization_count),
             "factorization_reuse_hits": float(factorization_reuse_hits),
             "forced_factorization_invalidations": float(forced_factorization_invalidations),
+            "inherited_factor_retries": float(inherited_factor_retries),
+            "confirming_corrections_discarded": float(confirming_corrections_discarded),
             "sparse_numeric_factorizations": float(
                 sparse_stats_end.get("numeric_factorizations", 0.0) - sparse_stats_start.get("numeric_factorizations", 0.0)
             ),

@@ -9,6 +9,7 @@ import numpy as np
 
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Associations.association import Associations
+from VeraGridEngine.Devices.Aggregation.market_unit import MarketUnit
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (BuildStatus, DeviceType, SubObjectType, ShuntConnectionType, PrpCat,
                                          ParamPowerFlowReferenceType)
@@ -38,6 +39,7 @@ class InjectionParent(DynamicDevice):
         '_capex',
         '_opex',
         'facility',
+        'use_facility_control',
         'technologies',
         '_scalable',
         '_shift_key',
@@ -52,6 +54,7 @@ class InjectionParent(DynamicDevice):
         "_phB",
         "_phC",
         'color',
+        '_market_unit',
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -122,7 +125,15 @@ class InjectionParent(DynamicDevice):
             tpe=DeviceType.FacilityDevice,
             definition='Facility where this is located',
             editable=True,
-            cat=list([PrpCat.OPF, PrpCat.TP]),
+            cat=list([PrpCat.OPF, PrpCat.PF, PrpCat.TP]),
+        ),
+        GCProp(
+            prop_name='use_facility_control',
+            units='',
+            tpe=bool,
+            definition='Use global facility control instead of the generator one',
+            editable=True,
+            cat=list([PrpCat.PF, PrpCat.TP]),
         ),
         GCProp(
             prop_name='technologies',
@@ -131,6 +142,13 @@ class InjectionParent(DynamicDevice):
             definition='Technologies associations to injections',
             display=False,
             cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='market_unit',
+            units='',
+            tpe=DeviceType.MarketUnitDevice,
+            definition='Market unit associated to this device',
+            display=True,
         ),
         GCProp(
             prop_name='scalable',
@@ -183,9 +201,8 @@ class InjectionParent(DynamicDevice):
             prop_name='phN',
             units='',
             tpe=bool,
-            definition='Is the neutral connected?',
+            definition='Is the neutral connected? Active grounded-star loads and shunts ground the bus neutral when enabled.',
             cat=[PrpCat.SC, PrpCat.PF3, PrpCat.EMT],
-            display=False,
         ),
 
         GCProp(
@@ -248,7 +265,7 @@ class InjectionParent(DynamicDevice):
         :param mttf: mean time to failure (h)
         :param mttr: mean time to recovery (h)
         :param capex: capital expenditures (investment cost)
-        :param opex: operational expenditures (maintainance cost)
+        :param opex: operational expenditures (maintenance cost)
         :param build_status: BuildStatus
         :param device_type: DeviceType
         """
@@ -279,6 +296,8 @@ class InjectionParent(DynamicDevice):
 
         self.facility: Facility | None = None
 
+        self.use_facility_control = False
+
         self.technologies: Associations = Associations(device_type=DeviceType.Technology)
 
         self.scalable: bool = True
@@ -301,6 +320,9 @@ class InjectionParent(DynamicDevice):
         self.bus_pos: int = 0
 
         self.color = color if color is not None else "#909090"  # light gray
+
+        self._market_unit: MarketUnit | None = None
+
 
     @property
     def bus(self) -> Bus | None:
@@ -788,3 +810,22 @@ class InjectionParent(DynamicDevice):
             self._phC = val
         else:
             raise ValueError(f'{val} is not an bool.')
+
+
+    @property
+    def market_unit(self) -> MarketUnit | None:
+        """
+        Bus
+        :return: MarketUnit
+        """
+        return self._market_unit
+
+    @market_unit.setter
+    def market_unit(self, val: MarketUnit | None):
+        if val is None:
+            self._market_unit = val
+        else:
+            if isinstance(val, MarketUnit):
+                self._market_unit = val
+            else:
+                raise Exception(str(type(val)) + 'not supported to be set into a market_unit')

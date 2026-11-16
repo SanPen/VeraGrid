@@ -285,7 +285,7 @@ from VeraGridEngine.Templates.Rms.genrow3_rms_template import get_genrow3_rms_te
 from VeraGridEngine.Templates.Rms.genrow4_rms_template import get_genrow4_rms_template
 
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
 
 # this example creates the KUNDUR grid without shunts. If you want to open an already created file use the following:
@@ -370,7 +370,7 @@ line13 = gce.Line(name="line 10-11-2", bus_from=bus10, bus_to=bus11,
 # Transformers
 xt1 = 0.15 * (100.0 / 900.0)
 trafo_G1 = gce.Line(name="trafo 5-1", bus_from=bus5, bus_to=bus1,
-                r=0.00000, x=0.15 * (100.0 / 900.0), b=0.0, rate=900.0)
+                    r=0.00000, x=0.15 * (100.0 / 900.0), b=0.0, rate=900.0)
 
 trafo_G2 = gce.Line(name="trafo 6-2", bus_from=bus6, bus_to=bus2,
                     r=0.00000, x=0.15 * (100.0 / 900.0), b=0.0, rate=900.0)
@@ -699,27 +699,27 @@ grid.add_generator(bus=bus4, api_obj=gen4)
 
 # The RMS Small-Signal assessment always starts from one solved power flow.
 pf_options = PowerFlowOptions(
-        solver_type=gce.SolverType.NR,
-        retry_with_other_methods=False,
-        verbose=0,
-        initialize_with_existing_solution=True,
-        tolerance=1e-6,
-        max_iter=25,
-        control_q=False,
-        control_taps_modules=True,
-        control_taps_phase=True,
-        control_remote_voltage=True,
-        orthogonalize_controls=True,
-        apply_temperature_correction=True,
-        branch_impedance_tolerance_mode=gce.BranchImpedanceMode.Specified,
-        distributed_slack=False,
-        ignore_single_node_islands=False,
-        trust_radius=1.0,
-        backtracking_parameter=0.05,
-        use_stored_guess=False,
-        initialize_angles=False,
-        generate_report=False,
-    )
+    solver_type=gce.SolverType.NR,
+    retry_with_other_methods=False,
+    verbose=0,
+    initialize_with_existing_solution=True,
+    tolerance=1e-6,
+    max_iter=25,
+    control_q=False,
+    control_taps_modules=True,
+    control_taps_phase=True,
+    control_remote_voltage=True,
+    orthogonalize_controls=True,
+    apply_temperature_correction=True,
+    branch_impedance_tolerance_mode=gce.BranchImpedanceMode.Specified,
+    distributed_slack=False,
+    ignore_single_node_islands=False,
+    trust_radius=1.0,
+    backtracking_parameter=0.05,
+    use_stored_guess=False,
+    initialize_angles=False,
+    generate_report=False,
+)
 power_flow = PowerFlowDriver(grid=grid, options=pf_options)
 power_flow.run()
 pf_results = power_flow.results
@@ -736,12 +736,10 @@ rms_options = RmsOptions(time_step=0.001,
                          max_iter=1000,
                          verbose=0)
 
-
 # k = 0 requests the complete eigenvalue spectrum.
 sss_options = RmsSmallSignalStabilityOptions(k=0,
                                              ss_assessment_time=0,
                                              verbose=1)
-
 
 driver = SmallSignalStabilityRmsDriver(grid=grid,
                                        rms_options=rms_options,

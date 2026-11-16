@@ -16,6 +16,7 @@ import VeraGridEngine.Devices as gcdev
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets as cgmes24
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_3_0_0_assets as cgmes30
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
+from VeraGridEngine.IO.cim.cgmes.dynamics.conversion import convert_cgmes_dynamics
 from VeraGridEngine.IO.cim.cgmes.cgmes_typing import (CGMES_TERMINAL, CGMES_TOPOLOGICAL_NODE,
                                                       CGMES_CONNECTIVITY_NODE, CGMES_DC_TERMINAL, CGMES_ASSETS,
                                                       CGMES_POWER_TRANSFORMER_END)
@@ -5295,5 +5296,10 @@ def cgmes_to_veragrid(cgmes_model: CgmesCircuit,
 
     recover_bus_nominal_voltages(gc_model=gc_model, logger=logger)
     enforce_ac_line_voltage_consistency(gc_model=gc_model, logger=logger)
+    convert_cgmes_dynamics(
+        cgmes_model=cgmes_model,
+        veragrid_model=gc_model,
+        logger=logger,
+    )
 
     return gc_model

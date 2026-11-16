@@ -13,17 +13,17 @@ from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDa
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
-# from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template_v2 import get_complete_generator_template_rms
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+# from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template_v2 import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 
 from VeraGridEngine.enumerations import DynamicEventTransitionType, DynamicIntegrationMethod, RmsInitializationMethod, SparseSolver
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
-from VeraGridEngine.Utils.NumericalMethods.sparse_lu_selection import get_sparse_lu_provider_status
+from VeraGridEngine.Utils.Sparse.sparse_solve import get_sparse_lu_provider_status
 import VeraGridEngine.api as gce
 from tests.RMS.test_rms_sparse_lu_selection import CountingProvider
 
@@ -211,11 +211,14 @@ def test_simulation_with_event(sparse_solver: SparseSolver) -> None:
     )
 
     t, y, well_initialized, converged = solver.simulate()
+    assert well_initialized, "GenQEC RMS initialization failed"
+    assert converged, "GenQEC RMS simulation did not converge"
 
     if counter is not None:
-        # Every native factorization is solved exactly once by its Newton correction.
+        # Chord Newton keeps the native factors across corrections and substeps, so one
+        # factorization may serve several solves.
         assert counter.factorizations > 0
-        assert counter.solves == counter.factorizations
+        assert counter.solves > counter.factorizations
         print(f"Native KLU factorizations: {counter.factorizations}")
     else:
         pass

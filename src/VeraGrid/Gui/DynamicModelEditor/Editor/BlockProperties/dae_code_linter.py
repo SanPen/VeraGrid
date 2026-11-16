@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Pure source diagnostics for the Dynamic Editor DAE language."""
 
@@ -14,10 +18,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (
     get_symbolic_parser_function_arity,
     get_symbolic_parser_function_names,
 )
-from VeraGridEngine.enumerations import ProceduralLogicType
-from VeraGridEngine.Templates.ProceduralLogicCatalog import (
-    ProceduralBlockTemplateDescriptor,
-)
+from VeraGridEngine.Templates.template_catalogue import ProceduralBlockTemplateDescriptor
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import (
     get_dynamic_library_procedural_descriptors,
 )
@@ -159,7 +160,7 @@ def normalize_algebraic_equality_syntax(code: str) -> str:
                     bracket_depth += 1
                 elif source_token.type == tokenize.OP and token_text in (")", "]", "}"):
                     closes_algebraic_list: bool = (
-                        token_text == "]" and bracket_depth == algebraic_list_depth
+                            token_text == "]" and bracket_depth == algebraic_list_depth
                     )
                     bracket_depth = max(0, bracket_depth - 1)
                     if closes_algebraic_list:
@@ -304,9 +305,9 @@ def build_missing_algebraic_comma_diagnostic(
     algebraic_end: int = source_prefix.rfind("]")
     inside_algebraic_section: bool = algebraic_start >= 0 and algebraic_start > algebraic_end
     previous_entry_is_open: bool = (
-        len(previous_line) > 0
-        and not previous_line.endswith(",")
-        and not previous_line.endswith("[")
+            len(previous_line) > 0
+            and not previous_line.endswith(",")
+            and not previous_line.endswith("[")
     )
     reported_line_starts_equation: bool = "=" in current_line
     if (inside_algebraic_section
@@ -326,9 +327,9 @@ def build_missing_algebraic_comma_diagnostic(
     if following_line_number <= len(source_lines):
         following_line: str = source_lines[following_line_number - 1]
         current_entry_is_open: bool = (
-            len(current_line.rstrip()) > 0
-            and not current_line.rstrip().endswith(",")
-            and not current_line.rstrip().endswith("[")
+                len(current_line.rstrip()) > 0
+                and not current_line.rstrip().endswith(",")
+                and not current_line.rstrip().endswith("[")
         )
         following_line_starts_equation: bool = "=" in following_line
         if (inside_algebraic_section
@@ -415,9 +416,9 @@ def build_dae_code_diagnostics(code: str,
             procedural_function: bool = function_name in procedural_callable_names
             known_function: bool = function_name in callable_names
             valid_function_call: bool = (
-                known_function
-                and function_arity == len(ast_node.args)
-                and len(ast_node.keywords) == 0
+                    known_function
+                    and function_arity == len(ast_node.args)
+                    and len(ast_node.keywords) == 0
             )
             if procedural_function:
                 # Typed procedural signatures are validated by the model-code

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import copy
@@ -8,6 +12,7 @@ from VeraGridEngine.Utils.procedural_logic import FixedSampleLogic
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import BinOp, Const, Var
 from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockParser, BlockSaver
+from tests.symbolic_block_roundtrip import parse_saved_blocks
 
 
 class _AliasPropagationEditorStub:
@@ -66,18 +71,15 @@ def test_connected_variable_roundtrip_restores_original_identity_on_disconnect()
     )
 
     saver: BlockSaver = BlockSaver(var_factory=source_factory)
-    saver.save_block(blk=block, main=True)
+    saver.save_block(blk=block)
 
     restored_factory: VarFactory = VarFactory()
     parser: BlockParser = BlockParser(var_factory=restored_factory)
-    parser.parse_consts(data=saver.get_const_to_save())
-    parser.parse_vars(data=saver.get_vars_to_save())
-    parser.parse_diff_vars(data=saver.get_diff_vars_to_save())
-    parser.parse_connections(data=saver.get_connections_to_save())
-    restored_block: Block = parser.parse_block(
-        blocks_data=saver.get_blocks(),
-        main_block_uid=block.uid,
-    )
+    restored_block: Block = parse_saved_blocks(
+        parser=parser,
+        saver=saver,
+        data=saver.get_blocks(),
+    )[0]
 
     restored_source: Var = restored_factory.get_vars_dict()[source_stable_uid]
     restored_target: Var = restored_factory.get_vars_dict()[target_stable_uid]

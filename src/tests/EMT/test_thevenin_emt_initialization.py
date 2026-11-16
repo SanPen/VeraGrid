@@ -28,14 +28,14 @@ from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import (
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.line.bergeron_line_emt_template import get_bergeron_line_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import (
     get_generator_thevenin_rl_emt_template_with_ref,
     get_generator_unbalanced_thevenin_rl_emt_template,
 )
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 
 

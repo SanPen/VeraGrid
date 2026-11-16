@@ -89,13 +89,11 @@ from VeraGrid.Gui.DynamicModelEditor.Editor.BlockProperties.dynamic_procedural_l
 )
 from VeraGridEngine.Utils.procedural_logic import ProceduralLogicBase
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.ProceduralLogicCatalog import (
-    ProceduralBlockTemplateDescriptor,
-)
+from VeraGridEngine.Templates.template_catalogue import ProceduralBlockTemplateDescriptor
 from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_library import (
     get_dynamic_library_procedural_descriptors,
 )
-from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
+from VeraGridEngine.Templates.template_catalogue import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import (
     BinOp,

@@ -1,0 +1,58 @@
+{
+  "file": "src/tests/data/grids/DGS/native_options_pf2024/nine_bus_avr_pss.dgs",
+  "frequency_hz": 60.0,
+  "load_flow_converged": true,
+  "initial_finite": true,
+  "initial_vector_size": 148,
+  "projection_converged": true,
+  "projection_residual": 8.417222474577102e-11,
+  "largest_residuals": [
+    {
+      "index": 12,
+      "residual": 6.193179302727003e-11,
+      "equation": "(Pf) - ((u) * ((((((Vm) / (vtap_f)) ** (2)) * ((g) + ((gsh) / (2)))) - ((((g) * ((Vm) / (vtap_f))) * ((Vm) / (vtap_t))) * (cos((Va) - (Va))))) + ((((b) * ((Vm) / (vtap_f))) * ((Vm) / (vtap_t))) * (cos(((Va) - (Va)) + (1.5707963267948966))))))"
+    },
+    {
+      "index": 10,
+      "residual": 6.375067140851343e-11,
+      "equation": "(Pt) - ((u) * ((((((Vm) / (vtap_t)) ** (2)) * ((g) + ((gsh) / (2)))) - ((((g) * ((Vm) / (vtap_t))) * ((Vm) / (vtap_f))) * (cos((Va) - (Va))))) + ((((b) * ((Vm) / (vtap_t))) * ((Vm) / (vtap_f))) * (cos(((Va) - (Va)) + (1.5707963267948966))))))"
+    },
+    {
+      "index": 8,
+      "residual": -6.50663967149967e-11,
+      "equation": "(Pf) - ((u) * ((((((Vm) / (vtap_f)) ** (2)) * ((g) + ((gsh) / (2)))) - ((((g) * ((Vm) / (vtap_f))) * ((Vm) / (vtap_t))) * (cos((Va) - (Va))))) + ((((b) * ((Vm) / (vtap_f))) * ((Vm) / (vtap_t))) * (cos(((Va) - (Va)) + (1.5707963267948966))))))"
+    },
+    {
+      "index": 29,
+      "residual": -6.880883363091783e-11,
+      "equation": "(Qf) - (((((-((Vm) ** (2))) * (((bmu) / (2)) + (b))) / (((m) * (vtap_f)) ** (2))) - (((((g) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (sin(((Va) - (Va)) - (phi))))) + (((((b) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (cos((((Va) - (Va)) - (phi)) - (0)))))"
+    },
+    {
+      "index": 26,
+      "residual": 7.022937786871353e-11,
+      "equation": "(Pt) - ((((((Vm) ** (2)) * (((gFe) / (2)) + (g))) / ((vtap_t) ** (2))) - (((((g) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (cos(((Va) - (Va)) - (phi))))) + (((((b) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (sin((((Va) - (Va)) - (phi)) - (0)))))"
+    },
+    {
+      "index": 24,
+      "residual": -7.022982195792338e-11,
+      "equation": "(Pf) - ((((((Vm) ** (2)) * (((gFe) / (2)) + (g))) / (((m) * (vtap_f)) ** (2))) - (((((g) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (cos(((Va) - (Va)) - (phi))))) - (((((b) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (sin((((Va) - (Va)) - (phi)) - (0)))))"
+    },
+    {
+      "index": 32,
+      "residual": -8.417144758965378e-11,
+      "equation": "(Pf) - ((((((Vm) ** (2)) * (((gFe) / (2)) + (g))) / (((m) * (vtap_f)) ** (2))) - (((((g) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (cos(((Va) - (Va)) - (phi))))) - (((((b) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (sin((((Va) - (Va)) - (phi)) - (0)))))"
+    },
+    {
+      "index": 34,
+      "residual": 8.417222474577102e-11,
+      "equation": "(Pt) - ((((((Vm) ** (2)) * (((gFe) / (2)) + (g))) / ((vtap_t) ** (2))) - (((((g) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (cos(((Va) - (Va)) - (phi))))) + (((((b) / (((m) * (vtap_f)) * (vtap_t))) * (Vm)) * (Vm)) * (sin((((Va) - (Va)) - (phi)) - (0)))))"
+    }
+  ],
+  "state_equilibrium_residual": 0.004790937895462503,
+  "first_step": {
+    "initialized": true,
+    "converged": true,
+    "finite": true,
+    "samples": 2
+  }
+}

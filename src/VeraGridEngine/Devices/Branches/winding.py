@@ -8,7 +8,7 @@ import numpy as np
 from VeraGridEngine.basic_structures import Logger, Mat
 from VeraGridEngine.Utils.NumericalMethods.common import fortescue_012_to_abc
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import (WindingsConnection, WindingType, BuildStatus, TapPhaseControl, TapModuleControl)
+from VeraGridEngine.enumerations import (WindingType, BuildStatus, TapPhaseControl, TapModuleControl)
 from VeraGridEngine.Devices.Branches.transformer_type import TransformerType
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType
@@ -67,7 +67,8 @@ class Winding(Transformer2W):
                  x2: float = 1e-20,
                  g2: float = 1e-20,
                  b2: float = 1e-20,
-                 conn: WindingsConnection = WindingsConnection.GG,
+                 conn_f: WindingType = WindingType.GroundedStar,
+                 conn_t: WindingType = WindingType.GroundedStar,
                  capex: float = 0.0,
                  opex: float = 0.0,
                  build_status: BuildStatus = BuildStatus.Commissioned):
@@ -121,7 +122,8 @@ class Winding(Transformer2W):
         :param x2: negative-sequence reactance (p.u.)
         :param g2: negative-sequence conductance (p.u.)
         :param b2: negative-sequence susceptance (p.u.)
-        :param conn: transformer connection type
+        :param conn_f: From-side winding connection
+        :param conn_t: To-side winding connection
         :param capex: Cost of investment (e/MW)
         :param opex: Cost of operation (e/MWh)
         :param build_status: build status (now time)
@@ -177,7 +179,8 @@ class Winding(Transformer2W):
                                x2=x2,
                                g2=g2,
                                b2=b2,
-                               conn=conn,
+                               conn_f=conn_f,
+                               conn_t=conn_t,
                                capex=capex,
                                opex=opex,
                                build_status=build_status)
@@ -199,6 +202,17 @@ class Winding(Transformer2W):
             return WindingType.GroundedStar, self.conn_f
         else:
             return self.conn_f, self.conn_t
+
+    def get_clock_phase(self) -> float:
+        """Return the winding terminal lag relative to its internal reference.
+
+        :return: Oriented from-to clock angle in radians.
+        """
+        internal_from = self.bus_from is not None and self.bus_from.internal
+        internal_to = self.bus_to is not None and self.bus_to.internal
+        if internal_from or internal_to:
+            return np.deg2rad(self.vector_group_number * 30.0) * (1 if internal_from else -1)
+        return super().get_clock_phase()
 
     def transformer_admittance(self, vtap_f: float, vtap_t: float,
                                logger: Logger) -> tuple[Mat, Mat, Mat, Mat]:
@@ -240,7 +254,7 @@ class Winding(Transformer2W):
 
         # A winding clock is its terminal lag relative to the common internal
         # reference, the opposite orientation to a conventional HV-to-LV branch.
-        clock_phase: float = np.deg2rad(self.vector_group_number * 30.0) * (1 if internal_from else -1)
+        clock_phase: float = self.get_clock_phase()
         yff: Mat
         yft: Mat
         ytf: Mat

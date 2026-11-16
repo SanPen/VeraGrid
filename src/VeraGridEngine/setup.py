@@ -97,6 +97,7 @@ for package_index, package in enumerate(discovered_packages):
 package_data: Dict[str, List[str]] = {
     'VeraGridEngine': [
         'LICENSE.txt',
+        'Simulations/Rms/numerical/SUNDIALS_LICENSE.txt',
         'setup.py',
         'data/fmu/**/*.c',
         'data/fmu/**/*.h',

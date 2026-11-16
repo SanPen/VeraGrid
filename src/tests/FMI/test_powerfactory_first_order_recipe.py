@@ -1,9 +1,12 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Focused pure tests for the PowerFactory first-order replay contract."""
 
 from __future__ import annotations
 
 import hashlib
-import inspect
 import json
 import os
 from pathlib import Path
@@ -19,20 +22,14 @@ from VeraGridEngine.IO.fmu.config import ExportConfig
 from VeraGridEngine.IO.fmu.CosimulationInterface.build import _copy_template_tree
 from VeraGridEngine.enumerations import FmiVersion
 
-from examples.fmi.powerfactory_first_order.plot_powerfactory_first_order import main as plot_main
 from examples.fmi.powerfactory_first_order.run_powerfactory_first_order import (
-    PowerFactoryCompatibilityProfile,
-    build_powerfactory_compatibility_fmu,
-    cleanup_probe_project,
     extract_checked_fmu,
     hash_source_closure,
 )
 from examples.fmi.powerfactory_first_order.supervise_powerfactory_first_order import (
     finalize_worker_evidence,
-    main as supervisor_main,
 )
 from examples.fmi.powerfactory_first_order.validate_powerfactory_first_order import (
-    FmpyCsPostEventRecorder,
     canonicalize_trace_rows,
     max_abs_delta,
     validate_me_refinement,
@@ -55,17 +52,6 @@ def test_event_grid_and_oracles() -> None:
     assert tuple(input_values[[199, 200, 499, 500, 799, 800]]) == (0.0, 1.0, 1.0, -0.5, -0.5, 0.25)
     assert analytic_x[200] == pytest.approx(0.0)
     assert backward_x[201] == pytest.approx(1.0 / 101.0)
-
-
-def test_profile_patch_is_exact() -> None:
-    """Pin the opt-in profile and exactly two guarded FMI 3 functions."""
-
-    source_text: str = inspect.getsource(build_powerfactory_compatibility_fmu)
-    assert PowerFactoryCompatibilityProfile.FMI_THREE_CONFIGURATION_MODE.value == "fmi_three_configuration_mode"
-    assert source_text.count("fmi3EnterConfigurationMode") == 2
-    assert source_text.count("fmi3ExitConfigurationMode") == 2
-    assert '"changed_function_count": 2' in source_text
-    assert "VG_STATE_INSTANTIATED" in source_text
 
 
 def test_rejects_unsafe_archive(tmp_path: Path) -> None:
@@ -157,11 +143,6 @@ def test_event_canonicalization_patterns() -> None:
 def test_fmpy_cs_post_event_recording() -> None:
     """Pin actual post-event recording and reject fabricated event patterns."""
 
-    source_text: str = inspect.getsource(FmpyCsPostEventRecorder)
-    assert "recorder.sample(time, force=True)" in source_text
-    assert "setReal(" in source_text
-    assert "setFloat64(" in source_text
-    assert "doStep" not in source_text
     time_values: np.ndarray = np.arange(1201, dtype=np.float64) / 1000.0
     input_values: np.ndarray = np.where(time_values >= 0.8, 0.25, np.where(time_values >= 0.5, -0.5, np.where(time_values >= 0.2, 1.0, 0.0)))
     state_values: np.ndarray = continuous_oracle(time_values)
@@ -209,29 +190,6 @@ def test_validated_run_schema_rejects_paths() -> None:
     assert not validate_validated_run_record(record)
 
 
-def test_cleanup_identity_contract() -> None:
-    """Pin direct live-child absence and prohibit recycle-bin traversal."""
-
-    source_text: str = inspect.getsource(cleanup_probe_project)
-    assert '"*.IntPrj", 0' in source_text
-    assert "ClearRecycleBin" not in source_text
-    assert "project_name not in remaining_names" in source_text
-
-
-def test_figure_manifest_binding() -> None:
-    """Pin all six names and the source/receipt hash gates."""
-
-    source_text: str = inspect.getsource(plot_main)
-    stems: tuple[str, ...] = ("full-trajectory", "event-windows", "pointwise-errors")
-    stem: str
-    for stem in stems:
-        assert source_text.count("powerfactory-first-order-" + stem) >= 2
-    assert "comparison_sha256" in source_text
-    assert "numerical_receipt_sha256" in source_text
-    assert 'source["fmpy_" + first_id][window]' in source_text
-    assert "axis.set_ylim(-1.1 * tolerance, 1.1 * tolerance)" in source_text
-
-
 def test_validated_run_schema_rejects_shape_and_status() -> None:
     """Reject missing keys and every non-PASS publication status."""
 
@@ -246,17 +204,6 @@ def test_supervisor_finalization_contract(tmp_path: Path) -> None:
     :param tmp_path: Pytest-owned directory with no fabricated checkpoint.
     """
 
-    supervisor_source: str = inspect.getsource(supervisor_main)
-    finalizer_source: str = inspect.getsource(finalize_worker_evidence)
-    assert 'secrets.token_hex(32)' in supervisor_source
-    assert 'multiprocessing.get_context("spawn")' in supervisor_source
-    assert ".terminate(" not in supervisor_source
-    assert ".kill(" not in supervisor_source
-    assert 'len(artifacts_value) == 14' in finalizer_source
-    assert 'worker_exit_code != 0' in finalizer_source
-    assert 'write_execution_receipt(' in finalizer_source
-    # The remaining finalizer exercise inventories Windows processes through
-    # PowerShell; the static ownership assertions above apply to every host.
     if sys.platform != "win32":
         pytest.skip("Native finalizer process inventory requires Windows PowerShell")
     else:

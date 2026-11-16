@@ -12,7 +12,6 @@ from VeraGridEngine.Compilers.Gslv.activation import (
     tap_module_control_mode_dict,
     tap_phase_control_mode_dict,
     winding_type_dict,
-    windings_connection_dict,
 )
 from VeraGridEngine.Compilers.Gslv.common import fill_profile
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit

@@ -19,6 +19,7 @@ class FluidPathData:
         "target_idx",
         "min_flow",
         "max_flow",
+        "loss_factor",
     )
 
     def __init__(self, nelm: int):
@@ -35,6 +36,7 @@ class FluidPathData:
         self.target_idx = np.empty(nelm, dtype=int)
         self.min_flow = np.zeros(nelm, dtype=float)
         self.max_flow = np.zeros(nelm, dtype=float)
+        self.loss_factor = np.zeros(nelm, dtype=float)
 
     def size(self) -> int:
         """
@@ -59,5 +61,6 @@ class FluidPathData:
         data.target_idx = self.target_idx.copy()
         data.min_flow = self.min_flow.copy()
         data.max_flow = self.max_flow.copy()
+        data.loss_factor = self.loss_factor.copy()
 
         return data

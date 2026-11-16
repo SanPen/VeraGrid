@@ -26,6 +26,7 @@ from VeraGrid.Gui.dialog_lifecycle import delete_dialog_safely, exec_dialog_safe
 from VeraGrid.Session.session import GcThread
 from VeraGrid.Session.server_driver import RemoteJobDriver
 from VeraGrid.Gui.Analysis.AnalysisDialogue import GridAnalysisGUI
+from VeraGrid.Gui.OperatorsView.operator_view import OperatorView
 
 # Engine imports
 import VeraGridEngine.Devices as dev
@@ -999,6 +1000,13 @@ class SimulationsMain(TimeEventsMain):
         self.ui.resultsTableView.setModel(None)
         self.ui.resultsLogsTreeView.setModel(None)
         self.changed_study()
+
+        # Update the operator if existing
+        operator_view_window = self.window_manager.get(key='operator_view')
+        if isinstance(operator_view_window, OperatorView):
+            operator_view_window.refresh_simulation_results()
+        else:
+            pass
 
     def refresh_runtime_translations(self) -> None:
         """
@@ -3256,8 +3264,8 @@ class SimulationsMain(TimeEventsMain):
 
     def get_opf_ntc_options(self) -> Union[None, sim.OptimalNetTransferCapacityOptions]:
         """
-
-        :return:
+        Get the NTC options from the GUI
+        :return: OptimalNetTransferCapacityOptions
         """
 
         # available transfer capacity inter areas
@@ -3299,7 +3307,7 @@ class SimulationsMain(TimeEventsMain):
             branch_rating_contribution=self.ui.ntcLoadRuleSpinBox.value() / 100.0,
             monitor_only_ntc_load_rule_branches=self.ui.ntcSelectBasedOnAcerCriteriaCheckBox.isChecked(),
             consider_contingencies=self.ui.consider_ntc_contingencies_checkBox.isChecked(),
-            strict_formulation=self.ui.strict_ntc_formulation_checkBox.isChecked(),
+            consider_slacks=not self.ui.strict_ntc_formulation_checkBox.isChecked(),
             opf_options=self.get_opf_options(),
             lin_options=self.get_linear_options()
         )

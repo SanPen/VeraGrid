@@ -59,6 +59,7 @@ from VeraGridEngine.Compilers.Gslv.Devices.transformers import add_transformers
 from VeraGridEngine.Compilers.Gslv.Devices.transformers3w import add_transformers3w
 from VeraGridEngine.Compilers.Gslv.Devices.vsc import add_vscs
 from VeraGridEngine.Compilers.Gslv.Devices.hvdc_line import add_hvdcs
+from VeraGridEngine.Compilers.Gslv.Devices.fluid import add_fluid_injections, add_fluid_nodes, add_fluid_paths
 
 if TYPE_CHECKING:
     from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
@@ -351,6 +352,21 @@ def to_gslv(circuit: MultiCircuit,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices
+    )
+
+    # Fluid assets depend on already-exported buses and generators, and paths depend on fluid nodes.
+    fluid_node_dict = add_fluid_nodes(
+        circuit=circuit, gslv_grid=pg_grid, bus_dict=bus_dict,
+        use_time_series=use_time_series, n_time=n_time, time_indices=time_indices,
+    )
+    add_fluid_paths(
+        circuit=circuit, gslv_grid=pg_grid, fluid_node_dict=fluid_node_dict,
+        use_time_series=use_time_series, n_time=n_time, time_indices=time_indices,
+    )
+    add_fluid_injections(
+        circuit=circuit, gslv_grid=pg_grid, fluid_node_dict=fluid_node_dict,
+        facility_dict=dicts.facility_dict, use_time_series=use_time_series,
+        n_time=n_time, time_indices=time_indices,
     )
 
     bind_event_devices(circuit=circuit, gslv_grid=pg_grid)

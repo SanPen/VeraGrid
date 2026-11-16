@@ -204,10 +204,15 @@ class DynamicDevice(PhysicalDevice):
         self._rms_template = None
         self._clear_rms_fmu_config()
         if self.auto_update_enabled:
-            # The template block is normalized before duplication so the device
-            # receives a self-contained shell with consistent symbolic wiring.
-            template.block.unify_blocks()
-            self.rms_model = duplicate_block(template.block, self._var_factory)
+            if self._var_factory is None:
+                # A standalone device retains the reusable source until its
+                # owning circuit injects the shared symbolic namespace.
+                pass
+            else:
+                # The template block is normalized before duplication so the device
+                # receives a self-contained shell with consistent symbolic wiring.
+                template.block.unify_blocks()
+                self.rms_model = duplicate_block(template.block, self._var_factory)
         else:
             pass
 
@@ -234,10 +239,16 @@ class DynamicDevice(PhysicalDevice):
         self._emt_template = None
         self._clear_emt_fmu_config()
         if self.auto_update_enabled:
-            # The template block is normalized before duplication so the device
-            # receives a self-contained shell with consistent symbolic wiring.
-            template.block.unify_blocks()
-            self.emt_model = duplicate_block(template.block, self._var_factory)
+            var_factory: VarFactory | None = self._var_factory
+            if var_factory is None:
+                # A standalone device retains the reusable source until its
+                # owning circuit injects the shared symbolic namespace.
+                pass
+            else:
+                # The template block is normalized before duplication so the device
+                # receives a self-contained shell with consistent symbolic wiring.
+                template.block.unify_blocks()
+                self.emt_model = duplicate_block(template.block, var_factory)
         else:
             pass
 
@@ -253,14 +264,50 @@ class DynamicDevice(PhysicalDevice):
 
     def set_var_factory(self, val: VarFactory) -> None:
         """
-        Store the shared variable factory used by RMS and EMT symbolic blocks.
+        Attach the shared factory and complete standalone template assignments.
 
         :param val: Shared variable factory.
         :return: None.
         """
 
         if isinstance(val, VarFactory):
+            # Only the first circuit attachment can complete a template assignment
+            # deferred while the device was standalone. Later rebinding operations
+            # must preserve the already materialized or persisted runtime blocks.
+            materialize_templates: bool = self._var_factory is None and self.auto_update_enabled
             self._var_factory = val
+
+            if materialize_templates:
+                # Copies and loaded devices may already own a valid executable
+                # block even though their factory pointer is attached afterward.
+                # Only an empty shell identifies a deferred template assignment.
+                if self._rms_model.empty():
+                    rms_template: RmsModelTemplate | None = self._rms_template
+                    rms_fmu_template: FmuTemplate | None = self._rms_fmu_template
+                    if rms_template is not None:
+                        self.rms_template = rms_template
+                    else:
+                        if rms_fmu_template is not None:
+                            self.rms_fmu_template = rms_fmu_template
+                        else:
+                            pass
+                else:
+                    pass
+
+                if self._emt_model.empty():
+                    emt_template: EmtModelTemplate | None = self._emt_template
+                    emt_fmu_template: FmuTemplate | None = self._emt_fmu_template
+                    if emt_template is not None:
+                        self.emt_template = emt_template
+                    else:
+                        if emt_fmu_template is not None:
+                            self.emt_fmu_template = emt_fmu_template
+                        else:
+                            pass
+                else:
+                    pass
+            else:
+                pass
         else:
             raise ValueError(f"VarFactory cannot accept {val}")
 
@@ -321,6 +368,13 @@ class DynamicDevice(PhysicalDevice):
 
     @rms_template.setter
     def rms_template(self, val: RmsModelTemplate | None) -> None:
+        """Assign the template and instantiate the RMS model on network devices.
+
+        Cable Systems retain the template for their connected branches.
+
+        :param val: Reusable template, or None to clear its assignment.
+        :return: None.
+        """
         if isinstance(val, RmsModelTemplate):
             # Native template assignment clears any FMU assignment because the
             # device must derive its RMS model from exactly one template source.
@@ -328,14 +382,22 @@ class DynamicDevice(PhysicalDevice):
             self._rms_fmu_template = None
             self._clear_rms_fmu_config()
 
-            if self.auto_update_enabled:
-                # Duplicating the template avoids mutating shared library blocks,
-                # and bus variables are rebound to this specific device instance.
-                rms_mdl = duplicate_block(val.block, self._var_factory,
-                                           preserve_external_network_connections=True)
-                rms_mdl.name = val.name
-                connect_bus_variables_rms(self, rms_mdl, self._var_factory)
-                self.rms_model = rms_mdl
+            if self.auto_update_enabled and self.device_type != DeviceType.UnderGroundLineDevice:
+                var_factory: VarFactory | None = self._var_factory
+                if var_factory is None:
+                    # Materialization is deferred until the device joins a circuit.
+                    pass
+                else:
+                    # Duplicating the template avoids mutating shared library blocks,
+                    # and bus variables are rebound to this specific device instance.
+                    rms_mdl: Block = duplicate_block(
+                        val.block, var_factory, preserve_external_network_connections=True,
+                    )
+                    rms_mdl.name = val.name
+                    connect_bus_variables_rms(self, rms_mdl, var_factory)
+                    self.rms_model = rms_mdl
+            else:
+                pass
 
         elif val is None:
             # Clearing the native template removes the editor-facing assignment
@@ -356,6 +418,13 @@ class DynamicDevice(PhysicalDevice):
 
     @emt_template.setter
     def emt_template(self, val: EmtModelTemplate | None) -> None:
+        """Assign the template and instantiate the EMT model on network devices.
+
+        Cable Systems retain the template for their connected branches.
+
+        :param val: Reusable template, or None to clear its assignment.
+        :return: None.
+        """
         if isinstance(val, EmtModelTemplate):
             # Native template assignment clears any FMU assignment because the
             # device must derive its EMT model from exactly one template source.
@@ -363,19 +432,26 @@ class DynamicDevice(PhysicalDevice):
             self._emt_fmu_template = None
             self._clear_emt_fmu_config()
 
-            if self.auto_update_enabled:
-                # Duplicating the template avoids mutating shared library blocks,
-                # and bus variables are rebound to this specific device instance.
-                # The attachment normalizers read ``self.emt_model`` while they
-                # rebuild the saved root contract, so publish the new block
-                # before attaching it to the buses.
-                emt_mdl: Block = duplicate_block(val.block, self._var_factory)
-                emt_mdl.name = val.name
-                self.emt_model = emt_mdl
-                connect_bus_variables_emt(self,
-                                          emt_mdl,
-                                          self._var_factory,
-                                          allow_deferred_connection=True)
+            if self.auto_update_enabled and self.device_type != DeviceType.UnderGroundLineDevice:
+                var_factory: VarFactory | None = self._var_factory
+                if var_factory is None:
+                    # Materialization is deferred until the device joins a circuit.
+                    pass
+                else:
+                    # Duplicating the template avoids mutating shared library blocks,
+                    # and bus variables are rebound to this specific device instance.
+                    # The attachment normalizers read ``self.emt_model`` while they
+                    # rebuild the saved root contract, so publish the new block
+                    # before attaching it to the buses.
+                    emt_mdl: Block = duplicate_block(val.block, var_factory)
+                    emt_mdl.name = val.name
+                    self.emt_model = emt_mdl
+                    connect_bus_variables_emt(self,
+                                              emt_mdl,
+                                              var_factory,
+                                              allow_deferred_connection=True)
+            else:
+                pass
         elif val is None:
             # Clearing the template makes any previously registered bus endpoint
             # stale because the device no longer guarantees that its current EMT

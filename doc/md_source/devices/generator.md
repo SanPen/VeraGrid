@@ -2,6 +2,44 @@
 
 ## Generator
 
+### Synchronous Q-V droop in power flow
+
+`GeneratorControlMode.QVDroop` uses the existing `k_droop` gain and `dead_band`:
+outside the dead band, `Q = k_droop * Qmax * (dU - sign(dU) * dead_band)`, where
+`dU = Vset - U`. Inside the dead band, Q is zero. Outside it, Q is clipped to
+`Qmin`/`Qmax`, as in the existing generator control, independently of the PV-limit
+switch. Q is in MVAr. In ABC power flow, U is the positive-sequence magnitude.
+The same scalar curve is reused for positive-sequence control, ABC injections and
+reported generator Q. There is no second `droop` parameter on Generator or Battery.
+
+The synchronous machine remains a sequence source: `I2 = -U2/Z2`, and
+`I0 = -U0/Z0` for a finite grounded path. Delta and floating-star connections block
+I0. The existing ideal-source condition handles a grounded Z0 exactly equal to zero.
+The I1 source compensates the passive sequence powers to preserve total terminal P
+and the droop-commanded total Q. No extra control unknown or Jacobian implementation
+is added. Voltage control is local.
+
+PowerFactory `ElmSym.av_mode = vdroop` imports as a synchronous Q-V droop generator.
+Export `ElmSym.ddroop` using **DGS Export Definitions 8 - VeraGrid**. If the field
+is missing in a legacy export, import keeps the configured fixed `qgini` and warns
+that droop was unavailable. A nonpositive or nonfinite value is rejected.
+The DGS parser converts the external percentage to the existing gain:
+`slope = 100 * Snom / ddroop`, `k_droop = slope / Qmax`, and
+`Vset = usetp + qgini / slope`. This preserves the unsaturated PF curve, including
+a nonzero Q reference, with zero dead band. The imported Vset is the zero-Q
+intercept; Generator.Q is not an additional offset in Q-V droop mode.
+The native limits are preserved. A nonpositive Qmax cannot represent this slope
+with the existing gain definition and is reported explicitly, without changing
+the rating or limits. The existing generator saturation still applies, so this
+does not reproduce PF operation beyond Q limits when PF disables them.
+Unlike the VSC curve, the generator curve does not clamp U to 0.9--1.1 pu.
+
+DGS export performs the inverse gain conversion with a zero-Q reference; nonzero
+dead bands are rejected because this export does not represent them. Storage
+with percentage droop continues to use `StaticGenerator` or the explicit VSC option.
+
+### Sequence impedance model for short-circuit studies
+
 For the power flow simulations, generators had been modelled as simple power injections into the system, which was
 completely valid. However, this is not sufficient when performing the short-circuit analysis, as the impedance of the
 generator must also be taken into account. VeraGrid has been programmed to accept a $3 \times 3$ impedance matrix, which

@@ -387,7 +387,7 @@ def test_gslv_conversion_exports_injection_association_assets_and_facility() -> 
     assert len(grid_gslv.fuels) == 1
     assert len(grid_gslv.emission_gases) == 1
     assert converted_generator.facility.get_idtag() == facility.idtag
-    assert converted_generator.tpe == "Strong"
+    assert converted_generator.tpe == pg.GeneratorType.Synchronous
     assert gslv_dict.technology_dict[weak_technology] in grid_gslv.technologies
     assert gslv_dict.technology_dict[strong_technology] in grid_gslv.technologies
     assert gslv_dict.fuel_dict[fuel] in grid_gslv.fuels

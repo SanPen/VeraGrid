@@ -1,0 +1,110 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
+from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Templates.template_catalogue import TemplateDefinition, TemplateProp
+from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
+
+
+class FrequencyLoadRmsTemplate(TemplateDefinition):
+    __slots__ = ()
+
+    def __init__(self, vf):
+        super().__init__(vf, params=[
+            TemplateProp(name="Pl0", units="pu", descr="Initial active power at nominal voltage (pu).", tpe=float),
+            TemplateProp(name="Ql0", units="pu", descr="Initial reactive power at nominal voltage (pu).", tpe=float),
+            TemplateProp(name="name", units="", descr="Name of the rms model.", tpe=str),
+        ])
+
+    def eval(self) -> RmsModelTemplate:
+        return FrequencyLoadBuild(self.vf, self.get_value("name"), self.get_value("Pl0"), self.get_value("Ql0"))
+
+
+def FrequencyLoadBuild(vfactory: VarFactory, name: str = "Frequency-dependent load RMS template",
+                       Pl0: float = 1.0, Ql0: float = 0.1) -> RmsModelTemplate:
+    """Build a voltage- and frequency-dependent RMS load model.
+
+    :param vfactory: Factory that owns the model's symbolic variables.
+    :param name: Name assigned to the generated RMS model template.
+    :param Pl0: Initial active power at nominal voltage in per unit.
+    :param Ql0: Initial reactive power at nominal voltage in per unit.
+    :return: Configured frequency-dependent load RMS model template.
+    """
+    templ = RmsModelTemplate(name=name)
+    templ.name = name
+    templ.tpe = DeviceType.LoadDevice
+    inputs = [vfactory.add_var("Vm"), vfactory.add_var('Va')]
+
+    # Vars:
+    m = vfactory.add_var('m')
+    P = vfactory.add_var('P')
+    Q = vfactory.add_var('Q')
+    Va = inputs[1]
+
+    # Parameters:
+    P0 = vfactory.add_var('Pl0')
+    Q0 = vfactory.add_var('Ql0')
+    V0 = vfactory.add_var('V0')
+    Kd = vfactory.add_var('Kd')
+    Ki = vfactory.add_var('Ki')
+    alpha_p = vfactory.add_var('alpha_p')
+    alpha_q = vfactory.add_var('alpha_q')
+    beta_p = vfactory.add_var('beta_p')
+    beta_q = vfactory.add_var('beta_q')
+    Tf = vfactory.add_var('Tf')
+    theta0 = vfactory.add_var('theta0')
+
+    block1, d_omega = tf_to_block(
+        vfactory,
+        num=[0, vfactory.add_const(1)],
+        den=[vfactory.add_const(1), Tf],
+        x=(Va - theta0),
+        name="frequency_measure"
+
+    )
+    # ZIP coefficients (classic formulation)
+    event_dict = {
+        P0: vfactory.add_const(Pl0),
+        Q0: vfactory.add_const(Ql0),
+        V0: inputs[0],
+
+        # Exponential Parameters
+        alpha_p: vfactory.add_const(1.2),
+        alpha_q: vfactory.add_const(1.2),
+        beta_p: vfactory.add_const(1.2),
+        beta_q: vfactory.add_const(1.2),
+
+        Tf: vfactory.add_const(0.1),
+        theta0: inputs[1],
+    }
+
+    init_eqs = {
+        P: P0,
+        Q: Q0,
+    }
+    templ.block = Block(
+        algebraic_eqs=[
+            P - P0 * (inputs[0]) ** alpha_p * (vfactory.add_const(1) + d_omega) ** beta_p,
+            Q - Q0 * (inputs[0]) ** alpha_q * (vfactory.add_const(1) + d_omega) ** beta_q,
+        ],
+        algebraic_vars=[P, Q],
+        init_eqs=init_eqs,
+        event_dict=event_dict,
+        children=[block1, ]
+    )
+
+    templ.block.external_mapping = {
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowReferenceType.Vm: inputs[0],
+    }
+
+    templ.block.in_vars = inputs
+
+    templ.comment = 'Load RMS frequency-dependent model'
+    return templ

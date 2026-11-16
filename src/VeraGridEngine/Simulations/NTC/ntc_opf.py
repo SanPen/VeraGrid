@@ -554,7 +554,7 @@ class BranchNtcVars:
         self.monitor_logic = np.zeros((nt, n_elm), dtype=int)
 
         # t, m, c, contingency, negative_slack, positive_slack
-        self.contingency_flow_data: List[Tuple[int, int, int, Union[float, LpVar, LpExp], LpVar, LpVar]] = list()
+        self.contingency_flow_data: List[Tuple[int, int, int, Union[float, LpVar, LpExp], Union[float, LpVar], Union[float, LpVar]]] = list()
 
         self.inter_space_branches: List[Tuple[int, float]] = list()  # index, sense
 
@@ -618,8 +618,8 @@ class BranchNtcVars:
 
     def add_contingency_flow(self, t: int, m: int, c: int,
                              flow_var: Union[float, LpVar, LpExp],
-                             neg_slack: LpVar,
-                             pos_slack: LpVar):
+                             neg_slack: Union[float, LpVar],
+                             pos_slack: Union[float, LpVar]):
         """
         Add contingency flow
         :param t: time index
@@ -957,7 +957,8 @@ def add_linear_injections_formulation(t: Union[int, None],
                                       skip_generation_limits: bool,
                                       ntc_vars: NtcVars,
                                       prob: LpModel,
-                                      logger: Logger):
+                                      logger: Logger,
+                                      consider_slacks: bool = True) -> Tuple[Union[float, LpExp], Vec]:
     """
     Add MIP injections formulation
     :param t: time step
@@ -976,6 +977,7 @@ def add_linear_injections_formulation(t: Union[int, None],
     :param ntc_vars: MIP variables structure
     :param prob: MIP problem
     :param logger: logger instance
+    :param consider_slacks: Add penalized relaxation variables; False enforces hard limits.
     :return objective function
     """
 
@@ -1016,8 +1018,11 @@ def add_linear_injections_formulation(t: Union[int, None],
     ntc_vars.delta_1[t] = prob.add_var(lb=0, ub=prob.INFINITY, name=join("Delta_up_", [t]))
     ntc_vars.delta_2[t] = prob.add_var(lb=0, ub=prob.INFINITY, name=join("Delta_down_", [t]))
 
-    ntc_vars.delta_sl_1[t] = prob.add_var(lb=0, ub=prob.INFINITY, name=join("DeltaSL_up_", [t]))
-    ntc_vars.delta_sl_2[t] = prob.add_var(lb=0, ub=prob.INFINITY, name=join("DeltaSL_down_", [t]))
+    if consider_slacks:
+        ntc_vars.delta_sl_1[t] = prob.add_var(lb=0, ub=prob.INFINITY, name=join("DeltaSL_up_", [t]))
+        ntc_vars.delta_sl_2[t] = prob.add_var(lb=0, ub=prob.INFINITY, name=join("DeltaSL_down_", [t]))
+    else:
+        pass  # Numeric zeros retain a hard equality between the area changes.
 
     for k in bus_a1_idx:
         if bus_data_t.active[k] and proportions[k] != 0:
@@ -1243,7 +1248,8 @@ def add_linear_branches_formulation(t_idx: int,
                                     loading: Vec,
                                     logger: Logger,
                                     inf=1e20,
-                                    slack_all_limits: bool = False) -> LpExp:
+                                    slack_all_limits: bool = False,
+                                    consider_slacks: bool = True) -> LpExp:
     """
     Formulate the branches
     :param t_idx: time index
@@ -1264,6 +1270,7 @@ def add_linear_branches_formulation(t_idx: int,
     :param inf: number considered infinite
     :param slack_all_limits: give EVERY monitored branch the penalized slack pair instead
                              of a hard bound. Used as a feasibility retry.
+    :param consider_slacks: Add penalized relaxation variables; False enforces hard limits.
     :return objective function
     """
     f_obj = 0.0
@@ -1392,7 +1399,7 @@ def add_linear_branches_formulation(t_idx: int,
             # add the rate constraint if the branch is monitored
             if branch_vars.monitor_logic[t_idx, m]:
 
-                if abs(loading[m]) > 1.0 or slack_all_limits:
+                if consider_slacks and (abs(loading[m]) > 1.0 or slack_all_limits):
                     # Allow penalized relaxation while controls seek to resolve the overload.
                     # Report actual slack after solving; an initial overload is not a result.
                     pos_sl: LpVar = prob.add_var(0, 1e20, join("base_flow_pos_sl_", [t_idx, m], "_"))
@@ -1533,7 +1540,8 @@ def add_corrective_contingency_formulation(t_idx: int,
                                            vsc_delta_vars: Union[Dict[int, LpVar], None] = None,
                                            hvdc_delta_vars: Union[Dict[int, LpVar], None] = None,
                                            add_exchange_preservation: bool = True,
-                                           enforce_rows: Union[BoolVec, None] = None) -> Union[float, LpExp]:
+                                           enforce_rows: Union[BoolVec, None] = None,
+                                           consider_slacks: bool = True) -> Union[float, LpExp]:
     """
     Formulate a single contingency allowing corrective re-dispatch of the VSC and HVDC converters
     Rationale: VSCs and HVDCs can change their powers quickly after the contingency
@@ -1567,6 +1575,7 @@ def add_corrective_contingency_formulation(t_idx: int,
     :param hvdc_delta_vars: persistent per-HVDC Δ variable store, same rationale
     :param add_exchange_preservation: add the exchange-preservation equality
     :param enforce_rows: per-branch flag restricting which rows get their limit constraint
+    :param consider_slacks: Add penalized relaxation variables; False enforces hard limits.
     """
     f_obj: Union[float, LpExp] = 0.0
 
@@ -1661,10 +1670,14 @@ def add_corrective_contingency_formulation(t_idx: int,
                 pass
 
             if isinstance(flow_expr, LpExp):
-                # Initial overloads still need a limit so slack accounts for any remaining excess.
+                # Enforce every admitted limit, with relaxation only when requested.
                 rate_pu: float = branch_data_t.contingency_rates[m] / Sbase
-                pos_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_pos_sl_", [t_idx, m, c], "_"))
-                neg_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_neg_sl_", [t_idx, m, c], "_"))
+                if consider_slacks:
+                    pos_slack: Union[float, LpVar] = prob.add_var(0, 1e20, join("br_cst_flow_pos_sl_", [t_idx, m, c], "_"))
+                    neg_slack: Union[float, LpVar] = prob.add_var(0, 1e20, join("br_cst_flow_neg_sl_", [t_idx, m, c], "_"))
+                else:
+                    pos_slack = 0.0
+                    neg_slack = 0.0
 
                 # record the flow so the result extraction can evaluate the post-contingency loading later
                 branch_vars.add_contingency_flow(t=t_idx, m=m, c=c, flow_var=flow_expr,
@@ -1698,7 +1711,8 @@ def add_preventive_contingency_formulation(t_idx: int,
                                            ntc_load_rule: float,
                                            alpha_threshold: float,
                                            alpha_n1: Mat,
-                                           prob: LpModel) -> Union[float, LpExp]:
+                                           prob: LpModel,
+                                           consider_slacks: bool = True) -> Union[float, LpExp]:
     """
     Formulate a single contingency with the preventive N-1 rule 
     :param t_idx: time index being formulated
@@ -1716,6 +1730,7 @@ def add_preventive_contingency_formulation(t_idx: int,
     :param alpha_threshold: minimum N-1 exchange sensitivity for a branch to be monitored
     :param alpha_n1: N-1 exchange-sensitivity matrix indexed as (branch, outaged-branch)
     :param prob: linear problem the variables and constraints are added to
+    :param consider_slacks: Add penalized relaxation variables; False enforces hard limits.
     :return: objective contribution (sum of the contingency overload slacks)
     """
     f_obj: Union[float, LpExp] = 0.0
@@ -1749,9 +1764,13 @@ def add_preventive_contingency_formulation(t_idx: int,
             # DC branches are always monitored because their AC-PTDF sensitivity is structurally zero
             if branch_data_t.dc[m] or (monitor_by_load_rule_n1 and monitor_by_sensitivity_n1):
 
-                # Initial overloads still need symmetric limits with explicit relaxation.
-                pos_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_pos_sl_", [t_idx, m, c, occ]))
-                neg_slack: LpVar = prob.add_var(0, 1e20, join("br_cst_flow_neg_sl_", [t_idx, m, c, occ]))
+                # Apply symmetric limits, using numeric zeros for hard constraints.
+                if consider_slacks:
+                    pos_slack: Union[float, LpVar] = prob.add_var(0, 1e20, join("br_cst_flow_pos_sl_", [t_idx, m, c, occ]))
+                    neg_slack: Union[float, LpVar] = prob.add_var(0, 1e20, join("br_cst_flow_neg_sl_", [t_idx, m, c, occ]))
+                else:
+                    pos_slack = 0.0
+                    neg_slack = 0.0
 
                 # record the flow so the result extraction can evaluate the post-contingency loading later
                 branch_vars.add_contingency_flow(t=t_idx, m=m, c=c,
@@ -2387,7 +2406,8 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                                                   group_rows: Union[Dict[int, IntVec], None] = None,
                                                   vsc_delta_store: Union[Dict[int, Dict[int, LpVar]], None] = None,
                                                   hvdc_delta_store: Union[Dict[int, Dict[int, LpVar]], None] = None,
-                                                  preservation_done: Union[set, None] = None):
+                                                  preservation_done: Union[set, None] = None,
+                                                  consider_slacks: bool = True) -> Union[float, LpExp]:
     """
     Formulate the branches
     :param t_idx: time index
@@ -2412,6 +2432,7 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
     :param hvdc_delta_store: per group index, the persistent HVDC Δ variable dictionary
     :param preservation_done: group indices whose exchange-preservation equality is already
                               in the LP
+    :param consider_slacks: Add penalized relaxation variables; False enforces hard limits.
     :return objective function
     """
     f_obj = 0.0
@@ -2492,7 +2513,7 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                 vsc_active=vsc_active, hvdc_active=hvdc_active,
                 vsc_delta_vars=vsc_deltas_c, hvdc_delta_vars=hvdc_deltas_c,
                 add_exchange_preservation=add_preservation_c,
-                enforce_rows=enforce_rows_c)
+                enforce_rows=enforce_rows_c, consider_slacks=consider_slacks)
         else:
             # preventive N-1: the converters stay at their base-case set-point
             f_obj += add_preventive_contingency_formulation(
@@ -2502,7 +2523,8 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                 monitor_only_ntc_load_rule_branches=monitor_only_ntc_load_rule_branches,
                 monitor_only_sensitive_branches=monitor_only_sensitive_branches,
                 structural_ntc=structural_ntc, ntc_load_rule=ntc_load_rule,
-                alpha_threshold=alpha_threshold, alpha_n1=alpha_n1, prob=prob)
+                alpha_threshold=alpha_threshold, alpha_n1=alpha_n1, prob=prob,
+                consider_slacks=consider_slacks)
 
     return f_obj
 
@@ -2948,7 +2970,8 @@ def run_linear_ntc_opf(grid: MultiCircuit,
                        verbose: int = 0,
                        robust: bool = False,
                        mip_framework: MIPFramework = MIPFramework.PuLP,
-                       max_lazy_rounds: int = 100) -> Tuple[NtcVars, LpModel]:
+                       max_lazy_rounds: int = 100,
+                       consider_slacks: bool = True) -> Tuple[NtcVars, LpModel]:
     """
 
     :param grid: MultiCircuit instance
@@ -2975,6 +2998,7 @@ def run_linear_ntc_opf(grid: MultiCircuit,
     :param robust: Robust optimization?
     :param mip_framework: MIPFramework to use
     :param max_lazy_rounds: Maximum number of lazy contingency constraint admission rounds
+    :param consider_slacks: Add penalized relaxation variables; False enforces hard limits.
     :return: NtcVars class with the results
     """
     mode_2_int = {
@@ -3068,6 +3092,7 @@ def run_linear_ntc_opf(grid: MultiCircuit,
         transfer_method=transfer_method,
         skip_generation_limits=skip_generation_limits,
         ntc_vars=mip_vars,
+        consider_slacks=consider_slacks,
         prob=lp_model,
         logger=logger
     )
@@ -3184,6 +3209,7 @@ def run_linear_ntc_opf(grid: MultiCircuit,
             logger=logger,
             inf=1e20,
             slack_all_limits=slack_all_limits,
+            consider_slacks=consider_slacks,
         )
 
         # formulate nodes ---------------------------------------------------------------------------------------
@@ -3225,7 +3251,8 @@ def run_linear_ntc_opf(grid: MultiCircuit,
                     # the feasibility retry also absorbs every part a contingency cuts off
                     controlled_states = CompactContingencies(
                         nc=nc, base_vars=mip_vars, multi_contingencies=mctg,
-                        prob=lp_model, logger=logger, absorb_islands=slack_all_limits)
+                        prob=lp_model, logger=logger, consider_slacks=consider_slacks,
+                        absorb_islands=consider_slacks and slack_all_limits)
                 else:
                     lazy_mctg = mctg
                     lazy_alpha_n1 = alpha_n1
@@ -3368,7 +3395,8 @@ def run_linear_ntc_opf(grid: MultiCircuit,
                     group_rows=group_rows_now,
                     vsc_delta_store=vsc_delta_store,
                     hvdc_delta_store=hvdc_delta_store,
-                    preservation_done=preservation_done
+                    preservation_done=preservation_done,
+                    consider_slacks=consider_slacks
                 )
 
                 # record the admitted rows so the screening skips them from now on
@@ -3417,7 +3445,7 @@ def run_linear_ntc_opf(grid: MultiCircuit,
     else:
         pass  # no lazy formulation was used
 
-    if is_infeasible(model=lp_model, status=status) and not slack_all_limits:
+    if consider_slacks and is_infeasible(model=lp_model, status=status) and not slack_all_limits:
         # Feasibility retry. Rebuild once with the penalized slack for every 
         # monitored limit so the answer is reported as slack instead of a failure. 
         logger.add_warning("Infeasible with hard branch limits, retrying with all "
@@ -3442,6 +3470,7 @@ def run_linear_ntc_opf(grid: MultiCircuit,
                                   monitor_only_ntc_load_rule_branches=monitor_only_ntc_load_rule_branches,
                                   ntc_load_rule=ntc_load_rule,
                                   slack_all_limits=True,
+                                  consider_slacks=consider_slacks,
                                   logger=logger,
                                   progress_text=progress_text,
                                   progress_func=progress_func,

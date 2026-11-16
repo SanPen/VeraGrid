@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Retain legacy DYR framing and USRSWS. ReleaseNotes 35.0 section 7.4 establishes that USRSWS2 is a version-35 addition."""
 from VeraGridEngine.IO.raw.psse_auxiliary import PsseVersion
@@ -27,11 +31,22 @@ class RawDyrV34(RawDyrV33):
         :param model: Source model identifier, case insensitive.
         :return: Reviewed inherited layout, or None for ambiguous ordering.
         """
-        if model.upper() == 'BUDCZT':
-            # Supplied 33.10 and 35.2 sheets disagree on TA/TE; 34 is unverified.
+        if model.upper() in ('BBGOV1', 'BEPSST', 'BUDCZT', 'CGEN1', 'COMPCC', 'FRQTPAT', 'GAST2A', 'MAXEX1', 'MAXEX2', 'OSTB2T', 'OSTB5T', 'PSS4B', 'ST6B', 'TGOV2', 'TGOV3', 'TGOV4', 'TGOV5', 'VTGTPAT', 'WESGOV'):
+            # These source sheets do not establish the exact PSS/E 34 layouts.
             return None
         else:
             return super().get_model_schema(model)
+
+    def get_auxiliary_signal_schema(self, model: str) -> DynamicModelSchema | None:
+        """Decline CPAAUT until a PSS/E 34 source sheet is reviewed.
+
+        :param model: Source model identifier, case-insensitive.
+        :return: None for unreviewed CPAAUT, otherwise the unchanged inherited layout.
+        """
+        if model.upper() == 'CPAAUT':
+            return None
+        else:
+            return super().get_auxiliary_signal_schema(model)
 
     def get_user_model_schema(self, name: str) -> UserDynamicModelSchema | None:
         """Keep legacy wrapper contracts unreviewed without a release-specific sheet.

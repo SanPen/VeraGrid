@@ -24,6 +24,12 @@ RMS_PROBLEM_CLASS_MAP = {
     RmsProblemTypes.Multilinear: RmsProblemMultilinear,
 }
 
+RMS_POWER_BALANCE_DAE_TYPES = frozenset((
+    RmsProblemTypes.PowerBalance,
+    RmsProblemTypes.PowerBalanceVectorized,
+    RmsProblemTypes.PowerBalanceFullVectorized,
+))
+
 
 def build_rms_problem(grid: MultiCircuit,
                       options: RmsOptions,

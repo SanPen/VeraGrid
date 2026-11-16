@@ -24,7 +24,7 @@ from VeraGridEngine.IO.manufacturer_native.runtime_session import ManufacturerNa
 from VeraGridEngine.IO.native_runtime import NativeWorkerLimits
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
-from VeraGridEngine.enumerations import EngineType, PlotSimulationType, SimulationTypes
+from VeraGridEngine.enumerations import DynamicSimulationMode, EngineType, PlotSimulationType, SimulationTypes
 
 
 def _compare_first_step_non_angle_states(
@@ -129,6 +129,7 @@ class EmtSimulationDriver(DriverTemplate):
         "pf_results_3Ph",
         "pf_results",
         "options",
+        "simulation_mode",
         "problem",
         "line_states",
     )
@@ -156,6 +157,8 @@ class EmtSimulationDriver(DriverTemplate):
         """
 
         DriverTemplate.__init__(self, grid=grid, engine=engine)
+
+        self.simulation_mode: DynamicSimulationMode = DynamicSimulationMode.EMT
 
         self.grid = grid
 

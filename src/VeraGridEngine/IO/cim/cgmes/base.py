@@ -181,13 +181,13 @@ class Base:
                 except AttributeError:
                     if not self.boundary_set:
                         logger.add_error("Declared property has no storage in CGMES class",
-                                         device_class=self.tpe,
+                                         device_class=self.__class__.__name__,
                                          device_property=prop_name,
                                          device=self.rdfid)
             else:
                 if not self.boundary_set:
                     logger.add_error("Missing object property",
-                                     device_class=self.tpe,
+                                     device_class=self.__class__.__name__,
                                      device_property=prop_name,
                                      device=self.rdfid)
 
@@ -257,7 +257,7 @@ class Base:
         return self.rdfid
 
     def __str__(self):
-        return self.tpe + ':' + self.rdfid
+        return self.__class__.__name__ + ':' + self.rdfid
 
     def __hash__(self):
         # alternatively, return hash(repr(self))
@@ -297,10 +297,11 @@ class Base:
         :return:
         """
         if attr_name in self.get_declared_property_names():
-            if obj.tpe in self.references_to_me:
-                self.references_to_me[obj.tpe].add(obj)
+            object_class_name: str = obj.__class__.__name__
+            if object_class_name in self.references_to_me:
+                self.references_to_me[object_class_name].add(obj)
             else:
-                self.references_to_me[obj.tpe] = {obj}
+                self.references_to_me[object_class_name] = {obj}
             if attr_name is None:
                 return
             current_value = self.get_declared_property_value(prop_name=attr_name)
@@ -308,11 +309,14 @@ class Base:
             if current_value is None:
                 self.set_declared_property_value(prop_name=attr_name, prop_value=obj)
             elif isinstance(current_value, list):
-                current_value.append(obj)
+                if obj in current_value:
+                    pass
+                else:
+                    current_value.append(obj)
             else:
                 self.set_declared_property_value(prop_name=attr_name, prop_value=[current_value, obj])
         else:
-            logger.add_error("Cannot add reference", device_class=self.tpe, device_property=attr_name)
+            logger.add_error("Cannot add reference", device_class=self.__class__.__name__, device_property=attr_name)
 
 
     def register_property(self, name: str,
@@ -356,7 +360,8 @@ class Base:
             l2 = '  ' * (level + 1)  # middle tabbing
 
             # header
-            xml = l1 + '<cim:' + self.tpe + ' rdf:ID="' + self.rdfid + '">\n'
+            class_name: str = self.__class__.__name__
+            xml = l1 + '<cim:' + class_name + ' rdf:ID="' + self.rdfid + '">\n'
 
             for prop_name, prop in self.declared_properties.items():
 
@@ -369,7 +374,7 @@ class Base:
                     if prop in self.class_replacements.keys():
                         cls = self.class_replacements[prop]
                     else:
-                        cls = self.tpe
+                        cls = class_name
 
                     if prop.class_type not in [bool, int, float, str]:
                         xml += l2 + '<cim:' + cls + '.' + prop_name + ' rdf:resource="#' + v + '" />\n'
@@ -377,7 +382,7 @@ class Base:
                         xml += l2 + '<cim:' + cls + '.' + prop_name + '>' + v + '</cim:' + cls + '.' + prop_name + '>\n'
 
             # closing
-            xml += l1 + '</cim:' + self.tpe + '>\n'
+            xml += l1 + '</cim:' + class_name + '>\n'
 
             data[profile] = xml
 

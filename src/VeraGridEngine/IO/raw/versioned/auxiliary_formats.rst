@@ -495,6 +495,12 @@ with profile-34 inheritance and provisional 36 support. Its bounded PID memory,
 terminal-scaled amplifier capability, limiter locations and actual terminal-voltage
 initialization remain separate from the unlimited ESAC8B PID arrangement.
 
+AC6C/AC6C2 have explicit profile-35 25-CON layouts with respectively two
+and three ICONs. AC6C2's third selector controls whether VR forcing limits
+follow live terminal magnitude; 36 inherits this layout provisionally, while
+33/34 direct records remain unreviewed. Their native equations are documented
+in the two-stage brushless research note.
+
 AC1C/AC2C/AC5C have explicit profile-35 two-ICON layouts with respectively
 21/23/19 constants and provisional 36 inheritance. Earlier profiles remain
 unsupported. The reviewed source domain and distinct winding-feedback topologies
@@ -627,3 +633,14 @@ the literal record, not the AC7CU1 sheet title. Five takeover points and both
 compound/live-field power arrangements are explicit. The ambiguous KP=0 source
 convention when rectified potential is selected remains declined. No wrapper
 header is inferred. See CASCADED_BRUSHLESS_EXCITATION.md.
+
+TGOV4 and TGOV5 parser contracts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PSS/E 33.10 Model Library sections 7.38/7.39 and 35.2 sections 7.45/7.46
+provide direct schemas for TGOV4 (three ICONs, 52 CONs) and TGOV5 (two linked-
+machine ICONs, 49 CONs). The parser preserves the reviewed field order in both
+profiles, including TGOV5's character machine ID. Profiles 34/36 remain
+unreviewed. These schemas do not activate import: the multivalve/boiler/fuel/
+PLU/EVA paths for TGOV4 and boiler/pressure/steam paths for TGOV5 still need
+native implementation and connected tests. See STEAM_GOVERNORS.md.

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 import gc
@@ -24,7 +28,7 @@ import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor as dynamic_bl
 import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_graphics as graph
 import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_models as dialog_models
 from VeraGrid.Gui.DynamicModelEditor.Workspace.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
-from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_utilities import (
+from VeraGridEngine.Templates.device_template_materialization import (
     create_default_template_builder,
     initialize_template_builder_from_block,
 )
@@ -41,11 +45,11 @@ from VeraGridEngine.Utils.Symbolic.templates_common_functions import attach_emt_
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.Utils.Symbolic.symbolic_io import duplicate_block
 from VeraGridEngine.enumerations import DynamicSimulationMode, VarPowerFlowReferenceType, BlockType
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_mask
-from VeraGridEngine.Templates.Emt.generator_emt_type_template import get_complete_generator_template_emt
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_mask
+from VeraGridEngine.Templates.Emt.synchronous_machines.generator_emt_type_template import get_complete_generator_template_emt
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.template_catalogue import TemplateDefinition, TemplateProp
 
 pytestmark = pytest.mark.filterwarnings("error")
 

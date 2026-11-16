@@ -188,26 +188,20 @@ class SmallSignalStabilityRmsResults(ResultsTemplate):
             else:
                 pass
 
-            if len(self.stat_vars_array) == self.state_matrix.shape[0]:
+            column_names = self.stat_vars_array.astype(str)
+            if len(column_names) != self.state_matrix.shape[1]:
+                column_names = np.concatenate((column_names, self.algebraic_vars_array.astype(str)))
+            if len(column_names) != self.state_matrix.shape[1]:
+                raise ValueError("The number of state and algebraic variable names must match the state matrix columns.")
 
-                return ResultsTable(
-                    data=self.state_matrix,
-                    index=np.array([f"Equation {i}" for i in range(len(self.eigenvalues))], dtype=np.str_),
-                    columns=np.array(self.stat_vars_array.astype(str), dtype=np.str_),
-                    title="State Matrix",
-                    idx_device_type=DeviceType.NoDevice,
-                    cols_device_type=DeviceType.NoDevice
-                )
-            else:
-                # TODO: adapt to generalized!
-                return ResultsTable(
-                    data=self.state_matrix,
-                    index=np.array([f"Equation {i}" for i in range(len(self.eigenvalues))], dtype=np.str_),
-                    columns=np.array(list(self.stat_vars_array.astype(str)) + list(self.algebraic_vars_array.astype(str)), dtype=np.str_),
-                    title="State Matrix",
-                    idx_device_type=DeviceType.NoDevice,
-                    cols_device_type=DeviceType.NoDevice
-                )
+            return ResultsTable(
+                data=self.state_matrix,
+                index=np.array([f"Equation {i}" for i in range(self.state_matrix.shape[0])], dtype=np.str_),
+                columns=np.array(column_names, dtype=np.str_),
+                title="State Matrix",
+                idx_device_type=DeviceType.NoDevice,
+                cols_device_type=DeviceType.NoDevice
+            )
 
 
         elif result_type == ResultTypes.ParticipationFactors:

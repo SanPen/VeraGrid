@@ -21,6 +21,7 @@ class FluidNodeData:
         "max_soc",
         "initial_level",
         "inflow",
+        "loss_factor",
         "spillage_cost",
     )
 
@@ -40,6 +41,7 @@ class FluidNodeData:
         self.max_soc = np.zeros(nelm, dtype=float)
         self.initial_level = np.zeros(nelm, dtype=float)
         self.inflow = np.zeros(nelm, dtype=float)
+        self.loss_factor = np.zeros(nelm, dtype=float)
         self.spillage_cost = np.zeros(nelm, dtype=float)
 
     def size(self) -> int:
@@ -68,6 +70,7 @@ class FluidNodeData:
         data.initial_level = self.initial_level.copy()
 
         data.inflow = self.inflow.copy()
+        data.loss_factor = self.loss_factor.copy()
         data.spillage_cost = self.spillage_cost.copy()
 
         return data

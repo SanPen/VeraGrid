@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-"""Sparse LU selection in the RMS Backward Euler solvers, the RMS driver and the small-signal pre-simulation.
+"""Sparse LU selection in the RMS Backward Euler solver, the RMS driver and the small-signal pre-simulation.
 
 The tests observe the solvers through explicit test objects (counting provider wrappers and a recording factory)
 passed through the public construction paths.
@@ -19,15 +19,21 @@ import scipy.sparse as sp
 from scipy.sparse import csc_matrix
 from scipy.sparse.linalg import MatrixRankWarning, spsolve, splu
 
-import VeraGridEngine.Utils.NumericalMethods.sparse_lu_selection as sparse_selection
+import VeraGridEngine.Utils.Sparse.sparse_solve as sparse_solve
 from tests.Base.test_dynamic_results_save_load import _build_rms_driver
+from VeraGridEngine.Simulations.Rms.initialization_rms import project_initial_algebraic_state, run_rms_consistent_initialization
+from tests.RMS.test_rms_consistent_newton_initialization import _ScalarRmsInitializationProblem
+from VeraGridEngine.Simulations.Rms.numerical.midpoint import MidpointImplicitIntegration
+from VeraGridEngine.Simulations.Rms.numerical.trapezoidal import TrapezoidalImplicitIntegration
+from VeraGridEngine.Simulations.Rms.numerical.adaptive_bdf12 import AdaptiveBdf12Integration
+from VeraGridEngine.Simulations.Rms.numerical.adaptive_bdf15 import AdaptiveBdf15Integration
+from tests.RMS.test_adaptive_bdf15 import DecayDae
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_ts import BackEulerImplicitTensygrid
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.Rms.initialization_rms import solve_rms_newton_correction
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized import BackEulerImplicitIntegrationFullVec
-from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized import BackEulerImplicitIntegrationVec
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
@@ -303,7 +309,7 @@ def _klu_provider_or_skip() -> SparseLinearSolverBackendProvider:
     """
     provider: SparseLinearSolverBackendProvider | None
     reason: str
-    provider, reason = sparse_selection.get_sparse_lu_provider_status(SparseSolver.KLU)
+    provider, reason = sparse_solve.get_sparse_lu_provider_status(SparseSolver.KLU)
     if provider is None:
         pytest.skip("native KLU unavailable: " + reason)
     else:
@@ -357,20 +363,24 @@ def _messages(logger: Logger, severity: LogSeverity, prefix: str) -> List[str]:
     return [entry.msg for entry in logger.entries if entry.severity == severity and entry.msg.startswith(prefix)]
 
 
-def _base_options(problem_type: RmsProblemTypes) -> RmsOptions:
+def _base_options(problem_type: RmsProblemTypes, sparse_solver: SparseSolver | None = None) -> RmsOptions:
     """
     Build the options of the Base 2-bus driver case for one problem type.
 
     :param problem_type: RMS problem formulation.
+    :param sparse_solver: Explicit test selection, or the preferred installed LU (KLU when available) when None;
+        RmsOptions itself defaults to SuperLU.
     :return: RMS options for 0.2 s with a 1 ms step.
     """
     return RmsOptions(time_step=1.0e-3, simulation_time=0.2, tolerance=1.0e-6, integration_method=DynamicIntegrationMethod.DaeBackEuler,
                       initialization_method=RmsInitializationMethod.Explicit, problem_type=problem_type, use_init_values=False,
-                      max_iter=1000, verbose=0)
+                      max_iter=1000, verbose=0,
+                      sparse_solver=(sparse_solve.get_default_sparse_lu_solver()
+                                     if sparse_solver is None else sparse_solver))
 
 
 def _helper_solver(problem_type: RmsProblemTypes, provider: SparseLinearSolverBackendProvider
-                   ) -> BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec:
+                   ) -> BackEulerImplicitIntegration:
     """
     Build a fresh Base 2-bus problem of one type and its solver through RmsSimulationDriver._build_back_euler_solver.
 
@@ -387,7 +397,7 @@ def _helper_solver(problem_type: RmsProblemTypes, provider: SparseLinearSolverBa
     return driver._build_back_euler_solver(problem=problem, provider=provider)
 
 
-def _simulate(solver: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec) -> Mat:
+def _simulate(solver: BackEulerImplicitIntegration) -> Mat:
     """
     Run a solver and return its trajectory after checking convergence.
 
@@ -414,8 +424,8 @@ def test_solve_once_superlu_or_none_is_exactly_spsolve() -> None:
     golden: List[str]
     matrix, rhs, golden = _square_case()
     expected: Vec = spsolve(matrix.copy(), rhs)
-    assert np.array_equal(sparse_selection.solve_sparse_system_once(matrix.copy(), rhs, None), expected)
-    assert np.array_equal(sparse_selection.solve_sparse_system_once(matrix.copy(), rhs, SuperLUSparseBackendProvider()), expected)
+    assert np.array_equal(sparse_solve.solve_sparse_system_once(matrix.copy(), rhs, None), expected)
+    assert np.array_equal(sparse_solve.solve_sparse_system_once(matrix.copy(), rhs, SuperLUSparseBackendProvider()), expected)
 
 
 def test_solve_once_native_provider_copies_noncanonical_input() -> None:
@@ -437,13 +447,13 @@ def test_solve_once_native_provider_copies_noncanonical_input() -> None:
     indices_before: np.ndarray = matrix.indices.copy()
     assert not matrix.has_canonical_format
 
-    solution: Vec = sparse_selection.solve_sparse_system_once(matrix, rhs, provider)
+    solution: Vec = sparse_solve.solve_sparse_system_once(matrix, rhs, provider)
 
     assert runtime.solves == 1
     assert solution.dtype == np.float64 and solution.shape == (3,)
     assert np.allclose(solution, spsolve(csc_matrix(matrix.toarray()), rhs), rtol=0.0, atol=1e-12)
     assert np.array_equal(matrix.data, data_before) and np.array_equal(matrix.indices, indices_before)
-    assert np.allclose(sparse_selection.solve_sparse_system_once(stacked, rhs, provider),
+    assert np.allclose(sparse_solve.solve_sparse_system_once(stacked, rhs, provider),
                        spsolve(csc_matrix(stacked.toarray()), rhs), rtol=0.0, atol=1e-12)
 
 
@@ -457,7 +467,7 @@ def test_solve_once_native_contract_violation_propagates() -> None:
     runtime: CountingScipyLuRuntime
     provider, runtime = _fake_native_provider()
     with pytest.raises(ValueError):
-        sparse_selection.solve_sparse_system_once(csc_matrix(np.ones((2, 3))), np.ones(2), provider)
+        sparse_solve.solve_sparse_system_once(csc_matrix(np.ones((2, 3))), np.ones(2), provider)
     assert runtime.solves == 0
 
 
@@ -474,7 +484,7 @@ def test_solve_once_real_klu_singular_matches_spsolve(dense: List[List[float]]) 
     with pytest.warns(MatrixRankWarning, match="Matrix is exactly singular"):
         reference: Vec = spsolve(matrix.copy(), np.ones(2))
     with pytest.warns(MatrixRankWarning, match="Matrix is exactly singular"):
-        solution: Vec = sparse_selection.solve_sparse_system_once(matrix, np.ones(2), provider)
+        solution: Vec = sparse_solve.solve_sparse_system_once(matrix, np.ones(2), provider)
     assert solution.dtype == np.float64 and solution.shape == (2,)
     assert np.all(np.isnan(solution)) and np.all(np.isnan(reference))
 
@@ -539,20 +549,20 @@ def test_newton_correction_native_provider_routes_both_branches() -> None:
     "problem_type, solver_class",
     [
         (RmsProblemTypes.PowerBalance, BackEulerImplicitIntegration),
-        (RmsProblemTypes.PowerBalanceVectorized, BackEulerImplicitIntegrationVec),
-        (RmsProblemTypes.PowerBalanceFullVectorized, BackEulerImplicitIntegrationFullVec),
+        (RmsProblemTypes.PowerBalanceVectorized, BackEulerImplicitIntegration),
+        (RmsProblemTypes.PowerBalanceFullVectorized, BackEulerImplicitIntegration),
     ],
 )
 def test_build_back_euler_solver_selects_class_and_passes_provider(problem_type: RmsProblemTypes, solver_class: type) -> None:
     """
-    The driver helper builds the solver class of the problem type with the driver options and the provider.
+    The driver helper builds the shared solver with the driver options and the provider.
 
     :param problem_type: RMS problem type.
     :param solver_class: Expected solver class.
     :return: None.
     """
     provider: SuperLUSparseBackendProvider = SuperLUSparseBackendProvider()
-    solver: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec = _helper_solver(problem_type, provider)
+    solver: BackEulerImplicitIntegration = _helper_solver(problem_type, provider)
     options: RmsOptions = _base_options(problem_type)
     assert type(solver) is solver_class
     assert solver._sparse_solver_backend_provider is provider
@@ -595,22 +605,25 @@ def test_every_fx_class_forwards_the_provider(problem_type: RmsProblemTypes) -> 
 @pytest.mark.parametrize("problem_type", [RmsProblemTypes.PowerBalance, RmsProblemTypes.PowerBalanceVectorized,
                                           RmsProblemTypes.PowerBalanceFullVectorized])
 def test_real_klu_factorizes_every_direct_correction(problem_type: RmsProblemTypes) -> None:
-    """
-    With real KLU every direct Newton correction is factorized natively: as many factorizations as fake-runtime solves (101 observed).
+    """Verify resident KLU corrections against SuperLU under the historical test name.
 
-    :param problem_type: RMS problem type.
-    :return: None.
+    Every direct correction must use selected native factors, while repeated
+    symbolic/numeric work is no longer required once per correction.
+
+    :param problem_type: Existing driver-supported RMS formulation.
+    :return: None; preserve the original absolute trajectory tolerance.
     """
-    klu: CountingProvider = CountingProvider(_klu_provider_or_skip())
-    provider: NativeLuRuntimeBackendProvider
-    runtime: CountingScipyLuRuntime
-    provider, runtime = _fake_native_provider()
-    y_klu: Mat = _simulate(_helper_solver(problem_type, klu))
-    _simulate(_helper_solver(problem_type, provider))
+    klu: SparseLinearSolverBackendProvider = _klu_provider_or_skip()
+    solver: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec = _helper_solver(problem_type, klu)
+    y_klu: Mat = _simulate(solver)
     y_superlu: Mat = _simulate(_helper_solver(problem_type, SuperLUSparseBackendProvider()))
-    assert klu.factorizations == runtime.solves
-    assert klu.factorizations > 0 and klu.solves == klu.factorizations
-    assert np.allclose(y_klu, y_superlu, rtol=0.0, atol=1e-8)
+    assert solver._sparse_solver_backend_provider is klu
+    stats: dict[str, float] = solver._sparse_linear_solver.get_stats()
+    assert stats["solve_calls"] > 0.0
+    assert stats["numeric_factorizations"] > 0.0
+    assert stats["numeric_factorizations"] + stats["numeric_refactorizations"] <= stats["solve_calls"]
+    assert np.allclose(y_klu, y_superlu, rtol=0.0, atol=1.0e-8)
+    print("RMS_NATIVE_LIFECYCLE", problem_type.name, stats)
 
 
 def test_fallback_branch_uses_the_selected_provider() -> None:
@@ -648,13 +661,13 @@ def test_driver_reports_an_unavailable_selection_once_per_run() -> None:
     options: RmsOptions = RmsOptions(time_step=1.0e-3, simulation_time=0.2, tolerance=1.0e-6,
                                      integration_method=DynamicIntegrationMethod.DaeBackEuler,
                                      initialization_method=RmsInitializationMethod.Explicit,
-                                     use_init_values=False, max_iter=1000, verbose=0, sparse_solver=SparseSolver.Pardiso)
+                                     use_init_values=False, max_iter=1000, verbose=0, sparse_solver=SparseSolver.UMFPACKTriangular)
     driver: RmsSimulationDriver = RmsSimulationDriver(grid=grid, options=options, pf_results=first_run.pf_results)
 
     driver.run()
 
     assert len([group for group in grid.rms_events_groups if group.active]) == 2
-    assert len(_messages(driver.logger, LogSeverity.Warning, "Sparse LU solver Pardiso is unavailable")) == 1
+    assert len(_messages(driver.logger, LogSeverity.Warning, "Sparse LU solver UmfPackTriangular is unavailable")) == 1
 
 
 def _small_signal_run(grid: MultiCircuit, pf_results: Any, sparse_solver: SparseSolver) -> Tuple[Vec, Logger, SmallSignalRecorder]:
@@ -687,6 +700,7 @@ def _small_signal_run(grid: MultiCircuit, pf_results: Any, sparse_solver: Sparse
 @pytest.mark.parametrize("sparse_solver, expected_type, warnings_expected",
                          [(SparseSolver.SuperLU, SparseSolver.SuperLU, 0),
                           (SparseSolver.Pardiso, SparseSolver.SuperLU, 1),
+                          (SparseSolver.UMFPACKTriangular, SparseSolver.SuperLU, 1),
                           (SparseSolver.KLU, SparseSolver.KLU, 0)])
 def test_small_signal_pre_simulation_receives_the_provider(sparse_solver: SparseSolver, expected_type: SparseSolver, warnings_expected: int) -> None:
     """
@@ -701,6 +715,20 @@ def test_small_signal_pre_simulation_receives_the_provider(sparse_solver: Sparse
     """
     if sparse_solver == SparseSolver.KLU:
         _klu_provider_or_skip()
+    else:
+        pass
+    if sparse_solver == SparseSolver.Pardiso:
+        # Availability differs across supported installed environments; keep
+        # strict backend/count assertions and a deterministic unsupported case.
+        available_provider: SparseLinearSolverBackendProvider | None
+        unavailable_reason: str
+        available_provider, unavailable_reason = sparse_solve.get_sparse_lu_provider_status(sparse_solver)
+        if available_provider is None:
+            expected_type = SparseSolver.SuperLU
+            warnings_expected = 1
+        else:
+            expected_type = SparseSolver.Pardiso
+            warnings_expected = 0
     else:
         pass
     built: RmsSimulationDriver = _build_rms_driver()
@@ -718,3 +746,169 @@ def test_small_signal_pre_simulation_receives_the_provider(sparse_solver: Sparse
     assert recorder.providers[0].get_solver_type() == expected_type
     assert len(_messages(logger, LogSeverity.Warning, "Sparse LU solver")) == warnings_expected
     assert np.array_equal(eigenvalues, reference)
+
+
+def test_rms_provider_precedes_initialization() -> None:
+    """The assembled problem owns its selection before event-group initialization.
+
+    :return: None; exercise all driver-supported native RMS formulations.
+    """
+    built: RmsSimulationDriver = _build_rms_driver()
+    problem_type: RmsProblemTypes
+    for problem_type in (RmsProblemTypes.PowerBalance, RmsProblemTypes.PowerBalanceVectorized, RmsProblemTypes.PowerBalanceFullVectorized):
+        options: RmsOptions = _base_options(problem_type, SparseSolver.SuperLU)
+        problem: RmsProblemTemplate = build_rms_problem(built.grid, options, built.pf_results, logger=built.logger)
+        provider: SparseLinearSolverBackendProvider | None = problem.get_sparse_solver_backend_provider()
+        assert provider is not None
+        assert provider.get_solver_type() == SparseSolver.SuperLU
+        problem.set_events_group(built.grid.rms_events_groups[0])
+        assert problem.get_sparse_solver_backend_provider() is provider
+
+
+def test_rms_initialization_projection_and_regularization_use_provider() -> None:
+    """Projection and shifted sparse corrections use the supplied physical backend.
+
+    :return: None; each numerical phase keeps independent factors.
+    """
+    provider: CountingProvider = CountingProvider(SuperLUSparseBackendProvider())
+    solver: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec = _helper_solver(RmsProblemTypes.PowerBalance, provider)
+    initial: Vec = solver.problem.get_x0().copy()
+    initial[solver.problem.get_states_number()] += 0.01
+    projected: Vec
+    converged: bool
+    residual: float
+    projected, converged, residual = project_initial_algebraic_state(
+        solver.problem, initial, solver.problem.get_dx0(), 1.0e-6, 100,
+        sparse_solver_backend_provider=provider)
+    assert converged and residual <= 1.0e-6
+    assert np.all(np.isfinite(projected)) and provider.solves > 0
+    # Omitted optional providers must consume the existing resolved binding.
+    solver.problem.set_sparse_solver_backend_provider(provider, solver.problem.options.sparse_solver)
+    direct_before: int = provider.solves
+    projected, converged, residual = project_initial_algebraic_state(
+        solver.problem, initial, solver.problem.get_dx0(), 1.0e-6, 100)
+    assert converged and residual <= 1.0e-6 and provider.solves > direct_before
+
+    # Preserve the initial unavailable-selection warning without resolving it
+    # again when a public consistency helper receives the already-bound problem.
+    consistency: _ScalarRmsInitializationProblem = _ScalarRmsInitializationProblem()
+    consistency.options = RmsOptions(sparse_solver=SparseSolver.UMFPACKTriangular,
+        initialization_method=RmsInitializationMethod.ConsistentNewton,
+        tolerance=1.0e-10, max_iter=20)
+    selection_logger: Logger = Logger()
+    bound: CountingProvider = CountingProvider(sparse_solve.resolve_sparse_lu_provider(
+        consistency.options.sparse_solver, selection_logger))
+    consistency.set_sparse_solver_backend_provider(bound, consistency.options.sparse_solver)
+    assert selection_logger.warning_count() == 1
+    assert run_rms_consistent_initialization(consistency, consistency.options, logger=selection_logger)
+    # This scalar consistency fixture retains the established dense threshold.
+    assert bound.solves == 0 and selection_logger.warning_count() == 1
+    assert consistency.get_sparse_solver_backend_provider(consistency.options.sparse_solver) is bound
+    np.testing.assert_allclose(consistency.get_x0(), np.array((2.0,)), atol=1.0e-10)
+    matrix: csc_matrix
+    rhs: Vec
+    labels: List[str]
+    matrix, rhs, labels = _square_case()
+    regularized: sparse_solve.SparseProviderLinearSolver = sparse_solve.SparseProviderLinearSolver(provider)
+    before: int = provider.solves
+    shift: float
+    for shift in (1.0e-4, 1.0e-1):
+        shifted: csc_matrix = (matrix + shift * sp.eye(matrix.shape[0], format="csc")).tocsc()
+        correction: Vec = sparse_solve.solve_sparse_system_once(shifted, -rhs, provider, regularized)
+        np.testing.assert_allclose(shifted @ correction, -rhs, atol=1.0e-12)
+    assert provider.solves == before + 2
+
+
+def test_rms_secondary_integrators_use_provider() -> None:
+    """Direct secondary integrators inherit the problem's available LU selection.
+
+    :return: None; only existing integrator/problem combinations are exercised.
+    """
+    provider: CountingProvider = CountingProvider(SuperLUSparseBackendProvider())
+    seed: BackEulerImplicitIntegration | BackEulerImplicitIntegrationVec | BackEulerImplicitIntegrationFullVec = _helper_solver(RmsProblemTypes.PowerBalance, provider)
+    seed.problem.set_sparse_solver_backend_provider(provider, SparseSolver.SuperLU)
+    midpoint: MidpointImplicitIntegration = MidpointImplicitIntegration(seed.problem, 0.0, 0.2, 1.0e-3, 100)
+    trapezoidal: TrapezoidalImplicitIntegration = TrapezoidalImplicitIntegration(seed.problem, 0.0, 0.2, 1.0e-3, 100)
+    back_euler: BackEulerImplicitTensygrid = BackEulerImplicitTensygrid(seed.problem, 0.0, 0.2, 1.0e-3, 100)
+    # The legacy Tensygrid class expects update_variable_params_ts, which no live
+    # RMS problem implements. Preserve that boundary instead of adding model support.
+    assert back_euler._sparse_solver_backend_provider is provider
+    integrator: MidpointImplicitIntegration | TrapezoidalImplicitIntegration
+    for integrator in (midpoint, trapezoidal):
+        assert integrator._sparse_solver_backend_provider is provider
+        # The shared physical fixture's load event occurs at 0.1 seconds.
+        seed.problem.reset_boundary_update_state(0.0)
+        before: int = provider.solves
+        result: tuple[Vec, Mat, bool, bool] = integrator.simulate()
+        assert result[2] and result[3]
+        assert provider.solves > before
+
+
+@pytest.mark.parametrize("solver_class", (AdaptiveBdf12Integration, AdaptiveBdf15Integration))
+def test_rms_adaptive_bdf_integrators_use_provider(solver_class: type) -> None:
+    """Both adaptive BDF integrators factorize and solve their Newton systems through the selected LU.
+
+    :param solver_class: Adaptive BDF integrator under test.
+    :return: None.
+    """
+    provider: CountingProvider = CountingProvider(SuperLUSparseBackendProvider())
+    integrator: AdaptiveBdf12Integration | AdaptiveBdf15Integration = solver_class(
+        DecayDae(), 0.0, 0.3, 0.01, 8, tolerance=1.0e-12, absolute_tolerance=1.0e-9, relative_tolerance=1.0e-7,
+        sparse_solver_backend_provider=provider)
+    result: tuple[Vec, Mat, bool, bool] = integrator.simulate()
+    assert result[2] and result[3]
+    np.testing.assert_allclose(result[1][-1, 0], np.exp(-0.3), rtol=1.0e-4)
+    assert provider.factorizations > 0
+    assert provider.solves > 0
+    # The consistent start needs no projection solve, so every factorization is one Jacobian refresh.
+    assert provider.factorizations == integrator.jacobian_refreshes
+
+
+def test_rms_adaptive_bdf15_rejects_correction_after_invalidated_factors() -> None:
+    """A solve on factors invalidated by an earlier non-finite result rejects the correction instead of raising.
+
+    :return: None.
+    """
+    integrator: AdaptiveBdf15Integration = AdaptiveBdf15Integration(
+        DecayDae(), 0.0, 0.3, 0.01, 8, sparse_solver_backend_provider=SuperLUSparseBackendProvider())
+    matrix: csc_matrix = csc_matrix(np.array([[2.0, 0.0], [0.0, 3.0]]))
+    integrator.factorization = integrator._factorize(matrix)
+    np.testing.assert_allclose(integrator._linear_solve(np.array([2.0, 3.0])), np.array([1.0, 1.0]))
+    integrator._factor_manager.invalidate()
+    assert np.all(np.isnan(integrator._linear_solve(np.array([2.0, 3.0]))))
+
+
+def test_rms_adaptive_bdf12_does_not_reuse_missing_factors() -> None:
+    """BDF1/2 refreshes instead of reusing when its factor owner holds no valid factors.
+
+    :return: None.
+    """
+    integrator: AdaptiveBdf12Integration = AdaptiveBdf12Integration(
+        DecayDae(), 0.0, 0.3, 0.01, 8, sparse_solver_backend_provider=SuperLUSparseBackendProvider())
+    integrator._reuse_jacobian = True
+    integrator._cached_factorization = integrator._factorize(csc_matrix(np.array([[2.0, 0.0], [0.0, 3.0]])))
+    integrator._cached_alpha = 100.0
+    # The owner exists but lost its factors, as after a failed refresh.
+    integrator._factor_manager.invalidate()
+    initial: Vec = np.ones(2)
+    solution: Vec | None = integrator._solve(100.0, -100.0 * initial, initial.copy())
+    assert solution is not None and np.all(np.isfinite(solution))
+    assert integrator.jacobian_refreshes == 1
+    assert integrator.jacobian_reuses == 0
+
+
+@pytest.mark.parametrize("solver_class", (AdaptiveBdf12Integration, AdaptiveBdf15Integration))
+def test_rms_adaptive_bdf_refactorizes_a_jacobian_mutated_in_place(solver_class: type) -> None:
+    """A problem that returns the same Jacobian object mutated in place still gets fresh factors.
+
+    :param solver_class: Adaptive BDF integrator under test.
+    :return: None.
+    """
+    integrator: AdaptiveBdf12Integration | AdaptiveBdf15Integration = solver_class(
+        DecayDae(), 0.0, 0.3, 0.01, 8, sparse_solver_backend_provider=SuperLUSparseBackendProvider())
+    template: csc_matrix = csc_matrix(np.array([[2.0, 0.0], [0.0, 3.0]]))
+    integrator._factorize(template)
+    template.data[:] = np.array([4.0, 5.0])
+    integrator._factorize(template)
+    np.testing.assert_allclose(integrator._factor_manager.solve(np.array([4.0, 5.0])), np.array([1.0, 1.0]))
+

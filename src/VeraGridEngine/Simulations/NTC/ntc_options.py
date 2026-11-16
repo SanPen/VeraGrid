@@ -32,7 +32,7 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
         "monitor_only_ntc_load_rule_branches",
         "consider_contingencies",
         "corrective_contingencies",
-        "strict_formulation",
+        "consider_slacks",
         "opf_options",
         "lin_options",
     )
@@ -50,7 +50,7 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
         GCProp(key="monitor_only_ntc_load_rule_branches", tpe=bool),
         GCProp(key="consider_contingencies", tpe=bool),
         GCProp(key="corrective_contingencies", tpe=bool),
-        GCProp(key="strict_formulation", tpe=bool),
+        GCProp(key="consider_slacks", tpe=bool),
         GCProp(key="opf_options", tpe=DeviceType.SimulationOptionsDevice),
         GCProp(key="lin_options", tpe=DeviceType.SimulationOptionsDevice),
     )
@@ -68,7 +68,7 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
                  monitor_only_ntc_load_rule_branches: bool = False,
                  consider_contingencies: bool = False,
                  corrective_contingencies: bool = True,
-                 strict_formulation: bool = False,
+                 consider_slacks: bool = True,
                  opf_options: OptimalPowerFlowOptions | None = None,
                  lin_options: LinearAnalysisOptions | None = None, ):
         """
@@ -88,7 +88,7 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
         :param corrective_contingencies: corrective N-1, meaning VSC/HVDC converters are dispatchable
                                          Set to False only for a conservative preventive (fixed-set-point) N-1,
                                          e.g. for a regulatory assessment or to reduce the problem size.
-        :param strict_formulation: Use the strict formulation
+        :param consider_slacks: Add penalized relaxation variables to the NTC formulation
         :param opf_options: OptimalPowerFlowOptions
         :param lin_options: LinearAnalysisOptions
         """
@@ -107,7 +107,7 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
         self.monitor_only_ntc_load_rule_branches: bool = monitor_only_ntc_load_rule_branches
         self.consider_contingencies: bool = consider_contingencies
         self.corrective_contingencies: bool = corrective_contingencies
-        self.strict_formulation: bool = strict_formulation
+        self.consider_slacks: bool = consider_slacks
 
         if opf_options is None:
             self.opf_options = OptimalPowerFlowOptions()

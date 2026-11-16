@@ -16,30 +16,23 @@ from VeraGridEngine.Devices.Associations.technology import Technology
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import IntVec
+from VeraGridEngine.enumerations import GeneratorType
 
 if TYPE_CHECKING:
     from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 
 
-def generator_tpe(elm: Generator) -> str:
+def generator_tpe(elm: Generator) -> "pg.GeneratorType":
     """
-    Get the selected technology label for a VeraGrid generator.
+    Convert one VeraGrid generator machine type to pygslv.
 
     :param elm: VeraGrid generator.
-    :return: Name of the strongest technology association, or ``Other``.
+    :return: Equivalent pygslv generator type.
     """
-    best_name: str = "Other"
-    best_value: float = -1.0
-
-    for association in elm.technologies:
-        value: float = float(association.value)
-        if value > best_value:
-            best_value = value
-            best_name = str(association.api_object.name)
-        else:
-            pass
-
-    return best_name
+    if elm.tpe == GeneratorType.Asynchronous:
+        return pg.GeneratorType.Asynchronous
+    else:
+        return pg.GeneratorType.Synchronous
 
 
 def generator_control_mode(elm: Generator) -> "pg.GeneratorControlMode":

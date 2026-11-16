@@ -39,19 +39,21 @@ import numpy as np
 from abc import ABC, abstractmethod
 from enum import Enum
 from numba import njit, types
-from typing import Dict, List, Callable, Tuple, Set, Any
+from numba.core.typing.templates import Signature
+from typing import Dict, List, Callable, Tuple, Set
 import os
 from pathlib import Path
 import importlib.util
 import hashlib
 import scipy.sparse as sp
-from collections import defaultdict
+from collections import defaultdict, ChainMap
 
 #RMS
-from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars
+from VeraGridEngine.Utils.Symbolic.symbolic import _precedence, expression2numba, get_expression_vars, event_parameter_assignments
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 #Totally integrated
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, BinOp, UnOp, Func, Func2, Var, Const
+from VeraGridEngine.Utils.Symbolic.symbolic import _binary_function_to_python, _binary_function_to_ad_python
 from VeraGridEngine.basic_structures import Vec
 
 
@@ -62,14 +64,14 @@ class GeneratedKernelCacheEntry:
 
     __slots__ = ["_python_function", "_signature_tpe"]
 
-    def __init__(self, python_function: Callable, signature_tpe: object) -> None:
+    def __init__(self, python_function: Callable, signature_tpe: Signature) -> None:
         """
         Build one generated-kernel cache entry.
 
         :param python_function: Generated Python function.
         :type python_function: Callable
         :param signature_tpe: Eager Numba signature.
-        :type signature_tpe: object
+        :type signature_tpe: Signature
         :return: None.
         :rtype: None
         """
@@ -85,14 +87,24 @@ class GeneratedKernelCacheEntry:
         """
         return self._python_function
 
-    def get_signature_tpe(self) -> object:
+    def get_signature_tpe(self) -> Signature:
         """
         Return the eager Numba signature.
 
         :return: Eager Numba signature.
-        :rtype: object
+        :rtype: Signature
         """
         return self._signature_tpe
+
+
+def _get_cse_candidate_benefit(candidate: Tuple[int, str]) -> int:
+    """
+    Return the benefit of one CSE candidate, the only key used to order candidates.
+
+    :param candidate: Pair ``(benefit, expression_hash)``.
+    :return: Benefit (occurrences times complexity).
+    """
+    return candidate[0]
 
 
 def _get_cse_sort_key(entry: Tuple[str, str]) -> int:
@@ -657,8 +669,19 @@ def _compile_to_file(full_source: str, func_name: str) -> Callable:
     filepath = os.path.join(cache_dir, filename)
 
     if not os.path.exists(filepath):
-        with open(filepath, "w") as f:
-            f.write(full_content)
+        # Write a private temporary file and rename it, so a concurrent process sharing the cache
+        # directory never imports a partially written kernel.
+        temporary_path: str = f"{filepath}.{os.getpid()}.tmp"
+        Path(temporary_path).write_text(full_content)
+        try:
+            os.replace(temporary_path, filepath)
+        except OSError:
+            # Windows refuses to replace a file another process holds open. The name is the content
+            # hash, so an existing file already holds this kernel: keep it and drop ours.
+            if os.path.exists(filepath):
+                os.remove(temporary_path)
+            else:
+                raise
 
     if mod_name in sys.modules:
         return sys.modules[mod_name].__dict__[func_name]
@@ -874,6 +897,13 @@ def _fingerprint_codegen_expr(node: Expr,
         arg_fp: str = _fingerprint_codegen_expr(
             node.arg, var_map, param_map, method_name, col_map, diff_var_map, structural_context)
         return f"F[{node.op}|{arg_fp}]"
+    elif isinstance(node, Func2):
+        first_fp: str = _fingerprint_codegen_expr(
+            node.arg1, var_map, param_map, method_name, col_map, diff_var_map, structural_context)
+        second_fp: str = _fingerprint_codegen_expr(
+            node.arg2, var_map, param_map, method_name, col_map, diff_var_map, structural_context)
+        # Bindings and argument order are part of both residual and AD cache identity.
+        return f"F2[{node.name}|{first_fp}|{second_fp}]"
     else:
         return f"RAW[{type(node).__name__}|{str(node)}]"
 
@@ -1139,7 +1169,11 @@ class SubexpressionAnalyzer:
                 benefit = count * complexity
                 candidates.append((benefit, expr_hash))
 
-        candidates.sort(reverse=True)
+        # Sort by benefit only: the sort is stable and expr_counts keeps first-occurrence order, so
+        # equal-benefit candidates are numbered in equation order. Breaking ties by the expression
+        # hash would follow the random variable uids, change the generated source in every process
+        # and defeat the content-addressed numba disk cache.
+        candidates.sort(key=_get_cse_candidate_benefit, reverse=True)
         temp_vars: Dict[str, str] = dict()
         for i, (_, expr_hash) in enumerate(candidates):
             temp_vars[expr_hash] = f"_t{i}"
@@ -1292,6 +1326,11 @@ class SubexpressionAnalyzer:
             self._count_subexpressions(node.operand)
         elif isinstance(node, Func):
             self._count_subexpressions(node.arg)
+        elif isinstance(node, Func2):
+            self._count_subexpressions(node.arg1)
+            self._count_subexpressions(node.arg2)
+        else:
+            pass
 
     def _calculate_complexity(self, node: Expr) -> int:
         if id(node) in self.memo_complexity:
@@ -1308,6 +1347,8 @@ class SubexpressionAnalyzer:
             res = 1 + self._calculate_complexity(node.operand)
         elif isinstance(node, Func):
             res = 5 + self._calculate_complexity(node.arg)
+        elif isinstance(node, Func2):
+            res = 5 + self._calculate_complexity(node.arg1) + self._calculate_complexity(node.arg2)
         else:
             res = 1
 
@@ -1346,6 +1387,11 @@ class SubexpressionAnalyzer:
             res = f"{node.op}{operand}"
         elif isinstance(node, Func):
             res = f"{node.op}({self._expr_to_canonical_string(node.arg)})"
+        elif isinstance(node, Func2):
+            first: str = self._expr_to_canonical_string(node.arg1)
+            second: str = self._expr_to_canonical_string(node.arg2)
+            # Retain argument order: atan2 and signed-zero limiter values depend on it.
+            res = f"Func2:{node.name}({first},{second})"
         else:
             res = str(node)
 
@@ -1374,11 +1420,16 @@ class SymbolicToPythonVisitor:
         self._str_cache: Dict[Tuple[int, int], str] = dict()
 
     def _prec(self, node: Expr) -> int:
-        """Return precedence of a node. Non-operators get 'infinite' precedence."""
-        # BinOp nodes define precedence; everything else we treat as atomic.
-        if isinstance(node, BinOp):
-            return self.OP_PRECEDENCE.get(node.op, 0)
-        return 10 ** 9
+        """
+        Return the precedence of a node with the shared expression rule (symbolic._precedence).
+
+        A unary expression or a negative literal binds weaker than '**', so it is
+        parenthesized as an operand of '**', exactly as expression2numba does.
+
+        :param node: Symbolic expression node.
+        :return: Precedence value.
+        """
+        return _precedence(node)
 
     def _maybe_parenthesize(self,
                             code: str,
@@ -1459,6 +1510,8 @@ class SymbolicToPythonVisitor:
                 result = self.visit_var(node, precedence)
             case Func():
                 result = self.visit_func(node, precedence)
+            case Func2():
+                result = self.visit_func2(node, precedence)
             case _:
                 result = self.generic_visit(node, precedence)
 
@@ -1468,6 +1521,17 @@ class SymbolicToPythonVisitor:
 
     def generic_visit(self, node: Expr, _: int) -> str:
         raise NotImplementedError(f"Node not supported: {type(node)}")
+
+    def visit_func2(self, node: Func2, _: int) -> str:
+        """Emit the canonical NumPy value for a binary symbolic function.
+
+        :param node: Binary function with its original ordered arguments.
+        :param _: Parent precedence; a function call is already atomic.
+        :return: Function-call source using elementwise limiter semantics.
+        """
+        first: str = self.visit(node.arg1, 0)
+        second: str = self.visit(node.arg2, 0)
+        return _binary_function_to_python(node.name, first, second)
 
     # def visit_binop(self, node: BinOp, prec: int) -> str:
     #     curr_prec = self.OP_PRECEDENCE.get(node.op, 0)
@@ -1558,6 +1622,14 @@ class SymbolicToPythonVisitor:
 
         return f"np.{op}({arg})"
 
+    def visit_func2(self, node: Func2, _precedence: int) -> str:
+        left = self.visit(node.arg1, 0)
+        right = self.visit(node.arg2, 0)
+        operations = {"atan2": "arctan2", "min": "minimum", "max": "maximum"}
+        if node.name not in operations:
+            raise NotImplementedError(f"Function not supported: {node.name}")
+        return f"np.{operations[node.name]}({left}, {right})"
+
 
 class RuntimeParameterToPythonVisitor(SymbolicToPythonVisitor):
     """Emit expressions for an ordered runtime-parameter update kernel."""
@@ -1641,7 +1713,7 @@ class RuntimeParameterCompiler:
             time_uids=time_uids,
         )
 
-    def compile(self, equations: List[Any], output_offset: int = 0) -> Callable:
+    def compile(self, equations: List[Expr], output_offset: int = 0) -> Callable:
         """Compile ordered expressions into an eagerly specialized Numba kernel.
 
         Each assignment is emitted in declaration order. Consequently, an
@@ -1655,11 +1727,11 @@ class RuntimeParameterCompiler:
         """
         source_lines: List[str] = list()
         equation_index: int
-        expression: Any
+        expression: Expr
         expression_code: str
         full_source: str
         python_function: Callable
-        signature_tpe: object
+        signature_tpe: Signature
 
         source_lines.append("def runtime_parameter_update(runtime_values, fixed_values, tm):")
         for equation_index, expression in enumerate(equations):
@@ -1765,7 +1837,7 @@ class ProceduralExpressionCompiler:
             function_source,
             "procedural_expression",
         )
-        signature_tpe: object = types.float64(
+        signature_tpe: Signature = types.float64(
             types.float64[::1],
             types.float64[::1],
             types.float64[::1],
@@ -1827,7 +1899,7 @@ class ProceduralExpressionCompiler:
             function_source,
             "procedural_boundary_update",
         )
-        signature_tpe: object = types.int64(
+        signature_tpe: Signature = types.int64(
             types.float64[::1],
             types.float64[::1],
             types.float64[::1],
@@ -1903,6 +1975,8 @@ class ADVisitor(SymbolicToPythonVisitor):
                 res = self.visit_var(node, precedence)
             case Func():
                 res = self.visit_func(node, precedence)
+            case Func2():
+                res = self.visit_func2(node, precedence)
             case _:
                 # Fallback for generic or unsupported nodes
                 res = self.generic_visit(node, precedence)
@@ -1910,6 +1984,21 @@ class ADVisitor(SymbolicToPythonVisitor):
         # 5. Store and Return
         self._str_cache[cache_key] = res
         return res
+
+    def visit_func2(self, node: Func2, _: int) -> Tuple[str, str]:
+        """Apply the chain rule while retaining the existing nonsmooth conventions.
+
+        :param node: Binary function whose arguments may also contain derivatives.
+        :param _: Parent precedence; emitted values and JVPs are grouped explicitly.
+        :return: Value source and directional derivative source.
+        """
+        first: str
+        first_derivative: str
+        second: str
+        second_derivative: str
+        first, first_derivative = self.visit(node.arg1, 0)
+        second, second_derivative = self.visit(node.arg2, 0)
+        return _binary_function_to_ad_python(node.name, first, first_derivative, second, second_derivative)
 
     def visit_const(self, node: Const, _: int) -> Tuple[str, str]:
         return str(node.value), "0.0"
@@ -1993,11 +2082,25 @@ class ADVisitor(SymbolicToPythonVisitor):
         rv, rd = self.visit(node.right, curr_prec)
         op = node.op
 
+        # Non-associative operators keep an equal-precedence right operand in
+        # parentheses, as the residual visitor does; literals are never wrapped.
+        right_needs_parentheses: bool = (
+            (op == '-' or op == '/')
+            and isinstance(node.right, BinOp)
+            and self.OP_PRECEDENCE.get(node.right.op, 0) == curr_prec
+            and not _is_zero(rv)
+            and not _is_one(rv)
+        )
+        if right_needs_parentheses:
+            rv = f"({rv})"
+        else:
+            pass
+
         v = ""
         if op == '+':
             v = rv if _is_zero(lv) else (lv if _is_zero(rv) else f"{lv} + {rv}")
         elif op == '-':
-            v = lv if _is_zero(rv) else (f"-{rv}" if _is_zero(lv) else f"{lv} - {rv}")
+            v = lv if _is_zero(rv) else (f"-({rv})" if _is_zero(lv) else f"{lv} - {rv}")
         elif op == '*':
             v = "0.0" if (_is_zero(lv) or _is_zero(rv)) else (
                 rv if _is_one(lv) else (lv if _is_one(rv) else f"{lv} * {rv}"))
@@ -2031,14 +2134,32 @@ class ADVisitor(SymbolicToPythonVisitor):
             if not (_is_zero(ld) and _is_zero(rd)):
                 if isinstance(node.right, Const):
                     val = float(node.right.value)
-                    if val == 1.0:
+                    if val == 0.0:
+                        d = "0.0"
+                    elif val == 1.0:
                         d = ld
                     elif val == 2.0:
                         d = f"2.0*({lv})*({ld})"
                     else:
                         d = f"({val})*(({lv})**({val - 1}))*({ld})"
                 else:
-                    d = f"(({v}) * ( ({rd})*np.log({lv}) + ({rv})*({ld})/({lv}) ))"
+                    # d(u**v) = v*u**(v-1)*du + u**v*log(u)*dv. The base partial has
+                    # no log or division, so it holds wherever u**v is real (negative
+                    # or zero bases included). Each partial is emitted only for a
+                    # derivative that is not a literal zero and evaluated only when
+                    # that derivative is non-zero at run time, so log(u) or an
+                    # infinite u**(v-1) never multiplies a zero seed.
+                    base_term: str = "0.0"
+                    if not _is_zero(ld):
+                        base_term = f"(0.0 if ({ld}) == 0.0 else ({rv})*(({lv})**(({rv}) - 1.0))*({ld}))"
+                    else:
+                        pass
+                    exponent_term: str = "0.0"
+                    if not _is_zero(rd):
+                        exponent_term = f"(0.0 if ({rd}) == 0.0 else ({v})*np.log({lv})*({rd}))"
+                    else:
+                        pass
+                    d = exponent_term if base_term == "0.0" else (base_term if exponent_term == "0.0" else f"({base_term} + {exponent_term})")
 
         return (f"({v})", f"({d})") if curr_prec < prec else (v, d)
 
@@ -2525,7 +2646,7 @@ class EagerEquationCompiler(EquationCompiler):
             n_parameters: int,
             nnz: int,
             with_history2: bool = True,
-    ) -> object:
+    ) -> Signature:
         """
         Build the eager Numba signature for a generated kernel.
 
@@ -2540,10 +2661,10 @@ class EagerEquationCompiler(EquationCompiler):
         :param with_history2: Whether the generated ABI includes ``history2``.
         :type with_history2: bool
         :return: Numba eager signature object.
-        :rtype: object
+        :rtype: Signature
         """
-        float64_vector_tpe: object = types.Array(types.float64, 1, "C")
-        int32_matrix_tpe: object = types.Array(types.int32, 2, "C", readonly=True)
+        float64_vector_tpe: types.Array = types.Array(types.float64, 1, "C")
+        int32_matrix_tpe: types.Array = types.Array(types.int32, 2, "C", readonly=True)
 
         if n_variables <= 0:
             raise ValueError("n_variables must be greater than zero")
@@ -2567,7 +2688,7 @@ class EagerEquationCompiler(EquationCompiler):
                 "EagerEquationCompiler requires an explicit history2 array to keep a strict ABI."
             )
 
-        signature_tpe: object
+        signature_tpe: Signature
         if kernel_tpe == EagerKernelKind.Residual:
             signature_tpe = types.void(
                 float64_vector_tpe,
@@ -2612,7 +2733,7 @@ class EagerEquationCompiler(EquationCompiler):
             use_cse: bool = True,
             offset: int = 0,
             inplace: bool = True,
-    ) -> Tuple[Callable, object]:
+    ) -> Tuple[Callable, Signature]:
         """
         Compile residual equations into an in-place eager kernel.
 
@@ -2627,11 +2748,11 @@ class EagerEquationCompiler(EquationCompiler):
         :param inplace: Compatibility argument that must stay ``True``.
         :type inplace: bool
         :return: Pair ``(python_function, eager_signature)``.
-        :rtype: Tuple[Callable, object]
+        :rtype: Tuple[Callable, Signature]
         """
         lines: List[str] = list()
         py_func: Callable
-        signature_tpe: object
+        signature_tpe: Signature
         full_source: str
         cache_key: str
         cache_entry: GeneratedKernelCacheEntry | None
@@ -2715,7 +2836,7 @@ class EagerEquationCompiler(EquationCompiler):
             func_name: str = "ad_step",
             use_cse: bool = True,
             active_indices: set | None = None,
-    ) -> Tuple[Callable, object]:
+    ) -> Tuple[Callable, Signature]:
         """
         Compile a sparse forward-mode AD kernel into an in-place eager function.
 
@@ -2728,7 +2849,7 @@ class EagerEquationCompiler(EquationCompiler):
         :param active_indices: Colored column subset activated in the current JVP sweep.
         :type active_indices: set | None
         :return: Pair ``(python_function, eager_signature)``.
-        :rtype: Tuple[Callable, object]
+        :rtype: Tuple[Callable, Signature]
         """
         adv: ADVisitor = ADVisitor(
             self.var_map,
@@ -2740,7 +2861,7 @@ class EagerEquationCompiler(EquationCompiler):
         )
         lines: List[str] = list()
         py_func: Callable
-        signature_tpe: object
+        signature_tpe: Signature
         full_source: str
         cache_key: str
         cache_entry: GeneratedKernelCacheEntry | None
@@ -2829,7 +2950,7 @@ class EagerEquationCompiler(EquationCompiler):
             template_eq: Expr,
             func_name: str,
             template_vars: List[Var],
-    ) -> Tuple[Callable, object]:
+    ) -> Tuple[Callable, Signature]:
         """
         Compile a vectorized matrix kernel into an in-place eager function.
 
@@ -2840,14 +2961,14 @@ class EagerEquationCompiler(EquationCompiler):
         :param template_vars: Ordered runtime variables of the structural group.
         :type template_vars: List[Var]
         :return: Pair ``(python_function, eager_signature)``.
-        :rtype: Tuple[Callable, object]
+        :rtype: Tuple[Callable, Signature]
         """
         col_map: Dict[int, int] = dict()
         visitor: MatrixVectorizedVisitor
         rhs_code: str
         lines: List[str] = list()
         py_func: Callable
-        signature_tpe: object
+        signature_tpe: Signature
         full_source: str
 
         # The template variables define the deterministic position of each grouped runtime value.
@@ -2965,7 +3086,8 @@ class RMSCompiler(EquationCompiler):
 
     def compile_sparse_jacobian(self, eqs: List[Expr],
                                 wrt_vars: List[Var],
-                                func_name: str) -> Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix]:
+                                func_name: str,
+                                independent_partials: bool = False) -> Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix]:
         """
         Compiles a sparse Jacobian evaluator using an O(N) structural extraction algorithm.
 
@@ -2983,7 +3105,7 @@ class RMSCompiler(EquationCompiler):
         for row, eq in enumerate(eqs):
             for uid in _collect_candidate_wrt_uids(eq, wrt_map):
                 col, var = wrt_map[uid]
-                d_expr = eq.diff(var, dt=self.dt_var)
+                d_expr = eq.diff(var, dt=None if independent_partials else self.dt_var)
                 if not (isinstance(d_expr, Const) and d_expr.value == 0):
                     triplets.append((col, row, d_expr))
 
@@ -3057,13 +3179,11 @@ class RMSCompiler(EquationCompiler):
             else:
                 pass
 
-        for i, eq in enumerate(eqs):
-            # Event-parameter expressions may reuse the same runtime variable many
-            # times, especially for piecewise ramps built from time-dependent
-            # expressions. The compiled expression must therefore use the alias-
-            # aware name map prepared above, otherwise the generated code can
-            # evaluate a simplified step-like path instead of the intended ramp.
-            expr_str = expression2numba(eq, final_names_dict)
+        for i, dependency_names in event_parameter_assignments(
+                eqs, self.compiler_names_dict, EVENT_PARAMS_NAME):
+            # Read dependent parameters from outputs already calculated in this
+            # call. A self-reference still reads the incoming runtime value.
+            expr_str = expression2numba(eqs[i], ChainMap(dependency_names, final_names_dict))
             lines.append(f"    out[{i}] = {expr_str}")
 
         lines.append("    return out")
@@ -3173,7 +3293,8 @@ class RMSCompilerVec(EquationCompiler):
 
     def compile_sparse_jacobian(self, eqs: List[Expr],
                                 wrt_vars: List[Var],
-                                func_name: str) -> Callable[[Vec, Vec, Vec, Vec, float], np.ndarray]:
+                                func_name: str,
+                                independent_partials: bool = False) -> Callable[[Vec, Vec, Vec, Vec, float], np.ndarray]:
         """
         Compiles a vectorized sparse Jacobian evaluator.
 
@@ -3191,7 +3312,7 @@ class RMSCompilerVec(EquationCompiler):
         for row, eq in enumerate(eqs):
             for uid in _collect_candidate_wrt_uids(eq, wrt_map):
                 col, var = wrt_map[uid]
-                d_expr = eq.diff(var, dt=self.dt_var)
+                d_expr = eq.diff(var, dt=None if independent_partials else self.dt_var)
                 if not (isinstance(d_expr, Const) and d_expr.value == 0):
                     triplets.append((col, row, d_expr))
 
@@ -3267,13 +3388,11 @@ class RMSCompilerVec(EquationCompiler):
             else:
                 pass
 
-        for i, eq in enumerate(eqs):
-            # Event-parameter expressions may reuse the same runtime variable many
-            # times, especially for piecewise ramps built from time-dependent
-            # expressions. The compiled expression must therefore use the alias-
-            # aware name map prepared above, otherwise the generated code can
-            # evaluate a simplified step-like path instead of the intended ramp.
-            expr_str = expression2numba(eq, final_names_dict)
+        for i, dependency_names in event_parameter_assignments(
+                eqs, self.compiler_names_dict, EVENT_PARAMS_NAME):
+            # Read dependent parameters from outputs already calculated in this
+            # call. A self-reference still reads the incoming runtime value.
+            expr_str = expression2numba(eqs[i], ChainMap(dependency_names, final_names_dict))
             lines.append(f"    out[{i}] = {expr_str}")
 
         lines.append("    return out")

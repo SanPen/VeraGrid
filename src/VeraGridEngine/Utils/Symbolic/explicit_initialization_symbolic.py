@@ -49,6 +49,7 @@ from VeraGridEngine.Utils.procedural_logic import (
     SampledValueLogic,
     TimeDelayLogic,
 )
+from VeraGridEngine.Utils.procedural_logic import ProceduralLogicBase
 
 
 class SelfImplicitSolveResult:
@@ -295,6 +296,50 @@ def evaluate_explicit_init_equation(
             unresolved_desc = ", ".join(f"{vr.name} (uid={vr.uid})" for vr in unresolved)
             raise ValueError(
                 f"Failed to evaluate explicit init equation '{eq}' with unresolved vars: {unresolved_desc}"
+            ) from exc
+        except ZeroDivisionError as exc:
+            indeterminate_divisions: Dict[Expr, Expr] = dict()
+
+            def collect_zero_over_zero(candidate: Expr) -> None:
+                """Collect evaluable nested ``0/0`` binary divisions."""
+                if isinstance(candidate, BinOp):
+                    collect_zero_over_zero(candidate.left)
+                    collect_zero_over_zero(candidate.right)
+                    if candidate.op == "/":
+                        try:
+                            numerator_value = candidate.left.eval_uid(
+                                uid_bindings
+                            )
+                            denominator_value = candidate.right.eval_uid(
+                                uid_bindings
+                            )
+                        except (ValueError, ZeroDivisionError):
+                            pass
+                        else:
+                            if (
+                                    numerator_value == 0.0
+                                    and denominator_value == 0.0
+                            ):
+                                indeterminate_divisions[candidate] = Const(0.0)
+                            else:
+                                pass
+
+            collect_zero_over_zero(eq)
+            if len(indeterminate_divisions) > 0:
+                try:
+                    return eq.subs(indeterminate_divisions).eval_uid(uid_bindings)
+                except ZeroDivisionError:
+                    # A remaining nonzero/zero division retains the detailed
+                    # fail-closed diagnostic below.
+                    pass
+            zero_denominators: List[str] = list(
+                f"{vr.name}={uid_bindings[vr.uid]}"
+                for vr in find_vars_order(eq)
+                if vr.uid in uid_bindings and uid_bindings[vr.uid] == 0.0
+            )
+            raise ZeroDivisionError(
+                f"Explicit init equation '{eq}' divided by zero; "
+                f"zero-valued inputs: {', '.join(zero_denominators)}"
             ) from exc
 
 
@@ -554,6 +599,8 @@ def build_init_dict(mdl, init_vars, init_event):
         build_init_dict(blk, init_vars, init_event)
 
 
+
+
 def _coerce_procedural_initial_expression(
         expression: Expr | Comparison | float | int | bool,
 ) -> Expr:
@@ -647,7 +694,7 @@ def apply_procedural_initializers(
     :param init_event: Runtime initialization equations updated in place.
     :return: None.
     """
-    procedural_entry: object
+    procedural_entry: ProceduralLogicBase
 
     for procedural_entry in mdl.procedural_logic:
         source_expression: Expr | None
@@ -921,6 +968,135 @@ def add_direct_algebraic_init_dependencies(
                                 init_vars[dependency_var] = direct_eq
                                 dependency_added = True
 
+
+def add_resolvable_direct_algebraic_initializers(
+        mdl: Block,
+        init_vars: Dict[Var, Union[Expr, Const]],
+        direct_initializers: Dict[Var, Expr],
+        preserved_var_uids: set[int],
+) -> None:
+    """Seed acyclic direct assignments downstream of known initial values.
+
+    A DGS ``inc(...)`` declaration often initializes the physical inputs of a
+    controller and leaves intermediate algebraic assignments to compute from
+    them. Those assignments are already explicit residuals of the form
+    ``target - expression``. Evaluate their forward dependency closure during
+    explicit initialization so the first Jacobian is taken at the declared
+    controller operating point.
+
+    Only assignments whose runtime-variable dependencies are already resolved
+    are admitted. This leaves implicit equations, unresolved boundaries, and
+    algebraic cycles under DAE ownership. Externally supplied operating-point
+    seeds are never replaced.
+
+    :param mdl: Symbolic block owning the runtime variables.
+    :param init_vars: Unified explicit initialization equations, updated in place.
+    :param direct_initializers: Available direct algebraic assignments.
+    :param preserved_var_uids: Variables seeded by an external operating point.
+    :return: None.
+    """
+    runtime_var_uids: set[int] = set()
+    nested_block: Block
+    for nested_block in mdl.get_all_blocks():
+        runtime_var: Var
+        for runtime_var in (
+                nested_block.state_vars
+                + nested_block.algebraic_vars
+                + nested_block.reformulated_vars
+        ):
+            runtime_var_uids.add(runtime_var.uid)
+
+    resolved_uids: set[int] = set(preserved_var_uids)
+    resolved_uids.update(variable.uid for variable in init_vars)
+    assignment_added: bool = True
+    while assignment_added:
+        assignment_added = False
+        target_var: Var
+        target_expression: Expr
+        for target_var, target_expression in direct_initializers.items():
+            if target_var.uid in resolved_uids:
+                pass
+            else:
+                unresolved_runtime_dependency: bool = False
+                dependency_var: Var
+                for dependency_var in get_expression_vars(target_expression):
+                    if (
+                            dependency_var.uid in runtime_var_uids
+                            and dependency_var.uid not in resolved_uids
+                    ):
+                        unresolved_runtime_dependency = True
+                    else:
+                        pass
+
+                if unresolved_runtime_dependency:
+                    pass
+                else:
+                    candidate_init_vars: Dict[Var, Union[Expr, Const]] = dict(
+                        init_vars
+                    )
+                    candidate_init_vars[target_var] = target_expression
+                    creates_cycle: bool = False
+                    dependency_var: Var
+                    for dependency_var in get_expression_vars(target_expression):
+                        if initialization_dependency_reaches_uid(
+                                start_var=dependency_var,
+                                target_uid=target_var.uid,
+                                init_vars=candidate_init_vars,
+                                visited_uids=set(),
+                        ):
+                            creates_cycle = True
+                        else:
+                            pass
+
+                    if creates_cycle:
+                        pass
+                    else:
+                        init_vars[target_var] = target_expression
+                        resolved_uids.add(target_var.uid)
+                        assignment_added = True
+
+def restore_seeded_equipment_boundaries(
+        mdl: Block,
+        init_vars: Dict[Var, Union[Expr, Const]],
+        preserved_uids: set[int],
+) -> None:
+    """Use an explicit physical seed to break a seeded algebraic identity cycle.
+
+    Only a pair declared in ``post_init_seed_eqs`` qualifies: the seed depends
+    on a power-flow output, while that output's initializer depends on the
+    seeded variable. Unrelated cycles remain errors in the dependency graph.
+    """
+    for block in mdl.get_all_blocks():
+        for output_var in block.external_mapping.values():
+            if output_var is None or output_var.uid not in preserved_uids or output_var not in block.algebraic_vars:
+                continue
+            output_init = next(
+                (expr for var, expr in init_vars.items() if var.uid == output_var.uid),
+                None,
+            )
+            if output_init is None:
+                continue
+            output_dependencies = get_expression_vars(output_init)
+            for seed_var, seed_expr in block.post_init_seed_eqs.items():
+                if not any(
+                    initialization_dependency_reaches_uid(
+                        start_var=dependency,
+                        target_uid=seed_var.uid,
+                        init_vars=init_vars,
+                        visited_uids=set(),
+                    )
+                    for dependency in output_dependencies
+                ):
+                    continue
+                if output_var.uid not in {var.uid for var in get_expression_vars(seed_expr)}:
+                    continue
+                for init_var in list(init_vars):
+                    if init_var.uid in (output_var.uid, seed_var.uid):
+                        init_vars.pop(init_var)
+                init_vars[seed_var] = seed_expr
+                break
+
+
 def build_explicit_init_graph(
         mdl: Block,
         preserved_var_uids: Optional[set[int]] = None,
@@ -945,6 +1121,7 @@ def build_explicit_init_graph(
     else:
         preserved_uids = set(preserved_var_uids)
     build_init_dict(mdl, init_vars, init_event)
+    restore_seeded_equipment_boundaries(mdl, init_vars, preserved_uids)
     apply_procedural_initializers(
         mdl=mdl,
         init_event=init_event,
@@ -969,6 +1146,13 @@ def build_explicit_init_graph(
         direct_initializers=direct_initializers,
         preserved_var_uids=preserved_uids,
     )
+    add_resolvable_direct_algebraic_initializers(
+        mdl=mdl,
+        init_vars=init_vars,
+        direct_initializers=direct_initializers,
+        preserved_var_uids=preserved_uids,
+    )
+    restore_seeded_equipment_boundaries(mdl, init_vars, preserved_uids)
 
     graph: Dict[Var, List[Var]] = defaultdict(list)
     in_degree: Dict[Var, int] = defaultdict(int)
@@ -1286,9 +1470,11 @@ def build_explicit_external_uid_values(
     :return: External values keyed by the exact variable UIDs used by the block.
     """
     external_uid_values: Dict[int, float] = dict()
+    equation_groups: List[List[Union[Expr, Const]]] = list()
+    procedural_initializers: Dict[Var, Union[Expr, Const]] = dict()
     runtime_block: Block
     for runtime_block in mdl.get_all_blocks():
-        equation_groups: List[List[Union[Expr, Const]]] = list([
+        equation_groups.extend((
             list(runtime_block.algebraic_eqs),
             list(runtime_block.state_eqs),
             list(runtime_block.differential_eqs),
@@ -1297,29 +1483,26 @@ def build_explicit_external_uid_values(
             list(runtime_block.event_dict.values()),
             list(runtime_block.mode_dict.values()),
             list(runtime_block.boolean_guards.values()),
-        ])
-        equation_group: List[Union[Expr, Const]]
-        equation: Union[Expr, Const]
-        equation_var: Var
-        for equation_group in equation_groups:
-            for equation in equation_group:
-                for equation_var in find_vars_order(equation):
-                    external_value: float | None = external_name_values.get(
-                        equation_var.name,
-                        None,
-                    )
-                    if external_value is None:
-                        pass
-                    else:
-                        external_uid_values[equation_var.uid] = float(external_value)
-                else:
+        ))
+        procedural_initializers.update(runtime_block.event_dict)
+        procedural_initializers.update(runtime_block.mode_dict)
+
+    # Use the same startup expressions as build_explicit_init_graph. A time
+    # dependency may exist only in procedural logic, while its mode declaration
+    # still contains a constant fallback. Do not mutate the model's modes here.
+    apply_procedural_initializers(mdl=mdl, init_event=procedural_initializers)
+    equation_groups.append(list(procedural_initializers.values()))
+    equation_group: List[Union[Expr, Const]]
+    equation: Union[Expr, Const]
+    equation_var: Var
+    for equation_group in equation_groups:
+        for equation in equation_group:
+            for equation_var in find_vars_order(equation):
+                external_value: float | None = external_name_values.get(equation_var.name, None)
+                if external_value is None:
                     pass
-            else:
-                pass
-        else:
-            pass
-    else:
-        pass
+                else:
+                    external_uid_values[equation_var.uid] = float(external_value)
 
     return external_uid_values
 
@@ -1524,7 +1707,11 @@ def init_explicit_common(
                     dx[uid2idx_diff[var.uid]] = result
                     working_diff_init_guess[var.uid] = result
                 else:
-                    raise RuntimeError(f"Unable to classify explicit variable {var.name}")
+                    # DGS ``inc()`` chains may contain initialization-only
+                    # helper variables. They are valid dependency nodes but
+                    # intentionally own no runtime state or algebraic column.
+                    # Retain their evaluated value for downstream equations.
+                    working_init_guess[var.uid] = result
 
             else:
                 # Todo: refactor this to use compile_rhs function already built in jit_compiler

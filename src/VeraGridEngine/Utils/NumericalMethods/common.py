@@ -127,13 +127,19 @@ class ConvexMethodResult:
 def find_closest_number(arr: Vec, target: float) -> Tuple[int, float]:
     """
     Find the closest number that exists in array
-    :param arr: Array to be searched (must be sorted from min to max)
+    :param arr: Array to be searched (sorted from min to max, or a table that falls from its first to its last value)
     :param target: Value to search for
     :return: index in the array, Closes adjusted or truncated value
     """
     if len(arr) == 0:
         # nothing to do
         return -1, target
+    elif arr[0] > arr[-1]:
+        # a falling table has no order for the walk below to rely on
+        index: int = int(np.argmin(np.abs(arr - target)))
+        return index, arr[index]
+    else:
+        pass
 
     prev: float = arr[0]
 

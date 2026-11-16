@@ -9,10 +9,10 @@ import numpy as np
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Fluid.fluid_node import FluidNode
 from VeraGridEngine.Devices.Injections.generator import Generator
-from VeraGridEngine.Devices.Profiles import ProfileBool
+from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
 from VeraGridEngine.Devices.Aggregation.facility import Facility
 from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat
-from VeraGridEngine.Devices.Parents.editable_device import GCProp
+from VeraGridEngine.Devices.Parents.editable_device import GCProp, get_at
 
 
 class FluidInjectionTemplate(PhysicalDevice):
@@ -21,6 +21,8 @@ class FluidInjectionTemplate(PhysicalDevice):
         '_active_prof',
         '_efficiency',
         '_max_flow_rate',
+        '_efficiency_prof',
+        '_max_flow_rate_prof',
         '_plant',
         '_generator',
         'build_status',
@@ -41,6 +43,7 @@ class FluidInjectionTemplate(PhysicalDevice):
             units="MWh/m3",
             tpe=float,
             definition="Power plant energy production per fluid unit",
+            profile_name='efficiency_prof',
             cat=[PrpCat.OPF],
         ),
         GCProp(
@@ -48,6 +51,7 @@ class FluidInjectionTemplate(PhysicalDevice):
             units="m3/s",
             tpe=float,
             definition="maximum fluid flow",
+            profile_name='max_flow_rate_prof',
             cat=[PrpCat.OPF],
         ),
         GCProp(
@@ -110,6 +114,8 @@ class FluidInjectionTemplate(PhysicalDevice):
 
         self.efficiency = float(efficiency)  # MWh/m3
         self.max_flow_rate = float(max_flow_rate)  # m3/s
+        self._efficiency_prof = ProfileFloat(default_value=self.efficiency)
+        self._max_flow_rate_prof = ProfileFloat(default_value=self.max_flow_rate)
         self._plant: FluidNode = plant
         self._generator: Generator = generator
 
@@ -210,6 +216,36 @@ class FluidInjectionTemplate(PhysicalDevice):
         self._efficiency = float(val)
 
     @property
+    def efficiency_prof(self) -> ProfileFloat:
+        """Get the conversion-efficiency profile.
+
+        :return: Snapshot-aligned efficiency profile.
+        """
+        return self._efficiency_prof
+
+    @efficiency_prof.setter
+    def efficiency_prof(self, val: Union[ProfileFloat, np.ndarray]) -> None:
+        """Set the conversion-efficiency profile.
+
+        :param val: Native profile or snapshot-aligned values.
+        :return: None.
+        """
+        if isinstance(val, ProfileFloat):
+            self._efficiency_prof = val
+        elif isinstance(val, np.ndarray):
+            self._efficiency_prof.set(arr=val)
+        else:
+            raise TypeError(f"Unsupported fluid efficiency profile: {type(val)!r}")
+
+    def get_efficiency_at(self, t: int | None) -> float:
+        """Get conversion efficiency at one snapshot.
+
+        :param t: Snapshot index, or ``None`` for the scalar value.
+        :return: Conversion efficiency.
+        """
+        return get_at(self.efficiency, self.efficiency_prof, t)
+
+    @property
     def max_flow_rate(self) -> float:
         """
         Get ``max_flow_rate``.
@@ -227,3 +263,33 @@ class FluidInjectionTemplate(PhysicalDevice):
         :return: None
         """
         self._max_flow_rate = float(val)
+
+    @property
+    def max_flow_rate_prof(self) -> ProfileFloat:
+        """Get the maximum-flow profile.
+
+        :return: Snapshot-aligned maximum flow in m3/s.
+        """
+        return self._max_flow_rate_prof
+
+    @max_flow_rate_prof.setter
+    def max_flow_rate_prof(self, val: Union[ProfileFloat, np.ndarray]) -> None:
+        """Set the maximum-flow profile.
+
+        :param val: Native profile or snapshot-aligned values.
+        :return: None.
+        """
+        if isinstance(val, ProfileFloat):
+            self._max_flow_rate_prof = val
+        elif isinstance(val, np.ndarray):
+            self._max_flow_rate_prof.set(arr=val)
+        else:
+            raise TypeError(f"Unsupported fluid maximum-flow profile: {type(val)!r}")
+
+    def get_max_flow_rate_at(self, t: int | None) -> float:
+        """Get maximum flow at one snapshot.
+
+        :param t: Snapshot index, or ``None`` for the scalar value.
+        :return: Maximum flow in m3/s.
+        """
+        return get_at(self.max_flow_rate, self.max_flow_rate_prof, t)

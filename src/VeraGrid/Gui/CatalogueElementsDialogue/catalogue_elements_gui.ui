@@ -2,15 +2,29 @@
 <ui version="4.0">
  <class>CatalogueElementsDialog</class>
  <widget class="QDialog" name="CatalogueElementsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>541</width>
+    <height>385</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Add catalogue elements</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="contentsMargins">
-    <left>6</left>
-    <top>6</top>
-    <right>6</right>
-    <bottom>6</bottom>
+   <property name="leftMargin">
+    <number>6</number>
+   </property>
+   <property name="topMargin">
+    <number>6</number>
+   </property>
+   <property name="rightMargin">
+    <number>6</number>
+   </property>
+   <property name="bottomMargin">
+    <number>6</number>
    </property>
    <item>
     <widget class="QLabel" name="titleLabel">
@@ -25,7 +39,7 @@
       <bool>true</bool>
      </property>
      <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
+      <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
      </property>
      <property name="uniformRowHeights">
       <bool>true</bool>
@@ -42,22 +56,36 @@
     <layout class="QHBoxLayout" name="toolsLayout">
      <item>
       <widget class="QPushButton" name="selectAllButton">
-       <property name="text">
+       <property name="toolTip">
         <string>Select all</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../Icons/icons.qrc">
+         <normaloff>:/Icons/icons/check_all.png</normaloff>:/Icons/icons/check_all.png</iconset>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="selectNoneButton">
-       <property name="text">
+       <property name="toolTip">
         <string>Select none</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../Icons/icons.qrc">
+         <normaloff>:/Icons/icons/uncheck_all.png</normaloff>:/Icons/icons/uncheck_all.png</iconset>
        </property>
       </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -67,18 +95,26 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QPushButton" name="acceptButton">
+       <property name="toolTip">
+        <string>Import selected models</string>
+       </property>
+       <property name="text">
+        <string>Import models</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../Icons/icons.qrc">
+         <normaloff>:/Icons/icons/accept.png</normaloff>:/Icons/icons/accept.png</iconset>
+       </property>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../Icons/icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
-

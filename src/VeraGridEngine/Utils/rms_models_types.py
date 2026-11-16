@@ -127,7 +127,7 @@ def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int
 
     for model_list in all_model_lists:
         if model_list:
-            model_result, var_result = compare_n_blocks_structurally(model_list)
+            model_result, var_result = compare_n_blocks_structurally(model_list, by_class=True)
             class_equivalence_dict.update(model_result)
             for rep_uid in model_result:
                 rep_block = uid_to_block[rep_uid]
@@ -135,8 +135,13 @@ def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int
                 for b in rep_block.get_all_blocks():
                     rep_var_uids.update(_get_var_attribute_mapping(b).keys())
                 var_lists = []
-                for ref_var_uid, equiv_uids in var_result.items():
+                for ref_var_uid, equiv_uids in var_result.get(rep_uid, {}).items():
                     if ref_var_uid in rep_var_uids:
+                        if len(equiv_uids) != len(model_result[rep_uid]):
+                            raise ValueError(
+                                f"Variable alignment for model {rep_uid} has "
+                                f"{len(equiv_uids)} peers; expected {len(model_result[rep_uid])}"
+                            )
                         var_lists.append([ref_var_uid] + equiv_uids)
                 if var_lists:
                     variables_equivalence_dict[rep_uid] = var_lists
@@ -157,8 +162,6 @@ def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int
         reference_class_for_all_blocks_dict[rep_uid] = sorted(all_uids)
 
     return class_equivalence_dict, variables_equivalence_dict, block_composition_dict, reference_class_for_all_blocks_dict
-
-
 
 
 

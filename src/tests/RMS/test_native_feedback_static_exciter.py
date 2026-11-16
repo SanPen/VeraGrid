@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent static feedback transfer, limiter topology and auxiliary routing checks."""
 from __future__ import annotations
@@ -5,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.excitation_systems.bbsex1 import AuxiliaryVoltageLocation, FeedbackStaticExciterParameters, build_bbsex1_template
+from VeraGridEngine.Templates.Rms.excitation_systems.bbsex1 import AuxiliaryVoltageLocation, FeedbackStaticExciterParameters, build_bbsex1_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller, linearized_response
 
@@ -81,7 +85,7 @@ def test_static_feedback_nonzero_auxiliary_initialization(location: AuxiliaryVol
 
     :param location: Physical auxiliary insertion point.
     """
-    from VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template import set_rms_model_parameter
+    from VeraGridEngine.Templates.Rms.synchronous_machines.genrou_exc_gov_rms_template import set_rms_model_parameter
     from VeraGridEngine.Utils.Symbolic.symbolic import Const
     vf: VarFactory = VarFactory()
     block: Block = build_bbsex1_template(vf,'feedback',FeedbackStaticExciterParameters(auxiliary_location=location)).block

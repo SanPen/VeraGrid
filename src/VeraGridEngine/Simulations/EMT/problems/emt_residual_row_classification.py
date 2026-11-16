@@ -20,6 +20,7 @@ import numpy as np
 import numpy.typing as npt
 
 from VeraGridEngine.enumerations import ExpressionAffinity, ResidualRowAffinityCode
+from VeraGridEngine.Utils.artifact_validation import immutable_array, validate_model_identity
 from VeraGridEngine.Utils.canonical_json import canonical_json_bytes
 from VeraGridEngine.Utils.Symbolic.structural_affinity import StructuralAffinityAnalyzer
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
@@ -222,36 +223,6 @@ def classify_emt_residual_rows(problem: EmtProblemTemplate) -> EmtResidualRowCla
     )
 
 
-def _validated_int32_array(values: object, name: str) -> npt.NDArray[np.int32]:
-    """
-    Validate an integer index array and return an immutable native int32 copy.
-
-    :param values: One-dimensional numpy array of integer (not bool) dtype.
-    :param name: Array name used in error messages.
-    :return: C-contiguous int32 array backed by immutable bytes.
-    :raises ValueError: When the array is not a one-dimensional integer array
-        or holds values outside the int32 range.
-    """
-    if not isinstance(values, np.ndarray):
-        raise ValueError(name + " must be a numpy array")
-    elif values.ndim != 1:
-        raise ValueError(name + " must be one-dimensional")
-    elif values.dtype == np.bool_ or not np.issubdtype(values.dtype, np.integer):
-        raise ValueError(name + " must have an integer dtype")
-    else:
-        pass
-
-    int32_info: np.iinfo = np.iinfo(np.int32)
-    if values.size > 0 and (int(values.min()) < int(int32_info.min) or int(values.max()) > int(int32_info.max)):
-        raise ValueError(name + " holds values outside the int32 range")
-    else:
-        pass
-
-    # Backing the array with immutable bytes makes writeable impossible to re-enable.
-    native: npt.NDArray[np.int32] = np.ascontiguousarray(values, dtype=np.int32)
-    return np.frombuffer(native.tobytes(), dtype=np.int32)
-
-
 def _is_strictly_ascending_within(values: npt.NDArray[np.int32], upper_bound: int) -> bool:
     """
     Tell whether an index array is strictly ascending within [0, upper_bound).
@@ -317,16 +288,7 @@ class EmtResidualRowMap:
         :raises ValueError: When any structural invariant does not hold.
         """
         # Model identity: 1..256 characters in 0x20..0x7E.
-        if type(model_identity) is not str or len(model_identity) < 1 or len(model_identity) > 256:
-            raise ValueError("model_identity must be a str of 1..256 characters")
-        else:
-            pass
-        character: str
-        for character in model_identity:
-            if ord(character) < 0x20 or ord(character) > 0x7E:
-                raise ValueError("model_identity must contain only printable ASCII characters")
-            else:
-                pass
+        validate_model_identity(model_identity)
 
         # Scalars: exact int, square system, state rows inside the system.
         if type(n_rows) is not int or type(n_columns) is not int or type(state_row_count) is not int:
@@ -341,9 +303,9 @@ class EmtResidualRowMap:
             pass
 
         # Arrays: one-dimensional int32 values, then their own invariants.
-        affinity: npt.NDArray[np.int32] = _validated_int32_array(row_affinity, "row_affinity")
-        opaque: npt.NDArray[np.int32] = _validated_int32_array(opaque_rows, "opaque_rows")
-        support: npt.NDArray[np.int32] = _validated_int32_array(nonlinear_support_columns, "nonlinear_support_columns")
+        affinity: npt.NDArray[np.int32] = immutable_array(row_affinity, "row_affinity", np.dtype(np.int32))
+        opaque: npt.NDArray[np.int32] = immutable_array(opaque_rows, "opaque_rows", np.dtype(np.int32))
+        support: npt.NDArray[np.int32] = immutable_array(nonlinear_support_columns, "nonlinear_support_columns", np.dtype(np.int32))
         lowest_code: int = int(ResidualRowAffinityCode.CONSTANT)
         highest_code: int = int(ResidualRowAffinityCode.NONLINEAR)
         if affinity.shape[0] != n_rows:

@@ -6,7 +6,7 @@
 """
 Sparse LU backends driven by an installed native LU runtime module.
 
-Native LU runtime contract (KLU today, GSLV later). A runtime is a Python module
+Native LU runtime contract. A runtime is a Python module
 object located only by import name, exposing:
 
 - ``analyze(indptr, indices, n) -> symbolic``
@@ -21,8 +21,7 @@ Arrays are a canonical CSC pattern (sorted indices, no duplicates) with int32
 C-contiguous vectors. Failures raise ``RuntimeError``. A numeric object may depend on
 its symbolic object, so callers keep both alive together. Handles are used by one
 thread at a time. KLU is provided by ``cvxoptklu._klu_native`` (distribution
-``veragrid-cvxoptklu``); GSLV must expose the same contract as the attribute
-``pygslv.sparse_lu`` of the licensed ``pygslv`` module.
+``veragrid-cvxoptklu``).
 """
 
 from __future__ import annotations
@@ -32,7 +31,6 @@ from types import ModuleType
 from typing import Any, Dict, Tuple
 
 import numpy as np
-from scipy.sparse import csc_matrix
 
 from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import (
     SparseLinearFactorizationHandle,
@@ -40,7 +38,7 @@ from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface impo
     SparseLinearSolverBackendProvider,
 )
 from VeraGridEngine.Utils.optional_dependencies import optional_dependency_failure
-from VeraGridEngine.basic_structures import Vec
+from VeraGridEngine.basic_structures import CscMat, Vec
 from VeraGridEngine.enumerations import SparseSolver
 
 class NativeLuRuntimeFactorizationHandle(SparseLinearFactorizationHandle):
@@ -50,7 +48,7 @@ class NativeLuRuntimeFactorizationHandle(SparseLinearFactorizationHandle):
 
     __slots__ = ["_runtime", "_symbolic", "_numeric", "_active_matrix"]
 
-    def __init__(self, runtime: ModuleType, symbolic: Any, numeric: Any, active_matrix: csc_matrix) -> None:
+    def __init__(self, runtime: ModuleType, symbolic: Any, numeric: Any, active_matrix: CscMat) -> None:
         """
         Wrap one native numeric factorization.
 
@@ -62,7 +60,7 @@ class NativeLuRuntimeFactorizationHandle(SparseLinearFactorizationHandle):
         self._runtime: ModuleType = runtime
         self._symbolic: Any = symbolic
         self._numeric: Any = numeric
-        self._active_matrix: csc_matrix = active_matrix
+        self._active_matrix: CscMat = active_matrix
 
     def get_symbolic(self) -> Any:
         """
@@ -90,7 +88,7 @@ class NativeLuRuntimeFactorizationHandle(SparseLinearFactorizationHandle):
         """
         self._runtime.solve_into(self._numeric, rhs, out_solution)
 
-    def get_active_matrix(self) -> csc_matrix:
+    def get_active_matrix(self) -> CscMat:
         """
         Return the matrix associated with this factorization.
 
@@ -106,7 +104,7 @@ class NativeLuRuntimeBackend(SparseLinearSolverBackend):
 
     __slots__ = ["_runtime", "_name", "_solver_type", "_base_matrix", "_base_data", "_indptr", "_indices", "_stats"]
 
-    def __init__(self, runtime: ModuleType, name: str, solver_type: SparseSolver, base_matrix: csc_matrix, base_data: Vec) -> None:
+    def __init__(self, runtime: ModuleType, name: str, solver_type: SparseSolver, base_matrix: CscMat, base_data: Vec) -> None:
         """
         Bind the backend to one persistent canonical CSC shell.
 
@@ -123,14 +121,14 @@ class NativeLuRuntimeBackend(SparseLinearSolverBackend):
             raise ValueError("The native LU runtime requires a canonical CSC pattern (sorted indices, no duplicates)")
         elif base_data.dtype != np.float64 or base_data.shape[0] != base_matrix.nnz:
             raise ValueError("The native LU runtime requires float64 values matching the CSC pattern")
-        elif not np.shares_memory(base_data, base_matrix.data):
+        elif base_data.size > 0 and not np.shares_memory(base_data, base_matrix.data):
             raise ValueError("The native LU runtime requires base_data to be the live values of base_matrix")
         else:
             pass
         self._runtime: ModuleType = runtime
         self._name: str = name
         self._solver_type: SparseSolver = solver_type
-        self._base_matrix: csc_matrix = base_matrix
+        self._base_matrix: CscMat = base_matrix
         self._base_data: Vec = base_data
         self._indptr: np.ndarray = np.ascontiguousarray(base_matrix.indptr, dtype=np.int32)
         self._indices: np.ndarray = np.ascontiguousarray(base_matrix.indices, dtype=np.int32)
@@ -176,18 +174,18 @@ class NativeLuRuntimeBackend(SparseLinearSolverBackend):
         """
         return True
 
-    def analyze(self, matrix: csc_matrix) -> Any:
+    def analyze(self, matrix: CscMat) -> Any:
         """
         Analyse the persistent sparsity pattern.
 
         :param matrix: Unused; the backend is bound to its persistent shell.
         :return: Opaque symbolic analysis.
         """
-        _unused_matrix: csc_matrix = matrix
+        _unused_matrix: CscMat = matrix
         self._stats["analyses"] += 1.0
         return self._runtime.analyze(self._indptr, self._indices, int(self._base_matrix.shape[0]))
 
-    def factorize(self, matrix: csc_matrix, analysis_handle: Any | None) -> SparseLinearFactorizationHandle:
+    def factorize(self, matrix: CscMat, analysis_handle: Any | None) -> SparseLinearFactorizationHandle:
         """
         Factorize the current values of the persistent shell.
 
@@ -195,7 +193,7 @@ class NativeLuRuntimeBackend(SparseLinearSolverBackend):
         :param analysis_handle: Symbolic analysis, or None to analyse first.
         :return: Native factorization handle owning its symbolic analysis.
         """
-        _unused_matrix: csc_matrix = matrix
+        _unused_matrix: CscMat = matrix
         if analysis_handle is None:
             symbolic: Any = self.analyze(self._base_matrix)
         else:
@@ -204,7 +202,7 @@ class NativeLuRuntimeBackend(SparseLinearSolverBackend):
         self._stats["numeric_factorizations"] += 1.0
         return NativeLuRuntimeFactorizationHandle(self._runtime, symbolic, numeric, self._base_matrix)
 
-    def refactor_numeric(self, matrix: csc_matrix, analysis_handle: Any | None,
+    def refactor_numeric(self, matrix: CscMat, analysis_handle: Any | None,
                          previous: SparseLinearFactorizationHandle) -> SparseLinearFactorizationHandle | None:
         """
         Refactorize the current values reusing the previous pivot sequence.
@@ -217,7 +215,7 @@ class NativeLuRuntimeBackend(SparseLinearSolverBackend):
         :param previous: Previous factorization of this backend.
         :return: Refactorized handle, or None when ``previous`` is not a native handle.
         """
-        _unused_matrix: csc_matrix = matrix
+        _unused_matrix: CscMat = matrix
         _unused_analysis: Any | None = analysis_handle
         if isinstance(previous, NativeLuRuntimeFactorizationHandle):
             numeric: Any = self._runtime.refactor(self._indptr, self._indices, self._base_data, previous.get_symbolic(), previous.get_numeric())
@@ -289,7 +287,7 @@ class NativeLuRuntimeBackendProvider(SparseLinearSolverBackendProvider):
         """
         return self._unavailable_reason
 
-    def create_backend(self, base_matrix: csc_matrix, base_data: Vec) -> SparseLinearSolverBackend:
+    def create_backend(self, base_matrix: CscMat, base_data: Vec) -> SparseLinearSolverBackend:
         """
         Create a backend bound to one persistent CSC shell.
 
@@ -310,11 +308,12 @@ def validate_native_lu_runtime(runtime: Any) -> str:
     :param runtime: Candidate runtime object.
     :return: Empty string when complete, otherwise a description of the missing part.
     """
+    problem: str
     try:
         complete: bool = (callable(runtime.analyze) and callable(runtime.factorize)
                           and callable(runtime.refactor) and callable(runtime.solve_into))
     except AttributeError as error:
-        problem: str = "does not implement the native LU contract (" + str(error) + ")"
+        problem = "does not implement the native LU contract (" + str(error) + ")"
     else:
         if complete:
             problem = ""
@@ -335,11 +334,12 @@ def load_native_lu_runtime(module_name: str, top_level_module: str, distribution
     :param distribution_name: Distribution to name in diagnostics and to read the installed version from.
     :return: Loaded module (or None) and the unavailability reason (empty when loaded).
     """
+    result: Tuple[ModuleType | None, str]
     try:
         runtime: ModuleType = importlib.import_module(module_name)
     except ModuleNotFoundError as error:
         if error.name == top_level_module:
-            result: Tuple[ModuleType | None, str] = (None, f"{distribution_name} is not installed; install it in this Python environment and restart VeraGrid")
+            result = (None, f"{distribution_name} is not installed; install it in this Python environment and restart VeraGrid")
         else:
             result = (None, optional_dependency_failure(distribution_name, error))
     except (ImportError, AttributeError, OSError, RuntimeError, ValueError, TypeError, SystemError) as error:

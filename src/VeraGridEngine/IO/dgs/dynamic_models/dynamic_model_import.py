@@ -9,11 +9,8 @@ import copy
 import hashlib
 import json
 from enum import Enum, auto
-from pathlib import Path
 from typing import Callable, Dict, List, Sequence, Set, Tuple
 
-from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagramConnection
-from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagramNode
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
@@ -26,6 +23,13 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.dgs.dgs_circuit import DgsCircuit
 from VeraGridEngine.IO.dgs.dgs_rms_measurement_binding import (
     _build_dgs_element_index,
+    _build_voltage_alias_expressions,
+    _build_current_alias_expressions,
+    _build_power_alias_expressions,
+    _build_pll_alias_expressions,
+    _resolve_cubicle_source,
+    _connect_meter_aliases,
+    _translate_slot_blocks_to_runtime,
     _build_exact_meter_targets,
     _build_implicit_meter_target_by_slot,
     _get_native_source_target_signal_names,
@@ -61,12 +65,12 @@ from VeraGridEngine.IO.dgs.dgs_objects import BlkSlot
 from VeraGridEngine.IO.dgs.dgs_objects import DGSElement
 from VeraGridEngine.IO.dgs.dgs_objects import ElmComp
 from VeraGridEngine.IO.dgs.dgs_objects import ElmPhi
-from VeraGridEngine.IO.dgs.dgs_objects import ElmSvs
+from VeraGridEngine.IO.dgs.dgs_objects import ElmSym, ElmGenstat, ElmVsc, ElmVscmono, ElmSvs
+from VeraGridEngine.IO.dgs.dgs_objects import TypSym
 from VeraGridEngine.IO.dgs.dgs_objects import StaImea
 from VeraGridEngine.IO.dgs.dgs_objects import StaPqmea
 from VeraGridEngine.IO.dgs.dgs_objects import StaVmea
 from VeraGridEngine.IO.dynamic_model_import_types import (
-    DgsDynamicModelActivationReport,
     DynamicModelImportBundle,
     DynamicModelImportEntry,
     DynamicModelImportEntryAvailability,
@@ -76,35 +80,28 @@ from VeraGridEngine.IO.dynamic_model_import_types import (
     DynamicModelImportSelectionRequest,
     DynamicModelImportSource,
     DynamicModelImportSourceProvenance,
-    DynamicModelLoadedUserTemplate,
     _emit_dynamic_model_import_progress,
 )
-from VeraGridEngine.IO.dgs.dynamic_models.dgs_dynamic_association import DgsDynamicAssociationRecord
+from VeraGridEngine.IO.dgs.dynamic_models.dgs_model_partition import (
+    DgsModelPartition, assign_dgs_slot_owners, connect_dgs_partitions,
+    copy_partition_diagrams, build_partition_diagram_connections,
+)
+from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.IO.dgs.dynamic_models.dgs_dynamic_association import infer_dgs_dynamic_association_role
-from VeraGridEngine.IO.dgs.dynamic_models.dgs_elmvsc_runtime_adapter import (
-    build_dgs_elmvscmono_rms_runtime_template,
-    build_dgs_elmvsc_rms_runtime_template,
-    configure_dgs_elmvscmono_runtime_template_for_device,
-    configure_dgs_elmvsc_runtime_template_for_device,
-    is_dgs_elmvscmono_slot_contract,
-    is_dgs_elmvsc_slot_contract,
+from VeraGridEngine.IO.dgs.dynamic_models.dgs_adapter_block_from_native_dgs import DgsElmSymMachineParameters
+from VeraGridEngine.IO.dgs.dynamic_models.dgs_native_machine_parameters import build_dgs_elmsym_machine_parameters
+from VeraGridEngine.IO.dgs.dynamic_models.dgs_native_model_workflow import (
+    NativeDgsEquipmentKind,
+    NativeDgsEquipmentPlan,
+    assemble_native_dgs_model,
+    construct_native_dgs_equipment,
+    detect_native_dgs_equipment,
 )
-from VeraGridEngine.IO.dgs.dynamic_models.dgs_elmsym_runtime_adapter import (
-    build_dgs_elmsym_rms_runtime_template,
-    configure_dgs_elmsym_runtime_template_for_device,
-)
-from VeraGridEngine.IO.dgs.dynamic_models.dgs_elmgenstat_runtime_adapter import (
-    build_dgs_elmgenstat_rms_runtime_template,
-)
-from VeraGridEngine.IO.dgs.dynamic_models.dgs_elmsvs_runtime_adapter import (
-    build_dgs_elmsvs_rms_runtime_template,
-)
-from VeraGridEngine.IO.file_system import get_create_veragrid_folder
-from VeraGridEngine.IO.dynamic_model_import_utils import sanitize_dynamic_model_file_stem
 from VeraGridEngine.Utils.Symbolic.block import (
     Block,
     RmsPhysicalMeterKind,
     find_connections,
+    rehash_block_var_keyed_dicts,
 )
 from VeraGridEngine.Utils.Symbolic.rms_measurements_functions import (
     build_rms_pll_measurements,
@@ -120,10 +117,10 @@ from VeraGridEngine.Utils.Symbolic.rms_measurements_functions import (
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
-from VeraGridEngine.Utils.procedural_logic import ProceduralLogicCodec
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import (
     BlockType,
+    DgsImportField,
     ConverterControlType,
     DeviceType,
     DgsDynamicAssociationRole,
@@ -132,19 +129,15 @@ from VeraGridEngine.enumerations import (
     VarPowerFlowReferenceType,
 )
 
+from VeraGridEngine.IO.dgs.dgs_import_metadata import (
+    assign_import_template,
+    DgsImportMetadata,
+    set_import_field,
+)
+
+
 class DgsDynamicParserContractError(RuntimeError):
     """Report that the dynamic DGS parser boundary is incomplete."""
-
-
-class _DgsRuntimeAdapterKind(Enum):
-    """Identify the typed runtime-adapter contract queried by the importer."""
-
-    VSC_MONOPOLAR = auto()
-    VSC_BIPOLAR = auto()
-    SYNCHRONOUS_MACHINE_PENDING = auto()
-    SYNCHRONOUS_MACHINE = auto()
-    STATIC_GENERATOR = auto()
-    STATIC_VAR_SYSTEM = auto()
 
 
 class _DgsRmsMeasurementConnection:
@@ -221,7 +214,9 @@ class DgsDynamicTemplateConversionResult:
     lookups point into those same canonical block trees and exist only until
     exact device assignment and native measurement binding have completed.
 
-    :param templates_by_root_dgs_id: Final templates indexed by root FID.
+    :param models_by_root_dgs_id: Installed physical or logical instances by root FID.
+    :param templates_by_root_dgs_id: Single-host final templates indexed by root FID.
+    :param partitions_by_root_dgs_id: Multi-host templates and transient ownership plans.
     :param child_blocks_by_root_and_slot_id: Canonical child blocks indexed by
         root FID and source slot FID for exact post-conversion binding.
     """
@@ -229,6 +224,8 @@ class DgsDynamicTemplateConversionResult:
     __slots__ = (
         "templates_by_root_dgs_id",
         "child_blocks_by_root_and_slot_id",
+        "models_by_root_dgs_id",
+        "partitions_by_root_dgs_id",
     )
 
     def __init__(self) -> None:
@@ -236,9 +233,11 @@ class DgsDynamicTemplateConversionResult:
 
         :return: None.
         """
+        self.partitions_by_root_dgs_id: Dict[str, List[DgsModelPartition]] = dict()
+        self.models_by_root_dgs_id: Dict[str, Block] = dict()
         self.templates_by_root_dgs_id: Dict[
             str,
-            RmsModelTemplate | EmtModelTemplate,
+            RmsModelTemplate | EmtModelTemplate
         ] = dict()
         self.child_blocks_by_root_and_slot_id: Dict[
             str,
@@ -669,7 +668,8 @@ def _build_dgs_root_elmcomp_entries_with_progress(
 
         processed_root_count += 1
         completed_steps += 1
-        current_progress_value = progress_start + int(round(progress_span * float(completed_steps) / float(total_steps)))
+        current_progress_value = progress_start + int(
+            round(progress_span * float(completed_steps) / float(total_steps)))
         _emit_dynamic_model_import_progress(
             progress_callback,
             current_progress_value,
@@ -1084,7 +1084,8 @@ def _build_dgs_root_elmcomp_entries_with_progress(
 
                     processed_slot_count += 1
                     completed_steps += 1
-                    current_progress_value = progress_start + int(round(progress_span * float(completed_steps) / float(total_steps)))
+                    current_progress_value = progress_start + int(
+                        round(progress_span * float(completed_steps) / float(total_steps)))
                     _emit_dynamic_model_import_progress(
                         progress_callback,
                         current_progress_value,
@@ -1093,10 +1094,6 @@ def _build_dgs_root_elmcomp_entries_with_progress(
 
     _emit_dynamic_model_import_progress(progress_callback, progress_end, "DGS root and slot catalogue ready")
     return entries, logger
-
-
-
-
 
 
 def build_dgs_dynamic_model_import_bundle(
@@ -1225,71 +1222,6 @@ def build_dgs_dynamic_model_import_bundle(
     return bundle, logger
 
 
-def get_dynamic_model_import_supported_device_types() -> List[DeviceType]:
-    """
-    Return the supported host-device types exposed by the import dialog.
-
-    Imported external templates do not reliably encode the final VeraGrid device
-    type, so the user must choose one explicit compatible target from a curated
-    list instead of the full internal ``DeviceType`` enumeration.
-
-    :return: Supported host-device types.
-    """
-    return list([
-        DeviceType.NoDevice,
-        DeviceType.DynamicModelHostDevice,
-        DeviceType.GeneratorDevice,
-        DeviceType.StaticGeneratorDevice,
-        DeviceType.BatteryDevice,
-        DeviceType.LoadDevice,
-        DeviceType.ShuntDevice,
-        DeviceType.ControllableShuntDevice,
-        DeviceType.CurrentInjectionDevice,
-        DeviceType.ExternalGridDevice,
-        DeviceType.LineDevice,
-        DeviceType.Transformer2WDevice,
-        DeviceType.VscDevice,
-        DeviceType.HVDCLineDevice,
-        DeviceType.DCLineDevice,
-        DeviceType.SwitchDevice,
-    ])
-
-
-def guess_dynamic_model_import_default_device_tpe(entry: "DynamicModelImportEntry") -> DeviceType:
-    """
-    Return the conservative non-physical classification for an imported entry.
-
-    DGS ``ElmComp.pelm`` values describe slot occupancy and do not prove that a
-    composite root is the active RMS or EMT model of one physical device. Composite
-    ``ElmComp`` entries use VeraGrid's non-physical dynamic-host catalogue tag;
-    standalone DSL blocks keep ``NoDevice``.
-
-    :param entry: Imported entry.
-    :return: Default device type guess.
-    """
-    source_provenance: DynamicModelImportSourceProvenance | None = (
-        entry.get_source_provenance()
-    )
-    is_root_composite: bool = (
-        entry.get_source_tpe() == DynamicModelImportSource.PowerFactoryDgs
-        and source_provenance is not None
-        and source_provenance.get_slot_index() is None
-        and entry.get_parent_key() is None
-        and entry.get_source_block() is not None
-    )
-    is_nested_composite: bool = (
-        source_provenance is not None and
-        source_provenance.get_source_element_class() == "ElmComp"
-    )
-
-    if is_root_composite or is_nested_composite:
-        device_tpe: DeviceType = DeviceType.DynamicModelHostDevice
-    else:
-        device_tpe = DeviceType.NoDevice
-
-    return device_tpe
-
-
 def get_dgs_dynamic_host_device_tpe(source_element_class: str | None) -> DeviceType | None:
     """
     Map one authoritative PowerFactory host class to a VeraGrid device type.
@@ -1344,7 +1276,7 @@ def get_dgs_dynamic_host_device_tpe(source_element_class: str | None) -> DeviceT
 def is_dgs_dynamic_block_runtime_assignable(
         block: Block,
         device_tpe: DeviceType,
-        adapter_kind: _DgsRuntimeAdapterKind | None = None,
+        native_kind: NativeDgsEquipmentKind | None = None,
 ) -> bool:
     """
     Check that an imported root exposes a complete VeraGrid runtime contract.
@@ -1353,12 +1285,11 @@ def is_dgs_dynamic_block_runtime_assignable(
     built-in PowerFactory equipment equations. Promotion therefore requires the
     external power-flow outputs and bus-facing inputs consumed by VeraGrid's
     device compiler. Unsupported families remain catalogue-only until their
-    typed adapters are implemented and validated.
+    native physical blocks are implemented and validated.
 
     :param block: Imported domain-neutral symbolic block.
     :param device_tpe: Exact physical host type inferred from DGS.
-    :param adapter_kind: Import-local adapter classification. ``None`` retains
-        compatibility with catalogue callers that inspect legacy templates.
+    :param native_kind: Native equipment family for boundary validation, when known.
     :return: ``True`` only for a complete supported runtime interface.
     """
     mapping_refs: Set[VarPowerFlowReferenceType] = set(block.external_mapping)
@@ -1379,7 +1310,7 @@ def is_dgs_dynamic_block_runtime_assignable(
             VarPowerFlowReferenceType.Qt,
         )
         is_monopolar_vsc: bool = (
-            adapter_kind == _DgsRuntimeAdapterKind.VSC_MONOPOLAR
+                native_kind == NativeDgsEquipmentKind.MonopolarVsc
         )
         if is_monopolar_vsc:
             required_input_values = (
@@ -1395,7 +1326,10 @@ def is_dgs_dynamic_block_runtime_assignable(
                 VarPowerFlowReferenceType.Vat,
             )
     else:
-        if device_tpe == DeviceType.ControllableShuntDevice:
+        if device_tpe in {
+            DeviceType.ControllableShuntDevice,
+            DeviceType.StaticGeneratorDevice,
+        }:
             required_mapping_values = (
                 VarPowerFlowReferenceType.P,
                 VarPowerFlowReferenceType.Q,
@@ -1429,286 +1363,1842 @@ def is_dgs_dynamic_block_runtime_assignable(
         result: bool = False
     else:
         result = (
-            required_mapping_refs.issubset(mapping_refs)
-            and required_input_refs.issubset(input_refs)
+                required_mapping_refs.issubset(mapping_refs)
+                and required_input_refs.issubset(input_refs)
         )
 
     return result
 
 
-def _get_dgs_runtime_adapter_kind(
-        block: Block,
-        device_tpe: DeviceType,
-) -> _DgsRuntimeAdapterKind | None:
-    """Classify one source block without attaching metadata to it.
+def get_unsupported_dgs_vsc_options(source: ElmVsc | ElmVscmono) -> List[str]:
+    """Identify native selections outside the current coupled-voltage adapter.
 
-    The classification exists only during the DGS conversion.  It replaces
-    mutable undeclared metadata previously copied onto ``Block`` and is
-    discarded after the final template has been configured and assigned.
-
-    :param block: Directly materialized DGS root block.
-    :param device_tpe: Exact physical host family resolved by FID.
-    :return: Required runtime adapter, or ``None`` for a native contract.
+    Missing columns retain the legacy slot-based import behavior. Explicit
+    nondefault selections must not silently acquire the existing voltage-source
+    equations. The load-flow-only modulation limit and EMT selector do not
+    change the RMS adapter and are deliberately excluded here.
     """
-    if device_tpe == DeviceType.VscDevice:
-        if is_dgs_elmvscmono_slot_contract(block):
-            adapter_kind: _DgsRuntimeAdapterKind | None = (
-                _DgsRuntimeAdapterKind.VSC_MONOPOLAR
-            )
+    options = (
+        ('i_ctrl', source.i_ctrl, 'integrated current controller'),
+        ('iVIsource', source.iVIsource, 'independent AC/DC sources'),
+        ('i_mod', source.i_mod, 'modulation variant'),
+    )
+    return [f'{name}={value} ({description})' for name, value, description in options
+            if value not in (None, 0)]
+
+
+class DynamicModelImport:
+    """Own one DGS-to-template conversion and its exact physical assignments.
+
+    Context objects are shared by reference with DynDgsParser. The result
+    indexes canonical templates and children; it never duplicates their graph.
+    """
+
+    __slots__ = ("_dgs_circuit", "_circuit", "_target_domain", "_logger", "_conversion_result",
+                 "block_metadata", "_import_metadata")
+
+    def __init__(self, dgs_circuit: DgsCircuit, circuit: MultiCircuit,
+                 target_domain: DynamicSimulationMode | None, logger: Logger,
+                 ) -> None:
+        """Retain the source graph, destination and diagnostics for one import.
+
+        :param dgs_circuit: Parsed DGS object graph shared with static import.
+        :param circuit: Destination owning devices and canonical templates.
+        :param target_domain: Explicit RMS or EMT destination.
+        :param logger: Import diagnostic sink shared with the caller.
+        :return: None.
+        """
+        self._dgs_circuit: DgsCircuit = dgs_circuit
+        self._circuit: MultiCircuit = circuit
+        self._target_domain: DynamicSimulationMode | None = target_domain
+        self._logger: Logger = logger
+        self._conversion_result: DgsDynamicTemplateConversionResult = DgsDynamicTemplateConversionResult()
+        self.block_metadata: Dict[int, Dict[str, bool | int | float | str | None]] = dict()
+        self._import_metadata: DgsImportMetadata = DgsImportMetadata(self.block_metadata)
+
+    def get_import_metadata(self) -> DgsImportMetadata:
+        """Share typed access to the importer's UID-keyed metadata dictionary.
+
+        :return: Registry used by adapters, topology preparation and measurements.
+        """
+        return self._import_metadata
+
+    def register_imported_rms_model_metadata(
+            self, device: DynamicDevice, source_element_class: str) -> None:
+        """Register only the machine identities needed by reference binding.
+
+        :param device: Exact static host with its definitive RMS model installed.
+        :param source_element_class: Authoritative DGS equipment family.
+        :return: None.
+        """
+        model: Block = device.rms_model
+        if source_element_class != "ElmSym" or model.empty():
+            return
         else:
-            if is_dgs_elmvsc_slot_contract(block):
-                adapter_kind = _DgsRuntimeAdapterKind.VSC_BIPOLAR
+            pass
+        states: Dict[str, Var] = dict((variable.name, variable) for variable in model.state_vars)
+        angle: Var | None = states.get("phi", None)
+        speed: Var | None = states.get("speed", None)
+        if angle is None or speed is None:
+            return
+        else:
+            pass
+        set_import_field(model, DgsImportField.DGS_ELMSYM_RUNTIME_ADAPTER, True, self._import_metadata)
+        set_import_field(model, DgsImportField.DGS_ELMSYM_ROTOR_ANGLE_VAR_UID, angle.uid, self._import_metadata)
+        set_import_field(model, DgsImportField.DGS_ELMSYM_SPEED_VAR_UID, speed.uid, self._import_metadata)
+
+    def get_conversion_result(self) -> DgsDynamicTemplateConversionResult:
+        """Expose the canonical associations used by later preparation phases.
+
+        :return: Current conversion result; template and block objects are shared.
+        """
+        return self._conversion_result
+
+    def _build_exact_dgs_elmsym_machine_parameters(self,
+                                                   source_machine_id: str,
+                                                   host_device: Generator,
+                                                   ) -> DgsElmSymMachineParameters | None:
+        """Resolve exact source ElmSym/TypSym rows without modifying the host.
+
+        :param source_machine_id: Exact source machine FID.
+        :param host_device: Imported physical generator supplying operating data.
+        :return: Validated machine parameters, or None for an unresolved source.
+        """
+        source_machine: ElmSym | None = None
+        candidate_machine: ElmSym
+        for candidate_machine in self._dgs_circuit.elmsyms:
+            if str(candidate_machine.ID).lstrip("#") == source_machine_id.lstrip("#"):
+                if source_machine is None:
+                    source_machine = candidate_machine
+                else:
+                    return None
             else:
-                adapter_kind = None
-    else:
-        # Generator and static-var equipment require the exact transient DGS
-        # relation classified by ``_get_dgs_direct_runtime_adapter_kind``.
-        # A detached Block cannot prove the physical FID association.
-        adapter_kind = None
-    return adapter_kind
+                pass
+        if source_machine is None:
+            return None
+        source_type_id: str = str(source_machine.typ_id).lstrip("#")
+        source_type: TypSym | None = None
+        candidate_type: TypSym
+        for candidate_type in self._dgs_circuit.typsyms:
+            if str(candidate_type.ID).lstrip("#") == source_type_id:
+                if source_type is None:
+                    source_type = candidate_type
+                else:
+                    return None
+            else:
+                pass
+        if source_type is None:
+            return None
+        return build_dgs_elmsym_machine_parameters(
+            source_machine=source_machine,
+            source_type=source_type,
+            operating_power_factor=float(host_device.Pf),
+        )
 
+    def _collect_native_dgs_rms_measurement_specs(self,
+                                                  root_element: ElmComp,
+                                                  direct_result: DgsDirectRootBuildResult,
+                                                  host_device: DynamicDevice | None,
+                                                  ) -> List[_DgsRmsMeasurementSpec]:
+        """Resolve native meter semantics and exact consumers before adaptation.
 
-def _get_dgs_direct_runtime_adapter_kind(
-        direct_result: DgsDirectRootBuildResult,
-        host_identity: Tuple[str, DeviceType, str, str | None],
-) -> _DgsRuntimeAdapterKind | None:
-    """Classify one physical adapter from an exact typed DGS slot.
+        :param root_element: Composite root whose direct slots are materialized.
+        :param direct_result: Exact direct-slot lookup for the controller root.
+        :param host_device: Physical host used to interpret implicit ElmPhi frames.
+        :return: Ordered native measurement construction specifications.
+        """
+        element_by_id: Dict[str, DGSElement] = _build_dgs_element_index(
+            dgs_circuit=self._dgs_circuit,
+        )
+        implicit_target_by_slot: Dict[str, str] = (
+            _build_implicit_meter_target_by_slot(
+                dgs_circuit=self._dgs_circuit,
+                root_element=root_element,
+                entries=direct_result.direct_entries,
+            )
+        )
+        specs: List[_DgsRmsMeasurementSpec] = list()
+        entry: ElmCompInstanceEntry
 
-    The source equipment FID and class must match exactly one resolved direct
-    relation. Signal names are then checked only inside that relation's declared
-    input/output lists, including uniqueness and direction. Recursive names in
-    unrelated controller children cannot establish an equipment contract.
+        # Follow exact direct-slot identities so equal signal names in independent
+        # controller children never become an accidental shared measurement.
+        for entry in direct_result.direct_entries:
+            if entry.slot_id is None:
+                pass
+            else:
+                is_pll_slot: bool = (
+                        entry.slot_filter is not None
+                        and (
+                                "ElmPhi" in entry.slot_filter
+                                or "ElmPll" in entry.slot_filter
+                        )
+                )
+                meter_element: DGSElement | None
+                if entry.element_id is None:
+                    if is_pll_slot:
+                        meter_element = _resolve_native_pll_element(
+                            root_element=root_element,
+                            dgs_circuit=self._dgs_circuit,
+                        )
+                    else:
+                        meter_element = None
+                else:
+                    meter_element = element_by_id.get(entry.element_id, None)
 
-    :param direct_result: Materialized root plus its validated transient slots.
-    :param host_identity: Exact FID, device type, source class and source name.
-    :return: Structurally proven direct adapter, or ``None``.
-    """
-    host_source_id: str = host_identity[0]
-    host_device_tpe: DeviceType = host_identity[1]
-    host_source_class: str = host_identity[2]
-    matching_entries: List[ElmCompInstanceEntry] = list()
-    direct_entry: ElmCompInstanceEntry
-    for direct_entry in direct_result.direct_entries:
+                meter_kind: RmsPhysicalMeterKind | None
+                if isinstance(meter_element, StaVmea):
+                    meter_kind = RmsPhysicalMeterKind.VOLTAGE
+                else:
+                    if isinstance(meter_element, StaImea):
+                        meter_kind = RmsPhysicalMeterKind.CURRENT
+                    else:
+                        if isinstance(meter_element, StaPqmea):
+                            meter_kind = RmsPhysicalMeterKind.POWER
+                        else:
+                            if isinstance(meter_element, ElmPhi) or is_pll_slot:
+                                meter_kind = RmsPhysicalMeterKind.PHASE_LOCKED_LOOP
+                            else:
+                                meter_kind = None
+
+                if meter_kind is None:
+                    pass
+                else:
+                    # Early materialization owns the native meter equations, so it
+                    # must retain every exact BlkSig consumer. The late-binding
+                    # helper deliberately excludes equipment-owned signals, which
+                    # would incorrectly discard complete meters before the runtime
+                    # adapter has removed their provisional fallback ownership.
+                    targets_by_alias: Dict[str, List[Var]] = (
+                        _build_exact_meter_targets(
+                            dgs_circuit=self._dgs_circuit,
+                            source_slot_id=entry.slot_id,
+                            child_block_by_slot_id=(
+                                direct_result.child_block_by_slot_id
+                            ),
+                        )
+                    )
+                    target_names: List[str] = (
+                        _get_native_source_target_signal_names(
+                            dgs_circuit=self._dgs_circuit,
+                            source_slot_id=entry.slot_id,
+                        )
+                    )
+                    if len(target_names) == 0:
+                        implicit_target_name: str | None = (
+                            implicit_target_by_slot.get(entry.slot_id, None)
+                        )
+                        if implicit_target_name is None:
+                            target_names = list(targets_by_alias.keys())
+                        else:
+                            target_names = list((implicit_target_name,))
+                    else:
+                        pass
+
+                    connections: List[_DgsRmsMeasurementConnection] = list()
+                    target_name: str
+                    target_var: Var
+                    for target_name in target_names:
+                        target_vars: List[Var] | None = targets_by_alias.get(
+                            target_name,
+                            None,
+                        )
+                        if target_vars is None:
+                            pass
+                        else:
+                            for target_var in target_vars:
+                                connections.append(_DgsRmsMeasurementConnection(
+                                    alias_name=target_name,
+                                    target_var=target_var,
+                                ))
+
+                    if len(connections) == 0:
+                        pass
+                    else:
+                        use_stationary_reference: bool = False
+                        if isinstance(meter_element, ElmPhi):
+                            use_stationary_reference = (
+                                    meter_element.pbusbar is None
+                                    or str(meter_element.pbusbar).strip() == ""
+                            )
+                        else:
+                            if is_pll_slot and isinstance(host_device, VSC):
+                                use_stationary_reference = (
+                                        host_device.control1 is ConverterControlType.Pac
+                                )
+                            else:
+                                pass
+                        source_fid: str
+                        if meter_element is None:
+                            source_fid = entry.slot_id
+                        else:
+                            source_fid = str(meter_element.ID)
+                        source_name: str = _get_veragrid_meter_name(
+                            meter_kind=meter_kind,
+                            source_fid=source_fid,
+                        )
+                        specs.append(_DgsRmsMeasurementSpec(
+                            source_fid=source_fid,
+                            source_name=source_name,
+                            meter_kind=meter_kind,
+                            meter_element=meter_element,
+                            connections=connections,
+                            use_stationary_reference=use_stationary_reference,
+                        ))
+        return specs
+
+    def _build_native_dgs_measurement_expression(self,
+                                                 spec: _DgsRmsMeasurementSpec,
+                                                 alias_name: str,
+                                                 physical_inputs_by_reference: Dict[VarPowerFlowReferenceType, Var],
+                                                 ) -> Expr | None:
+        """Build one native meter output expression from physical placeholders.
+
+        :param spec: Resolved native measurement specification.
+        :param alias_name: Exact producer alias connected to a controller input.
+        :param physical_inputs_by_reference: Canonical early physical inputs.
+        :return: Native output expression, or ``None`` when unsupported.
+        """
+        normalized_name: str = alias_name.strip().lower()
+        expression: Expr | None = None
+        references: List[VarPowerFlowReferenceType] = (
+            _get_native_dgs_measurement_physical_references(spec=spec)
+        )
+
+        if spec.meter_kind is RmsPhysicalMeterKind.POWER:
+            power_meter: StaPqmea | None
+            if isinstance(spec.meter_element, StaPqmea):
+                power_meter = spec.meter_element
+            else:
+                power_meter = None
+            if power_meter is None or power_meter.outserv != 0:
+                pass
+            else:
+                orientation: float = 1.0 if power_meter.i_orient == 0 else -1.0
+                if power_meter.Snom > 0.0 and self._circuit.Sbase > 0.0:
+                    power_scale: float = float(self._circuit.Sbase) / float(power_meter.Snom)
+                else:
+                    power_scale = 1.0
+                if normalized_name.startswith("q") and len(references) > 1:
+                    physical_power: Var | None = physical_inputs_by_reference.get(
+                        references[1],
+                        None,
+                    )
+                else:
+                    if len(references) > 0:
+                        physical_power = physical_inputs_by_reference.get(
+                            references[0],
+                            None,
+                        )
+                    else:
+                        physical_power = None
+                if physical_power is None:
+                    pass
+                else:
+                    expression = Const(orientation * power_scale) * physical_power
+        else:
+            if spec.meter_kind is RmsPhysicalMeterKind.VOLTAGE:
+                if len(references) < 2:
+                    pass
+                else:
+                    voltage_magnitude: Var | None = physical_inputs_by_reference.get(
+                        references[0],
+                        None,
+                    )
+                    voltage_angle: Var | None = physical_inputs_by_reference.get(
+                        references[1],
+                        None,
+                    )
+                    if voltage_magnitude is None or voltage_angle is None:
+                        pass
+                    else:
+                        if "u1r" in normalized_name or normalized_name == "ur":
+                            expression = voltage_magnitude * sym.cos(voltage_angle)
+                        else:
+                            if "u1i" in normalized_name or normalized_name == "ui":
+                                expression = voltage_magnitude * sym.sin(voltage_angle)
+                            else:
+                                if normalized_name.startswith("cosphi"):
+                                    expression = sym.cos(voltage_angle)
+                                else:
+                                    if normalized_name.startswith("sinphi"):
+                                        expression = sym.sin(voltage_angle)
+                                    else:
+                                        if "phi" in normalized_name:
+                                            expression = voltage_angle
+                                        else:
+                                            if normalized_name in ("fe", "fref"):
+                                                expression = Const(1.0)
+                                            else:
+                                                if (
+                                                        normalized_name.startswith("f")
+                                                        or "_hz" in normalized_name
+                                                ):
+                                                    expression = Const(float(self._circuit.fBase))
+                                                else:
+                                                    expression = voltage_magnitude
+            else:
+                if spec.meter_kind is RmsPhysicalMeterKind.PHASE_LOCKED_LOOP:
+                    if spec.use_stationary_reference:
+                        if normalized_name.startswith("cosphi"):
+                            expression = Const(1.0)
+                        else:
+                            if normalized_name.startswith("sinphi"):
+                                expression = Const(0.0)
+                            else:
+                                if normalized_name == "fmeas":
+                                    expression = Const(1.0)
+                                else:
+                                    if "hz" in normalized_name:
+                                        expression = Const(float(self._circuit.fBase))
+                                    else:
+                                        pass
+                    else:
+                        if len(references) == 0:
+                            voltage_angle = None
+                        else:
+                            voltage_angle = physical_inputs_by_reference.get(
+                                references[0],
+                                None,
+                            )
+                        if voltage_angle is None:
+                            pass
+                        else:
+                            if normalized_name.startswith("cosphi"):
+                                expression = sym.cos(voltage_angle)
+                            else:
+                                if normalized_name.startswith("sinphi"):
+                                    expression = sym.sin(voltage_angle)
+                                else:
+                                    pass
+                else:
+                    pass
+        return expression
+
+    def _materialize_native_dgs_rms_measurements(self,
+                                                 block: Block,
+                                                 native_specs: List[_DgsRmsMeasurementSpec],
+                                                 physical_inputs_by_reference: Dict[VarPowerFlowReferenceType, Var],
+                                                 var_factory: VarFactory,
+                                                 ) -> Set[int]:
+        """Create native early measurements and connect exact controller inputs.
+
+        :param block: Imported controller root receiving measurement children.
+        :param native_specs: Exact native meter construction specifications.
+        :param physical_inputs_by_reference: Shared physical placeholder lookup.
+        :param var_factory: Factory owning early measurement variables.
+        :return: Object identities of controller inputs replaced successfully.
+        """
+        replaced_input_object_ids: Set[int] = set()
+        spec: _DgsRmsMeasurementSpec
+        for spec in native_specs:
+            required_references: List[VarPowerFlowReferenceType] = (
+                _get_native_dgs_measurement_physical_references(spec=spec)
+            )
+            required_reference: VarPowerFlowReferenceType
+            for required_reference in required_references:
+                _get_or_create_dgs_physical_input(
+                    block=block,
+                    reference=required_reference,
+                    physical_inputs_by_reference=physical_inputs_by_reference,
+                    var_factory=var_factory,
+                )
+
+            measurement_block: Block = Block(name=spec.source_name)
+            measurement_block.in_vars = list(
+                physical_inputs_by_reference[reference]
+                for reference in required_references
+            )
+            connected_count: int = 0
+            output_by_alias: Dict[str, Var] = dict()
+            connection: _DgsRmsMeasurementConnection
+            for connection in spec.connections:
+                output_var: Var | None = output_by_alias.get(
+                    connection.alias_name,
+                    None,
+                )
+                if output_var is None:
+                    source_expression: Expr | None = (
+                        self._build_native_dgs_measurement_expression(
+                            spec=spec,
+                            alias_name=connection.alias_name,
+                            physical_inputs_by_reference=physical_inputs_by_reference,
+                        )
+                    )
+                    if source_expression is None:
+                        pass
+                    else:
+                        # The exact DGS consumer variable becomes the measurement
+                        # output. Reusing it prevents a same-name second UID from
+                        # appearing when the template is wrapped or duplicated.
+                        output_var = connection.target_var
+                        _remove_meter_target_fallback_ownership(
+                            host_model=block,
+                            target_var=output_var,
+                        )
+                        measurement_block.algebraic_vars.append(output_var)
+                        measurement_block.out_vars.append(output_var)
+                        measurement_block.algebraic_eqs.append(
+                            output_var - source_expression
+                        )
+                        output_by_alias[connection.alias_name] = output_var
+                        replaced_input_object_ids.add(id(connection.target_var))
+                        connected_count += 1
+                else:
+                    # One native output can feed several exact endpoints. Remove
+                    # every additional receiver fallback before atomically joining
+                    # its complete block interface to the canonical output UID.
+                    _remove_meter_target_fallback_ownership(
+                        host_model=block,
+                        target_var=connection.target_var,
+                    )
+                    block.update_model(
+                        old=connection.target_var,
+                        new=output_var,
+                    )
+                    replaced_input_object_ids.add(id(connection.target_var))
+                    connected_count += 1
+
+            if connected_count == 0:
+                pass
+            else:
+                block.children.append(measurement_block)
+        return replaced_input_object_ids
+
+    def _add_required_dgs_rms_measurements(self,
+                                           block: Block,
+                                           host_device: DynamicDevice,
+                                           native_specs: List[_DgsRmsMeasurementSpec],
+                                           ) -> None:
+        """Materialize and connect measurements required by one imported model.
+
+        :param block: Imported DGS composite root.
+        :param host_device: Exact static device that owns the final RMS template.
+        :param native_specs: Exact native meters resolved from the DGS graph.
+        :return: None.
+        """
+        measurement_var_factory: VarFactory = VarFactory()
+        physical_inputs_by_reference: Dict[VarPowerFlowReferenceType, Var] = dict()
+        replaced_input_object_ids: Set[int] = (
+            self._materialize_native_dgs_rms_measurements(
+                block=block,
+                native_specs=native_specs,
+                physical_inputs_by_reference=physical_inputs_by_reference,
+                var_factory=measurement_var_factory,
+            )
+        )
+        unconnected_inputs: List[Tuple[Block, Var]] = (
+            _collect_unconnected_dgs_child_inputs(block=block)
+        )
+        physical_input_object_ids: Set[int] = set(
+            id(physical_input)
+            for physical_input in physical_inputs_by_reference.values()
+        )
+        unconnected_inputs = list(
+            input_entry
+            for input_entry in unconnected_inputs
+            if id(input_entry[1]) not in physical_input_object_ids
+        )
+        inputs_by_terminal: Dict[RmsTerminalSide, List[Tuple[Block, Var]]] = dict((
+            (RmsTerminalSide.FROM, list()),
+            (RmsTerminalSide.TO, list()),
+            (RmsTerminalSide.BUS, list()),
+        ))
+        owner_block: Block
+        input_var: Var
+        for owner_block, input_var in unconnected_inputs:
+            if isinstance(input_var.ref, VarPowerFlowReferenceType):
+                terminal_side: RmsTerminalSide | None = (
+                    _classify_rms_measurement_terminal(reference=input_var.ref)
+                )
+                if terminal_side is None:
+                    pass
+                else:
+                    inputs_by_terminal[terminal_side].append((owner_block, input_var))
+            else:
+                pass
+
+        terminal_side: RmsTerminalSide
+        terminal_inputs: List[Tuple[Block, Var]]
+        for terminal_side, terminal_inputs in inputs_by_terminal.items():
+            if len(terminal_inputs) == 0:
+                pass
+            else:
+                if isinstance(host_device, BranchParent):
+                    if terminal_side is RmsTerminalSide.FROM:
+                        terminal_bus = host_device.bus_from
+                    else:
+                        if terminal_side is RmsTerminalSide.TO:
+                            terminal_bus = host_device.bus_to
+                        else:
+                            terminal_bus = None
+                else:
+                    if isinstance(host_device, InjectionParent):
+                        if terminal_side is RmsTerminalSide.BUS:
+                            terminal_bus = host_device.bus
+                        else:
+                            terminal_bus = None
+                    else:
+                        terminal_bus = None
+
+                if terminal_bus is None:
+                    pass
+                else:
+                    terminal_vars: List[Var] = list(
+                        input_entry[1] for input_entry in terminal_inputs
+                    )
+                    measurement_types: List[BlockType] = (
+                        find_measurements_for_inputs_group(
+                            bus=terminal_bus,
+                            inputs=terminal_vars,
+                        )
+                    )
+                    measurement_type: BlockType
+                    for measurement_type in measurement_types:
+                        # Allocate every prerequisite before invoking the builder.
+                        # A single canonical input is reused across all measurements
+                        # that observe the same physical terminal quantity.
+                        required_references: List[VarPowerFlowReferenceType] = (
+                            _get_rms_terminal_physical_references(
+                                block_type=measurement_type,
+                                terminal_side=terminal_side,
+                                is_dc_terminal=terminal_bus.is_dc,
+                            )
+                        )
+                        required_reference: VarPowerFlowReferenceType
+                        for required_reference in required_references:
+                            _get_or_create_dgs_physical_input(
+                                block=block,
+                                reference=required_reference,
+                                physical_inputs_by_reference=physical_inputs_by_reference,
+                                var_factory=measurement_var_factory,
+                            )
+                        measurement_block: Block | None = _build_dgs_rms_measurement_block(
+                            block_type=measurement_type,
+                            terminal_side=terminal_side,
+                            is_dc_terminal=terminal_bus.is_dc,
+                            physical_inputs_by_reference=physical_inputs_by_reference,
+                            var_factory=measurement_var_factory,
+                        )
+                        if measurement_block is None:
+                            pass
+                        else:
+                            measurement_output: Var
+                            for measurement_output in measurement_block.out_vars:
+                                for owner_block, input_var in terminal_inputs:
+                                    if (
+                                            input_var.ref == measurement_output.ref
+                                            and input_var is not measurement_output
+                                    ):
+                                        owner_block.update_model(
+                                            old=input_var,
+                                            new=measurement_output,
+                                        )
+                                        replaced_input_object_ids.add(id(input_var))
+                                    else:
+                                        pass
+                            block.children.append(measurement_block)
+
+        if len(replaced_input_object_ids) == 0:
+            pass
+        else:
+            block.in_vars = list(
+                root_input
+                for root_input in block.in_vars
+                if id(root_input) not in replaced_input_object_ids
+            )
+
+    def _native_runtime_validation_kind(self, direct_result: DgsDirectRootBuildResult) -> NativeDgsEquipmentKind | None:
+        """Resolve the physical boundary contract from native equipment detection.
+
+        :param direct_result: Root whose native requirements are being detected.
+        :return: Physical boundary kind required for final host assignment.
+        """
+        plans: tuple[NativeDgsEquipmentPlan, ...] = detect_native_dgs_equipment(direct_result, self._dgs_circuit)
+        if len(plans) == 0:
+            return None
+        elif len(plans) != 1:
+            raise ValueError("A native dynamic root must resolve one exact physical host")
+        else:
+            return plans[0].kind
+
+    def _construct_native_runtime_template(
+            self, template: RmsModelTemplate, direct_result: DgsDirectRootBuildResult,
+            host_device: DynamicDevice | None,
+            measurement_specs: List[_DgsRmsMeasurementSpec],
+    ) -> RmsModelTemplate:
+        """Build and assemble fully configured native physical equipment.
+
+        :param template: Imported controller with required measurements attached.
+        :param direct_result: Exact source slots and their controller instances.
+        :param host_device: Physical host already resolved from source FID.
+        :param measurement_specs: Existing measurements with exact source provenance.
+        :return: Complete native template, or the unchanged controller-only root.
+        """
+        plans: tuple[NativeDgsEquipmentPlan, ...] = detect_native_dgs_equipment(direct_result, self._dgs_circuit)
+        if len(plans) == 0:
+            return template
+        elif len(plans) != 1 or host_device is None:
+            raise ValueError("Native construction requires one exact equipment host")
+        else:
+            plan: NativeDgsEquipmentPlan = plans[0]
+            if str(plan.entry.element_id).lstrip("#") != str(host_device.idtag).lstrip("#"):
+                raise ValueError("Native equipment FID does not match its resolved host")
+            else:
+                pass
+            machine_parameters: DgsElmSymMachineParameters | None = None
+            if plan.kind == NativeDgsEquipmentKind.SynchronousMachine and isinstance(host_device, Generator):
+                machine_parameters = self._build_exact_dgs_elmsym_machine_parameters(
+                    str(plan.entry.element_id), host_device)
+            else:
+                pass
+            # Register already materialized meters as exact slot producers. No
+            # second measurement graph or recursive signal-name lookup is needed.
+            for entry in direct_result.direct_entries:
+                if entry.slot_id is None or entry.slot_id in direct_result.child_block_by_slot_id:
+                    pass
+                else:
+                    meter_targets: Dict[str, List[Var]] = _build_exact_meter_targets(
+                        self._dgs_circuit, entry.slot_id, direct_result.child_block_by_slot_id)
+                    cable_target_uids: Set[int] = set(variable.uid for variables in meter_targets.values()
+                                                     for variable in variables)
+                    for spec in measurement_specs:
+                        source_ids: Set[str] = set((entry.slot_id, str(entry.element_id)))
+                        target_uids: Set[int] = set(connection.target_var.uid for connection in spec.connections)
+                        if spec.source_fid not in source_ids and len(target_uids & cable_target_uids) == 0:
+                            pass
+                        else:
+                            for child in template.block.children:
+                                output_uids: Set[int] = set(variable.uid for variable in child.out_vars)
+                                if child.name == spec.source_name and len(target_uids & output_uids) > 0:
+                                    direct_result.child_block_by_slot_id[entry.slot_id] = child
+                                else:
+                                    pass
+            equipment: Block = construct_native_dgs_equipment(
+                plan, host_device, self._dgs_circuit, float(self._circuit.Sbase),
+                float(self._circuit.fBase), machine_parameters)
+            template.block = assemble_native_dgs_model(plan, equipment, direct_result, self._dgs_circuit, self._logger)
+            return template
+
+    def _build_dgs_direct_runtime_template(self,
+                                           source_block: Block,
+                                           template_name: str,
+                                           device_tpe: DeviceType,
+                                           direct_result: DgsDirectRootBuildResult | None,
+                                           host_device: DynamicDevice | None,
+                                           native_measurement_specs: List[_DgsRmsMeasurementSpec],
+                                           ) -> RmsModelTemplate | EmtModelTemplate:
+        """Wrap one directly materialized DGS block in its final template.
+
+        The caller transfers ownership of ``source_block``.  No catalogue entry,
+        serialization payload or duplicate symbolic graph is created between the
+        parser and the final ``MultiCircuit`` template.
+
+        :param source_block: Direct root block owned by this conversion.
+        :param template_name: Final reusable-template display name.
+        :param device_tpe: Exact physical host family or generic dynamic host.
+        :param direct_result: Transient direct-root conversion context, if present.
+        :param host_device: Exact static host used to resolve measurement terminals.
+        :param native_measurement_specs: Native meters resolved from the DGS graph.
+        :return: Final RMS or EMT template ready for circuit registration.
+        """
+        # Type only child inputs whose DGS signal has no internal producer. The
+        # synthesized root interface then exposes the same typed Var objects.
+        _assign_dgs_external_input_references(
+            block=source_block,
+            device_tpe=device_tpe,
+        )
+
+        # Native PowerFactory meters are not executable ElmDsl children. Replace
+        # their missing signals with explicit VeraGrid measurements before the root
+        # interface is finalized for the editor and physical assembly.
         if (
-                direct_entry.element_reference_is_resolved
-                and direct_entry.element_id == host_source_id
-                and direct_entry.element_kind == host_source_class
+                self._target_domain == DynamicSimulationMode.RMS
+                and host_device is not None
         ):
-            matching_entries.append(direct_entry)
+            self._add_required_dgs_rms_measurements(
+                block=source_block,
+                host_device=host_device,
+                native_specs=native_measurement_specs,
+            )
         else:
             pass
 
-    if len(matching_entries) != 1:
-        adapter_kind: _DgsRuntimeAdapterKind | None = None
-    else:
-        equipment_entry: ElmCompInstanceEntry = matching_entries[0]
-        host_matches_declared_equipment: bool = (
-            equipment_entry.accepts_element_kind(
-                element_kind=host_source_class,
+        # Complete only the public composite ports already owned by the child graph.
+        _apply_composite_child_interface_if_missing(block=source_block)
+        source_block.name = template_name
+        template_comment: str = (
+            f"PowerFactory DGS dynamic model: {template_name}"
+        )
+
+        if self._target_domain == DynamicSimulationMode.EMT:
+            emt_template: EmtModelTemplate = EmtModelTemplate(name=template_name)
+            emt_template.tpe = device_tpe
+            emt_template.block = source_block
+            emt_template.name = template_name
+            emt_template.comment = template_comment
+            result: RmsModelTemplate | EmtModelTemplate = emt_template
+        else:
+            rms_template: RmsModelTemplate = RmsModelTemplate(name=template_name)
+            rms_template.tpe = device_tpe
+            rms_template.block = source_block
+            rms_template.name = template_name
+            rms_template.comment = template_comment
+            adapted_template: RmsModelTemplate | None
+
+            # Native equipment receives its physical parameters before assembly.
+            if direct_result is not None:
+                adapted_template = self._construct_native_runtime_template(
+                    rms_template, direct_result, host_device, native_measurement_specs)
+            else:
+                adapted_template = rms_template
+
+            if adapted_template is None:
+                # Preserve the declarative root for inspection, but never expose an
+                # incomplete physical adapter as assignable equipment.
+                rms_template.tpe = DeviceType.DynamicModelHostDevice
+                result = rms_template
+            else:
+                result = adapted_template
+        return result
+
+    def _is_selected_dgs_root_for_host(
+            self, root_element: ElmComp,
+            host_identity: Tuple[str, DeviceType, str, str | None],
+    ) -> bool:
+        """Respect native model ownership and service state before assembly.
+
+        :param root_element: Candidate composite declaration.
+        :param host_identity: Exact physical host resolved through its native slot.
+        :return: Whether this is the unique active model selected for the host.
+        """
+        if root_element.outserv != 0:
+            return False
+        else:
+            pass
+        source_index: Dict[str, DGSElement] = _build_dgs_element_index(self._dgs_circuit)
+        source: DGSElement | None = source_index.get(host_identity[0], None)
+        if isinstance(source, (ElmVsc, ElmVscmono, ElmSym, ElmGenstat, ElmSvs)):
+            if source.outserv != 0:
+                return False
+            else:
+                pass
+            selected_root: str = "" if source.c_pmod is None else str(source.c_pmod).strip().lstrip("#")
+            if selected_root != "":
+                return selected_root == str(root_element.ID).strip().lstrip("#")
+            else:
+                # Older exports omit c_pmod. Retain compatibility only when one
+                # active direct relation establishes an unambiguous owner.
+                candidates: List[str] = list()
+                candidate: ElmComp
+                for candidate in self._dgs_circuit.elmcomps:
+                    if candidate.outserv == 0:
+                        candidate_entries: List[ElmCompInstanceEntry] = get_unique_elmcomp_slot_entries(
+                            extract_elmcomp_direct_instances(self._dgs_circuit, candidate))
+                        if any(entry.element_reference_is_resolved and entry.element_id == host_identity[0]
+                               and entry.element_kind == host_identity[2] for entry in candidate_entries):
+                            candidates.append(candidate.ID)
+                        else:
+                            pass
+                    else:
+                        pass
+                return len(candidates) == 1 and candidates[0] == root_element.ID
+        else:
+            # Other existing host families retain their direct typed binding;
+            # their native source contracts do not expose this selector here.
+            return True
+
+    def _resolve_dgs_direct_root_host_identity(self,
+                                               root_element: ElmComp,
+                                               ) -> Tuple[str, DeviceType, str, str | None] | None:
+        """Resolve at most one physical host directly from root ``pElm`` FIDs.
+
+        :param root_element: Root composite whose host is being resolved.
+        :return: FID, VeraGrid type, source class and source name, or ``None``.
+        """
+        identities: Dict[
+            Tuple[str, DeviceType],
+            Tuple[str, str | None],
+        ] = dict()
+        direct_entries: List[ElmCompInstanceEntry] = (
+            get_unique_elmcomp_slot_entries(
+                entries=extract_elmcomp_direct_instances(
+                    circuit=self._dgs_circuit,
+                    root_element=root_element,
+                )
             )
         )
-        output_components: List[str] = equipment_entry.get_slot_signal_components(
-            direction=DgsSlotSignalDirection.Output,
-        )
-        input_components: List[str] = equipment_entry.get_slot_signal_components(
-            direction=DgsSlotSignalDirection.Input,
-        )
-        output_names: Set[str] = set(output_components)
-        input_names: Set[str] = set(input_components)
-        contract_is_unique_and_directional: bool = bool(
-            len(output_names) == len(output_components)
-            and len(input_names) == len(input_components)
-            and output_names.isdisjoint(input_names)
-            and host_matches_declared_equipment
-        )
-        if not contract_is_unique_and_directional:
-            adapter_kind = None
-        else:
-            if host_source_class == "ElmVscmono":
-                required_outputs: Set[str] = set(("id", "iq", "uDC"))
-                required_inputs: Set[str] = set(("Pmd", "Pmq"))
-                has_angle_inputs: bool = bool(
-                    {"cosref", "sinref"}.issubset(input_names)
-                    or {"cosphi", "sinphi"}.issubset(input_names)
-                )
-                if (
-                        required_outputs.issubset(output_names)
-                        and required_inputs.issubset(input_names)
-                        and has_angle_inputs
-                ):
-                    adapter_kind = _DgsRuntimeAdapterKind.VSC_MONOPOLAR
-                else:
-                    adapter_kind = None
-            else:
-                if host_source_class == "ElmVsc":
-                    required_inputs = set(("Pmr", "Pmi", "mdc"))
-                    current_output_count: int = int("iDC" in output_names) + int(
-                        "idc" in output_names
-                    )
-                    cell_voltage_output_count: int = int(
-                        "yUcell" in output_names
-                    ) + int("Ucap" in output_names)
-                    if (
-                            required_inputs.issubset(input_names)
-                            and current_output_count == 1
-                            and cell_voltage_output_count == 1
-                    ):
-                        adapter_kind = _DgsRuntimeAdapterKind.VSC_BIPOLAR
-                    else:
-                        adapter_kind = None
-                else:
-                    if (
-                            host_source_class == "ElmSym"
-                            and host_device_tpe == DeviceType.GeneratorDevice
-                    ):
-                        required_outputs = set([
-                            "ID", "IQ", "IFDIEEE", "RPOWER", "SG", "VT",
-                            "VTD", "VTQ", "cosn", "speed",
-                        ])
-                        required_inputs = set(["pt", "ve"])
-                        if (
-                                required_outputs.issubset(output_names)
-                                and required_inputs.issubset(input_names)
-                        ):
-                            adapter_kind = (
-                                _DgsRuntimeAdapterKind.SYNCHRONOUS_MACHINE_PENDING
-                            )
-                        else:
-                            adapter_kind = None
-                    else:
-                        if (
-                                host_source_class == "ElmGenstat"
-                                and host_device_tpe == DeviceType.GeneratorDevice
-                        ):
-                            required_inputs = set(["id_ref", "iq_ref"])
-                            if required_inputs.issubset(input_names):
-                                adapter_kind = _DgsRuntimeAdapterKind.STATIC_GENERATOR
-                            else:
-                                adapter_kind = None
-                        else:
-                            if (
-                                    host_source_class == "ElmSvs"
-                                    and host_device_tpe
-                                    == DeviceType.ControllableShuntDevice
-                            ):
-                                required_outputs = set([
-                                    "ysvs", "qreact", "qcap", "qfixcap",
-                                    "nxcap", "nfixcap",
-                                ])
-                                required_inputs = set(["bsvs"])
-                                if (
-                                        required_outputs.issubset(output_names)
-                                        and required_inputs.issubset(input_names)
-                                ):
-                                    adapter_kind = (
-                                        _DgsRuntimeAdapterKind.STATIC_VAR_SYSTEM
-                                    )
-                                else:
-                                    adapter_kind = None
-                            else:
-                                adapter_kind = None
-    return adapter_kind
+        direct_entry: ElmCompInstanceEntry
 
-
-def guess_dynamic_model_import_hierarchy_device_tpe(
-        bundle: "DynamicModelImportBundle",
-        entry: "DynamicModelImportEntry",
-) -> DeviceType:
-    """
-    Infer one physical host type from an exact DGS composite hierarchy.
-
-    A root becomes directly assignable only when all supported physical host
-    relations reduce to one source FID and one compatible VeraGrid device type.
-    Roots with several hosts remain generic catalogue objects because assigning
-    a plant controller independently to every device would duplicate its states.
-
-    :param bundle: Bundle containing the complete source hierarchy.
-    :param entry: Entry whose owning hierarchy is being classified.
-    :return: Physical device type or the conservative generic classification.
-    """
-    fallback_tpe: DeviceType = guess_dynamic_model_import_default_device_tpe(entry=entry)
-    source_provenance: DynamicModelImportSourceProvenance | None = (
-        entry.get_source_provenance()
-    )
-    is_root_composite: bool = (
-        source_provenance is not None
-        and source_provenance.get_slot_index() is None
-        and entry.get_parent_key() is None
-        and entry.get_source_block() is not None
-    )
-    host_identities: Set[Tuple[str, DeviceType]] = set()
-    candidate_entry: DynamicModelImportEntry
-    candidate_provenance: DynamicModelImportSourceProvenance | None
-    candidate_class: str | None
-    candidate_device_tpe: DeviceType | None
-    candidate_element_id: str | None
-    source_block: Block | None = entry.get_source_block()
-
-    if (
-            entry.get_source_tpe() != DynamicModelImportSource.PowerFactoryDgs
-            or source_provenance is None
-            or not is_root_composite
-    ):
-        result: DeviceType = fallback_tpe
-    else:
-        # FID and class are the only admissible join keys. Display names remain
-        # provenance and never participate in host inference.
-        for candidate_entry in bundle.get_entries():
-            candidate_provenance = candidate_entry.get_source_provenance()
-            if candidate_provenance is None:
+        # Only one resolved unique slot may establish each physical FID identity.
+        for direct_entry in direct_entries:
+            source_element_id: str | None = direct_entry.element_id
+            source_element_class: str | None = direct_entry.element_kind
+            host_device_tpe: DeviceType | None = get_dgs_dynamic_host_device_tpe(
+                source_element_class=source_element_class,
+            )
+            if (
+                    source_element_id is None
+                    or source_element_class is None
+                    or not direct_entry.element_reference_is_resolved
+                    or host_device_tpe is None
+            ):
                 pass
             else:
-                if (
-                        candidate_provenance.get_root_dgs_id()
-                        != source_provenance.get_root_dgs_id()
-                ):
+                host_key: Tuple[str, DeviceType] = (
+                    source_element_id,
+                    host_device_tpe,
+                )
+                if host_key in identities:
                     pass
                 else:
-                    candidate_class = (
-                        candidate_provenance.get_source_element_class()
+                    identities[host_key] = (
+                        source_element_class,
+                        direct_entry.element_name,
                     )
-                    candidate_device_tpe = get_dgs_dynamic_host_device_tpe(
-                        source_element_class=candidate_class,
-                    )
-                    candidate_element_id = (
-                        candidate_provenance.get_source_element_dgs_id()
-                    )
-                    if candidate_device_tpe is None or candidate_element_id is None:
-                        pass
-                    else:
-                        host_identities.add((candidate_element_id, candidate_device_tpe))
 
-        if len(host_identities) == 1:
-            host_identity: Tuple[str, DeviceType] = next(iter(host_identities))
-            if source_block is None:
-                result = fallback_tpe
-            else:
-                runtime_contract_ready: bool = is_dgs_dynamic_block_runtime_assignable(
-                    block=source_block,
-                    device_tpe=host_identity[1],
-                    adapter_kind=_get_dgs_runtime_adapter_kind(
-                        block=source_block,
-                        device_tpe=host_identity[1],
-                    ),
-                )
-                elmvsc_adapter_supported: bool = (
-                    host_identity[1] == DeviceType.VscDevice
-                    and (
-                        is_dgs_elmvsc_slot_contract(source_block)
-                        or is_dgs_elmvscmono_slot_contract(source_block)
-                    )
-                )
-                if (
-                        runtime_contract_ready
-                        or elmvsc_adapter_supported
+        if len(identities) == 1:
+            exact_host_key: Tuple[str, DeviceType] = next(iter(identities))
+            exact_host_source: Tuple[str, str | None] = identities[exact_host_key]
+            resolved_device_tpe: DeviceType = exact_host_key[1]
+            if exact_host_source[0] == "ElmSvs":
+                imported_svs_types: List[DeviceType] = list()
+                candidate_svs_type: DeviceType
+                candidate_svs_obj: object
+                for candidate_svs_type in (
+                        DeviceType.ControllableShuntDevice,
+                        DeviceType.StaticGeneratorDevice,
+                        DeviceType.VscDevice,
                 ):
-                    result = host_identity[1]
+                    for candidate_svs_obj in self._circuit.get_elements_by_type(
+                            device_type=candidate_svs_type,
+                    ):
+                        if (
+                                isinstance(candidate_svs_obj, DynamicDevice)
+                                and candidate_svs_obj.idtag == exact_host_key[0]
+                        ):
+                            imported_svs_types.append(candidate_svs_type)
+                        else:
+                            pass
+                if len(imported_svs_types) == 1:
+                    resolved_device_tpe = imported_svs_types[0]
                 else:
-                    result = fallback_tpe
+                    pass
+            if exact_host_source[0] == "ElmGenstat":
+                imported_hosts: List[DynamicDevice] = _find_exact_dgs_dynamic_host_devices(
+                    self._circuit, exact_host_key[0], resolved_device_tpe, exact_host_source[0])
+                if len(imported_hosts) == 1:
+                    resolved_device_tpe = imported_hosts[0].device_type
+                else:
+                    pass
+            else:
+                pass
+            result: Tuple[str, DeviceType, str, str | None] | None = (
+                exact_host_key[0],
+                resolved_device_tpe,
+                exact_host_source[0],
+                exact_host_source[1],
+            )
         else:
-            result = fallback_tpe
+            result = None
+        return result
 
-    return result
+    def _register_dgs_direct_template(self,
+                                      template_obj: RmsModelTemplate | EmtModelTemplate,
+                                      root_dgs_id: str,
+                                      existing_names: Set[str],
+                                      ) -> bool:
+        """Register one direct DGS template with a deterministic FID collision name.
+
+        :param template_obj: Final template owning the parsed block.
+        :param root_dgs_id: Exact source root FID used only for collision resolution.
+        :param existing_names: Mutable names already registered in the destination domain.
+        :return: ``True`` when the template was registered.
+        """
+        requested_name: str = str(template_obj.name).strip()
+        if requested_name == "":
+            requested_name = f"DGS dynamic root {root_dgs_id}"
+        else:
+            pass
+
+        if requested_name in existing_names:
+            final_name: str = f"{requested_name} [DGS {root_dgs_id}]"
+        else:
+            final_name = requested_name
+
+        if final_name in existing_names:
+            self._logger.add_warning(
+                msg="DGS dynamic root skipped because its FID-qualified name already exists",
+                value=final_name,
+            )
+            registered: bool = False
+        else:
+            template_obj.name = final_name
+            template_obj.block.name = final_name
+            if isinstance(template_obj, RmsModelTemplate):
+                self._circuit.add_rms_model(template_obj)
+            else:
+                self._circuit.add_emt_model(template_obj)
+            existing_names.add(final_name)
+            registered = True
+        return registered
+
+    def _activate_dgs_direct_template(self,
+                                      template_obj: RmsModelTemplate | EmtModelTemplate,
+                                      host_identity: Tuple[str, DeviceType, str, str | None],
+                                      native_kind: NativeDgsEquipmentKind | None,
+                                      ) -> bool:
+        """Configure and assign one template to the exact imported device FID.
+
+        :param template_obj: Registered direct template.
+        :param host_identity: Exact FID, VeraGrid type, source class and source name.
+        :param native_kind: Native equipment family used for boundary validation.
+        :return: ``True`` when the exact host owns this template after the call.
+        """
+        source_element_id: str = host_identity[0]
+        host_device_tpe: DeviceType = host_identity[1]
+        source_element_class: str = host_identity[2]
+        source_element_name: str | None = host_identity[3]
+        host_devices: List[DynamicDevice] = _find_exact_dgs_dynamic_host_devices(
+            circuit=self._circuit,
+            source_element_dgs_id=source_element_id,
+            device_tpe=host_device_tpe,
+            source_element_class=source_element_class,
+        )
+        if len(host_devices) == 1:
+            host_device: DynamicDevice | None = host_devices[0]
+        else:
+            host_device = None
+
+        runtime_equipment_kind: NativeDgsEquipmentKind | None = native_kind
+        if (
+                runtime_equipment_kind is None
+                and source_element_class == "ElmVscmono"
+        ):
+            # A native monopolar block may already expose the complete equipment
+            # boundary and its voltage contract is
+            # still monopolar during the final fail-closed assignment check.
+            runtime_equipment_kind = NativeDgsEquipmentKind.MonopolarVsc
+        else:
+            pass
+
+        runtime_contract_ready: bool = (
+                host_device is not None
+                and template_obj.tpe == host_device_tpe
+                and is_dgs_dynamic_block_runtime_assignable(
+            block=template_obj.block,
+            device_tpe=host_device_tpe,
+            native_kind=runtime_equipment_kind,
+        )
+        )
+        if not runtime_contract_ready or host_device is None:
+            # An incomplete physical wrapper remains inspectable, but it must not
+            # appear in the assignable device-template catalogue.
+            template_obj.tpe = DeviceType.DynamicModelHostDevice
+            self._logger.add_warning(
+                msg=(
+                    "DGS dynamic host retained without activation because exact "
+                    "resolution or its native physical contract is incomplete"
+                ),
+                device=source_element_name,
+                device_class=source_element_class,
+                value=source_element_id,
+            )
+            activated: bool = False
+        else:
+            current_template: RmsModelTemplate | EmtModelTemplate | None
+            if isinstance(template_obj, RmsModelTemplate):
+                current_template = host_device.rms_template
+            else:
+                current_template = host_device.emt_template
+
+            if current_template is template_obj:
+                activated = True
+            else:
+                if current_template is not None:
+                    self._logger.add_warning(
+                        msg="DGS dynamic host already owns a different template",
+                        device=source_element_name,
+                        device_class=source_element_class,
+                        value=source_element_id,
+                    )
+                    activated = False
+                else:
+                    try:
+                        assign_import_template(host_device, template_obj)
+                        activated = True
+                    except (TypeError, ValueError, KeyError) as error:
+                        # A rejected template stays inspectable, but it must not
+                        # appear in the assignable device-template catalogue.
+                        template_obj.tpe = DeviceType.DynamicModelHostDevice
+                        self._logger.add_warning(
+                            msg="DGS dynamic host rejected its template",
+                            device=source_element_name,
+                            device_class=source_element_class,
+                            value=str(error),
+                        )
+                        activated = False
+
+                    if activated and isinstance(template_obj, RmsModelTemplate):
+                        self.register_imported_rms_model_metadata(host_device, source_element_class)
+                    else:
+                        pass
+        return activated
+
+    def _get_unique_dgs_dynamic_roots_by_id(self,
+                                            emit_diagnostics: bool,
+                                            ) -> Dict[str, ElmComp]:
+        """Select only roots with one non-empty normalized DGS FID.
+
+        The first occurrence of a duplicated FID is deliberately excluded together
+        with every later occurrence.  Keeping the first would let the assignment
+        stage reuse one final template for several source roots.
+
+        :param emit_diagnostics: Whether this validation pass records source errors.
+        :return: Unique roots keyed by their normalized non-empty FID.
+        """
+        root_count_by_id: Dict[str, int] = dict()
+        first_root_by_id: Dict[str, ElmComp] = dict()
+        root_element: ElmComp
+        for root_element in self._dgs_circuit.elmcomps:
+            root_id: str = str(root_element.ID).strip()
+            if root_id == "":
+                if emit_diagnostics:
+                    self._logger.add_warning(
+                        msg="DGS dynamic root skipped because its FID is empty",
+                        device=root_element.loc_name,
+                        device_class="ElmComp",
+                    )
+                else:
+                    pass
+            else:
+                current_count: int | None = root_count_by_id.get(root_id, None)
+                if current_count is None:
+                    root_count_by_id[root_id] = 1
+                    first_root_by_id[root_id] = root_element
+                else:
+                    root_count_by_id[root_id] = current_count + 1
+
+        unique_root_by_id: Dict[str, ElmComp] = dict()
+        root_id: str
+        for root_id, root_element in first_root_by_id.items():
+            root_count: int | None = root_count_by_id.get(root_id, None)
+            if root_count == 1:
+                unique_root_by_id[root_id] = root_element
+            else:
+                if emit_diagnostics:
+                    self._logger.add_warning(
+                        msg="DGS dynamic roots skipped because their FID is duplicated",
+                        device=root_element.loc_name,
+                        device_class="ElmComp",
+                        value=root_id,
+                    )
+                else:
+                    pass
+        return unique_root_by_id
+
+    def convert_and_add_templates(self) -> DgsDynamicTemplateConversionResult:
+        """Convert DGS roots directly into registered final templates.
+
+        The automatic file-open path owns one transient DGS parse graph.  Each
+        successful root follows ``Block -> Template -> MultiCircuit``.  The return
+        value is the only cross-stage state: one minimal lookup from the exact root
+        FID to the final template already owned by ``MultiCircuit``.
+
+        :return: Final-template associations plus transient canonical slot lookups.
+        """
+        self._conversion_result: DgsDynamicTemplateConversionResult = (
+            DgsDynamicTemplateConversionResult()
+        )
+        templates_by_root_dgs_id: Dict[
+            str,
+            RmsModelTemplate | EmtModelTemplate,
+        ] = self._conversion_result.templates_by_root_dgs_id
+        if self._target_domain not in {
+            DynamicSimulationMode.RMS,
+            DynamicSimulationMode.EMT,
+        }:
+            self._logger.add_error(
+                msg="DGS dynamic model import requires RMS or EMT mode",
+                value=self._target_domain,
+            )
+            return self._conversion_result
+        else:
+            pass
+
+        # Reject empty and duplicated root identities before building the shared
+        # graphical index. Ambiguous roots must not prevent independent valid roots
+        # from reaching their own direct FID conversion.
+        unique_root_by_id: Dict[str, ElmComp] = self._get_unique_dgs_dynamic_roots_by_id(
+
+            emit_diagnostics=True,
+        )
+        excluded_root_ids: Set[str] = set()
+        candidate_root: ElmComp
+        for candidate_root in self._dgs_circuit.elmcomps:
+            if (
+                    candidate_root.ID != ""
+                    and candidate_root.ID not in unique_root_by_id
+            ):
+                excluded_root_ids.add(candidate_root.ID)
+            else:
+                pass
+
+        try:
+            parsed_blocks: Dict[str, ParsedDgsBlockDefinition] = (
+                parse_dgs_block_definitions_from_circuit(
+                    circuit=self._dgs_circuit,
+                    simulation_domain=self._target_domain,
+                )
+            )
+            graphical_indexes: DgsGraphicalIndexes = build_dgs_graphical_indexes(
+                circuit=self._dgs_circuit,
+                excluded_element_ids=excluded_root_ids,
+            )
+        except (DgsDynamicParserContractError, KeyError, TypeError, ValueError) as error:
+            self._logger.add_error(
+                msg="DGS dynamic model import is unavailable",
+                value=str(error),
+            )
+            return self._conversion_result
+        # Todo: at this point I think circuit.rms_models should be empty
+        if self._target_domain == DynamicSimulationMode.RMS:
+            existing_names: Set[str] = set(
+                template.name for template in self._circuit.rms_models
+            )
+        else:
+            existing_names = set(
+                template.name for template in self._circuit.emt_models
+            )
+
+        materialized_count: int = 0
+        failed_count: int = 0
+        root_id: str
+        root_element: ElmComp
+        for root_id, root_element in unique_root_by_id.items():
+            host_identity: Tuple[str, DeviceType, str, str | None] | None = (
+                self._resolve_dgs_direct_root_host_identity(
+
+                    root_element=root_element,
+                )
+            )
+            if host_identity is not None and not self._is_selected_dgs_root_for_host(root_element, host_identity):
+                self._logger.add_info(
+                    msg="DGS secondary or out-of-service root retained without physical assembly",
+                    device=root_element.loc_name, device_class="ElmComp", value=root_id)
+                host_identity = None
+            else:
+                pass
+            source_vsc: ElmVsc | ElmVscmono | None = None
+            unsupported_vsc_options: List[str] = []
+            if host_identity is not None and host_identity[2] in {"ElmVsc", "ElmVscmono"}:
+                sources = (self._dgs_circuit.elmvscs if host_identity[2] == "ElmVsc"
+                           else self._dgs_circuit.elmvscmonos)
+                matches = [source for source in sources if source.ID == host_identity[0]]
+                if len(matches) == 1:
+                    source_vsc = matches[0]
+                    unsupported_vsc_options = get_unsupported_dgs_vsc_options(source_vsc)
+                if unsupported_vsc_options:
+                    self._logger.add_warning(
+                        msg="DGS converter options require an unsupported RMS equipment model",
+                        device=host_identity[3],
+                        device_class=host_identity[2],
+                        value="; ".join(unsupported_vsc_options),
+                    )
+            if unsupported_vsc_options:
+                # Keep the parsed controller available, without constructing
+                # equipment equations for a native option we do not implement.
+                host_identity = None
+            source_block: Block | None
+            direct_result: DgsDirectRootBuildResult | None = None
+            try:
+                root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
+                    circuit=self._dgs_circuit,
+                    parsed_blocks=parsed_blocks,
+                    root_name=root_element.loc_name,
+                    root_typ_id=root_element.typ_id,
+                    root_dgs_id=root_id,
+                )
+                direct_result = build_direct_root_elmcomp_block(
+                    circuit=self._dgs_circuit,
+                    result=root_result,
+                    graphical_indexes=graphical_indexes,
+                )
+                source_block = direct_result.root_block
+            except (
+                    DgsDynamicParserContractError,
+                    KeyError,
+                    TypeError,
+                    UnsupportedDgsExpression,
+                    ValueError,
+            ) as error:
+                self._logger.add_warning(
+                    msg="DGS dynamic root could not be materialized",
+                    device=root_element.loc_name,
+                    device_class="ElmComp",
+                    value=str(error),
+                )
+                failed_count += 1
+                source_block = None
+
+            if source_block is None or direct_result is None:
+                pass
+            else:
+                try:
+                    multi_plans: tuple[NativeDgsEquipmentPlan, ...] = detect_native_dgs_equipment(direct_result, self._dgs_circuit)
+                    if self._target_domain == DynamicSimulationMode.RMS and len(multi_plans) > 1:
+                        parts: List[DgsModelPartition] = self._convert_partitioned_root(root_element, direct_result, multi_plans)
+                        for part in parts:
+                            if part.template is not None and self._register_dgs_direct_template(
+                                    part.template, f"{root_id}:{part.device.idtag}", existing_names):
+                                materialized_count += 1
+                            else:
+                                raise ValueError("DGS partition template could not be registered")
+                        self._conversion_result.partitions_by_root_dgs_id[root_id] = parts
+                        self._conversion_result.child_blocks_by_root_and_slot_id[root_id] = dict(direct_result.child_block_by_slot_id)
+                    else:
+                        self._convert_single_direct_root(root_id, root_element, direct_result, source_block,
+                                                         host_identity, existing_names)
+                        materialized_count += 1
+                except (DgsDynamicParserContractError, KeyError, TypeError, UnsupportedDgsExpression, ValueError) as error:
+                    self._logger.add_warning(
+                        msg="DGS dynamic root could not be assembled",
+                        device=root_element.loc_name, device_class="ElmComp", value=str(error))
+                    failed_count += 1
+
+        # Isolated BlkRef occurrences are valid reusable DGS definitions even when
+        # the file has no ElmComp root or physical host. Materialize one final
+        # catalogue template per exact BlkDef without creating Bundle/Entry state.
+        standalone_occurrences: List[DgsStandaloneBlockOccurrence] = (
+            list_dgs_blkref_catalog_occurrences_from_circuit(circuit=self._dgs_circuit)
+        )
+        standalone_id_count: Dict[str, int] = dict()
+        standalone_occurrence: DgsStandaloneBlockOccurrence
+        for standalone_occurrence in standalone_occurrences:
+            standalone_id: str = str(standalone_occurrence.blkref_id).strip()
+            current_count: int | None = standalone_id_count.get(standalone_id, None)
+            if current_count is None:
+                standalone_id_count[standalone_id] = 1
+            else:
+                standalone_id_count[standalone_id] = current_count + 1
+
+        elmcomp_ids: Set[str] = set()
+        source_root: ElmComp
+        for source_root in self._dgs_circuit.elmcomps:
+            elmcomp_ids.add(str(source_root.ID).strip())
+        materialized_standalone_type_ids: Set[str] = set()
+        for standalone_occurrence in standalone_occurrences:
+            standalone_id = str(standalone_occurrence.blkref_id).strip()
+            standalone_id_occurrences: int | None = standalone_id_count.get(
+                standalone_id,
+                None,
+            )
+            standalone_is_eligible: bool = bool(
+                not standalone_occurrence.connected
+                and standalone_id != ""
+                and standalone_id_occurrences == 1
+                and standalone_id not in elmcomp_ids
+                and standalone_occurrence.typ_id
+                not in materialized_standalone_type_ids
+            )
+            if not standalone_is_eligible:
+                pass
+            else:
+                parsed_standalone: ParsedDgsBlockDefinition | None = (
+                    parsed_blocks.get(standalone_occurrence.typ_id, None)
+                )
+                if parsed_standalone is None:
+                    self._logger.add_warning(
+                        msg="Isolated DGS BlkRef skipped because its BlkDef is missing",
+                        device=standalone_occurrence.sample_display_name,
+                        device_class="BlkRef",
+                        value=standalone_id,
+                    )
+                    failed_count += 1
+                else:
+                    try:
+                        standalone_block: Block = (
+                            build_standalone_blkdef_block_from_parsed_block(
+                                parsed_block=parsed_standalone,
+                                block_name=parsed_standalone.blkdef.loc_name,
+                            )
+                        )
+                        standalone_template: RmsModelTemplate | EmtModelTemplate = (
+                            self._build_dgs_direct_runtime_template(
+                                source_block=standalone_block,
+                                template_name=parsed_standalone.blkdef.loc_name,
+                                device_tpe=DeviceType.DynamicModelHostDevice,
+                                direct_result=None,
+                                host_device=None,
+                                native_measurement_specs=list(),
+                            )
+                        )
+                        standalone_registered: bool = self._register_dgs_direct_template(
+                            template_obj=standalone_template,
+                            root_dgs_id=standalone_id,
+                            existing_names=existing_names,
+                        )
+                    except (
+                            KeyError,
+                            TypeError,
+                            UnsupportedDgsExpression,
+                            ValueError,
+                    ) as error:
+                        self._logger.add_warning(
+                            msg="Isolated DGS BlkRef could not be materialized",
+                            device=standalone_occurrence.sample_display_name,
+                            device_class="BlkRef",
+                            value=str(error),
+                        )
+                        failed_count += 1
+                    else:
+                        materialized_standalone_type_ids.add(
+                            standalone_occurrence.typ_id
+                        )
+                        if standalone_registered:
+                            materialized_count += 1
+                        else:
+                            failed_count += 1
+
+        self._logger.add_info(
+            msg="DGS dynamic template conversion completed",
+            value=(
+                f"templates={materialized_count}, "
+                f"failed={failed_count}"
+            ),
+        )
+        return self._conversion_result
+
+    def _convert_partitioned_root(self, root_element: ElmComp, direct: DgsDirectRootBuildResult,
+                                  plans: tuple[NativeDgsEquipmentPlan, ...]) -> List[DgsModelPartition]:
+        """Assign whole controller instances and build one native template per host.
+
+        :param root_element: Composite selected by the physical devices.
+        :param direct: Complete controller graph and exact source slot relations.
+        :param plans: All native requirements in this composite.
+        :return: Deterministically ordered, independently owned partitions.
+        """
+        native_hosts: Dict[str, str] = dict()
+        devices: Dict[str, DynamicDevice] = dict()
+        plan: NativeDgsEquipmentPlan
+        for plan in plans:
+            device_type: DeviceType | None = get_dgs_dynamic_host_device_tpe(plan.entry.element_kind)
+            matches: List[DynamicDevice] = _find_exact_dgs_dynamic_host_devices(
+                self._circuit, str(plan.entry.element_id), device_type, str(plan.entry.element_kind))
+            if len(matches) != 1:
+                raise ValueError(f"DGS partition requires one exact device: {plan.entry.element_id}")
+            else:
+                device: DynamicDevice = matches[0]
+                identity: Tuple[str, DeviceType, str, str | None] = (
+                    device.idtag, device.device_type, str(plan.entry.element_kind), plan.entry.element_name)
+                if not self._is_selected_dgs_root_for_host(root_element, identity):
+                    raise ValueError(f"DGS composite is not active and selected by device {device.name}")
+                elif device.idtag in devices:
+                    raise ValueError("DGS composite repeats a native physical device")
+                else:
+                    devices[device.idtag] = device
+                    native_hosts[str(plan.entry.slot_id)] = device.idtag
+        owners: Dict[str, str] = assign_dgs_slot_owners(direct, self._dgs_circuit, native_hosts)
+        parts: List[DgsModelPartition] = list()
+        host_id: str
+        for host_id in sorted(devices):
+            plan = next(candidate for candidate in plans if candidate.entry.element_id == host_id)
+            device = devices[host_id]
+            slots: Set[str] = set(slot for slot, host in owners.items() if host == device.idtag)
+            control: Block = Block(name=f"{root_element.loc_name} / {device.name} control")
+            control.children = list(child for slot, child in direct.child_block_by_slot_id.items() if slot in slots)
+            parts.append(DgsModelPartition(plan, device, control, slots))
+        aggregate: Block = Block(children=list(part.control for part in parts))
+        # Root-level executable content belongs once to the stable first host.
+        original: Block = direct.root_block
+        original.children = list()
+        if (len(original.state_vars) > 0 or len(original.algebraic_eqs) > 0
+                or len(original.parameters) > 0 or len(original.procedural_logic) > 0):
+            parts[0].control.add(original)
+        else:
+            pass
+        # Reserve native measurement producers before assembling equipment. Their
+        # actual physical expressions are bound once standard network shells exist.
+        meter_view: DgsDirectRootBuildResult = DgsDirectRootBuildResult(
+            aggregate, direct.child_block_by_slot_id, direct.graphical_tree_by_slot_id,
+            list(entry for entry in direct.direct_entries if entry.element_kind not in ("ElmDsl", "ElmComp")))
+        specs: List[_DgsRmsMeasurementSpec] = self._collect_native_dgs_rms_measurement_specs(root_element, meter_view, None)
+        spec: _DgsRmsMeasurementSpec
+        for spec in specs:
+            meter_entries: List[ElmCompInstanceEntry] = list(entry for entry in direct.direct_entries
+                if entry.element_id == spec.source_fid or entry.slot_id == spec.source_fid)
+            if len(meter_entries) != 1 or meter_entries[0].slot_id is None:
+                raise ValueError("Native measurement has no unique source slot")
+            else:
+                slot_id: str = meter_entries[0].slot_id
+                part: DgsModelPartition = next(candidate for candidate in parts if slot_id in candidate.slots)
+                outputs: Dict[str, Var] = dict()
+                substitutions: Dict[Var, Var] = dict()
+                connection: _DgsRmsMeasurementConnection
+                for connection in spec.connections:
+                    _remove_meter_target_fallback_ownership(aggregate, connection.target_var)
+                    if connection.alias_name not in outputs:
+                        outputs[connection.alias_name] = connection.target_var
+                    else:
+                        substitutions[connection.target_var] = outputs[connection.alias_name]
+                aggregate.update_model_bulk(substitutions)
+                meter: Block = Block(name=spec.source_name, out_vars=list(outputs.values()),
+                                     algebraic_vars=list(outputs.values()),
+                                     algebraic_eqs=list(variable - Const(0.0) for variable in outputs.values()))
+                part.control.add(meter)
+                direct.child_block_by_slot_id[slot_id] = meter
+        for part in parts:
+            _apply_composite_child_interface_if_missing(part.control)
+            context: DgsDirectRootBuildResult = DgsDirectRootBuildResult(
+                part.control, direct.child_block_by_slot_id, direct.graphical_tree_by_slot_id,
+                list(entry for entry in direct.direct_entries
+                     if entry.slot_id not in native_hosts or entry.slot_id == part.plan.entry.slot_id))
+            machine_parameters: DgsElmSymMachineParameters | None = None
+            if part.plan.kind == NativeDgsEquipmentKind.SynchronousMachine and isinstance(part.device, Generator):
+                machine_parameters = self._build_exact_dgs_elmsym_machine_parameters(part.device.idtag, part.device)
+            else:
+                pass
+            equipment: Block = construct_native_dgs_equipment(part.plan, part.device, self._dgs_circuit,
+                float(self._circuit.Sbase), float(self._circuit.fBase), machine_parameters)
+            assembled: Block = assemble_native_dgs_model(part.plan, equipment, context, self._dgs_circuit,
+                                                          self._logger, controller_scope=aggregate)
+            # A flat top-level diagram exposes the native block and local controls.
+            assembled.children = list()
+            root: Block = Block(name=f"{root_element.loc_name} / {part.device.name}",
+                                children=list((assembled,)), in_vars=list(assembled.in_vars),
+                                out_vars=list(assembled.out_vars), external_mapping=dict(assembled.external_mapping))
+            root.dynamic_model_contract = copy.deepcopy(assembled.dynamic_model_contract)
+            root.children.extend(part.control.children)
+            local_outputs: Set[int] = set(variable.uid for child in part.control.children for variable in child.out_vars)
+            root.in_vars = list(variable for variable in assembled.in_vars if variable.uid not in local_outputs)
+            child: Block
+            index: int
+            for index, child in enumerate(root.children):
+                root.diagram.add_node(name=child.name, x=float((index % 4) * 260), y=float((index // 4) * 180),
+                                      tpe="TEMPLATE", device_uid=child.uid)
+            template: RmsModelTemplate = RmsModelTemplate(name=root.name)
+            template.tpe = part.device.device_type
+            template.block = root
+            template.comment = f"PowerFactory DGS composite {root_element.ID}; device {part.device.idtag}"
+            part.template = template
+        self._logger.add_info(msg="DGS composite partitioned into physical devices", device=root_element.loc_name,
+                              value=", ".join(part.device.idtag for part in parts))
+        return parts
+
+    def finalize_partitioned_roots(self) -> bool:
+        """Complete independent multi-host imports after network model preparation.
+
+        A failed composite remains inspectable without activating incomplete
+        equations or preventing other source composites from being imported.
+
+        :return: True when no partition requires a default-model fallback.
+        """
+        successful: bool = True
+        root_id: str
+        parts: List[DgsModelPartition]
+        part: DgsModelPartition
+        for root_id, parts in self._conversion_result.partitions_by_root_dgs_id.items():
+            if any(part.template is None or part.device.rms_template is not part.template for part in parts):
+                successful = False
+            elif all(part.template.block.uid == part.device.rms_model.uid for part in parts):
+                pass
+            else:
+                try:
+                    self._finalize_partitioned_root(root_id, parts)
+                except (KeyError, TypeError, ValueError, StopIteration) as error:
+                    successful = False
+                    for part in parts:
+                        if part.template is not None:
+                            part.template.tpe = DeviceType.DynamicModelHostDevice
+                        else:
+                            pass
+                        part.device.rms_template = None
+                        part.device.rms_model = Block()
+                    self._logger.add_warning(msg="DGS partitioned root retained without activation",
+                                             device=root_id, value=str(error))
+                else:
+                    pass
+        return successful
+
+    def _finalize_partitioned_root(self, root_id: str, parts: List[DgsModelPartition]) -> None:
+        """Connect final instance UIDs and resolve exact physical meter expressions.
+
+        :param root_id: Source composite identity.
+        :param parts: Constructed and activated equipment partitions.
+        :return: None.
+        """
+        runtime_slots: Dict[str, Block] = dict()
+        canonical_slots: Dict[str, Block] = self._conversion_result.child_blocks_by_root_and_slot_id[root_id]
+        part: DgsModelPartition
+        for part in parts:
+            copy_partition_diagrams(part.template.block, part.device.rms_model)
+            runtime_slots.update(_translate_slot_blocks_to_runtime(part.template.block, part.device.rms_model,
+                                                                   canonical_slots))
+        connect_dgs_partitions(parts, self._circuit.var_factory)
+        source_root: ElmComp = next(root for root in self._dgs_circuit.elmcomps if root.ID == root_id)
+        entries: List[ElmCompInstanceEntry] = get_unique_elmcomp_slot_entries(
+            extract_elmcomp_direct_instances(self._dgs_circuit, source_root))
+        view: DgsDirectRootBuildResult = DgsDirectRootBuildResult(
+            Block(), runtime_slots, dict(), list(entry for entry in entries
+                                                  if entry.element_kind not in ("ElmDsl", "ElmComp")))
+        specs: List[_DgsRmsMeasurementSpec] = self._collect_native_dgs_rms_measurement_specs(source_root, view, None)
+        elements: Dict[str, DGSElement] = _build_dgs_element_index(self._dgs_circuit)
+        all_devices: dict = self._circuit.get_all_elements_dict()[0]
+        devices: Dict[str, DynamicDevice] = dict((key, value) for key, value in all_devices.items()
+                                                if isinstance(value, DynamicDevice))
+        buses: Dict[str, Bus] = dict((bus.idtag, bus) for bus in self._circuit.buses)
+        spec: _DgsRmsMeasurementSpec
+        for spec in specs:
+            entry: ElmCompInstanceEntry = next(entry for entry in entries
+                if entry.element_id == spec.source_fid or entry.slot_id == spec.source_fid)
+            part = next(candidate for candidate in parts if entry.slot_id in candidate.slots)
+            meter: DGSElement | None = spec.meter_element
+            names: List[str] = list(dict.fromkeys(connection.alias_name for connection in spec.connections))
+            aliases: Dict[str, Expr] = dict()
+            prepared: Block | None = None
+            if isinstance(meter, StaVmea):
+                bus: Bus | None = buses.get(str(meter.pbusbar).lstrip('#'), None)
+                if bus is not None:
+                    aliases = _build_voltage_alias_expressions(meter, names, bus)
+                else:
+                    raise ValueError(f"Unresolved DGS voltage measurement terminal: {spec.source_fid}")
+            elif isinstance(meter, (StaImea, StaPqmea)):
+                measured_device: DynamicDevice | None
+                measured_bus: Bus | None
+                terminal: int | None
+                measured_device, measured_bus, terminal = _resolve_cubicle_source(
+                    str(meter.pcubic).lstrip('#'), elements, devices, buses)
+                if measured_device is None or measured_bus is None or terminal is None:
+                    raise ValueError(f"Unresolved DGS measurement cubicle: {spec.source_fid}")
+                elif isinstance(meter, StaImea):
+                    aliases = _build_current_alias_expressions(meter, names, measured_bus, measured_device,
+                        terminal, float(self._circuit.Sbase), host_model=part.device.rms_model)
+                else:
+                    aliases = _build_power_alias_expressions(meter, names, measured_device, terminal,
+                        float(self._circuit.Sbase), self._circuit, part.device, self._import_metadata)
+            elif isinstance(meter, ElmPhi):
+                bus = buses.get(str(meter.pbusbar).lstrip('#'), None)
+                if bus is not None or spec.use_stationary_reference:
+                    aliases, prepared = _build_pll_alias_expressions(self._circuit, names,
+                        part.device.bus if bus is None else bus, meter, spec.source_fid, spec.use_stationary_reference)
+                else:
+                    raise ValueError(f"Unresolved DGS PLL terminal: {spec.source_fid}")
+            else:
+                raise ValueError(f"Unsupported partitioned DGS measurement: {spec.source_fid}")
+            targets: Dict[str, List[Var]] = dict()
+            connection: _DgsRmsMeasurementConnection
+            for connection in spec.connections:
+                if connection.alias_name not in targets:
+                    targets[connection.alias_name] = list()
+                else:
+                    pass
+                targets[connection.alias_name].append(connection.target_var)
+            if set(aliases) != set(targets):
+                raise ValueError(f"Incomplete partitioned DGS measurement outputs: {spec.source_fid}")
+            else:
+                connected: int = _connect_meter_aliases(part.device.rms_model, targets, aliases, spec.source_name,
+                    spec.meter_kind, self._circuit.var_factory, prepared, self._import_metadata)
+                if connected == 0:
+                    raise ValueError(f"DGS partition measurement could not be connected: {spec.source_fid}")
+                else:
+                    pass
+        # Persist the completed graph, including interconnection nodes, using
+        # existing UID/factory semantics. No import plan survives in runtime.
+        for part in parts:
+            owner: Block
+            for owner in part.device.rms_model.get_all_blocks():
+                # VarFactory has propagated cross-model UIDs; keyed startup
+                # dictionaries must now use those same effective identities.
+                rehash_block_var_keyed_dicts(owner)
+                owner.post_init_seed_eqs = dict(owner.post_init_seed_eqs.items())
+            build_partition_diagram_connections(part.device.rms_model)
+            part.template.block = part.device.rms_model.copy()
+        self._logger.add_info(msg="DGS partition interconnections and measurements finalized", device=source_root.loc_name,
+                              value=f"devices={len(parts)}")
+
+    def _convert_single_direct_root(self, root_id: str, root_element: ElmComp,
+                                    direct_result: DgsDirectRootBuildResult, source_block: Block,
+                                    host_identity: Tuple[str, DeviceType, str, str | None] | None,
+                                    existing_names: Set[str]) -> None:
+        """Preserve the existing one-host construction path.
+
+        :param root_id: Exact composite identity.
+        :param root_element: Source composite.
+        :param direct_result: Parsed children and slot relations.
+        :param source_block: Owned controller root.
+        :param host_identity: Selected physical host, if present.
+        :param existing_names: Registered template names.
+        :return: None.
+        """
+        host_device_for_measurements: DynamicDevice | None = None
+        if host_identity is None:
+            resolved_device_tpe: DeviceType = (
+                DeviceType.DynamicModelHostDevice
+            )
+            native_kind: NativeDgsEquipmentKind | None = None
+        else:
+            host_device_tpe: DeviceType = host_identity[1]
+            native_kind = self._native_runtime_validation_kind(direct_result)
+            native_runtime_ready: bool = (
+                is_dgs_dynamic_block_runtime_assignable(
+                    block=source_block,
+                    device_tpe=host_device_tpe,
+                    native_kind=native_kind,
+                )
+            )
+            native_construction_supported: bool = (
+                    self._target_domain == DynamicSimulationMode.RMS
+                    and native_kind is not None
+            )
+            typed_vsc_contract_ready: bool = bool(
+                host_device_tpe != DeviceType.VscDevice
+                or native_kind is not None
+            )
+            if (
+                    typed_vsc_contract_ready
+                    and (native_runtime_ready or native_construction_supported)
+            ):
+                resolved_device_tpe = host_device_tpe
+            else:
+                resolved_device_tpe = DeviceType.DynamicModelHostDevice
+                self._logger.add_warning(
+                    msg=(
+                        "DGS dynamic root retained as a generic template "
+                        "because its physical runtime contract is unsupported"
+                    ),
+                    device=root_element.loc_name,
+                    device_class="ElmComp",
+                    value=root_id,
+                )
+
+            exact_host_devices_for_measurements: List[DynamicDevice] = (
+                _find_exact_dgs_dynamic_host_devices(
+                    circuit=self._circuit,
+                    source_element_dgs_id=host_identity[0],
+                    device_tpe=host_identity[1],
+                    source_element_class=host_identity[2],
+                )
+            )
+            if len(exact_host_devices_for_measurements) == 1:
+                host_device_for_measurements = (
+                    exact_host_devices_for_measurements[0]
+                )
+            else:
+                pass
+
+        native_measurement_specs: List[_DgsRmsMeasurementSpec] = (
+            self._collect_native_dgs_rms_measurement_specs(
+                root_element=root_element,
+                direct_result=direct_result,
+                host_device=host_device_for_measurements,
+            )
+        )
+        template_obj: RmsModelTemplate | EmtModelTemplate = (
+            self._build_dgs_direct_runtime_template(
+                source_block=source_block,
+                template_name=root_element.loc_name,
+                device_tpe=resolved_device_tpe,
+                direct_result=direct_result if host_identity is not None else None,
+                host_device=host_device_for_measurements,
+                native_measurement_specs=native_measurement_specs,
+            )
+        )
+        registered: bool = self._register_dgs_direct_template(
+            template_obj=template_obj,
+            root_dgs_id=root_id,
+            existing_names=existing_names,
+        )
+        if registered:
+            self._conversion_result.templates_by_root_dgs_id[root_id] = template_obj
+            self._conversion_result.child_blocks_by_root_and_slot_id[root_id] = (
+                dict(direct_result.child_block_by_slot_id)
+            )
+            pass
+        else:
+            raise ValueError("DGS template could not be registered")
+
+    def apply_templates_to_devices(self) -> None:
+        """Configure and install each imported model on its exact physical host.
+
+        :return: None; metadata remains keyed by the installed model identities.
+        """
+        activated_count: int = 0
+        failed_count: int = 0
+        unique_root_by_id: Dict[str, ElmComp] = self._get_unique_dgs_dynamic_roots_by_id(
+
+            emit_diagnostics=False,
+        )
+        root_id: str
+        root_element: ElmComp
+        for root_id, root_element in unique_root_by_id.items():
+            template_obj: RmsModelTemplate | EmtModelTemplate | None = (
+                self._conversion_result.templates_by_root_dgs_id.get(root_id, None)
+            )
+            partitioned: List[DgsModelPartition] | None = self._conversion_result.partitions_by_root_dgs_id.get(root_id, None)
+            if partitioned is not None:
+                try:
+                    for part in partitioned:
+                        identity: Tuple[str, DeviceType, str, str | None] = (
+                            part.device.idtag, part.device.device_type, str(part.plan.entry.element_kind), part.plan.entry.element_name)
+                        if part.template is not None and self._activate_dgs_direct_template(part.template, identity, part.plan.kind):
+                            pass
+                        else:
+                            raise ValueError(f"DGS partition could not be activated: {part.device.name}")
+                except (KeyError, TypeError, ValueError) as error:
+                    for part in partitioned:
+                        part.device.rms_template = None
+                        part.device.rms_model = Block()
+                    self._logger.add_warning(msg="DGS partitioned root could not be activated", device=root_id, value=str(error))
+                    failed_count += 1
+                else:
+                    activated_count += len(partitioned)
+            elif template_obj is None:
+                pass
+            else:
+                host_identity: Tuple[
+                                   str,
+                                   DeviceType,
+                                   str,
+                                   str | None,
+                               ] | None = self._resolve_dgs_direct_root_host_identity(
+
+                    root_element=root_element,
+                )
+                if host_identity is None or not self._is_selected_dgs_root_for_host(root_element, host_identity):
+                    pass
+                else:
+                    # Each native family is named by its source class, so the host class selects it
+                    native_kinds: Dict[str, NativeDgsEquipmentKind] = dict(
+                        (kind.value, kind) for kind in NativeDgsEquipmentKind)
+                    native_kind: NativeDgsEquipmentKind | None = native_kinds.get(host_identity[2], None)
+                    try:
+                        activated: bool = self._activate_dgs_direct_template(
+                            template_obj=template_obj, host_identity=host_identity, native_kind=native_kind)
+                    except (DgsDynamicParserContractError, KeyError, TypeError, UnsupportedDgsExpression, ValueError) as error:
+                        activated = False
+                        self._logger.add_warning(
+                            msg="DGS dynamic root could not be activated",
+                            device=root_element.loc_name, device_class="ElmComp", value=str(error))
+                    else:
+                        pass
+                    if activated:
+                        hosts: List[DynamicDevice] = _find_exact_dgs_dynamic_host_devices(
+                            self._circuit, host_identity[0], host_identity[1], host_identity[2],
+                        )
+                        if len(hosts) == 1:
+                            self._conversion_result.models_by_root_dgs_id[root_id] = (
+                                hosts[0].rms_model if isinstance(template_obj, RmsModelTemplate)
+                                else hosts[0].emt_model
+                            )
+                        else:
+                            pass
+                        activated_count += 1
+                    else:
+                        failed_count += 1
+
+        self._logger.add_info(
+            msg="DGS dynamic device assignment completed",
+            value=f"activated={activated_count}, failed={failed_count}",
+        )
 
 
 def _apply_composite_child_interface_if_missing(block: Block) -> None:
@@ -1746,7 +3236,6 @@ def _apply_composite_child_interface_if_missing(block: Block) -> None:
                 for var in power_flow_pair:
                     intern_connected_vars_list.append(var)
 
-
     for child_block in block.children:
         # Preserve the child order so imported reusable-template ports stay stable.
         for input_var in child_block.in_vars:
@@ -1756,7 +3245,7 @@ def _apply_composite_child_interface_if_missing(block: Block) -> None:
                 input_vars_by_uid[input_var.uid] = input_var
 
         for output_var in child_block.out_vars:
-            if output_var.uid in output_vars_by_uid or input_var in intern_connected_vars_list:
+            if output_var.uid in output_vars_by_uid or output_var in intern_connected_vars_list:
                 pass
             else:
                 output_vars_by_uid[output_var.uid] = output_var
@@ -2248,8 +3737,8 @@ def _build_dgs_rms_measurement_block(
                             include_var: bool = input_var in (vm, va, vdc)
                         else:
                             include_var = (
-                                input_var is not None
-                                and input_var.ref == required_reference
+                                    input_var is not None
+                                    and input_var.ref == required_reference
                             )
                         if (
                                 include_var
@@ -2276,160 +3765,6 @@ def _build_dgs_rms_measurement_block(
     return measurement_block
 
 
-def _collect_native_dgs_rms_measurement_specs(
-        dgs_circuit: DgsCircuit,
-        root_element: ElmComp,
-        direct_result: DgsDirectRootBuildResult,
-        host_device: DynamicDevice | None,
-) -> List[_DgsRmsMeasurementSpec]:
-    """Resolve native meter semantics and exact consumers before adaptation.
-
-    :param dgs_circuit: Parsed source graph retaining native meter objects.
-    :param root_element: Composite root whose direct slots are materialized.
-    :param direct_result: Exact direct-slot lookup for the controller root.
-    :param host_device: Physical host used to interpret implicit ElmPhi frames.
-    :return: Ordered native measurement construction specifications.
-    """
-    element_by_id: Dict[str, DGSElement] = _build_dgs_element_index(
-        dgs_circuit=dgs_circuit,
-    )
-    implicit_target_by_slot: Dict[str, str] = (
-        _build_implicit_meter_target_by_slot(
-            dgs_circuit=dgs_circuit,
-            root_element=root_element,
-            entries=direct_result.direct_entries,
-        )
-    )
-    specs: List[_DgsRmsMeasurementSpec] = list()
-    entry: ElmCompInstanceEntry
-
-    # Follow exact direct-slot identities so equal signal names in independent
-    # controller children never become an accidental shared measurement.
-    for entry in direct_result.direct_entries:
-        if entry.slot_id is None:
-            pass
-        else:
-            is_pll_slot: bool = (
-                entry.slot_filter is not None
-                and (
-                    "ElmPhi" in entry.slot_filter
-                    or "ElmPll" in entry.slot_filter
-                )
-            )
-            meter_element: DGSElement | None
-            if entry.element_id is None:
-                if is_pll_slot:
-                    meter_element = _resolve_native_pll_element(
-                        root_element=root_element,
-                        dgs_circuit=dgs_circuit,
-                    )
-                else:
-                    meter_element = None
-            else:
-                meter_element = element_by_id.get(entry.element_id, None)
-
-            meter_kind: RmsPhysicalMeterKind | None
-            if isinstance(meter_element, StaVmea):
-                meter_kind = RmsPhysicalMeterKind.VOLTAGE
-            else:
-                if isinstance(meter_element, StaImea):
-                    meter_kind = RmsPhysicalMeterKind.CURRENT
-                else:
-                    if isinstance(meter_element, StaPqmea):
-                        meter_kind = RmsPhysicalMeterKind.POWER
-                    else:
-                        if isinstance(meter_element, ElmPhi) or is_pll_slot:
-                            meter_kind = RmsPhysicalMeterKind.PHASE_LOCKED_LOOP
-                        else:
-                            meter_kind = None
-
-            if meter_kind is None:
-                pass
-            else:
-                # Early materialization owns the native meter equations, so it
-                # must retain every exact BlkSig consumer. The late-binding
-                # helper deliberately excludes equipment-owned signals, which
-                # would incorrectly discard complete meters before the runtime
-                # adapter has removed their provisional fallback ownership.
-                targets_by_alias: Dict[str, List[Var]] = (
-                    _build_exact_meter_targets(
-                        dgs_circuit=dgs_circuit,
-                        source_slot_id=entry.slot_id,
-                        child_block_by_slot_id=(
-                            direct_result.child_block_by_slot_id
-                        ),
-                    )
-                )
-                target_names: List[str] = (
-                    _get_native_source_target_signal_names(
-                        dgs_circuit=dgs_circuit,
-                        source_slot_id=entry.slot_id,
-                    )
-                )
-                if len(target_names) == 0:
-                    implicit_target_name: str | None = (
-                        implicit_target_by_slot.get(entry.slot_id, None)
-                    )
-                    if implicit_target_name is None:
-                        target_names = list(targets_by_alias.keys())
-                    else:
-                        target_names = list((implicit_target_name,))
-                else:
-                    pass
-
-                connections: List[_DgsRmsMeasurementConnection] = list()
-                target_name: str
-                target_var: Var
-                for target_name in target_names:
-                    target_vars: List[Var] | None = targets_by_alias.get(
-                        target_name,
-                        None,
-                    )
-                    if target_vars is None:
-                        pass
-                    else:
-                        for target_var in target_vars:
-                            connections.append(_DgsRmsMeasurementConnection(
-                                alias_name=target_name,
-                                target_var=target_var,
-                            ))
-
-                if len(connections) == 0:
-                    pass
-                else:
-                    use_stationary_reference: bool = False
-                    if isinstance(meter_element, ElmPhi):
-                        use_stationary_reference = (
-                            meter_element.pbusbar is None
-                            or str(meter_element.pbusbar).strip() == ""
-                        )
-                    else:
-                        if is_pll_slot and isinstance(host_device, VSC):
-                            use_stationary_reference = (
-                                host_device.control1 is ConverterControlType.Pac
-                            )
-                        else:
-                            pass
-                    source_fid: str
-                    if meter_element is None:
-                        source_fid = entry.slot_id
-                    else:
-                        source_fid = str(meter_element.ID)
-                    source_name: str = _get_veragrid_meter_name(
-                        meter_kind=meter_kind,
-                        source_fid=source_fid,
-                    )
-                    specs.append(_DgsRmsMeasurementSpec(
-                        source_fid=source_fid,
-                        source_name=source_name,
-                        meter_kind=meter_kind,
-                        meter_element=meter_element,
-                        connections=connections,
-                        use_stationary_reference=use_stationary_reference,
-                    ))
-    return specs
-
-
 def _get_native_dgs_measurement_physical_references(
         spec: _DgsRmsMeasurementSpec,
 ) -> List[VarPowerFlowReferenceType]:
@@ -2449,7 +3784,7 @@ def _get_native_dgs_measurement_physical_references(
         if isinstance(candidate_reference, VarPowerFlowReferenceType):
             candidate_terminal_side: RmsTerminalSide | None = (
                 _classify_rms_measurement_terminal(
-                reference=candidate_reference,
+                    reference=candidate_reference,
                 )
             )
             if terminal_side is None and candidate_terminal_side is not None:
@@ -2502,378 +3837,6 @@ def _get_native_dgs_measurement_physical_references(
     else:
         pass
     return references
-
-
-def _build_native_dgs_measurement_expression(
-        spec: _DgsRmsMeasurementSpec,
-        alias_name: str,
-        physical_inputs_by_reference: Dict[VarPowerFlowReferenceType, Var],
-        circuit: MultiCircuit,
-) -> Expr | None:
-    """Build one native meter output expression from physical placeholders.
-
-    :param spec: Resolved native measurement specification.
-    :param alias_name: Exact producer alias connected to a controller input.
-    :param physical_inputs_by_reference: Canonical early physical inputs.
-    :param circuit: Circuit supplying system power and frequency bases.
-    :return: Native output expression, or ``None`` when unsupported.
-    """
-    normalized_name: str = alias_name.strip().lower()
-    expression: Expr | None = None
-    references: List[VarPowerFlowReferenceType] = (
-        _get_native_dgs_measurement_physical_references(spec=spec)
-    )
-
-    if spec.meter_kind is RmsPhysicalMeterKind.POWER:
-        power_meter: StaPqmea | None
-        if isinstance(spec.meter_element, StaPqmea):
-            power_meter = spec.meter_element
-        else:
-            power_meter = None
-        if power_meter is None or power_meter.outserv != 0:
-            pass
-        else:
-            orientation: float = 1.0 if power_meter.i_orient == 0 else -1.0
-            if power_meter.Snom > 0.0 and circuit.Sbase > 0.0:
-                power_scale: float = float(circuit.Sbase) / float(power_meter.Snom)
-            else:
-                power_scale = 1.0
-            if normalized_name.startswith("q") and len(references) > 1:
-                physical_power: Var | None = physical_inputs_by_reference.get(
-                    references[1],
-                    None,
-                )
-            else:
-                if len(references) > 0:
-                    physical_power = physical_inputs_by_reference.get(
-                        references[0],
-                        None,
-                    )
-                else:
-                    physical_power = None
-            if physical_power is None:
-                pass
-            else:
-                expression = Const(orientation * power_scale) * physical_power
-    else:
-        if spec.meter_kind is RmsPhysicalMeterKind.VOLTAGE:
-            if len(references) < 2:
-                pass
-            else:
-                voltage_magnitude: Var | None = physical_inputs_by_reference.get(
-                    references[0],
-                    None,
-                )
-                voltage_angle: Var | None = physical_inputs_by_reference.get(
-                    references[1],
-                    None,
-                )
-                if voltage_magnitude is None or voltage_angle is None:
-                    pass
-                else:
-                    if "u1r" in normalized_name or normalized_name == "ur":
-                        expression = voltage_magnitude * sym.cos(voltage_angle)
-                    else:
-                        if "u1i" in normalized_name or normalized_name == "ui":
-                            expression = voltage_magnitude * sym.sin(voltage_angle)
-                        else:
-                            if normalized_name.startswith("cosphi"):
-                                expression = sym.cos(voltage_angle)
-                            else:
-                                if normalized_name.startswith("sinphi"):
-                                    expression = sym.sin(voltage_angle)
-                                else:
-                                    if "phi" in normalized_name:
-                                        expression = voltage_angle
-                                    else:
-                                        if normalized_name in ("fe", "fref"):
-                                            expression = Const(1.0)
-                                        else:
-                                            if (
-                                                    normalized_name.startswith("f")
-                                                    or "_hz" in normalized_name
-                                            ):
-                                                expression = Const(float(circuit.fBase))
-                                            else:
-                                                expression = voltage_magnitude
-        else:
-            if spec.meter_kind is RmsPhysicalMeterKind.PHASE_LOCKED_LOOP:
-                if spec.use_stationary_reference:
-                    if normalized_name.startswith("cosphi"):
-                        expression = Const(1.0)
-                    else:
-                        if normalized_name.startswith("sinphi"):
-                            expression = Const(0.0)
-                        else:
-                            if normalized_name == "fmeas":
-                                expression = Const(1.0)
-                            else:
-                                if "hz" in normalized_name:
-                                    expression = Const(float(circuit.fBase))
-                                else:
-                                    pass
-                else:
-                    if len(references) == 0:
-                        voltage_angle = None
-                    else:
-                        voltage_angle = physical_inputs_by_reference.get(
-                            references[0],
-                            None,
-                        )
-                    if voltage_angle is None:
-                        pass
-                    else:
-                        if normalized_name.startswith("cosphi"):
-                            expression = sym.cos(voltage_angle)
-                        else:
-                            if normalized_name.startswith("sinphi"):
-                                expression = sym.sin(voltage_angle)
-                            else:
-                                pass
-            else:
-                pass
-    return expression
-
-
-def _materialize_native_dgs_rms_measurements(
-        block: Block,
-        circuit: MultiCircuit,
-        native_specs: List[_DgsRmsMeasurementSpec],
-        physical_inputs_by_reference: Dict[VarPowerFlowReferenceType, Var],
-        var_factory: VarFactory,
-) -> Set[int]:
-    """Create native early measurements and connect exact controller inputs.
-
-    :param block: Imported controller root receiving measurement children.
-    :param circuit: Circuit supplying native measurement bases.
-    :param native_specs: Exact native meter construction specifications.
-    :param physical_inputs_by_reference: Shared physical placeholder lookup.
-    :param var_factory: Factory owning early measurement variables.
-    :return: Object identities of controller inputs replaced successfully.
-    """
-    replaced_input_object_ids: Set[int] = set()
-    spec: _DgsRmsMeasurementSpec
-    for spec in native_specs:
-        required_references: List[VarPowerFlowReferenceType] = (
-            _get_native_dgs_measurement_physical_references(spec=spec)
-        )
-        required_reference: VarPowerFlowReferenceType
-        for required_reference in required_references:
-            _get_or_create_dgs_physical_input(
-                block=block,
-                reference=required_reference,
-                physical_inputs_by_reference=physical_inputs_by_reference,
-                var_factory=var_factory,
-            )
-
-        measurement_block: Block = Block(name=spec.source_name)
-        measurement_block.in_vars = list(
-            physical_inputs_by_reference[reference]
-            for reference in required_references
-        )
-        connected_count: int = 0
-        output_by_alias: Dict[str, Var] = dict()
-        connection: _DgsRmsMeasurementConnection
-        for connection in spec.connections:
-            output_var: Var | None = output_by_alias.get(
-                connection.alias_name,
-                None,
-            )
-            if output_var is None:
-                source_expression: Expr | None = (
-                    _build_native_dgs_measurement_expression(
-                        spec=spec,
-                        alias_name=connection.alias_name,
-                        physical_inputs_by_reference=physical_inputs_by_reference,
-                        circuit=circuit,
-                    )
-                )
-                if source_expression is None:
-                    pass
-                else:
-                    # The exact DGS consumer variable becomes the measurement
-                    # output. Reusing it prevents a same-name second UID from
-                    # appearing when the template is wrapped or duplicated.
-                    output_var = connection.target_var
-                    _remove_meter_target_fallback_ownership(
-                        host_model=block,
-                        target_var=output_var,
-                    )
-                    measurement_block.algebraic_vars.append(output_var)
-                    measurement_block.out_vars.append(output_var)
-                    measurement_block.algebraic_eqs.append(
-                        output_var - source_expression
-                    )
-                    output_by_alias[connection.alias_name] = output_var
-                    replaced_input_object_ids.add(id(connection.target_var))
-                    connected_count += 1
-            else:
-                # One native output can feed several exact endpoints. Remove
-                # every additional receiver fallback before atomically joining
-                # its complete block interface to the canonical output UID.
-                _remove_meter_target_fallback_ownership(
-                    host_model=block,
-                    target_var=connection.target_var,
-                )
-                block.update_model(
-                    old=connection.target_var,
-                    new=output_var,
-                )
-                replaced_input_object_ids.add(id(connection.target_var))
-                connected_count += 1
-
-        if connected_count == 0:
-            pass
-        else:
-            block.children.append(measurement_block)
-    return replaced_input_object_ids
-
-
-def _add_required_dgs_rms_measurements(
-        block: Block,
-        host_device: DynamicDevice,
-        circuit: MultiCircuit,
-        native_specs: List[_DgsRmsMeasurementSpec],
-) -> None:
-    """Materialize and connect measurements required by one imported model.
-
-    :param block: Imported DGS composite root.
-    :param host_device: Exact static device that owns the final RMS template.
-    :param circuit: Circuit providing the system power and frequency bases.
-    :param native_specs: Exact native meters resolved from the DGS graph.
-    :return: None.
-    """
-    measurement_var_factory: VarFactory = VarFactory()
-    physical_inputs_by_reference: Dict[VarPowerFlowReferenceType, Var] = dict()
-    replaced_input_object_ids: Set[int] = (
-        _materialize_native_dgs_rms_measurements(
-            block=block,
-            circuit=circuit,
-            native_specs=native_specs,
-            physical_inputs_by_reference=physical_inputs_by_reference,
-            var_factory=measurement_var_factory,
-        )
-    )
-    unconnected_inputs: List[Tuple[Block, Var]] = (
-        _collect_unconnected_dgs_child_inputs(block=block)
-    )
-    physical_input_object_ids: Set[int] = set(
-        id(physical_input)
-        for physical_input in physical_inputs_by_reference.values()
-    )
-    unconnected_inputs = list(
-        input_entry
-        for input_entry in unconnected_inputs
-        if id(input_entry[1]) not in physical_input_object_ids
-    )
-    inputs_by_terminal: Dict[RmsTerminalSide, List[Tuple[Block, Var]]] = dict((
-        (RmsTerminalSide.FROM, list()),
-        (RmsTerminalSide.TO, list()),
-        (RmsTerminalSide.BUS, list()),
-    ))
-    owner_block: Block
-    input_var: Var
-    for owner_block, input_var in unconnected_inputs:
-        if isinstance(input_var.ref, VarPowerFlowReferenceType):
-            terminal_side: RmsTerminalSide | None = (
-                _classify_rms_measurement_terminal(reference=input_var.ref)
-            )
-            if terminal_side is None:
-                pass
-            else:
-                inputs_by_terminal[terminal_side].append((owner_block, input_var))
-        else:
-            pass
-
-    terminal_side: RmsTerminalSide
-    terminal_inputs: List[Tuple[Block, Var]]
-    for terminal_side, terminal_inputs in inputs_by_terminal.items():
-        if len(terminal_inputs) == 0:
-            pass
-        else:
-            if isinstance(host_device, BranchParent):
-                if terminal_side is RmsTerminalSide.FROM:
-                    terminal_bus = host_device.bus_from
-                else:
-                    if terminal_side is RmsTerminalSide.TO:
-                        terminal_bus = host_device.bus_to
-                    else:
-                        terminal_bus = None
-            else:
-                if isinstance(host_device, InjectionParent):
-                    if terminal_side is RmsTerminalSide.BUS:
-                        terminal_bus = host_device.bus
-                    else:
-                        terminal_bus = None
-                else:
-                    terminal_bus = None
-
-            if terminal_bus is None:
-                pass
-            else:
-                terminal_vars: List[Var] = list(
-                    input_entry[1] for input_entry in terminal_inputs
-                )
-                measurement_types: List[BlockType] = (
-                    find_measurements_for_inputs_group(
-                        bus=terminal_bus,
-                        inputs=terminal_vars,
-                    )
-                )
-                measurement_type: BlockType
-                for measurement_type in measurement_types:
-                    # Allocate every prerequisite before invoking the builder.
-                    # A single canonical input is reused across all measurements
-                    # that observe the same physical terminal quantity.
-                    required_references: List[VarPowerFlowReferenceType] = (
-                        _get_rms_terminal_physical_references(
-                            block_type=measurement_type,
-                            terminal_side=terminal_side,
-                            is_dc_terminal=terminal_bus.is_dc,
-                        )
-                    )
-                    required_reference: VarPowerFlowReferenceType
-                    for required_reference in required_references:
-                        _get_or_create_dgs_physical_input(
-                            block=block,
-                            reference=required_reference,
-                            physical_inputs_by_reference=physical_inputs_by_reference,
-                            var_factory=measurement_var_factory,
-                        )
-                    measurement_block: Block | None = _build_dgs_rms_measurement_block(
-                        block_type=measurement_type,
-                        terminal_side=terminal_side,
-                        is_dc_terminal=terminal_bus.is_dc,
-                        physical_inputs_by_reference=physical_inputs_by_reference,
-                        var_factory=measurement_var_factory,
-                    )
-                    if measurement_block is None:
-                        pass
-                    else:
-                        measurement_output: Var
-                        for measurement_output in measurement_block.out_vars:
-                            for owner_block, input_var in terminal_inputs:
-                                if (
-                                        input_var.ref == measurement_output.ref
-                                        and input_var is not measurement_output
-                                ):
-                                    owner_block.update_model(
-                                        old=input_var,
-                                        new=measurement_output,
-                                    )
-                                    replaced_input_object_ids.add(id(input_var))
-                                else:
-                                    pass
-                        block.children.append(measurement_block)
-
-    if len(replaced_input_object_ids) == 0:
-        pass
-    else:
-        block.in_vars = list(
-            root_input
-            for root_input in block.in_vars
-            if id(root_input) not in replaced_input_object_ids
-        )
 
 
 def _clone_import_block(block: Block) -> Block:
@@ -2935,172 +3898,11 @@ def _build_selected_template_from_import_entry(
             rms_template.block = cloned_block
             rms_template.name = template_name
             rms_template.comment = template_comment
-            if (
-                    entry.get_source_tpe() == DynamicModelImportSource.PowerFactoryDgs
-                    and selection_request.get_device_tpe() == DeviceType.VscDevice
-                    and (
-                        is_dgs_elmvsc_slot_contract(cloned_block)
-                        or is_dgs_elmvscmono_slot_contract(cloned_block)
-                    )
-            ):
-                if is_dgs_elmvscmono_slot_contract(cloned_block):
-                    adapted_template: RmsModelTemplate | None = (
-                        build_dgs_elmvscmono_rms_runtime_template(
-                            control_template=rms_template,
-                            clone_control_block=clone_source_block,
-                        )
-                    )
-                else:
-                    adapted_template = (
-                        build_dgs_elmvsc_rms_runtime_template(
-                            control_template=rms_template,
-                            clone_control_block=clone_source_block,
-                        )
-                    )
-                if adapted_template is None:
-                    return rms_template
-                else:
-                    return adapted_template
-            else:
-                # Detached catalogue blocks do not carry the transient FID
-                # relation required by equipment adapters. Keep them generic
-                # and fail closed until a direct DGS conversion supplies it.
-                return rms_template
+            # Detached catalogue blocks have no exact equipment FID or static
+            # host. Physical assembly is performed only by the direct importer.
+            return rms_template
         else:
             return None
-
-
-def _build_dgs_direct_runtime_template(
-        source_block: Block,
-        circuit: MultiCircuit,
-        template_name: str,
-        target_domain: DynamicSimulationMode,
-        device_tpe: DeviceType,
-        adapter_kind: _DgsRuntimeAdapterKind | None,
-        direct_result: DgsDirectRootBuildResult | None,
-        source_svs: ElmSvs | None,
-        host_device: DynamicDevice | None,
-        native_measurement_specs: List[_DgsRmsMeasurementSpec],
-) -> RmsModelTemplate | EmtModelTemplate:
-    """Wrap one directly materialized DGS block in its final template.
-
-    The caller transfers ownership of ``source_block``.  No catalogue entry,
-    serialization payload or duplicate symbolic graph is created between the
-    parser and the final ``MultiCircuit`` template.
-
-    :param source_block: Direct root block owned by this conversion.
-    :param circuit: Destination circuit supplying system measurement bases.
-    :param template_name: Final reusable-template display name.
-    :param target_domain: Explicit RMS or EMT destination.
-    :param device_tpe: Exact physical host family or generic dynamic host.
-    :param adapter_kind: Import-local runtime adapter classification.
-    :param direct_result: Transient direct-root conversion context, if present.
-    :param source_svs: Exact transient ElmSvs source, when adapting an SVC.
-    :param host_device: Exact static host used to resolve measurement terminals.
-    :param native_measurement_specs: Native meters resolved from the DGS graph.
-    :return: Final RMS or EMT template ready for circuit registration.
-    """
-    # Type only child inputs whose DGS signal has no internal producer. The
-    # synthesized root interface then exposes the same typed Var objects.
-    _assign_dgs_external_input_references(
-        block=source_block,
-        device_tpe=device_tpe,
-    )
-
-    # Native PowerFactory meters are not executable ElmDsl children. Replace
-    # their missing signals with explicit VeraGrid measurements before the root
-    # interface is finalized for the editor and runtime adapter.
-    if (
-            target_domain == DynamicSimulationMode.RMS
-            and host_device is not None
-    ):
-        _add_required_dgs_rms_measurements(
-            block=source_block,
-            host_device=host_device,
-            circuit=circuit,
-            native_specs=native_measurement_specs,
-        )
-    else:
-        pass
-
-    # Complete only the public composite ports already owned by the child graph.
-    _apply_composite_child_interface_if_missing(block=source_block)
-    source_block.name = template_name
-    template_comment: str = (
-        f"PowerFactory DGS dynamic model: {template_name}"
-    )
-
-    if target_domain == DynamicSimulationMode.EMT:
-        emt_template: EmtModelTemplate = EmtModelTemplate(name=template_name)
-        emt_template.tpe = device_tpe
-        emt_template.block = source_block
-        emt_template.name = template_name
-        emt_template.comment = template_comment
-        result: RmsModelTemplate | EmtModelTemplate = emt_template
-    else:
-        rms_template: RmsModelTemplate = RmsModelTemplate(name=template_name)
-        rms_template.tpe = device_tpe
-        rms_template.block = source_block
-        rms_template.name = template_name
-        rms_template.comment = template_comment
-        adapted_template: RmsModelTemplate | None
-
-        # Runtime wrappers consume the same block directly; cloning here would
-        # create the forbidden second semantic model during a massive import.
-        if adapter_kind == _DgsRuntimeAdapterKind.VSC_MONOPOLAR:
-            adapted_template = build_dgs_elmvscmono_rms_runtime_template(
-                control_template=rms_template,
-                clone_control_block=False,
-            )
-        else:
-            if adapter_kind == _DgsRuntimeAdapterKind.VSC_BIPOLAR:
-                adapted_template = build_dgs_elmvsc_rms_runtime_template(
-                    control_template=rms_template,
-                    clone_control_block=False,
-                )
-            else:
-                if (
-                        adapter_kind
-                        == _DgsRuntimeAdapterKind.SYNCHRONOUS_MACHINE_PENDING
-                ):
-                    adapted_template = build_dgs_elmsym_rms_runtime_template(
-                        control_template=rms_template,
-                        clone_control_block=False,
-                        direct_result=direct_result,
-                    )
-                else:
-                    if adapter_kind == _DgsRuntimeAdapterKind.STATIC_GENERATOR:
-                        adapted_template = (
-                            build_dgs_elmgenstat_rms_runtime_template(
-                                control_template=rms_template,
-                                clone_control_block=False,
-                                direct_result=direct_result,
-                            )
-                        )
-                    else:
-                        if (
-                                adapter_kind
-                                == _DgsRuntimeAdapterKind.STATIC_VAR_SYSTEM
-                        ):
-                            adapted_template = (
-                                build_dgs_elmsvs_rms_runtime_template(
-                                    control_template=rms_template,
-                                    clone_control_block=False,
-                                    direct_result=direct_result,
-                                    source_svs=source_svs,
-                                )
-                            )
-                        else:
-                            adapted_template = rms_template
-
-        if adapted_template is None:
-            # Preserve the declarative root for inspection, but never expose an
-            # incomplete physical adapter as assignable equipment.
-            rms_template.tpe = DeviceType.DynamicModelHostDevice
-            result = rms_template
-        else:
-            result = adapted_template
-    return result
 
 
 def build_dynamic_import_template_fingerprint(
@@ -3213,107 +4015,6 @@ def _append_dynamic_model_import_entry_result(
         report.add_entry_result(entry_result=entry_result)
 
     return entry_result
-
-
-def build_dgs_dynamic_association_records(
-        report: DynamicModelImportReport,
-) -> List[DgsDynamicAssociationRecord]:
-    """
-    Build the source association records from one DGS import.
-
-    The records preserve the DGS composite hierarchy and final catalogue
-    identity without activating a runtime dynamic model during file import.
-
-    :param report: Completed massive-import report.
-    :return: Ordered source association records.
-    """
-    records: List[DgsDynamicAssociationRecord] = list()
-    root_template_name_by_dgs_id: Dict[str, str] = dict()
-    entry_result: DynamicModelImportEntryResult
-    source_provenance: DynamicModelImportSourceProvenance | None
-    final_template_name: str | None
-
-    # Resolve the reusable composite template once per exact ElmComp FID.  The
-    # root result and its physical pElm slot results are deliberately separate
-    # catalogue entries, so this first pass provides the safe join key between
-    # them without relying on display names.
-    for entry_result in report.get_entry_results():
-        source_provenance = entry_result.get_source_provenance()
-        final_template_name = entry_result.get_final_name()
-        is_root_result: bool = (
-            source_provenance is not None
-            and source_provenance.get_slot_index() is None
-            and final_template_name is not None
-        )
-        if (
-                is_root_result
-                and source_provenance is not None
-                and final_template_name is not None
-        ):
-            root_template_name_by_dgs_id[
-                source_provenance.get_root_dgs_id()
-            ] = final_template_name
-        else:
-            pass
-
-    for entry_result in report.get_entry_results():
-        source_provenance = entry_result.get_source_provenance()
-        if source_provenance is None:
-            pass
-        else:
-            final_template_name = entry_result.get_final_name()
-            source_element_class: str | None = (
-                source_provenance.get_source_element_class()
-            )
-            is_physical_root_slot: bool = (
-                source_provenance.get_slot_index() is not None
-                and source_element_class is not None
-                and source_element_class not in {"ElmDsl", "ElmComp"}
-            )
-            if final_template_name is None and is_physical_root_slot:
-                # A physical pElm is a source reference, not a reusable template.
-                # Carry the owning root-template identity onto its association
-                # record so consumers can answer which composite controls the
-                # exact equipment FID while keeping activation as a distinct,
-                # explicitly validated runtime step.
-                final_template_name = root_template_name_by_dgs_id.get(
-                    source_provenance.get_root_dgs_id(),
-                    None,
-                )
-            else:
-                pass
-            records.append(
-                DgsDynamicAssociationRecord(
-                    unique_key=entry_result.get_unique_key(),
-                    root_dgs_id=source_provenance.get_root_dgs_id(),
-                    root_name=source_provenance.get_root_name(),
-                    root_typ_id=source_provenance.get_root_typ_id(),
-                    slot_dgs_id=source_provenance.get_slot_dgs_id(),
-                    slot_name=source_provenance.get_slot_name(),
-                    slot_index=source_provenance.get_slot_index(),
-                    slot_element=source_provenance.get_slot_element(),
-                    slot_filter=source_provenance.get_slot_filter(),
-                    source_element_dgs_id=(
-                        source_provenance.get_source_element_dgs_id()
-                    ),
-                    source_element_name=source_provenance.get_source_element_name(),
-                    source_element_class=(
-                        source_provenance.get_source_element_class()
-                    ),
-                    final_template_name=final_template_name,
-                    role=infer_dgs_dynamic_association_role(
-                        slot_index=source_provenance.get_slot_index(),
-                        source_element_class=(
-                            source_provenance.get_source_element_class()
-                        ),
-                        slot_filter=source_provenance.get_slot_filter(),
-                    ),
-                    target_domain=entry_result.get_domain(),
-                    status=entry_result.get_status(),
-                )
-            )
-
-    return records
 
 
 def add_dynamic_import_selection_requests_to_circuit(
@@ -3462,7 +4163,8 @@ def add_dynamic_import_selection_requests_to_circuit(
                 )
 
             if template_obj is None:
-                logger.add_warning(msg="Dynamic model entry skipped because it is not importable", value=entry.get_display_name())
+                logger.add_warning(msg="Dynamic model entry skipped because it is not importable",
+                                   value=entry.get_display_name())
                 if len(outcome_message) == 0:
                     outcome_message = "Source entry is not importable"
                 else:
@@ -3519,7 +4221,9 @@ def add_dynamic_import_selection_requests_to_circuit(
                                 template_renamed = True
                                 outcome_message = f"Name collision renamed to {template_obj.name}"
                             else:
-                                logger.add_warning(msg="Dynamic model entry skipped because the template name already exists", value=template_obj.name)
+                                logger.add_warning(
+                                    msg="Dynamic model entry skipped because the template name already exists",
+                                    value=template_obj.name)
                         else:
                             circuit.add_rms_model(template_obj)
                             existing_rms_names.add(template_obj.name)
@@ -3568,7 +4272,9 @@ def add_dynamic_import_selection_requests_to_circuit(
                                     template_renamed = True
                                     outcome_message = f"Name collision renamed to {template_obj.name}"
                                 else:
-                                    logger.add_warning(msg="Dynamic model entry skipped because the template name already exists", value=template_obj.name)
+                                    logger.add_warning(
+                                        msg="Dynamic model entry skipped because the template name already exists",
+                                        value=template_obj.name)
                             else:
                                 circuit.add_emt_model(template_obj)
                                 existing_emt_names.add(template_obj.name)
@@ -3673,6 +4379,11 @@ def _find_exact_dgs_dynamic_host_devices(
     else:
         pass
 
+    if source_element_class == "ElmGenstat" and DeviceType.StaticGeneratorDevice not in candidate_device_types:
+        candidate_device_types.append(DeviceType.StaticGeneratorDevice)
+    else:
+        pass
+
     candidate_device_type: DeviceType
     for candidate_device_type in candidate_device_types:
         for candidate_obj in circuit.get_elements_by_type(
@@ -3693,1787 +4404,37 @@ def _find_exact_dgs_dynamic_host_devices(
     return matches
 
 
-def _assign_dgs_dynamic_template_to_host(
-        host_device: DynamicDevice,
-        template_obj: RmsModelTemplate | EmtModelTemplate,
-        activation_report: DgsDynamicModelActivationReport,
-) -> None:
-    """
-    Assign one exact imported template without overwriting another controller.
-
-    :param host_device: Exact physical host resolved by DGS FID.
-    :param template_obj: Unique imported template.
-    :param activation_report: Mutable structured outcome report.
-    :return: None.
-    """
-    if isinstance(template_obj, RmsModelTemplate):
-        current_template: RmsModelTemplate | EmtModelTemplate | None = host_device.rms_template
-    else:
-        current_template = host_device.emt_template
-
-    if isinstance(template_obj, RmsModelTemplate):
-        if current_template is template_obj:
-            activation_report.record_already_active()
-        else:
-            if current_template is None:
-                try:
-                    host_device.rms_template = template_obj
-                except (TypeError, ValueError, KeyError):
-                    activation_report.record_failed()
-                else:
-                    activation_report.record_physical_activated()
-            else:
-                activation_report.record_conflict()
-    else:
-        if current_template is template_obj:
-            activation_report.record_already_active()
-        else:
-            if current_template is None:
-                try:
-                    host_device.emt_template = template_obj
-                except (TypeError, ValueError, KeyError):
-                    activation_report.record_failed()
-                else:
-                    activation_report.record_physical_activated()
-            else:
-                activation_report.record_conflict()
-
-
-def _resolve_dgs_direct_root_host_identity(
-        dgs_circuit: DgsCircuit,
-        root_element: ElmComp,
-        logger: Logger,
-) -> Tuple[str, DeviceType, str, str | None] | None:
-    """Resolve at most one physical host directly from root ``pElm`` FIDs.
-
-    :param dgs_circuit: Parsed declarative DGS object graph.
-    :param root_element: Root composite whose host is being resolved.
-    :param logger: Diagnostic sink for ambiguous source relations.
-    :return: FID, VeraGrid type, source class and source name, or ``None``.
-    """
-    identities: Dict[
-        Tuple[str, DeviceType],
-        Tuple[str, str | None],
-    ] = dict()
-    direct_entries: List[ElmCompInstanceEntry] = (
-        get_unique_elmcomp_slot_entries(
-            entries=extract_elmcomp_direct_instances(
-                circuit=dgs_circuit,
-                root_element=root_element,
-            )
-        )
-    )
-    direct_entry: ElmCompInstanceEntry
-
-    # Only one resolved unique slot may establish each physical FID identity.
-    for direct_entry in direct_entries:
-        source_element_id: str | None = direct_entry.element_id
-        source_element_class: str | None = direct_entry.element_kind
-        host_device_tpe: DeviceType | None = get_dgs_dynamic_host_device_tpe(
-            source_element_class=source_element_class,
-        )
-        if (
-                source_element_id is None
-                or source_element_class is None
-                or not direct_entry.element_reference_is_resolved
-                or host_device_tpe is None
-        ):
-            pass
-        else:
-            host_key: Tuple[str, DeviceType] = (
-                source_element_id,
-                host_device_tpe,
-            )
-            if host_key in identities:
-                pass
-            else:
-                identities[host_key] = (
-                    source_element_class,
-                    direct_entry.element_name,
-                )
-
-    if len(identities) == 1:
-        exact_host_key: Tuple[str, DeviceType] = next(iter(identities))
-        exact_host_source: Tuple[str, str | None] = identities[exact_host_key]
-        result: Tuple[str, DeviceType, str, str | None] | None = (
-            exact_host_key[0],
-            exact_host_key[1],
-            exact_host_source[0],
-            exact_host_source[1],
-        )
-    else:
-        if len(identities) > 1:
-            logger.add_warning(
-                msg=(
-                    "DGS dynamic root retained without activation because "
-                    "it has several physical hosts"
-                ),
-                value=root_element.loc_name,
-            )
-        else:
-            pass
-        result = None
-    return result
-
-
-def _register_dgs_direct_template(
-        circuit: MultiCircuit,
-        template_obj: RmsModelTemplate | EmtModelTemplate,
-        root_dgs_id: str,
-        existing_names: Set[str],
-        logger: Logger,
-) -> bool:
-    """Register one direct DGS template with a deterministic FID collision name.
-
-    :param circuit: Destination circuit.
-    :param template_obj: Final template owning the parsed block.
-    :param root_dgs_id: Exact source root FID used only for collision resolution.
-    :param existing_names: Mutable names already registered in the destination domain.
-    :param logger: Diagnostic sink for irreconcilable collisions.
-    :return: ``True`` when the template was registered.
-    """
-    requested_name: str = str(template_obj.name).strip()
-    if requested_name == "":
-        requested_name = f"DGS dynamic root {root_dgs_id}"
-    else:
-        pass
-
-    if requested_name in existing_names:
-        final_name: str = f"{requested_name} [DGS {root_dgs_id}]"
-    else:
-        final_name = requested_name
-
-    if final_name in existing_names:
-        logger.add_warning(
-            msg="DGS dynamic root skipped because its FID-qualified name already exists",
-            value=final_name,
-        )
-        registered: bool = False
-    else:
-        template_obj.name = final_name
-        template_obj.block.name = final_name
-        if isinstance(template_obj, RmsModelTemplate):
-            circuit.add_rms_model(template_obj)
-        else:
-            circuit.add_emt_model(template_obj)
-        existing_names.add(final_name)
-        registered = True
-    return registered
-
-
-def _activate_dgs_direct_template(
-        circuit: MultiCircuit,
-        template_obj: RmsModelTemplate | EmtModelTemplate,
-        host_identity: Tuple[str, DeviceType, str, str | None],
-        adapter_kind: _DgsRuntimeAdapterKind | None,
-        logger: Logger,
-) -> bool:
-    """Configure and assign one template to the exact imported device FID.
-
-    :param circuit: Circuit containing static devices and the final template.
-    :param template_obj: Registered direct template.
-    :param host_identity: Exact FID, VeraGrid type, source class and source name.
-    :param adapter_kind: Import-local runtime adapter classification.
-    :param logger: Diagnostic sink for fail-closed activation outcomes.
-    :return: ``True`` when the exact host owns this template after the call.
-    """
-    source_element_id: str = host_identity[0]
-    host_device_tpe: DeviceType = host_identity[1]
-    source_element_class: str = host_identity[2]
-    source_element_name: str | None = host_identity[3]
-    host_devices: List[DynamicDevice] = _find_exact_dgs_dynamic_host_devices(
-        circuit=circuit,
-        source_element_dgs_id=source_element_id,
-        device_tpe=host_device_tpe,
-        source_element_class=source_element_class,
-    )
-    if len(host_devices) == 1:
-        host_device: DynamicDevice | None = host_devices[0]
-    else:
-        host_device = None
-
-    adapter_configuration_ready: bool = True
-    if (
-            isinstance(template_obj, RmsModelTemplate)
-            and isinstance(host_device, VSC)
-            and adapter_kind == _DgsRuntimeAdapterKind.VSC_MONOPOLAR
-    ):
-        adapter_configuration_ready = (
-            configure_dgs_elmvscmono_runtime_template_for_device(
-                template=template_obj,
-                device=host_device,
-                system_base_mva=float(circuit.Sbase),
-            )
-        )
-    else:
-        if (
-                isinstance(template_obj, RmsModelTemplate)
-                and isinstance(host_device, VSC)
-                and adapter_kind == _DgsRuntimeAdapterKind.VSC_BIPOLAR
-        ):
-            adapter_configuration_ready = (
-                configure_dgs_elmvsc_runtime_template_for_device(
-                    template=template_obj,
-                    device=host_device,
-                    system_base_mva=float(circuit.Sbase),
-                )
-            )
-        else:
-            if (
-                    isinstance(template_obj, RmsModelTemplate)
-                    and isinstance(host_device, Generator)
-                    and adapter_kind
-                    == _DgsRuntimeAdapterKind.SYNCHRONOUS_MACHINE_PENDING
-            ):
-                adapter_configuration_ready = (
-                    configure_dgs_elmsym_runtime_template_for_device(
-                        template=template_obj,
-                        device=host_device,
-                        system_base_mva=float(circuit.Sbase),
-                    )
-                )
-            else:
-                pass
-
-    runtime_adapter_kind: _DgsRuntimeAdapterKind | None = adapter_kind
-    if (
-            runtime_adapter_kind is None
-            and source_element_class == "ElmVscmono"
-    ):
-        # A native monopolar block may already expose the complete equipment
-        # boundary and therefore need no wrapper, but its voltage contract is
-        # still monopolar during the final fail-closed assignment check.
-        runtime_adapter_kind = _DgsRuntimeAdapterKind.VSC_MONOPOLAR
-    else:
-        pass
-
-    runtime_contract_ready: bool = (
-        host_device is not None
-        and template_obj.tpe == host_device_tpe
-        and adapter_configuration_ready
-        and is_dgs_dynamic_block_runtime_assignable(
-            block=template_obj.block,
-            device_tpe=host_device_tpe,
-            adapter_kind=runtime_adapter_kind,
-        )
-    )
-    if not runtime_contract_ready or host_device is None:
-        # An incomplete physical wrapper remains inspectable, but it must not
-        # appear in the assignable device-template catalogue.
-        template_obj.tpe = DeviceType.DynamicModelHostDevice
-        logger.add_warning(
-            msg=(
-                "DGS dynamic host retained without activation because exact "
-                "resolution or its runtime adapter contract is incomplete"
-            ),
-            device=source_element_name,
-            device_class=source_element_class,
-            value=source_element_id,
-        )
-        activated: bool = False
-    else:
-        if isinstance(template_obj, RmsModelTemplate):
-            current_template: RmsModelTemplate | EmtModelTemplate | None = (
-                host_device.rms_template
-            )
-        else:
-            current_template = host_device.emt_template
-
-        if current_template is template_obj:
-            activated = True
-        else:
-            if current_template is not None:
-                logger.add_warning(
-                    msg="DGS dynamic host already owns a different template",
-                    device=source_element_name,
-                    device_class=source_element_class,
-                    value=source_element_id,
-                )
-                activated = False
-            else:
-                try:
-                    if isinstance(template_obj, RmsModelTemplate):
-                        host_device.rms_template = template_obj
-                    else:
-                        host_device.emt_template = template_obj
-                except (TypeError, ValueError, KeyError) as error:
-                    logger.add_warning(
-                        msg="DGS dynamic template assignment failed",
-                        device=source_element_name,
-                        device_class=source_element_class,
-                        value=str(error),
-                    )
-                    activated = False
-                else:
-                    activated = True
-    return activated
-
-
-def _get_unique_dgs_dynamic_roots_by_id(
-        dgs_circuit: DgsCircuit,
-        logger: Logger,
-        emit_diagnostics: bool,
-) -> Dict[str, ElmComp]:
-    """Select only roots with one non-empty normalized DGS FID.
-
-    The first occurrence of a duplicated FID is deliberately excluded together
-    with every later occurrence.  Keeping the first would let the assignment
-    stage reuse one final template for several source roots.
-
-    :param dgs_circuit: Parsed DGS circuit containing composite roots.
-    :param logger: Import diagnostic sink.
-    :param emit_diagnostics: Whether this validation pass records source errors.
-    :return: Unique roots keyed by their normalized non-empty FID.
-    """
-    root_count_by_id: Dict[str, int] = dict()
-    first_root_by_id: Dict[str, ElmComp] = dict()
-    root_element: ElmComp
-    for root_element in dgs_circuit.elmcomps:
-        root_id: str = str(root_element.ID).strip()
-        if root_id == "":
-            if emit_diagnostics:
-                logger.add_warning(
-                    msg="DGS dynamic root skipped because its FID is empty",
-                    device=root_element.loc_name,
-                    device_class="ElmComp",
-                )
-            else:
-                pass
-        else:
-            current_count: int | None = root_count_by_id.get(root_id, None)
-            if current_count is None:
-                root_count_by_id[root_id] = 1
-                first_root_by_id[root_id] = root_element
-            else:
-                root_count_by_id[root_id] = current_count + 1
-
-    unique_root_by_id: Dict[str, ElmComp] = dict()
-    root_id: str
-    for root_id, root_element in first_root_by_id.items():
-        root_count: int | None = root_count_by_id.get(root_id, None)
-        if root_count == 1:
-            unique_root_by_id[root_id] = root_element
-        else:
-            if emit_diagnostics:
-                logger.add_warning(
-                    msg="DGS dynamic roots skipped because their FID is duplicated",
-                    device=root_element.loc_name,
-                    device_class="ElmComp",
-                    value=root_id,
-                )
-            else:
-                pass
-    return unique_root_by_id
-
-
 def convert_and_add_dgs_dynamic_templates_to_circuit(
-        dgs_circuit: DgsCircuit,
-        circuit: MultiCircuit,
-        target_domain: DynamicSimulationMode | None,
-        logger: Logger,
+        dgs_circuit: DgsCircuit, circuit: MultiCircuit,
+        target_domain: DynamicSimulationMode | None, logger: Logger,
 ) -> DgsDynamicTemplateConversionResult:
-    """Convert DGS roots directly into registered final templates.
+    """Convert through the shared importer while preserving the public function API.
 
-    The automatic file-open path owns one transient DGS parse graph.  Each
-    successful root follows ``Block -> Template -> MultiCircuit``.  The return
-    value is the only cross-stage state: one minimal lookup from the exact root
-    FID to the final template already owned by ``MultiCircuit``.
-
-    :param dgs_circuit: Declarative DGS graph already used by static import.
-    :param circuit: Destination circuit containing the static devices.
-    :param target_domain: Explicit RMS or EMT destination; ``None`` is rejected.
-    :param logger: Import diagnostics.
-    :return: Final-template associations plus transient canonical slot lookups.
+    :param dgs_circuit: Parsed source graph.
+    :param circuit: Destination circuit.
+    :param target_domain: Explicit RMS or EMT destination.
+    :param logger: Diagnostic sink.
+    :return: Canonical template and child associations.
     """
-    conversion_result: DgsDynamicTemplateConversionResult = (
-        DgsDynamicTemplateConversionResult()
-    )
-    templates_by_root_dgs_id: Dict[
-        str,
-        RmsModelTemplate | EmtModelTemplate,
-    ] = conversion_result.templates_by_root_dgs_id
-    if target_domain not in {
-        DynamicSimulationMode.RMS,
-        DynamicSimulationMode.EMT,
-    }:
-        logger.add_error(
-            msg="DGS dynamic model import requires RMS or EMT mode",
-            value=target_domain,
-        )
-        return conversion_result
-    else:
-        pass
-
-    # Reject empty and duplicated root identities before building the shared
-    # graphical index. Ambiguous roots must not prevent independent valid roots
-    # from reaching their own direct FID conversion.
-    unique_root_by_id: Dict[str, ElmComp] = _get_unique_dgs_dynamic_roots_by_id(
-        dgs_circuit=dgs_circuit,
-        logger=logger,
-        emit_diagnostics=True,
-    )
-    excluded_root_ids: Set[str] = set()
-    candidate_root: ElmComp
-    for candidate_root in dgs_circuit.elmcomps:
-        if (
-                candidate_root.ID != ""
-                and candidate_root.ID not in unique_root_by_id
-        ):
-            excluded_root_ids.add(candidate_root.ID)
-        else:
-            pass
-
-    try:
-        parsed_blocks: Dict[str, ParsedDgsBlockDefinition] = (
-            parse_dgs_block_definitions_from_circuit(
-                circuit=dgs_circuit,
-                simulation_domain=target_domain,
-            )
-        )
-        graphical_indexes: DgsGraphicalIndexes = build_dgs_graphical_indexes(
-            circuit=dgs_circuit,
-            excluded_element_ids=excluded_root_ids,
-        )
-    except (DgsDynamicParserContractError, KeyError, TypeError, ValueError) as error:
-        logger.add_error(
-            msg="DGS dynamic model import is unavailable",
-            value=str(error),
-        )
-        return conversion_result
-
-    if target_domain == DynamicSimulationMode.RMS:
-        existing_names: Set[str] = set(
-            template.name for template in circuit.rms_models
-        )
-    else:
-        existing_names = set(
-            template.name for template in circuit.emt_models
-        )
-
-    materialized_count: int = 0
-    failed_count: int = 0
-    root_id: str
-    root_element: ElmComp
-    for root_id, root_element in unique_root_by_id.items():
-        host_identity: Tuple[str, DeviceType, str, str | None] | None = (
-            _resolve_dgs_direct_root_host_identity(
-                dgs_circuit=dgs_circuit,
-                root_element=root_element,
-                logger=logger,
-            )
-        )
-        source_block: Block | None
-        direct_result: DgsDirectRootBuildResult | None = None
-        try:
-            root_result: DgsRootBlockResult = build_dgs_root_block_from_circuit(
-                circuit=dgs_circuit,
-                parsed_blocks=parsed_blocks,
-                root_name=root_element.loc_name,
-                root_typ_id=root_element.typ_id,
-                root_dgs_id=root_id,
-            )
-            direct_result = build_direct_root_elmcomp_block(
-                    circuit=dgs_circuit,
-                    result=root_result,
-                    graphical_indexes=graphical_indexes,
-            )
-            source_block = direct_result.root_block
-        except (
-                DgsDynamicParserContractError,
-                KeyError,
-                TypeError,
-                UnsupportedDgsExpression,
-                ValueError,
-        ) as error:
-            logger.add_warning(
-                msg="DGS dynamic root could not be materialized",
-                device=root_element.loc_name,
-                device_class="ElmComp",
-                value=str(error),
-            )
-            failed_count += 1
-            source_block = None
-
-        if source_block is None or direct_result is None:
-            pass
-        else:
-            source_svs: ElmSvs | None = None
-            host_device_for_measurements: DynamicDevice | None = None
-            if host_identity is None:
-                resolved_device_tpe: DeviceType = (
-                    DeviceType.DynamicModelHostDevice
-                )
-                adapter_kind: _DgsRuntimeAdapterKind | None = None
-            else:
-                host_device_tpe: DeviceType = host_identity[1]
-                adapter_kind = _get_dgs_direct_runtime_adapter_kind(
-                    direct_result=direct_result,
-                    host_identity=host_identity,
-                )
-                native_runtime_ready: bool = (
-                    is_dgs_dynamic_block_runtime_assignable(
-                        block=source_block,
-                        device_tpe=host_device_tpe,
-                        adapter_kind=adapter_kind,
-                    )
-                )
-                adapter_supported: bool = (
-                    target_domain == DynamicSimulationMode.RMS
-                    and adapter_kind is not None
-                )
-                typed_vsc_contract_ready: bool = bool(
-                    host_device_tpe != DeviceType.VscDevice
-                    or adapter_kind is not None
-                )
-                if (
-                        typed_vsc_contract_ready
-                        and (native_runtime_ready or adapter_supported)
-                ):
-                    resolved_device_tpe = host_device_tpe
-                else:
-                    resolved_device_tpe = DeviceType.DynamicModelHostDevice
-                    logger.add_warning(
-                        msg=(
-                            "DGS dynamic root retained as a generic template "
-                            "because its physical runtime contract is unsupported"
-                        ),
-                        device=root_element.loc_name,
-                        device_class="ElmComp",
-                        value=root_id,
-                    )
-
-                if host_identity[2] == "ElmSvs":
-                    candidate_source_svs: ElmSvs
-                    source_svs_is_ambiguous: bool = False
-                    for candidate_source_svs in dgs_circuit.elmsvss:
-                        if candidate_source_svs.ID == host_identity[0]:
-                            if source_svs is None:
-                                source_svs = candidate_source_svs
-                            else:
-                                source_svs = None
-                                source_svs_is_ambiguous = True
-                        else:
-                            pass
-                    else:
-                        pass
-                    if source_svs_is_ambiguous:
-                        source_svs = None
-                    else:
-                        pass
-                else:
-                    pass
-
-                exact_host_devices_for_measurements: List[DynamicDevice] = (
-                    _find_exact_dgs_dynamic_host_devices(
-                        circuit=circuit,
-                        source_element_dgs_id=host_identity[0],
-                        device_tpe=host_identity[1],
-                        source_element_class=host_identity[2],
-                    )
-                )
-                if len(exact_host_devices_for_measurements) == 1:
-                    host_device_for_measurements = (
-                        exact_host_devices_for_measurements[0]
-                    )
-                else:
-                    pass
-
-            native_measurement_specs: List[_DgsRmsMeasurementSpec] = (
-                _collect_native_dgs_rms_measurement_specs(
-                    dgs_circuit=dgs_circuit,
-                    root_element=root_element,
-                    direct_result=direct_result,
-                    host_device=host_device_for_measurements,
-                )
-            )
-            template_obj: RmsModelTemplate | EmtModelTemplate = (
-                _build_dgs_direct_runtime_template(
-                    source_block=source_block,
-                    circuit=circuit,
-                    template_name=root_element.loc_name,
-                    target_domain=target_domain,
-                    device_tpe=resolved_device_tpe,
-                    adapter_kind=adapter_kind,
-                    direct_result=direct_result,
-                    source_svs=source_svs,
-                    host_device=host_device_for_measurements,
-                    native_measurement_specs=native_measurement_specs,
-                )
-            )
-            if (
-                    adapter_kind
-                    == _DgsRuntimeAdapterKind.SYNCHRONOUS_MACHINE_PENDING
-                    and isinstance(template_obj, RmsModelTemplate)
-                    and host_identity is not None
-            ):
-                exact_host_devices: List[DynamicDevice] = (
-                    _find_exact_dgs_dynamic_host_devices(
-                        circuit=circuit,
-                        source_element_dgs_id=host_identity[0],
-                        device_tpe=host_identity[1],
-                        source_element_class=host_identity[2],
-                    )
-                )
-                exact_host_device: DynamicDevice | None = None
-                if len(exact_host_devices) == 1:
-                    exact_host_device = exact_host_devices[0]
-                else:
-                    pass
-                if isinstance(exact_host_device, Generator):
-                    elmsym_configuration_ready: bool = (
-                        configure_dgs_elmsym_runtime_template_for_device(
-                            template=template_obj,
-                            device=exact_host_device,
-                            system_base_mva=float(circuit.Sbase),
-                            direct_result=direct_result,
-                        )
-                    )
-                else:
-                    elmsym_configuration_ready = False
-                if elmsym_configuration_ready:
-                    pass
-                else:
-                    template_obj.tpe = DeviceType.DynamicModelHostDevice
-                    logger.add_warning(
-                        msg=(
-                            "DGS ElmSym template retained as generic because "
-                            "exact runtime configuration failed"
-                        ),
-                        device=root_element.loc_name,
-                        device_class="ElmComp",
-                        value=root_id,
-                    )
-            else:
-                pass
-            registered: bool = _register_dgs_direct_template(
-                circuit=circuit,
-                template_obj=template_obj,
-                root_dgs_id=root_id,
-                existing_names=existing_names,
-                logger=logger,
-            )
-            if registered:
-                templates_by_root_dgs_id[root_id] = template_obj
-                conversion_result.child_blocks_by_root_and_slot_id[root_id] = (
-                    dict(direct_result.child_block_by_slot_id)
-                )
-                materialized_count += 1
-            else:
-                failed_count += 1
-
-    # Isolated BlkRef occurrences are valid reusable DGS definitions even when
-    # the file has no ElmComp root or physical host. Materialize one final
-    # catalogue template per exact BlkDef without creating Bundle/Entry state.
-    standalone_occurrences: List[DgsStandaloneBlockOccurrence] = (
-        list_dgs_blkref_catalog_occurrences_from_circuit(circuit=dgs_circuit)
-    )
-    standalone_id_count: Dict[str, int] = dict()
-    standalone_occurrence: DgsStandaloneBlockOccurrence
-    for standalone_occurrence in standalone_occurrences:
-        standalone_id: str = str(standalone_occurrence.blkref_id).strip()
-        current_count: int | None = standalone_id_count.get(standalone_id, None)
-        if current_count is None:
-            standalone_id_count[standalone_id] = 1
-        else:
-            standalone_id_count[standalone_id] = current_count + 1
-
-    elmcomp_ids: Set[str] = set()
-    source_root: ElmComp
-    for source_root in dgs_circuit.elmcomps:
-        elmcomp_ids.add(str(source_root.ID).strip())
-    materialized_standalone_type_ids: Set[str] = set()
-    for standalone_occurrence in standalone_occurrences:
-        standalone_id = str(standalone_occurrence.blkref_id).strip()
-        standalone_id_occurrences: int | None = standalone_id_count.get(
-            standalone_id,
-            None,
-        )
-        standalone_is_eligible: bool = bool(
-            not standalone_occurrence.connected
-            and standalone_id != ""
-            and standalone_id_occurrences == 1
-            and standalone_id not in elmcomp_ids
-            and standalone_occurrence.typ_id
-            not in materialized_standalone_type_ids
-        )
-        if not standalone_is_eligible:
-            pass
-        else:
-            parsed_standalone: ParsedDgsBlockDefinition | None = (
-                parsed_blocks.get(standalone_occurrence.typ_id, None)
-            )
-            if parsed_standalone is None:
-                logger.add_warning(
-                    msg="Isolated DGS BlkRef skipped because its BlkDef is missing",
-                    device=standalone_occurrence.sample_display_name,
-                    device_class="BlkRef",
-                    value=standalone_id,
-                )
-                failed_count += 1
-            else:
-                try:
-                    standalone_block: Block = (
-                        build_standalone_blkdef_block_from_parsed_block(
-                            parsed_block=parsed_standalone,
-                            block_name=parsed_standalone.blkdef.loc_name,
-                        )
-                    )
-                    standalone_template: RmsModelTemplate | EmtModelTemplate = (
-                        _build_dgs_direct_runtime_template(
-                            source_block=standalone_block,
-                            circuit=circuit,
-                            template_name=parsed_standalone.blkdef.loc_name,
-                            target_domain=target_domain,
-                            device_tpe=DeviceType.DynamicModelHostDevice,
-                            adapter_kind=None,
-                            direct_result=None,
-                            source_svs=None,
-                            host_device=None,
-                            native_measurement_specs=list(),
-                        )
-                    )
-                    standalone_registered: bool = _register_dgs_direct_template(
-                        circuit=circuit,
-                        template_obj=standalone_template,
-                        root_dgs_id=standalone_id,
-                        existing_names=existing_names,
-                        logger=logger,
-                    )
-                except (
-                        KeyError,
-                        TypeError,
-                        UnsupportedDgsExpression,
-                        ValueError,
-                ) as error:
-                    logger.add_warning(
-                        msg="Isolated DGS BlkRef could not be materialized",
-                        device=standalone_occurrence.sample_display_name,
-                        device_class="BlkRef",
-                        value=str(error),
-                    )
-                    failed_count += 1
-                else:
-                    materialized_standalone_type_ids.add(
-                        standalone_occurrence.typ_id
-                    )
-                    if standalone_registered:
-                        materialized_count += 1
-                    else:
-                        failed_count += 1
-
-    logger.add_info(
-        msg="DGS dynamic template conversion completed",
-        value=(
-            f"templates={materialized_count}, "
-            f"failed={failed_count}"
-        ),
-    )
-    return conversion_result
+    importer: DynamicModelImport = DynamicModelImport(dgs_circuit, circuit, target_domain, logger)
+    return importer.convert_and_add_templates()
 
 
 def apply_dgs_dynamic_templates_to_devices(
-        dgs_circuit: DgsCircuit,
-        circuit: MultiCircuit,
-        templates_by_root_dgs_id: Dict[
-            str,
-            RmsModelTemplate | EmtModelTemplate,
-        ],
-        logger: Logger,
+        dgs_circuit: DgsCircuit, circuit: MultiCircuit,
+        templates_by_root_dgs_id: Dict[str, RmsModelTemplate | EmtModelTemplate], logger: Logger,
 ) -> None:
-    """Apply registered DGS templates to exact static devices by root FID.
+    """Assign through the shared importer while preserving existing API consumers.
 
-    This second stage does not reconstruct source entries or duplicate blocks.
-    It resolves the physical host again from the transient DGS graph, retrieves
-    the already registered final template from the minimal FID lookup, configures
-    each structurally proven adapter and assigns the template fail closed.
-
-    :param dgs_circuit: Declarative DGS graph used for exact host resolution.
-    :param circuit: Destination circuit owning devices and registered templates.
-    :param templates_by_root_dgs_id: Final templates indexed by exact root FID.
-    :param logger: Import diagnostics.
+    :param dgs_circuit: Parsed source graph.
+    :param circuit: Destination circuit.
+    :param templates_by_root_dgs_id: Previously registered canonical templates.
+    :param logger: Diagnostic sink.
     :return: None.
     """
-    activated_count: int = 0
-    failed_count: int = 0
-    unique_root_by_id: Dict[str, ElmComp] = _get_unique_dgs_dynamic_roots_by_id(
-        dgs_circuit=dgs_circuit,
-        logger=logger,
-        emit_diagnostics=False,
-    )
-    root_id: str
-    root_element: ElmComp
-    for root_id, root_element in unique_root_by_id.items():
-        template_obj: RmsModelTemplate | EmtModelTemplate | None = (
-            templates_by_root_dgs_id.get(root_id, None)
-        )
-        if template_obj is None:
-            pass
-        else:
-            host_identity: Tuple[
-                str,
-                DeviceType,
-                str,
-                str | None,
-            ] | None = _resolve_dgs_direct_root_host_identity(
-                dgs_circuit=dgs_circuit,
-                root_element=root_element,
-                logger=logger,
-            )
-            if host_identity is None:
-                pass
-            else:
-                if (
-                        template_obj.tpe == DeviceType.VscDevice
-                        and host_identity[1] == DeviceType.VscDevice
-                        and host_identity[2] == "ElmVscmono"
-                ):
-                    adapter_kind: _DgsRuntimeAdapterKind | None = (
-                        _DgsRuntimeAdapterKind.VSC_MONOPOLAR
-                    )
-                else:
-                    if (
-                            template_obj.tpe == DeviceType.VscDevice
-                            and host_identity[1] == DeviceType.VscDevice
-                            and host_identity[2] == "ElmVsc"
-                    ):
-                        adapter_kind = _DgsRuntimeAdapterKind.VSC_BIPOLAR
-                    else:
-                        adapter_kind = None
-                if _activate_dgs_direct_template(
-                        circuit=circuit,
-                        template_obj=template_obj,
-                        host_identity=host_identity,
-                        adapter_kind=adapter_kind,
-                        logger=logger,
-                ):
-                    activated_count += 1
-                else:
-                    failed_count += 1
-
-    logger.add_info(
-        msg="DGS dynamic device assignment completed",
-        value=f"activated={activated_count}, failed={failed_count}",
-    )
-
-
-def activate_unambiguous_dgs_dynamic_models_in_circuit(
-        circuit: MultiCircuit,
-        records: Sequence[DgsDynamicAssociationRecord],
-        template_by_root_dgs_id: Dict[str, RmsModelTemplate | EmtModelTemplate],
-        logger: Logger,
-) -> DgsDynamicModelActivationReport:
-    """
-    Activate unambiguous DGS composite models on their exact physical hosts.
-
-    A root is activated only when its supported host relations collapse to one
-    ``(FID, device type)`` identity, that identity resolves to exactly one
-    imported device and the final template name resolves uniquely. Auxiliary
-    pElm references remain provenance and multi-host plant controllers remain
-    explicit catalogue objects for a later user-directed composition workflow.
-
-    :param circuit: Destination circuit with static devices and templates.
-    :param records: Exact root-slot-pElm source associations.
-    :param template_by_root_dgs_id: Installed VeraGrid template indexed by the
-        exact source ElmComp FID that produced it.
-    :param logger: Diagnostic sink for handled unresolved roots.
-    :return: Structured activation report.
-    """
-    activation_report: DgsDynamicModelActivationReport = DgsDynamicModelActivationReport()
-    records_by_root_id: Dict[str, List[DgsDynamicAssociationRecord]] = dict()
-    record: DgsDynamicAssociationRecord
-    root_records: List[DgsDynamicAssociationRecord]
-    existing_root_records: List[DgsDynamicAssociationRecord] | None
-    host_record_by_identity: Dict[Tuple[str, DeviceType], DgsDynamicAssociationRecord]
-    source_element_id: str | None
-    host_device_tpe: DeviceType | None
-    host_identity: Tuple[str, DeviceType]
-    host_record: DgsDynamicAssociationRecord
-    template_name: str | None
-    host_devices: List[DynamicDevice]
-    template_obj: RmsModelTemplate | EmtModelTemplate | None
-
-    # Group once by exact root FID so the ambiguity decision is linear in the
-    # number of source associations even for large PowerFactory catalogues.
-    for record in records:
-        existing_root_records = records_by_root_id.get(record.get_root_dgs_id(), None)
-        if existing_root_records is None:
-            root_records = list()
-            root_records.append(record)
-            records_by_root_id[record.get_root_dgs_id()] = root_records
-        else:
-            existing_root_records.append(record)
-
-    for root_records in records_by_root_id.values():
-        host_record_by_identity = dict()
-        for record in root_records:
-            source_element_id = record.get_source_element_dgs_id()
-            host_device_tpe = get_dgs_dynamic_host_device_tpe(
-                source_element_class=record.get_source_element_class(),
-            )
-            template_name = record.get_final_template_name()
-            if source_element_id is None or host_device_tpe is None or template_name is None:
-                pass
-            else:
-                host_identity = source_element_id, host_device_tpe
-                if host_identity in host_record_by_identity:
-                    pass
-                else:
-                    host_record_by_identity[host_identity] = record
-
-        if len(host_record_by_identity) == 0:
-            # Roots without one exact physical host remain local catalogue
-            # metadata. They are not promoted to global circuit devices.
-            pass
-        else:
-            if len(host_record_by_identity) > 1:
-                activation_report.record_ambiguous()
-                logger.add_warning(
-                    msg="DGS dynamic root retained without activation because it has several physical hosts",
-                    value=root_records[0].get_root_name(),
-                )
-            else:
-                host_identity = next(iter(host_record_by_identity))
-                host_record = host_record_by_identity[host_identity]
-                template_name = host_record.get_final_template_name()
-                if template_name is None:
-                    activation_report.record_unresolved()
-                else:
-                    host_devices = _find_exact_dgs_dynamic_host_devices(
-                        circuit=circuit,
-                        source_element_dgs_id=host_identity[0],
-                        device_tpe=host_identity[1],
-                        source_element_class=(
-                            host_record.get_source_element_class()
-                        ),
-                    )
-                    template_obj = template_by_root_dgs_id.get(
-                        host_record.get_root_dgs_id(),
-                        None,
-                    )
-                    if (
-                            host_record.get_target_domain() == DynamicSimulationMode.RMS
-                            and not isinstance(template_obj, RmsModelTemplate)
-                    ):
-                        template_obj = None
-                    else:
-                        if (
-                                host_record.get_target_domain() == DynamicSimulationMode.EMT
-                                and not isinstance(template_obj, EmtModelTemplate)
-                        ):
-                            template_obj = None
-                        else:
-                            pass
-                    source_element_class: str = (
-                        host_record.get_source_element_class()
-                    )
-                    if source_element_class == "ElmVscmono":
-                        template_adapter_kind: _DgsRuntimeAdapterKind | None = (
-                            _DgsRuntimeAdapterKind.VSC_MONOPOLAR
-                        )
-                    else:
-                        if source_element_class == "ElmVsc":
-                            template_adapter_kind = (
-                                _DgsRuntimeAdapterKind.VSC_BIPOLAR
-                            )
-                        else:
-                            if source_element_class == "ElmSym":
-                                template_adapter_kind = (
-                                    _DgsRuntimeAdapterKind.SYNCHRONOUS_MACHINE_PENDING
-                                )
-                            else:
-                                template_adapter_kind = None
-                    host_device: DynamicDevice | None
-                    if len(host_devices) == 1:
-                        host_device = host_devices[0]
-                    else:
-                        host_device = None
-                    adapter_configuration_ready: bool = True
-                    if (
-                            isinstance(template_obj, RmsModelTemplate)
-                            and isinstance(host_device, VSC)
-                            and template_adapter_kind
-                            == _DgsRuntimeAdapterKind.VSC_MONOPOLAR
-                    ):
-                        # Monopolar bridges use the grounded return represented
-                        # by their one exported DC terminal and native base.
-                        adapter_configuration_ready = (
-                            configure_dgs_elmvscmono_runtime_template_for_device(
-                                template=template_obj,
-                                device=host_device,
-                                system_base_mva=float(circuit.Sbase),
-                            )
-                        )
-                    else:
-                        if (
-                                isinstance(template_obj, RmsModelTemplate)
-                                and isinstance(host_device, VSC)
-                                and template_adapter_kind
-                                == _DgsRuntimeAdapterKind.VSC_BIPOLAR
-                        ):
-                            # Bipolar bridges use both exported pole bases.
-                            adapter_configuration_ready = (
-                                configure_dgs_elmvsc_runtime_template_for_device(
-                                    template=template_obj,
-                                    device=host_device,
-                                    system_base_mva=float(circuit.Sbase),
-                                )
-                            )
-                        else:
-                            if (
-                                    isinstance(template_obj, RmsModelTemplate)
-                                    and isinstance(host_device, Generator)
-                                    and template_adapter_kind
-                                    == _DgsRuntimeAdapterKind.SYNCHRONOUS_MACHINE_PENDING
-                            ):
-                                # The exact TypSym selects salient or round
-                                # rotor structure and supplies every physical
-                                # parameter before the runtime contract check.
-                                adapter_configuration_ready = (
-                                    configure_dgs_elmsym_runtime_template_for_device(
-                                        template=template_obj,
-                                        device=host_device,
-                                        system_base_mva=float(circuit.Sbase),
-                                    )
-                                )
-                            else:
-                                pass
-                    runtime_contract_ready: bool = (
-                        template_obj is not None
-                        and template_obj.tpe == host_identity[1]
-                        and adapter_configuration_ready
-                        and is_dgs_dynamic_block_runtime_assignable(
-                            block=template_obj.block,
-                            device_tpe=host_identity[1],
-                            adapter_kind=template_adapter_kind,
-                        )
-                    )
-                    if len(host_devices) != 1 or not runtime_contract_ready:
-                        activation_report.record_unresolved()
-                        logger.add_warning(
-                            msg=(
-                                "DGS dynamic host retained without activation because exact "
-                                "resolution or its runtime adapter contract is incomplete"
-                            ),
-                            device=host_record.get_source_element_name(),
-                            device_class=host_record.get_source_element_class(),
-                            value=host_identity[0],
-                        )
-                    else:
-                        if template_obj is None:
-                            # The explicit runtime-contract condition above makes
-                            # this branch unreachable, while the local guard keeps
-                            # the type state evident for static analysis.
-                            activation_report.record_unresolved()
-                            pass
-                        else:
-                            _assign_dgs_dynamic_template_to_host(
-                                host_device=host_devices[0],
-                                template_obj=template_obj,
-                                activation_report=activation_report,
-                            )
-
-    return activation_report
-
-
-def add_all_dynamic_import_bundle_to_circuit_with_report(
-        circuit: MultiCircuit,
-        bundle: DynamicModelImportBundle,
-        logger: Logger,
-        target_domain: DynamicSimulationMode,
-        progress_callback: Callable[[int, str], None] | None = None,
-        user_root_folder: str | None = None,
-        persist_to_user_catalog: bool = False,
-        consume_bundle_templates: bool = False,
-) -> DynamicModelImportReport:
-    """
-    Add every importable bundle entry to a circuit for non-interactive DGS loading.
-
-    Structurally equivalent entries are deduplicated across names within the same
-    target domain and device classification.  Same-name entries with a different
-    symbolic structure receive a deterministic source-qualified name so
-    the bulk path never discards a valid variant merely because another root
-    exposed the same slot label.
-
-    :param circuit: Target circuit.
-    :param bundle: Parsed dynamic-model bundle.
-    :param logger: Logger receiving partial-failure and deduplication diagnostics.
-    :param target_domain: Explicit RMS or EMT destination for every selected entry.
-    :param progress_callback: Optional UI progress callback.
-    :param user_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :param persist_to_user_catalog: Deprecated compatibility request; executable persistence is refused.
-    :param consume_bundle_templates: Transfer source blocks from an ephemeral
-        bundle to avoid a second massive symbolic graph in memory.
-    :return: Structured massive-import report.
-    """
-    selection_requests: List[DynamicModelImportSelectionRequest] = list()
-    selected_entry_keys: Set[str] = set()
-    entry: DynamicModelImportEntry
-    importable_count: int = 0
-    selection_request: DynamicModelImportSelectionRequest
-    entry_availability: DynamicModelImportEntryAvailability
-    unavailable_status: DynamicModelImportEntryStatus
-    unavailable_message: str
-    source_is_dgs: bool = (
-        bundle.get_source_tpe() == DynamicModelImportSource.PowerFactoryDgs
-    )
-    effective_persist_to_user_catalog: bool = (
-        persist_to_user_catalog and not source_is_dgs
-    )
-    template_fingerprint_by_object_id: Dict[int, str | None] = dict()
-
-    # Imported DGS models remain declarative data owned by the circuit. They
-    # must never be converted into executable Python for user-catalog storage.
-    if persist_to_user_catalog and source_is_dgs:
-        logger.add_warning(
-            msg="DGS dynamic model Python persistence refused",
-            value="The imported Block and template remain in the circuit",
-        )
-    else:
-        pass
-
-    for entry in bundle.get_entries():
-        if entry.is_importable():
-            importable_count += 1
-        else:
-            pass
-
-    report: DynamicModelImportReport = DynamicModelImportReport(
-        discovered_count=len(bundle.get_entries()),
-        importable_count=importable_count,
-    )
-
-    for entry in bundle.get_entries():
-        if not entry.is_importable():
-            entry_availability = entry.get_availability()
-            if entry_availability == DynamicModelImportEntryAvailability.MetadataOnly:
-                unavailable_status = DynamicModelImportEntryStatus.Skipped
-                unavailable_message = (
-                    "Source hierarchy and association metadata retained without "
-                    "a reusable template"
-                )
-            else:
-                unavailable_status = DynamicModelImportEntryStatus.Failed
-                unavailable_message = "Source entry could not be materialized"
-            selection_request = DynamicModelImportSelectionRequest(
-                entry_key=entry.get_unique_key(),
-                target_domain=target_domain,
-                device_tpe=guess_dynamic_model_import_hierarchy_device_tpe(bundle=bundle, entry=entry),
-            )
-            _append_dynamic_model_import_entry_result(
-                report=report,
-                entry=entry,
-                selection_request=selection_request,
-                final_name=None,
-                status=unavailable_status,
-                message=unavailable_message,
-            )
-        else:
-            entry_key: str = entry.get_unique_key()
-            if entry_key in selected_entry_keys:
-                logger.add_info(
-                    msg="Duplicate dynamic model catalogue entry ignored",
-                    value=entry_key,
-                )
-            else:
-                selected_entry_keys.add(entry_key)
-                selection_requests.append(
-                    DynamicModelImportSelectionRequest(
-                        entry_key=entry_key,
-                        target_domain=target_domain,
-                        device_tpe=guess_dynamic_model_import_hierarchy_device_tpe(bundle=bundle, entry=entry),
-                    )
-                )
-
-    add_dynamic_import_selection_requests_to_circuit(
-        circuit=circuit,
-        bundle=bundle,
-        selection_requests=selection_requests,
-        logger=logger,
-        progress_callback=progress_callback,
-        user_root_folder=user_root_folder,
-        rename_conflicting_templates=True,
-        persist_to_user_catalog=effective_persist_to_user_catalog,
-        report=report,
-        template_fingerprint_by_object_id=template_fingerprint_by_object_id,
-        clone_source_blocks=not consume_bundle_templates,
-    )
-
-    # DGS source relations remain separate metadata.  Building one record per
-    # report result preserves aliases after many-to-one template deduplication
-    # without assigning any template to an electrical device.
-    if bundle.get_source_tpe() == DynamicModelImportSource.PowerFactoryDgs:
-        template_by_root_dgs_id: Dict[
-            str,
-            RmsModelTemplate | EmtModelTemplate,
-        ] = dict()
-        ambiguous_template_root_ids: Set[str] = set()
-
-        # The source-to-destination association exists only while this import is
-        # active. It replaces the former second lookup by a mutable display name
-        # after the templates had already been registered in the circuit.
-        for entry in bundle.get_entries():
-            source_provenance: DynamicModelImportSourceProvenance | None = (
-                entry.get_source_provenance()
-            )
-            installed_template: RmsModelTemplate | EmtModelTemplate | None = (
-                entry.get_installed_template()
-            )
-            if (
-                    source_provenance is None
-                    or source_provenance.get_slot_index() is not None
-                    or installed_template is None
-            ):
-                pass
-            else:
-                root_dgs_id: str = source_provenance.get_root_dgs_id()
-                existing_template: RmsModelTemplate | EmtModelTemplate | None = (
-                    template_by_root_dgs_id.get(root_dgs_id, None)
-                )
-                if root_dgs_id in ambiguous_template_root_ids:
-                    pass
-                else:
-                    if existing_template is None:
-                        template_by_root_dgs_id[root_dgs_id] = installed_template
-                    else:
-                        if existing_template is installed_template:
-                            pass
-                        else:
-                            # More than one destination for one source root is not
-                            # assignable. Remove the partial mapping so activation
-                            # remains fail-closed and report the contradiction.
-                            del template_by_root_dgs_id[root_dgs_id]
-                            ambiguous_template_root_ids.add(root_dgs_id)
-                            logger.add_warning(
-                                msg=(
-                                    "DGS dynamic root retained without activation because "
-                                    "it produced several VeraGrid templates"
-                                ),
-                                value=root_dgs_id,
-                            )
-
-        association_records: List[DgsDynamicAssociationRecord] = build_dgs_dynamic_association_records(
-            report=report,
-        )
-
-        # Exact single-host composites can now follow the same end state as a
-        # manual GUI template assignment. Ambiguous plant controllers and
-        # unsupported equipment remain safely available in the catalogue.
-        activation_report: DgsDynamicModelActivationReport = (
-            activate_unambiguous_dgs_dynamic_models_in_circuit(
-                circuit=circuit,
-                records=association_records,
-                template_by_root_dgs_id=template_by_root_dgs_id,
-                logger=logger,
-            )
-        )
-        report.set_activation_report(activation_report=activation_report)
-        logger.add_info(
-            msg="DGS dynamic device models activated by exact source identity",
-            value=activation_report.get_activated_count(),
-        )
-
-    else:
-        pass
-
-    return report
-
-
-def add_all_dynamic_import_bundle_to_circuit(
-        circuit: MultiCircuit,
-        bundle: DynamicModelImportBundle,
-        logger: Logger,
-        target_domain: DynamicSimulationMode,
-        progress_callback: Callable[[int, str], None] | None = None,
-        user_root_folder: str | None = None,
-        persist_to_user_catalog: bool = False,
-) -> int:
-    """
-    Add every importable entry and return the backward-compatible added count.
-
-    :param circuit: Target circuit.
-    :param bundle: Parsed dynamic-model bundle.
-    :param logger: Logger receiving partial-failure and deduplication diagnostics.
-    :param target_domain: Explicit RMS or EMT destination for every selected entry.
-    :param progress_callback: Optional UI progress callback.
-    :param user_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :param persist_to_user_catalog: Deprecated compatibility request; executable persistence is refused.
-    :return: Number of added templates, including collision-safe renamed variants.
-    """
-    report: DynamicModelImportReport = add_all_dynamic_import_bundle_to_circuit_with_report(
-        circuit=circuit,
-        bundle=bundle,
-        logger=logger,
-        target_domain=target_domain,
-        progress_callback=progress_callback,
-        user_root_folder=user_root_folder,
-        persist_to_user_catalog=persist_to_user_catalog,
-    )
-    return report.get_added_count()
-
-
-def add_dynamic_import_bundle_to_circuit(
-        circuit: MultiCircuit,
-        bundle: DynamicModelImportBundle,
-        selected_keys: Sequence[str],
-        target_domain: DynamicSimulationMode,
-        device_tpe: DeviceType,
-        logger: Logger,
-) -> int:
-    """
-    Add the selected imported dynamic models to the circuit.
-
-    The caller selects the simulation domain and compatible device family before
-    any RMS or EMT template is materialized.
-
-    :param circuit: Target circuit.
-    :param bundle: Imported dynamic-model bundle.
-    :param selected_keys: Selected entry keys.
-    :param target_domain: Explicit RMS or EMT destination.
-    :param device_tpe: Compatible VeraGrid device family.
-    :param logger: Logger receiving duplicate or importability diagnostics.
-    :return: Number of templates added to the circuit.
-    """
-    selection_requests: List[DynamicModelImportSelectionRequest] = list()
-    entry_key: str
-
-    for entry_key in selected_keys:
-        selection_requests.append(
-            DynamicModelImportSelectionRequest(
-                entry_key=entry_key,
-                target_domain=target_domain,
-                device_tpe=device_tpe,
-            )
-        )
-
-    return add_dynamic_import_selection_requests_to_circuit(
-        circuit=circuit,
-        bundle=bundle,
-        selection_requests=selection_requests,
-        logger=logger,
-    )
-
-
-def load_user_dynamic_model_templates_into_circuit(
-        circuit: MultiCircuit,
-        logger: Logger | None = None,
-        user_root_folder: str | None = None,
-) -> int:
-    """
-    Load persisted user dynamic templates from the VeraGrid user folder.
-
-    The loader only targets the importer-managed ``user_templates`` folder so the
-    GUI can restore previously imported EMT templates across sessions without
-    coupling that behavior to generic ``MultiCircuit`` construction.
-
-    :param circuit: Target circuit receiving the persisted templates.
-    :param logger: Optional logger receiving load diagnostics.
-    :param user_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :return: Number of templates added to the circuit.
-    """
-    effective_logger: Logger = Logger() if logger is None else logger
-    existing_rms_names: Set[str] = set()
-    existing_emt_names: Set[str] = set()
-    loaded_template: DynamicModelLoadedUserTemplate
-    template_obj: RmsModelTemplate | EmtModelTemplate
-    added_count: int = 0
-
-    # The catalogue must stay idempotent inside one circuit even if the same user
-    # template file is scanned more than once across GUI actions.
-    for template in circuit.rms_models:
-        existing_rms_names.add(template.name)
-
-    for template in circuit.emt_models:
-        existing_emt_names.add(template.name)
-
-    # Reuse the shared data-only scanner so the GUI catalogue and the importer
-    # materialize exactly the same declarative template payloads.
-    for loaded_template in load_user_dynamic_model_templates(
-            logger=effective_logger,
-            user_root_folder=user_root_folder,
-    ):
-        template_obj = loaded_template.get_template_obj()
-
-        if isinstance(template_obj, RmsModelTemplate):
-            if template_obj.name in existing_rms_names:
-                effective_logger.add_debug(
-                    "Skipped persisted user RMS model because the template name already exists",
-                    template_obj.name,
-                )
-            else:
-                circuit.add_rms_model(template_obj)
-                existing_rms_names.add(template_obj.name)
-                added_count += 1
-        else:
-            if isinstance(template_obj, EmtModelTemplate):
-                if template_obj.name in existing_emt_names:
-                    effective_logger.add_debug(
-                        "Skipped persisted user EMT model because the template name already exists",
-                        template_obj.name,
-                    )
-                else:
-                    circuit.add_emt_model(template_obj)
-                    existing_emt_names.add(template_obj.name)
-                    added_count += 1
-            else:
-                pass
-
-    return added_count
-
-
-def load_user_dynamic_model_templates(
-        logger: Logger | None = None,
-        user_root_folder: str | None = None,
-) -> List[DynamicModelLoadedUserTemplate]:
-    """
-    Materialize all persisted user dynamic templates from the VeraGrid user folder.
-
-    :param logger: Optional logger receiving load diagnostics.
-    :param user_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :return: Materialized persisted user templates.
-    """
-    effective_logger: Logger = Logger() if logger is None else logger
-    templates: List[DynamicModelLoadedUserTemplate] = list()
-    seen_template_signatures: Set[tuple[DynamicSimulationMode, str]] = set()
-    folder_path: Path
-    payload_path: Path
-    template: DynamicModelLoadedUserTemplate | None
-
-    for folder_path in _iter_user_dynamic_models_folder_paths(user_root_folder=user_root_folder):
-        # Declarative payloads are the only persisted representation accepted at
-        # this boundary, so imported data can never become executable source.
-        for payload_path in sorted(folder_path.glob("*.payload.json")):
-            template = _load_user_dynamic_template_from_payload_path(
-                payload_path=payload_path,
-                logger=effective_logger,
-            )
-
-            if template is None:
-                pass
-            else:
-                _append_loaded_user_dynamic_template_once(
-                    template=template,
-                    seen_template_signatures=seen_template_signatures,
-                    templates=templates,
-                )
-
-    return templates
-
-
-def _load_user_dynamic_template_from_payload_path(
-        payload_path: Path,
-        logger: Logger,
-) -> DynamicModelLoadedUserTemplate | None:
-    """Materialize one validated declarative user-template payload.
-
-    :param payload_path: Exact JSON payload path.
-    :param logger: Diagnostic sink for rejected payloads.
-    :return: Typed loaded-template descriptor, or ``None`` when invalid.
-    """
-    try:
-        loaded_payload: Tuple[
-            Block,
-            str,
-            DynamicSimulationMode,
-            DeviceType,
-        ] | None = load_user_dynamic_template_json_payload(
-            json_path=str(payload_path),
-        )
-    except (OSError, ValueError, KeyError, TypeError) as error:
-        logger.add_warning(
-            msg="Declarative user dynamic-model payload rejected",
-            value=f"{payload_path}: {error}",
-        )
-        loaded_payload = None
-
-    if loaded_payload is None:
-        result: DynamicModelLoadedUserTemplate | None = None
-    else:
-        block: Block = loaded_payload[0]
-        template_name: str = loaded_payload[1]
-        target_domain: DynamicSimulationMode = loaded_payload[2]
-        device_tpe: DeviceType = loaded_payload[3]
-        template_obj: RmsModelTemplate | EmtModelTemplate
-        if target_domain == DynamicSimulationMode.RMS:
-            template_obj = RmsModelTemplate(name=template_name)
-        else:
-            template_obj = EmtModelTemplate(name=template_name)
-        template_obj.tpe = device_tpe
-        template_obj.block = block
-        result = DynamicModelLoadedUserTemplate(
-            payload_path=payload_path,
-            domain=target_domain,
-            device_tpe=device_tpe,
-            template_obj=template_obj,
-        )
-    return result
-
-
-def _append_loaded_user_dynamic_template_once(
-        template: DynamicModelLoadedUserTemplate,
-        seen_template_signatures: Set[tuple[DynamicSimulationMode, str]],
-        templates: List[DynamicModelLoadedUserTemplate],
-) -> None:
-    """
-    Append one loaded template unless its domain and name were already restored.
-
-    :param template: Loaded user-template descriptor.
-    :param seen_template_signatures: Mutable set of already accepted signatures.
-    :param templates: Mutable ordered output collection.
-    :return: None.
-    """
-    template_signature: tuple[DynamicSimulationMode, str] = (
-        template.get_domain(),
-        template.get_template_obj().name,
-    )
-
-    # Domain-separated folders are scanned before the legacy folder, so keeping
-    # the first signature deterministically preserves the modern catalogue.
-    if template_signature in seen_template_signatures:
-        pass
-    else:
-        seen_template_signatures.add(template_signature)
-        templates.append(template)
-
-
-def _get_user_dynamic_models_root_folder_path(create: bool = True,
-                                              user_root_folder: str | None = None) -> Path:
-    """
-    Return the VeraGrid user root folder used to persist imported dynamic models.
-
-    :param create: Create the folder when it does not exist?
-    :param user_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :return: Persistent user dynamic-model root folder path.
-    """
-    root_folder_path: Path
-    folder_path: Path
-
-    if user_root_folder is None:
-        root_folder_path = Path(get_create_veragrid_folder())
-    else:
-        root_folder_path = Path(user_root_folder)
-
-    folder_path = root_folder_path / "user_defined_models"
-
-    if create:
-        folder_path.mkdir(parents=True, exist_ok=True)
-    else:
-        pass
-
-    return folder_path
-
-
-def _get_legacy_user_dynamic_models_folder_path(create: bool = False,
-                                                user_root_folder: str | None = None) -> Path:
-    """
-    Return the legacy flat folder used by older VeraGrid builds.
-
-    :param create: Create the folder when it does not exist?
-    :param user_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :return: Legacy persisted user dynamic-model folder path.
-    """
-    root_folder_path: Path
-    folder_path: Path
-
-    if user_root_folder is None:
-        root_folder_path = Path(get_create_veragrid_folder())
-    else:
-        root_folder_path = Path(user_root_folder)
-
-    folder_path = root_folder_path / "user_templates"
-
-    if create:
-        folder_path.mkdir(parents=True, exist_ok=True)
-    else:
-        pass
-
-    return folder_path
-
-
-def _get_user_dynamic_models_domain_folder_path(
-        target_domain: DynamicSimulationMode,
-        create: bool = True,
-        user_root_folder: str | None = None,
-) -> Path:
-    """
-    Return the domain-specific VeraGrid user folder used to persist one template.
-
-    :param target_domain: Selected persisted template domain.
-    :param create: Create the folder when it does not exist?
-    :param user_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :return: Persistent domain-specific user dynamic-model folder path.
-    """
-    folder_name: str
-
-    if target_domain == DynamicSimulationMode.RMS:
-        folder_name = "rms"
-    else:
-        if target_domain == DynamicSimulationMode.EMT:
-            folder_name = "emt"
-        else:
-            raise ValueError(f"Unsupported user dynamic-model domain {target_domain}")
-
-    folder_path: Path = _get_user_dynamic_models_root_folder_path(
-        create=create,
-        user_root_folder=user_root_folder,
-    ) / folder_name
-
-    if create:
-        folder_path.mkdir(parents=True, exist_ok=True)
-    else:
-        pass
-
-    return folder_path
-
-
-def _iter_user_dynamic_models_folder_paths(user_root_folder: str | None = None) -> List[Path]:
-    """
-    Return the existing persisted user-template folders to scan.
-
-    The loader prefers the new domain-separated layout while still scanning the
-    legacy flat folder so existing user templates keep loading without migration.
-
-    :param user_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :return: Existing persisted user-template folders in deterministic order.
-    """
-    folder_paths: List[Path] = list()
-    rms_folder_path: Path = _get_user_dynamic_models_domain_folder_path(
-        DynamicSimulationMode.RMS,
-        create=False,
-        user_root_folder=user_root_folder,
-    )
-    emt_folder_path: Path = _get_user_dynamic_models_domain_folder_path(
-        DynamicSimulationMode.EMT,
-        create=False,
-        user_root_folder=user_root_folder,
-    )
-    legacy_folder_path: Path = _get_legacy_user_dynamic_models_folder_path(
-        create=False,
-        user_root_folder=user_root_folder,
-    )
-
-    if rms_folder_path.exists():
-        folder_paths.append(rms_folder_path)
-    else:
-        pass
-
-    if emt_folder_path.exists():
-        folder_paths.append(emt_folder_path)
-    else:
-        pass
-
-    if legacy_folder_path.exists():
-        folder_paths.append(legacy_folder_path)
-    else:
-        pass
-
-    return folder_paths
-
-
-def _sanitize_file_stem(text: str) -> str:
-    """
-    Convert one display name into a filesystem-safe stem.
-
-    :param text: Source text.
-    :return: Filesystem-safe stem.
-    """
-    return sanitize_dynamic_model_file_stem(text=text)
-
-
-def build_user_dynamic_template_payload_output_path(
-        template_name: str,
-        target_domain: DynamicSimulationMode,
-        catalog_root_folder: str | None = None,
-) -> Path:
-    """
-    Build the preferred unsuffixed sidecar path for one persisted user template.
-
-    :param template_name: Human-facing template name.
-    :param target_domain: Selected RMS or EMT user folder.
-    :param catalog_root_folder: Optional explicit VeraGrid user root used mainly by tests.
-    :return: Preferred JSON payload path before collision resolution.
-    """
-    output_folder: Path = _get_user_dynamic_models_domain_folder_path(
-        target_domain=target_domain,
-        create=True,
-        user_root_folder=catalog_root_folder,
-    )
-    safe_stem: str = _sanitize_file_stem(template_name)
-
-    if len(safe_stem) == 0:
-        safe_stem = "user_dynamic_model"
-    else:
-        pass
-
-    return output_folder / f"{safe_stem}.payload.json"
-
-
-def _iter_child_blocks_recursive(block: Block) -> List[Block]:
-    """
-    Return every descendant child block in depth-first order.
-
-    :param block: Root block.
-    :return: Recursive child block list.
-    """
-    child_blocks: List[Block] = list()
-    child_block: Block
-
-    for child_block in block.children:
-        child_blocks.append(child_block)
-        child_blocks.extend(_iter_child_blocks_recursive(child_block))
-
-    return child_blocks
-
-
-def build_user_dynamic_template_persistable_block(block: Block) -> Block:
-    """
-    Build the reusable block stored in the declarative user-template payload.
-
-    Device-bound editors expose lateral `INPUT_CONN` and `OUTPUT_CONN` blocks only
-    as one visual wrapper around the reusable template interface. Persisting those
-    GUI-only children into the catalogue would duplicate the lateral interface when
-    the template gets opened again. The persisted declarative payload therefore
-    keeps the root symbolic ports but removes the wrapper connection blocks and
-    their diagram branches.
-
-    :param block: Editor working block.
-    :return: Persistable reusable block without GUI-only lateral wrappers.
-    """
-    export_block: Block = copy.deepcopy(block)
-    interface_block_uids: Set[int] = set()
-    filtered_children: List[Block] = list()
-    child_block: Block
-    node_uid: int
-    node_data: BlockDiagramNode
-    connection_uid: int
-    connection_data: BlockDiagramConnection
-    filtered_node_data: Dict[int, BlockDiagramNode] = dict()
-    filtered_connection_data: Dict[int, BlockDiagramConnection] = dict()
-
-    for node_uid, node_data in export_block.diagram.node_data.items():
-        if node_data.tpe == BlockType.INPUT_CONN.name or node_data.tpe == BlockType.OUTPUT_CONN.name:
-            interface_block_uids.add(int(node_data.device_uid))
-        else:
-            filtered_node_data[node_uid] = node_data
-
-    for child_block in export_block.children:
-        if child_block.uid in interface_block_uids:
-            pass
-        else:
-            filtered_children.append(child_block)
-
-    for connection_uid, connection_data in export_block.diagram.con_data.items():
-        if connection_data.from_uid in interface_block_uids or connection_data.to_uid in interface_block_uids:
-            pass
-        else:
-            filtered_connection_data[connection_uid] = connection_data
-
-    export_block.children = filtered_children
-    export_block.diagram.node_data = filtered_node_data
-    export_block.diagram.con_data = filtered_connection_data
-    _apply_composite_child_interface_if_missing(export_block)
-    return export_block
-
-
+    importer: DynamicModelImport = DynamicModelImport(dgs_circuit, circuit, None, logger)
+    importer.get_conversion_result().templates_by_root_dgs_id.update(templates_by_root_dgs_id)
+    importer.apply_templates_to_devices()
 
 
 def _build_user_dynamic_template_payload_text(
@@ -5509,124 +4470,3 @@ def _build_user_dynamic_template_payload_text(
         ensure_ascii=True,
         sort_keys=True,
     ) + "\n"
-
-
-def export_user_dynamic_template_json_from_block(
-        block: Block,
-        output_path: str,
-        template_name: str,
-        target_domain: DynamicSimulationMode,
-        device_tpe: DeviceType,
-        progress_callback: Callable[[int, str], None] | None = None,
-) -> Path:
-    """
-    Export one editor block to one standalone JSON payload.
-
-    :param block: Exported symbolic block.
-    :param output_path: Destination JSON file path.
-    :param template_name: Default runtime template name.
-    :param target_domain: Selected RMS or EMT catalogue domain.
-    :param device_tpe: Selected supported device type.
-    :param progress_callback: Optional UI progress callback.
-    :return: Written JSON file path.
-    """
-    export_block: Block = copy.deepcopy(block)
-    destination_path: Path = Path(output_path)
-    payload_text: str
-
-    _emit_dynamic_model_import_progress(progress_callback, 0, "Preparing JSON snapshot export...")
-    _apply_composite_child_interface_if_missing(export_block)
-    destination_path.parent.mkdir(parents=True, exist_ok=True)
-    _emit_dynamic_model_import_progress(progress_callback, 25, "Serializing block snapshot...")
-    payload_text = _build_user_dynamic_template_payload_text(
-        block=export_block,
-        template_name=template_name,
-        target_domain=target_domain,
-        device_tpe=device_tpe,
-    )
-    _emit_dynamic_model_import_progress(progress_callback, 75, "Writing JSON snapshot...")
-    destination_path.write_text(payload_text, encoding="utf-8")
-    _emit_dynamic_model_import_progress(progress_callback, 100, "JSON snapshot saved")
-    return destination_path
-
-
-def load_user_dynamic_template_json_payload(
-        json_path: str,
-        progress_callback: Callable[[int, str], None] | None = None,
-) -> Tuple[Block, str, DynamicSimulationMode, DeviceType] | None:
-    """
-    Load one intermediate JSON snapshot exported from the dynamic block editor.
-
-    :param json_path: Source JSON snapshot path.
-    :param progress_callback: Optional UI progress callback.
-    :return: Tuple ``(block, template_name, target_domain, device_tpe)`` or ``None`` when the payload is invalid.
-    """
-    _emit_dynamic_model_import_progress(progress_callback, 0, "Reading JSON snapshot...")
-    payload_text: str = Path(json_path).read_text(encoding="utf-8")
-    _emit_dynamic_model_import_progress(progress_callback, 20, "Parsing JSON snapshot...")
-    payload_obj: object = json.loads(payload_text)
-    template_name: str
-    target_domain: DynamicSimulationMode
-    device_tpe: DeviceType
-    block: Block
-
-    if isinstance(payload_obj, dict):
-        block_data_obj: object | None = payload_obj.get("block_data", None)
-        template_name_obj: object | None = payload_obj.get(
-            "template_name",
-            None,
-        )
-        target_domain_obj: object | None = payload_obj.get(
-            "target_domain",
-            None,
-        )
-        device_tpe_obj: object | None = payload_obj.get("device_tpe", None)
-    else:
-        return None
-
-    if isinstance(block_data_obj, dict):
-        _emit_dynamic_model_import_progress(progress_callback, 55, "Rebuilding symbolic block from JSON...")
-        block = Block.parse(
-            data=block_data_obj,
-            procedural_logic_codec=ProceduralLogicCodec(),
-        )
-    else:
-        return None
-
-    if isinstance(template_name_obj, str):
-        template_name = template_name_obj.strip()
-    else:
-        template_name = ""
-
-    if len(template_name) == 0:
-        template_name = block.name.strip()
-    else:
-        pass
-
-    if len(template_name) == 0:
-        template_name = Path(json_path).stem
-    else:
-        pass
-
-    if target_domain_obj == DynamicSimulationMode.RMS.value:
-        target_domain = DynamicSimulationMode.RMS
-    else:
-        if target_domain_obj == DynamicSimulationMode.EMT.value:
-            target_domain = DynamicSimulationMode.EMT
-        else:
-            return None
-
-    if isinstance(device_tpe_obj, str):
-        if device_tpe_obj in DeviceType.__members__:
-            device_tpe = DeviceType[device_tpe_obj]
-        else:
-            return None
-    else:
-        return None
-
-    _emit_dynamic_model_import_progress(
-        progress_callback,
-        100,
-        "JSON snapshot loaded",
-    )
-    return block, template_name, target_domain, device_tpe

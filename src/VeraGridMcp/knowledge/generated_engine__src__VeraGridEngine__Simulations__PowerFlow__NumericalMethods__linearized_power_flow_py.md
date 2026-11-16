@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 0
 - Top-level function count: 3
-- Representative imports: time, warnings, scipy.sparse, numpy, VeraGridEngine.Utils.NumericalMethods.sparse_solve, VeraGridEngine.Simulations.PowerFlow.power_flow_results, VeraGridEngine.DataStructures.numerical_circuit, VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions, VeraGridEngine.basic_structures
+- Representative imports: time, warnings, scipy.sparse, numpy, VeraGridEngine.Utils.Sparse.sparse_solve, VeraGridEngine.Simulations.PowerFlow.power_flow_results, VeraGridEngine.DataStructures.numerical_circuit, VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions, VeraGridEngine.basic_structures
 
 ## Function: linear_pf(nc, Ybus, Bpqpv, Bref, Bf, S0, I0, Y0, V0, tau, vd, no_slack, pq, pv)
 

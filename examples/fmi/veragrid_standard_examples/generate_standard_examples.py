@@ -32,9 +32,9 @@ from VeraGridEngine.IO.fmu.config import ExportConfig as CsExportConfig
 from VeraGridEngine.IO.fmu.config import detect_target_platform as detect_cs_target_platform
 from VeraGridEngine.IO.fmu.config import ExportConfig as MeExportConfig
 from VeraGridEngine.IO.fmu.config import detect_target_platform as detect_me_target_platform
-from VeraGridEngine.Templates.Rms.international_standards.excitation_systems.esdc2a import build_esdc2a_template
-from VeraGridEngine.Templates.Rms.international_standards.governors.tgov1 import build_tgov1_template
-from VeraGridEngine.Templates.Rms.international_standards.synchronous_machines.gensal import build_gensal_template
+from VeraGridEngine.Templates.Rms.excitation_systems.esdc2a import build_esdc2a_template
+from VeraGridEngine.Templates.Rms.governors.tgov1 import build_tgov1_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.gensal import build_gensal_template
 
 
 class ExampleFamily(Enum):

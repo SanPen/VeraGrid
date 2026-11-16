@@ -11,7 +11,7 @@ import numpy as np
 from scipy.sparse.csgraph import connected_components
 from typing import List, Tuple
 
-from VeraGridEngine.Utils.NumericalMethods.sparse_solve import get_sparse_type, get_linear_solver
+from VeraGridEngine.Utils.Sparse.sparse_solve import get_sparse_type, get_linear_solver
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPowerFlowResults
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 import VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions as cf
@@ -64,7 +64,7 @@ def linear_pf(nc: NumericalCircuit,
         # compose the reduced power injections (Pinj)
         # Since we have removed the slack nodes, we must account their influence as Injections Bref * Va_ref
         # We also need to account for the effect of the phase shifters (Pps)
-        Pps = Bf.T @ tau
+        Pps = Bf.T @ (tau + (np.pi / 6.0 * nc.passive_branch_data.vector_group_number))
         Pinj = Sbus[no_slack].real - (Bref @ Va_ref) * Vm[no_slack] + Pps[no_slack]  # TODO: add G from shunts
 
         # update angles for non-reference buses
@@ -85,6 +85,7 @@ def linear_pf(nc: NumericalCircuit,
     else:
         norm_f = 0.0
         V = V0
+        Va = np.angle(V0)
         Scalc = cf.compute_power(Ybus, V)
 
     end = time.time()
@@ -96,17 +97,18 @@ def linear_pf(nc: NumericalCircuit,
         active=nc.passive_branch_data.active,
         X=nc.passive_branch_data.X,
         tap_module=nc.active_branch_data.tap_module,
-        tap_angle=nc.active_branch_data.tap_angle,
+        tap_angle=nc.active_branch_data.tap_angle + (np.pi / 6.0 * nc.passive_branch_data.vector_group_number),
         F=nc.passive_branch_data.F,
         T=nc.passive_branch_data.T,
         branch_rates=nc.passive_branch_data.rates,
-        Sbase=nc.Sbase
+        Sbase=nc.Sbase,
+        theta=Va
     )
 
     return NumericPowerFlowResults(V=V,
                                    Scalc=Scalc * nc.Sbase,
-                                   m=np.ones(nc.nbr, dtype=float),
-                                   tau=np.zeros(nc.nbr, dtype=float),
+                                   m=nc.active_branch_data.tap_module.copy(),
+                                   tau=tau.copy(),
                                    Sf=Sf,
                                    St=St,
                                    If=If,
@@ -477,7 +479,8 @@ def acdc_lin_pf(nc: NumericalCircuit,
     # compose the reduced power injections (Pinj)
     # Since we have removed the slack nodes, we must account their influence as Injections Bref * Va_ref
     # We also need to account for the effect of the phase shifters (Pps)
-    Pps = Bf.T @ tau
+    phase = tau + (np.pi / 6.0 * nc.passive_branch_data.vector_group_number)
+    Pps = Bf.T @ phase
 
     Bref = Bbus[:, vd]
     Pref = (Bref @ Va[vd]) * Vm
@@ -504,8 +507,8 @@ def acdc_lin_pf(nc: NumericalCircuit,
 
             return NumericPowerFlowResults(V=V,
                                            Scalc=S0 * nc.Sbase,
-                                           m=np.ones(nc.nbr, dtype=float),
-                                           tau=np.zeros(nc.nbr, dtype=float),
+                                           m=nc.active_branch_data.tap_module.copy(),
+                                           tau=tau.copy(),
                                            Sf=Pf,
                                            St=-Pf,
                                            If=zm,
@@ -576,7 +579,7 @@ def acdc_lin_pf(nc: NumericalCircuit,
     V = cf.polar_to_rect(Vm, Va)
 
     # Compute the flows from angles instead of complex voltages
-    Pf = (Af @ Va - ys_arr * tau) * nc.Sbase
+    Pf = (Af @ Va - ys_arr * phase) * nc.Sbase
 
     # check for convergence
     norm_f = 0.0
@@ -598,8 +601,8 @@ def acdc_lin_pf(nc: NumericalCircuit,
 
     return NumericPowerFlowResults(V=V,
                                    Scalc=S0 * nc.Sbase,
-                                   m=np.ones(nc.nbr, dtype=float),
-                                   tau=np.zeros(nc.nbr, dtype=float),
+                                   m=nc.active_branch_data.tap_module.copy(),
+                                   tau=tau.copy(),
                                    Sf=Pf,
                                    St=-Pf,
                                    If=zm,
@@ -648,6 +651,13 @@ def lacpf(nc: NumericalCircuit,
     :param logger: Logger
     :return: NumericPowerFlowResults
     """
+
+    if np.any(((np.pi / 6.0 * nc.passive_branch_data.vector_group_number) != 0.0)
+              & (nc.passive_branch_data.active != 0)):
+        raise NotImplementedError(
+            "LACPF does not support transformer clock displacements. "
+            "Use NR or Linear (DC) power flow."
+        )
 
     start = time.time()
 

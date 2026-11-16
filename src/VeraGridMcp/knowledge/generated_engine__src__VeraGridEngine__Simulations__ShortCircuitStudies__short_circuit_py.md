@@ -1,6 +1,6 @@
 # VeraGridEngine Module: src/VeraGridEngine/Simulations/ShortCircuitStudies/short_circuit.py
 
-- Original source path: `src/VeraGridEngine/Simulations/ShortCircuitStudies/short_circuit.py`
+- Original source path: `../../VeraGridEngine/Simulations/ShortCircuitStudies/NumericalMethods/short_circuit_sequences.py`
 - Knowledge kind: generated VeraGridEngine code summary
 
 ## Module Summary

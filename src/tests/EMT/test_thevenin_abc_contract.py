@@ -1,5 +1,10 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent phase-matrix and native lifecycle checks of the passive source."""
+
 
 import copy
 from pathlib import Path
@@ -20,19 +25,18 @@ from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.IO.file_save import FileSave
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
-from VeraGridEngine.Simulations.EMT.injection_operating_point import EmtInjectionOperatingPoint
 from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
-from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import get_shunt_r_emt_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Utils.Symbolic.block import (
-    Block, DynamicModelContract, EmtTerminalCurrentContribution,
-    dynamic_model_contract_from_data, validate_dynamic_model_contract,
+    Block, DynamicModelContract,
+    dynamic_model_contract_from_data
 )
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockSaver, duplicate_block, duplicate_block_vars_uid
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
@@ -40,9 +44,11 @@ from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import (
     DynamicIntegrationMethod, EmtInitializationMethod, EmtInitializationStatus,
     EmtSolverTypes, ParamPowerFlowReferenceType, ShuntConnectionType, TheveninSourceVoltageMode,
-    GeneratorControlMode, VarPowerFlowReferenceType, EmtTerminalSide, EmtTerminalConductor,
+    GeneratorControlMode, VarPowerFlowReferenceType,
     DynamicSimulationMode,
 )
+
+from tests.symbolic_block_roundtrip import parse_saved_block, roundtrip_block, save_block_fixture
 
 
 def _find_source_var(block: Block, name: str) -> Var:
@@ -335,6 +341,11 @@ def test_source_native_balanced_startup(mode: TheveninSourceVoltageMode) -> None
     _, values, derivatives, well_initialized, converged = solver.simulate(boundary_updater=problem)
     assert well_initialized and converged
     assert np.all(np.isfinite(values)) and np.all(np.isfinite(derivatives))
+    pf_power = complex(problem.power_flow_results.Sbus[0]) / problem.grid.Sbase
+    pe = _find_source_var(source.emt_model, "Pe")
+    qe = _find_source_var(source.emt_model, "Qe")
+    np.testing.assert_allclose(values[:, problem.get_var_idx(pe)], pf_power.real, rtol=0.0, atol=1e-5)
+    np.testing.assert_allclose(values[:, problem.get_var_idx(qe)], pf_power.imag, rtol=0.0, atol=1e-5)
 
 
 def test_source_native_pf3_startup() -> None:
@@ -556,17 +567,17 @@ def test_source_native_colocated_pv_initialization(method: EmtInitializationMeth
     load.bus = load_bus
     source: Block
     for source in first.emt_model.get_all_blocks():
-        mode_uid: int | None = source.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid
-        if mode_uid is None:
+        mode_parameter: Var | None = source.external_mapping.get(VarPowerFlowReferenceType.MODE_MARKER, None)
+        if mode_parameter is None or mode_parameter not in source.parameters:
             pass
         else:
-            source.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid = None
+            del source.external_mapping[VarPowerFlowReferenceType.MODE_MARKER]
             assert not problem._try_seed_colocated_balanced_pv_sources(grid, 1, injections, source_indices, residual,
                 grid.Sbase, mapping, scratch)
-            source.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid = mode_uid
+            source.external_mapping[VarPowerFlowReferenceType.MODE_MARKER] = mode_parameter
             parameter: Var
             for parameter in source.parameters:
-                if parameter.uid == mode_uid:
+                if parameter.uid == mode_parameter.uid:
                     mapping[parameter] = Const(1)
                     assert not problem._try_seed_colocated_balanced_pv_sources(grid, 1, injections, source_indices, residual,
                         grid.Sbase, mapping, scratch)
@@ -583,19 +594,13 @@ def test_source_native_colocated_pv_initialization(method: EmtInitializationMeth
         assert not problem._try_seed_colocated_balanced_pv_sources(grid, 1, injections, source_indices, residual,
             grid.Sbase, mapping, scratch)
         first.emt_model.external_mapping[ref] = original_ref
-    first.emt_model.dynamic_model_contract.emt_terminal_current_contributions = list((
-        EmtTerminalCurrentContribution(EmtTerminalSide.BUS, EmtTerminalConductor.PHASE_A, VarPowerFlowReferenceType.i_A),
-    ))
-    assert not problem._try_seed_colocated_balanced_pv_sources(grid, 1, injections, source_indices, residual,
-        grid.Sbase, mapping, scratch)
-    first.emt_model.dynamic_model_contract.emt_terminal_current_contributions = list()
     first.emt_model.external_mapping[VarPowerFlowReferenceType.i_N] = first.emt_model.external_mapping[VarPowerFlowReferenceType.i_A]
     assert not problem._try_seed_colocated_balanced_pv_sources(grid, 1, injections, source_indices, residual,
         grid.Sbase, mapping, scratch)
     del first.emt_model.external_mapping[VarPowerFlowReferenceType.i_N]
     # Legacy differential residuals belong to an additional equation owner even
     # when that wrapper has no declared derivative variables.
-    assert first.emt_model.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid is None
+    assert "emt_finite_reciprocal_source_mode_var_uid" not in first.emt_model.dynamic_model_contract.to_data()
     legacy_equations: list[Expr] = first.emt_model.differential_eqs
     first.emt_model.differential_eqs = list((Const(1.0),))
     assert not problem._try_seed_colocated_balanced_pv_sources(grid, 1, injections, source_indices, residual,
@@ -641,10 +646,8 @@ def test_source_default_impedance_fallback_is_runtime_only() -> None:
 @pytest.mark.parametrize("r1,x1,r0,x0,r2,x2,connection", (
     (-0.01, 0.2, 0.04, 0.6, 0.02, 0.2, ShuntConnectionType.GroundedStar),
     (0.02, 0.0, 0.04, 0.6, 0.02, 0.2, ShuntConnectionType.GroundedStar),
-    (0.02, np.nan, 0.04, 0.6, 0.02, 0.2, ShuntConnectionType.GroundedStar),
     (0.02, 0.2, 0.04, 0.0, 0.02, 0.2, ShuntConnectionType.GroundedStar),
     (0.02, 0.2, -0.04, 0.6, 0.02, 0.2, ShuntConnectionType.GroundedStar),
-    (0.02, 0.2, 0.04, np.inf, 0.02, 0.2, ShuntConnectionType.GroundedStar),
     (0.02, 0.2, 0.04, 0.6, 0.03, 0.35, ShuntConnectionType.GroundedStar),
     (0.02, 0.2, 0.04, 0.6, 1e-20, 0.2, ShuntConnectionType.GroundedStar),
     (0.02, 0.2, 0.04, 0.6, 0.02, 0.2, ShuntConnectionType.Delta),
@@ -688,6 +691,18 @@ def test_source_rejects_known_incompatible_family(
         )
 
 
+@pytest.mark.parametrize('x1,x0', ((np.nan, 0.6), (0.2, np.inf)))
+def test_source_rejects_nonfinite_sequence_impedances_at_construction(x1: float, x0: float) -> None:
+    """Reject non-finite Thevenin sequence impedances before EMT validation.
+
+    :param x1: Positive-sequence reactance.
+    :param x0: Zero-sequence reactance.
+    :return: None.
+    """
+    with pytest.raises(ValueError, match='Non-finite value rejected'):
+        gce.Generator(r1=0.02, x1=x1, r0=0.04, x0=x0, r2=0.02, x2=0.2)
+
+
 @pytest.mark.parametrize("mode", (TheveninSourceVoltageMode.Balanced, TheveninSourceVoltageMode.Phase))
 def test_source_block_roundtrip_preserves_contract(mode: TheveninSourceVoltageMode) -> None:
     """Declarative reconstruction preserves the authored equations and marker.
@@ -696,12 +711,11 @@ def test_source_block_roundtrip_preserves_contract(mode: TheveninSourceVoltageMo
     :return: None.
     """
     original: Block = get_generator_thevenin_rl_emt_template_with_ref(VarFactory(), source_voltage_mode=mode).block
-    restored: Block = Block.parse(original.to_dict())
+    restored: Block = roundtrip_block(original)
     # Only the electrical child declares capability, through its own parameter.
-    assert restored.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid is None
+    assert "emt_finite_reciprocal_source_mode_var_uid" not in restored.dynamic_model_contract.to_data()
     restored_mode: Var = _find_source_var(restored, "source_voltage_mode")
-    assert restored.children[0].dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid == restored_mode.uid
-    validate_dynamic_model_contract(restored.children[0])
+    assert restored.children[0].external_mapping[VarPowerFlowReferenceType.MODE_MARKER] is restored_mode
     rotation: np.ndarray = np.exp(-2j * np.pi * np.arange(3) / 3.0)
     voltage: np.ndarray = rotation + 0.02j
     current: np.ndarray = (0.3 - 0.1j) * rotation + 0.01j
@@ -734,8 +748,8 @@ def test_source_project_roundtrip_and_instance_lifecycle(tmp_path: Path, mode: T
     first_marker: Var = _find_source_var(first.emt_model, "source_voltage_mode")
     second_marker: Var = _find_source_var(second.emt_model, "source_voltage_mode")
     assert first_marker is not second_marker
-    assert first.emt_model.children[0].dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid == first_marker.uid
-    assert second.emt_model.children[0].dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid == second_marker.uid
+    assert first.emt_model.children[0].external_mapping[VarPowerFlowReferenceType.MODE_MARKER] is first_marker
+    assert second.emt_model.children[0].external_mapping[VarPowerFlowReferenceType.MODE_MARKER] is second_marker
     path: Path = tmp_path / "thevenin.veragrid"
     assert not FileSave(circuit=grid, file_name=str(path)).save().has_errors()
     loaded: gce.MultiCircuit | None = FileOpen(str(path)).open()
@@ -750,111 +764,28 @@ def test_source_project_roundtrip_and_instance_lifecycle(tmp_path: Path, mode: T
     persisted_root: Block
     for persisted_root in (loaded.emt_models[0].block, loaded.generators[0].emt_model, loaded.generators[1].emt_model):
         persisted_mode: Var = _find_source_var(persisted_root, "source_voltage_mode")
-        assert persisted_root.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid is None
-        assert persisted_root.children[0].dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid == persisted_mode.uid
-        validate_dynamic_model_contract(persisted_root.children[0])
+        assert "emt_finite_reciprocal_source_mode_var_uid" not in persisted_root.dynamic_model_contract.to_data()
+        assert persisted_root.children[0].external_mapping[VarPowerFlowReferenceType.MODE_MARKER] is persisted_mode
     else:
         pass
     replacement: EmtModelTemplate = get_generator_thevenin_rl_emt_template_with_ref(loaded.var_factory)
     loaded.add_emt_model(replacement)
     loaded.generators[0].emt_template = replacement
     replacement_mode: Var = _find_source_var(loaded.generators[0].emt_model, "source_voltage_mode")
-    assert loaded.generators[0].emt_model.children[0].dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid == replacement_mode.uid
+    assert loaded.generators[0].emt_model.children[0].external_mapping[VarPowerFlowReferenceType.MODE_MARKER] is replacement_mode
     retained_model: Block = loaded.generators[1].emt_model
     assert loaded.generators[1].emt_template is loaded.emt_models[0]
     loaded.delete_emt_model(replacement)
     assert replacement not in loaded.emt_models
     assert loaded.generators[1].emt_template is loaded.emt_models[0]
     assert loaded.generators[1].emt_model is retained_model
-    validate_dynamic_model_contract(retained_model.children[0])
 
 
-@pytest.mark.parametrize("invalid_kind", (
-    "unreachable", "boolean_uid", "wrapper", "event", "expression", "undefined", "bad_code", "boolean_code",
-    "missing_r1", "missing_x1", "missing_r0", "missing_x0", "foreign_alias",
-    "dual_event", "dual_mode", "dual_diff", "ancestor_event", "ancestor_mode", "ancestor_diff",
-    "sibling_event", "sibling_mode", "sibling_diff",
-))
-def test_source_capability_declared_reference_validation(invalid_kind: str) -> None:
-    """Reject declarations that could misclassify an unsupported source.
-
-    :param invalid_kind: Corrupt identity, ownership, static mode or impedance boundary.
-    :return: None.
-    """
-    factory: VarFactory = VarFactory()
-    root: Block = get_generator_thevenin_rl_emt_template_with_ref(factory).block
-    owner: Block = root.children[0]
-    marker: Var = _find_source_var(owner, "source_voltage_mode")
-    validate_dynamic_model_contract(owner)
-    expected_error: type[Exception] = KeyError
-    # Exercise the actual validator rather than guessing capability from names.
-    if invalid_kind in (
-            "dual_event", "dual_mode", "dual_diff", "ancestor_event", "ancestor_mode", "ancestor_diff",
-            "sibling_event", "sibling_mode", "sibling_diff",
-    ):
-        collision_owner: Block = owner
-        if invalid_kind.startswith("ancestor_"):
-            collision_owner = root
-        elif invalid_kind.startswith("sibling_"):
-            collision_owner = Block(name="Runtime sibling")
-            root.children = list((owner, collision_owner))
-        else:
-            pass
-        # Distinct objects must still collide by their canonical symbolic UID.
-        runtime_marker: Var = Var(name="runtime_mode_alias", uid=marker.uid)
-        if invalid_kind.endswith("_event"):
-            collision_owner.event_dict[runtime_marker] = factory.add_const(1.0)
-        elif invalid_kind.endswith("_mode"):
-            collision_owner.mode_dict[runtime_marker] = factory.add_const(1.0)
-        else:
-            collision_owner.diff_vars = list((runtime_marker,))
-        owner = root
-        expected_error = ValueError
-    elif invalid_kind == "unreachable":
-        owner.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid = factory.add_var(name="unowned").uid
-    elif invalid_kind == "boolean_uid":
-        owner.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid = True
-        expected_error = TypeError
-    elif invalid_kind == "wrapper":
-        root.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid = marker.uid
-        owner = root
-    elif invalid_kind == "event":
-        owner.event_dict[marker] = owner.parameters.pop(marker)
-        expected_error = ValueError
-    elif invalid_kind == "expression":
-        owner.parameters[marker] = marker + factory.add_const(0.0)
-        expected_error = TypeError
-    elif invalid_kind == "undefined":
-        owner.parameters[marker] = factory.add_const(None)
-        expected_error = ValueError
-    elif invalid_kind == "bad_code":
-        owner.parameters[marker] = factory.add_const(2.0)
-        expected_error = ValueError
-    elif invalid_kind == "boolean_code":
-        owner.parameters[marker] = factory.add_const(True)
-        expected_error = ValueError
-    elif invalid_kind == "missing_r1":
-        del owner.api_obj_mapping[ParamPowerFlowReferenceType.R1]
-    elif invalid_kind == "missing_x1":
-        del owner.api_obj_mapping[ParamPowerFlowReferenceType.X1]
-    elif invalid_kind == "missing_r0":
-        del owner.api_obj_mapping[ParamPowerFlowReferenceType.thevenin_source_r0_pu]
-    elif invalid_kind == "missing_x0":
-        del owner.api_obj_mapping[ParamPowerFlowReferenceType.thevenin_source_x0_pu]
-    else:
-        owner.api_obj_mapping[ParamPowerFlowReferenceType.R1] = factory.add_var(name="foreign_resistance")
-    with pytest.raises(expected_error):
-        validate_dynamic_model_contract(owner)
-    # Both canonical writers reject the same malformed declaration before data leaves the tree.
-    with pytest.raises(expected_error):
-        root.to_dict()
-    with pytest.raises(expected_error):
-        BlockSaver(var_factory=factory).save_block(root, main=True)
 
 
 @pytest.mark.parametrize("version, has_modal_fields", (
     (1, False), (2, False), (3, False), (4, False), (5, False), (6, False),
-    (7, False), (7, True), (8, True),
+    (7, False), (7, True), (8, True), (9, True), (10, True), (11, True), (12, True), (13, True), (14, True), (15, True),
 ))
 def test_source_capability_legacy_contract_versions(version: int, has_modal_fields: bool) -> None:
     """Read old contracts without inferred capability and enforce the new schema.
@@ -865,9 +796,21 @@ def test_source_capability_legacy_contract_versions(version: int, has_modal_fiel
     """
     data: dict[str, object] = DynamicModelContract().to_data()
     data["version"] = version
+    if 7 <= version < 15 and not (version == 7 and has_modal_fields):
+        data["emt_finite_reciprocal_source_mode_var_uid"] = None
+    else:
+        pass
     # Reproduce the declared historical key sets, including discarded metadata.
+    if version < 12:
+        data["explicit_init_override_init_exprs"] = dict(x=dict(retired_expression=True))
+    else:
+        pass
+    if version < 11:
+        data["explicit_init_excluded_var_names"] = list(("retired_exclusion",))
+    else:
+        pass
     if version < 7 or (version == 7 and has_modal_fields):
-        del data["emt_finite_reciprocal_source_mode_var_uid"]
+        data.pop("emt_finite_reciprocal_source_mode_var_uid", None)
     else:
         pass
     if has_modal_fields:
@@ -880,21 +823,21 @@ def test_source_capability_legacy_contract_versions(version: int, has_modal_fiel
         data["rms_terminal_power_contributions"] = list()
     else:
         pass
-    if version in (1, 2):
-        del data["emt_terminal_current_contributions"]
+    if 3 <= version <= 12:
+        data["emt_terminal_current_contributions"] = list((dict(retired_current=True),))
     else:
         pass
     if version in (1, 2, 3):
-        del data["emt_internal_grounding_link"]
+        data.pop("emt_internal_grounding_link", None)
     else:
         pass
-    if version in (1, 2, 3, 4):
-        del data["rms_physical_measurement_point"]
+    if 5 <= version <= 9:
+        data["rms_physical_measurement_point"] = dict(source_fid="retired-meter")
     else:
         pass
     restored: DynamicModelContract = dynamic_model_contract_from_data(data)
-    assert restored.emt_finite_reciprocal_source_mode_var_uid is None
-    assert restored.to_data()["version"] == 8
+    assert "emt_finite_reciprocal_source_mode_var_uid" not in restored.to_data()
+    assert restored.to_data()["version"] == 15
     if has_modal_fields:
         assert restored.modal_template_kind == "configurable_integrator"
         assert restored.modal_template_config == data["modal_template_config"]
@@ -921,6 +864,7 @@ def test_source_capability_legacy_contract_versions(version: int, has_modal_fiel
     if version == 7 or version == 8:
         combined_seven: dict[str, object] = DynamicModelContract().to_data()
         combined_seven["version"] = 7
+        combined_seven["emt_finite_reciprocal_source_mode_var_uid"] = None
         with pytest.raises(KeyError):
             dynamic_model_contract_from_data(combined_seven)
     else:
@@ -941,7 +885,7 @@ def test_source_capability_legacy_contract_versions(version: int, has_modal_fiel
         pass
     # Neither an implicit missing declaration nor unexpected fields are accepted.
     if "emt_finite_reciprocal_source_mode_var_uid" in data:
-        del data["emt_finite_reciprocal_source_mode_var_uid"]
+        data.pop("emt_finite_reciprocal_source_mode_var_uid", None)
         with pytest.raises(KeyError):
             dynamic_model_contract_from_data(data)
         invalid_uid: object
@@ -952,7 +896,7 @@ def test_source_capability_legacy_contract_versions(version: int, has_modal_fiel
         else:
             pass
         data["emt_finite_reciprocal_source_mode_var_uid"] = 123
-        assert dynamic_model_contract_from_data(data).emt_finite_reciprocal_source_mode_var_uid == 123
+        assert "emt_finite_reciprocal_source_mode_var_uid" not in dynamic_model_contract_from_data(data).to_data()
         data["unexpected_capability"] = None
     else:
         data["emt_finite_reciprocal_source_mode_var_uid"] = 123
@@ -980,9 +924,8 @@ def test_source_capability_copy_identity(mode: TheveninSourceVoltageMode) -> Non
     for candidate in (instance, editor, deep, committed):
         candidate_marker: Var = _find_source_var(candidate, "source_voltage_mode")
         assert candidate_marker is not original_marker
-        assert candidate.children[0].dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid == candidate_marker.uid
-        assert candidate.dynamic_model_contract.emt_finite_reciprocal_source_mode_var_uid is None
-        validate_dynamic_model_contract(candidate.children[0])
+        assert candidate.children[0].external_mapping[VarPowerFlowReferenceType.MODE_MARKER] is candidate_marker
+        assert "emt_finite_reciprocal_source_mode_var_uid" not in candidate.dynamic_model_contract.to_data()
         if candidate is instance:
             assert candidate_marker.uid != original_marker.uid
         else:
@@ -1072,3 +1015,83 @@ def test_delete_emt_template_uses_canonical_references(generic_delete: bool) -> 
     assert matching_generator.emt_model is absent_model
     assert unrelated_generator.emt_template is retained_source
     assert unrelated_line.emt_template is retained_line
+
+
+@pytest.mark.parametrize("version", (7, 8, 9, 10, 11, 12, 13, 14))
+@pytest.mark.parametrize("mode", (TheveninSourceVoltageMode.Balanced, TheveninSourceVoltageMode.Phase))
+def test_legacy_source_uid_migrates_to_owned_reference(
+        version: int, mode: TheveninSourceVoltageMode,
+) -> None:
+    """Recover old source identities without requiring a wrapper reference.
+
+    :param version: Historical contract schema containing the source UID.
+    :param mode: Authored source capability to preserve.
+    :return: None.
+    """
+    original: Block = get_generator_thevenin_rl_emt_template_with_ref(
+        VarFactory(), source_voltage_mode=mode,
+    ).block
+    marker: Var = _find_source_var(original, "source_voltage_mode")
+    records: dict[int, dict[str, object]]
+    saver: BlockSaver
+    records, saver = save_block_fixture(original)
+    record: dict[str, object]
+    # Reproduce pre-reference archives: only the inner owner persisted a mode UID.
+    for record in records.values():
+        mapping: object = record["external_mapping"]
+        assert isinstance(mapping, dict)
+        mapping.pop(VarPowerFlowReferenceType.MODE_MARKER.value, None)
+        contract: object = record["dynamic_model_contract"]
+        assert isinstance(contract, dict)
+        contract["version"] = version
+        contract["emt_finite_reciprocal_source_mode_var_uid"] = (
+            marker.uid if record["uid"] == original.children[0].uid else None
+        )
+        if version == 7:
+            contract.pop("modal_template_kind")
+            contract.pop("modal_template_config")
+        else:
+            pass
+    restored: Block = parse_saved_block(records, saver)
+    owner: Block = restored.children[0]
+    restored_marker: Var | None = owner.external_mapping.get(VarPowerFlowReferenceType.MODE_MARKER, None)
+    assert restored_marker is not None
+    assert restored_marker in owner.parameters
+    assert owner.parameters[restored_marker].value == (0.0 if mode == TheveninSourceVoltageMode.Balanced else 1.0)
+    assert VarPowerFlowReferenceType.MODE_MARKER not in restored.external_mapping
+    # Migration must persist through another save and remap correctly for a new instance.
+    resaved: Block = roundtrip_block(restored)
+    instance: Block = duplicate_block(restored, VarFactory())
+    candidate: Block
+    for candidate in (resaved, instance):
+        candidate_marker: Var | None = candidate.children[0].external_mapping.get(VarPowerFlowReferenceType.MODE_MARKER, None)
+        assert candidate_marker is not None
+        assert candidate_marker in candidate.children[0].parameters
+        assert "emt_finite_reciprocal_source_mode_var_uid" not in candidate.children[0].dynamic_model_contract.to_data()
+
+
+@pytest.mark.parametrize("conflict", (False, True))
+def test_legacy_source_uid_rejects_invalid_target(conflict: bool) -> None:
+    """Reject nonexistent legacy parameters and conflicting modern references.
+
+    :param conflict: Use an existing incompatible reference instead of an unknown UID.
+    :return: None.
+    """
+    original: Block = get_generator_thevenin_rl_emt_template_with_ref(VarFactory()).block
+    owner: Block = original.children[0]
+    marker: Var = _find_source_var(original, "source_voltage_mode")
+    records: dict[int, dict[str, object]]
+    saver: BlockSaver
+    records, saver = save_block_fixture(original)
+    contract: object = records[owner.uid]["dynamic_model_contract"]
+    assert isinstance(contract, dict)
+    contract["version"] = 14
+    if conflict:
+        contract["emt_finite_reciprocal_source_mode_var_uid"] = marker.uid
+        mapping: object = records[owner.uid]["external_mapping"]
+        assert isinstance(mapping, dict)
+        mapping[VarPowerFlowReferenceType.MODE_MARKER.value] = owner.in_vars[0].non_mutable_uid
+    else:
+        contract["emt_finite_reciprocal_source_mode_var_uid"] = -1
+    with pytest.raises(ValueError, match="Legacy Thevenin mode"):
+        parse_saved_block(records, saver)

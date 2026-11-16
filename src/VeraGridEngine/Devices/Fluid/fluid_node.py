@@ -23,10 +23,12 @@ class FluidNode(PhysicalDevice):
         '_initial_level',
         '_spillage_cost',
         '_inflow',
+        '_loss_factor',
         '_bus',
         'build_status',
         'color',
         '_inflow_prof',
+        '_loss_factor_prof',
         '_spillage_cost_prof',
         '_max_soc_prof',
         '_min_soc_prof',
@@ -94,6 +96,14 @@ class FluidNode(PhysicalDevice):
             cat=[PrpCat.OPF],
         ),
         GCProp(
+            prop_name='loss_factor',
+            units='p.u./h',
+            tpe=float,
+            definition='Fraction of the stored level lost per hour.',
+            profile_name='loss_factor_prof',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
             prop_name='color',
             units='',
             tpe=str,
@@ -114,6 +124,7 @@ class FluidNode(PhysicalDevice):
                  current_level: float = 0.0,
                  spillage_cost: float = 1000.0,
                  inflow: float = 0.0,
+                 loss_factor: float = 0.0,
                  bus: Union[None, Bus] = None,
                  build_status: BuildStatus = BuildStatus.Commissioned,
                  color: str | None = None):
@@ -144,11 +155,13 @@ class FluidNode(PhysicalDevice):
         self.initial_level = float(current_level)  # hm3
         self.spillage_cost = float(spillage_cost)  # m3/s
         self.inflow = float(inflow)  # m3/s
+        self.loss_factor = float(loss_factor)  # p.u./h
         self._bus: Bus | None = bus
 
         self.color = color if color is not None else "#00aad4"  # nice blue color
 
         self._inflow_prof = ProfileFloat(default_value=self.inflow)  # m3/s
+        self._loss_factor_prof = ProfileFloat(default_value=self.loss_factor)  # p.u./h
         self._spillage_cost_prof = ProfileFloat(default_value=self.spillage_cost)  # e/(m3/s)
 
         self._max_soc_prof = ProfileFloat(default_value=self.max_soc)  # p.u.
@@ -186,6 +199,53 @@ class FluidNode(PhysicalDevice):
         :return:
         """
         return get_at(self.spillage_cost, self.spillage_cost_prof, t)
+
+    @property
+    def loss_factor(self) -> float:
+        """Get the hourly stored-level loss factor.
+
+        :return: Fraction of stored level lost per hour.
+        """
+        return self._loss_factor
+
+    @loss_factor.setter
+    def loss_factor(self, val: float) -> None:
+        """Set the hourly stored-level loss factor.
+
+        :param val: Fraction of stored level lost per hour.
+        :return: None.
+        """
+        self._loss_factor = float(val)
+
+    @property
+    def loss_factor_prof(self) -> ProfileFloat:
+        """Get the hourly loss-factor profile.
+
+        :return: Snapshot-aligned loss factors.
+        """
+        return self._loss_factor_prof
+
+    @loss_factor_prof.setter
+    def loss_factor_prof(self, val: Union[ProfileFloat, np.ndarray]) -> None:
+        """Set the hourly loss-factor profile.
+
+        :param val: Native profile or snapshot-aligned values.
+        :return: None.
+        """
+        if isinstance(val, ProfileFloat):
+            self._loss_factor_prof = val
+        elif isinstance(val, np.ndarray):
+            self._loss_factor_prof.set(arr=val)
+        else:
+            raise TypeError(f"Unsupported fluid loss-factor profile: {type(val)!r}")
+
+    def get_loss_factor_at(self, t: int | None) -> float:
+        """Get hourly loss factor at one snapshot.
+
+        :param t: Snapshot index, or ``None`` for the scalar value.
+        :return: Fraction of stored level lost per hour.
+        """
+        return get_at(self.loss_factor, self.loss_factor_prof, t)
 
     @property
     def inflow_prof(self) -> ProfileFloat:
@@ -275,10 +335,12 @@ class FluidNode(PhysicalDevice):
         fluid_node.initial_level = self.initial_level  # hm3
         fluid_node.spillage_cost = self.spillage_cost  # m3/s
         fluid_node.inflow = self.inflow  # m3/s
+        fluid_node.loss_factor = self.loss_factor  # p.u./h
         fluid_node._bus = self._bus
         fluid_node.build_status = self.build_status
 
         fluid_node.inflow_prof = self.inflow_prof  # m3/s
+        fluid_node.loss_factor_prof = self.loss_factor_prof  # p.u./h
         fluid_node.spillage_cost_prof = self.spillage_cost_prof  # e/(m3/s)
         fluid_node.max_soc_prof = self.max_soc_prof  # m3
         fluid_node.min_soc_prof = self.min_soc_prof  # m3

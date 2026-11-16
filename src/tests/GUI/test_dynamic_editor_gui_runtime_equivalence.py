@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
@@ -8,7 +12,7 @@ from PySide6 import QtCore, QtWidgets
 from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_editor import DynamicBlockEditorGUI
 from VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_block_preparation import prepare_block_for_editing
 from VeraGrid.Gui.DynamicModelEditor.Workspace.Tabs.dynamic_editor_tab import resolve_navigation_content_block
-from VeraGrid.Gui.DynamicModelEditor.Editor.DynamicLibrary.dynamic_editor_utilities import create_generic_block
+from VeraGridEngine.Templates.device_template_materialization import create_generic_block
 import VeraGrid.Gui.DynamicModelEditor.Editor.dynamic_editor_graphics as graph
 from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Branches.line import Line
@@ -29,17 +33,16 @@ from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDa
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
-from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
-from VeraGridEngine.Templates.Rms.genrow_rms_template import get_genrow_rms_template
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Emt.load_characteristics.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.synchronous_machines.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Rms.synchronous_machines.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, symbolic_to_string
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Emt.buses.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model, set_rms_model
 from VeraGridEngine.enumerations import BlockType, BranchImpedanceMode, DynamicIntegrationMethod, DynamicSimulationMode, DynEditorGraphicsModes, EmtInitializationMethod, EmtSolverTypes, RmsInitializationMethod, ShuntConnectionType, SolverType, VarPowerFlowReferenceType
 
@@ -952,7 +955,7 @@ def test_nested_dc_line_editor_does_not_connect_the_rms_root_interface(
     qt_app.processEvents()
 
     assert [variable.name for variable in dc_line_block.out_vars] == ["Pf", "Pt"]
-    assert [variable.name for variable in root_block.out_vars] == ["net_conn_Pf", "net_conn_Pt"]
+    assert [variable.name for variable in root_block.out_vars] == ["Pf", "Pt"]
 
     nested_editor.prepare_to_delete()
     nested_editor.close()

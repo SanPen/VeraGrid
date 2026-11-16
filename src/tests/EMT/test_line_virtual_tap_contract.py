@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Power-preserving Line coordinates through EMT equations and native startup."""
 
 from pathlib import Path
@@ -16,7 +20,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDa
 from VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver import StructuralCompiledSolver
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.line.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtInitializationMethod, EmtInitializationStatus, ParamPowerFlowReferenceType, VarPowerFlowReferenceType

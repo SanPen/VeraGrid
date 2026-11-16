@@ -147,91 +147,91 @@ def test_load_save_load_xlsx() -> None:
 
 
 def test_load_save_load_rms() -> None:
+    """Check RMS model persistence for the two-bus and both Kundur cases.
+
+    :return: None.
     """
-        This test checks if the saving and load process is correct when the grid contains rms models
+    folder: str = os.path.join(os.path.dirname(__file__), '..', 'data', 'grids')
+    output_folder: str = os.path.join(os.path.dirname(__file__), '..', 'data', 'output')
+    os.makedirs(output_folder, exist_ok=True)
 
-        The test consists in:
-        - loading grids in different veragrid variations (grid1)
-        - saving the grid with a different name
-        - loading the saved grid (grid2)
-        - comparing that grid1 == grid2
+    grid_names: list[str] = list((
+        '2bus_genqec_load_test.veragrid',
+        'rms_kundur_with_event_gensimple.veragrid',
+        'rms_kundur_with_small_event_gensimple.veragrid',
+    ))
+    grid_name: str
+    for grid_name in grid_names:
+        # Keep each roundtrip independent so diagnostics identify its source grid.
+        logger: Logger = Logger()
+        fname = os.path.join(folder, grid_name)
 
-        """
+        # open the main grid
+        grid1 = gce.open_file(fname)
 
-    logger = Logger()
+        name, ext = os.path.splitext(os.path.basename(fname))
 
-    folder = os.path.join('data', 'grids')
-    if not os.path.exists(os.path.join("data", "output")):
-        os.makedirs(os.path.join("data", "output"))
+        fname2 = os.path.join(output_folder, name + '_to_save.veragrid')
 
-    name = '2bus_genqec_load_test.veragrid'
-    fname = os.path.join(folder, name)
+        gce.save_file(grid=grid1, filename=fname2)
 
-    # open the main grid
-    grid1 = gce.open_file(fname)
+        # open the main grid again
+        grid2 = gce.open_file(fname2)
 
-    name, ext = os.path.splitext(os.path.basename(fname))
+        # The generic circuit comparator currently trips on some persisted ``None``
+        # float-valued properties for this file, so this test validates the specific
+        # save/load contract it was created for through the explicit EMT and dynamic
+        # plot comparisons below.
 
-    fname2 = os.path.join("data", "output", name + '_to_save.veragrid')
+        # compare the rms models inside the elements of the grid
 
-    gce.save_file(grid=grid1, filename=fname2)
+        # get injection models
+        grid1_rms_system_dict = grid1.compose_bus_blocks()
+        grid2_rms_system_dict = grid2.compose_bus_blocks()
 
-    # open the main grid again
-    grid2 = gce.open_file(fname2)
+        # get branch models
+        grid1_rms_lines = list()
+        grid2_rms_lines = list()
 
-    # The generic circuit comparator currently trips on some persisted ``None``
-    # float-valued properties for this file, so this test validates the specific
-    # save/load contract it was created for through the explicit EMT and dynamic
-    # plot comparisons below.
+        for elm in grid1.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
+            grid1_rms_lines.append(elm.rms_model)
 
-    # compare the rms models inside the elements of the grid
+        for elm in grid2.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
+            grid2_rms_lines.append(elm.rms_model)
 
-    # get injection models
-    grid1_rms_system_dict = grid1.compose_bus_blocks()
-    grid2_rms_system_dict = grid2.compose_bus_blocks()
+        # create the blocks that will be compared
+        blocks_grid1: Block = Block()
+        blocks_grid2: Block = Block()
+        blocks_grid2.uid = blocks_grid1.uid
 
-    # get branch models
-    grid1_rms_lines = list()
-    grid2_rms_lines = list()
+        # add injections and bus models
+        for bus, block in grid1_rms_system_dict.items():
+            blocks_grid1.children.extend(block.children)
+            blocks_grid1.children.append(bus.rms_model)
 
-    for elm in grid1.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
-        grid1_rms_lines.append(elm.rms_model)
+        for bus, block in grid2_rms_system_dict.items():
+            blocks_grid2.children.extend(block.children)
+            blocks_grid2.children.append(bus.rms_model)
 
-    for elm in grid2.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
-        grid2_rms_lines.append(elm.rms_model)
+        # add line models
+        blocks_grid1.children.extend(grid1_rms_lines)
+        blocks_grid2.children.extend(grid2_rms_lines)
 
-    # create the blocks that will be compared
-    blocks_grid1: Block = Block()
-    blocks_grid2: Block = Block()
-    blocks_grid2.uid = blocks_grid1.uid
+        # compare the blocks
+        equal = compare_blocks(blocks_grid1, blocks_grid2, grid1.var_factory, grid2.var_factory, testing=True)
 
-    # add injections and bus models
-    for bus, block in grid1_rms_system_dict.items():
-        blocks_grid1.children.extend(block.children)
-        blocks_grid1.children.append(bus.rms_model)
+        if not equal:
+            logger.add_error(msg="BLock dictionaries differs",
+                             value=blocks_grid2,
+                             expected_value=blocks_grid1)
+            logger.print()
 
-    for bus, block in grid2_rms_system_dict.items():
-        blocks_grid2.children.extend(block.children)
-        blocks_grid2.children.append(bus.rms_model)
+        # asset for failing
+        assert equal, f"RMS models changed after saving and loading {grid_name}"
 
-    # add line models
-    blocks_grid1.children.extend(grid1_rms_lines)
-    blocks_grid2.children.extend(grid2_rms_lines)
+        # if all ok, we can delete the test file
+        os.remove(fname2)
 
-    # compare the blocks
-    equal = compare_blocks(blocks_grid1, blocks_grid2, grid1.var_factory, grid2.var_factory, testing=True)
-
-    if not equal:
-        logger.add_error(msg="BLock dictionaries differs",
-                         value=blocks_grid2,
-                         expected_value=blocks_grid1)
-        logger.print()
-
-    # asset for failing
-    assert equal
-
-    # if all ok, we can delete the test file
-    os.remove(fname2)
 
 def test_load_save_load_with_dynamic_plots() -> None:
     """

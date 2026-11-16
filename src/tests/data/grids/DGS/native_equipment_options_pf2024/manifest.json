@@ -1,0 +1,2195 @@
+{
+  "powerfactory_version": "24.0.2.0",
+  "dgs_version": "7.0",
+  "export_date": "2026-11-10",
+  "format": "ASCII File",
+  "additional_parameters": "/external",
+  "scope": "Native field and RMS import checks; no simulation reference validation",
+  "files": [
+    {
+      "file": "vsc_base.dgs",
+      "baseline": "vsc_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": null,
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "e875027c38cc5cb45ffbb8b253e33389d1153d21f72fe0629e4af768061aa4ac",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_topology_0.dgs",
+      "baseline": "vsc_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "vsctype",
+        "before": 1,
+        "after": 0
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "689b99a902f080b8c0760d3be9f96052da3bb25627a92525796fe059e31dcdc6",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_topology_2.dgs",
+      "baseline": "vsc_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "vsctype",
+        "before": 1,
+        "after": 2
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "b0801e656eb47849962b7843767e0faba067864b5b5260e7de751f29baa4d0e4",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_i_ctrl_1.dgs",
+      "baseline": "vsc_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "i_ctrl",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "3b6ae8de90650d97ec86ed0b89a9b62544426a50a4d7d6135ee0f3a179365834",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_i_mod_1.dgs",
+      "baseline": "vsc_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "i_mod",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "5fe7aef65c44c3160219d2c6af750f5c6dfc16ca230d919feeb29d40aceb1822",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_iVIsource_1.dgs",
+      "baseline": "vsc_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "iVIsource",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "fb0c4d2f66666a122eee8b0be2064b81fe723e62845d75507a8b0764dbf129be",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_iZarmDCside_1.dgs",
+      "baseline": "vsc_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "iZarmDCside",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "6ec927ecb782fe8236186846c6bce607009ba0f263635294bdad51a2b8dc571c",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_iVacMax_1.dgs",
+      "baseline": "vsc_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 1,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "iVacMax",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "92213e7b6bb5e919501498ec097564b5dbed5364303e2a0ca66d15c8be714687",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "genstat_base.dgs",
+      "baseline": "genstat_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        }
+      },
+      "change": null,
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "1f4ceaa3a3733dbb2ce1932880bd479b8efed86bcf0b08e13a76bab5d974f65c",
+      "bytes": 58453,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 44,
+        "BlkFrom": 4,
+        "BlkGoto": 3,
+        "BlkMul": 1,
+        "BlkRef": 53,
+        "BlkSig": 130,
+        "BlkSlot": 17,
+        "BlkSum": 6,
+        "ElmComp": 4,
+        "ElmCoup": 1,
+        "ElmDsl": 5,
+        "ElmGenstat": 1,
+        "ElmLne": 3,
+        "ElmLod": 1,
+        "ElmNet": 1,
+        "ElmShnt": 1,
+        "ElmSite": 1,
+        "ElmTerm": 6,
+        "ElmTr2": 1,
+        "ElmVac": 2,
+        "IntFolder": 12,
+        "IntGrf": 28,
+        "IntGrfcon": 16,
+        "IntGrfnet": 2,
+        "IntTemplate": 1,
+        "StaCubic": 15,
+        "StaSwitch": 6,
+        "StaVmea": 2,
+        "TypCon": 2,
+        "TypLne": 1,
+        "TypTow": 1,
+        "TypTr2": 1
+      }
+    },
+    {
+      "file": "genstat_model_0.dgs",
+      "baseline": "genstat_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        }
+      },
+      "change": {
+        "attribute": "iSimModel",
+        "before": 1,
+        "after": 0
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "a5d74a56bcf580dde57aa6a7a79230e92702ed85715676f0d9784cdeb38b9938",
+      "bytes": 58453,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 44,
+        "BlkFrom": 4,
+        "BlkGoto": 3,
+        "BlkMul": 1,
+        "BlkRef": 53,
+        "BlkSig": 130,
+        "BlkSlot": 17,
+        "BlkSum": 6,
+        "ElmComp": 4,
+        "ElmCoup": 1,
+        "ElmDsl": 5,
+        "ElmGenstat": 1,
+        "ElmLne": 3,
+        "ElmLod": 1,
+        "ElmNet": 1,
+        "ElmShnt": 1,
+        "ElmSite": 1,
+        "ElmTerm": 6,
+        "ElmTr2": 1,
+        "ElmVac": 2,
+        "IntFolder": 12,
+        "IntGrf": 28,
+        "IntGrfcon": 16,
+        "IntGrfnet": 2,
+        "IntTemplate": 1,
+        "StaCubic": 15,
+        "StaSwitch": 6,
+        "StaVmea": 2,
+        "TypCon": 2,
+        "TypLne": 1,
+        "TypTow": 1,
+        "TypTr2": 1
+      }
+    },
+    {
+      "file": "genstat_model_2.dgs",
+      "baseline": "genstat_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        }
+      },
+      "change": {
+        "attribute": "iSimModel",
+        "before": 1,
+        "after": 2
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "f7e97dc1b470452b1861fc7a38f5e531b3fa4546259f6480214181899a610260",
+      "bytes": 58453,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 44,
+        "BlkFrom": 4,
+        "BlkGoto": 3,
+        "BlkMul": 1,
+        "BlkRef": 53,
+        "BlkSig": 130,
+        "BlkSlot": 17,
+        "BlkSum": 6,
+        "ElmComp": 4,
+        "ElmCoup": 1,
+        "ElmDsl": 5,
+        "ElmGenstat": 1,
+        "ElmLne": 3,
+        "ElmLod": 1,
+        "ElmNet": 1,
+        "ElmShnt": 1,
+        "ElmSite": 1,
+        "ElmTerm": 6,
+        "ElmTr2": 1,
+        "ElmVac": 2,
+        "IntFolder": 12,
+        "IntGrf": 28,
+        "IntGrfcon": 16,
+        "IntGrfnet": 2,
+        "IntTemplate": 1,
+        "StaCubic": 15,
+        "StaSwitch": 6,
+        "StaVmea": 2,
+        "TypCon": 2,
+        "TypLne": 1,
+        "TypTow": 1,
+        "TypTr2": 1
+      }
+    },
+    {
+      "file": "genstat_model_3.dgs",
+      "baseline": "genstat_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        }
+      },
+      "change": {
+        "attribute": "iSimModel",
+        "before": 1,
+        "after": 3
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "535ce64e04e15245028ca336332b648b894816b086ce9c32f4467540df1afb56",
+      "bytes": 58453,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 44,
+        "BlkFrom": 4,
+        "BlkGoto": 3,
+        "BlkMul": 1,
+        "BlkRef": 53,
+        "BlkSig": 130,
+        "BlkSlot": 17,
+        "BlkSum": 6,
+        "ElmComp": 4,
+        "ElmCoup": 1,
+        "ElmDsl": 5,
+        "ElmGenstat": 1,
+        "ElmLne": 3,
+        "ElmLod": 1,
+        "ElmNet": 1,
+        "ElmShnt": 1,
+        "ElmSite": 1,
+        "ElmTerm": 6,
+        "ElmTr2": 1,
+        "ElmVac": 2,
+        "IntFolder": 12,
+        "IntGrf": 28,
+        "IntGrfcon": 16,
+        "IntGrfnet": 2,
+        "IntTemplate": 1,
+        "StaCubic": 15,
+        "StaSwitch": 6,
+        "StaVmea": 2,
+        "TypCon": 2,
+        "TypLne": 1,
+        "TypTow": 1,
+        "TypTr2": 1
+      }
+    },
+    {
+      "file": "genstat_model_4.dgs",
+      "baseline": "genstat_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        }
+      },
+      "change": {
+        "attribute": "iSimModel",
+        "before": 1,
+        "after": 4
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "114d6cb38294c050a1f4d6b18f902ea8f9f706cd104bf7c735b7f5facf3a49fb",
+      "bytes": 58453,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 44,
+        "BlkFrom": 4,
+        "BlkGoto": 3,
+        "BlkMul": 1,
+        "BlkRef": 53,
+        "BlkSig": 130,
+        "BlkSlot": 17,
+        "BlkSum": 6,
+        "ElmComp": 4,
+        "ElmCoup": 1,
+        "ElmDsl": 5,
+        "ElmGenstat": 1,
+        "ElmLne": 3,
+        "ElmLod": 1,
+        "ElmNet": 1,
+        "ElmShnt": 1,
+        "ElmSite": 1,
+        "ElmTerm": 6,
+        "ElmTr2": 1,
+        "ElmVac": 2,
+        "IntFolder": 12,
+        "IntGrf": 28,
+        "IntGrfcon": 16,
+        "IntGrfnet": 2,
+        "IntTemplate": 1,
+        "StaCubic": 15,
+        "StaSwitch": 6,
+        "StaVmea": 2,
+        "TypCon": 2,
+        "TypLne": 1,
+        "TypTow": 1,
+        "TypTr2": 1
+      }
+    },
+    {
+      "file": "genstat_reference_machine.dgs",
+      "baseline": "genstat_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        }
+      },
+      "change": {
+        "attribute": "ip_ctrl",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "136e7521b96a41c2a8734ea45975ed07",
+      "sha256": "4f3a0fc0b90f88a4f2bb6771ebb3e9d8468e8d48cc19698ecad1e7d9ab9cbc14",
+      "bytes": 58453,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 44,
+        "BlkFrom": 4,
+        "BlkGoto": 3,
+        "BlkMul": 1,
+        "BlkRef": 53,
+        "BlkSig": 130,
+        "BlkSlot": 17,
+        "BlkSum": 6,
+        "ElmComp": 4,
+        "ElmCoup": 1,
+        "ElmDsl": 5,
+        "ElmGenstat": 1,
+        "ElmLne": 3,
+        "ElmLod": 1,
+        "ElmNet": 1,
+        "ElmShnt": 1,
+        "ElmSite": 1,
+        "ElmTerm": 6,
+        "ElmTr2": 1,
+        "ElmVac": 2,
+        "IntFolder": 12,
+        "IntGrf": 28,
+        "IntGrfcon": 16,
+        "IntGrfnet": 2,
+        "IntTemplate": 1,
+        "StaCubic": 15,
+        "StaSwitch": 6,
+        "StaVmea": 2,
+        "TypCon": 2,
+        "TypLne": 1,
+        "TypTow": 1,
+        "TypTr2": 1
+      }
+    },
+    {
+      "file": "vsc_two_level_base.dgs",
+      "baseline": "vsc_two_level_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 0,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": null,
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "ce253947ab1e41ae947d71e3d0d2e442",
+      "sha256": "00034a55af00be8f267ab5777184035d5aafef9a71fbcf2d08909f67b4b9336a",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_two_level_i_ctrl_1.dgs",
+      "baseline": "vsc_two_level_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 0,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "i_ctrl",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "ce253947ab1e41ae947d71e3d0d2e442",
+      "sha256": "7ff1b612e556da49225d7ed0d1026b0a90ee6787c74c9bd5275049f19685e1cd",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_two_level_i_mod_1.dgs",
+      "baseline": "vsc_two_level_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 0,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "i_mod",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "ce253947ab1e41ae947d71e3d0d2e442",
+      "sha256": "521e320c8c19d524b9259c1635bbb1f7664f3a2c88ed48339d61acb8c33da104",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_two_level_iVIsource_1.dgs",
+      "baseline": "vsc_two_level_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 0,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "iVIsource",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "ce253947ab1e41ae947d71e3d0d2e442",
+      "sha256": "71de08ea2d6bc2bd370b1f0b1f31a4cc779e493fac338240154cf1dace291f03",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "vsc_two_level_iVacMax_1.dgs",
+      "baseline": "vsc_two_level_base.dgs",
+      "project": "VeraGrid Native HVDC_Offshore_Wind 20261",
+      "study_case": "01_Base_Case",
+      "class": "ElmVsc",
+      "target": "Conv_Offshore",
+      "target_path": "\\PC.IntUser\\VeraGrid Native HVDC_Offshore_Wind 20261.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\HVDC.ElmNet\\Conv_Offshore.ElmVsc",
+      "attributes": {
+        "Cdc": {
+          "value": 0.0,
+          "description": "Cell capacitor"
+        },
+        "Kd": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kd: d-axis, proportional gain"
+        },
+        "Kq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Kq: q-axis, proportional gain"
+        },
+        "Larm": {
+          "value": 60.0,
+          "description": "Arm reactor: Inductance, Larm"
+        },
+        "MmmcSM": {
+          "available": false
+        },
+        "Pmmax": {
+          "value": 1.0,
+          "description": "Consider modulation index limit: Max. PWM factor"
+        },
+        "Rarm": {
+          "value": 0.006000000052154064,
+          "description": "Arm reactor: Resistance, Rarm"
+        },
+        "Td": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Td: d-axis, integration time constant"
+        },
+        "Tq": {
+          "value": 0.0,
+          "description": "Use integrated current controller: Tq: q-axis, integration time constant"
+        },
+        "iVIsource": {
+          "value": 0,
+          "description": "Independent AC and DC voltage/current source model"
+        },
+        "iVacMax": {
+          "value": 0,
+          "description": "Consider modulation index limit"
+        },
+        "iZarmDCside": {
+          "value": 0,
+          "description": "Consider arm reactor on DC side"
+        },
+        "i_ctrl": {
+          "value": 0,
+          "description": "Use integrated current controller"
+        },
+        "i_mod": {
+          "value": 0,
+          "description": "Modulation"
+        },
+        "mmcCmod": {
+          "value": 10000.0,
+          "description": "Submodule capacitance"
+        },
+        "vsctype": {
+          "value": 0,
+          "description": "Converter type:Two-level converter:Half-bridge type MMC:Full-bridge type MMC"
+        }
+      },
+      "change": {
+        "attribute": "iVacMax",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "source_job": "ce253947ab1e41ae947d71e3d0d2e442",
+      "sha256": "878c6df36445f3a6ed4925ceb45d2eb72202b7b3a320add34a66bc1f72389c85",
+      "bytes": 143179,
+      "unresolved_references": [],
+      "tables": {
+        "General": 1,
+        "BlkDef": 69,
+        "BlkMul": 5,
+        "BlkRef": 55,
+        "BlkSig": 263,
+        "BlkSlot": 36,
+        "BlkSum": 25,
+        "ElmAsm": 14,
+        "ElmComp": 16,
+        "ElmCoup": 50,
+        "ElmDsl": 172,
+        "ElmLne": 12,
+        "ElmNet": 3,
+        "ElmSind": 2,
+        "ElmSubstat": 2,
+        "ElmTerm": 86,
+        "ElmTr2": 15,
+        "ElmTr3": 2,
+        "ElmVsc": 2,
+        "ElmXnet": 1,
+        "IntFolder": 27,
+        "IntGrf": 228,
+        "IntGrfcon": 227,
+        "IntGrfnet": 5,
+        "IntTemplate": 1,
+        "StaCt": 1,
+        "StaCubic": 193,
+        "StaImea": 1,
+        "StaSwitch": 39,
+        "StaVmea": 34,
+        "TypAsmo": 1,
+        "TypLne": 3,
+        "TypTr2": 2,
+        "TypTr3": 1
+      }
+    },
+    {
+      "file": "genstat_delay_base.dgs",
+      "baseline": "genstat_delay_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iDelay": {
+          "value": 0,
+          "description": "Current source model: dq-reference angle delay (if dq-reference signals not connected)"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        },
+        "umin": {
+          "value": 0.0,
+          "description": "Min. operation voltage: Switch-off threshold"
+        }
+      },
+      "change": null,
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "sha256": "8e7499146df21352519e91d3f4fb05b15f3a14f95dc876a108fe2108a326bdcd",
+      "job_id": "1ae4ea85a4aa47bc9bf985e4c24518aa"
+    },
+    {
+      "file": "genstat_delay_on.dgs",
+      "baseline": "genstat_delay_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iDelay": {
+          "value": 0,
+          "description": "Current source model: dq-reference angle delay (if dq-reference signals not connected)"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        },
+        "umin": {
+          "value": 0.0,
+          "description": "Min. operation voltage: Switch-off threshold"
+        }
+      },
+      "change": {
+        "attribute": "iDelay",
+        "before": 0,
+        "after": 1
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "sha256": "7633c5f665080a979487bedbe123102bce6178e117bc74fc812786f807ae7610",
+      "job_id": "1ae4ea85a4aa47bc9bf985e4c24518aa"
+    },
+    {
+      "file": "genstat_delay_20ms.dgs",
+      "baseline": "genstat_delay_base.dgs",
+      "project": "VeraGrid DGS Genstat Options 20261110",
+      "study_case": "CtrlFP_Pmed_Drate_descendente",
+      "class": "ElmGenstat",
+      "target": "AMD_PV_Converter_CT_EQ",
+      "target_path": "\\PC.IntUser\\VeraGrid DGS Genstat Options 20261110.IntPrj\\Network Model.IntPrjfolder\\Network Data.IntPrjfolder\\Grid.ElmNet\\AMD_Composite Network.ElmSite\\AMD_PV_Converter_CT_EQ.ElmGenstat",
+      "attributes": {
+        "Tdelay": {
+          "value": 0.009999999776482582,
+          "description": "Current source model: Delay time constant"
+        },
+        "av_mode": {
+          "value": "constq",
+          "description": "Local Controller"
+        },
+        "iAstabint": {
+          "value": 1,
+          "description": "A-stable integration algorithm"
+        },
+        "iDelay": {
+          "value": 0,
+          "description": "Current source model: dq-reference angle delay (if dq-reference signals not connected)"
+        },
+        "iSimModel": {
+          "value": 1,
+          "description": "Model:According to connected input signals:Current source:Voltage source:Constant impedance:Constant power"
+        },
+        "ip_ctrl": {
+          "value": 0,
+          "description": "Reference Machine"
+        },
+        "umin": {
+          "value": 0.0,
+          "description": "Min. operation voltage: Switch-off threshold"
+        }
+      },
+      "change": {
+        "attribute": "Tdelay",
+        "before": 0.009999999776482582,
+        "after": 0.019999999552965164
+      },
+      "code": 0,
+      "errors": [],
+      "warnings": [],
+      "sha256": "61f36acc92e6076b203724a82412790842da79d8b5a02c56ecc28345b9ee97d5",
+      "job_id": "1ae4ea85a4aa47bc9bf985e4c24518aa"
+    }
+  ]
+}

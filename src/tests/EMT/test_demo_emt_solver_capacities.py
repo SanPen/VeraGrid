@@ -177,14 +177,17 @@ class BoundaryUpdateWrapper(ABC):
 
 
 class BergeronBoundaryUpdater(BoundaryUpdateWrapper):
-    __slots__ = ['line', 'step_counter']
+    __slots__ = ['line', 'step_counter', 'source_idx', 'source_voltage']
 
-    def __init__(self, line: 'BergeronLineModel'):
+    def __init__(self, line: 'BergeronLineModel', source_idx: int, source_voltage: float):
         self.line = line
         self.step_counter: int = 0
+        self.source_idx = source_idx
+        self.source_voltage = source_voltage
 
     def update(self, t: float, x: np.ndarray, params: np.ndarray) -> None:
         self.line.update_history(self.step_counter, x, params)
+        params[self.source_idx] = self.source_voltage if t > 0.0 else 0.0
         self.step_counter += 1
 
 
@@ -308,7 +311,7 @@ class BergeronLineModel:
 # ==============================================================================
 # 2. STANDALONE DEMO (Validation test)
 # ==============================================================================
-def create_test_system_bergeron(R_load: float) -> Tuple[Block, BergeronLineModel, float, float, Var, Var]:
+def create_test_system_bergeron(R_load: float) -> Tuple[Block, BergeronLineModel, float, float, Var, Var, Var, float]:
     """
     Creates a test grid: Ideal Voltage Source (Step) -> Line -> Resistive Load
     """
@@ -324,11 +327,12 @@ def create_test_system_bergeron(R_load: float) -> Tuple[Block, BergeronLineModel
 
     v_f = Var("v_f")
     v_t = Var("v_t")
+    source_voltage = Var("source_voltage")
 
     i_f_exprs, i_t_exprs = line.get_nodal_injections([v_f], [v_t])
     i_t_line = i_t_exprs[0]
 
-    kcl_f = v_f - V_step
+    kcl_f = v_f - source_voltage
 
     if R_load > 1e6:
         kcl_t = i_t_line
@@ -338,24 +342,29 @@ def create_test_system_bergeron(R_load: float) -> Tuple[Block, BergeronLineModel
     sys_block = Block(
         name="TestGrid",
         algebraic_vars=[v_f, v_t],
-        algebraic_eqs=[kcl_f, kcl_t]
+        algebraic_eqs=[kcl_f, kcl_t],
+        event_dict={source_voltage: Const(0.0)},
     )
     sys_block.add(line.block)
 
-    return sys_block, line, h, tau, v_f, v_t
+    return sys_block, line, h, tau, v_f, v_t, source_voltage, V_step
 
 
 def run_test_bergeron(case_name: str, R_load: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray, float]:
     """Executes a single test case using JitAdSolver."""
     print(f"\n--- Running Test: {case_name} (R_load = {R_load} ohm) ---")
 
-    sys_block, line, h, tau, v_f_var, v_t_var = create_test_system_bergeron(R_load)
+    sys_block, line, h, tau, v_f_var, v_t_var, source_var, source_step = create_test_system_bergeron(R_load)
     sys_block.unify_blocks()
     glob_time = Var("t_glob")
 
     problem = GenericEmtProblem(sys_block=sys_block, glob_time=glob_time)
     line.setup_indices(problem, vprms_offset=0)
-    line_updater = BergeronBoundaryUpdater(line)
+    line_updater = BergeronBoundaryUpdater(
+        line,
+        source_idx=problem.uid2idx_event_params[source_var.uid],
+        source_voltage=source_step,
+    )
 
     solver = JitAdSolver(
         problem=problem,

@@ -1,4 +1,9 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Diagnostics for PF power omitted by a load's EMT parameter contract."""
+
 from types import MethodType, SimpleNamespace
 
 import numpy as np
@@ -8,10 +13,12 @@ from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import (
+from VeraGridEngine.Templates.Emt.load_characteristics.load_RLC_emt_template import (
     get_shunt_r_emt_template, get_shunt_l_emt_template, get_shunt_c_emt_template,
     get_shunt_rlc_combo_emt_template,
 )
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def _make_warning_context(logger):
@@ -124,7 +131,7 @@ def test_physical_component_interface_survives_renaming_and_storage(storage, com
     if storage == "copy":
         model = model.copy()
     elif storage == "serialized":
-        model = Block.parse(data=model.to_dict(), procedural_logic_codec=ProceduralLogicCodec())
+        model = roundtrip_block(model, procedural_logic_codec=ProceduralLogicCodec())
     physical_keys = {VarPowerFlowReferenceType[f"{part}_{phase}"] for part in "RLC" for phase in "ABC"}
     actual = {
         key for block in model.get_all_blocks() for key, var in block.external_mapping.items()

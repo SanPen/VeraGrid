@@ -14,7 +14,6 @@ import datetime as dateslib
 
 from VeraGridEngine.basic_structures import IntVec, StrVec, Vec, Mat, ObjVec, BoolVec
 import VeraGridEngine.Devices as dev
-import VeraGridEngine.Templates as tem
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, BRANCH_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES
 from VeraGridEngine.Devices.Parents.editable_device import GCPROP_TYPES
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
@@ -5066,10 +5065,11 @@ class Assets:
         """
         self._rms_events_groups.append(obj)
 
-    def delete_rms_events_group(self, obj: dev.RmsEventsGroup):
-        """
-        Delete zone
-        :param obj: index
+    def delete_rms_events_group(self, obj: dev.RmsEventsGroup) -> None:
+        """Delete an RMS event group together with its events and plot entries.
+
+        :param obj: Group whose events and associated curves must be removed.
+        :return: None.
         """
         try:
             self._rms_events_groups.remove(obj)
@@ -5079,6 +5079,21 @@ class Assets:
         to_del = [evt for evt in self._rms_events if evt.group == obj]
         for evt in to_del:
             self.delete_rms_event(evt)
+
+        # Curves may retain either a live group reference or only its persistent
+        # identity. Collect first because deleting entries changes this list.
+        entries_to_delete: List[dev.DynamicPlotEntry] = list()
+        entry: dev.DynamicPlotEntry
+        for entry in self._dynamic_plot_entries:
+            if entry.group is not None and entry.group.idtag == obj.idtag:
+                entries_to_delete.append(entry)
+            elif entry.event_group_idtag == obj.idtag:
+                entries_to_delete.append(entry)
+            else:
+                pass
+
+        for entry in entries_to_delete:
+            self.delete_dynamic_plot_entry(entry)
 
     def get_rms_event_by_groups(self) -> List[Tuple[dev.RmsEventsGroup, List[dev.RmsEvent]]]:
         """
@@ -5921,12 +5936,13 @@ class Assets:
         """
         return len(self._facilities)
 
-    def add_facility(self, obj: dev.Facility):
+    def add_facility(self, obj: dev.Facility) -> dev.Facility:
         """
         Add facility
         :param obj: Facility object
         """
         self._facilities.append(obj)
+        return obj
 
     def delete_facility(self, obj: dev.Facility):
         """
@@ -9954,8 +9970,8 @@ class Assets:
                                all_elements_dict: Dict[str, ALL_DEV_TYPES] | None = None) -> None:
         """
         Find the device types of pointer objects
-        :param logger:
-        :param all_elements_dict:
+        :param logger: Logger object
+        :param all_elements_dict: Dictionary of all devices by idtag to search references
         :return:
         """
         if all_elements_dict is None:

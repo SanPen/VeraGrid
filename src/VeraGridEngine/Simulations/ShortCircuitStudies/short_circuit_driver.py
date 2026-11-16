@@ -12,12 +12,12 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import CxVec, Vec
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults, PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowResults3Ph
-from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
-from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_worker import (short_circuit_ph3,
-                                                                                 short_circuit_unbalanced,
-                                                                                 short_circuit_abc,
-                                                                                 short_circuit_vsc, )
+from VeraGridEngine.Simulations.ShortCircuitStudies.NumericalMethods.short_circuit_sequences import (
+    short_circuit_ph3,
+    short_circuit_unbalanced,
+    calc_short_circuit_seq_with_vsc, )
+from VeraGridEngine.Simulations.ShortCircuitStudies.NumericalMethods.short_circuit_3p import short_circuit_abc
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_results import ShortCircuitResults
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Devices import Line, Bus
@@ -58,7 +58,7 @@ class ShortCircuitDriver(DriverTemplate):
         DriverTemplate.__init__(self, grid=grid)
 
         self.pf_results: PowerFlowResults | None = pf_results
-        self.pf_results3ph: PowerFlowResults3Ph = pf_results3ph
+        self.pf_results3ph: PowerFlowResults3Ph | None  = pf_results3ph
         self.pf_options: PowerFlowOptions | None = pf_options
         self.opf_results: OptimalPowerFlowResults | None = opf_results
 
@@ -78,7 +78,7 @@ class ShortCircuitDriver(DriverTemplate):
             hvdc_names=grid.get_hvdc_names(),
             vsc_names=grid.get_vsc_names(),
             sc_names=grid.get_short_circuit_event_names(),
-            bus_types=np.ones(n),
+            bus_types=np.ones(n, dtype=int),
             area_names=grid.get_area_names()
         )
 
@@ -100,7 +100,7 @@ class ShortCircuitDriver(DriverTemplate):
         :param fault_position: per unit distance measured from the "from" bus (0 ~ 1)
         :param r_fault: Fault resistance in p.u.
         :param x_fault: Fault reactance in p.u.
-        :return: the two new Branches and the mid short circuited bus
+        :return: the two new Branches and the mid short-circuited bus
         """
 
         assert (0.0 < fault_position < 1.0)
@@ -399,17 +399,17 @@ class ShortCircuitDriver(DriverTemplate):
         # compute Zbus
         # is dense, so no need to store it as sparse
         if adm.Ybus.shape[0] > 1:
-            return short_circuit_vsc(nc=nc,
-                                     V_pf=V_pf,
-                                     S_pf=S_pf,
-                                     St_vsc_pf=St_vsc_pf,
-                                     Pfp_vsc_pf=Pfp_vsc_pf,
-                                     Pfn_vsc_pf=Pfn_vsc_pf,
-                                     Z_fault=Z_fault,
-                                     fault_bus=fault_bus,
-                                     options=options,
-                                     constz=constz,
-                                     logger=logger)
+            return calc_short_circuit_seq_with_vsc(nc=nc,
+                                                   V_pf=V_pf,
+                                                   S_pf=S_pf,
+                                                   St_vsc_pf=St_vsc_pf,
+                                                   Pfp_vsc_pf=Pfp_vsc_pf,
+                                                   Pfn_vsc_pf=Pfn_vsc_pf,
+                                                   Z_fault=Z_fault,
+                                                   fault_bus=fault_bus,
+                                                   options=options,
+                                                   constz=constz,
+                                                   logger=logger)
 
         # if we get here, no short circuit was done, so declare empty results and exit --------------------------------
         nbus = nc.bus_data.nbus
@@ -522,12 +522,17 @@ class ShortCircuitDriver(DriverTemplate):
 
                     fault_impedance: complex = sc_definition.get_fault_impedance()
 
-                    if abs(fault_impedance) == 0.0:
-                        self.logger.add_error(msg="Short-circuit fault impedance is zero",
+                    if not np.isfinite(fault_impedance):
+                        self.logger.add_error(msg="Short-circuit fault impedance is not finite",
                                               device=sc_definition.name,
                                               value=fault_impedance,
-                                              expected_value="Non-zero fault impedance")
+                                              expected_value="Finite fault impedance")
                     else:
+                        # A zero-impedance event represents a bolted fault. Regularize
+                        # only the calculation input, leaving the event unchanged.
+                        if fault_impedance == 0j:
+                            fault_impedance = complex(1e-20, 0.0)
+
                         # Compose the fault admittance
                         n = len(grid.buses)
                         Zf = np.zeros(n, dtype=complex)

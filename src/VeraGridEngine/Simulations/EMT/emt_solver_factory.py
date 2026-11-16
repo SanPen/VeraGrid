@@ -3,6 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
+from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.enumerations import EmtSolverTypes
 from VeraGridEngine.Simulations.driver_template import DummySignal
@@ -16,10 +17,8 @@ from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.Utils.NumericalMethods.emt_sparse_solver_registry import resolve_emt_sparse_solver_backend_provider
 from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonDiagnosticsConfig
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import SparseSolver
 from collections.abc import Callable
 from typing import Any
-import warnings
 
 
 EMT_SOLVER_CLASS_MAP = {
@@ -72,7 +71,15 @@ def build_emt_solver(options: EmtOptions,
     else:
         raise ValueError(f"Unsupported EMT solver type: {options.solver_type}")
 
-    if options.solver_type == EmtSolverTypes.StructuralCompiled:
+    sparse_backend_provider: SparseLinearSolverBackendProvider | None
+    if isinstance(problem, EmtProblemTemplate):
+        sparse_backend_provider = problem.get_sparse_solver_backend_provider(
+            options.sparse_solver, options.external_sparse_solver_plugin_name,
+            options.external_sparse_solver_directory, options.allow_internal_sparse_fallback)
+    else:
+        sparse_backend_provider = None
+    if sparse_backend_provider is None:
+        # Generic direct helper callers first supply their options at this factory.
         sparse_backend_provider = resolve_emt_sparse_solver_backend_provider(
             solver_type=options.sparse_solver,
             external_plugin_name=options.external_sparse_solver_plugin_name,
@@ -80,55 +87,26 @@ def build_emt_solver(options: EmtOptions,
             allow_internal_fallback=options.allow_internal_sparse_fallback,
             logger=logger,
         )
-        return solver_cls(problem=problem,
-                          t0=t0,
-                          t_end=t_end,
-                          h=h,
-                          method=method,
+        if isinstance(problem, EmtProblemTemplate):
+            problem.set_sparse_solver_backend_provider(
+                sparse_backend_provider, options.sparse_solver, options.external_sparse_solver_plugin_name,
+                options.external_sparse_solver_directory, options.allow_internal_sparse_fallback)
+        else:
+            pass
+    else:
+        pass
+    if options.solver_type == EmtSolverTypes.StructuralCompiled:
+        return solver_cls(problem=problem, t0=t0, t_end=t_end, h=h, method=method,
                           newton_max_iter=options.init_newton_max_iter,
                           warmup_policy=options.compiled_warmup_policy,
                           sparse_solver_backend_provider=sparse_backend_provider,
                           newton_diag_config=newton_diag_config,
-                          progress_signal=progress_signal,
-                          cancel_checker=cancel_checker,
+                          progress_signal=progress_signal, cancel_checker=cancel_checker,
                           newton_tolerance=options.tolerance)
-    elif options.solver_type == EmtSolverTypes.StructuralAD:
-        sparse_backend_provider = resolve_emt_sparse_solver_backend_provider(
-            solver_type=options.sparse_solver,
-            external_plugin_name=options.external_sparse_solver_plugin_name,
-            external_plugin_directory=options.external_sparse_solver_directory,
-            allow_internal_fallback=options.allow_internal_sparse_fallback,
-            logger=logger,
-        )
-        return solver_cls(problem=problem,
-                          t0=t0,
-                          t_end=t_end,
-                          h=h,
-                          method=method,
+    else:
+        return solver_cls(problem=problem, t0=t0, t_end=t_end, h=h, method=method,
                           newton_max_iter=options.init_newton_max_iter,
                           sparse_solver_backend_provider=sparse_backend_provider,
                           newton_diag_config=newton_diag_config,
-                          progress_signal=progress_signal,
-                          cancel_checker=cancel_checker,
-                          newton_tolerance=options.tolerance)
-    else:
-        if options.sparse_solver != SparseSolver.SuperLU or len(options.external_sparse_solver_plugin_name) > 0:
-            # These solvers keep their own linear algebra; make the ignored selection visible.
-            ignored_message: str = (f"sparse_solver {options.sparse_solver.value} is ignored by the "
-                                    f"{options.solver_type.value} EMT solver")
-            if logger is None:
-                warnings.warn(ignored_message, RuntimeWarning, stacklevel=2)
-            else:
-                logger.add_warning(ignored_message)
-        else:
-            pass
-        return solver_cls(problem=problem,
-                          t0=t0,
-                          t_end=t_end,
-                          h=h,
-                          method=method,
-                          newton_max_iter=options.init_newton_max_iter,
-                          newton_diag_config=newton_diag_config,
-                          progress_signal=progress_signal,
-                          cancel_checker=cancel_checker,
+                          progress_signal=progress_signal, cancel_checker=cancel_checker,
                           newton_tolerance=options.tolerance)

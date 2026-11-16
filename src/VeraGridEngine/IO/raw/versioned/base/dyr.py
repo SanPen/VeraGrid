@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Typed dynamic assignments and explicit model schemas.
 
@@ -95,11 +99,13 @@ class DynamicParameter:
 class DynamicModelSchema:
     """Record layout for a built-in machine or controller, independent of simulation."""
 
-    __slots__ = ('name', 'parameters', 'icon_names', 'character_icon_names', 'signed_icon_names')
+    __slots__ = ('name', 'parameters', 'icon_names', 'character_icon_names', 'signed_icon_names',
+                 'alternative_parameter_counts')
 
     def __init__(self, name: str, parameters: tuple[str, ...],
                  icon_names: tuple[str, ...] = (), character_icon_names: tuple[str, ...] = (),
-                 signed_icon_names: tuple[str, ...] = ()) -> None:
+                 signed_icon_names: tuple[str, ...] = (),
+                 alternative_parameter_counts: tuple[int, ...] = ()) -> None:
         """Declare a machine or controller's ordered header and constant schema.
 
         :param name: PSS/E model name.
@@ -107,12 +113,14 @@ class DynamicModelSchema:
         :param icon_names: Ordered header fields preceding the constants; integers unless explicitly character fields.
         :param character_icon_names: Header fields preserving equipment identifiers, including leading zeros.
         :param signed_icon_names: Explicit integer fields permitting negative selector codes.
+        :param alternative_parameter_counts: Other documented leading constant counts for conflicting source examples.
         """
         self.name: str = name
         self.parameters: tuple[str, ...] = parameters
         self.icon_names: tuple[str, ...] = icon_names
         self.character_icon_names: tuple[str, ...] = character_icon_names
         self.signed_icon_names: tuple[str, ...] = signed_icon_names
+        self.alternative_parameter_counts: tuple[int, ...] = alternative_parameter_counts
 
 
 class UserModelHeader:
@@ -143,10 +151,12 @@ class UserModelHeader:
 class UserDynamicModelSchema:
     """A named user subroutine's payload and exact calling/allocation contract."""
 
-    __slots__ = ('layout', 'model_type', 'call_type', 'state_count', 'variable_count')
+    __slots__ = ('layout', 'model_type', 'call_type', 'state_count', 'variable_count',
+                 'reserved_icon_count')
 
     def __init__(self, layout: DynamicModelSchema, model_type: UserModelType,
-                 call_type: int, state_count: int, variable_count: int) -> None:
+                 call_type: int, state_count: int, variable_count: int,
+                 reserved_icon_count: int | None = None) -> None:
         """Declare one explicitly reviewed release-specific user-model contract.
 
         :param layout: Source subroutine name and ordered ICON/CON payload layout.
@@ -154,12 +164,14 @@ class UserDynamicModelSchema:
         :param call_type: Exact source IT value.
         :param state_count: Exact declared NS allocation.
         :param variable_count: Exact declared NV allocation.
+        :param reserved_icon_count: Exact USRLOD/USRREL reserved ICON allocation, when documented.
         """
         self.layout: DynamicModelSchema = layout
         self.model_type: UserModelType = model_type
         self.call_type: int = call_type
         self.state_count: int = state_count
         self.variable_count: int = variable_count
+        self.reserved_icon_count: int | None = reserved_icon_count
 
     def matches(self, header: UserModelHeader) -> bool:
         """Check the whole calling contract without treating allocation fields as payload.
@@ -170,7 +182,8 @@ class UserDynamicModelSchema:
         return (header.name.upper() == self.layout.name and header.model_type == self.model_type
                 and header.call_type == self.call_type and header.icon_count == len(self.layout.icon_names)
                 and header.constant_count == len(self.layout.parameters)
-                and header.state_count == self.state_count and header.variable_count == self.variable_count)
+                and header.state_count == self.state_count and header.variable_count == self.variable_count
+                and header.reserved_icon_count == self.reserved_icon_count)
 
 
 class DyrRecord:
@@ -312,6 +325,14 @@ class RawDyr:
         else:
             return schema
 
+    def get_auxiliary_signal_schema(self, model: str) -> DynamicModelSchema | None:
+        """Select a record layout whose target is an auxiliary device signal.
+
+        :param model: Input model name, case-insensitive.
+        :return: Auxiliary signal schema when documented by the release.
+        """
+        return None
+
     def get_user_model_schema(self, name: str) -> UserDynamicModelSchema | None:
         """Select an explicitly reviewed user-model contract in the concrete release.
 
@@ -356,6 +377,11 @@ class RawDyr:
         else:
             pass
         record: DyrRecord = DyrRecord(tokens, line_number)
+        if not tokens[0].quoted and tokens[0].text.upper() == 'MINS':
+            self.parse_mins_record(record)
+            return record
+        else:
+            pass
         if (isinstance(record.identifier, float) or
                 (isinstance(record.identifier, int) and record.identifier < 0) or
                 (isinstance(record.identifier, str) and (not tokens[0].quoted or len(record.identifier) == 0))):
@@ -363,11 +389,26 @@ class RawDyr:
             return record
         else:
             pass
+        auxiliary_schema: DynamicModelSchema | None = self.get_auxiliary_signal_schema(record.model)
         schema: DynamicModelSchema | None = self.get_model_schema(record.model)
-        if schema is not None:
-            record.target_kind = EquipmentKind.MACHINE
-            record.bus = self.read_bus_reference(record, tokens[0])
-            if len(record.data) != len(schema.parameters) + len(schema.icon_names) + 1:
+        if auxiliary_schema is not None:
+            self.parse_auxiliary_signal_record(record, auxiliary_schema)
+        elif schema is not None:
+            load_model: bool = record.model.upper().startswith(('CIM5', 'CIM6', 'CIMW', 'CMLD'))
+            if load_model:
+                record.target_kind = EquipmentKind.LOAD
+                if isinstance(record.identifier, int):
+                    pass
+                else:
+                    self.fail(record, 'PSS/E CIM load scope identifiers must be integer bus, area, owner, or zone numbers')
+            else:
+                record.target_kind = EquipmentKind.MACHINE
+                record.bus = self.read_bus_reference(record, tokens[0])
+            constant_count: int = len(record.data) - len(schema.icon_names) - 1
+            accepted_constant_counts: tuple[int, ...] = (
+                (len(schema.parameters),) + schema.alternative_parameter_counts
+            )
+            if constant_count not in accepted_constant_counts:
                 self.fail(record, 'Incorrect field count for ' + schema.name)
             else:
                 record.equipment_id = tokens[2].text
@@ -376,7 +417,8 @@ class RawDyr:
                 self.read_schema_icons(record, schema, tokens[3:constant_start])
                 constants: list[float] = list()
                 parameters: list[DynamicParameter] = list()
-                for name, token in zip(schema.parameters, tokens[constant_start:]):
+                source_parameter_names: tuple[str, ...] = schema.parameters[:constant_count]
+                for name, token in zip(source_parameter_names, tokens[constant_start:]):
                     value: float | None = parse_dyr_constant(token)
                     if value is not None:
                         constants.append(value)
@@ -389,7 +431,9 @@ class RawDyr:
                     record.status = RecordStatus.VALID
                 else:
                     pass
-                if not 1 <= len(record.equipment_id) <= 2:
+                if load_model and record.equipment_id != '*' and not 1 <= len(record.equipment_id) <= 2:
+                    self.fail(record, 'PSS/E CIM load identifier must be one or two characters or *')
+                elif not load_model and not 1 <= len(record.equipment_id) <= 2:
                     self.fail(record, 'Machine identifier must contain one or two characters')
                 else:
                     pass
@@ -399,6 +443,98 @@ class RawDyr:
             self.logger.add_warning('DYR model has no reviewed schema; assignment retained',
                                     device=self.source, value=record.model)
         return record
+
+    def parse_mins_record(self, record: DyrRecord) -> None:
+        """Parse a documented MINS machine-relay record from a DYR stream.
+
+        :param record: Record whose first token is the MINS keyword.
+        :return: None.
+        """
+        schema: DynamicModelSchema | None = self.get_model_schema(record.model)
+        if schema is None or record.model.upper() not in ('FRQTPAT', 'VTGTPAT'):
+            self.fail(record, 'MINS record has no reviewed model schema: ' + record.model)
+        elif len(record.tokens) != 2 + len(schema.icon_names) + len(schema.parameters):
+            self.fail(record, 'Incorrect MINS field count for ' + record.model)
+        else:
+            monitor_bus: BusIdentifier | None = self.read_bus_reference(record, record.tokens[2])
+            generator_bus: BusIdentifier | None = self.read_bus_reference(record, record.tokens[3])
+            machine_id: str = record.tokens[4].text
+            if (monitor_bus is None or generator_bus is None or not record.tokens[4].quoted
+                    or not 1 <= len(machine_id) <= 2):
+                self.fail(record, 'MINS requires monitored bus, generator bus, and quoted machine ID')
+            else:
+                record.target_kind = EquipmentKind.MACHINE
+                record.bus = generator_bus
+                record.remote_buses = (monitor_bus,)
+                record.equipment_id = machine_id
+                record.icons = (monitor_bus.number or monitor_bus.name,
+                                generator_bus.number or generator_bus.name, machine_id)
+                constants: list[float] = list()
+                parameters: list[DynamicParameter] = list()
+                for parameter_name, token in zip(schema.parameters, record.tokens[5:]):
+                    value: float | None = parse_dyr_constant(token)
+                    if value is not None:
+                        constants.append(value)
+                        parameters.append(DynamicParameter(parameter_name, value))
+                    else:
+                        self.fail(record, 'MINS constants must be finite numbers')
+                record.constants = tuple(constants)
+                record.parameters = tuple(parameters)
+                if record.status != RecordStatus.INVALID:
+                    record.status = RecordStatus.VALID
+                else:
+                    pass
+
+    def parse_auxiliary_signal_record(self, record: DyrRecord, schema: DynamicModelSchema) -> None:
+        """Preserve an auxiliary-signal header without treating it as a machine.
+
+        :param record: Assignment with an auxiliary-device identifier.
+        :param schema: Documented signal constants and ICON declarations.
+        :return: None.
+        """
+        if len(record.tokens) != len(schema.parameters) + 5:
+            self.fail(record, 'Incorrect auxiliary-signal field count for ' + schema.name)
+        else:
+            values: tuple[int | float | str, ...] = tuple(
+                parse_dyr_value(token) for token in record.tokens[2:5]
+            )
+            device_type: int | float | str = values[0]
+            signal_index: int | float | str = values[1]
+            if not isinstance(record.identifier, str) or not record.identifier:
+                self.fail(record, 'Auxiliary signal target must be a quoted DC or FACTS device name')
+            elif not isinstance(device_type, int) or device_type not in (1, 2, 3, 4):
+                self.fail(record, 'Auxiliary device type must select a DC or FACTS device (1 through 4)')
+            elif not isinstance(signal_index, int) or signal_index < 1:
+                self.fail(record, 'Auxiliary signal index must be a positive integer')
+            elif ((device_type == 1 and signal_index > 4)
+                  or (device_type == 2 and signal_index > 12)
+                  or (device_type == 3 and signal_index > 2)
+                  or (device_type == 4 and signal_index > 1)):
+                self.fail(record, 'Auxiliary signal index exceeds the PSS/E limit for the selected device type')
+            else:
+                bus: BusIdentifier | None = self.read_bus_reference(record, record.tokens[4])
+                if bus is not None:
+                    record.auxiliary_device_type = device_type
+                    record.signal_index = signal_index
+                    record.remote_buses = (bus,)
+                    record.icons = (bus.number if bus.number is not None else bus.name,)
+                else:
+                    pass
+                constants: list[float] = list()
+                parameters: list[DynamicParameter] = list()
+                for name, token in zip(schema.parameters, record.tokens[5:]):
+                    value: float | None = parse_dyr_constant(token)
+                    if value is not None:
+                        constants.append(value)
+                        parameters.append(DynamicParameter(name, value))
+                    else:
+                        self.fail(record, 'Auxiliary model constants must be finite numbers')
+                record.constants = tuple(constants)
+                record.parameters = tuple(parameters)
+                if record.status != RecordStatus.INVALID:
+                    record.status = RecordStatus.VALID
+                else:
+                    pass
 
     def fail(self, record: DyrRecord, message: str) -> None:
         """Invalidate an assignment while keeping its complete original payload.
@@ -425,20 +561,32 @@ class RawDyr:
             return
         else:
             pass
-        if len(record.tokens) < name_index + 7 or not record.tokens[name_index].quoted:
+        name: str = record.tokens[name_index].text.strip() if name_index < len(record.tokens) else ''
+        legacy_omitted_icon_count: bool = (
+            keyword == 'USRMDL'
+            and self.version == PsseVersion.V33
+            and name.upper() in ('TGOV3DU', 'WESGOVDU')
+        )
+        allocation_field_count: int = 5 if legacy_omitted_icon_count else 6
+        if len(record.tokens) < name_index + 1 + allocation_field_count or not record.tokens[name_index].quoted:
             self.fail(record, 'Incomplete user-model name/allocation header')
             return
         else:
             pass
         counts: list[int] = list()
-        for token in record.tokens[name_index + 1:name_index + 7]:
+        for token in record.tokens[name_index + 1:name_index + 1 + allocation_field_count]:
             value: int | float | str = parse_dyr_value(token)
             if isinstance(value, int) and value >= 0:
                 counts.append(value)
             else:
                 self.fail(record, 'User-model allocation fields must be nonnegative integers')
-        if len(counts) != 6:
+        if len(counts) != allocation_field_count:
             return
+        else:
+            pass
+        if legacy_omitted_icon_count:
+            # These 33.10 governor sheets omit NI because their wrappers have no ICONs.
+            counts.insert(2, 0)
         else:
             pass
         header: UserModelHeader = UserModelHeader(record.tokens[name_index].text.strip(), tuple(counts))
@@ -449,7 +597,7 @@ class RawDyr:
             pass
         header.references = tuple(parse_dyr_value(token) for token in record.tokens[2:name_index])
         self.parse_user_target(record)
-        position: int = name_index + 7
+        position: int = name_index + 1 + allocation_field_count
         if keyword == 'USRREL' or (keyword == 'USRLOD' and header.model_type in (UserModelType.LOAD, UserModelType.LOAD_RELAY)):
             if position < len(record.tokens):
                 reserved: int | float | str = parse_dyr_value(record.tokens[position])
@@ -507,7 +655,9 @@ class RawDyr:
         record.constants = tuple(constants)
         # A reviewed subroutine must satisfy the release's complete contract.
         # Arbitrary user records retain their generic parsed payload unchanged.
-        user_schema: UserDynamicModelSchema | None = self.get_user_model_schema(header.name) if keyword == 'USRMDL' else None
+        user_schema: UserDynamicModelSchema | None = (
+            self.get_user_model_schema(header.name) if keyword in ('USRMDL', 'USRLOD') else None
+        )
         if user_schema is None:
             pass
         elif not user_schema.matches(header):

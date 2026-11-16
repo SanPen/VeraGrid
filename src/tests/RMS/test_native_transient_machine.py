@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Independent phasor and field-balance checks for a field-transient machine."""
 from __future__ import annotations
@@ -6,7 +10,7 @@ import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.international_standards.synchronous_machines.gentra import build_gentra_template
+from VeraGridEngine.Templates.Rms.synchronous_machines.gentra import build_gentra_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const
 from tests.RMS.test_native_turbine_governors import initialized_values

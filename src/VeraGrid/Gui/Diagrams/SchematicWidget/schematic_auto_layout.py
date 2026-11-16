@@ -1215,6 +1215,96 @@ def build_hybrid_power_system_layout(graph: nx.MultiDiGraph, position_scale=0.5)
     return positions
 
 
+def build_voltage_hierarchical_layout(graph: nx.MultiDiGraph,
+                                      position_scale: float = 0.5) -> Dict[int, np.ndarray]:
+    """Lay out voltage levels from highest to lowest, keeping earlier levels fixed.
+
+    Nominal voltages within 1% of the highest value in a group share a level.
+    Missing, non-finite and non-positive voltages form the final level. Each
+    same-voltage component starts with the power-system layout, then relaxes
+    against all its already placed electrical neighbours (normally transformers).
+    Unanchored components are packed beside the existing drawing. Backbone
+    spacing grows with network size to reserve room for the lower levels.
+    A final deterministic clearance pass separates bus centres; it does not
+    guarantee clearance of labels, bus shapes or branch crossings.
+    """
+    if not graph:
+        return {}
+
+    # A transformer's internal star bus may have an artificial nominal voltage
+    # (often 1 kV). Place its visible junction with the highest connected winding
+    # so lower-voltage terminals can anchor to it when their level is processed.
+    # Only layout metadata on a copy changes; electrical device values stay intact.
+    graph = graph.copy()
+    undirected = graph.to_undirected()
+    junction_types = {DeviceType.Transformer3WDevice.value, DeviceType.TransformerNwDevice.value}
+    for node, data in graph.nodes(data=True):
+        if data.get("device_tpe") in junction_types:
+            winding_voltages = [get_layout_graph_node_voltage_kv(undirected, neighbour)
+                                for neighbour in undirected.neighbors(node)
+                                if undirected.nodes[neighbour].get("device_tpe") not in junction_types]
+            valid = [voltage for voltage in winding_voltages if np.isfinite(voltage) and voltage > 0]
+            if valid:
+                data["voltage_kv"] = max(valid)
+
+    voltages = {}
+    for node in graph:
+        voltage = get_layout_graph_node_voltage_kv(graph, node)
+        voltages[node] = voltage if np.isfinite(voltage) and voltage > 0 else 0.0
+    levels: List[List[int]] = []
+    level_voltage = None
+    for node in sorted(graph, key=lambda n: (-voltages[n], n)):
+        voltage = voltages[node]
+        if level_voltage is None or not np.isclose(voltage, level_voltage, rtol=0.01, atol=1e-6):
+            levels.append([])
+            level_voltage = voltage
+        levels[-1].append(node)
+
+    positions: Dict[int, np.ndarray] = {}
+    undirected = graph.to_undirected()
+    clearance = 1.5
+    for level_index, nodes in enumerate(levels):
+        if level_index == 0:
+            backbone = build_hybrid_power_system_layout(graph.subgraph(nodes).copy(), position_scale=1.0)
+            reserve = max(1.0, np.sqrt(len(graph) / len(nodes)))
+            positions.update({node: point * reserve for node, point in backbone.items()})
+        else:
+            for component in sorted(nx.connected_components(undirected.subgraph(nodes)), key=min):
+                component_nodes = sorted(component)
+                anchors = sorted({neighbour for node in component_nodes
+                                  for neighbour in undirected.neighbors(node) if neighbour in positions})
+                local = build_hybrid_power_system_layout(graph.subgraph(component_nodes).copy(),
+                                                        position_scale=1.0)
+                centre = np.mean(list(local.values()), axis=0)
+                if anchors:
+                    target = np.mean([positions[node] for node in anchors], axis=0)
+                    initial = {node: point - centre + target + np.array([0.0, 3.8])
+                               for node, point in local.items()}
+                    initial.update({node: positions[node].copy() for node in anchors})
+                    anchored_graph = undirected.subgraph(component_nodes + anchors)
+                    relaxed = nx.spring_layout(anchored_graph, pos=initial, fixed=anchors,
+                                               k=3.8, iterations=100, weight="strength", seed=7)
+                    local = {node: relaxed[node] for node in component_nodes}
+                else:
+                    right = max(point[0] for point in positions.values())
+                    left = min(point[0] for point in local.values())
+                    local = {node: point + np.array([right + 6.0 - left, 0.0])
+                             for node, point in local.items()}
+                # Resolve collisions only for new buses, preserving all earlier levels.
+                for node in component_nodes:
+                    origin = local[node]
+                    candidate = origin
+                    attempt = 0
+                    occupied = np.array(list(positions.values()))
+                    while len(occupied) and np.any(np.linalg.norm(occupied - candidate, axis=1) < clearance):
+                        attempt += 1
+                        angle = attempt * np.pi * (3.0 - np.sqrt(5.0))
+                        radius = clearance * np.sqrt(attempt)
+                        candidate = origin + radius * np.array([np.cos(angle), np.sin(angle)])
+                    positions[node] = candidate.copy()
+    return {node: point * position_scale for node, point in positions.items()}
+
+
 def apply_multipartite_subsets(graph: nx.MultiDiGraph) -> nx.MultiGraph:
     """
     Create a graph copy carrying the subset attribute required by ``multipartite_layout``.
@@ -1289,7 +1379,9 @@ def calculate_schematic_layout(graph: nx.MultiDiGraph, sel: str) -> Dict[int, np
     calculated_positions: Dict[int, np.ndarray]
     undirected_graph: nx.MultiGraph = graph.to_undirected()
 
-    if sel == "power_system_layout":
+    if sel == "voltage_hierarchical_layout":
+        calculated_positions = build_voltage_hierarchical_layout(graph=graph)
+    elif sel == "power_system_layout":
         calculated_positions = build_hybrid_power_system_layout(graph=graph)
     elif sel == "random_layout":
         calculated_positions = nx.random_layout(graph, seed=7)

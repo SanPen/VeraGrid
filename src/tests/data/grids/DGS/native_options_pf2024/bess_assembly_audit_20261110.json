@@ -1,0 +1,90 @@
+{
+  "scope": "Native BESS import diagnostics only; no trajectory validation",
+  "files": [
+    {
+      "file": "bess_base.dgs",
+      "diagnostics": [
+        {
+          "message": "Native VSC control pair is not represented exactly; converter kept inactive",
+          "device": "Onduleur NIDEC GF",
+          "detail": "i_acdc=0"
+        },
+        {
+          "message": "DGS converter options require an unsupported RMS equipment model",
+          "device": "Onduleur NIDEC GF",
+          "detail": "iVIsource=1 (independent AC/DC sources)"
+        }
+      ]
+    },
+    {
+      "file": "bess_coupled_converter.dgs",
+      "diagnostics": [
+        {
+          "message": "Native VSC control pair is not represented exactly; converter kept inactive",
+          "device": "Onduleur NIDEC GF",
+          "detail": "i_acdc=0"
+        }
+      ]
+    },
+    {
+      "file": "bess_current_controller_on.dgs",
+      "diagnostics": [
+        {
+          "message": "Native VSC control pair is not represented exactly; converter kept inactive",
+          "device": "Onduleur NIDEC GF",
+          "detail": "i_acdc=0"
+        },
+        {
+          "message": "DGS converter options require an unsupported RMS equipment model",
+          "device": "Onduleur NIDEC GF",
+          "detail": "i_ctrl=1 (integrated current controller); iVIsource=1 (independent AC/DC sources)"
+        }
+      ]
+    },
+    {
+      "file": "bess_modulation_1.dgs",
+      "diagnostics": [
+        {
+          "message": "Native VSC control pair is not represented exactly; converter kept inactive",
+          "device": "Onduleur NIDEC GF",
+          "detail": "i_acdc=0"
+        },
+        {
+          "message": "DGS converter options require an unsupported RMS equipment model",
+          "device": "Onduleur NIDEC GF",
+          "detail": "iVIsource=1 (independent AC/DC sources); i_mod=1 (modulation variant)"
+        }
+      ]
+    },
+    {
+      "file": "bess_modulation_limit_on.dgs",
+      "diagnostics": [
+        {
+          "message": "Native VSC control pair is not represented exactly; converter kept inactive",
+          "device": "Onduleur NIDEC GF",
+          "detail": "i_acdc=0"
+        },
+        {
+          "message": "DGS converter options require an unsupported RMS equipment model",
+          "device": "Onduleur NIDEC GF",
+          "detail": "iVIsource=1 (independent AC/DC sources)"
+        }
+      ]
+    },
+    {
+      "file": "bess_virtual_admittance_dynamic.dgs",
+      "diagnostics": [
+        {
+          "message": "Native VSC control pair is not represented exactly; converter kept inactive",
+          "device": "Onduleur NIDEC GF",
+          "detail": "i_acdc=0"
+        },
+        {
+          "message": "DGS converter options require an unsupported RMS equipment model",
+          "device": "Onduleur NIDEC GF",
+          "detail": "iVIsource=1 (independent AC/DC sources)"
+        }
+      ]
+    }
+  ]
+}

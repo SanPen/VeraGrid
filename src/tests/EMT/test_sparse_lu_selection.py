@@ -9,7 +9,8 @@ from __future__ import annotations
 
 import importlib
 from types import ModuleType
-from typing import Any, Dict, Iterator, List, Tuple
+from secrets import token_hex
+from typing import Any, Dict, List
 
 import numpy as np
 import pytest
@@ -17,12 +18,22 @@ import scipy.sparse as sp
 from scipy.sparse import csc_matrix
 from scipy.sparse.linalg import splu
 
-import VeraGridEngine.Compilers.Gslv.activation as gslv_activation
 import VeraGridEngine.Simulations.EMT.emt_solver_factory as emt_solver_factory
 import VeraGridEngine.Utils.NumericalMethods.emt_sparse_solver_registry as sparse_registry
 import VeraGridEngine.Utils.NumericalMethods.native_lu_runtime_backend as native_backend_module
-import VeraGridEngine.Utils.NumericalMethods.sparse_lu_selection as sparse_selection
+import VeraGridEngine.Utils.Sparse.sparse_solve as sparse_solve
 from tests.EMT.test_kundur_emt_initialization import _build_kundur_problem
+from tests.EMT.test_klu_default import _decay_problem
+from tests.EMT.test_emt_initialization_workflow import build_single_state_single_algebraic_problem, run_common_explicit_initialization_for_test
+from tests.RMS.test_rms_sparse_lu_selection import CountingProvider
+from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import ExplicitInitializationResult
+from VeraGridEngine.Utils.Symbolic.symbolic import Var
+from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
+from VeraGridEngine.Simulations.EMT.initialization_emt import run_emt_native_initialization, EmtInitializationReport
+from VeraGridEngine.Simulations.EMT.periodic_initialization_emt import solve_periodic_initialization
+from VeraGridEngine.Simulations.EMT.solvers.solver_AD import JitAdSolver
+from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
+from VeraGridEngine.enumerations import EmtInitializationMethod, EmtInitializationStatus
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver import StructuralVectorizedSolver
@@ -40,18 +51,6 @@ from VeraGridEngine.Utils.NumericalMethods.native_lu_runtime_backend import (
 )
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes, SparseSolver
-
-
-@pytest.fixture(autouse=True)
-def isolated_provider_cache() -> Iterator[None]:
-    """
-    Clear the process-wide native provider cache around every test.
-
-    :return: Iterator yielding once.
-    """
-    sparse_selection.clear_sparse_lu_provider_cache()
-    yield None
-    sparse_selection.clear_sparse_lu_provider_cache()
 
 
 def _fake_analyze(indptr: np.ndarray, indices: np.ndarray, n: int) -> Dict[str, Any]:
@@ -207,28 +206,6 @@ class _RecordingAnalyze:
         return symbolic
 
 
-class _MissingRuntimeLoader:
-    """load_native_lu_runtime stand-in reporting a missing package and counting calls."""
-
-    __slots__ = ("calls",)
-
-    def __init__(self) -> None:
-        """Create an empty call list."""
-        self.calls: List[str] = list()
-
-    def __call__(self, module_name: str, top_level_module: str, distribution_name: str) -> Tuple[ModuleType | None, str]:
-        """
-        Record the call and report the package as missing.
-
-        :param module_name: Runtime module name.
-        :param top_level_module: Top-level import name.
-        :param distribution_name: Distribution name.
-        :return: No runtime and the reason.
-        """
-        self.calls.append(module_name)
-        return None, "veragrid-cvxoptklu is not installed"
-
-
 class _PluginLoader:
     """load_sparse_solver_backend_provider stand-in returning a prepared provider."""
 
@@ -349,35 +326,42 @@ def test_loader_reports_reasons_without_raising(monkeypatch: pytest.MonkeyPatch,
     assert validate_native_lu_runtime(_fake_runtime("complete")) == ""
 
 
-def test_selection_falls_back_to_superlu_with_a_logged_reason(monkeypatch: pytest.MonkeyPatch) -> None:
-    """An unavailable selection logs its reason once per resolution and uses SciPy SuperLU."""
-    missing_loader: _MissingRuntimeLoader = _MissingRuntimeLoader()
-    monkeypatch.setattr(sparse_selection, "load_native_lu_runtime", missing_loader)
+def test_selection_falls_back_to_superlu_with_a_logged_reason() -> None:
+    """A solver without a factorisation-reusing provider logs its reason once per resolution and uses SciPy SuperLU."""
     logger: Logger = Logger()
-    provider: SparseLinearSolverBackendProvider = sparse_selection.resolve_sparse_lu_provider(SparseSolver.KLU, logger)
+    provider: SparseLinearSolverBackendProvider = sparse_solve.resolve_sparse_lu_provider(SparseSolver.UMFPACKTriangular, logger)
     assert isinstance(provider, SuperLUSparseBackendProvider)
     assert len(logger) == 1
-    assert "Sparse LU solver KLU is unavailable: veragrid-cvxoptklu is not installed" in str(logger)
-    sparse_selection.resolve_sparse_lu_provider(SparseSolver.KLU, logger)
-    assert missing_loader.calls == ["cvxoptklu._klu_native"]
-    with pytest.warns(RuntimeWarning, match="Sparse LU solver KLU is unavailable"):
-        sparse_selection.resolve_sparse_lu_provider(SparseSolver.KLU, None)
+    assert ("Sparse LU solver UmfPackTriangular is unavailable: no factorisation-reusing provider is registered for UmfPackTriangular. "
+            "Using SciPy SuperLU.") in str(logger)
+    with pytest.warns(RuntimeWarning, match="Sparse LU solver UmfPackTriangular is unavailable"):
+        sparse_solve.resolve_sparse_lu_provider(SparseSolver.UMFPACKTriangular, None)
 
 
 def test_selection_status_without_fallback() -> None:
-    """SuperLU is always available; solvers without a reuse provider report why."""
-    provider, reason = sparse_selection.get_sparse_lu_provider_status(SparseSolver.SuperLU)
-    assert isinstance(provider, SuperLUSparseBackendProvider)
-    assert reason == ""
-    for solver_type in (SparseSolver.Pardiso, SparseSolver.UMFPACK, SparseSolver.ILU, SparseSolver.GMRES, SparseSolver.UMFPACKTriangular):
-        provider, reason = sparse_selection.get_sparse_lu_provider_status(solver_type)
-        assert provider is None
-        assert reason == "no factorisation-reusing provider is registered for " + solver_type.value
+    """Optional real LU providers report availability without secretly substituting.
+
+    :return: None; distinct methods and unavailable packages retain a reason.
+    """
+    provider: SparseLinearSolverBackendProvider | None
+    reason: str
+    available: List[SparseSolver] = sparse_solve.get_available_sparse_solvers()
+    solver_type: SparseSolver
+    for solver_type in (SparseSolver.SuperLU, SparseSolver.KLU, SparseSolver.CLU, SparseSolver.Pardiso,
+                        SparseSolver.UMFPACK, SparseSolver.ILU, SparseSolver.GMRES, SparseSolver.UMFPACKTriangular):
+        provider, reason = sparse_solve.get_sparse_lu_provider_status(solver_type)
+        if solver_type in (SparseSolver.SuperLU, SparseSolver.KLU, SparseSolver.CLU, SparseSolver.Pardiso) and solver_type in available:
+            assert provider is not None and provider.get_solver_type() == solver_type
+            assert reason == ""
+        else:
+            assert provider is None and len(reason) > 0
 
 
 def test_klu_provider_is_available_whenever_the_runtime_imports() -> None:
     """No silent skip: the native KLU provider is available exactly when its runtime imports."""
-    provider, reason = sparse_selection.get_sparse_lu_provider_status(SparseSolver.KLU)
+    provider: SparseLinearSolverBackendProvider | None
+    reason: str
+    provider, reason = sparse_solve.get_sparse_lu_provider_status(SparseSolver.KLU)
     try:
         runtime: ModuleType = importlib.import_module("cvxoptklu._klu_native")
     except ImportError:
@@ -391,29 +375,27 @@ def test_klu_provider_is_available_whenever_the_runtime_imports() -> None:
             assert provider is None
 
 
-def test_gslv_slot_follows_activation_and_contract(monkeypatch: pytest.MonkeyPatch) -> None:
-    """GSLV is available only with an activated pygslv exposing a complete sparse_lu attribute."""
-    monkeypatch.setattr(gslv_activation, "GSLV_AVAILABLE", False)
-    monkeypatch.setattr(gslv_activation, "GSLV_UNAVAILABLE_REASON", "not licensed")
-    provider, reason = sparse_selection.get_sparse_lu_provider_status(SparseSolver.GSLV)
-    assert provider is None
-    assert reason == "GSLV unavailable: not licensed"
+def test_sparse_solve_is_the_single_selection_point() -> None:
+    """sparse_solve exposes both selection faces and SparseSolver has no GSLV member."""
+    assert "GSLV" not in SparseSolver.__members__
+    assert callable(sparse_solve.get_linear_solver)
+    assert callable(sparse_solve.resolve_sparse_lu_provider)
 
-    sparse_selection.clear_sparse_lu_provider_cache()
-    monkeypatch.setattr(gslv_activation, "GSLV_AVAILABLE", True)
-    monkeypatch.setattr(gslv_activation, "pg", ModuleType("fake_pygslv_without_lu"))
-    provider, reason = sparse_selection.get_sparse_lu_provider_status(SparseSolver.GSLV)
-    assert provider is None
-    assert reason == "the installed pygslv does not expose the sparse_lu native LU runtime"
 
-    sparse_selection.clear_sparse_lu_provider_cache()
-    fake_pygslv: ModuleType = ModuleType("fake_pygslv")
-    fake_pygslv.sparse_lu = _fake_runtime("sparse_lu")
-    monkeypatch.setattr(gslv_activation, "pg", fake_pygslv)
-    provider, reason = sparse_selection.get_sparse_lu_provider_status(SparseSolver.GSLV)
-    assert isinstance(provider, NativeLuRuntimeBackendProvider)
-    assert provider.get_solver_type() == SparseSolver.GSLV
-    assert reason == ""
+def test_klu_provider_is_cached_per_process() -> None:
+    """When the native KLU runtime is available, its provider object is resolved once per process."""
+    first: SparseLinearSolverBackendProvider | None
+    first_reason: str
+    second: SparseLinearSolverBackendProvider | None
+    second_reason: str
+    first, first_reason = sparse_solve.get_sparse_lu_provider_status(SparseSolver.KLU)
+    second, second_reason = sparse_solve.get_sparse_lu_provider_status(SparseSolver.KLU)
+    if first is None:
+        assert second is None
+        assert second_reason == first_reason
+    else:
+        assert second is first
+        assert first_reason == "" and second_reason == ""
 
 
 def test_registry_plugin_branches(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -439,32 +421,32 @@ def test_registry_plugin_branches(monkeypatch: pytest.MonkeyPatch) -> None:
         sparse_registry.resolve_emt_sparse_solver_backend_provider(SparseSolver.SuperLU, "fake", "", True, None)
 
 
-def test_registry_internal_resolution(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_registry_internal_resolution() -> None:
     """Internal resolution logs and falls back, or raises with the reason when fallback is off."""
-    monkeypatch.setattr(sparse_selection, "load_native_lu_runtime", _MissingRuntimeLoader())
     logger: Logger = Logger()
-    provider = sparse_registry.resolve_emt_sparse_solver_backend_provider(SparseSolver.KLU, "", "", True, logger)
+    provider: SparseLinearSolverBackendProvider = sparse_registry.resolve_emt_sparse_solver_backend_provider(SparseSolver.UMFPACKTriangular, "", "", True, logger)
     assert isinstance(provider, SuperLUSparseBackendProvider)
     assert len(logger) == 1
-    with pytest.raises(RuntimeError, match="veragrid-cvxoptklu is not installed"):
-        sparse_registry.resolve_emt_sparse_solver_backend_provider(SparseSolver.KLU, "", "", False, logger)
+    with pytest.raises(RuntimeError, match="no factorisation-reusing provider is registered for UmfPackTriangular"):
+        sparse_registry.resolve_emt_sparse_solver_backend_provider(SparseSolver.UMFPACKTriangular, "", "", False, logger)
     assert isinstance(sparse_registry.resolve_emt_sparse_solver_backend_provider(SparseSolver.SuperLU, "", "", False, None), SuperLUSparseBackendProvider)
 
 
 def test_factory_passes_logger_and_reports_ignored_selection(monkeypatch: pytest.MonkeyPatch) -> None:
-    """build_emt_solver forwards its logger and reports a selection ignored by non-structural solvers."""
-    monkeypatch.setattr(sparse_selection, "load_native_lu_runtime", _MissingRuntimeLoader())
+    """Every factory branch forwards selection and reports unavailable-provider fallback."""
     for solver_type in (EmtSolverTypes.StructuralCompiled, EmtSolverTypes.StructuralAD, EmtSolverTypes.Symbolic, EmtSolverTypes.Automatic):
         monkeypatch.setitem(emt_solver_factory.EMT_SOLVER_CLASS_MAP, solver_type, _RecordingSolver)
     structural_logger: Logger = Logger()
-    solver = emt_solver_factory.build_emt_solver(options=EmtOptions(solver_type=EmtSolverTypes.StructuralCompiled, sparse_solver=SparseSolver.KLU),
-                                                 problem=None, t0=0.0, t_end=1.0, h=1.0, logger=structural_logger)
+    solver: _RecordingSolver = emt_solver_factory.build_emt_solver(options=EmtOptions(solver_type=EmtSolverTypes.StructuralCompiled, sparse_solver=SparseSolver.UMFPACKTriangular),
+                                                                   problem=None, t0=0.0, t_end=1.0, h=1.0, logger=structural_logger)
     assert isinstance(solver.kwargs["sparse_solver_backend_provider"], SuperLUSparseBackendProvider)
     assert len(structural_logger) == 1
     symbolic_logger: Logger = Logger()
-    emt_solver_factory.build_emt_solver(options=EmtOptions(solver_type=EmtSolverTypes.Symbolic, sparse_solver=SparseSolver.KLU),
+    emt_solver_factory.build_emt_solver(options=EmtOptions(solver_type=EmtSolverTypes.Symbolic, sparse_solver=SparseSolver.UMFPACKTriangular),
                                         problem=None, t0=0.0, t_end=1.0, h=1.0, logger=symbolic_logger)
-    assert "sparse_solver KLU is ignored by the" in str(symbolic_logger)
+    assert "is unavailable:" in str(symbolic_logger)
+    assert "ignored" not in str(symbolic_logger)
+    assert len(symbolic_logger) == 1
     default_logger: Logger = Logger()
     emt_solver_factory.build_emt_solver(options=EmtOptions(solver_type=EmtSolverTypes.Symbolic), problem=None, t0=0.0, t_end=1.0, h=1.0, logger=default_logger)
     assert len(default_logger) == 0
@@ -486,7 +468,9 @@ def _klu_provider_or_skip() -> SparseLinearSolverBackendProvider:
 
     :return: Native KLU provider.
     """
-    provider, reason = sparse_selection.get_sparse_lu_provider_status(SparseSolver.KLU)
+    provider: SparseLinearSolverBackendProvider | None
+    reason: str
+    provider, reason = sparse_solve.get_sparse_lu_provider_status(SparseSolver.KLU)
     if provider is None:
         pytest.skip("native KLU runtime unavailable: " + reason)
     else:
@@ -508,3 +492,116 @@ def test_kundur_native_klu_matches_superlu(kundur_problem: EmtProblemDae, solver
         trajectories[label] = result[1]
     assert trajectories["superlu"].shape == trajectories["klu"].shape
     assert float(np.max(np.abs(trajectories["superlu"] - trajectories["klu"]))) <= 1e-8
+
+
+def test_emt_provider_precedes_initialization(kundur_problem: EmtProblemDae) -> None:
+    """Construction retains its provider for subsequent initialization and simulation.
+
+    :param kundur_problem: Existing physical EMT fixture, already constructed.
+    :return: None.
+    """
+    provider: SparseLinearSolverBackendProvider | None = kundur_problem.get_sparse_solver_backend_provider(kundur_problem.options.sparse_solver)
+    assert provider is not None
+    solver: StructuralVectorizedSolver | StructuralCompiledSolver | JitAdSolver | JitSymbolicSolver = emt_solver_factory.build_emt_solver(kundur_problem.options, kundur_problem, 0.0, 1.0e-5, 1.0e-5)
+    assert solver._sparse_solver_backend_provider is provider
+
+    # A generic helper must invalidate the binding for every registry input;
+    # none of these changes may silently reuse a previously allowed fallback.
+    problem: EmtProblemTemplate = _decay_problem()
+    options: EmtOptions = EmtOptions(sparse_solver=SparseSolver.SuperLU)
+    baseline_provider: SparseLinearSolverBackendProvider = SuperLUSparseBackendProvider()
+    problem.set_sparse_solver_backend_provider(baseline_provider, SparseSolver.SuperLU)
+    assert problem.get_sparse_solver_backend_provider(SparseSolver.SuperLU) is baseline_provider
+    assert problem.get_sparse_solver_backend_provider(SparseSolver.SuperLU, "missing_plugin") is None
+    assert problem.get_sparse_solver_backend_provider(SparseSolver.SuperLU, "", "different_directory") is None
+    assert problem.get_sparse_solver_backend_provider(SparseSolver.SuperLU, "", "", False) is None
+
+    options = EmtOptions(sparse_solver=SparseSolver.SuperLU,
+        external_sparse_solver_plugin_name="missing_lu_identity_regression_plugin")
+    logger: Logger = Logger()
+    fallback_solver: StructuralVectorizedSolver | StructuralCompiledSolver | JitAdSolver | JitSymbolicSolver = emt_solver_factory.build_emt_solver(options, problem, 0.0, 1.0e-5, 1.0e-5, logger=logger)
+    fallback_provider: SparseLinearSolverBackendProvider | None = problem.get_sparse_solver_backend_provider(
+        options.sparse_solver, options.external_sparse_solver_plugin_name,
+        options.external_sparse_solver_directory, options.allow_internal_sparse_fallback)
+    assert fallback_solver._sparse_solver_backend_provider is fallback_provider
+    assert fallback_provider is not baseline_provider
+    assert logger.warning_count() == 1
+    emt_solver_factory.build_emt_solver(options, problem, 0.0, 1.0e-5, 1.0e-5, logger=logger)
+    assert logger.warning_count() == 1
+
+    options = EmtOptions(sparse_solver=SparseSolver.SuperLU,
+        external_sparse_solver_plugin_name="missing_lu_identity_regression_plugin",
+        external_sparse_solver_directory="missing_lu_identity_regression_directory")
+    emt_solver_factory.build_emt_solver(options, problem, 0.0, 1.0e-5, 1.0e-5, logger=logger)
+    assert logger.warning_count() == 2
+    options = EmtOptions(sparse_solver=SparseSolver.SuperLU,
+        external_sparse_solver_plugin_name="missing_lu_identity_regression_plugin",
+        external_sparse_solver_directory="missing_lu_identity_regression_directory",
+        allow_internal_sparse_fallback=False)
+    with pytest.raises(FileNotFoundError):
+        emt_solver_factory.build_emt_solver(options, problem, 0.0, 1.0e-5, 1.0e-5, logger=logger)
+    with pytest.raises(FileNotFoundError):
+        run_emt_native_initialization(problem, options)
+    with pytest.raises(FileNotFoundError):
+        solve_periodic_initialization(problem, options)
+
+
+def test_emt_jit_solvers_use_provider() -> None:
+    """Both JIT families physically solve their sparse branch with the selected LU.
+
+    :return: None; a nonzero decay state forces real Newton work.
+    """
+    provider: SparseLinearSolverBackendProvider = _klu_provider_or_skip()
+    ad_problem: EmtProblemTemplate = _decay_problem()
+    ad_problem.init_guess[ad_problem.get_state_vars()[0].uid] = 1.0
+    symbolic_problem: EmtProblemTemplate = _decay_problem()
+    symbolic_problem.init_guess[symbolic_problem.get_state_vars()[0].uid] = 1.0
+    ad: JitAdSolver = JitAdSolver(ad_problem, 0.0, 5.0e-5, 1.0e-5,
+        method=DynamicIntegrationMethod.DaeBackEuler, dense_threshold=0,
+        newton_tolerance=1.0e-8, sparse_solver_backend_provider=provider)
+    symbolic: JitSymbolicSolver = JitSymbolicSolver(symbolic_problem, 0.0, 5.0e-5, 1.0e-5,
+        method=DynamicIntegrationMethod.DaeBackEuler, dense_threshold=0,
+        newton_tolerance=1.0e-8, sparse_solver_backend_provider=provider)
+    ad_result: tuple[np.ndarray, np.ndarray, np.ndarray, bool, bool] = ad.simulate()
+    symbolic_result: tuple[np.ndarray, np.ndarray, np.ndarray, bool, bool] = symbolic.simulate()
+    assert ad_result[4] and symbolic_result[4]
+    np.testing.assert_allclose(ad_result[1], symbolic_result[1], atol=1.0e-8, rtol=1.0e-8)
+    assert ad._sparse_linear_solver.get_stats()["solve_calls"] > 0.0
+    assert symbolic._sparse_factor_manager is not None
+    assert symbolic._sparse_factor_manager.get_stats()["solve_calls"] > 0.0
+
+
+def test_emt_initialization_uses_provider() -> None:
+    """Native reduced initialization reaches a real supplied provider below no dense path.
+
+    :return: None; verify the original physical state/algebraic operating point.
+    """
+    seed_problem: EmtProblemTemplate = build_single_state_single_algebraic_problem()[0]
+    # Persistent initialization keys contain symbol names. Rebuild the same
+    # equations with run-local names so this test always measures native work
+    # while leaving all user cache entries and global configuration untouched.
+    suffix: str = token_hex(8)
+    variables: list[Var]
+    variable: Var
+    for variables in (seed_problem.get_state_vars(), seed_problem.get_algebraic_vars(), seed_problem.get_diff_vars()):
+        for variable in variables:
+            variable.set_name(variable.name + "_" + suffix)
+    problem: EmtProblemTemplate = EmtProblemTemplate(
+        sys_block=seed_problem.sys_block, static_parameter_values_mapping=dict(),
+        glob_time=Var("time_" + suffix))
+    provider: CountingProvider = CountingProvider(_klu_provider_or_skip())
+    options: EmtOptions = EmtOptions(initialization_method=EmtInitializationMethod.ConsistentNewton,
+        sparse_solver=SparseSolver.KLU, init_dense_threshold=0, init_fix_seeded_states=False)
+    problem.set_sparse_solver_backend_provider(provider, SparseSolver.KLU)
+    explicit_result: ExplicitInitializationResult = run_common_explicit_initialization_for_test(problem)
+    assert explicit_result.converged
+    # Explicit propagation already solves y. Perturb its finite seed so native
+    # Newton must restore the original y=2 constraint through the selected LU.
+    problem.init_guess[problem.get_algebraic_vars()[0].uid] = 3.0
+    report: EmtInitializationReport = run_emt_native_initialization(problem, options)
+    print("INITIALIZATION_PROVIDER_PHASE", report.status, report.method_used, report.unknown_var_count, report.initial_residual_inf, report.final_residual_inf, report.message)
+    assert report.status == EmtInitializationStatus.RESOLVED
+    assert not report.persistent_cache_hit
+    assert provider.solves > 0 and provider.factorizations > 0
+    np.testing.assert_allclose(problem.get_x0(), np.array((2.0, 2.0)), atol=1.0e-9)
+    np.testing.assert_allclose(problem.get_dx0(), np.zeros(1), atol=1.0e-9)

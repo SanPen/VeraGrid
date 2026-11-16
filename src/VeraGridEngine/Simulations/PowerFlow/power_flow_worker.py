@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 import numpy as np
-from typing import Union, Dict, Tuple, TYPE_CHECKING
+from typing import Union, Dict, Tuple, List, TYPE_CHECKING
 
 import VeraGridEngine.Simulations.PowerFlow as pflw
 from VeraGridEngine.enumerations import SolverType, GeneratorControlMode, BusMode, GeneratorType, ShuntControlMode
@@ -29,8 +29,11 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls import compute_slack_distribution
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.static_generator_droop import StaticGeneratorDroop
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.shunt_droop import ShuntDroop
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Aggregation.area import Area
+from VeraGridEngine.Devices.Branches.switch import Switch
+from VeraGridEngine.Devices.types import BRANCH_TYPES, INJECTION_DEVICE_TYPES
 from VeraGridEngine.basic_structures import CxVec, Vec
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -1013,7 +1016,10 @@ def multi_island_pf_nc(nc: NumericalCircuit,
                 V0 = nc.bus_data.Vbus
 
     static_droop: StaticGeneratorDroop = StaticGeneratorDroop(nc)
-    has_static_droop: bool = len(static_droop.idx) > 0
+    shunt_droop: ShuntDroop = ShuntDroop(nc)
+    # Only the complete-support formulation carries the voltage-dependent droop injections.
+    has_static_droop: bool = (len(static_droop.idx) + len(static_droop.shunt_idx) + len(shunt_droop.idx) > 0
+                             or (len(static_droop.generator_idx) > 0 and options.solver_type != SolverType.HELM))
     if has_static_droop or (nc.active_branch_data.any_pf_control and options.solver_type != SolverType.HELM):
 
         results = __multi_island_pf_nc_complete_support(
@@ -1048,7 +1054,9 @@ def multi_island_pf_nc(nc: NumericalCircuit,
 
         V_for_q = results.voltage[nc.bus_data.original_idx] if nc.topology_performed else results.voltage
         q0_gen = _get_generator_q_for_split(nc=nc, V=V_for_q)
-        droop_q: Vec = static_droop.delta_q_bus(V_for_q) * nc.Sbase
+        # The result splitter already evaluates generator k_droop; exclude it here.
+        droop_q: Vec = (static_droop.delta_q_bus(V_for_q, include_generators=False)
+                       + shunt_droop.delta_q_bus(V_for_q)) * nc.Sbase
         if nc.topology_performed:
             droop_q = nc.propagate_bus_result(droop_q)
         else:
@@ -1079,6 +1087,13 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         # Reconstruct the fixed shunt-like device reactive power from the final
         # solved voltage so the reported device values remain in nodal balance.
         results.shunt_q = -(nc.shunt_data.Y.imag * np.power(vm_abs[nc.shunt_data.bus_idx], 2.0)) * nc.shunt_data.active
+        # A droop shunt has no compiled admittance; it reports the Q its law gives at the final voltage
+        results.shunt_q[shunt_droop.idx] = -shunt_droop.q(V_for_q) * nc.Sbase
+        if len(static_droop.shunt_idx) > 0:
+            first_shunt: int = len(static_droop.idx)
+            last_shunt: int = first_shunt + len(static_droop.shunt_idx)
+            legacy_power: CxVec = static_droop.power(V_for_q[static_droop.bus_idx])[first_shunt:last_shunt]
+            results.shunt_q[static_droop.shunt_idx] = -legacy_power.imag * nc.Sbase
 
         # Split only the remaining generator-like reactive power after removing
         # the fixed compiled bus contribution.
@@ -1302,6 +1317,65 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         return results
 
 
+def _recover_ideal_switch_flows(circuit: MultiCircuit, results: PowerFlowResults,
+                               t_idx: int | None) -> None:
+    """Recover reduced ideal AC-switch flows at an unambiguous KCL boundary.
+
+    :param circuit: Original circuit, before buses joined by switches were merged.
+    :param results: Converged result with propagated original-bus voltages.
+    :param t_idx: Snapshot or profile index used by the solved circuit.
+    :return: None.
+    """
+    branch_indices: Dict[BRANCH_TYPES, int] = circuit.get_branches_index_dict(
+        add_vsc=False, add_hvdc=False, add_switch=True)
+    bus_indices: Dict[Bus, int] = circuit.get_bus_index_dict()
+    switch: Switch
+    for switch in circuit.get_switches():
+        # The tiny default impedance denotes an ideal switch; finite impedance,
+        # retained switches, and open switches keep their existing results.
+        if (switch.get_active_at(t_idx) and not switch.retained and switch.reducible
+                and abs(switch.R) + abs(switch.X) < 1.0e-18
+                and switch.bus_from is not None and switch.bus_to is not None
+                and not switch.bus_from.is_dc and not switch.bus_to.is_dc
+                and switch.bus_from.Vnom == switch.bus_to.Vnom):
+            recovered: bool = False
+            boundary: Bus
+            for boundary in (switch.bus_from, switch.bus_to):
+                associated_branches: List[BRANCH_TYPES]
+                associated_injections: List[INJECTION_DEVICE_TYPES]
+                associated_branches, associated_injections = circuit.get_bus_devices(boundary)
+                active_branches: List[BRANCH_TYPES] = list(
+                    branch for branch in associated_branches if branch.get_active_at(t_idx))
+                if (not recovered and len(active_branches) == 2
+                        and not any(injection.get_active_at(t_idx) for injection in associated_injections)):
+                    neighbor: BRANCH_TYPES = active_branches[0] if active_branches[1] is switch else active_branches[1]
+                    neighbor_idx: int = branch_indices.get(neighbor, -1)
+                    if neighbor_idx > -1 and not neighbor.reducible:
+                        # The other terminal flow is known; KCL determines the
+                        # switch flow exactly without changing the solved network.
+                        boundary_power: complex = complex(
+                            results.Sf[neighbor_idx] if neighbor.bus_from is boundary else results.St[neighbor_idx])
+                        switch_idx: int = branch_indices[switch]
+                        from_idx: int = bus_indices[switch.bus_from]
+                        to_idx: int = bus_indices[switch.bus_to]
+                        results.Sf[switch_idx] = -boundary_power if switch.bus_from is boundary else boundary_power
+                        results.St[switch_idx] = -results.Sf[switch_idx]
+                        results.If[switch_idx] = np.conj(results.Sf[switch_idx]
+                                                         / (circuit.Sbase * results.voltage[from_idx] + 1.0e-20))
+                        results.It[switch_idx] = np.conj(results.St[switch_idx]
+                                                         / (circuit.Sbase * results.voltage[to_idx] + 1.0e-20))
+                        results.losses[switch_idx] = 0.0
+                        results.loading[switch_idx] = results.Sf[switch_idx] / (switch.get_rate_at(t_idx) + 1.0e-9)
+                        results.Vbranch[switch_idx] = results.voltage[from_idx] - results.voltage[to_idx]
+                        recovered = True
+                    else:
+                        pass
+                else:
+                    pass
+        else:
+            pass
+
+
 def multi_island_pf(multi_circuit: MultiCircuit,
                     options: PowerFlowOptions,
                     opf_results: VALID_OPF_RESULTS | None = None,
@@ -1339,5 +1413,11 @@ def multi_island_pf(multi_circuit: MultiCircuit,
     )
 
     res = multi_island_pf_nc(nc=nc, options=options, logger=logger)
+
+    # Reconstruct only uniquely determined ideal-switch outputs after solving.
+    if nc.topology_performed and res.converged:
+        _recover_ideal_switch_flows(circuit=multi_circuit, results=res, t_idx=t)
+    else:
+        pass
 
     return res

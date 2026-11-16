@@ -87,7 +87,7 @@ def test_three_phase_nonconvergence_preserves_branch_results(disabled_lines: tup
         assert np.all(branch_values == 0.0)
 
 
-def test_ieee_13_bus_feeder_driver():
+def ieee_13_bus_feeder_driver():
     """
     This test builds the IEEE 13-Bus Test Feeder and compares the obtained results with the reference values.
     Uses power_flow_driver.py
@@ -451,6 +451,12 @@ def test_ieee_13_bus_feeder_driver():
     XFM_1.phases = np.array([1, 2, 3])
     grid.add_transformer2w(XFM_1)
 
+    return grid
+
+def test_ieee_13_bus_feeder_driver():
+
+    grid = ieee_13_bus_feeder_driver()
+
     # ------------------------------------------------------------------------------------------------------------------
     # Run power flow
     # ------------------------------------------------------------------------------------------------------------------
@@ -459,6 +465,8 @@ def test_ieee_13_bus_feeder_driver():
     # ----------------------------------------------------------------------------------------------------------------------
     # Results
     # ----------------------------------------------------------------------------------------------------------------------
+    # TODO: Check these reference results
+
     Ua_reference = np.array(
         [1. + 0.j, 0. + 0.j, 0. + 0.j, 0.99690934 - 0.00115138j, 0.97231175 - 0.01309998j,
          0.96701492 - 0.04891478j, 0.96511924 - 0.04921662j, 0. + 0.j, 0.96012162 - 0.05287428j, 0.967015 - 0.04891481j,

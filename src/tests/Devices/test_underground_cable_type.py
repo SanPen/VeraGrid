@@ -185,9 +185,9 @@ def test_resistance_input_modes_produce_equivalent_matrices() -> None:
     direct.core_dc_resistance = material.core_dc_resistance
     direct.sheath_dc_resistance = material.sheath_dc_resistance
     # Inactive material values must not influence or invalidate the DC input.
-    direct.core_resistivity = float('nan')
+    direct.core_resistivity = 0.0
     direct.core_filling_factor = 0.0
-    direct.sheath_resistivity = float('nan')
+    direct.sheath_resistivity = 0.0
     direct.sheath_filling_factor = 0.0
     system = build_pf_606_system(direct)
     np.testing.assert_allclose(system.z_primitive, reference.z_primitive, rtol=1e-7, atol=1e-9)
@@ -222,16 +222,45 @@ def test_material_mode_uses_derived_resistance_and_preserves_legacy_matrices() -
 
 
 @pytest.mark.parametrize('layer', ['core', 'sheath'])
-@pytest.mark.parametrize('resistance', [0.0, -1.0, float('nan'), float('inf')])
+@pytest.mark.parametrize('resistance', [0.0, -1.0])
 def test_invalid_direct_resistance_is_reported_before_calculation(layer: str, resistance: float) -> None:
+    """Report finite non-positive direct resistances during cable calculation.
+
+    :param layer: Cable layer receiving the resistance.
+    :param resistance: Finite invalid resistance value.
+    :return: None.
+    """
     cable = build_pf_606_cable()
     system = build_pf_606_system(cable)
     cable.set_value(cable.registered_properties['resistance_input'], None, CableResistanceInput.DcResistance)
-    setattr(cable, f'{layer}_dc_resistance', resistance)
+    if layer == 'core':
+        cable.core_dc_resistance = resistance
+    else:
+        cable.sheath_dc_resistance = resistance
     logger = Logger()
     assert not system.compute(logger=logger)
     assert logger.has_errors()
     assert f'{layer.capitalize()} DC resistance' in str(logger)
+
+
+@pytest.mark.parametrize('layer', ['core', 'sheath'])
+@pytest.mark.parametrize('resistance', [float('nan'), float('inf')])
+def test_nonfinite_direct_resistance_is_rejected_at_assignment(layer: str, resistance: float) -> None:
+    """Reject non-finite direct resistances before cable calculation.
+
+    :param layer: Cable layer receiving the resistance.
+    :param resistance: Non-finite resistance value.
+    :return: None.
+    """
+    cable: dev.UndergroundCableType = build_pf_606_cable()
+
+    # Device values must remain finite even when the selected input mode would later ignore a field.
+    if layer == 'core':
+        with pytest.raises(ValueError, match='Non-finite value rejected'):
+            cable.core_dc_resistance = resistance
+    else:
+        with pytest.raises(ValueError, match='Non-finite value rejected'):
+            cable.sheath_dc_resistance = resistance
 
 
 def test_direct_resistance_survives_native_roundtrip(tmp_path: Path) -> None:

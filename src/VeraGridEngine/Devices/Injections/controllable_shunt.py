@@ -38,10 +38,17 @@ class ControllableShunt(ShuntParent):
         '_Vmin',
         '_Vmax',
         '_Vset_prof',
+        '_Qdroop',
         'control_mode',
+        'Snom',
+        'droop',
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(prop_name='Snom', units='MVA', tpe=float,
+               definition='Rated power for Q-V droop control.', cat=[PrpCat.PF]),
+        GCProp(prop_name='droop', units='%', tpe=float,
+               definition='Voltage droop at rated reactive power; zero Q at Vset.', cat=[PrpCat.PF]),
         GCProp(
             prop_name='control_mode',
             units='',
@@ -130,7 +137,7 @@ class ControllableShunt(ShuntParent):
             prop_name='Vmin',
             units='p.u.',
             tpe=float,
-            definition='Lower range voltage value when regulating with Discrete mode',
+            definition='Lower voltage band in Discrete mode, or measurement clamp in Q-V droop mode.',
             cat=[PrpCat.PF, PrpCat.OPF],
             dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_vmin_pu,
         ),
@@ -147,9 +154,17 @@ class ControllableShunt(ShuntParent):
             prop_name='Vmax',
             units='p.u.',
             tpe=float,
-            definition='Upper range voltage value when regulating with Discrete mode.',
+            definition='Upper voltage band in Discrete mode, or measurement clamp in Q-V droop mode.',
             cat=[PrpCat.PF, PrpCat.OPF],
             dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_vmax_pu,
+        ),
+        GCProp(
+            prop_name='Qdroop',
+            units='MVAr/p.u.',
+            tpe=float,
+            definition='Q-V droop slope: capacitive MVAr per p.u. of control voltage below Vset, '
+                       'with the susceptance kept within [Bmin, Bmax] (MVAr at 1 p.u., capacitive positive).',
+            cat=[PrpCat.PF],
         ),
     )
 
@@ -180,13 +195,16 @@ class ControllableShunt(ShuntParent):
                  vset: float = 1.0,
                  vmin: float = 0.9,
                  vmax: float = 1.1,
+                 qdroop: float = 0.0,
                  mttf: float = 0.0,
                  mttr: float = 0.0,
                  capex: float = 0.0,
                  opex: float = 0.0,
                  control_bus: Bus = None,
                  control_mode: ShuntControlMode = ShuntControlMode.Continuous,
-                 build_status: BuildStatus = BuildStatus.Commissioned):
+                 build_status: BuildStatus = BuildStatus.Commissioned,
+                 Snom: float = 0.0,
+                 droop: float = 3.0):
         """
         The controllable shunt object implements the so-called ZIP model, in which the load can be
         represented by a combination of power (P), current(I), and impedance (Z).
@@ -198,6 +216,7 @@ class ControllableShunt(ShuntParent):
         :param active: Is the load active?
         :param mttf: Mean time to failure in hours
         :param mttr: Mean time to recovery in hours
+        :param qdroop: Q-V droop slope in MVAr/p.u., used by ShuntControlMode.QVDroop
         """
         ShuntParent.__init__(self,
                              name=name,
@@ -247,6 +266,8 @@ class ControllableShunt(ShuntParent):
 
         self.control_bus = control_bus
 
+        self.Qdroop = float(qdroop)
+
         # Voltage module set point (p.u.)
         self.Vset = float(vset)
 
@@ -257,6 +278,8 @@ class ControllableShunt(ShuntParent):
         self.Vmax = float(vmax)
 
         self.control_mode: ShuntControlMode = control_mode
+        self.Snom: float = Snom
+        self.droop: float = droop
 
     @property
     def step(self):
@@ -543,6 +566,25 @@ class ControllableShunt(ShuntParent):
         :return: None
         """
         self._Vset = float(val)
+
+    @property
+    def Qdroop(self) -> float:
+        """
+        Get ``Qdroop``.
+
+        :return: float
+        """
+        return self._Qdroop
+
+    @Qdroop.setter
+    def Qdroop(self, val: float) -> None:
+        """
+        Set ``Qdroop``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Qdroop = float(val)
 
     @property
     def Vmax(self) -> float:

@@ -18,10 +18,10 @@ expression. Every construct the analyzer cannot prove affine is NONLINEAR.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, FrozenSet, List, Set, Tuple
+from typing import Dict, FrozenSet, List, Set, Tuple
 
 from VeraGridEngine.enumerations import ExpressionAffinity
-from VeraGridEngine.Utils.Symbolic.symbolic import BinOp, Const, Func, Func2, UnOp, Var
+from VeraGridEngine.Utils.Symbolic.symbolic import BinOp, Comparison, Const, Expr, Func, Func2, UnOp, Var
 
 
 class SymbolRole(Enum):
@@ -84,7 +84,7 @@ class StructuralAffinityAnalyzer:
         self._excitation_names: FrozenSet[str] = frozenset(excitation_names)
         self._epoch_constant_names: FrozenSet[str] = frozenset(epoch_constant_names)
         # Each entry keeps the node alive so that its identity cannot be reused.
-        self._affinity_memo: Dict[int, Tuple[Any, ExpressionAffinity]] = dict()
+        self._affinity_memo: Dict[int, Tuple[Expr | Comparison, ExpressionAffinity]] = dict()
 
     @staticmethod
     def _rank(affinity: ExpressionAffinity) -> int:
@@ -178,7 +178,7 @@ class StructuralAffinityAnalyzer:
             role = SymbolRole.UNRESOLVED
         return role
 
-    def _is_traversable(self, node: Any) -> bool:
+    def _is_traversable(self, node: Expr | Comparison) -> bool:
         """
         Tell whether a node belongs to the explicitly supported operator set.
 
@@ -199,7 +199,7 @@ class StructuralAffinityAnalyzer:
         return result
 
     @staticmethod
-    def _children(node: Any) -> List[Any]:
+    def _children(node: Expr) -> List[Expr]:
         """
         Return the operands of a traversable node.
 
@@ -208,7 +208,7 @@ class StructuralAffinityAnalyzer:
         """
         node_type: type = type(node)
         if node_type is BinOp:
-            children: List[Any] = [node.left, node.right]
+            children: List[Expr] = [node.left, node.right]
         elif node_type is UnOp:
             children = [node.operand]
         elif node_type is Func:
@@ -217,7 +217,7 @@ class StructuralAffinityAnalyzer:
             children = [node.arg1, node.arg2]
         return children
 
-    def _leaf_affinity(self, node: Any) -> ExpressionAffinity:
+    def _leaf_affinity(self, node: Const | Var) -> ExpressionAffinity:
         """
         Classify a Const or Var node.
 
@@ -262,7 +262,7 @@ class StructuralAffinityAnalyzer:
         elif base == ExpressionAffinity.NONLINEAR:
             result = ExpressionAffinity.NONLINEAR
         elif base == ExpressionAffinity.AFFINE:
-            right: Any = node.right
+            right: Expr = node.right
             if type(right) is Const and right.value is not None and right.value == 1:
                 result = ExpressionAffinity.AFFINE
             elif type(right) is Const and right.value is not None and right.value == 0:
@@ -273,7 +273,7 @@ class StructuralAffinityAnalyzer:
             result = self._higher(base, exponent)
         return result
 
-    def _combine(self, node: Any, operands: List[ExpressionAffinity]) -> ExpressionAffinity:
+    def _combine(self, node: Expr, operands: List[ExpressionAffinity]) -> ExpressionAffinity:
         """
         Classify a traversable node from the affinities of its operands.
 
@@ -306,17 +306,17 @@ class StructuralAffinityAnalyzer:
                 pass
         return result
 
-    def classify(self, expr: Any) -> ExpressionAffinity:
+    def classify(self, expr: Expr | Comparison) -> ExpressionAffinity:
         """
         Classify an expression with respect to the unknowns.
 
         Unsupported node types, non-whitelisted operators and non-Expr objects
         are NONLINEAR. The traversal is iterative.
 
-        :param expr: Expression (or any row object) to classify.
+        :param expr: Symbolic expression or comparison to classify.
         :return: Affinity of the expression.
         """
-        pending: List[Tuple[Any, bool]] = [(expr, False)]
+        pending: List[Tuple[Expr | Comparison, bool]] = [(expr, False)]
         while len(pending) > 0:
             node, expanded = pending.pop()
             key: int = id(node)
@@ -338,19 +338,19 @@ class StructuralAffinityAnalyzer:
                     pending.append((child, False))
         return self._affinity_memo[id(expr)][1]
 
-    def _collect_support(self, expr: Any) -> Tuple[FrozenSet[int], bool]:
+    def _collect_support(self, expr: Expr | Comparison) -> Tuple[FrozenSet[int], bool]:
         """
         Collect the unknown support of an expression.
 
-        :param expr: Expression (or any row object) to inspect.
+        :param expr: Symbolic expression or comparison to inspect.
         :return: Support (all unknowns when opaque) and the opacity flag.
         """
         visited: Set[int] = set()
         support: Set[int] = set()
         opaque: bool = False
-        pending: List[Any] = [expr]
+        pending: List[Expr | Comparison] = [expr]
         while len(pending) > 0:
-            node: Any = pending.pop()
+            node: Expr | Comparison = pending.pop()
             node_type: type = type(node)
             if id(node) in visited:
                 pass
@@ -381,7 +381,7 @@ class StructuralAffinityAnalyzer:
             result = frozenset(support)
         return result, opaque
 
-    def get_unknown_support(self, expr: Any) -> FrozenSet[int]:
+    def get_unknown_support(self, expr: Expr | Comparison) -> FrozenSet[int]:
         """
         Return the unknown uids an expression references.
 
@@ -389,16 +389,16 @@ class StructuralAffinityAnalyzer:
         contains a node outside the supported operator set, every unknown is
         returned.
 
-        :param expr: Expression (or any row object) to inspect.
+        :param expr: Symbolic expression or comparison to inspect.
         :return: Unknown uids referenced by the expression.
         """
         return self._collect_support(expr)[0]
 
-    def is_opaque(self, expr: Any) -> bool:
+    def is_opaque(self, expr: Expr | Comparison) -> bool:
         """
         Tell whether an expression contains a node outside the supported operator set.
 
-        :param expr: Expression (or any row object) to inspect.
+        :param expr: Symbolic expression or comparison to inspect.
         :return: True when the support of the expression cannot be determined structurally.
         """
         return self._collect_support(expr)[1]

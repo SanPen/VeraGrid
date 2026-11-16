@@ -19,6 +19,7 @@ class CgmesProperty(BaseProperty):
         "out_of_the_standard",
         "profiles",
         "default_value",
+        "multiplicity",
     )
 
     def __init__(self, property_name: str,
@@ -31,7 +32,8 @@ class CgmesProperty(BaseProperty):
                  comment='',
                  out_of_the_standard=False,
                  profiles: List[CgmesProfileType] = (),
-                 default_value: Any = None):
+                 default_value: Any = None,
+                 multiplicity: str | None = None):
         """
         CIM property for soft type checking
         :param property_name: name of the property
@@ -45,6 +47,7 @@ class CgmesProperty(BaseProperty):
         :param out_of_the_standard: Is this property out of the standard?
         :param profiles: List of profiles where this property should appear
         :param default_value: Design-time default value used by conversion when missing
+        :param multiplicity: RDF multiplicity token, for example ``2..n``.
         """
         BaseProperty.__init__(self,
                               property_name=property_name,
@@ -65,6 +68,7 @@ class CgmesProperty(BaseProperty):
         self.out_of_the_standard = out_of_the_standard
         self.profiles = profiles
         self.default_value = default_value
+        self.multiplicity: str | None = multiplicity
 
     def get_dict(self) -> Dict[str, Any]:
         """
@@ -78,5 +82,6 @@ class CgmesProperty(BaseProperty):
                 'max_chars': self.max_chars,
                 'profiles': ', '.join([a.value for a in self.profiles]),
                 'default_value': self.default_value,
+                'multiplicity': self.multiplicity,
                 "descriptions": self.description,
                 'comment': self.comment}

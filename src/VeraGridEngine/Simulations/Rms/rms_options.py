@@ -27,6 +27,19 @@ class RmsOptions(OptionsTemplate):
         "time_step",
         "simulation_time",
         "tolerance",
+        "use_weighted_newton_correction",
+        "weighted_newton_absolute_tolerance",
+        "weighted_newton_relative_tolerance",
+        "bdf_absolute_tolerance",
+        "bdf_relative_tolerance",
+        "bdf_linear_solver",
+        "bdf_suppress_algebraic",
+        "bdf_max_failures",
+        "bdf_max_steps",
+        "bdf_max_order",
+        "bdf_min_step",
+        "bdf_initial_step",
+        "bdf_max_step",
         "use_init_values",
         "max_iter",
         "init_fix_pf_bus_voltages",
@@ -49,6 +62,19 @@ class RmsOptions(OptionsTemplate):
         GCProp(key="time_step", tpe=float),
         GCProp(key="simulation_time", tpe=float),
         GCProp(key="tolerance", tpe=float),
+        GCProp(key="use_weighted_newton_correction", tpe=bool),
+        GCProp(key="weighted_newton_absolute_tolerance", tpe=float),
+        GCProp(key="weighted_newton_relative_tolerance", tpe=float),
+        GCProp(key="bdf_absolute_tolerance", tpe=float),
+        GCProp(key="bdf_relative_tolerance", tpe=float),
+        GCProp(key="bdf_linear_solver", tpe=str),
+        GCProp(key="bdf_suppress_algebraic", tpe=bool),
+        GCProp(key="bdf_max_failures", tpe=int),
+        GCProp(key="bdf_max_steps", tpe=int),
+        GCProp(key="bdf_max_order", tpe=int),
+        GCProp(key="bdf_min_step", tpe=float),
+        GCProp(key="bdf_initial_step", tpe=float),
+        GCProp(key="bdf_max_step", tpe=float),
         GCProp(key="use_init_values", tpe=bool),
         GCProp(key="max_iter", tpe=int),
         GCProp(key="init_fix_pf_bus_voltages", tpe=bool),
@@ -80,14 +106,44 @@ class RmsOptions(OptionsTemplate):
                  fmi_me_newton_max_iterations: int = 20,
                  fmi_me_max_continuous_states: int = 128,
                  fmi_me_max_runtime_evaluations_per_step: int = 100000,
-                 sparse_solver: SparseSolver = SparseSolver.SuperLU) -> None:
+                 sparse_solver: SparseSolver = SparseSolver.SuperLU,
+                 use_weighted_newton_correction: bool = False,
+                 weighted_newton_absolute_tolerance: float = 1e-6,
+                 weighted_newton_relative_tolerance: float = 1e-3,
+                 bdf_absolute_tolerance: float = 1e-6,
+                 bdf_relative_tolerance: float = 1e-3,
+                 bdf_max_step: float = 0.01,
+                 bdf_initial_step: float = 0.0,
+                 bdf_min_step: float = 0.0,
+                 bdf_max_order: int = 5,
+                 bdf_max_steps: int = 100000,
+                 bdf_max_failures: int = 10,
+                 bdf_suppress_algebraic: bool = False,
+                 bdf_linear_solver: str = "sparse") -> None:
         """
         RmsOptions
         :param time_step: time step of the simulations (s)
         :param simulation_time: simulation time (s)
         :param max_iter: max number of iterations
         :param init_fix_pf_bus_voltages: Keep RMS bus voltages fixed at their power-flow seeds during consistent initialization.
-        :param tolerance: Integration tolerance
+        :param tolerance: Absolute Newton residual tolerance in the default
+            mode, also used for the initial algebraic projection.
+        :param use_weighted_newton_correction: Legacy setting; Backward Euler now
+            consistently uses the residual norm and rejects this when enabled.
+        :param weighted_newton_absolute_tolerance: Absolute scale for the
+            weighted correction norm.
+        :param weighted_newton_relative_tolerance: Relative scale for the
+            weighted correction norm.
+        :param bdf_absolute_tolerance: Absolute scale for adaptive BDF step error.
+        :param bdf_relative_tolerance: Relative scale for adaptive BDF step error.
+        :param bdf_max_step: Maximum BDF1--5 internal step, also capped by time_step.
+        :param bdf_initial_step: BDF1--5 first step; zero selects automatic startup.
+        :param bdf_min_step: Smallest permitted BDF1--5 step.
+        :param bdf_max_order: Highest BDF1--5 order, from one through five.
+        :param bdf_max_steps: Total accepted-step work limit.
+        :param bdf_max_failures: Consecutive failures of each kind before stopping.
+        :param bdf_suppress_algebraic: Exclude algebraic coordinates from the step error norm.
+        :param bdf_linear_solver: Sparse LU, dense LU or GMRES for BDF1--5.
         :param integration_method: Integration method (default Backward Euler)
         :param fmi_state_event_time_tolerance: Absolute FMI ME event-time tolerance in seconds.
         :param fmi_state_event_max_iterations: Maximum FMI ME event bisections.
@@ -110,6 +166,39 @@ class RmsOptions(OptionsTemplate):
         self.time_step: float = time_step
         self.simulation_time: float = simulation_time
         self.tolerance: float = tolerance
+        for label, value in (
+            ("absolute", weighted_newton_absolute_tolerance),
+            ("relative", weighted_newton_relative_tolerance),
+        ):
+            if not math.isfinite(value) or value <= 0.0:
+                raise ValueError(f"RMS weighted Newton {label} tolerance must be finite and positive")
+        self.use_weighted_newton_correction: bool = bool(use_weighted_newton_correction)
+        self.weighted_newton_absolute_tolerance: float = weighted_newton_absolute_tolerance
+        self.weighted_newton_relative_tolerance: float = weighted_newton_relative_tolerance
+        for label, value in (("absolute", bdf_absolute_tolerance),
+                             ("relative", bdf_relative_tolerance)):
+            if not math.isfinite(value) or value <= 0.0:
+                raise ValueError(f"RMS adaptive BDF {label} tolerance must be finite and positive")
+        self.bdf_absolute_tolerance = bdf_absolute_tolerance
+        self.bdf_relative_tolerance = bdf_relative_tolerance
+        if (not math.isfinite(bdf_max_step) or bdf_max_step <= 0
+                or not math.isfinite(bdf_min_step) or bdf_min_step < 0 or bdf_min_step > bdf_max_step
+                or not math.isfinite(bdf_initial_step) or bdf_initial_step < 0
+                or bdf_initial_step > bdf_max_step):
+            raise ValueError("Invalid BDF timestep limits; zero initial step selects automatic startup")
+        if (any(not isinstance(value, int) for value in (bdf_max_order, bdf_max_steps, bdf_max_failures))
+                or not 1 <= bdf_max_order <= 5 or bdf_max_steps < 1 or bdf_max_failures < 1):
+            raise ValueError("Invalid BDF order or work limits")
+        if bdf_linear_solver not in ("sparse", "dense", "gmres"):
+            raise ValueError("BDF linear solver must be sparse, dense or gmres")
+        self.bdf_max_step = bdf_max_step
+        self.bdf_initial_step = bdf_initial_step
+        self.bdf_min_step = bdf_min_step
+        self.bdf_max_order = bdf_max_order
+        self.bdf_max_steps = bdf_max_steps
+        self.bdf_max_failures = bdf_max_failures
+        self.bdf_suppress_algebraic = bdf_suppress_algebraic
+        self.bdf_linear_solver = bdf_linear_solver
         self.use_init_values: bool = use_init_values
         self.max_iter: int = max_iter
         self.init_fix_pf_bus_voltages: bool = init_fix_pf_bus_voltages

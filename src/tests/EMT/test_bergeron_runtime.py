@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Physical checks for coupled Bergeron propagation and resistive losses."""
 from types import SimpleNamespace
 
@@ -5,7 +9,7 @@ import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import (
+from VeraGridEngine.Templates.Emt.line.bergeron_line_emt_template import (
     BergeronHistoryRuntime, get_bergeron_line_emt_template,
 )
 

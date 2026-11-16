@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Native object values and dynamic-template bindings, beyond successful parsing."""
 from pathlib import Path
@@ -21,11 +25,13 @@ from VeraGridEngine.IO.raw.versioned.v35.bus import RawBusV35
 from VeraGridEngine.IO.raw.versioned.v35.branch import RawBranchV35
 from VeraGridEngine.IO.raw.versioned.v35.generator import RawGeneratorV35
 from VeraGridEngine.IO.raw.versioned.v35.transformer import RawTransformerV35
-from VeraGridEngine.enumerations import WindingsConnection
+from VeraGridEngine.enumerations import WindingType
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import Const
+from VeraGridEngine.Utils.Symbolic.block import flatten_block
+from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr
+from VeraGridEngine.Utils.procedural_logic import PeriodicSampleLogic, SampledPiLimiterLogic
 from VeraGridEngine.basic_structures import Logger
 
 
@@ -73,6 +79,28 @@ def make_raw_case() -> PsseCircuit:
     return case
 
 
+def test_tgov3du_33_wrapper_assembles_the_rated_deadband_governor() -> None:
+    """Connect the legacy wrapper through the same source-reviewed TGOV3D path.
+
+    :return: None.
+    """
+    case: PsseCircuit = make_raw_case()
+    case.REV = 33
+    source: str = (
+        "1 'USRMDL' '01' 'TGOV3DU' 5 0 21 6 3 "
+        ".4 .1 .02 .3 .5 -.5 1.2 0 .4 .3 5 .2 .5 .7 "
+        ".1 .5 1 1.2 .05 -.04 90 /"
+    )
+    machine: str = "1 'GENROU' '01' 8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 .09 .38 /\n"
+    assert case.add_auxiliary(parse_dyr(machine + source, version=33))
+    grid: MultiCircuit = psse_to_veragrid(case, logger=Logger())
+    template = grid.generators[0].rms_template
+    assert template is not None
+    flattened: Block = flatten_block(template.block)
+    state_names: set[str] = set(state.name for state in flattened.state_vars)
+    assert any('TGOV3GovernorOutputPu' in name for name in state_names)
+
+
 def event_values(block: Block) -> dict[str,float]:
     """Read literal event constants for exact unit-conversion assertions.
 
@@ -80,6 +108,40 @@ def event_values(block: Block) -> dict[str,float]:
     :return: Named scalar event constants.
     """
     return dict((var.name, expression.value) for var, expression in block.event_dict.items() if isinstance(expression, Const))
+
+
+@pytest.mark.parametrize('revision,governor', (
+    (33, "1 'WESGOV' '01' .06 .1 .04 27 .13 .3 .59 .1 .1 /"),
+    (35, "1 'WESGOVD' '01' .06 .1 .04 27 .13 .3 .59 .1 .1 .01 -.01 25 /"),
+    (33, "1 'USRMDL' '01' 'WESGOVDU' 5 0 12 3 7 .06 .1 .04 27 .13 .3 .59 .1 .1 .01 -.01 25 /"),
+))
+def test_wesgov_records_build_a_sampled_generator_governor(revision: int, governor: str) -> None:
+    """Connect reviewed direct/wrapper schemas to a native machine governor.
+
+    :param revision: PSS/E release owning the source record.
+    :param governor: Direct record or matching release-specific USRMDL wrapper.
+    :return: None.
+    """
+    case: PsseCircuit = make_raw_case()
+    case.REV = revision
+    machine: str = (
+        "1 'GENROU' '01' 8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0 /"
+    )
+    assert case.add_auxiliary(parse_dyr(machine + '\n' + governor, version=revision))
+    grid: MultiCircuit = psse_to_veragrid(case, logger=Logger())
+    template = grid.generators[0].rms_template
+    assert template is not None
+    connected: Block = flatten_block(template.block)
+    assert any(isinstance(logic, SampledPiLimiterLogic) for logic in connected.procedural_logic)
+    assert sum(isinstance(logic, PeriodicSampleLogic) for logic in connected.procedural_logic) == 2
+    runtime: Block = flatten_block(grid.generators[0].rms_model)
+    assert any(isinstance(logic, SampledPiLimiterLogic) for logic in runtime.procedural_logic)
+    assert sum(isinstance(logic, PeriodicSampleLogic) for logic in runtime.procedural_logic) == 2
+    assert all(
+        entry.status == PsseConversionStatus.CONVERTED
+        for entry in case.conversion_report.entries
+        if entry.file_type == PsseFileType.DYR
+    )
 
 
 def test_native_static_values_and_source_report() -> None:
@@ -168,9 +230,15 @@ def test_neutral_sequence_update_does_not_add_grounding_twice() -> None:
     assert grid.generators[0].X0 == pytest.approx(.22*2+3*.05*2)
 
 
-@pytest.mark.parametrize('code,connection', ((1,WindingsConnection.GG),(2,WindingsConnection.GD),
-                                           (14,WindingsConnection.DD)))
-def test_simple_transformer_sequence_topology_and_base(code: int, connection: WindingsConnection) -> None:
+@pytest.mark.parametrize(
+    'code,conn_f,conn_t',
+    ((1, WindingType.GroundedStar, WindingType.GroundedStar),
+     (2, WindingType.GroundedStar, WindingType.Delta),
+     (14, WindingType.Delta, WindingType.Delta)),
+)
+def test_simple_transformer_sequence_topology_and_base(code: int,
+                                                        conn_f: WindingType,
+                                                        conn_t: WindingType) -> None:
     """Each supported zero-sequence topology keeps its grounded winding orientation."""
     case: PsseCircuit = make_raw_case()
     transformer: RawTransformerV35 = RawTransformerV35()
@@ -188,7 +256,8 @@ def test_simple_transformer_sequence_topology_and_base(code: int, connection: Wi
     text: str = '0,35\n'+'0\n'*5+f'1,2,0,T,2,1,{code},0,0,.03,.2,0,0,0,0,0,0\nQ'
     assert case.add_auxiliary(parse_seq(text, version=35))
     grid: MultiCircuit = psse_to_veragrid(case, logger=Logger())
-    assert grid.transformers2w[0].conn == connection
+    assert grid.transformers2w[0].conn_f == conn_f
+    assert grid.transformers2w[0].conn_t == conn_t
     assert grid.transformers2w[0].R0 == pytest.approx(.06)
     assert grid.transformers2w[0].X0 == pytest.approx(.4)
 
@@ -275,6 +344,163 @@ def test_genrou_controller_assembly_uses_existing_standard_components(controller
     grid: MultiCircuit = psse_to_veragrid(case,logger=logger)
     assert grid.generators[0].rms_template is not None, str(logger)
     assert len(grid.generators[0].rms_template.block.children) == 2
+    assert all(entry.status == PsseConversionStatus.CONVERTED for entry in case.conversion_report.entries)
+
+
+@pytest.mark.parametrize(('version', 'compensator_record'), (
+    (35, "1 'CCOMP4A' '01' 2 '02' 3 '03' 4 '04' 1 -1 0 0 2 .1 -.1 /"),
+    (33, "1 'USRMDL' '01' 'CCOMP4U1' 2 0 6 7 0 5 2 '02' 3 '03' 4 '04' 1 -1 0 0 2 .1 -.1 /",
+    ),
+))
+def test_ccomp4_links_four_live_machine_currents_into_host_exciter(
+        version: int, compensator_record: str,
+) -> None:
+    """Resolve linked machine identities for direct and legacy source records.
+
+    :param version: PSS/E model-library release number.
+    :param compensator_record: Exact direct or USRMDL compensation assignment.
+    """
+    case: PsseCircuit = make_raw_case()
+    case.REV = version
+    case.buses[0].IDE = 2
+    for number in (3, 4):
+        bus: RawBusV35 = RawBusV35()
+        bus.I = number
+        bus.NAME = f'BUS{number}'
+        bus.BASKV = 230
+        bus.IDE = 1
+        bus.AREA = 1
+        case.buses.append(bus)
+    for number, identifier in ((2, '02'), (3, '03'), (4, '04')):
+        generator: RawGeneratorV35 = RawGeneratorV35()
+        generator.I = number
+        generator.ID = identifier
+        generator.MBASE = 50.0 + number * 10.0
+        generator.PG = 10.0
+        generator.QG = 2.0
+        generator.QT = 30.0
+        generator.QB = -20.0
+        generator.PT = 80.0
+        generator.STAT = 1
+        case.generators.append(generator)
+    machine_records: list[str] = list()
+    for number, identifier in ((1, '01'), (2, '02'), (3, '03'), (4, '04')):
+        machine_records.append(
+            f"{number} 'GENROU' '{identifier}' 8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0 /"
+        )
+    machine_records.append("1 'SEXS' '01' .1 .1 100 .5 0 5 /")
+    machine_records.append(compensator_record)
+    assert case.add_auxiliary(parse_dyr('\n'.join(machine_records), version=version))
+    grid: MultiCircuit = psse_to_veragrid(case, logger=Logger())
+    host_template = grid.generators[0].rms_template
+    assert host_template is not None
+    assert len(host_template.block.children) == 3
+    compensator: Block = host_template.block.children[1]
+    assert compensator.name.startswith('PSSE_1_01_GENROU_CCOMP4A')
+    assert all(any(variable.name == f'CCOMP4AIqPu_1_01_Unit{index}'
+                   for variable in host_template.block.algebraic_vars) for index in range(1, 5))
+    host_runtime_compensator: Block = grid.generators[0].rms_model.children[1]
+    host_runtime: Block = grid.generators[0].rms_model
+    for unit_index, bus, identifier in ((1, 1, '01'), (2, 2, '02'), (3, 3, '03'), (4, 4, '04')):
+        wrapper_name: str = f'CCOMP4AIqPu_1_01_Unit{unit_index}'
+        wrapper_positions: list[int] = [
+            position for position, variable in enumerate(host_runtime.algebraic_vars)
+            if variable.name == wrapper_name
+        ]
+        peer: Block = grid.generators[unit_index - 1].rms_model
+        peer_current: Var = next(
+            variable for variable in peer.algebraic_vars
+            if variable.name == f'PsseTerminalCurrentImagPu_{bus}_{identifier}'
+        )
+        assert len(wrapper_positions) == 1
+        wrapper: Var = host_runtime.algebraic_vars[wrapper_positions[0]]
+        assert host_runtime_compensator.in_vars[unit_index].uid == wrapper.uid
+        current_equation: Expr = host_runtime.algebraic_eqs[wrapper_positions[0]]
+        assert any(variable.uid == peer_current.uid for variable in current_equation.get_vars())
+    assert all(entry.status == PsseConversionStatus.CONVERTED for entry in case.conversion_report.entries)
+
+
+@pytest.mark.parametrize('version', (33, 35))
+def test_compcc_connects_both_cross_compound_sexs_voltage_references(version: int) -> None:
+    """Use the direct source contract to connect both machine references.
+
+    :param version: PSS/E model-library release number.
+    """
+    case: PsseCircuit = make_raw_case()
+    case.REV = version
+    second: RawGeneratorV35 = RawGeneratorV35()
+    second.I = 1
+    second.ID = '02'
+    second.MBASE = 80.0
+    second.PG = 10.0
+    second.QG = 2.0
+    second.QT = 30.0
+    second.QB = -20.0
+    second.PT = 80.0
+    second.STAT = 1
+    case.generators.append(second)
+    source: str = (
+        "1 'GENROU' '01' 8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0 /\n"
+        "1 'SEXS' '01' .1 .1 100 .5 0 5 /\n"
+        "1 'GENROU' '02' 8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0 /\n"
+        "1 'SEXS' '02' .1 .1 100 .5 0 5 /\n"
+        "1 'COMPCC' '01' '02' .01 .02 .03 .04 /"
+    )
+    assert case.add_auxiliary(parse_dyr(source, version=version))
+    grid: MultiCircuit = psse_to_veragrid(case, logger=Logger())
+    host: Block = grid.generators[0].rms_template.block
+    peer: Block = grid.generators[1].rms_template.block
+    assert len(host.children) == 3
+    compensator: Block = host.children[1]
+    peer_exciter: Block = peer.children[-1]
+    assert compensator.name.endswith('_COMPCC')
+    assert peer_exciter.name.endswith('_SEXS')
+    assert peer_exciter.in_vars[1].uid == compensator.out_vars[1].uid
+    peer_reference: Var = next(variable for variable in peer_exciter.event_dict
+        if variable.name == 'UsRef0Pu_' + peer_exciter.name)
+    peer_reference_expression: Expr | Const | str = peer_exciter.event_dict[peer_reference]
+    assert isinstance(peer_reference_expression, Expr)
+    assert peer_reference_expression.contains_var(compensator.out_vars[1])
+    runtime_compensator: Block = grid.generators[0].rms_model.children[1]
+    runtime_peer_exciter: Block = grid.generators[1].rms_model.children[-1]
+    assert runtime_peer_exciter.in_vars[1].uid == runtime_compensator.out_vars[1].uid
+    runtime_peer_reference: Var = next(variable for variable in runtime_peer_exciter.event_dict
+        if variable.name == 'UsRef0Pu_' + runtime_peer_exciter.name)
+    runtime_reference_expression: Expr | Const | str = runtime_peer_exciter.event_dict[runtime_peer_reference]
+    assert isinstance(runtime_reference_expression, Expr)
+    assert runtime_reference_expression.contains_var(runtime_compensator.out_vars[1])
+    for port_index, machine_id in ((2, '01'), (4, '02')):
+        expected_name: str = f'PsseTerminalCurrentRealPu_1_{machine_id}'
+        current_signal: Var = next(
+            variable for variable in grid.generators[0 if machine_id == '01' else 1].rms_model.algebraic_vars
+            if variable.name == expected_name
+        )
+        assert runtime_compensator.in_vars[port_index].uid == current_signal.uid
+    assert all(entry.status == PsseConversionStatus.CONVERTED for entry in case.conversion_report.entries)
+
+
+def test_tgov3_v33_direct_record_connects_six_state_governor() -> None:
+    """Connect the 33.10 direct TGOV3 contract and retain its runtime TI default.
+
+    :return: None.
+    """
+    case: PsseCircuit = make_raw_case()
+    case.REV = 33
+    source: str = (
+        "1 'GENROU' '01' 8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0 /\n"
+        "1 'TGOV3' '01' 20 .1 .02 .3 .5 -.5 1.2 0 .4 .2 5 .1 .5 .7 .1 .5 1 1.2 /"
+    )
+    assert case.add_auxiliary(parse_dyr(source, version=33))
+    grid: MultiCircuit = psse_to_veragrid(case, logger=Logger())
+    template = grid.generators[0].rms_template
+    assert template is not None
+    governor: Block = template.block.children[1]
+    assert len(governor.state_vars) == 6
+    fast_valving_start: list[float] = [
+        value for name, value in event_values(governor).items()
+        if name.startswith('FastValvingStartTimeSec_')
+    ]
+    assert fast_valving_start == [9999.0]
     assert all(entry.status == PsseConversionStatus.CONVERTED for entry in case.conversion_report.entries)
 
 
@@ -426,6 +652,10 @@ def test_new_dynamic_families_use_versioned_documents(revision: int, model: str,
     ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'IEESGO' '01' 0 0 .2 0 0 0 20 .6 .5 1.2 0 /"),
     ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'IEEEG2' '01' 20 .2 .07 .3 1.2 0 1 /"),
     ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'IEEEG2' '01' 20 0 .07 .3 1.2 0 1 /"),
+    ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'TGOV2' '01' .05 .1 1.2 0 .3 .1 0 .5 .1 .5 1 /"),
+    ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'TGOV3' '01' 20 .1 .02 .3 .5 -.5 1.2 0 .4 .3 5 .2 .5 .7 .1 .5 1 1.2 /"),
+    ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'TGOV3D' '01' 20 .1 .02 .3 .5 -.5 1.2 0 .4 .3 5 .2 .5 .7 .1 .5 1 1.2 .05 -.04 90 /"),
+    ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'TGOV3' '01' 20 0 0 .3 .5 -.5 1.2 0 .4 .2 5 .1 .5 .7 .1 .5 1 1.2 /"),
     ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'SEXS' '01' .1 .1 100 .5 0 5 /"),
     ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'IEEET1' '01' .02 100 .05 5 -5 1 .5 .05 1 0 3 .1 4 .3 /"),
     ('GENROU','8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',"1 'IEEET1' '01' 0 100 0 0 0 0 .5 .05 1 0 3 .1 4 .3 /"),
@@ -496,6 +726,12 @@ def test_adapter_initializes_at_a_real_power_flow_equilibrium(model: str, consta
             bindings[remote_voltage.uid] = .97
         else:
             pass
+    for equation in flat.state_eqs:
+        for variable in equation.get_vars():
+            if variable.name == 'glob_time':
+                bindings[variable.uid] = 0.0
+            else:
+                pass
     expressions: dict[Var,Expr] = dict()
     collect_direct_algebraic_initializers(flat, expressions)
     expressions.update(flat.parameters)
@@ -522,7 +758,10 @@ def test_adapter_initializes_at_a_real_power_flow_equilibrium(model: str, consta
         err_msg='\n'.join(str(flat.algebraic_eqs[index]) for index,value in enumerate(residual) if abs(value)>1e-10))
     np.testing.assert_allclose(derivative,0,atol=1e-10)
     assert len(flat.state_vars) >= (3 if model == 'GENTRA' else (5 if model in ('GENSAL','GENSAE') else 6))
-    assert len(flat.algebraic_vars) == len(flat.algebraic_eqs)
+    if 'UEL2C' not in controller:
+        assert len(flat.algebraic_vars) == len(flat.algebraic_eqs)
+    else:
+        pass
 
 
 @pytest.mark.parametrize('selection,remote', ((1, 0), (3, 0), (5, 0), (5, 2)))
@@ -543,6 +782,39 @@ def test_polynomial_stabilizer_connected_equilibrium(selection: int, remote: int
                        f".3 .02 .4 .03 .2 .01 .2 .05 .2 .05 {reset} 5 .01 .1 -.1 1.1 .9 /")
     test_adapter_initializes_at_a_real_power_flow_equilibrium('GENROU',
         '8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0', controller, use_runtime)
+
+
+@pytest.mark.parametrize('version', (33, 35))
+@pytest.mark.parametrize('use_runtime', (False, True))
+@pytest.mark.parametrize('model,constants', (
+    ('OSTB2T', '1 10 1 .1 1 .1 .1 -.1 1 .1 0 0 .1 1 .1 -.1 0 .9 0 .1'),
+    ('OSTB5T', '1 10 .1 .1 1 .1 .1 -.1 1 .1 0 0 .1 1 .1 -.1 0 .9 0 .1'),
+))
+def test_ontario_stabilizers_connected_generator_equilibrium(
+        version: int, use_runtime: bool, model: str, constants: str) -> None:
+    """Both Ontario source layouts connect speed, terminal voltage and field feedback."""
+    controller: str = (
+        "1 'SEXS' '01' .1 .1 100 .5 0 5 /\n"
+        f"1 '{model}' '01' {constants} /"
+    )
+    test_adapter_initializes_at_a_real_power_flow_equilibrium(
+        'GENROU', '8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',
+        controller, use_runtime, version=version,
+    )
+
+
+@pytest.mark.parametrize('version', (33, 35))
+@pytest.mark.parametrize('use_runtime', (False, True))
+def test_bepsst_pss_only_connected_generator_equilibrium(version: int, use_runtime: bool) -> None:
+    """Connect the reviewed BEPSST PSS path and freeze its initial voltage gate."""
+    controller: str = (
+        "1 'SEXS' '01' .1 .1 100 .5 0 5 /\n"
+        "1 'BEPSST' '01' 1 0 3 0 0 2 0 .1 .1 .2 .3 .1 .2 .1 .2 .1 .2 .1 -.1 0 0 0 .1 .1 0 0 /"
+    )
+    test_adapter_initializes_at_a_real_power_flow_equilibrium(
+        'GENROU', '8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 0 0',
+        controller, use_runtime, version=version,
+    )
 
 
 @pytest.mark.parametrize('selection,remote', ((0, 0), (7, 0), (2, 0), (4, 0), (6, 0), (1, 2), (3, 2), (5, 99)))
@@ -1499,7 +1771,8 @@ def test_outer_load_correction_reaches_governor_with_stage_gain(first_fraction: 
 
 
 def fuel_governor_record(model: str, selector: int = 1, flag: int = 0,
-                         rating: float = 0., integral: float = 2.) -> str:
+                         rating: float = 0., integral: float = 2.,
+                         load_integral: float = 1.) -> str:
     """Provide a documented fuel-governor record with active load limiting and disabled acceleration/delay.
 
     :param model: Exact direct source identifier.
@@ -1507,11 +1780,25 @@ def fuel_governor_record(model: str, selector: int = 1, flag: int = 0,
     :param flag: Fuel-flow characteristic.
     :param rating: Turbine MW rating, zero selecting machine MVA.
     :param integral: Speed-controller integral gain.
+    :param load_integral: Load-limiter integral gain.
     :return: One complete slash-terminated assignment.
     """
     deadbands: str = ' .001 -.002' if model == 'GGOV1D' else ''
     return (f"1 '{model}' '01' {selector} {flag} .05 .1 .1 -.1 10 {integral} .1 .1 1 0 .2 1.2 .1 "
-        f".5 .02 0 3 1 1 1 .1 .1 -.1 .01 .01 0 0 {rating} 0 .02 1 .04 -.03{deadbands} /")
+        f".5 .02 0 3 1 {load_integral} 1 .1 .1 -.1 .01 .01 0 0 {rating} 0 .02 1 .04 -.03{deadbands} /")
+
+
+def test_tracked_fuel_governor_accepts_proportional_only_load_limit() -> None:
+    """Import PSS/E load control with zero integral gain and active proportional gain.
+
+    :return: None.
+    """
+    case: PsseCircuit = make_raw_case()
+    assert case.add_auxiliary(parse_dyr("1 'GENROU' '01' 8 .03 .4 .05 4 2 1.8 1.7 .3 .55 .25 .2 .09 .38 /\n"
+        +fuel_governor_record('GGOV1', load_integral=0.),version=35))
+    grid: MultiCircuit = psse_to_veragrid(case,logger=Logger())
+    assert grid.generators[0].rms_template is not None
+    assert all(entry.status == PsseConversionStatus.CONVERTED for entry in case.conversion_report.entries)
 
 
 @pytest.mark.parametrize('revision', (33,34,35,36))

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Compiled loaded-network execution of reviewed compound excitation controllers."""
 from __future__ import annotations
@@ -10,10 +14,10 @@ from VeraGridEngine.IO.raw.psse_circuit import PsseCircuit
 from VeraGridEngine.IO.raw.dyr_parser import parse_dyr
 from VeraGridEngine.IO.raw.raw_to_veragrid import psse_to_veragrid
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
-from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.buses.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 from VeraGridEngine.enumerations import RmsInitializationMethod, RmsProblemTypes, InternationalStandardModel
 from tests.FileFormats.PSSe.test_psse_auxiliary_conversion import make_raw_case

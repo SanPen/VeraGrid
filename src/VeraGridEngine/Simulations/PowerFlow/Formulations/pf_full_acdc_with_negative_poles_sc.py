@@ -215,12 +215,13 @@ def adv_jacobian(nbus: int,
 
     # -------- ROW 4 (current balance VSCs) ---------
     dIvsc_dVa = CSC(nvsc_has_dc_n, len(i_u_va), 0, False)  # fully empty
-    # Alex review required: compile the static SC bipolar-current derivative with its voltage-angle input.
+    # The SC balance residual uses pole magnitudes (unlike the signed PF balance).
+    pole_angles = np.zeros(nbus)
     dIvsc_dVm = deriv.dIvsc_dVm_csc(
-        k_vsc_has_dc_n, nbus, i_u_vm, Pfp_vsc, Pfn_vsc, Va, Fdcp_vsc, Fdcn_vsc
+        k_vsc_has_dc_n, nbus, i_u_vm, Pfp_vsc, Pfn_vsc, pole_angles, Fdcp_vsc, Fdcn_vsc
     )
-    dIvsc_dPfpvsc = deriv.dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, Va, Fdcn_vsc)
-    dIvsc_dPfnvsc = deriv.dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, Va, Fdcp_vsc)
+    dIvsc_dPfpvsc = deriv.dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, pole_angles, Fdcn_vsc)
+    dIvsc_dPfnvsc = deriv.dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, pole_angles, Fdcp_vsc)
     dIvsc_dPtvsc = CSC(nvsc_has_dc_n, len(u_vsc_pt), 0, False)  # fully empty
     dIvsc_dQtvsc = CSC(nvsc_has_dc_n, len(u_vsc_qt), 0, False)  # fully empty
     dIvsc_dPfhvdc = CSC(nvsc_has_dc_n, nhvdc, 0, False)  # fully empty
@@ -246,12 +247,13 @@ def adv_jacobian(nbus: int,
 
     # -------- ROW 6 (loss HVDCs) ---------
     dLhvdc_dVa = CSC(nhvdc, len(i_u_va), 0, False)  # fully empty
-    dLhvdc_dVm = deriv.dLosshvdc_dVm_csc(nhvdc, nbus, i_u_vm, Vm, Pf_hvdc, hvdc_r, F_hvdc)
+    # Chain rule for the SC loss term r * (Pf / Vm)**2.
+    dLhvdc_dVm = deriv.dLosshvdc_dVm_csc(nhvdc, nbus, i_u_vm, Vm, Pf_hvdc ** 2, hvdc_r, F_hvdc)
     dLhvdc_dPfpvsc = CSC(nhvdc, nvsc, 0, False)  # fully empty
     dLhvdc_dPfnvsc = CSC(nhvdc, nvsc, 0, False)  # fully empty
     dLhvdc_dPtvsc = CSC(nhvdc, nvsc, 0, False)  # fully empty
     dLhvdc_dQtvsc = CSC(nhvdc, nvsc, 0, False)  # fully empty
-    dLhvdc_dPfhvdc = deriv.dLosshvdc_dPfhvdc_csc(nhvdc, Vm, hvdc_r, F_hvdc)
+    dLhvdc_dPfhvdc = deriv.dLosshvdc_dPfhvdc_csc(nhvdc, Vm, 2.0 * hvdc_r * Pf_hvdc, F_hvdc)
     dLhvdc_dPthvdc = deriv.dLosshvdc_dPthvdc_csc(nhvdc)
     dLhvdc_dQfhvdc = CSC(nhvdc, nhvdc, 0, False)  # fully empty
     dLhvdc_dQthvdc = CSC(nhvdc, nhvdc, 0, False)  # fully empty
@@ -259,8 +261,9 @@ def adv_jacobian(nbus: int,
     dLhvdc_dtau = CSC(nhvdc, len(u_cbr_tau), 0, False)  # fully empty
 
     # -------- ROW 7 (inj HVDCs) ---------
-    dInjhvdc_dVa = deriv.dInjhvdc_dVa_csc(nhvdc, nbus, i_u_va, hvdc_droop, F_hvdc, T_hvdc)
-    dInjhvdc_dVm = CSC(nhvdc, len(i_u_vm), 0, False)  # fully empty
+    # Match the existing SC residual, which evaluates this difference using Vm.
+    dInjhvdc_dVa = CSC(nhvdc, len(i_u_va), 0, False)
+    dInjhvdc_dVm = deriv.dInjhvdc_dVa_csc(nhvdc, nbus, i_u_vm, hvdc_droop, F_hvdc, T_hvdc)
     dInjhvdc_dPfpvsc = CSC(nhvdc, len(u_vsc_pfp), 0, False)  # fully empty
     dInjhvdc_dPfnvsc = CSC(nhvdc, len(u_vsc_pfn), 0, False)  # fully empty
     dInjhvdc_dPtvsc = CSC(nhvdc, len(u_vsc_pt), 0, False)  # fully empty
@@ -872,13 +875,22 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
         return q_per_bus
 
-    def _standard_fault_vsc_power(self, vsc_i: int, V: CxVec) -> complex:
-        """
-        Standard fault behavior: freeze the prefault converter admittance.
-        """
+    def _fault_vsc_power(self, vsc_i: int, voltage: complex) -> complex:
+        """Evaluate the existing local fault map in terminal-power convention."""
         ac_bus = self.nc.vsc_data.T[vsc_i]
         vpf = abs(self.V0[ac_bus])
-        scale = abs(V[ac_bus]) ** 2 / (vpf * vpf + 1e-20)
+        if self.nc.vsc_data.fault_control_int[vsc_i] == ConverterFaultControlType.WECC_WT_Type_4B.idx():
+            p, q = wecc_wt_type_4b(
+                V_measured=voltage,
+                Vpf=vpf,
+                St_vsc_pf=self.St_vsc_pf[self.nc.vsc_data.original_idx[vsc_i]],
+                S_base_vg=self.nc.Sbase,
+                S_rated_vsc=self.nc.vsc_data.rates[vsc_i],
+                vblkl=self.nc.vsc_data.min_ac_voltage[vsc_i])
+            return complex(p, q)
+
+        # Standard fault behavior: freeze the prefault converter admittance.
+        scale = abs(voltage) ** 2 / (vpf * vpf + 1e-20)
         return self.St_vsc_pf[self.nc.vsc_data.original_idx[vsc_i]] / self.nc.Sbase * scale
 
     def _set_fault_vsc_power_flow_guess(self) -> None:
@@ -1060,6 +1072,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                 """
                 if control1 == ConverterControlType.Fault1.idx() and control2 == ConverterControlType.Fault2.idx():
                     u_vsc_pfp.append(k)
+                    if self.nc.vsc_data.F_dcn[k] > -1:
+                        u_vsc_pfn.append(k)
                     u_vsc_pt.append(k)
                     u_vsc_qt.append(k)
 
@@ -2101,20 +2115,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
             if (self.nc.vsc_data.control1_int[vsc_i] == ConverterControlType.Fault1.idx()
                     and self.nc.vsc_data.control2_int[vsc_i] == ConverterControlType.Fault2.idx()):
 
-                if self.nc.vsc_data.fault_control_int[vsc_i] == ConverterFaultControlType.WECC_WT_Type_4B.idx():
-                    Pt_ref_[vsc_i], Qt_ref_[vsc_i] = wecc_wt_type_4b(
-                        V_measured=V[self.nc.vsc_data.T[vsc_i]],
-                        Vpf=abs(self.V0[self.nc.vsc_data.T[vsc_i]]),
-                        St_vsc_pf=self.St_vsc_pf[self.nc.vsc_data.original_idx[vsc_i]],
-                        S_base_vg=self.nc.Sbase,
-                        S_rated_vsc=self.nc.vsc_data.rates[vsc_i],
-                        vblkl=self.nc.vsc_data.min_ac_voltage[vsc_i]
-                    )
-
-                elif self.nc.vsc_data.fault_control_int[vsc_i] == ConverterFaultControlType.Standard.idx():
-                    St_ref = self._standard_fault_vsc_power(vsc_i=vsc_i, V=V)
-                    Pt_ref_[vsc_i] = St_ref.real
-                    Qt_ref_[vsc_i] = St_ref.imag
+                St_ref = self._fault_vsc_power(vsc_i, V[self.nc.vsc_data.T[vsc_i]])
+                Pt_ref_[vsc_i] = St_ref.real
+                Qt_ref_[vsc_i] = St_ref.imag
 
         T_vsc = self.nc.vsc_data.T
         It = np.sqrt(Pt_vsc_ * Pt_vsc_ + Qt_vsc_ * Qt_vsc_) / Vm_[T_vsc]
@@ -2383,14 +2386,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
                     if self.nc.vsc_data.fault_control_int[i] == ConverterFaultControlType.WECC_WT_Type_4B.idx():
 
-                        self.Pt_vsc[i], self.Qt_vsc[i] = wecc_wt_type_4b(
-                            V_measured=self.V[self.nc.vsc_data.T[i]],
-                            Vpf=abs(self.V0[self.nc.vsc_data.T[i]]),
-                            St_vsc_pf=self.St_vsc_pf[self.nc.vsc_data.original_idx[i]],
-                            S_base_vg=self.nc.Sbase,
-                            S_rated_vsc=self.nc.vsc_data.rates[i],
-                            vblkl=self.nc.vsc_data.min_ac_voltage[i]
-                        )
+                        ref = self._fault_vsc_power(i, self.V[self.nc.vsc_data.T[i]])
+                        self.Pt_vsc[i], self.Qt_vsc[i] = ref.real, ref.imag
 
                     elif self.nc.vsc_data.fault_control_int[i] == ConverterFaultControlType.Standard.idx():
 
@@ -2716,20 +2713,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
             if (self.nc.vsc_data.control1_int[vsc_i] == ConverterControlType.Fault1.idx()
                     and self.nc.vsc_data.control2_int[vsc_i] == ConverterControlType.Fault2.idx()):
 
-                if self.nc.vsc_data.fault_control_int[vsc_i] == ConverterFaultControlType.WECC_WT_Type_4B.idx():
-                    Pt_ref[vsc_i], Qt_ref[vsc_i] = wecc_wt_type_4b(
-                        V_measured=V[self.nc.vsc_data.T[vsc_i]],
-                        Vpf=abs(self.V0[self.nc.vsc_data.T[vsc_i]]),
-                        St_vsc_pf=self.St_vsc_pf[self.nc.vsc_data.original_idx[vsc_i]],
-                        S_base_vg=self.nc.Sbase,
-                        S_rated_vsc=self.nc.vsc_data.rates[vsc_i],
-                        vblkl=self.nc.vsc_data.min_ac_voltage[vsc_i]
-                    )
-
-                elif self.nc.vsc_data.fault_control_int[vsc_i] == ConverterFaultControlType.Standard.idx():
-                    St_ref = self._standard_fault_vsc_power(vsc_i=vsc_i, V=V)
-                    Pt_ref[vsc_i] = St_ref.real
-                    Qt_ref[vsc_i] = St_ref.imag
+                St_ref = self._fault_vsc_power(vsc_i, V[self.nc.vsc_data.T[vsc_i]])
+                Pt_ref[vsc_i] = St_ref.real
+                Qt_ref[vsc_i] = St_ref.imag
 
         It = np.sqrt(self.Pt_vsc * self.Pt_vsc + self.Qt_vsc * self.Qt_vsc) / self.Vm[T_vsc]
         It2 = It * It
@@ -2798,6 +2784,82 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
         return self._f
 
+    def Jacobian(self, autodiff: bool | None = None) -> CSC:
+        """Reuse analytic network derivatives and differentiate local fault maps.
+
+        The fault maps read their local terminal voltage. Their local
+        slopes reuse the existing control functions, without perturbing and
+        evaluating the whole network for each Jacobian column. Full finite
+        differences remain available through the existing power-flow option.
+        """
+        if autodiff is None:
+            autodiff = self.options.use_autodiff_jacobian
+        if autodiff:
+            return calc_autodiff_jacobian(func=self.compute_f,
+                                         x=self.var2x(),
+                                         sparsity=self._finite_difference_sparsity(),
+                                         h=1e-7)
+
+        network = mat_to_scipy(self._network_jacobian())
+        n_va = len(self.i_u_va)
+        n_vm = len(self.i_u_vm)
+        n_pt = len(self.u_vsc_pt)
+        n_qt = len(self.u_vsc_qt)
+        pt_offset = n_va + n_vm + len(self.u_vsc_pfp) + len(self.u_vsc_pfn)
+        qt_offset = pt_offset + n_pt
+        vm_lookup = np.full(self.nc.nbus, -1, dtype=int)
+        vm_lookup[self.i_u_vm] = np.arange(n_vm)
+        va_lookup = np.full(self.nc.nbus, -1, dtype=int)
+        va_lookup[self.i_u_va] = np.arange(n_va)
+        dref_dvm = np.zeros(self.nc.nvsc, dtype=complex)
+        dref_dva = np.zeros(self.nc.nvsc, dtype=complex)
+        h = 1e-7
+        for vsc_i in self.u_vsc_pt:
+            bus = self.nc.vsc_data.T[vsc_i]
+            direction = np.exp(1j * self.Va[bus])
+            voltage = self.Vm[bus] * direction
+            ref = self._fault_vsc_power(vsc_i, voltage)
+            ref_vm = self._fault_vsc_power(vsc_i, voltage + h * direction)
+            ref_va = self._fault_vsc_power(vsc_i, voltage * np.exp(1j * h))
+            dref_dvm[vsc_i] = (ref_vm - ref) / h
+            dref_dva[vsc_i] = (ref_va - ref) / h
+
+        controls = lil_matrix((n_pt + n_qt, network.shape[1]), dtype=float)
+        for row, vsc_i in enumerate(self.u_vsc_pt):
+            bus = self.nc.vsc_data.T[vsc_i]
+            col = vm_lookup[bus]
+            if col >= 0:
+                controls[row, n_va + col] = dref_dvm[vsc_i].real
+            col = va_lookup[bus]
+            if col >= 0:
+                controls[row, col] = dref_dva[vsc_i].real
+            controls[row, pt_offset + row] = -1.0
+        for row, vsc_i in enumerate(self.u_vsc_qt):
+            bus = self.nc.vsc_data.T[vsc_i]
+            col = vm_lookup[bus]
+            if col >= 0:
+                controls[n_pt + row, n_va + col] = dref_dvm[vsc_i].imag
+            col = va_lookup[bus]
+            if col >= 0:
+                controls[n_pt + row, col] = dref_dva[vsc_i].imag
+            controls[n_pt + row, qt_offset + row] = -1.0
+
+        if np.any(self.sc_async_gen_q_mask):
+            # Each asynchronous-machine Q depends only on its own |V|. All
+            # local slopes can therefore be evaluated in the same perturbation.
+            q = self._compute_sc_asynchronous_generator_q_per_bus(self.V)
+            q_h = self._compute_sc_asynchronous_generator_q_per_bus(
+                polar_to_rect(self.Vm + h, self.Va))
+            dq = (q_h - q) / (h * self.nc.Sbase)
+            correction = lil_matrix(network.shape, dtype=float)
+            for row, bus in enumerate(self.i_k_q):
+                col = vm_lookup[bus]
+                if col >= 0:
+                    correction[len(self.i_k_p) + row, n_va + col] = -dq[bus]
+            network = network + correction.tocsc()
+
+        return scipy_to_mat(vstack((network, controls.tocsc()), format="csc"))
+
     def _finite_difference_sparsity(self) -> CSC:
         """Build the complete structural pattern of the SC residual.
 
@@ -2809,7 +2871,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
         :return: Square CSC pattern matching :meth:`compute_f` and ``var2x``.
         """
         analytic_structure: csc_matrix = mat_to_scipy(
-            self.Jacobian(autodiff=False)
+            self._network_jacobian()
         )
         n_columns: int = len(self.var2x())
         n_va: int = len(self.i_u_va)
@@ -2870,111 +2932,98 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
         assert complete_structure.shape == (n_columns, n_columns)
         return scipy_to_mat(complete_structure)
 
-    def Jacobian(self, autodiff: bool = True) -> CSC:
-        """
-        Get the Jacobian
-        :return:
-        """
-        if autodiff:
-            sparsity: CSC = self._finite_difference_sparsity()
-            J: CSC = calc_autodiff_jacobian(func=self.compute_f,
-                                            x=self.var2x(),
-                                            sparsity=sparsity,
-                                            h=1e-7)
+    def _network_jacobian(self) -> CSC:
+        """Analytic network, branch and converter-balance blocks."""
+        # build the symbolic Jacobian
+        tap_modules = expand(self.nc.nbr, self.m, self.u_cbr_m, 1.0)
+        tap_angles = expand(self.nc.nbr, self.tau, self.u_cbr_tau, 0.0)
 
-            return J
+        # HVDC
+        nhvdc = self.nc.hvdc_data.nelm
 
-        else:
-            # build the symbolic Jacobian
-            tap_modules = expand(self.nc.nbr, self.m, self.u_cbr_m, 1.0)
-            tap_angles = expand(self.nc.nbr, self.tau, self.u_cbr_tau, 0.0)
+        hvdc_r_pu = self.nc.hvdc_data.r / (self.nc.hvdc_data.Vnf * self.nc.hvdc_data.Vnf / self.nc.Sbase)
 
-            # HVDC
-            nhvdc = self.nc.hvdc_data.nelm
+        hvdc_droop_redone = np.zeros(self.nc.hvdc_data.nelm, dtype=float)
+        if len(self.hvdc_droop_idx) > 0:
+            hvdc_droop_redone[self.hvdc_droop_idx] = self.nc.hvdc_data.angle_droop[self.hvdc_droop_idx]
 
-            hvdc_r_pu = self.nc.hvdc_data.r / (self.nc.hvdc_data.Vnf * self.nc.hvdc_data.Vnf / self.nc.Sbase)
+        assert isspmatrix_csc(self.adm.Ybus)
 
-            hvdc_droop_redone = np.zeros(self.nc.hvdc_data.nelm, dtype=float)
-            if len(self.hvdc_droop_idx) > 0:
-                hvdc_droop_redone[self.hvdc_droop_idx] = self.nc.hvdc_data.angle_droop[self.hvdc_droop_idx]
+        J_sym = adv_jacobian(
+            nbus=self.nc.nbus,
+            nbr=self.nc.nbr,
+            nvsc=self.nc.vsc_data.nelm,
+            nhvdc=nhvdc,
+            F=self.nc.passive_branch_data.F,
+            T=self.nc.passive_branch_data.T,
+            Fdcp_vsc=self.nc.vsc_data.F,
+            Fdcn_vsc=self.nc.vsc_data.F_dcn,
+            T_vsc=self.nc.vsc_data.T,
+            F_hvdc=self.nc.hvdc_data.F,
+            T_hvdc=self.nc.hvdc_data.T,
 
-            assert isspmatrix_csc(self.adm.Ybus)
+            tap_angles=tap_angles,
+            tap_modules=tap_modules,
 
-            J_sym = adv_jacobian(
-                nbus=self.nc.nbus,
-                nbr=self.nc.nbr,
-                nvsc=self.nc.vsc_data.nelm,
-                nhvdc=nhvdc,
-                F=self.nc.passive_branch_data.F,
-                T=self.nc.passive_branch_data.T,
-                Fdcp_vsc=self.nc.vsc_data.F,
-                Fdcn_vsc=self.nc.vsc_data.F_dcn,
-                T_vsc=self.nc.vsc_data.T,
-                F_hvdc=self.nc.hvdc_data.F,
-                T_hvdc=self.nc.hvdc_data.T,
+            V=self.V,
+            Vm=self.Vm,
+            Va=self.Va,
+            I0=self.I0,
 
-                tap_angles=tap_angles,
-                tap_modules=tap_modules,
+            # Controllable Branch Indices
+            u_cbr_m=self.u_cbr_m,
+            u_cbr_tau=self.u_cbr_tau,
 
-                V=self.V,
-                Vm=self.Vm,
-                Va=self.Va,
-                I0=self.I0,
+            k_cbr_pf=self.k_cbr_pf,
+            k_cbr_pt=self.k_cbr_pt,
+            k_cbr_qf=self.k_cbr_qf,
+            k_cbr_qt=self.k_cbr_qt,
 
-                # Controllable Branch Indices
-                u_cbr_m=self.u_cbr_m,
-                u_cbr_tau=self.u_cbr_tau,
+            # VSC Indices
+            u_vsc_pfp=self.u_vsc_pfp,
+            u_vsc_pfn=self.u_vsc_pfn,
+            u_vsc_pt=self.u_vsc_pt,
+            u_vsc_qt=self.u_vsc_qt,
+            k_vsc_has_dc_n=self.k_vsc_has_dc_n,
+            k_vsc_imax=self.k_vsc_i,
 
-                k_cbr_pf=self.k_cbr_pf,
-                k_cbr_pt=self.k_cbr_pt,
-                k_cbr_qf=self.k_cbr_qf,
-                k_cbr_qt=self.k_cbr_qt,
+            # VSC Params
+            alpha1=self.nc.vsc_data.alpha1,
+            alpha2=self.nc.vsc_data.alpha2,
+            alpha3=self.nc.vsc_data.alpha3,
 
-                # VSC Indices
-                u_vsc_pfp=self.u_vsc_pfp,
-                u_vsc_pfn=self.u_vsc_pfn,
-                u_vsc_pt=self.u_vsc_pt,
-                u_vsc_qt=self.u_vsc_qt,
-                k_vsc_has_dc_n=self.k_vsc_has_dc_n,
-                k_vsc_imax=self.k_vsc_i,
+            # HVDC Params
+            hvdc_r=hvdc_r_pu,
+            hvdc_droop=hvdc_droop_redone,
 
-                # VSC Params
-                alpha1=self.nc.vsc_data.alpha1,
-                alpha2=self.nc.vsc_data.alpha2,
-                alpha3=self.nc.vsc_data.alpha3,
+            # Bus Indices
+            i_u_vm=self.i_u_vm,
+            i_u_va=self.i_u_va,
+            i_k_p=self.i_k_p,
+            i_k_q=self.i_k_q,
 
-                # HVDC Params
-                hvdc_r=hvdc_r_pu,
-                hvdc_droop=hvdc_droop_redone,
+            # Unknowns
+            Pfp_vsc=self.Pfp_vsc,
+            Pfn_vsc=self.Pfn_vsc,
+            Pt_vsc=self.Pt_vsc,
+            Qt_vsc=self.Qt_vsc,
+            Pf_hvdc=self.Pf_hvdc,
 
-                # Bus Indices
-                i_u_vm=self.i_u_vm,
-                i_u_va=self.i_u_va,
-                i_k_p=self.i_k_p,
-                i_k_q=self.i_k_q,
+            # Admittances and Connections
+            Ys=self.adm.ys,
+            Bc=self.nc.passive_branch_data.B,
 
-                # Unknowns
-                Pfp_vsc=self.Pfp_vsc,
-                Pfn_vsc=self.Pfn_vsc,
-                Pt_vsc=self.Pt_vsc,
-                Qt_vsc=self.Qt_vsc,
-                Pf_hvdc=self.Pf_hvdc,
+            yff_cbr=self.adm.yff,
+            yft_cbr=self.adm.yft,
+            ytf_cbr=self.adm.ytf,
+            ytt_cbr=self.adm.ytt,
 
-                # Admittances and Connections
-                Ys=self.adm.ys,
-                Bc=self.nc.passive_branch_data.B,
+            Yi=self.adm.Ybus.indices,
+            Yp=self.adm.Ybus.indptr,
+            Yx=self.adm.Ybus.data
+        )
 
-                yff_cbr=self.adm.yff,
-                yft_cbr=self.adm.yft,
-                ytf_cbr=self.adm.ytf,
-                ytt_cbr=self.adm.ytt,
-
-                Yi=self.adm.Ybus.indices,
-                Yp=self.adm.Ybus.indptr,
-                Yx=self.adm.Ybus.data
-            )
-
-            return J_sym
+        return J_sym
 
     def get_x_names(self) -> List[str]:
         """

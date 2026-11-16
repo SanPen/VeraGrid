@@ -803,7 +803,7 @@ class IoMain(ScenariosMain):
             files_types += "*.dgridcal *.dveragrid "
 
         files_types += "*.gch5 *.xlsx *.xls *.sqlite *.dgs *.iidm *.xiidm"
-        files_types += "*.m *.matpower *.raw *.RAW *.rawx *.uct *.json *.ejson2 *.ejson3 *.xml "
+        files_types += "*.m *.matpower *.raw *.RAW *.rawx *.uct *.json *.ejson2 *.ejson3 *.xml *.dss "
         files_types += "*.zip *.dpx *.pwf *.epc *.EPC *.ech *.dta *.nc *.hdf5 *.p"
 
         dialogue = QtWidgets.QFileDialog(None,

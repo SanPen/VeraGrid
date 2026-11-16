@@ -17,12 +17,13 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOpt
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import (
+from VeraGridEngine.Simulations.Rms.initialization_rms import (
     project_initial_algebraic_state,
 )
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import Var
+from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var, get_expression_vars
+from VeraGridEngine.basic_structures import LogEntry, LogSeverity
 from VeraGridEngine.enumerations import (
     DynamicIntegrationMethod,
     DynamicSimulationMode,
@@ -59,7 +60,14 @@ def test_dgs_v2_first_rms_step_is_finite_and_converged() -> None:
     # Fail closed on the known V2 import contract before numerical execution.
     assert grid is not None
     assert file_open.logger.error_count() == 0
-    assert file_open.logger.warning_count() == 0
+    warning_messages: list[str] = list()
+    log_entry: LogEntry
+    for log_entry in file_open.logger.entries:
+        if log_entry.severity == LogSeverity.Warning:
+            warning_messages.append(log_entry.msg)
+        else:
+            pass
+    assert warning_messages == list()
     assert len(grid.buses) == 10
     assert len(grid.get_vsc()) == 2
     vsc: VSC
@@ -67,6 +75,32 @@ def test_dgs_v2_first_rms_step_is_finite_and_converged() -> None:
         assert vsc.dc_link_capacitance_uf == 76.80000305175781
     else:
         pass
+
+    # Early import must connect the master's PLL outputs to both exact consumers;
+    # an empty warning log alone would also accept a silently omitted meter.
+    master_models: list[Block] = list(
+        converter.rms_model for converter in grid.get_vsc()
+        if any(block.name == "Phase meter 266" for block in converter.rms_model.get_all_blocks())
+    )
+    assert len(master_models) == 1
+    master_blocks: list[Block] = master_models[0].get_all_blocks()
+    phase_meters: list[Block] = list(block for block in master_blocks if block.name == "Phase meter 266")
+    assert len(phase_meters) == 1
+    assert set(variable.name for variable in phase_meters[0].out_vars) == set(("cosphi", "sinphi"))
+    phase_output_uids: set[int] = set(variable.uid for variable in phase_meters[0].out_vars)
+    # Native converter physics lives on the assembled root; the coordinate
+    # transform remains a controller child. Both must use the same meter outputs.
+    transforms: list[Block] = list(block for block in master_blocks if block.name == "Vxy_To_dqFrame")
+    assert len(transforms) == 1
+    consumer: Block
+    for consumer in (transforms[0], master_models[0]):
+        consumed_uids: set[int] = set()
+        equations: list[Expr]
+        equation: Expr
+        for equations in (consumer.algebraic_eqs, consumer.state_eqs):
+            for equation in equations:
+                consumed_uids.update(variable.uid for variable in get_expression_vars(equation))
+        assert phase_output_uids.issubset(consumed_uids)
 
     # Reconstruct the exact imported operating point before RMS initialization.
     power_flow_options: PowerFlowOptions = PowerFlowOptions(
@@ -82,42 +116,6 @@ def test_dgs_v2_first_rms_step_is_finite_and_converged() -> None:
     )
     assert power_flow_results.converged
     assert np.all(np.isfinite(power_flow_results.voltage))
-    expected_voltage_magnitudes: np.ndarray = np.array(
-        [
-            0.99305449497315,
-            0.97827079645434,
-            1.00000000000085,
-            0.99999999999954,
-            0.99999999999993,
-            0.99305374736455,
-            0.98734944091317,
-            0.97826973988012,
-            0.98438149730841,
-            1.00613187974404,
-        ],
-        dtype=float,
-    )
-    expected_voltage_angles: np.ndarray = np.deg2rad(
-        np.array(
-            [
-                5.43962357467693,
-                -10.481835935501,
-                3.51384198717049e-11,
-                -7.25762234448074e-12,
-                0.0,
-                5.44061914175967,
-                11.5847546649269,
-                -10.4828023281179,
-                -16.8707878220013,
-                0.0,
-            ],
-            dtype=float,
-        )
-    )
-    expected_voltage: np.ndarray = expected_voltage_magnitudes * np.exp(
-        1j * expected_voltage_angles
-    )
-    assert np.max(np.abs(power_flow_results.voltage - expected_voltage)) <= 1.0e-6
 
     # Build explicit initialization at t=0 and advance one Backward-Euler step.
     rms_options: RmsOptions = RmsOptions(

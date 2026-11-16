@@ -1,6 +1,11 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 """Check saved RMS mappings without launching a GUI or running a simulation."""
 
 from __future__ import annotations
+
 
 import pytest
 
@@ -11,27 +16,27 @@ from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import (
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Templates.Rms.hvdc_vsc_gfl_rms_template_v2 import (
+from VeraGridEngine.Templates.Rms.converters.hvdc_vsc_gfl_rms_template_v2 import (
     build_hvdc_vsc_gfl_rms,
     build_vsc_dc_link_rms,
 )
-from VeraGridEngine.Templates.Rms.genrow_rms_template import get_genrow_rms_template
-from VeraGridEngine.Templates.Rms.line_rms_template import (
+from VeraGridEngine.Templates.Rms.synchronous_machines.genrow_rms_template import get_genrow_rms_template
+from VeraGridEngine.Templates.Rms.line.line_rms_template import (
     get_dc_line_rms_template,
     get_line_rms_template,
 )
-from VeraGridEngine.Templates.Rms.load_phasor_current_rms_template import (
+from VeraGridEngine.Templates.Rms.load_characteristics.load_phasor_current_rms_template import (
     get_load_phasor_current_rms_template,
 )
-from VeraGridEngine.Templates.Rms.load_phasor_rms_template import (
+from VeraGridEngine.Templates.Rms.load_characteristics.load_phasor_rms_template import (
     get_load_phasor_rms_template,
 )
-from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.Templates.Rms.vsc_gfl import (
+from VeraGridEngine.Templates.Rms.load_characteristics.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.converters.vsc_gfl import (
     TrafoGflBuild as build_vsc_gfl_transformer_rms,
     VscGflBuild as build_vsc_gfl_rms,
 )
-from VeraGridEngine.Templates.Rms.vsc_gfl_new import (
+from VeraGridEngine.Templates.Rms.converters.vsc_gfl_new import (
     TrafoGflBuild as build_vsc_gfl_transformer_rms_new,
     VscGflBuild as build_vsc_gfl_rms_new,
 )
@@ -47,6 +52,8 @@ from VeraGridEngine.enumerations import (
     ParamPowerFlowReferenceType,
     VarPowerFlowReferenceType,
 )
+
+from tests.symbolic_block_roundtrip import roundtrip_block
 
 
 def test_rms_templates_keep_api_mappings_on_local_storage_owners() -> None:
@@ -211,7 +218,7 @@ def test_rms_save_keeps_child_static_mappings_owner_local(roundtrip: bool) -> No
             if key not in expected_api_uids
         )
     if roundtrip:
-        root = Block.parse(root.to_dict())
+        root = roundtrip_block(root)
     else:
         pass
     device: VSC = VSC(alpha1=0.001, alpha2=0.015, alpha3=0.20)

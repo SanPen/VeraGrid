@@ -12,7 +12,7 @@ from scipy import sparse
 import timeit
 from VeraGridEngine.basic_structures import Vec, CxVec
 from VeraGridEngine.Utils.Sparse.csc import pack_3_by_4, diags
-from VeraGridEngine.Utils.NumericalMethods.sparse_solve import get_linear_solver, get_available_sparse_solvers
+from VeraGridEngine.Utils.Sparse.sparse_solve import get_linear_solver, get_available_sparse_solvers
 from VeraGridEngine.enumerations import SparseSolver
 
 

@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
 # SPDX-License-Identifier: MPL-2.0
 """Physical initialization, saturation, gate placement and DC field limits."""
 from __future__ import annotations
@@ -6,7 +10,7 @@ import numpy as np
 import pytest
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Rms.dc_exciter import DcExciterKind, DcExciterParameters, build_dc_exciter
+from VeraGridEngine.Templates.Rms.excitation_systems.dc_exciter import DcExciterKind, DcExciterParameters, build_dc_exciter
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from tests.RMS.test_native_turbine_governors import initialized_values, evaluate_controller, linearized_response

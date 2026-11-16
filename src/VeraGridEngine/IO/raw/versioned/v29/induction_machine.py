@@ -12,7 +12,16 @@ class RawInductionMachineV29(RawInductionMachine):
 
     def parse(self, data, version, logger: Logger):
         self.version = version
-        if len(data) == 1:
+        if len(data) == 1 and len(data[0]) == 34:
+            # one-line form with all 34 fields (as PSS/E v33-v35 write it)
+            (self.I, self.ID, self.STAT, self.SCODE, self.DCODE, self.AREA, self.ZONE, self.OWNER,
+             self.TCODE, self.BCODE, self.MBASE, self.RATEKV,
+             self.PCODE, self.PSET, self.H, self.A, self.B, self.D, self.E,
+             self.RA, self.XA, self.XM, self.R1,
+             self.X1, self.R2, self.X2, self.X3,
+             self.E1, self.SE1, self.E2, self.SE2,
+             self.IA1, self.IA2, self.XAMULT) = data[0]
+        elif len(data) == 1:
             (self.I, self.ID, self.STAT, self.SCODE, self.DCODE, self.AREA, self.ZONE, self.OWNER,
              self.TCODE, self.BCODE, self.MBASE, self.RATEKV,
              self.PCODE, self.PSET, self.H, self.A, self.B, self.D, self.E) = data[0]

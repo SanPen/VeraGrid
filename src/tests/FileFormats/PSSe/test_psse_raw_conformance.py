@@ -9,6 +9,7 @@ from pathlib import Path
 
 import numpy as np
 import VeraGridEngine.Devices as dev
+from VeraGridEngine.api import open_file
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.raw.versioned.v34.switched_shunt import RawSwitchedShuntV34
 from VeraGridEngine.IO.raw.versioned.v35.switched_shunt import RawSwitchedShuntV35
@@ -1265,6 +1266,38 @@ def test_psse35_node_writer_omits_isub_from_raw_record() -> None:
     raw_values = interpret_line(node.get_raw_line(35))
 
     assert raw_values == [4, "NODE_4", 3009, 1, 1.02, 3.5]
+
+
+def test_induction_machine_raw_import(tmp_path: Path) -> None:
+    """Read complete, short and three-line induction machine records from RAW files."""
+    for version in (33, 34, 35):
+        raw_text: str = "\n".join([
+            f"0,100.0,{version},0,0,60.0",
+            "Induction machine case",
+            "Induction machine case 2",
+            "0 / END OF BUS DATA, BEGIN INDUCTION MACHINE DATA",
+            "2,'1',1,1,2,1,1,1,1,1,5.0,0,1,2.0,1,1,1,1,1,0.01,0.1,2.5,3,4,5,6,7,8,9,10,11,12,13,0.7",
+            "3,'1',1,1,2,1,1,1,1,1,5.0,0,1,2.0,1,1,1,1,1",
+            "4,'1',1,1,2,1,1,1,1,1,5.0,0",
+            "1,2.0,1,1,1,1,1,0.01,0.1,2.5,3,4,5,6,7,8,9,10,11,12,13",
+            "0.7",
+            "0 / END OF INDUCTION MACHINE DATA",
+            "Q",
+        ])
+        raw_path: Path = tmp_path / f"induction_{version}.raw"
+        raw_path.write_text(raw_text, encoding="utf-8")
+        psse_circuit = read_raw(str(raw_path), logger=Logger())
+        open_file(str(raw_path))
+
+        assert len(psse_circuit.induction_machines) == 3
+        machine = psse_circuit.induction_machines[0]
+        assert (machine.I, machine.PSET, machine.RA, machine.XM, machine.R1, machine.X1,
+                machine.R2, machine.X2, machine.X3, machine.E1, machine.SE1, machine.E2,
+                machine.SE2, machine.IA1, machine.IA2, machine.XAMULT) == (
+                    2, 2.0, 0.01, 2.5, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0.7)
+        assert psse_circuit.induction_machines[1].XAMULT == 1.0
+        assert psse_circuit.induction_machines[2].XAMULT == 0.7
+        assert psse_circuit.induction_machines[2].RA == 0.01
 
 
 def test_psse35_induction_machine_uses_stat_field_name() -> None:

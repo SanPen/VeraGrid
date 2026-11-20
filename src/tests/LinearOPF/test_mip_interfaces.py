@@ -98,6 +98,19 @@ def test_pulp_model_accepts_constant_objective() -> None:
     assert model.model.objective.value() == 0.0
 
 
+def test_pulp_constraint_handle_retains_dual() -> None:
+    """Check that the returned constraint exposes its solved shadow price.
+
+    :return: None.
+    """
+    model: PulpLpModel = PulpLpModel(solver_type=MIPSolvers.HIGHS)
+    variable: Any = model.add_var(lb=0, ub=10, name="x")
+    constraint: Any = model.add_cst(variable >= 2, name="minimum")
+    model.minimize(variable)
+    assert model.solve() == model.OPTIMAL
+    assert np.isclose(model.get_dual_value(constraint), 1.0)
+
+
 def test_issue_372_1():
     """
     https://github.com/SanPen/VeraGrid/issues/372#issuecomment-2823645586

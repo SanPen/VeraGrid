@@ -2480,9 +2480,9 @@ def add_linear_branches_formulation(t: int,
                 # insetad of the rates, the literature suggests an absolute initial value of the flow
                 V = bus_data_t.Vnom[branch_data_t.F[m]]
                 if V > 0.0:
-                    factor = branch_data_t.R[m] * branch_data_t.rates[m] / (V ** 2)
+                    factor = abs(branch_data_t.R[m]) * branch_data_t.rates[m] / (V ** 2)
                 else:
-                    factor = branch_data_t.R[m]
+                    factor = abs(branch_data_t.R[m])
 
                 # store the values for later retrieval
                 branch_vars.losses[t, m] = branch_vars.z_flows[t, m] * factor

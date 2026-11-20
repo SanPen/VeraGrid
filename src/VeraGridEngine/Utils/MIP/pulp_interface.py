@@ -296,9 +296,7 @@ class PulpLpModel(AbstractLpModel):
         if isinstance(cst, bool):
             return 0
         else:
-            self.model.addConstraint(constraint=cst, name=name)
-            cst_name = name or getattr(cst, "name", "")
-            added_cst = get_model_constraint_by_name(self.model, cst_name) if cst_name else None
+            added_cst = self.model.addConstraint(constraint=cst, name=name)
             return added_cst if added_cst is not None else cst
 
     @staticmethod

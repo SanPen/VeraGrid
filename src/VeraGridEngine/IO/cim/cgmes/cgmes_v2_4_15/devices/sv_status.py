@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class SvStatus(Base):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
 		CgmesProperty(property_name='ConductingEquipment', class_type='ConductingEquipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The conducting equipment associated with the status state variable.''', mandatory=True, profiles=[CgmesProfileType.SV]),
-		CgmesProperty(property_name='inService', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The in service status as a result of topology processing.''', mandatory=True, profiles=[CgmesProfileType.OP]),
+		CgmesProperty(property_name='inService', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The in service status as a result of topology processing.''', mandatory=True, profiles=[CgmesProfileType.SV]),
 	)
 	__slots__ = ('ConductingEquipment', 'inService')
 	def __init__(self, rdfid, tpe='SvStatus', resources=list(), class_replacements=dict()):

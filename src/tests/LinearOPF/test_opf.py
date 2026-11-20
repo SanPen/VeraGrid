@@ -19,6 +19,28 @@ VALENTINA_GEN_LIMITS = {
 VALENTINA_LOAD_COST = 12000.0
 
 
+def test_opf_negative_resistance_losses() -> None:
+    """Check that negative resistance cannot produce negative approximated losses.
+
+    :return: None.
+    """
+    grid: MultiCircuit = MultiCircuit()
+    grid.create_profiles(steps=2, step_length=1, step_unit="h")
+    bus1: Bus = grid.add_bus(Bus(name="source", Vnom=10, is_slack=True))
+    bus2: Bus = grid.add_bus(Bus(name="load", Vnom=10))
+    grid.add_line(obj=Line(bus_from=bus1, bus_to=bus2, r=-0.01, x=0.1, rate=100))
+    grid.add_generator(bus=bus1, api_obj=Generator(name="gen", enabled_dispatch=True, Cost=15, Pmax=100))
+    load: Load = grid.add_load(bus=bus2, api_obj=Load(name="load", Cost=10000))
+    load.P_prof = np.array([10.0, 12.0])
+    options: OptimalPowerFlowOptions = OptimalPowerFlowOptions(add_losses_approximation=True)
+    driver: OptimalPowerFlowTimeSeriesDriver = OptimalPowerFlowTimeSeriesDriver(grid=grid, options=options)
+    driver.run()
+    assert np.all(driver.results.converged)
+    assert np.all(driver.results.losses > 0.0)
+    assert np.allclose(driver.results.generator_power.sum(axis=1),
+                       driver.results.load_power.sum(axis=1) + np.asarray(driver.results.losses, dtype=float).sum(axis=1))
+
+
 def _valentina_case():
     fname = os.path.join('data', 'grids', 'New.England_solar_case_OPF.gridcal')
     grid = FileOpen(fname).open()

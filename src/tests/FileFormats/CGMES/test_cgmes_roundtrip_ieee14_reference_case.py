@@ -5,14 +5,91 @@
 """Reference-case tests that compare CGMES import/export against the IEEE 14 RAW benchmark."""
 
 import os
+from io import BytesIO
+from pathlib import Path
+from xml.etree import ElementTree
+from zipfile import ZipFile
 
 import numpy as np
 import pandas as pd
 
 import VeraGridEngine.api as gce
 from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
+from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
+from VeraGridEngine.IO.cim.cgmes.cgmes_create_instances import create_cgmes_sub_load_area
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_export import CimExporter
+from VeraGridEngine.data_logger import DataLogger
 
 pd.set_option("display.max_colwidth", None)
+
+
+def test_cgmes_24_export_resolves_load_area(tmp_path: Path) -> None:
+    """The EQ export must define the LoadArea referenced by each SubLoadArea."""
+    root: Path = Path(__file__).resolve().parents[4]
+    grid = gce.open_file(str(root / "src/tests/data/grids/RAW/IEEE 14 bus.raw"))
+    output: Path = tmp_path / "ieee14.zip"
+    gce.save_cgmes_file(grid=grid, filename=str(output),
+                        cgmes_boundary_set_path=str(root / "src/VeraGrid/data/ENTSOe_boundary_set.zip"),
+                        cgmes_version=gce.CGMESVersions.v2_4_15, pf_results=gce.power_flow(grid))
+
+    with ZipFile(output) as archive:
+        eq_name: str = next(name for name in archive.namelist() if "_EQ_" in name)
+        eq = ElementTree.fromstring(archive.read(eq_name))
+
+    cim: str = "{http://iec.ch/TC57/2013/CIM-schema-cim16#}"
+    rdf: str = "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}"
+    area_ids: set[str] = {area.attrib[rdf + "ID"] for area in eq.findall(cim + "LoadArea")}
+    references: list[str] = [link.attrib[rdf + "resource"][1:]
+                             for link in eq.findall(cim + "SubLoadArea/" + cim + "SubLoadArea.LoadArea")]
+    assert references
+    assert all(reference in area_ids for reference in references)
+    assert eq.find(cim + "LoadArea/" + cim + "IdentifiedObject.name") is not None
+
+
+def test_cgmes_24_eq_only_resolves_load_area() -> None:
+    """EQ-only export retains the LoadArea identity without OP attributes."""
+    model: CgmesCircuit = CgmesCircuit(cgmes_version=gce.CGMESVersions.v2_4_15)
+    create_cgmes_sub_load_area(model, gce.CGMESVersions.v2_4_15, DataLogger())
+    exporter: CimExporter = CimExporter(model, [CgmesProfileType.EQ], False)
+    stream: BytesIO = BytesIO()
+    exporter.serialize(stream, "EQ")
+    eq = ElementTree.fromstring(stream.getvalue())
+    cim: str = "{http://iec.ch/TC57/2013/CIM-schema-cim16#}"
+    rdf: str = "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}"
+    area = eq.find(cim + "LoadArea")
+    reference = eq.find(cim + "SubLoadArea/" + cim + "SubLoadArea.LoadArea")
+    assert area is not None
+    assert reference is not None
+    assert reference.attrib[rdf + "resource"] == "#" + area.attrib[rdf + "ID"]
+    assert len(area) == 0
+
+
+def test_cgmes_export_sv_status_values(tmp_path: Path) -> None:
+    """Export active and inactive equipment status in the SV profile."""
+    root: Path = Path(__file__).resolve().parents[4]
+    grid = gce.open_file(str(root / "src/tests/data/grids/RAW/IEEE 14 bus.raw"))
+    grid.loads[0].active = False
+    results = gce.power_flow(grid)
+    for version in (gce.CGMESVersions.v2_4_15, gce.CGMESVersions.v3_0_0):
+        output: Path = tmp_path / f"status_{version.value}.zip"
+        gce.save_cgmes_file(grid=grid, filename=str(output),
+                            cgmes_boundary_set_path=str(root / "src/VeraGrid/data/ENTSOe_boundary_set.zip"),
+                            cgmes_version=version, pf_results=results)
+        with ZipFile(output) as archive:
+            sv_name: str = next(name for name in archive.namelist() if "_SV_" in name)
+            sv = ElementTree.fromstring(archive.read(sv_name))
+
+        if version == gce.CGMESVersions.v2_4_15:
+            cim: str = "{http://iec.ch/TC57/2013/CIM-schema-cim16#}"
+        else:
+            cim = "{http://iec.ch/TC57/CIM100#}"
+        statuses = sv.findall(cim + "SvStatus")
+        values: list[str | None] = [status.findtext(cim + "SvStatus.inService") for status in statuses]
+        assert "true" in values
+        assert "false" in values
+        assert all(value in ("true", "false") for value in values)
+        assert all(status.find(cim + "SvStatus.ConductingEquipment") is not None for status in statuses)
 
 
 def test_ieee14_cgmes() -> None:

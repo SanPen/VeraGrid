@@ -1185,7 +1185,7 @@ def create_sv_shunt_compensator_sections(cgmes_model: CgmesCircuit,
 
 
 def create_sv_status(cgmes_model: CgmesCircuit,
-                     in_service: int,
+                     in_service: bool,
                      cgmes_conducting_equipment,
                      ver: CGMESVersions) -> None:
     """

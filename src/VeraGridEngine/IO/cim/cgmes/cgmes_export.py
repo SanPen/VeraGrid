@@ -257,6 +257,12 @@ class CimExporter:
                     new_prof = json_dict['ProfileKeyword'][i].strip('[]').split(',')
                     self.class_filters[json_dict["Class Name"][i]][p_key]["Profile"].extend(new_prof)
 
+        # The 2.4.15 state-variable schema declares this attribute in SV, not OP.
+        if cgmes_circuit.cgmes_version == CGMESVersions.v2_4_15:
+            self.class_filters["SvStatus"]["inService"]["Profile"] = ["SV"]
+        else:
+            pass
+
     def export(self, file_name):
         fname = os.path.basename(file_name)
         fpath = os.path.dirname(file_name)
@@ -502,7 +508,10 @@ class CimExporter:
         for class_name, filters in self.class_filters.items():
             objects = self.cgmes_circuit.get_objects_list(elm_type=class_name)
             use_declared_property_fallback = False
-            if self.in_profile(filters, profile):
+            # EQ SubLoadArea references LoadArea even though its attributes belong to OP.
+            load_area_in_eq: bool = (self.cgmes_circuit.cgmes_version == CGMESVersions.v2_4_15
+                                     and profile == "EQ" and class_name == "LoadArea")
+            if self.in_profile(filters, profile) or load_area_in_eq:
                 pass
             else:
                 if len(filters) == 0 and profile not in core_profiles:
@@ -603,6 +612,6 @@ class CimExporter:
                             child.text = str(attr_value)
                     element.append(child)
                     has_child = True
-                if has_child:
+                if has_child or load_area_in_eq:
                     other_elements.append(element)
         return other_elements

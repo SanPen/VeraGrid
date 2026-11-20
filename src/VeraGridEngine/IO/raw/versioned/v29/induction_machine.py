@@ -13,9 +13,16 @@ class RawInductionMachineV29(RawInductionMachine):
     def parse(self, data, version, logger: Logger):
         self.version = version
         if len(data) == 1:
-            (self.I, self.ID, self.STAT, self.SCODE, self.DCODE, self.AREA, self.ZONE, self.OWNER,
-             self.TCODE, self.BCODE, self.MBASE, self.RATEKV,
-             self.PCODE, self.PSET, self.H, self.A, self.B, self.D, self.E) = data[0]
+            if len(data[0]) == 19:
+                (self.I, self.ID, self.STAT, self.SCODE, self.DCODE, self.AREA, self.ZONE, self.OWNER,
+                 self.TCODE, self.BCODE, self.MBASE, self.RATEKV,
+                 self.PCODE, self.PSET, self.H, self.A, self.B, self.D, self.E) = data[0]
+            else:
+                (self.I, self.ID, self.STAT, self.SCODE, self.DCODE, self.AREA, self.ZONE, self.OWNER,
+                 self.TCODE, self.BCODE, self.MBASE, self.RATEKV, self.PCODE, self.PSET, self.H,
+                 self.A, self.B, self.D, self.E, self.RA, self.XA, self.XM, self.R1, self.X1,
+                 self.R2, self.X2, self.X3, self.E1, self.SE1, self.E2, self.SE2, self.IA1,
+                 self.IA2, self.XAMULT) = self.extend_or_curtail(data[0], 34)
         elif len(data) == 3:
             (self.I, self.ID, self.STAT, self.SCODE, self.DCODE, self.AREA, self.ZONE, self.OWNER,
              self.TCODE, self.BCODE, self.MBASE, self.RATEKV) = data[0]
@@ -26,7 +33,7 @@ class RawInductionMachineV29(RawInductionMachine):
              self.E1, self.SE1, self.E2, self.SE2,
              self.IA1, self.IA2) = data[1]
 
-            self.XAMULT = data[2]
+            self.XAMULT = data[2][0]
         else:
             logger.add_warning('Incorrect number of lines for Induction machine', str(len(data)))
 

@@ -828,7 +828,7 @@ def export_sv_statuses(gc_model: MultiCircuit,
             continue
         create_sv_status(
             cgmes_model=cgmes_model,
-            in_service=int(bool(device.get_active_at(t_idx))),
+            in_service=bool(device.get_active_at(t_idx)),
             cgmes_conducting_equipment=cgmes_obj,
             ver=ver
         )

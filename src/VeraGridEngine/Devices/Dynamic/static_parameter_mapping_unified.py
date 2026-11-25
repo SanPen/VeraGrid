@@ -3590,6 +3590,15 @@ def assign_transformer2w_static_api_mapping(
         problem_mapping=problem_mapping,
     )
 
+    assign_api_mapping_value_if_present(
+        mdl=mdl,
+        key=ParamPowerFlowReferenceType.transformer_clock_phase,
+        value=transformer.get_clock_phase(),
+        logger=logger,
+        device_name=transformer.name,
+        problem_mapping=problem_mapping,
+    )
+
     device_name: str = str(transformer.name)
     eps_value: float = 1.0e-12
     omega_base: float = 2.0 * np.pi * grid.fBase

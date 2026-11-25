@@ -800,86 +800,13 @@ class MultiCircuit(Assets):
         """
         Returns a deep (true) copy of this circuit.
         """
-        cpy = MultiCircuit(name=self.name, Sbase=self.Sbase, fbase=self.fBase, idtag=self.idtag)
+        # Copy the complete asset graph with one memo so shared references stay shared.
+        cpy: MultiCircuit = copy.deepcopy(self)
 
-        # TODO: make this list automatic
-        ppts = ['branch_groups',
-                'lines',
-                'dc_lines',
-                'transformers2w',
-                'hvdc_lines',
-                'vsc_devices',
-                'upfc_devices',
-                'switch_devices',
-                'transformers3w',
-                'windings',
-                'series_reactances',
-                'buses',
-                'loads',
-                'generators',
-                'external_grids',
-                'shunts',
-                'batteries',
-                'static_generators',
-                'current_injections',
-                'controllable_shunts',
-                # 'connectivity_nodes',
-                'bus_bars',
-                'overhead_line_types',
-                'wire_types',
-                'underground_cable_constructions',
-                'underground_cable_types',
-                'sequence_line_types',
-                'transformer_types',
-                'substations',
-                'voltage_levels',
-                'areas',
-                'zones',
-                'countries',
-                'communities',
-                'regions',
-                'municipalities',
-                'time_profile',
-                'contingencies',
-                'contingency_groups',
-                'investments',
-                'investments_groups',
-                'technologies',
-                'fuels',
-                'emission_gases',
-                # 'generators_technologies',
-                # 'generators_fuels',
-                # 'generators_emissions',
-                'fluid_nodes',
-                'fluid_paths',
-                'pi_measurements',
-                'qi_measurements',
-                'vm_measurements',
-                'pf_measurements',
-                'qf_measurements',
-                'if_measurements',
-                'modelling_authorities',
-                'diagrams',
-                'var_factory',
-                'manufacturer_native_models',
-                'rms_models',
-                'emt_models',
-                'fmu_templates',
-                'rms_events',
-                'emt_events',
-                'rms_events_groups',
-                'emt_events_groups',
-                ]
-
-        copy_memo = dict()
-        for pr in ppts:
-            if pr != 'diagrams':
-                setattr(cpy, pr, copy.deepcopy(getattr(self, pr), copy_memo))
-
+        # Rebind device and diagram references to the canonical copied assets.
         cpy.rebind_internal_device_references()
-
-        obj_dict = cpy.get_all_elements_dict_by_type(add_locations=True)
-        cpy.diagrams = dev.copy_diagrams(self.diagrams, obj_dict=obj_dict)
+        cpy.diagrams = dev.copy_diagrams(
+            self.diagrams, obj_dict=cpy.get_all_elements_dict_by_type(add_locations=True))
 
         return cpy
 

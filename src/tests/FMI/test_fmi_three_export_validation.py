@@ -115,6 +115,21 @@ def test_packaging_validator_prunes_only_exact_resource_subtree(tmp_path: Path) 
         exceptions=('__pycache__', str(Path('data') / 'fmu')),
     )
 
+    # A removed package may leave only its ignored bytecode cache behind.
+    stale_package: Path = package_root / "removed_package"
+    (stale_package / "nested" / "__pycache__").mkdir(parents=True)
+    assert check_all_folders_contain_init_py(
+        directory=str(package_root),
+        exceptions=('__pycache__', str(Path('data') / 'fmu')),
+    )
+    (stale_package / "module.py").write_text("", encoding="utf-8")
+    with pytest.raises(Exception, match="removed_package"):
+        check_all_folders_contain_init_py(
+            directory=str(package_root),
+            exceptions=('__pycache__', str(Path('data') / 'fmu')),
+        )
+    (stale_package / "__init__.py").write_text("", encoding="utf-8")
+
     # A sibling under data remains subject to the package initializer contract.
     unexpected_sibling: Path = data_root / "unexpected"
     unexpected_sibling.mkdir()

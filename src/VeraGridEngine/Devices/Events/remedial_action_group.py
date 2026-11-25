@@ -4,11 +4,63 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import List, Union, Tuple
+from typing import Dict, List, Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.enumerations import PrpCat, RemedialActionPropertyEnum
+
+
+__ALLOWED_PROPERTY_TYPES__: Dict[DeviceType, Tuple[RemedialActionPropertyEnum, ...]] = {
+    DeviceType.BusDevice: (
+        RemedialActionPropertyEnum.Vmin,
+        RemedialActionPropertyEnum.Vmax,
+    ),
+    DeviceType.LineDevice: (
+        RemedialActionPropertyEnum.Loading,
+        RemedialActionPropertyEnum.ContingencyLoading,
+    ),
+    DeviceType.Transformer2WDevice: (
+        RemedialActionPropertyEnum.Loading,
+        RemedialActionPropertyEnum.ContingencyLoading,
+    ),
+}
+
+
+def get_allowed_property_types_for_device(
+        monitored_device: PhysicalDevice | None) -> Tuple[RemedialActionPropertyEnum, ...]:
+    """
+    Return monitorable limits applicable to one physical device.
+
+    :param monitored_device: Physical device whose results will be monitored.
+    :return: Applicable result properties in enumeration order.
+    """
+    if monitored_device is None:
+        return ()
+    else:
+        return __ALLOWED_PROPERTY_TYPES__.get(monitored_device.device_type, ())
+
+
+def check_property_compatibility(
+        monitored_device: PhysicalDevice | None,
+        property_type: RemedialActionPropertyEnum | None) -> None:
+    """
+    Validate that ``property_type`` is applicable to ``monitored_device``.
+
+    :param monitored_device: Physical device being monitored.
+    :param property_type: Result property selected for the device.
+    :return: None.
+    """
+    if property_type is None:
+        pass
+    else:
+        allowed_property_types: Tuple[RemedialActionPropertyEnum, ...] = (
+            get_allowed_property_types_for_device(monitored_device=monitored_device)
+        )
+        if property_type not in allowed_property_types:
+            raise ValueError('property_type is not applicable to monitored_device')
+        else:
+            pass
 
 
 class RemedialActionGroup(EditableDevice):
@@ -100,10 +152,15 @@ class RemedialActionGroup(EditableDevice):
         self._monitored_device: PhysicalDevice | None = None
         self._property_type: RemedialActionPropertyEnum | None = None
 
-        # self.conn_group = conn_group
-        # self.parent_ra = remedial_action_dependency
-        # self.monitored_device = monitored_device
-        # self.property_type = property_type
+        # This is like this because we want to enforce the constructor rules
+        self.conn_group = conn_group
+        self.prev_ra = remedial_action_dependency
+        self.monitored_device = monitored_device
+        self.property_type = property_type
+        check_property_compatibility(
+            monitored_device=self._monitored_device,
+            property_type=self._property_type,
+        )
 
     @property
     def conn_group(self) -> ContingencyGroup | None:
@@ -180,53 +237,38 @@ class RemedialActionGroup(EditableDevice):
         """
         Set the monitored physical model element.
 
+        When auto-updates are enabled, an incompatible property_type is cleared.
+        When auto-updates are disabled (e.g. during snapshot loading), an
+        incompatible non-None assignment raises ValueError so the caller can
+        report the invalid reference.
+
         :param value: Physical device, or None.
         :return: None.
         """
         if value is None or isinstance(value, PhysicalDevice):
-            allowed_device_types: Tuple[DeviceType, ...] = (
-                DeviceType.BusDevice,
-                DeviceType.LineDevice,
-                DeviceType.Transformer2WDevice,
-            )
-            if value is None or value.device_type in allowed_device_types:
-                self._monitored_device = value
-                allowed_property_types: List[RemedialActionPropertyEnum] = self.get_allowed_property_types()
-                if self._property_type is not None and self._property_type not in allowed_property_types:
-                    self._property_type = None
+            if value is None or value.device_type in __ALLOWED_PROPERTY_TYPES__:
+                if self.auto_update_enabled:
+                    allowed_property_types: Tuple[RemedialActionPropertyEnum, ...] = (
+                        get_allowed_property_types_for_device(monitored_device=value)
+                    )
+                    self._monitored_device = value
+                    if self._property_type is not None and self._property_type not in allowed_property_types:
+                        self._property_type = None
+                    else:
+                        pass
                 else:
-                    pass
+                    if value is not None:
+                        check_property_compatibility(
+                            monitored_device=value,
+                            property_type=self._property_type,
+                        )
+                    else:
+                        pass
+                    self._monitored_device = value
             else:
                 raise ValueError('monitored_device must be a bus, line, or two-winding transformer')
         else:
             raise TypeError('monitored_device must be a PhysicalDevice or None')
-
-    @staticmethod
-    def get_allowed_property_types_for_device(
-            monitored_device: PhysicalDevice | None) -> List[RemedialActionPropertyEnum]:
-        """
-        Return monitorable limits applicable to one physical device.
-
-        :param monitored_device: Physical device whose results will be monitored.
-        :return: Applicable result properties in enumeration order.
-        """
-        if monitored_device is None:
-            property_types: List[RemedialActionPropertyEnum] = list()
-        else:
-            device_type: DeviceType = monitored_device.device_type
-            if device_type == DeviceType.BusDevice:
-                property_types = [
-                    RemedialActionPropertyEnum.Vmin,
-                    RemedialActionPropertyEnum.Vmax,
-                ]
-            elif device_type in (DeviceType.LineDevice, DeviceType.Transformer2WDevice):
-                property_types = [
-                    RemedialActionPropertyEnum.Loading,
-                    RemedialActionPropertyEnum.ContingencyLoading,
-                ]
-            else:
-                property_types = list()
-        return property_types
 
     def get_allowed_property_types(self) -> List[RemedialActionPropertyEnum]:
         """
@@ -234,17 +276,14 @@ class RemedialActionGroup(EditableDevice):
 
         :return: Applicable result properties in enumeration order.
         """
-        property_types: List[RemedialActionPropertyEnum] = self.get_allowed_property_types_for_device(
-            monitored_device=self.monitored_device,
-        )
-        return property_types
+        return list(get_allowed_property_types_for_device(monitored_device=self.monitored_device))
 
     @property
     def property_type(self) -> RemedialActionPropertyEnum | None:
         """
         Return the monitored result property.
 
-        :return: Selected monitored limit.
+        :return: Selected limit.
         """
         return self._property_type
 
@@ -259,11 +298,14 @@ class RemedialActionGroup(EditableDevice):
         if value is None:
             self._property_type = None
         elif isinstance(value, RemedialActionPropertyEnum):
-            allowed_property_types: List[RemedialActionPropertyEnum] = self.get_allowed_property_types()
-            if value in allowed_property_types:
-                self._property_type = value
+            if self.auto_update_enabled:
+                check_property_compatibility(
+                    monitored_device=self._monitored_device,
+                    property_type=value,
+                )
             else:
-                raise ValueError('property_type is not applicable to monitored_device')
+                pass
+            self._property_type = value
         else:
             raise TypeError('property_type must be a RemedialActionPropertyEnum member or None')
 

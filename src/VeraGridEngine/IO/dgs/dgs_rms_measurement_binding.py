@@ -2329,7 +2329,11 @@ def _build_exact_meter_targets(
                     if target_var is None:
                         pass
                     else:
-                        exact_targets[component_name] = list([target_var])
+                        targets: List[Var] | None = exact_targets.get(component_name, None)
+                        if targets is None:
+                            exact_targets[component_name] = list([target_var])
+                        else:
+                            targets.append(target_var)
             else:
                 pass
     return exact_targets

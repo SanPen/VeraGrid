@@ -11,6 +11,7 @@ from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.IO.dgs.dgs_to_veragrid import dgs_to_circuit
 from VeraGridEngine.enumerations import DynamicSimulationMode, RmsInitializationMethod, DynamicIntegrationMethod
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
 from VeraGridEngine.Simulations.Rms.initialization_rms import (
@@ -33,7 +34,8 @@ def _check_native_avr_initialization(path: Path) -> dict:
     """
     grid = dgs_to_circuit(str(path), use_dynamic_information=True,
                           dynamic_simulation_mode=DynamicSimulationMode.RMS)
-    pf = gce.power_flow(grid)
+    # Initialize phase angles for the fixture's 150-degree transformer clocks.
+    pf = gce.power_flow(grid, options=PowerFlowOptions(initialize_angles=True))
     report = {'file': str(path), 'frequency_hz': grid.fBase, 'load_flow_converged': bool(pf.converged)}
     if not pf.converged:
         return report

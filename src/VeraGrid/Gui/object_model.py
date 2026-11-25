@@ -18,6 +18,7 @@ from VeraGrid.Gui.gui_functions import (BoolCheckboxDelegate, IntDelegate, Combo
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 from VeraGridEngine.Devices import Bus, ContingencyGroup, RemedialActionGroup
+from VeraGridEngine.Devices.Events.remedial_action_group import get_allowed_property_types_for_device
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp, GCPROP_TYPES
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
@@ -275,10 +276,8 @@ class RemedialActionPropertyDelegate(QtWidgets.QItemDelegate):
         """
         del option
         monitored_device: PhysicalDevice | None = self.get_monitored_device(index=index)
-        property_types: List[RemedialActionPropertyEnum] = (
-            RemedialActionGroup.get_allowed_property_types_for_device(
-                monitored_device=monitored_device,
-            )
+        property_types: Tuple[RemedialActionPropertyEnum, ...] = (
+            get_allowed_property_types_for_device(monitored_device=monitored_device)
         )
         editor: QtWidgets.QComboBox = QtWidgets.QComboBox(parent)
         property_type: RemedialActionPropertyEnum

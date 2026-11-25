@@ -11,7 +11,6 @@ from multiprocessing import active_children
 from multiprocessing.process import BaseProcess
 import os
 import shutil
-from tempfile import gettempdir
 from time import monotonic, sleep
 from threading import Event, Thread
 import zipfile
@@ -372,7 +371,7 @@ def test_export_validation_contains_native_load_faults(
     previous_output: bytes = b"previous-valid-output"
     config.output_path.write_bytes(previous_output)
     cwd_before: Path = Path.cwd()
-    temporary_before: set[Path] = set(Path(gettempdir()).glob("veragrid_fmu_validation_*"))
+    temporary_before: set[Path] = set(tmp_path.glob("veragrid_fmu_validation_*"))
     child: BaseProcess
     children_before: set[int | None] = set(child.pid for child in active_children())
     started_at: float = monotonic()
@@ -400,7 +399,7 @@ def test_export_validation_contains_native_load_faults(
     assert monotonic() - started_at < 140.0
     assert config.output_path.read_bytes() == previous_output
     assert Path.cwd() == cwd_before
-    assert set(Path(gettempdir()).glob("veragrid_fmu_validation_*")) == temporary_before
+    assert set(tmp_path.glob("veragrid_fmu_validation_*")) == temporary_before
     assert set(child.pid for child in active_children()) == children_before
     assert tuple(tmp_path.glob(".veragrid_fmu_candidate_*")) == tuple()
     assert tuple(tmp_path.glob("veragrid_fmu*_build_*")) == tuple()
@@ -825,7 +824,7 @@ def test_export_validation_cancellation_during_unload(tmp_path: Path) -> None:
     config, library, marker = _build_validation_probe_library(tmp_path, compiler, _ValidationLoadBehavior.HANG_UNLOAD)
     previous: bytes = config.output_path.read_bytes()
     children_before: set[int | None] = set(child.pid for child in active_children())
-    extraction_before: set[Path] = set(Path(gettempdir()).glob("veragrid_fmu_validation_*"))
+    extraction_before: set[Path] = set(tmp_path.glob("veragrid_fmu_validation_*"))
     control: FmuValidationControl = FmuValidationControl()
     requester: _ExportCancellationRequester = _ExportCancellationRequester(marker, control, FmuValidationPhase.UNLOADING)
     requester.start()
@@ -838,7 +837,7 @@ def test_export_validation_cancellation_during_unload(tmp_path: Path) -> None:
     assert control.get_phase() == FmuValidationPhase.CANCELLED
     assert config.output_path.read_bytes() == previous
     assert set(child.pid for child in active_children()) == children_before
-    assert set(Path(gettempdir()).glob("veragrid_fmu_validation_*")) == extraction_before
+    assert set(tmp_path.glob("veragrid_fmu_validation_*")) == extraction_before
     assert tuple(tmp_path.glob(".veragrid_fmu_candidate_*")) == tuple()
 
 

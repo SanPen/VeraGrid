@@ -31,6 +31,7 @@ class TrafoRmsTemplate(RmsModelTemplate):
         Pt = vf.add_var("Pt", reference=VarPowerFlowReferenceType.Pt)
         m = vf.add_var('m')
         phi = vf.add_var('phi')
+        clock_phase = vf.add_var('clock_phase')
         gt = vf.add_var("g")
         bt = vf.add_var("b")
         gFe = vf.add_var('gFe')
@@ -61,7 +62,7 @@ class TrafoRmsTemplate(RmsModelTemplate):
         #    phase_displacement = 0.0
 
         phase_displacement = 0
-        theta_hk = Vaf - Vat
+        theta_hk = Vaf - Vat - clock_phase
         # Keep terminal powers in the same semantic order as the RMS branch
         # root interface.  The Dynamic Editor persists graphical ports by
         # index, so a different order would silently cross Qf and Pt when the
@@ -104,6 +105,7 @@ class TrafoRmsTemplate(RmsModelTemplate):
             ParamPowerFlowReferenceType.bsh: bmu,
             ParamPowerFlowReferenceType.tap_module: m,
             ParamPowerFlowReferenceType.tap_phase: phi,
+            ParamPowerFlowReferenceType.transformer_clock_phase: clock_phase,
             ParamPowerFlowReferenceType.vtap_f: vtap_f,
             ParamPowerFlowReferenceType.vtap_t: vtap_t,
         }
@@ -114,6 +116,7 @@ class TrafoRmsTemplate(RmsModelTemplate):
         block.parameters[bmu] = vf.add_const(0.0)
         block.parameters[m] = vf.add_const(1.0)
         block.parameters[phi] = vf.add_const(0.0)
+        block.parameters[clock_phase] = vf.add_const(0.0)
         block.parameters[vtap_f] = vf.add_const(1.0)
         block.parameters[vtap_t] = vf.add_const(1.0)
         #

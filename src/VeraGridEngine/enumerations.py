@@ -5608,6 +5608,7 @@ class ParamPowerFlowReferenceType(Enum):
     transformer_winding1_rated_voltage_ll_kv = "transformer_winding1_rated_voltage_ll_kv"
     transformer_winding2_rated_voltage_ll_kv = "transformer_winding2_rated_voltage_ll_kv"
     transformer_connection_clock = "transformer_connection_clock"
+    transformer_clock_phase = "transformer_clock_phase"
     transformer_open_circuit_current_pct = "transformer_open_circuit_current_pct"
     transformer_open_circuit_loss_kw = "transformer_open_circuit_loss_kw"
     transformer_short_circuit_voltage_pct = "transformer_short_circuit_voltage_pct"

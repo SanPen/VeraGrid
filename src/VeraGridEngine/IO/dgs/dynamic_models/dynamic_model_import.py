@@ -1697,7 +1697,9 @@ class DynamicModelImport:
                     expression = Const(orientation * power_scale) * physical_power
         else:
             if spec.meter_kind is RmsPhysicalMeterKind.VOLTAGE:
-                if len(references) < 2:
+                if normalized_name in ("fe", "fref"):
+                    expression = Const(1.0)
+                elif len(references) < 2:
                     pass
                 else:
                     voltage_magnitude: Var | None = physical_inputs_by_reference.get(

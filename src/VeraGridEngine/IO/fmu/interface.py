@@ -251,7 +251,11 @@ def _validate_exported_fmu(
     else:
         pass
     context: BaseContext = get_context("spawn")
-    extraction_root: Path = Path(mkdtemp(prefix="veragrid_fmu_validation_"))
+    # Keep this export's native files beside its destination so concurrent
+    # exports never share an observable validation sandbox namespace.
+    validation_directory: Path = config.output_path.parent
+    validation_directory.mkdir(parents=True, exist_ok=True)
+    extraction_root: Path = Path(mkdtemp(prefix="veragrid_fmu_validation_", dir=str(validation_directory)))
     extraction_directory: Path = extraction_root / "fmu"
     completion_path: Path = extraction_root / "complete"
     diagnostic_path: Path = extraction_root / "diagnostic"

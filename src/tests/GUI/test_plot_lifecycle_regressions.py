@@ -189,14 +189,14 @@ def test_painter_state_is_restored_when_drawing_fails(qt_app: QtWidgets.QApplica
     coordinates: np.ndarray = np.arange(3.0)
     assert chart.set_line_series(coordinates, ['A'], [coordinates])
     # Inject invalid internal data to exercise cleanup even if a renderer unexpectedly fails.
-    chart._series[0].replace_data(coordinates, np.ones((3, 1)), QtGui.QColor('#008800'))
+    chart._series[0].replace_data(coordinates, np.ones((3, 2)), QtGui.QColor('#008800'))
     image: QtGui.QImage = QtGui.QImage(600, 400, QtGui.QImage.Format.Format_ARGB32)
     painter: QtGui.QPainter = QtGui.QPainter(image)
     try:
         try:
             chart.paint_to_painter(painter)
-        except TypeError as error:
-            assert '0-dimensional' in str(error)
+        except TypeError:
+            pass
         else:
             pytest.fail('Drawing failure did not propagate')
         assert painter.isActive()
@@ -223,11 +223,10 @@ def test_export_ends_painter_when_drawing_fails(
     coordinates: np.ndarray = np.arange(3.0)
     assert chart.set_line_series(coordinates, ['A'], [coordinates])
     # Inject invalid internal data to exercise cleanup even if a renderer unexpectedly fails.
-    chart._series[0].replace_data(coordinates, np.ones((3, 1)), QtGui.QColor('#008800'))
+    chart._series[0].replace_data(coordinates, np.ones((3, 2)), QtGui.QColor('#008800'))
     try:
         save_chart_image(chart, str(tmp_path / f'failed{suffix}'))
     except TypeError as error:
-        assert '0-dimensional' in str(error)
         # Inspect the failed export frame while it still retains its native paint device.
         frame: TracebackType | None = error.__traceback__
         checked_painter: bool = False

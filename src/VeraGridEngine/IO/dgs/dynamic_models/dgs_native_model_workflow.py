@@ -588,6 +588,30 @@ def assemble_native_dgs_model(
             cable = routing.resolve(cable)
         source_slot: str = str(cable.pnodfrom).lstrip("#")
         target_slot: str = str(cable.pnodto).lstrip("#")
+        source_entry: ElmCompInstanceEntry | None = entries.get(source_slot, None)
+        target_entry: ElmCompInstanceEntry | None = entries.get(target_slot, None)
+        target_child: Block | None = direct_result.child_block_by_slot_id.get(target_slot, None)
+        if (source_entry is not None and source_entry.slot_reference_is_resolved
+                and source_entry.element_id is None and target_entry is not None and target_child is not None):
+            # Empty optional producers leave initialized receiver values held.
+            other_source: bool = any(
+                other is not source_cable
+                and str(other.pnodto).lstrip('#') == target_slot
+                and int(other.inodto) == int(cable.inodto)
+                for other in dgs_circuit.blksigs
+            )
+            if other_source:
+                pass
+            else:
+                for target_variable in _slot_input_variables(target_entry, target_child, int(cable.inodto)):
+                    initial_expression: Expr | None = target_child.init_eqs.get(target_variable, None)
+                    if initial_expression is None:
+                        pass
+                    else:
+                        target_child.event_dict[target_variable] = initial_expression
+                        target_child.init_eqs.pop(target_variable, None)
+        else:
+            pass
         if source_slot == plan.entry.slot_id:
             other: ElmCompInstanceEntry | None = entries.get(target_slot, None)
             child: Block | None = direct_result.child_block_by_slot_id.get(target_slot, None)
